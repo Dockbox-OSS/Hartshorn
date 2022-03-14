@@ -31,18 +31,15 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 public class BindingHierarchyTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     void testToString() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext());
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext);
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
@@ -52,7 +49,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testToStringNamed() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, "sample"), this.applicationContext());
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, "sample"), this.applicationContext);
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
@@ -62,7 +59,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testIteratorIsSorted() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext());
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext);
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
@@ -79,15 +76,15 @@ public class BindingHierarchyTests {
     void testApplicationContextHierarchyControl() {
         final Key<Contract> key = Key.of(Contract.class);
 
-        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key, this.applicationContext());
+        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key, this.applicationContext);
         secondHierarchy.add(2, Providers.of(ImplementationC.class));
 
-        this.applicationContext().hierarchy(key)
+        this.applicationContext.hierarchy(key)
                 .add(0, Providers.of(ImplementationA.class))
                 .add(1, Providers.of(ImplementationB.class))
                 .merge(secondHierarchy);
 
-        final BindingHierarchy<Contract> hierarchy = this.applicationContext().hierarchy(key);
+        final BindingHierarchy<Contract> hierarchy = this.applicationContext.hierarchy(key);
         Assertions.assertNotNull(hierarchy);
 
         Assertions.assertEquals(3, hierarchy.size());
@@ -110,9 +107,9 @@ public class BindingHierarchyTests {
 
     @Test
     void testContextCreatesHierarchy() {
-        this.applicationContext().bind(Key.of(LocalContract.class), LocalImpl.class);
+        this.applicationContext.bind(Key.of(LocalContract.class), LocalImpl.class);
 
-        final BindingHierarchy<LocalContract> hierarchy = this.applicationContext().hierarchy(Key.of(LocalContract.class));
+        final BindingHierarchy<LocalContract> hierarchy = this.applicationContext.hierarchy(Key.of(LocalContract.class));
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 

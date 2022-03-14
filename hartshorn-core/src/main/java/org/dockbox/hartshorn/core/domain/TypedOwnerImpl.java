@@ -16,17 +16,21 @@
 
 package org.dockbox.hartshorn.core.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Simple implementation of {@link TypedOwner}
  */
-@Getter
-@AllArgsConstructor
 public final class TypedOwnerImpl implements TypedOwner {
 
     private final String id;
+
+    public TypedOwnerImpl(final String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Creates a new {@link TypedOwnerImpl} from the given ID.

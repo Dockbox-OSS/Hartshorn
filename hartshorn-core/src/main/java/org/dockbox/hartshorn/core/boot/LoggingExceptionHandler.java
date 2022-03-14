@@ -19,9 +19,6 @@ package org.dockbox.hartshorn.core.boot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * This class is used to handle exceptions that occur during the application lifecycle. This default implementation
  * of the {@link ExceptionHandler} interface logs the exception to the {@link Logger} and is able to correctly display
@@ -32,11 +29,21 @@ import lombok.Setter;
  */
 public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
-    @Getter @Setter
     private boolean stacktraces;
-
-    @Getter
     private ApplicationManager applicationManager;
+
+    public LoggingExceptionHandler stacktraces(final boolean stacktraces) {
+        this.stacktraces = stacktraces;
+        return this;
+    }
+
+    public boolean stacktraces() {
+        return this.stacktraces;
+    }
+
+    public ApplicationManager applicationManager() {
+        return this.applicationManager;
+    }
 
     @Override
     public void handle(final Throwable throwable) {

@@ -20,16 +20,19 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.inject.Binder;
 import org.dockbox.hartshorn.core.inject.DelegatedBinder;
 
-import lombok.Setter;
-
 public abstract class InjectConfiguration implements DelegatedBinder {
 
-    @Setter private Binder binder;
+    private Binder binder;
 
     public abstract void collect(ApplicationContext context);
 
     public final Binder binder() {
         if (this.binder == null) throw new IllegalStateException("No binder provided!");
         return this.binder;
+    }
+
+    public InjectConfiguration binder(final Binder binder) {
+        this.binder = binder;
+        return this;
     }
 }

@@ -26,22 +26,32 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Simple implementation of {@link CommandContext}.
  */
-@AllArgsConstructor
 public class CommandContextImpl extends DefaultContext implements CommandContext {
 
     private final String command;
     private final List<CommandParameter<?>> args;
     private final List<CommandParameter<?>> flags;
+    private final CommandSource source;
+    private final ApplicationContext applicationContext;
 
-    @Getter private final CommandSource source;
+    public CommandContextImpl(final String command, final List<CommandParameter<?>> args, final List<CommandParameter<?>> flags, final CommandSource source, final ApplicationContext applicationContext) {
+        this.command = command;
+        this.args = args;
+        this.flags = flags;
+        this.source = source;
+        this.applicationContext = applicationContext;
+    }
 
-    @Getter private final ApplicationContext applicationContext;
+    public CommandSource source() {
+        return this.source;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     public List<CommandParameter<?>> arguments() {

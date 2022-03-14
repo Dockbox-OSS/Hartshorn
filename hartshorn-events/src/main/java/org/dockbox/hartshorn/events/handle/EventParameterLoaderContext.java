@@ -22,9 +22,6 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
 
-import lombok.Getter;
-
-@Getter
 public class EventParameterLoaderContext extends ParameterLoaderContext {
 
     private final Event event;
@@ -33,5 +30,9 @@ public class EventParameterLoaderContext extends ParameterLoaderContext {
                                        final ApplicationContext applicationContext, final Event event) {
         super(method, type, instance, applicationContext);
         this.event = event;
+    }
+
+    public Event event() {
+        return this.event;
     }
 }

@@ -19,10 +19,6 @@ package org.dockbox.hartshorn.core.binding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * A singleton-like provider, which uses an existing instance of type {@code T} to
  * provide the requested instance.
@@ -34,11 +30,17 @@ import lombok.Getter;
  * @see SupplierProvider
  * @see ContextDrivenProvider
  */
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
-@Getter
 public class InstanceProvider<T> implements Provider<T> {
 
     private final T instance;
+
+    InstanceProvider(final T instance) {
+        this.instance = instance;
+    }
+
+    public T instance() {
+        return this.instance;
+    }
 
     @Override
     public Exceptional<T> provide(final ApplicationContext context) {

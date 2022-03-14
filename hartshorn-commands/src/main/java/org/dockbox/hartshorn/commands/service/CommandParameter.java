@@ -19,21 +19,29 @@ package org.dockbox.hartshorn.commands.service;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.core.StringUtilities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Represents a single parameter which can be provided to command executors
  * through {@link CommandContext#flags()} and {@link CommandContext#arguments()}.
  *
  * @param <T> The type of the parameter value.
  */
-@AllArgsConstructor
-@Getter
 public class CommandParameter<T> {
 
     private final T value;
     private final String key;
+
+    public CommandParameter(final T value, final String key) {
+        this.value = value;
+        this.key = key;
+    }
+
+    public T value() {
+        return this.value;
+    }
+
+    public String key() {
+        return this.key;
+    }
 
     public String trimmedKey() {
         return StringUtilities.trimWith('-', this.key());

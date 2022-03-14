@@ -21,12 +21,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import lombok.Getter;
-
 public class MessageTemplate implements Message {
 
-    @Getter private Locale language;
-    @Getter private final String key;
+    private Locale language;
+    private final String key;
 
     private final Map<Locale, Object[]> formattingArgs;
     private final Map<Locale, String> resourceMap;
@@ -43,6 +41,16 @@ public class MessageTemplate implements Message {
         this.resourceMap.put(language, value);
 
         this.defaultValue = value;
+    }
+
+    @Override
+    public Locale language() {
+        return this.language;
+    }
+
+    @Override
+    public String key() {
+        return this.key;
     }
 
     @Override

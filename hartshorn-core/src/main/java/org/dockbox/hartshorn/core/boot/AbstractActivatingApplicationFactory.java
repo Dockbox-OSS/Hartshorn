@@ -39,9 +39,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 public abstract class AbstractActivatingApplicationFactory<
         Self extends ApplicationFactory<Self, C>,
         C extends SelfActivatingApplicationContext,
@@ -53,8 +50,11 @@ public abstract class AbstractActivatingApplicationFactory<
     }
 
     private FactoryState state = FactoryState.WAITING;
-    @Getter(AccessLevel.PROTECTED)
     private Logger logger;
+
+    protected Logger logger() {
+        return this.logger;
+    }
 
     @Override
     public C create() {

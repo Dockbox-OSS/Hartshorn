@@ -21,12 +21,14 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Getter;
-
 public class ViewModelImpl implements ViewModel {
 
-    @Getter
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+
+    @Override
+    public Map<String, Object> attributes() {
+        return this.attributes;
+    }
 
     @Override
     public void attribute(final String name, final Object value) {

@@ -16,8 +16,7 @@
 
 package org.dockbox.hartshorn.core.domain.tuple;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import java.util.Objects;
 
 /**
  * Represents a triad of values
@@ -29,16 +28,45 @@ import lombok.Data;
  * @param <B> type of the second value.
  * @param <C> type of the third value.
  */
-@Data
-@AllArgsConstructor
 public class Triad<A, B, C> {
 
     private final A first;
     private final B second;
     private final C third;
 
+    public Triad(final A first, final B second, final C third) {
+        this.first = first;
+        this.second = second;
+        this.third = third;
+    }
+
+    public A first() {
+        return this.first;
+    }
+
+    public B second() {
+        return this.second;
+    }
+
+    public C third() {
+        return this.third;
+    }
+
     @Override
     public String toString() {
         return "Triad[" + this.first + ", " + this.second + ", " + this.third + ']';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final Triad<?, ?, ?> triad = (Triad<?, ?, ?>) o;
+        return Objects.equals(this.first, triad.first) && Objects.equals(this.second, triad.second) && Objects.equals(this.third, triad.third);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.first, this.second, this.third);
     }
 }

@@ -20,10 +20,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.function.Function;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * A {@link StringTypeAdapter} implementation. This implementation uses a {@link Function} to convert the {@link String}
  * to the desired type. This is useful when the conversion is not trivial, so that the converter can be defined in a
@@ -33,11 +29,19 @@ import lombok.Getter;
  * @author Guus Lieben
  * @since 21.9
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
 
-    @Getter private final Class<T> type;
+    private final Class<T> type;
     private final Function<String, Exceptional<T>> function;
+
+    private StringTypeAdapterImpl(final Class<T> type, final Function<String, Exceptional<T>> function) {
+        this.type = type;
+        this.function = function;
+    }
+
+    public Class<T> type() {
+        return this.type;
+    }
 
     @Override
     public Exceptional<T> adapt(final String value) {

@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
-
 /**
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
  * the {@link TypeContext owner}, typically this will be similar to {@code /config/{owner-id}/}.
@@ -36,8 +34,10 @@ import lombok.Getter;
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
-    @Getter
-    private final String name = "fs";
+    @Override
+    public String name() {
+        return "fs";
+    }
 
     @Override
     public Set<URI> lookup(final ApplicationContext context, final String path) {

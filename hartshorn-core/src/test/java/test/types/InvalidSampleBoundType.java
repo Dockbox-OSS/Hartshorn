@@ -16,13 +16,16 @@
 
 package test.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class InvalidSampleBoundType implements SampleInterface {
 
     private final String name;
 
+    public InvalidSampleBoundType(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
 }

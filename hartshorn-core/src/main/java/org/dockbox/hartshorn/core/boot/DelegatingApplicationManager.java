@@ -30,9 +30,6 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * The default implementation of the {@link ApplicationManager} interface. This implementation delegates most functionality
  * to concrete implementations of each of the {@link ApplicationManager} parent interfaces. If any of these implementations
@@ -43,7 +40,6 @@ import lombok.Setter;
  * @since 21.9
  */
 @LogExclude
-@Getter
 public class DelegatingApplicationManager implements ObservableApplicationManager, ModifiableContextCarrier {
 
     private static final String BANNER = """
@@ -62,8 +58,6 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     private final boolean isCI;
 
     private ApplicationContext applicationContext;
-
-    @Setter
     private ExceptionHandler exceptionHandler;
 
     public DelegatingApplicationManager(
@@ -91,6 +85,41 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
         this.isCI = this.checkCI();
 
         if (!this.isCI()) this.printHeader(activator);
+    }
+
+    @Override
+    public Set<LifecycleObserver> observers() {
+        return this.observers;
+    }
+
+    public ApplicationFSProvider applicationFSProvider() {
+        return this.applicationFSProvider;
+    }
+
+    public ApplicationLogger applicationLogger() {
+        return this.applicationLogger;
+    }
+
+    public ApplicationProxier applicationProxier() {
+        return this.applicationProxier;
+    }
+
+    public boolean CI() {
+        return this.isCI;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    public ExceptionHandler exceptionHandler() {
+        return this.exceptionHandler;
+    }
+
+    public DelegatingApplicationManager exceptionHandler(final ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+        return this;
     }
 
     protected boolean checkCI() {

@@ -18,15 +18,23 @@ package org.dockbox.hartshorn.data.mapping;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ModifierElement {
 
     private List<String> names;
 
+    public ModifierElement(final List<String> names) {
+        this.names = names;
+    }
+
+    public ModifierElement() {
+    }
+
+    public List<String> names() {
+        return this.names;
+    }
+
+    public ModifierElement names(final List<String> names) {
+        this.names = names;
+        return this;
+    }
 }

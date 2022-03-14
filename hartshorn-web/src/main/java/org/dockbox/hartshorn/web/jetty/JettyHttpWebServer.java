@@ -40,18 +40,13 @@ import java.net.URL;
 import javax.inject.Inject;
 import javax.servlet.Servlet;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class JettyHttpWebServer extends DefaultHttpWebServer {
 
-    @Inject @Getter
-    private ApplicationContext context;
-    @Getter
     private final ServletContextHandler contextHandler;
-    @Getter
     private final HandlerWrapper servletHandler;
-    @Getter @Setter
+
+    @Inject
+    private ApplicationContext context;
     private JsonInclusionRule skipBehavior = JsonInclusionRule.SKIP_NONE;
     private JettyServer server;
 
@@ -69,6 +64,27 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
             this.staticContent(staticContent);
         }
         this.listStaticDirectories(true);
+    }
+
+    public ApplicationContext context() {
+        return this.context;
+    }
+
+    public ServletContextHandler contextHandler() {
+        return this.contextHandler;
+    }
+
+    public HandlerWrapper servletHandler() {
+        return this.servletHandler;
+    }
+
+    public JsonInclusionRule skipBehavior() {
+        return this.skipBehavior;
+    }
+
+    public JettyHttpWebServer skipBehavior(final JsonInclusionRule skipBehavior) {
+        this.skipBehavior = skipBehavior;
+        return this;
     }
 
     @Override

@@ -17,11 +17,7 @@
 package org.dockbox.hartshorn.core.domain.tuple;
 
 import java.util.Map.Entry;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Objects;
 
 /**
  * Represents a simple tuple holding a single key of type <code>K</code> and value
@@ -30,14 +26,23 @@ import lombok.Setter;
  * @param <K> The type of the key represented by this tuple
  * @param <V> The type of the value represented by this tuple
  */
-@Getter
-@Setter
-@AllArgsConstructor
-@EqualsAndHashCode
 public class Tuple<K, V> implements Entry<K, V> {
 
     private final K key;
     private final V value;
+
+    public Tuple(final K key, final V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public K key() {
+        return this.key;
+    }
+
+    public V value() {
+        return this.value;
+    }
 
     public static <K, V> Tuple<K, V> of(final K key, final V value) {
         return new Tuple<>(key, value);
@@ -56,5 +61,18 @@ public class Tuple<K, V> implements Entry<K, V> {
     @Override
     public V setValue(final V value) {
         throw new UnsupportedOperationException("Cannot modify final Tuple value");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+        return Objects.equals(this.key, tuple.key) && Objects.equals(this.value, tuple.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.key, this.value);
     }
 }

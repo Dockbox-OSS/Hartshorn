@@ -37,10 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
-@Getter(AccessLevel.PROTECTED)
 public abstract class AbstractApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> implements ApplicationFactory<Self, C> {
 
     protected ApplicationConfigurator applicationConfigurator;
@@ -65,6 +61,86 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
     protected final Set<ComponentPostProcessor<?>> componentPostProcessors = ConcurrentHashMap.newKeySet();
     protected final Set<ComponentPreProcessor<?>> componentPreProcessors = ConcurrentHashMap.newKeySet();
+
+    protected ApplicationConfigurator applicationConfigurator() {
+        return this.applicationConfigurator;
+    }
+
+    protected ApplicationProxier applicationProxier() {
+        return this.applicationProxier;
+    }
+
+    protected ApplicationFSProvider applicationFSProvider() {
+        return this.applicationFSProvider;
+    }
+
+    protected ApplicationLogger applicationLogger() {
+        return this.applicationLogger;
+    }
+
+    protected ExceptionHandler exceptionHandler() {
+        return this.exceptionHandler;
+    }
+
+    protected BiFunction<PrefixContext, ApplicationManager, ApplicationEnvironment> applicationEnvironment() {
+        return this.applicationEnvironment;
+    }
+
+    protected Function<ApplicationContext, ComponentLocator> componentLocator() {
+        return this.componentLocator;
+    }
+
+    protected Function<ApplicationContext, ClasspathResourceLocator> resourceLocator() {
+        return this.resourceLocator;
+    }
+
+    protected Function<ApplicationContext, MetaProvider> metaProvider() {
+        return this.metaProvider;
+    }
+
+    protected Function<ApplicationContext, ComponentProvider> componentProvider() {
+        return this.componentProvider;
+    }
+
+    protected Function<ApplicationContext, ComponentPopulator> componentPopulator() {
+        return this.componentPopulator;
+    }
+
+    protected Function<ApplicationManager, PrefixContext> prefixContext() {
+        return this.prefixContext;
+    }
+
+    protected TypeContext<?> activator() {
+        return this.activator;
+    }
+
+    protected Set<InjectConfiguration> injectConfigurations() {
+        return this.injectConfigurations;
+    }
+
+    protected Set<Annotation> serviceActivators() {
+        return this.serviceActivators;
+    }
+
+    protected Set<Modifiers> modifiers() {
+        return this.modifiers;
+    }
+
+    protected Set<String> arguments() {
+        return this.arguments;
+    }
+
+    protected Set<String> prefixes() {
+        return this.prefixes;
+    }
+
+    protected Set<ComponentPostProcessor<?>> componentPostProcessors() {
+        return this.componentPostProcessors;
+    }
+
+    protected Set<ComponentPreProcessor<?>> componentPreProcessors() {
+        return this.componentPreProcessors;
+    }
 
     @Override
     public Self modifiers(final Modifiers... modifiers) {

@@ -18,16 +18,39 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Component(id = "entity")
 public class EntityElement implements Element {
 
     private String name;
 
+    public EntityElement() {
+    }
+
+    public EntityElement(final String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public EntityElement name(final String name) {
+        this.name = name;
+        return this;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final EntityElement that = (EntityElement) o;
+        return Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name);
+    }
 }

@@ -26,10 +26,6 @@ import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
 import javax.persistence.EntityManager;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class QueryContext {
 
     private ParameterLoader<JpaParameterLoaderContext> parameterLoader;
@@ -39,9 +35,34 @@ public class QueryContext {
     private final MethodContext<?, ?> method;
     private final TypeContext<?> entityType;
 
-    @Getter private final ApplicationContext applicationContext;
-    @Getter private final JpaRepository<?, ?> repository;
-    @Getter private final boolean modifiesEntity;
+    private final ApplicationContext applicationContext;
+    private final JpaRepository<?, ?> repository;
+    private final boolean modifiesEntity;
+
+    public QueryContext(
+            final Query annotation, final Object[] args, final MethodContext<?, ?> method,
+            final TypeContext<?> entityType, final ApplicationContext applicationContext,
+            final JpaRepository<?, ?> repository, final boolean modifiesEntity) {
+        this.annotation = annotation;
+        this.args = args;
+        this.method = method;
+        this.entityType = entityType;
+        this.applicationContext = applicationContext;
+        this.repository = repository;
+        this.modifiesEntity = modifiesEntity;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    public JpaRepository<?, ?> repository() {
+        return this.repository;
+    }
+
+    public boolean modifiesEntity() {
+        return this.modifiesEntity;
+    }
 
     public boolean automaticClear() {
         return this.annotation.automaticClear();

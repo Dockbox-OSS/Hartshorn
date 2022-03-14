@@ -19,17 +19,20 @@ package org.dockbox.hartshorn.commands.extension;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.i18n.Message;
 
-import lombok.AllArgsConstructor;
-
 /**
  * Indicates the result of a {@link CommandExecutorExtension}.
  */
-@AllArgsConstructor
 public final class ExtensionResult {
 
     private final boolean proceed;
     private final Message reason;
     private final boolean send;
+
+    public ExtensionResult(final boolean proceed, final Message reason, final boolean send) {
+        this.proceed = proceed;
+        this.reason = reason;
+        this.send = send;
+    }
 
     /**
      * Gets a new {@link ExtensionResult} which allows the {@link org.dockbox.hartshorn.commands.CommandExecutor} to

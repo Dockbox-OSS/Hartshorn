@@ -43,7 +43,7 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
         final MediaType mediaType = parameter.declaredBy().annotation(HttpRequest.class).get().consumes();
         if (!mediaType.isSerializable()) return Exceptional.empty();
         final FileFormat bodyFormat = mediaType.fileFormat().get();
-        final ObjectMapper objectMapper = context.applicationContext().get(ObjectMapper.class).fileType(bodyFormat);
+        final ObjectMapper objectMapper = context.provider().get(ObjectMapper.class).fileType(bodyFormat);
 
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
     }

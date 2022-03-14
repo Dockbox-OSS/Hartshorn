@@ -23,13 +23,9 @@ import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-import lombok.Getter;
-
 public class CommandParameterLoaderContext extends ParameterLoaderContext {
 
-    @Getter
     private final CommandContext commandContext;
-    @Getter
     private final MethodCommandExecutorContext<?> executorContext;
 
     public CommandParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final CommandContext commandContext,
@@ -37,5 +33,13 @@ public class CommandParameterLoaderContext extends ParameterLoaderContext {
         super(method, type, instance, applicationContext);
         this.commandContext = commandContext;
         this.executorContext = executorContext;
+    }
+
+    public CommandContext commandContext() {
+        return this.commandContext;
+    }
+
+    public MethodCommandExecutorContext<?> executorContext() {
+        return this.executorContext;
     }
 }

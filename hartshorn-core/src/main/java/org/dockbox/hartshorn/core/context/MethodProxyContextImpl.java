@@ -21,19 +21,35 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class MethodProxyContextImpl<T> extends DefaultContext implements MethodProxyContext<T> {
 
     private final ApplicationContext context;
     private final TypeContext<T> type;
     private final MethodContext<?, T> method;
 
+    public MethodProxyContextImpl(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method) {
+        this.context = context;
+        this.type = type;
+        this.method = method;
+    }
+
     @Override
     public <A extends Annotation> A annotation(final Class<A> annotation) {
         return this.method.annotation(annotation).orNull();
+    }
+
+    @Override
+    public ApplicationContext context() {
+        return this.context;
+    }
+
+    @Override
+    public TypeContext<T> type() {
+        return this.type;
+    }
+
+    @Override
+    public MethodContext<?, T> method() {
+        return this.method;
     }
 }

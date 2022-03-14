@@ -206,16 +206,16 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         if (null == this.objectMapper) {
             this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
             final MapperBuilder<?, ?> builder = this.mapper(this.fileType());
-            builder.annotationIntrospector(new PropertyAliasIntrospector(this.context));
+            builder.annotationIntrospector(new PropertyAliasIntrospector());
             builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
             builder.enable(Feature.ALLOW_COMMENTS);
             builder.enable(Feature.ALLOW_YAML_COMMENTS);
             builder.enable(SerializationFeature.INDENT_OUTPUT);
             builder.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
             builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-            // As Lombok generates fluent style getters/setters, these are not picked up by Jackson which
-            // would otherwise cause it to fail due to it recognizing the object as an empty bean, even
-            // if it is not empty.
+            // Hartshorn convention uses fluent style getters/setters, these are not picked up by Jackson
+            // which would otherwise cause it to fail due to it recognizing the object as an empty bean,
+            // even if it is not empty.
             builder.visibility(PropertyAccessor.FIELD, Visibility.ANY);
             builder.serializationInclusion(this.include);
             this.objectMapper = builder.build();

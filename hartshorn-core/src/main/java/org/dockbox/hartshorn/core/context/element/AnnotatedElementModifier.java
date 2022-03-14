@@ -19,9 +19,6 @@ package org.dockbox.hartshorn.core.context.element;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * AnnotatedElementModifier is a helper class that allows to modify an {@link AnnotatedElementContext} by adding or removing
  * virtual annotations. This does not modify the actual {@link AnnotatedElement} itself, but only the context.
@@ -31,11 +28,21 @@ import lombok.Getter;
  * @author Guus Lieben
  * @since 22.1
  */
-@AllArgsConstructor(staticName = "of")
 public final class AnnotatedElementModifier<A extends AnnotatedElement> implements ElementModifier<AnnotatedElementContext<A>> {
 
-    @Getter
     private final AnnotatedElementContext<A> element;
+
+    private AnnotatedElementModifier(final AnnotatedElementContext<A> element) {
+        this.element = element;
+    }
+
+    public AnnotatedElementContext<A> element() {
+        return this.element;
+    }
+
+    public static <A extends AnnotatedElement> AnnotatedElementModifier<A> of(final AnnotatedElementContext<A> element) {
+        return new AnnotatedElementModifier<>(element);
+    }
 
     /**
      * Adds a virtual annotation to the {@link AnnotatedElementContext}.

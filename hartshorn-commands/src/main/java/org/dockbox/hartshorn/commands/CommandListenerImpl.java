@@ -26,9 +26,6 @@ import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class CommandListenerImpl implements CommandListener {
 
     @Inject
@@ -36,14 +33,41 @@ public class CommandListenerImpl implements CommandListener {
     @Inject
     private CommandGateway gateway;
 
-    @Getter
-    @Setter
     private boolean async;
-    @Getter
-    @Setter
     private InputStream input = System.in;
-    @Setter
     private CommandSource source;
+
+    @Inject
+    protected void context(ApplicationContext applicationContext) {
+        this.context = applicationContext;
+        this.source(SystemSubject.instance(applicationContext));
+    }
+
+    public boolean async() {
+        return this.async;
+    }
+
+    public InputStream input() {
+        return this.input;
+    }
+
+    @Override
+    public CommandListenerImpl async(final boolean async) {
+        this.async = async;
+        return this;
+    }
+
+    @Override
+    public CommandListenerImpl input(final InputStream input) {
+        this.input = input;
+        return this;
+    }
+
+    @Override
+    public CommandListenerImpl source(final CommandSource source) {
+        this.source = source;
+        return this;
+    }
 
     @Override
     public void open() {
@@ -94,6 +118,6 @@ public class CommandListenerImpl implements CommandListener {
      @return The source to execute commands.
      */
     protected CommandSource source() {
-        return SystemSubject.instance(this.context);
+        return this.source;
     }
 }

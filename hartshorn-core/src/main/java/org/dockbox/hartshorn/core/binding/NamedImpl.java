@@ -22,9 +22,6 @@ import java.lang.annotation.Annotation;
 
 import javax.inject.Named;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * An implementation of the {@link Named} annotation. This is used by {@link Key}s to allow for {@link String}
  * based names instead of always requiring a {@link Named} instance.
@@ -32,11 +29,17 @@ import lombok.Getter;
  * @author Guus Lieben
  * @since 21.2
  */
-@AllArgsConstructor
 public class NamedImpl implements Named {
 
-    @Getter
     private final String value;
+
+    public NamedImpl(final String value) {
+        this.value = value;
+    }
+
+    public String value() {
+        return this.value;
+    }
 
     @Override
     public Class<? extends Annotation> annotationType() {

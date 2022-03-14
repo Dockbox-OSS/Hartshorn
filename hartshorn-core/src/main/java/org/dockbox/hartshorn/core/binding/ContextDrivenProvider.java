@@ -23,8 +23,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 
-import lombok.Getter;
-
 /**
  * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorContext} to
  * create a new instance of a class. The constructor is looked up based on its parameters, where the
@@ -33,15 +31,15 @@ import lombok.Getter;
  * <p>If no injectable constructors can be found, the default constructro is used instead. If this
  * constructor is not injectable, an {@link IllegalStateException} is thrown.
  *
- * @param <C> The type of the class to create.
+ * @param <C>
+ *         The type of the class to create.
  *
  * @author Guus Lieben
- * @since 21.4
  * @see Provider
  * @see SupplierProvider
  * @see InstanceProvider
+ * @since 21.4
  */
-@Getter
 public class ContextDrivenProvider<C> implements Provider<C> {
 
     private final TypeContext<? extends C> context;
@@ -67,7 +65,8 @@ public class ContextDrivenProvider<C> implements Provider<C> {
                     throw new IllegalStateException("No injectable constructors found for " + this.context().type());
                 }
                 else this.optimalConstructor = defaultConstructor.get();
-            } else {
+            }
+            else {
 
             /*
              An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
@@ -87,5 +86,13 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     protected Exceptional<C> create(final ApplicationContext context) {
         if (this.optimalConstructor() == null) return Exceptional.empty();
         return this.optimalConstructor().createInstance(context).rethrowUnchecked().map(instance -> (C) instance);
+    }
+
+    public TypeContext<? extends C> context() {
+        return this.context;
+    }
+
+    public ConstructorContext<? extends C> optimalConstructor() {
+        return this.optimalConstructor;
     }
 }

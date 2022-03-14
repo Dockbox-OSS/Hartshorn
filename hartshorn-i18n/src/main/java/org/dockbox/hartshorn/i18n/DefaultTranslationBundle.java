@@ -33,18 +33,22 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class DefaultTranslationBundle implements TranslationBundle {
+
+    private final Map<String, Message> messages = new ConcurrentHashMap<>();
 
     @Inject
     private ApplicationContext applicationContext;
-
-    @Getter @Setter
     private Locale primaryLanguage = Locale.getDefault();
 
-    private final Map<String, Message> messages = new ConcurrentHashMap<>();
+    public Locale primaryLanguage() {
+        return this.primaryLanguage;
+    }
+
+    public DefaultTranslationBundle primaryLanguage(final Locale primaryLanguage) {
+        this.primaryLanguage = primaryLanguage;
+        return this;
+    }
 
     @Override
     public Set<Message> messages() {

@@ -22,13 +22,14 @@ import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import lombok.Getter;
-
 public abstract class DefaultHttpWebServer implements HttpWebServer {
 
     @Inject
-    @Getter
     @Named("http_webserver")
     private ParameterLoader<HttpRequestParameterLoaderContext> loader;
 
+    @Override
+    public ParameterLoader<HttpRequestParameterLoaderContext> loader() {
+        return this.loader;
+    }
 }

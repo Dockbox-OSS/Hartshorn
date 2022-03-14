@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.Property;
 import org.dockbox.hartshorn.core.Demo;
+import org.dockbox.hartshorn.core.annotations.Property;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
-
-import lombok.Getter;
 
 @Demo
 public class ReflectTestType extends ParentTestType {
@@ -38,10 +36,23 @@ public class ReflectTestType extends ParentTestType {
     private String privateField = "privateField";
     @Property(getter = "field", setter = "field")
     private String accessorField;
+
     /* TEST UTILITIES, DO NOT TEST AGAINST */
-    @Getter private boolean activatedSetter;
-    @Getter private boolean activatedMethod;
-    @Getter private boolean activatedConstructor;
+    private boolean activatedSetter;
+    private boolean activatedMethod;
+    private boolean activatedConstructor;
+
+    public boolean activatedSetter() {
+        return this.activatedSetter;
+    }
+
+    public boolean activatedMethod() {
+        return this.activatedMethod;
+    }
+
+    public boolean activatedConstructor() {
+        return this.activatedConstructor;
+    }
 
     @Demo
     public ReflectTestType() {

@@ -45,14 +45,11 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import lombok.Getter;
-
 @HartshornTest
 @UsePersistence
 public class RequestArgumentProcessorTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> bodies() {
@@ -72,7 +69,7 @@ public class RequestArgumentProcessorTests {
         final ParameterContext<String> context = Mockito.mock(ParameterContext.class);
         Mockito.when(context.type()).thenReturn(TypeContext.of(String.class));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
         final Exceptional<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -96,7 +93,7 @@ public class RequestArgumentProcessorTests {
         // Different order due to generic return type
         Mockito.doReturn(declaring).when(context).declaredBy();
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
         final Exceptional<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -114,7 +111,7 @@ public class RequestArgumentProcessorTests {
         Mockito.when(requestHeader.value()).thenReturn("string-header");
         Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
         final Exceptional<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -132,7 +129,7 @@ public class RequestArgumentProcessorTests {
         Mockito.when(requestHeader.value()).thenReturn("int-header");
         Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
         final Exceptional<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());

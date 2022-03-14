@@ -18,13 +18,15 @@ package org.dockbox.hartshorn.data.context;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class DeserialisationContext extends SerialisationContext {
 
     private final TypeContext<?> type;
 
+    public DeserialisationContext(final TypeContext<?> type) {
+        this.type = type;
+    }
+
+    public TypeContext<?> type() {
+        return this.type;
+    }
 }

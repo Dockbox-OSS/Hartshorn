@@ -21,19 +21,13 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import org.dockbox.hartshorn.core.annotations.Property;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
-
-    private ApplicationContext context;
 
     @Override
     public PropertyName findNameForSerialization(final Annotated a) {

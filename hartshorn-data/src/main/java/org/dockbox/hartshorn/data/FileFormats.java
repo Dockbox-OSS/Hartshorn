@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.data;
 
 import java.nio.file.Path;
 
-import lombok.Getter;
-
 /** Enumerated values containing the file extensions for several commonly used file types. */
 public enum FileFormats implements FileFormat {
     // Raw/text types
@@ -29,14 +27,22 @@ public enum FileFormats implements FileFormat {
     TOML(DataStorageType.RAW, "toml"),
     PROPERTIES(DataStorageType.RAW, "properties");
 
-    @Getter private final String extension;
-    @Getter private final DataStorageType type;
+    private final String extension;
+    private final DataStorageType type;
     private final String[] aliases;
 
     FileFormats(final DataStorageType type, final String extension, final String... aliases) {
         this.extension = extension;
         this.type = type;
         this.aliases = aliases;
+    }
+
+    public String extension() {
+        return this.extension;
+    }
+
+    public DataStorageType type() {
+        return this.type;
     }
 
     public static FileFormats lookup(final String source) {

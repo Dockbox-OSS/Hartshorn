@@ -24,9 +24,6 @@ import org.hibernate.dialect.Dialect;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
-@Getter
 public class HibernateRemoteImpl implements HibernateRemote {
 
     private final String driver;
@@ -56,6 +53,28 @@ public class HibernateRemoteImpl implements HibernateRemote {
 
         this.url = (String) context.property("hartshorn.data.url").orNull();
         if (this.url == null) throw new IllegalStateException("Connection string was not configured, expected hartshorn.data.url to be set, but got null");
+    }
+
+    @Override
+    public String driver() {
+        return this.driver;
+    }
+
+    @Override
+    public Class<? extends Dialect> dialect() {
+        return this.dialect;
+    }
+
+    public String username() {
+        return this.username;
+    }
+
+    public String password() {
+        return this.password;
+    }
+
+    public String url() {
+        return this.url;
     }
 
     @Override

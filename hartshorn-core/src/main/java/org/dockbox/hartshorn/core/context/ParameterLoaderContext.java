@@ -19,14 +19,48 @@ package org.dockbox.hartshorn.core.context;
 import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class ParameterLoaderContext extends DefaultContext implements ContextCarrier {
+
     private final ExecutableElementContext<?, ?> executable;
     private final TypeContext<?> type;
     private final Object instance;
     private final ApplicationContext applicationContext;
+    private final ComponentProvider provider;
+
+    public ParameterLoaderContext(final ExecutableElementContext<?, ?> executable, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext) {
+        this.executable = executable;
+        this.type = type;
+        this.instance = instance;
+        this.applicationContext = applicationContext;
+        this.provider = applicationContext;
+    }
+
+    public ParameterLoaderContext(final ExecutableElementContext<?, ?> executable, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider) {
+        this.executable = executable;
+        this.type = type;
+        this.instance = instance;
+        this.applicationContext = applicationContext;
+        this.provider = provider;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    public ExecutableElementContext<?, ?> executable() {
+        return this.executable;
+    }
+
+    public TypeContext<?> type() {
+        return this.type;
+    }
+
+    public Object instance() {
+        return this.instance;
+    }
+
+    public ComponentProvider provider() {
+        return this.provider;
+    }
 }

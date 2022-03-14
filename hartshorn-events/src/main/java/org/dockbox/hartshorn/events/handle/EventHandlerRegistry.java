@@ -22,11 +22,13 @@ import org.dockbox.hartshorn.events.parents.Event;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Getter;
-
 public final class EventHandlerRegistry {
 
-    @Getter private final Map<TypeContext<? extends Event>, EventHandler> handlers = new ConcurrentHashMap<>();
+    private final Map<TypeContext<? extends Event>, EventHandler> handlers = new ConcurrentHashMap<>();
+
+    public Map<TypeContext<? extends Event>, EventHandler> handlers() {
+        return this.handlers;
+    }
 
     public EventHandler handler(final TypeContext<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);

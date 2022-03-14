@@ -23,8 +23,6 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
-
 /**
  * Looks up a resource through the classpath. The packaged resource is copied to a temporary file, created and managed
  * by {@link org.dockbox.hartshorn.core.boot.ClasspathResourceLocator#resources(String)}. This requires the strategy name to be
@@ -32,8 +30,9 @@ import lombok.Getter;
  */
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
-    @Getter
-    private final String name = "classpath";
+    public String name() {
+        return "classpath";
+    }
 
     @Override
     public Set<URI> lookup(final ApplicationContext context, final String path) {

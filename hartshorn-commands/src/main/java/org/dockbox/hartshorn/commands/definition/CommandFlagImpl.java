@@ -18,15 +18,16 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.core.StringUtilities;
 
-import lombok.AllArgsConstructor;
-
 /**
  * Simple implementation of {@link CommandFlag}.
  */
-@AllArgsConstructor
 public class CommandFlagImpl implements CommandFlag {
 
     private final String name;
+
+    public CommandFlagImpl(final String name) {
+        this.name = name;
+    }
 
     @Override
     public String name() {

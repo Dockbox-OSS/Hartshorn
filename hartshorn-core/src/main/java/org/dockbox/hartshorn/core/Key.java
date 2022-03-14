@@ -23,14 +23,23 @@ import java.util.Objects;
 
 import javax.inject.Named;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class Key<C> {
+
     private final TypeContext<C> type;
     private final Named name;
+
+    public Key(final TypeContext<C> type, final Named name) {
+        this.type = type;
+        this.name = name;
+    }
+
+    public TypeContext<C> type() {
+        return this.type;
+    }
+
+    public Named name() {
+        return this.name;
+    }
 
     public static <C> Key<C> of(final TypeContext<C> type) {
         return new Key<>(type, null);

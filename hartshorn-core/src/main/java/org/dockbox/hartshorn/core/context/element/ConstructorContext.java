@@ -25,8 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.function.Function;
 
-import lombok.Getter;
-
 /**
  * A context element that represents a constructor. This context element can be used to instantiate a component, as well as provide information
  * about the executable element properties as defined in {@link ExecutableElementContext}.
@@ -38,13 +36,16 @@ import lombok.Getter;
  */
 public final class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>, T> implements TypedElementContext<T> {
 
-    @Getter
     private final Constructor<T> constructor;
     private Function<Object[], Exceptional<T>> invoker;
 
     private ConstructorContext(final Constructor<T> constructor) {
         this.constructor = constructor;
         this.constructor.setAccessible(true);
+    }
+
+    public Constructor<T> constructor() {
+        return this.constructor;
     }
 
     /**

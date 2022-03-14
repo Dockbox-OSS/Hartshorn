@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.web;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum HttpStatus {
 
     // 1xx Informational
@@ -111,6 +106,24 @@ public enum HttpStatus {
     private final Series series;
     private final String message;
 
+    HttpStatus(final int value, final Series series, final String message) {
+        this.value = value;
+        this.series = series;
+        this.message = message;
+    }
+
+    public int value() {
+        return this.value;
+    }
+
+    public Series series() {
+        return this.series;
+    }
+
+    public String message() {
+        return this.message;
+    }
+
     public boolean isError() {
         return (this.series() == Series.CLIENT_ERROR || this.series() == Series.SERVER_ERROR);
     }
@@ -127,8 +140,6 @@ public enum HttpStatus {
         return null;
     }
 
-    @Getter
-    @AllArgsConstructor
     public enum Series {
         INFORMATIONAL(1),
         SUCCESSFUL(2),
@@ -138,6 +149,14 @@ public enum HttpStatus {
 
         public static final Series[] VALUES = values();
         private final int value;
+
+        Series(final int value) {
+            this.value = value;
+        }
+
+        public int value() {
+            return this.value;
+        }
 
         public static Series resolve(final int statusCode) {
             final int seriesCode = statusCode / 100;

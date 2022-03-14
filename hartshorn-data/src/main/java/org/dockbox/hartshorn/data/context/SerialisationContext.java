@@ -16,19 +16,12 @@
 
 package org.dockbox.hartshorn.data.context;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.data.FileFormats;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.nio.file.Path;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class SerialisationContext extends DefaultContext {
 
     private SerialisationTarget target;
@@ -37,4 +30,30 @@ public class SerialisationContext extends DefaultContext {
     @Nullable
     private Path predeterminedPath;
 
+    public SerialisationTarget target() {
+        return this.target;
+    }
+
+    public SerialisationContext target(final SerialisationTarget target) {
+        this.target = target;
+        return this;
+    }
+
+    public FileFormats fileFormat() {
+        return this.fileFormat;
+    }
+
+    public SerialisationContext fileFormat(final FileFormats fileFormat) {
+        this.fileFormat = fileFormat;
+        return this;
+    }
+
+    public Path predeterminedPath() {
+        return this.predeterminedPath;
+    }
+
+    public SerialisationContext predeterminedPath(final Path predeterminedPath) {
+        this.predeterminedPath = predeterminedPath;
+        return this;
+    }
 }

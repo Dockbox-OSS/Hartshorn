@@ -28,15 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 /**
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.
  */
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
-    @Getter
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
     @Inject

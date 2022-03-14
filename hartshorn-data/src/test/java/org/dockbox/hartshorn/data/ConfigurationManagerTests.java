@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -29,20 +29,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 @UseConfigurations
 public class ConfigurationManagerTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     void testClassPathConfigurations() {
         // Configuration is read from resources/junit.yml
-        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValue());
@@ -51,7 +48,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testDefaultValuesAreUsedIfPropertyIsAbsent() {
-        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValueWithDefault());
@@ -60,7 +57,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testNumberValuesAreParsed() {
-        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertEquals(1, configuration.number());
@@ -68,7 +65,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testCollectionsAreParsed() {
-        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.list());
@@ -77,7 +74,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testCollectionsAreSorted() {
-        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.copyOnWriteArrayList());
@@ -88,7 +85,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testCustomCollectionsAreConverted() {
-        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.copyOnWriteArrayList());
@@ -98,16 +95,16 @@ public class ConfigurationManagerTests {
 
     @Test
     void testFsConfigurations() {
-        final Path file = FileFormats.YAML.asPath(this.applicationContext().environment().manager().applicationPath(), "junit");
-        final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
+        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().manager().applicationPath(), "junit");
+        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
         objectMapper.write(file, """
                 junit:
                     fs: "This is a value"
                     """);
 
-        new ConfigurationServicePreProcessor().process(this.applicationContext(), Key.of(DemoFSConfiguration.class));
+        new ConfigurationServicePreProcessor().process(this.applicationContext, Key.of(DemoFSConfiguration.class));
 
-        final DemoFSConfiguration configuration = this.applicationContext().get(DemoFSConfiguration.class);
+        final DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.fileSystemValue());
         Assertions.assertEquals("This is a value", configuration.fileSystemValue());
@@ -115,8 +112,8 @@ public class ConfigurationManagerTests {
 
     @Test
     void testNormalValuesAreAccessible() {
-        this.applicationContext().property("demo", "Hartshorn");
-        final ValueTyped typed = this.applicationContext().get(ValueTyped.class);
+        this.applicationContext.property("demo", "Hartshorn");
+        final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.string());
         Assertions.assertEquals("Hartshorn", typed.string());
@@ -124,8 +121,8 @@ public class ConfigurationManagerTests {
 
     @Test
     void testNestedValuesAreAccessible() {
-        this.applicationContext().property("nested.demo", "Hartshorn");
-        final ValueTyped typed = this.applicationContext().get(ValueTyped.class);
+        this.applicationContext.property("nested.demo", "Hartshorn");
+        final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);
         Assertions.assertNotNull(typed.nestedString());

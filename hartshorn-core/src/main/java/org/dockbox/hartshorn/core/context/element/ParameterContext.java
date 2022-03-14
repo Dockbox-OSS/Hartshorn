@@ -27,12 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
-
 public final class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
 
     private final Parameter parameter;
-    @Getter private final boolean isVarargs;
+    private final boolean isVarargs;
 
     private String name;
     private TypeContext<T> type;
@@ -43,6 +41,10 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
     private ParameterContext(final Parameter parameter) {
         this.parameter = parameter;
         this.isVarargs = parameter.isVarArgs();
+    }
+
+    public boolean isVarargs() {
+        return this.isVarargs;
     }
 
     public static <T> ParameterContext<T> of(final Parameter parameter) {

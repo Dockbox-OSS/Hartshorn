@@ -16,25 +16,29 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
-
-import lombok.AllArgsConstructor;
 
 /**
  * Simple implementation of {@link CommandElement}.
  *
  * @param <T>
  */
-@AllArgsConstructor
 public class CommandElementImpl<T> implements CommandElement<T> {
 
     private final ArgumentConverter<T> converter;
     private final String name;
     private final boolean optional;
     private final int size;
+
+    public CommandElementImpl(final ArgumentConverter<T> converter, final String name, final boolean optional, final int size) {
+        this.converter = converter;
+        this.name = name;
+        this.optional = optional;
+        this.size = size;
+    }
 
     @Override
     public String name() {

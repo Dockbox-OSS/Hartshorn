@@ -21,13 +21,14 @@ import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @Component
 public class TypeWithEnabledInjectField {
 
     @Inject
     @Enable
-    @Getter
     private SingletonEnableable singletonEnableable;
+
+    public SingletonEnableable singletonEnableable() {
+        return this.singletonEnableable;
+    }
 }

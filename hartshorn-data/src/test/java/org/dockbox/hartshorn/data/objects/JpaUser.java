@@ -20,17 +20,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 /**
  * A simple JPA compatible user type with an auto-generated {@link #id()}.
  */
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 public class JpaUser {
 
     @Id
@@ -40,8 +33,29 @@ public class JpaUser {
     private String name;
     private int age;
 
+    public JpaUser() {
+    }
+
     public JpaUser(final String name, final int age) {
         this.name = name;
         this.age = age;
+    }
+
+    public JpaUser(final long id, final String name, final int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+
+    public long id() {
+        return this.id;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public int age() {
+        return this.age;
     }
 }

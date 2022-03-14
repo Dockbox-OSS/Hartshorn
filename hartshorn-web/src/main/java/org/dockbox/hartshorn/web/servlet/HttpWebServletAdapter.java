@@ -27,13 +27,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class HttpWebServletAdapter extends HttpServlet {
 
     private final ApplicationContext applicationContext;
     private final WebServlet webServlet;
+
+    public HttpWebServletAdapter(final ApplicationContext applicationContext, final WebServlet webServlet) {
+        this.applicationContext = applicationContext;
+        this.webServlet = webServlet;
+    }
 
     @Override
     protected synchronized void doGet(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {

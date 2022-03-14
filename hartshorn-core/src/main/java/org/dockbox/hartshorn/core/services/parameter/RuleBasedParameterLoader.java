@@ -27,17 +27,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C>{
 
-    @Getter(AccessLevel.PROTECTED)
     private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
 
     public RuleBasedParameterLoader add(final ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);
         return this;
+    }
+
+    protected Set<ParameterLoaderRule<C>> rules() {
+        return this.rules;
     }
 
     @Override

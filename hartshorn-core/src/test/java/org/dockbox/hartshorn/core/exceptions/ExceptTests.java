@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
-import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.DelegatingApplicationManager;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -26,23 +26,20 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 public class ExceptTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     public void testExceptKeepsPreferences() {
         final TestExceptionHandle handle = new TestExceptionHandle();
-        ((DelegatingApplicationManager) this.applicationContext().environment().manager()).exceptionHandler(handle);
-        this.applicationContext().environment().manager().stacktraces(true);
+        ((DelegatingApplicationManager) this.applicationContext.environment().manager()).exceptionHandler(handle);
+        this.applicationContext.environment().manager().stacktraces(true);
 
         final Throwable throwable = new Exception("Test");
-        this.applicationContext().handle("Test", throwable);
+        this.applicationContext.handle("Test", throwable);
 
         Assertions.assertTrue(handle.stacktrace());
         Assertions.assertEquals("Test", handle.message());
@@ -52,10 +49,10 @@ public class ExceptTests {
     @Test
     public void testExceptUsesExceptionMessageIfNoneProvided() {
         final TestExceptionHandle handle = new TestExceptionHandle();
-        ((DelegatingApplicationManager) this.applicationContext().environment().manager()).exceptionHandler(handle);
+        ((DelegatingApplicationManager) this.applicationContext.environment().manager()).exceptionHandler(handle);
 
         final Exception throwable = new Exception("Something broke!");
-        this.applicationContext().handle(throwable);
+        this.applicationContext.handle(throwable);
 
         Assertions.assertSame(throwable, handle.exception());
         Assertions.assertEquals("Something broke!", handle.message());
@@ -64,11 +61,11 @@ public class ExceptTests {
     @Test
     public void testExceptUsesFirstExceptionMessageIfNoneProvided() {
         final TestExceptionHandle handle = new TestExceptionHandle();
-        ((DelegatingApplicationManager) this.applicationContext().environment().manager()).exceptionHandler(handle);
+        ((DelegatingApplicationManager) this.applicationContext.environment().manager()).exceptionHandler(handle);
 
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception("Something broke!", cause);
-        this.applicationContext().handle(throwable);
+        this.applicationContext.handle(throwable);
 
         Assertions.assertSame(throwable, handle.exception());
         Assertions.assertEquals("Something broke!", handle.message());
@@ -77,7 +74,7 @@ public class ExceptTests {
     @Test
     public void testGetFirstUsesParentFirst() {
         final ExceptionHandler handle = new TestExceptionHandle();
-        ((DelegatingApplicationManager) this.applicationContext().environment().manager()).exceptionHandler(handle);
+        ((DelegatingApplicationManager) this.applicationContext.environment().manager()).exceptionHandler(handle);
 
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception("Something broke!", cause);
@@ -90,7 +87,7 @@ public class ExceptTests {
     @Test
     public void testGetFirstUsesCauseIfParentMessageAbsent() {
         final ExceptionHandler handle = new TestExceptionHandle();
-        ((DelegatingApplicationManager) this.applicationContext().environment().manager()).exceptionHandler(handle);
+        ((DelegatingApplicationManager) this.applicationContext.environment().manager()).exceptionHandler(handle);
 
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception(null, cause);

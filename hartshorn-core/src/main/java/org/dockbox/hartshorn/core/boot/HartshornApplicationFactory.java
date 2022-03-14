@@ -23,16 +23,14 @@ import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
-import org.dockbox.hartshorn.core.context.ContextualComponentPopulator;
-import org.dockbox.hartshorn.core.context.StandardDelegatingApplicationContext;
 import org.dockbox.hartshorn.core.context.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.ContextualComponentPopulator;
 import org.dockbox.hartshorn.core.context.HierarchicalApplicationComponentProvider;
 import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
+import org.dockbox.hartshorn.core.context.StandardDelegatingApplicationContext;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 
 import java.lang.annotation.Annotation;
-
-import lombok.Getter;
 
 /**
  * The default implementation of the {@link HartshornApplicationFactory} interface. This implementation is responsible for
@@ -56,8 +54,9 @@ import lombok.Getter;
  */
 public class HartshornApplicationFactory extends AbstractActivatingApplicationFactory<HartshornApplicationFactory, StandardDelegatingApplicationContext, DelegatingApplicationManager> {
 
-    @Getter
-    private final HartshornApplicationFactory self = this;
+    public HartshornApplicationFactory self() {
+        return this;
+    }
 
     @Override
     public HartshornApplicationFactory loadDefaults() {
