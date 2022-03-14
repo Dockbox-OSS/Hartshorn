@@ -21,11 +21,13 @@ import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.junit.jupiter.api.Assertions;
 
-import lombok.Getter;
-
 public class PriorityEventListener {
 
-    @Getter private static Priority last;
+    private static Priority last;
+
+    public static Priority last() {
+        return last;
+    }
 
     @Listener(Priority.FIRST)
     public void onFirst(final SampleEvent event) {

@@ -22,11 +22,9 @@ import org.dockbox.hartshorn.events.annotations.Listener;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import lombok.Getter;
-
 public class GenericEventListener {
 
-    @Getter private static final List<Object> objects = new CopyOnWriteArrayList<>();
+    public static final List<Object> objects = new CopyOnWriteArrayList<>();
 
     @Listener
     public void onString(final GenericEvent<String> event) {
@@ -44,5 +42,4 @@ public class GenericEventListener {
     public void on(final GenericEvent<?> event) {
         objects.add(event.value());
     }
-
 }
