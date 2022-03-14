@@ -25,25 +25,22 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 @UseTranslations
 public class TranslationInjectModifierTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     public void testResourceServiceIsProxied() {
-        final ITestResources resources = this.applicationContext().get(ITestResources.class);
+        final ITestResources resources = this.applicationContext.get(ITestResources.class);
         Assertions.assertTrue(TypeContext.of(resources).isProxy());
     }
 
     @Test
     public void testResourceServiceReturnsValidResourceKey() {
-        final ITestResources resources = this.applicationContext().get(ITestResources.class);
+        final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -52,7 +49,7 @@ public class TranslationInjectModifierTests {
 
     @Test
     public void testResourceServiceReturnsValidResourceValue() {
-        final ITestResources resources = this.applicationContext().get(ITestResources.class);
+        final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -61,7 +58,7 @@ public class TranslationInjectModifierTests {
 
     @Test
     public void testResourceServiceFormatsParamResource() {
-        final ITestResources resources = this.applicationContext().get(ITestResources.class);
+        final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final Message testEntry = resources.parameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);
@@ -70,7 +67,7 @@ public class TranslationInjectModifierTests {
 
     @Test
     void testAbstractServiceAbstractMethodIsProxied() {
-        final AbstractTestResources resources = this.applicationContext().get(AbstractTestResources.class);
+        final AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
         final Message testEntry = resources.abstractEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -79,7 +76,7 @@ public class TranslationInjectModifierTests {
 
     @Test
     void testAbstractServiceConcreteMethodIsProxied() {
-        final AbstractTestResources resources = this.applicationContext().get(AbstractTestResources.class);
+        final AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
         final Message testEntry = resources.concreteEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -88,7 +85,7 @@ public class TranslationInjectModifierTests {
 
     @Test
     void testConcreteServiceMethodIsProxied() {
-        final TestResources resources = this.applicationContext().get(TestResources.class);
+        final TestResources resources = this.applicationContext.get(TestResources.class);
         final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);

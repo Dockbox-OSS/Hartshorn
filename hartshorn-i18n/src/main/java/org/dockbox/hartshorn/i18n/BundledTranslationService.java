@@ -21,17 +21,23 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 public class BundledTranslationService implements TranslationService {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Inject
-    @Getter
     private TranslationBundle bundle;
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    @Override
+    public TranslationBundle bundle() {
+        return this.bundle;
+    }
 
     @Override
     public Exceptional<Message> get(final String key) {
