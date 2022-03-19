@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.hibernate.Session;
 

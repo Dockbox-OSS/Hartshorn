@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.bridge;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.Service;
 
 @Service
 public interface BridgeImpl extends BridgeParent<Bob>{

@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Exceptional;
 
 import java.util.List;
 import java.util.Map;

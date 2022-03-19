@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.exceptions;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 public class EmptyEntryException extends ApplicationException {
     public EmptyEntryException(final String message) {

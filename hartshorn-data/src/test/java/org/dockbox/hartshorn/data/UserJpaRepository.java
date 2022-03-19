@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
 @Service

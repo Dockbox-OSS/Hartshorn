@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.core.StringUtilities;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
  * Simple implementation of {@link CommandFlag}.

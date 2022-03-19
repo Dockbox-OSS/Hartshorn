@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Exceptional;
 
 /**
  * Represents a collection of entries of type <code>T</code>.

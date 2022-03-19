@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.inject.Context;
-import org.dockbox.hartshorn.core.annotations.inject.Required;
+import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.inject.Required;
 
 import javax.inject.Inject;
 

@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ContextCarrier;
 
 /**
  * The context provided to a {@link org.dockbox.hartshorn.commands.CommandExecutor} during

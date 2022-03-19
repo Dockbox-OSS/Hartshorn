@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.bridge;
 
-import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.component.factory.Factory;
 
 public interface BridgeParent<R> {
     @Factory

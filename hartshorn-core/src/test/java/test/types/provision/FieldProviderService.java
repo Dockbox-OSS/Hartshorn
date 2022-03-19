@@ -16,8 +16,8 @@
 
 package test.types.provision;
 
-import org.dockbox.hartshorn.core.annotations.inject.Provider;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.Service;
 
 import javax.inject.Singleton;
 

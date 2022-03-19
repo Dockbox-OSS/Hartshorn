@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Identifiable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Identifiable;
 
 import java.util.Locale;
 import java.util.UUID;

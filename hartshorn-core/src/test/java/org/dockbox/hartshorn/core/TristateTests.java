@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.tuple.Tristate;
+import org.dockbox.hartshorn.util.Tristate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

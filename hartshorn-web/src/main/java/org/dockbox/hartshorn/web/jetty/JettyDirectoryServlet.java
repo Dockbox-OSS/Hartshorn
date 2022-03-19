@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;

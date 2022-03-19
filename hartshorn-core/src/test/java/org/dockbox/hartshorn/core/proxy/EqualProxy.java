@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.Unproxy;
+import org.dockbox.hartshorn.proxy.Unproxy;
 
 public class EqualProxy {
     public boolean test(final @Unproxy(fallbackToProxy = true) EqualProxy self) {

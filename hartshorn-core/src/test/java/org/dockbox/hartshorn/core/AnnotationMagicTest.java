@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.core.annotations.TestClassWithRoute;
 import org.dockbox.hartshorn.core.annotations.TestClassWithSameBaseType;
 import org.dockbox.hartshorn.core.annotations.TestClassWithSocketJS;
 import org.dockbox.hartshorn.core.annotations.TestClassWithSub;
+import org.dockbox.hartshorn.util.reflect.AnnotationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

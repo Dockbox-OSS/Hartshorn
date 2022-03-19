@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.registry;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Exceptional;
 
 import java.util.ArrayList;
 import java.util.Collection;

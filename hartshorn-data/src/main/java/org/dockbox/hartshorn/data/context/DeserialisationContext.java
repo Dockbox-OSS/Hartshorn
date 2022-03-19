@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class DeserialisationContext extends SerialisationContext {
 

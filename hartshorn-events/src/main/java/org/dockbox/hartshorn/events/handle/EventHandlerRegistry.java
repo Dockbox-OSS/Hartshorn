@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
 
 import java.util.Map;

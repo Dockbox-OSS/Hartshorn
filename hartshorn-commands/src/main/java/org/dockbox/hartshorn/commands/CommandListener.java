@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.application.lifecycle.ApplicationState;
 import org.dockbox.hartshorn.events.EngineChangedState;
 
 import java.io.InputStream;

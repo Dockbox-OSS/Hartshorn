@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.PersistentElement;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;

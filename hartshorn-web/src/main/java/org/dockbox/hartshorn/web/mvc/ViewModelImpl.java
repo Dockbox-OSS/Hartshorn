@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Exceptional;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

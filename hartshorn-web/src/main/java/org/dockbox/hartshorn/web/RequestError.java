@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.context.CarrierContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.context.CarrierContext;
+import org.dockbox.hartshorn.util.Exceptional;
 
 import java.io.PrintWriter;
 

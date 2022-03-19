@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.data.annotations;
 
+import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to indicate a field should be populated with the value obtained
- * from {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)}.
+ * from {@link ApplicationPropertyHolder#property(String)}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

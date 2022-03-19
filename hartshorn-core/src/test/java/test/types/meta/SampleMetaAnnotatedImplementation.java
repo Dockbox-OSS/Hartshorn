@@ -16,7 +16,7 @@
 
 package test.types.meta;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import test.types.SampleInterface;
 
 import javax.inject.Named;

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.boot.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 
 import java.io.IOException;
 import java.nio.file.Files;

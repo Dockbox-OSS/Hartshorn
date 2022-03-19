@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.data.context;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.data.FileFormats;
 
 import java.nio.file.Path;

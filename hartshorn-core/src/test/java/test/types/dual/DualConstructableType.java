@@ -16,7 +16,7 @@
 
 package test.types.dual;
 
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
 import test.types.SampleInterface;
 
