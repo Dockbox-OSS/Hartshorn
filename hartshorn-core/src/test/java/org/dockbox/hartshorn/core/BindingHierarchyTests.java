@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.binding.BindingHierarchy;
-import org.dockbox.hartshorn.core.binding.ContextDrivenProvider;
-import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.core.binding.Provider;
-import org.dockbox.hartshorn.core.binding.Providers;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.ContextDrivenProvider;
+import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.Providers;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

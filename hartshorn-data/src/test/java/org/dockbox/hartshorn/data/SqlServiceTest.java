@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.data;
 
 import com.mysql.cj.jdbc.Driver;
 
-import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;

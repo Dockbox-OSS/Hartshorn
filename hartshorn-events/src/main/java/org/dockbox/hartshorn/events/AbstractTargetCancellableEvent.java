@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.domain.Subject;
+import org.dockbox.hartshorn.util.Subject;
 import org.dockbox.hartshorn.events.parents.CancellableContextCarrierEvent;
 import org.dockbox.hartshorn.events.parents.SubjectHolder;
 

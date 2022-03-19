@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.context.QueryContext;
 
 @FunctionalInterface

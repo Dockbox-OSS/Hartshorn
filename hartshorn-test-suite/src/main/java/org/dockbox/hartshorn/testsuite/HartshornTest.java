@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.annotations.Extends;
-import org.dockbox.hartshorn.core.annotations.inject.Populate;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.Annotation;

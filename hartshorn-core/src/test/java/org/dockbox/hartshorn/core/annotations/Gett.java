@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.core.annotations;
 
+import org.dockbox.hartshorn.util.reflect.AliasFor;
+import org.dockbox.hartshorn.util.reflect.Extends;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

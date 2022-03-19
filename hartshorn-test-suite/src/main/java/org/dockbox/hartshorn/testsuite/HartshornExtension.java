@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.activate.Activator;
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
-import org.dockbox.hartshorn.core.boot.ApplicationFactory;
-import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.AccessModifier;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.Activator;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.HartshornApplicationFactory;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.AccessModifier;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

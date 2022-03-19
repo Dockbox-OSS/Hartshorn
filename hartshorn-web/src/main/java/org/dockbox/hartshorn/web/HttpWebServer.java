@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 

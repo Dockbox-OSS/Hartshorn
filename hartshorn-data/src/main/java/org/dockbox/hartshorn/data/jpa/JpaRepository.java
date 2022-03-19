@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.core.context.ContextCarrier;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 
 import java.util.Set;

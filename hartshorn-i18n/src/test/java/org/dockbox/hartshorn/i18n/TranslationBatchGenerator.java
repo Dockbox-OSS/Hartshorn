@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.CollectionUtilities;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.component.processing.AutomaticActivation;
+import org.dockbox.hartshorn.application.HartshornApplicationFactory;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
 import org.dockbox.hartshorn.testsuite.HartshornExtension;

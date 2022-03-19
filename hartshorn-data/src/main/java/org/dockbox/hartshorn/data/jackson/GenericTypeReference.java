@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.jackson;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.util.GenericType;
 
 import java.lang.reflect.Type;
 

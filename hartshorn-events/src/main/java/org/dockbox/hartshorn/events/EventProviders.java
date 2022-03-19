@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.annotations.inject.Provider;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.handle.EventParameterLoader;
 

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.data.registry.Registry;
 import org.dockbox.hartshorn.data.registry.RegistryColumn;
 import org.junit.jupiter.api.Assertions;

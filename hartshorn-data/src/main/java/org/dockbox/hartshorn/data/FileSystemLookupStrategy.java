@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.net.URI;

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.inject.Context;
+import org.dockbox.hartshorn.inject.Context;
 
 public class ContextInjectedType {
     @Context

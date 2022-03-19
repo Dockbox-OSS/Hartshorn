@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.data.Element;
 import org.dockbox.hartshorn.data.EntityElement;
 import org.dockbox.hartshorn.data.FileFormat;

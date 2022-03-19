@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.exceptions;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.i18n.Message;
 
 /**

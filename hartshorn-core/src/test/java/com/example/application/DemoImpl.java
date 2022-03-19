@@ -16,7 +16,7 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 
 @ComponentBinding(Demo.class)
 public class DemoImpl implements Demo{

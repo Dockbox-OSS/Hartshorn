@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
-import org.dockbox.hartshorn.core.MetaProvider;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.component.processing.AutomaticActivation;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.inject.TypedOwner;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;

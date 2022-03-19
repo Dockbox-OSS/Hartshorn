@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
+import org.dockbox.hartshorn.inject.Key;
+
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 

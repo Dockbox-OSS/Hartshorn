@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
-import org.dockbox.hartshorn.core.boot.DelegatingApplicationManager;
-import org.dockbox.hartshorn.core.boot.ExceptionHandler;
-import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.LoggingExceptionHandler;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

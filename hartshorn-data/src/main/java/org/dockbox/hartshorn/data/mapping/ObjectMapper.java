@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.data.FileFormat;
 
 import java.net.URI;

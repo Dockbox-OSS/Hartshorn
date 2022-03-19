@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.factory.Factory;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.core.types.User;
 
 @Service

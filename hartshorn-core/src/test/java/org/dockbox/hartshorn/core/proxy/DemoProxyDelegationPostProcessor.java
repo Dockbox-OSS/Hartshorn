@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.services.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.component.processing.AutomaticActivation;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
 
 @AutomaticActivation
 public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<InterfaceProxy, Service> {

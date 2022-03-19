@@ -32,12 +32,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
-import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.data.DefaultObjectMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;

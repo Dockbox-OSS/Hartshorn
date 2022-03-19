@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.HttpChannel;

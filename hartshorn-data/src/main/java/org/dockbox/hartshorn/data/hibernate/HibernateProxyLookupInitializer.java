@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.boot.ApplicationManager;
-import org.dockbox.hartshorn.core.boot.DelegatingApplicationManager;
-import org.dockbox.hartshorn.core.boot.HartshornApplicationProxier;
-import org.dockbox.hartshorn.core.boot.LifecycleObserver;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
+import org.dockbox.hartshorn.proxy.HartshornApplicationProxier;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 
 @Service(activators = UsePersistence.class)

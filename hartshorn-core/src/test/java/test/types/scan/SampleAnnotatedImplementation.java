@@ -16,7 +16,7 @@
 
 package test.types.scan;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import test.types.SampleInterface;
 
 @ComponentBinding(SampleInterface.class)

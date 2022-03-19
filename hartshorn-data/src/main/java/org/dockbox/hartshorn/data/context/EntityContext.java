@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Collection;
 

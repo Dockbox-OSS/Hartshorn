@@ -16,7 +16,7 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
 import java.lang.annotation.Retention;
 

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
 
 /**
  * Type used to store a {@link java.lang.reflect.Method}'s parameter and the index of said

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Exceptional;
 
 import java.util.Collection;
 

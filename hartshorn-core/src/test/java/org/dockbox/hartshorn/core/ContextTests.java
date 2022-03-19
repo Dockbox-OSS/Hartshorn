@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.Context;
-import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.context.DefaultNamedContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultNamedContext;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

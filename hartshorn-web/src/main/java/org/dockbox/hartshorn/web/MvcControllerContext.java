@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
-import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.DefaultContext;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

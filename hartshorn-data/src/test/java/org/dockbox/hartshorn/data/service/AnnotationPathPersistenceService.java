@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.PersistentElement;
 import org.dockbox.hartshorn.data.annotations.Deserialise;
 import org.dockbox.hartshorn.data.annotations.File;

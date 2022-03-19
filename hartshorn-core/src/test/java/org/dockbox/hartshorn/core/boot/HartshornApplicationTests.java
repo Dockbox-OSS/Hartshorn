@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.core.boot.activators.AbstractActivator;
 import org.dockbox.hartshorn.core.boot.activators.InterfaceActivator;
 import org.dockbox.hartshorn.core.boot.activators.NonDecoratedActivator;

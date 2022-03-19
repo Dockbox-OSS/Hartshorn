@@ -16,7 +16,8 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * Looks up a resource through the classpath. The packaged resource is copied to a temporary file, created and managed
- * by {@link org.dockbox.hartshorn.core.boot.ClasspathResourceLocator#resources(String)}. This requires the strategy name to be
+ * by {@link ClasspathResourceLocator#resources(String)}. This requires the strategy name to be
  * configured to be equal to {@code classpath:{resource_name}}.
  */
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {

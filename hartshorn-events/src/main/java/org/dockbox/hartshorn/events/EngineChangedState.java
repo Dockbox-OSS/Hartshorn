@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.application.lifecycle.ApplicationState;
 import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
 public abstract class EngineChangedState<T extends ApplicationState> extends ContextCarrierEvent {

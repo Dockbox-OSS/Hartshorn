@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.service;
 
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.core.StringUtilities;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
  * Represents a single parameter which can be provided to command executors

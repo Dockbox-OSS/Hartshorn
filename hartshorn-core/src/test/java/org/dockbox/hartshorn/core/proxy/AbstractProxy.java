@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.Service;
 
 @Service
 public abstract class AbstractProxy implements InterfaceProxy {

@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -33,7 +33,7 @@ public class MessageTemplateServiceTests {
 
     private static final Locale NL_NL = new Locale("nl", "NL");
     private static final Locale EN_US = Locale.US;
-    
+
     private TranslationBundle bundle() {
         final Message english = new MessageTemplate("value", "demo", EN_US);
         final Message dutch = new MessageTemplate("waarde", "demo", NL_NL);

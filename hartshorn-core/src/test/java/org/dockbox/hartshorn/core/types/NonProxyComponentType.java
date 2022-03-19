@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+import org.dockbox.hartshorn.component.Component;
 
 @Component(permitProxying = false)
 public interface NonProxyComponentType {

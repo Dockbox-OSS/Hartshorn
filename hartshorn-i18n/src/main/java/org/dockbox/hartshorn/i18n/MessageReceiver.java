@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.domain.Subject;
+import org.dockbox.hartshorn.util.Subject;
 
 import java.util.Locale;
 

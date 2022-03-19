@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
-import org.dockbox.hartshorn.core.context.Context;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
 

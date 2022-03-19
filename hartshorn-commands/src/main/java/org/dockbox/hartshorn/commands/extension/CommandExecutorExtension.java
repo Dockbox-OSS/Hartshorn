@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
-import org.dockbox.hartshorn.core.domain.Identifiable;
+import org.dockbox.hartshorn.util.Identifiable;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;

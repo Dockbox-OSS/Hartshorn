@@ -16,18 +16,23 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
-import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.ProviderService;
 import org.dockbox.hartshorn.core.proxy.types.SampleType;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.MethodWrapper;
+import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
@@ -366,4 +371,14 @@ public class ProxyTests {
         Assertions.assertEquals(proxyInstance, proxyInstance);
         Assertions.assertTrue(proxyInstance.test(proxyInstance));
     }
+
+//    @Test
+//    void testLambdaCanBeProxied() throws NoSuchMethodException, ApplicationException {
+//        // TODO: This test is not working.
+//        final StateAwareProxyFactory<Supplier, ?> factory = this.applicationContext.environment().manager().factory(Supplier.class);
+//        factory.intercept(Supplier.class.getMethod("get"), context -> "foo");
+//        final Exceptional<Supplier> proxy = factory.proxy();
+//        Assertions.assertTrue(proxy.present());
+//        Assertions.assertEquals("foo", proxy.get().get());
+//    }
 }

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.factory.Factory;
+import org.dockbox.hartshorn.component.Service;
 
 @FunctionalInterface
 @Service(activators = UseCaching.class)

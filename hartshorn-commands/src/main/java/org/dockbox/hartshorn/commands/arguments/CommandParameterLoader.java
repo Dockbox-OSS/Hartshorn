@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.context.CommandParameterContext;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
 import java.util.ArrayList;
 

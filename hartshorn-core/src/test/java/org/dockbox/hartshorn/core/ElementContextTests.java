@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.annotations.activate.Activator;
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
-import org.dockbox.hartshorn.core.context.element.AccessModifier;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.application.Activator;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.util.reflect.AccessModifier;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.core.types.AnnotatedElement;
 import org.dockbox.hartshorn.core.types.BoundUserImpl;
 import org.dockbox.hartshorn.core.types.ImplementationWithTP;

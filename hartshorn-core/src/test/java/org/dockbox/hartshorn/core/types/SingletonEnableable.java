@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.component.Enableable;
 
 import javax.inject.Singleton;
 

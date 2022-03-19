@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultContext;
 
 public class SampleContext extends DefaultContext {
 

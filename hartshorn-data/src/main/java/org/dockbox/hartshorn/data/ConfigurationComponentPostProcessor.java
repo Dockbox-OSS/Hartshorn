@@ -19,16 +19,16 @@ package org.dockbox.hartshorn.data;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.ConstructorContext;
-import org.dockbox.hartshorn.core.context.element.FieldContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
-import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
-import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.processing.AutomaticActivation;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.reflect.FieldContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.reflect.NotPrimitiveException;
+import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 import java.util.Collection;
 

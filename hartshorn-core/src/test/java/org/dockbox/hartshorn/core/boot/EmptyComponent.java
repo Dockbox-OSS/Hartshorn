@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+import org.dockbox.hartshorn.component.Component;
 
 @Component(id = "component")
 public class EmptyComponent {
