@@ -17,23 +17,22 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ActivatorHolder;
-import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.scope.ScopedContextHolder;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
@@ -42,7 +41,6 @@ import java.io.Closeable;
 public interface ApplicationContext extends
         ApplicationBinder,
         HierarchicalComponentProvider,
-        ScopedContextHolder,
         ApplicationPropertyHolder,
         ExceptionHandler,
         ApplicationLogger,

@@ -26,6 +26,6 @@ import test.types.SampleInterface;
 public class SampleConfiguration extends InjectConfiguration {
     @Override
     public void collect(final ApplicationContext context) {
-        this.bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        this.bind(SampleInterface.class).to(SampleImplementation.class);
     }
 }

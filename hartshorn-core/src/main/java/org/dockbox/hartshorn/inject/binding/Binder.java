@@ -17,16 +17,17 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.Key;
-
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public interface Binder {
 
-    <C> void bind(Key<C> contract, Supplier<C> supplier);
+    <C> BindingFunction<C> bind(Key<C> key);
 
-    <C, T extends C> void bind(Key<C> key, Class<? extends T> implementation);
+    default <C> BindingFunction<C> bind(final Class<C> type) {
+        return this.bind(Key.of(type));
+    }
 
-    <C, T extends C> void bind(Key<C> key, T instance);
-
-    <T, C extends T> void singleton(final Key<T> key, final C instance);
+    default <C> BindingFunction<C> bind(final TypeContext<C> type) {
+        return this.bind(Key.of(type));
+    }
 }

@@ -45,7 +45,11 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     private final TypeContext<? extends C> context;
     private ConstructorContext<? extends C> optimalConstructor;
 
-    protected ContextDrivenProvider(final TypeContext<? extends C> context) {
+    public ContextDrivenProvider(final Class<? extends C> type) {
+        this(TypeContext.of(type));
+    }
+
+    public ContextDrivenProvider(final TypeContext<? extends C> context) {
         this.context = context;
     }
 

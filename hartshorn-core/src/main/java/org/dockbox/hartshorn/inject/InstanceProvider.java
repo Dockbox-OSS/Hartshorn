@@ -34,7 +34,7 @@ public class InstanceProvider<T> implements Provider<T> {
 
     private final T instance;
 
-    InstanceProvider(final T instance) {
+    public InstanceProvider(final T instance) {
         this.instance = instance;
     }
 

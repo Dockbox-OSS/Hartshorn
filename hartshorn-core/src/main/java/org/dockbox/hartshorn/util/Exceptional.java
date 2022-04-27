@@ -301,6 +301,12 @@ public final class Exceptional<T> {
         }
     }
 
+    public Exceptional<T> orFlat(@NonNull final Callable<Exceptional<T>> supplier) {
+        Objects.requireNonNull(supplier);
+        if (this.present()) return this;
+        else return of(supplier).map(Exceptional::orNull);
+    }
+
     /**
      * Return {@code true} if there is a value present, otherwise {@code false}.
      *

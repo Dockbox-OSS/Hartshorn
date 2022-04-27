@@ -88,7 +88,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
             return;
         }
 
-        context.bind(key, element.obtain(context).get());
+        context.bind(key).to(element.obtain(context).rethrowUnchecked().get());
     }
 
     private <R, C extends TypeContext<R>, E extends AnnotatedElementContext<?> & ObtainableElement<C>> void processTypeBinding(final ApplicationContext context, final TypeContext<?> generic, final E element) {
@@ -104,7 +104,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
             return;
         }
 
-        context.bind(key, element.obtain(context).get().type());
+        context.bind(key).to(element.obtain(context).rethrowUnchecked().get().type());
     }
 
     @Override

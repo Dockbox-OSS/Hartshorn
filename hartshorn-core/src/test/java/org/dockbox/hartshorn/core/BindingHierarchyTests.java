@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.inject.Providers;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,9 +40,9 @@ public class BindingHierarchyTests {
     @Test
     void testToString() {
         final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext);
-        hierarchy.add(0, Providers.of(ImplementationA.class));
-        hierarchy.add(1, Providers.of(ImplementationB.class));
-        hierarchy.add(2, Providers.of(ImplementationC.class));
+        hierarchy.add(0, new ContextDrivenProvider<>(ImplementationA.class));
+        hierarchy.add(1, new ContextDrivenProvider<>(ImplementationB.class));
+        hierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
 
         Assertions.assertEquals("Hierarchy[Contract]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
@@ -51,9 +50,9 @@ public class BindingHierarchyTests {
     @Test
     void testToStringNamed() {
         final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, "sample"), this.applicationContext);
-        hierarchy.add(0, Providers.of(ImplementationA.class));
-        hierarchy.add(1, Providers.of(ImplementationB.class));
-        hierarchy.add(2, Providers.of(ImplementationC.class));
+        hierarchy.add(0, new ContextDrivenProvider<>(ImplementationA.class));
+        hierarchy.add(1, new ContextDrivenProvider<>(ImplementationB.class));
+        hierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
 
         Assertions.assertEquals("Hierarchy[Contract::sample]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
@@ -61,9 +60,9 @@ public class BindingHierarchyTests {
     @Test
     void testIteratorIsSorted() {
         final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext);
-        hierarchy.add(0, Providers.of(ImplementationA.class));
-        hierarchy.add(1, Providers.of(ImplementationB.class));
-        hierarchy.add(2, Providers.of(ImplementationC.class));
+        hierarchy.add(0, new ContextDrivenProvider<>(ImplementationA.class));
+        hierarchy.add(1, new ContextDrivenProvider<>(ImplementationB.class));
+        hierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
 
         int next = 2;
         for (final Entry<Integer, Provider<Contract>> entry : hierarchy) {
@@ -78,11 +77,11 @@ public class BindingHierarchyTests {
         final Key<Contract> key = Key.of(Contract.class);
 
         final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key, this.applicationContext);
-        secondHierarchy.add(2, Providers.of(ImplementationC.class));
+        secondHierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
 
         this.applicationContext.hierarchy(key)
-                .add(0, Providers.of(ImplementationA.class))
-                .add(1, Providers.of(ImplementationB.class))
+                .add(0, new ContextDrivenProvider<>(ImplementationA.class))
+                .add(1, new ContextDrivenProvider<>(ImplementationB.class))
                 .merge(secondHierarchy);
 
         final BindingHierarchy<Contract> hierarchy = this.applicationContext.hierarchy(key);
@@ -108,7 +107,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testContextCreatesHierarchy() {
-        this.applicationContext.bind(Key.of(LocalContract.class), LocalImpl.class);
+        this.applicationContext.bind(LocalContract.class).to(LocalImpl.class);
 
         final BindingHierarchy<LocalContract> hierarchy = this.applicationContext.hierarchy(Key.of(LocalContract.class));
         Assertions.assertNotNull(hierarchy);

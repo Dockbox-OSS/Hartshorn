@@ -34,8 +34,8 @@ public class CommandProviders {
 
     @Provider
     @Singleton
-    public SystemSubject systemSubject() {
-        return new ApplicationSystemSubject();
+    public Class<? extends SystemSubject> systemSubject() {
+        return ApplicationSystemSubject.class;
     }
 
     @Provider

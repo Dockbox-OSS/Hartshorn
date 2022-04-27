@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.Activator;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.application.ApplicationFactory;
 import org.dockbox.hartshorn.application.HartshornApplicationFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -81,7 +80,7 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         final ApplicationContext applicationContext = createContext(applicationFactory, testClass.get()).orNull();
         if (applicationContext == null) throw new IllegalStateException("Could not create application context");
 
-        applicationContext.bind(Key.of(HartshornExtension.class), this);
+        applicationContext.bind(HartshornExtension.class).singleton(this);
 
         final Optional<Object> testInstance = context.getTestInstance();
         testInstance.ifPresent(applicationContext::populate);

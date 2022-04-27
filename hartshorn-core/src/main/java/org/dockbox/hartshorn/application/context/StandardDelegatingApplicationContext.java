@@ -16,51 +16,50 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.ActivatorHolder;
-import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.StartupModifiers;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.ComponentProvider;
-import org.dockbox.hartshorn.component.ContextualComponentPopulator;
-import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
-import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.StandardComponentProvider;
-import org.dockbox.hartshorn.component.scope.ScopedComponentProvider;
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.component.Enableable;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.Providers;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.inject.ProviderContext;
-import org.dockbox.hartshorn.proxy.ProxyLookup;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.ContextualComponentPopulator;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
+import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.component.StandardComponentProvider;
+import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.ContextDrivenProvider;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.ProviderContext;
+import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
+import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
+import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
+import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.ProxyLookup;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.CustomMultiTreeMap;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -74,16 +73,16 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
-public class StandardDelegatingApplicationContext extends DefaultContext implements SelfActivatingApplicationContext, HierarchicalComponentProvider {
+public class StandardDelegatingApplicationContext extends DefaultContext implements
+        SelfActivatingApplicationContext,
+        HierarchicalComponentProvider {
 
     public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
 
@@ -91,7 +90,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
     protected final transient MultiMap<Integer, ComponentPreProcessor<?>> preProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
     protected final transient Queue<String> prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
-    protected final transient Map<String, ScopedComponentProvider> providers = new ConcurrentHashMap<>();
     protected final transient Properties environmentValues = new Properties();
 
     private final transient StandardComponentProvider componentProvider;
@@ -117,11 +115,9 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
                                                 final Set<StartupModifiers> modifiers) {
 
         this.componentProvider = new HierarchicalApplicationComponentProvider(this);
-        this.store(this.componentProvider);
-
         this.componentPopulator = new ContextualComponentPopulator(this);
 
-        this.componentProvider.singleton(Key.of(ApplicationContext.class), this);
+        this.componentProvider.bind(ApplicationContext.class).singleton(this);
         this.environment = environment;
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
@@ -143,28 +139,28 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     }
 
     protected void registerDefaultBindings() {
-        this.bind(Key.of(ComponentProvider.class), this);
-        this.bind(Key.of(ApplicationContext.class), this);
-        this.bind(Key.of(ActivatorHolder.class), this);
-        this.bind(Key.of(ApplicationPropertyHolder.class), this);
-        this.bind(Key.of(ApplicationBinder.class), this);
+        this.bind(ComponentProvider.class).singleton(this);
+        this.bind(ApplicationContext.class).singleton(this);
+        this.bind(ActivatorHolder.class).singleton(this);
+        this.bind(ApplicationPropertyHolder.class).singleton(this);
+        this.bind(ApplicationBinder.class).singleton(this);
 
-        this.bind(Key.of(ComponentPopulator.class), this.componentPopulator);
-        this.bind(Key.of(StandardComponentProvider.class), this.componentProvider);
-        this.bind(Key.of(ComponentProvider.class), this.componentProvider);
+        this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
+        this.bind(StandardComponentProvider.class).singleton(this.componentProvider);
+        this.bind(ComponentProvider.class).singleton(this.componentProvider);
 
-        this.bind(Key.of(MetaProvider.class), this.meta());
-        this.bind(Key.of(ComponentLocator.class), this.locator());
-        this.bind(Key.of(ApplicationEnvironment.class), this.environment());
-        this.bind(Key.of(ClasspathResourceLocator.class), this.resourceLocator());
+        this.bind(MetaProvider.class).singleton(this.meta());
+        this.bind(ComponentLocator.class).singleton(this.locator());
+        this.bind(ApplicationEnvironment.class).singleton(this.environment());
+        this.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator());
 
-        this.bind(Key.of(ProxyLookup.class), this.environment().manager());
-        this.bind(Key.of(ApplicationLogger.class), this.environment().manager());
-        this.bind(Key.of(ApplicationProxier.class), this.environment().manager());
-        this.bind(Key.of(ApplicationManager.class), this.environment().manager());
-        this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
+        this.bind(Key.of(ProxyLookup.class)).singleton(this.environment().manager());
+        this.bind(Key.of(ApplicationLogger.class)).singleton(this.environment().manager());
+        this.bind(Key.of(ApplicationProxier.class)).singleton(this.environment().manager());
+        this.bind(Key.of(ApplicationManager.class)).singleton(this.environment().manager());
+        this.bind(Key.of(LifecycleObservable.class)).singleton(this.environment().manager());
 
-        this.bind(Key.of(Logger.class), (Supplier<Logger>) this::log);
+        this.bind(Key.of(Logger.class)).to(this::log);
     }
 
     @Override
@@ -351,19 +347,20 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     @Override
     public <T> void add(final ProviderContext<T> context) {
         final Key<T> key = context.key();
-        this.componentProvider.inHierarchy(key, hierarchy -> {
-            if (context.singleton()) {
-                if (context.lazy()) {
-                    hierarchy.add(context.priority(), Providers.of(() -> context.provider().get()));
-                }
-                else {
-                    hierarchy.add(context.priority(), Providers.of(context.provider().get()));
-                }
+        final BindingHierarchy<T> hierarchy = this.hierarchy(key);
+        final BindingFunction<T> function = this.bind(key);
+
+        if (context.singleton()) {
+            if (context.lazy()) {
+                function.lazySingleton(context.provider());
             }
             else {
-                hierarchy.add(context.priority(), Providers.of(context.provider()));
+                function.singleton(context.provider().get());
             }
-        });
+        }
+        else {
+            function.to(context.provider());
+        }
     }
 
     @Override
@@ -413,7 +410,8 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
             this.handleScanned(implementer, target, annotation);
         }
         else {
-            this.componentProvider.inHierarchy(Key.of(target), hierarchy -> hierarchy.add(annotation.priority(), Providers.of(implementer)));
+            final BindingHierarchy<T> hierarchy = this.hierarchy(Key.of(target));
+            hierarchy.add(annotation.priority(), new ContextDrivenProvider<>(implementer));
         }
     }
 
@@ -423,7 +421,8 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         if (!"".equals(meta.value())) {
             key = key.name(meta);
         }
-        this.componentProvider.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
+        final BindingHierarchy<C> hierarchy = this.hierarchy(key);
+        hierarchy.add(bindAnnotation.priority(), new ContextDrivenProvider<>(binder));
     }
 
     @Override
@@ -482,18 +481,9 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     }
 
     @Override
-    public <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
-        this.componentProvider.bind(contract, supplier);
-    }
-
-    @Override
-    public <C, T extends C> void bind(final Key<C> key, final Class<? extends T> implementation) {
-        this.componentProvider.bind(key, implementation);
-    }
-
-    @Override
-    public <C, T extends C> void bind(final Key<C> key, final T instance) {
-        this.componentProvider.bind(key, instance);
+    public <C> BindingFunction<C> bind(final Key<C> key) {
+        final BindingFunction<C> function = this.componentProvider.bind(key);
+        return new DelegatingApplicationBindingFunction<>(this, function);
     }
 
     public ClasspathResourceLocator resourceLocator() {
@@ -514,37 +504,8 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     }
 
     @Override
-    public <T, C extends T> void singleton(final Key<T> key, final C instance) {
-        this.componentProvider.singleton(key, instance);
-    }
-
-    @Override
-    public <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
-        this.componentProvider.inHierarchy(key, consumer);
-    }
-
-    @Override
     public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
         return this.componentProvider.hierarchy(key);
     }
 
-    @Override
-    public void store(final ScopedComponentProvider provider) {
-        final String key = provider.scope();
-        if (this.providers.containsKey(key)) {
-            throw new IllegalStateException("A provider for " + key + " already exists");
-        }
-        this.providers.put(key, provider);
-    }
-
-    @Override
-    @Nullable
-    public ScopedComponentProvider get(final String key) {
-        return this.providers.get(key);
-    }
-
-    @Override
-    public void remove(final String key) {
-        this.providers.remove(key);
-    }
 }

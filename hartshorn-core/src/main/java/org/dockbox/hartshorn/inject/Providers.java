@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.util.function.Supplier;
-
 /**
  * A supplier of {@link TypeContext}s. These are the default values used by the framework.
  *
@@ -29,53 +27,5 @@ import java.util.function.Supplier;
 public final class Providers {
 
     private Providers() {}
-
-    /**
-     * A provider that uses a {@link TypeContext} to create instances.
-     *
-     * @param type The type the provider should provide.
-     * @param <C> The type the provider should provide.
-     * @return A provider that uses a {@link TypeContext} to create instances.
-     * @see ContextDrivenProvider
-     */
-    public static <C> Provider<C> of(final TypeContext<? extends C> type) {
-        return new ContextDrivenProvider<>(type);
-    }
-
-    /**
-     * A provider that uses a {@link Class} to create instances.
-     *
-     * @param type The type the provider should provide.
-     * @param <C> The type the provider should provide.
-     * @return A provider that uses a {@link Class} to create instances.
-     * @see ContextDrivenProvider
-     */
-    public static <C> Provider<C> of(final Class<? extends C> type) {
-        return of(TypeContext.of(type));
-    }
-
-    /**
-     * A provider that uses an existing instance to provide the instance.
-     *
-     * @param instance The instance to provide.
-     * @param <C> The type the provider should provide.
-     * @return A provider that uses an existing instance to provide the instance.
-     * @see InstanceProvider
-     */
-    public static <C> Provider<C> of(final C instance) {
-        return new InstanceProvider<>(instance);
-    }
-
-    /**
-     * A provider that uses a {@link Supplier} to create instances.
-     *
-     * @param supplier The supplier to use.
-     * @param <C> The type the provider should provide.
-     * @return A provider that uses a {@link Supplier} to create instances.
-     * @see SupplierProvider
-     */
-    public static <C> Provider<C> of(final Supplier<C> supplier) {
-        return new SupplierProvider<>(supplier);
-    }
 
 }

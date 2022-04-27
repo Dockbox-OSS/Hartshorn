@@ -37,7 +37,7 @@ public class SupplierProvider<C> implements Provider<C> {
 
     private final Supplier<C> supplier;
 
-    SupplierProvider(final Supplier<C> supplier) {
+    public SupplierProvider(final Supplier<C> supplier) {
         this.supplier = supplier;
     }
 
