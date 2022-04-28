@@ -154,13 +154,13 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         this.bind(ApplicationEnvironment.class).singleton(this.environment());
         this.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator());
 
-        this.bind(Key.of(ProxyLookup.class)).singleton(this.environment().manager());
-        this.bind(Key.of(ApplicationLogger.class)).singleton(this.environment().manager());
-        this.bind(Key.of(ApplicationProxier.class)).singleton(this.environment().manager());
-        this.bind(Key.of(ApplicationManager.class)).singleton(this.environment().manager());
-        this.bind(Key.of(LifecycleObservable.class)).singleton(this.environment().manager());
+        this.bind(ProxyLookup.class).singleton(this.environment().manager());
+        this.bind(ApplicationLogger.class).singleton(this.environment().manager());
+        this.bind(ApplicationProxier.class).singleton(this.environment().manager());
+        this.bind(ApplicationManager.class).singleton(this.environment().manager());
+        this.bind(LifecycleObservable.class).singleton(this.environment().manager());
 
-        this.bind(Key.of(Logger.class)).to(this::log);
+        this.bind(Logger.class).to(this::log);
     }
 
     @Override

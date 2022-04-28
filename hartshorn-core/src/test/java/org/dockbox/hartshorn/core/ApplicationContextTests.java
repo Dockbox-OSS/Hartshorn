@@ -151,7 +151,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingCanBeProvided() {
-        this.applicationContext.bind(Key.of(SampleInterface.class)).to(SampleImplementation::new);
+        this.applicationContext.bind(SampleInterface.class).to(SampleImplementation::new);
         final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
