@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.scope;
+package org.dockbox.hartshorn.inject.binding;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.Exceptional;
 
-public interface ScopedContextHolder {
-    void store(ScopedComponentProvider provider);
-
-    @Nullable
-    ScopedComponentProvider get(String key);
-
-    void remove(String key);
+@FunctionalInterface
+public interface ComponentInstanceFactory {
+    <T>Exceptional<T> instantiate(Key<T> key);
 }

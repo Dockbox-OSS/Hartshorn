@@ -16,15 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.Key;
-
-import java.util.function.Consumer;
 
 public interface HierarchicalComponentProvider extends ComponentProvider, Binder {
-
-    <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer);
 
     <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

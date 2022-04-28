@@ -29,8 +29,8 @@ public class EventProviders {
 
     @Singleton
     @Provider
-    public EventBus eventBus() {
-        return new EventBusImpl();
+    public Class<? extends EventBus> eventBus() {
+        return EventBusImpl.class;
     }
 
     @Provider("event_loader")

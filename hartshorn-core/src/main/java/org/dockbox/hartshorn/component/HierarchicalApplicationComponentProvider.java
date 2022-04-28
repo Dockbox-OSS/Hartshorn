@@ -17,39 +17,41 @@
 package org.dockbox.hartshorn.component;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.inject.Providers;
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.ContextDrivenProvider;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.ConcurrentHashSingletonCache;
+import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
+import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
+import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.SingletonCache;
+import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.CustomMultiTreeMap;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class HierarchicalApplicationComponentProvider extends DefaultContext implements StandardComponentProvider, ContextCarrier {
 
     private final ApplicationContext applicationContext;
 
-    private final transient Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
+    private final transient SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final transient Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
     protected final transient MultiMap<Integer, ComponentPostProcessor<?>> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
@@ -65,10 +67,13 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     @Override
     public <T> T get(final Key<T> key, final boolean enable) {
-        if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
+        if (this.singletonCache.contains(key)) {
+            return this.singletonCache.get(key);
+        }
+
         this.applicationContext().locator().validate(key);
 
-        T instance = this.create(key);
+        T instance = this.create(key).orNull();
 
         final Exceptional<ComponentContainer> container = this.applicationContext().locator().container(key.type());
         if (container.present()) {
@@ -91,19 +96,10 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     @Nullable
-    public <T> T create(final Key<T> key) {
-        final Exceptional<T> provision = this.provide(key).rethrowUnchecked();
-        if (provision.present())
-            return provision.get();
-
-        final TypeContext<T> type = key.type();
-
-        final Exceptional<T> raw = Exceptional.of(() -> this.raw(type)).rethrowUnchecked();
-        if (raw.present())
-            return raw.get();
-
-        // If the component is functional and permits proxying, a post processor will be able to proxy the instance
-        return null;
+    private <T> Exceptional<T> create(final Key<T> key) {
+        return this.provide(key)
+                .orFlat(() -> this.raw(key))
+                .rethrowUnchecked();
     }
 
     @Override
@@ -112,18 +108,10 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     @Override
-    public <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(supplier)));
-    }
+    public <C> BindingFunction<C> bind(final Key<C> key) {
+        final BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
-    @Override
-    public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(implementation)));
-    }
-
-    @Override
-    public <C, T extends C> void bind(final Key<C> contract, final T instance) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
+        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this::raw);
     }
 
     @Override
@@ -132,21 +120,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (hierarchy instanceof ContextWrappedHierarchy) return hierarchy;
         else return new ContextWrappedHierarchy<>(hierarchy, this.applicationContext(), updated -> this.hierarchies.put(key, updated));
-    }
-
-    @Override
-    public <T, C extends T> void singleton(final Key<T> key, final C instance) {
-        if (instance == null) {
-            throw new IllegalStateException("Singleton %s was not created".formatted(key.type().name()));
-        }
-        this.singletons.put(key, instance);
-    }
-
-    @Override
-    public <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
-        final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this.applicationContext()));
-        consumer.accept(hierarchy);
-        this.hierarchies.put(key, hierarchy);
     }
 
     public <T> Exceptional<T> provide(final Key<T> key) {
@@ -249,20 +222,16 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         final MetaProvider meta = this.applicationContext().meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this.applicationContext(), instance))))
-            this.singletons.put(key, instance);
+        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this.applicationContext(), instance)))) {
+            this.bind(key).singleton(instance);
+        }
     }
 
     public void postProcessor(final ComponentPostProcessor<?> postProcessor) {
         this.postProcessors.put(postProcessor.order(), postProcessor);
     }
 
-    public <T> T raw(final TypeContext<T> type) {
-        return Providers.of(type).provide(this.applicationContext()).rethrowUnchecked().orNull();
-    }
-
-    @Override
-    public String scope() {
-        return "application";
+    public <T> Exceptional<T> raw(final Key<T> key) {
+        return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext()).rethrowUnchecked();
     }
 }

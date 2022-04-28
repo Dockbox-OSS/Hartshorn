@@ -16,7 +16,5 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.component.scope.ScopedComponentProvider;
-
-public interface StandardComponentProvider extends HierarchicalComponentProvider, ProcessableComponentProvider, ScopedComponentProvider {
+public interface StandardComponentProvider extends HierarchicalComponentProvider, ProcessableComponentProvider, ComponentProvider {
 }

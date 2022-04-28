@@ -18,29 +18,12 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.Key;
 
-import java.util.function.Supplier;
-
 public interface DelegatedBinder extends Binder {
-
-    @Override
-    default <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
-        this.binder().bind(contract, supplier);
-    }
 
     Binder binder();
 
     @Override
-    default <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        this.binder().bind(contract, implementation);
-    }
-
-    @Override
-    default <C, T extends C> void bind(final Key<C> contract, final T instance) {
-        this.binder().bind(contract, instance);
-    }
-
-    @Override
-    default <T, C extends T> void singleton(final Key<T> key, final C instance) {
-        this.binder().singleton(key, instance);
+    default <C> BindingFunction<C> bind(final Key<C> key) {
+        return this.binder().bind(key);
     }
 }

@@ -16,13 +16,9 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
-import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.StandardDelegatingApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
+import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.proxy.AbstractProxy;
 import org.dockbox.hartshorn.core.types.CircularConstructorA;
 import org.dockbox.hartshorn.core.types.CircularConstructorB;
@@ -42,8 +38,12 @@ import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,7 +51,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -102,7 +101,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingCanBeProvided() {
-        this.applicationContext.bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        this.applicationContext.bind(SampleInterface.class).to(SampleImplementation.class);
         final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -115,7 +114,7 @@ public class ApplicationContextTests {
     @Test
     public void testStaticBindingWithMetaCanBeProvided() {
         final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
-        this.applicationContext.bind(key, SampleImplementation.class);
+        this.applicationContext.bind(key).to(SampleImplementation.class);
         final SampleInterface provided = this.applicationContext.get(key);
         Assertions.assertNotNull(provided);
 
@@ -127,7 +126,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingCanBeProvided() {
-        this.applicationContext.bind(Key.of(SampleInterface.class), new SampleImplementation());
+        this.applicationContext.bind(SampleInterface.class).singleton(new SampleImplementation());
         final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -140,7 +139,7 @@ public class ApplicationContextTests {
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() {
         final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
-        this.applicationContext.bind(key, new SampleImplementation());
+        this.applicationContext.bind(key).singleton(new SampleImplementation());
         final SampleInterface provided = this.applicationContext.get(key);
         Assertions.assertNotNull(provided);
 
@@ -152,7 +151,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingCanBeProvided() {
-        this.applicationContext.bind(Key.of(SampleInterface.class), (Supplier<SampleInterface>) SampleImplementation::new);
+        this.applicationContext.bind(SampleInterface.class).to(SampleImplementation::new);
         final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -165,7 +164,7 @@ public class ApplicationContextTests {
     @Test
     public void testProviderBindingWithMetaCanBeProvided() {
         final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
-        this.applicationContext.bind(key, (Supplier<SampleInterface>) SampleImplementation::new);
+        this.applicationContext.bind(key).to(SampleImplementation::new);
         final SampleInterface provided = this.applicationContext.get(key);
         Assertions.assertNotNull(provided);
 
@@ -233,7 +232,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testTypesCanBePopulated() {
-        this.applicationContext.bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        this.applicationContext.bind(SampleInterface.class).to(SampleImplementation.class);
         final PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 
@@ -244,7 +243,7 @@ public class ApplicationContextTests {
 
     @Test
     public void unboundTypesCanBeProvided() {
-        this.applicationContext.bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        this.applicationContext.bind(SampleInterface.class).to(SampleImplementation.class);
         final PopulatedType provided = this.applicationContext.get(PopulatedType.class);
         Assertions.assertNotNull(provided);
         Assertions.assertNotNull(provided.sampleInterface());
@@ -259,8 +258,8 @@ public class ApplicationContextTests {
         ((StandardDelegatingApplicationContext) this.applicationContext).process();
 
         if (field) {
-            if (fieldMeta == null) {this.applicationContext.bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
-            else this.applicationContext.bind(Key.of(SampleField.class, fieldMeta), SampleFieldImplementation.class);
+            if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
+            else this.applicationContext.bind(Key.of(SampleField.class, fieldMeta)).to(SampleFieldImplementation.class);
         }
 
         final ProvidedInterface provided;
@@ -423,7 +422,7 @@ public class ApplicationContextTests {
     @Test
     void testStringProvision() {
         final Key<String> key = Key.of(String.class, "license");
-        this.applicationContext.bind(key, "MIT");
+        this.applicationContext.bind(key).singleton("MIT");
         final String license = this.applicationContext.get(key);
         Assertions.assertEquals("MIT", license);
     }
