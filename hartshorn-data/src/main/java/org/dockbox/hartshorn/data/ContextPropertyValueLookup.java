@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.Exceptional;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+@Component
 public class ContextPropertyValueLookup implements ValueLookup {
 
     @Inject

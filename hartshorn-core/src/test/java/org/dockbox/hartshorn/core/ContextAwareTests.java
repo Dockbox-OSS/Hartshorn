@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +35,7 @@ public class ContextAwareTests {
     private ApplicationContext applicationContext;
 
     @Test
+    @TestComponents(SampleContextAwareType.class)
     void testApplicationContextIsBound() {
         final ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);

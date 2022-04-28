@@ -18,9 +18,13 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.ApplicationFactory;
-import org.dockbox.hartshorn.application.HartshornApplicationFactory;
+import org.dockbox.hartshorn.application.ServiceImpl;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentLocatorImpl;
+import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
@@ -39,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -72,24 +77,26 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
-        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(context);
+        final Optional<Method> testMethod = context.getTestMethod();
+        if (testMethod.isEmpty()) throw new IllegalStateException("Test method was not provided to runner");
 
         final Optional<Class<?>> testClass = context.getTestClass();
         if (testClass.isEmpty()) throw new IllegalStateException("Test class was not provided to runner");
 
+        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(context);
         final ApplicationContext applicationContext = createContext(applicationFactory, testClass.get()).orNull();
         if (applicationContext == null) throw new IllegalStateException("Could not create application context");
 
         applicationContext.bind(HartshornExtension.class).singleton(this);
-
-        final Optional<Object> testInstance = context.getTestInstance();
-        testInstance.ifPresent(applicationContext::populate);
-
-        final Optional<Method> testMethod = context.getTestMethod();
-        if (testMethod.isEmpty()) throw new IllegalStateException("Test method was not provided to runner");
+        context.getTestInstance().ifPresent(instance -> this.populateTestInstance(instance, applicationContext));
 
         this.activeMethod = testMethod.get();
         this.applicationContext = applicationContext;
+    }
+
+    protected void populateTestInstance(final Object instance, final ApplicationContext applicationContext) {
+        final ComponentPopulator populator = applicationContext.get(ComponentPopulator.class);
+        populator.populate(instance);
     }
 
     @Override
@@ -137,9 +144,11 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
     }
 
     public ApplicationFactory<?, ?> prepareFactory(final ExtensionContext context) throws Exception {
-        ApplicationFactory<?, ?> applicationFactory = new HartshornApplicationFactory()
+        ApplicationFactory<?, ?> applicationFactory = new TestApplicationFactory()
                 .loadDefaults()
-                .applicationFSProvider(new JUnitFSProvider());
+                .applicationFSProvider(new JUnitFSProvider())
+                .componentLocator(applicationContext -> this.getComponentLocator(applicationContext, context));
+
 
         if (context.getTestClass().isPresent()) {
             final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(context.getTestClass().get()).methods(HartshornFactory.class);
@@ -172,5 +181,34 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         }
 
         return applicationFactory;
+    }
+
+    private ComponentLocator getComponentLocator(final ApplicationContext applicationContext, final ExtensionContext context) {
+        final ComponentLocator componentLocator = new ComponentLocatorImpl(applicationContext);
+
+        ((TestApplicationContext) applicationContext).addActivator(new ServiceImpl());
+
+        final Consumer<TestComponents> testComponentsConsumer = testComponents -> {
+            for (final Class<?> testComponent : testComponents.value()) {
+                componentLocator.register(testComponent);
+
+                if (applicationContext instanceof TestApplicationContext) {
+                    final TypeContext<?> testComponentType = TypeContext.of(testComponent);
+                    testComponentType.annotation(ComponentBinding.class).present(binding -> {
+                        ((TestApplicationContext) applicationContext).handleBinder(testComponentType, binding);
+                    });
+                }
+            }
+        };
+
+        Exceptional.of(context.getTestMethod()).map(MethodContext::of)
+                .flatMap(method -> method.annotation(TestComponents.class))
+                .present(testComponentsConsumer);
+
+        Exceptional.of(context.getTestClass()).map(TypeContext::of)
+                .flatMap(method -> method.annotation(TestComponents.class))
+                .present(testComponentsConsumer);
+
+        return componentLocator;
     }
 }

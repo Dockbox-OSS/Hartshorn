@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package test.types.factory;
+package test.types;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 
-import test.types.SampleInterface;
-
-@ComponentBinding(value = SampleInterface.class, permitProxying = false)
-public class FactorySampleImplementation implements SampleInterface {
-
-    private final String name;
-
-    @Bound
-    public FactorySampleImplementation(final String name) {
-        this.name = name;
-    }
-
+@ComponentBinding(SampleInterface.class)
+public class SampleAnnotatedImplementation implements SampleInterface {
     @Override
     public String name() {
-        return this.name;
+        return "AnnotatedHartshorn";
     }
 }

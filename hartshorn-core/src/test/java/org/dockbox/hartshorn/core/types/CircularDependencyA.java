@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.dockbox.hartshorn.component.Component;
 
-@Singleton
+import javax.inject.Inject;
+
+@Component(singleton = true)
 public class CircularDependencyA {
     @Inject
     private CircularDependencyB b;

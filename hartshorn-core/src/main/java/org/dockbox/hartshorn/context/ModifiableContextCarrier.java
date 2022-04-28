@@ -19,5 +19,5 @@ package org.dockbox.hartshorn.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 public interface ModifiableContextCarrier extends ContextCarrier {
-    public ModifiableContextCarrier applicationContext(ApplicationContext context);
+    ModifiableContextCarrier applicationContext(ApplicationContext context);
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.types.provision;
+package test.types;
 
 import test.types.SampleInterface;
 

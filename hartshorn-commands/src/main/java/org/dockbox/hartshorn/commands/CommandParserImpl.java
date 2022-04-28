@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandContextImpl;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -27,10 +28,10 @@ import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ import javax.inject.Inject;
 /**
  * Simple implementation of {@link CommandParser}.
  */
+@Component
 public class CommandParserImpl implements CommandParser {
 
     // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag

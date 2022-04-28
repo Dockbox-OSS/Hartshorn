@@ -46,7 +46,7 @@ public abstract class ExecutableElementContext<A extends Executable, P> extends 
 
     private TypeContext<P> parent;
     private LinkedList<ParameterContext<?>> parameters;
-    protected ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
+    protected final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
 
     // TODO #584: Continue documentation here
     public List<ParameterContext<?>> parameters(final Class<? extends Annotation> annotation) {

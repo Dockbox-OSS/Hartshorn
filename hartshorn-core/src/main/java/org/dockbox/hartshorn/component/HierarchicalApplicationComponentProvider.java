@@ -41,11 +41,14 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CustomMultiTreeMap;
 import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
+
+import javax.inject.Inject;
 
 public class HierarchicalApplicationComponentProvider extends DefaultContext implements StandardComponentProvider, ContextCarrier {
 
@@ -54,7 +57,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     private final transient SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final transient Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
-    protected final transient MultiMap<Integer, ComponentPostProcessor<?>> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+    private final transient MultiMap<Integer, ComponentPostProcessor<?>> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
 
     public HierarchicalApplicationComponentProvider(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -75,13 +78,20 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         T instance = this.create(key).orNull();
 
-        final Exceptional<ComponentContainer> container = this.applicationContext().locator().container(key.type());
+        TypeContext<? extends T> type = key.type();
+        if (instance != null) {
+            type = TypeContext.of(instance);
+        }
+
+        final Exceptional<ComponentContainer> container = this.applicationContext().locator().container(type);
         if (container.present()) {
             instance = this.process(key, instance, container.get());
         }
         else {
-            this.populateAndStore(key, instance);
+            this.verify(instance);
         }
+
+        this.storeSingletons(key, instance);
 
         // Inject properties if applicable
         if (enable) {
@@ -144,7 +154,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         // See ServiceOrder#PHASE_1
         if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_1, true, processingContext);
 
-        instance = this.populateAndStore(key, instance);
+        this.storeSingletons(key, instance);
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
@@ -152,10 +162,9 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         if (container.permitsProxying()) {
             instance = this.finalize(key, instance, processingContext);
-            this.populateAndStore(key, instance);
         }
 
-        this.storeSingletons(key, instance);
+        instance = this.applicationContext().populate(instance);
 
         return instance;
     }
@@ -233,5 +242,14 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     public <T> Exceptional<T> raw(final Key<T> key) {
         return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext()).rethrowUnchecked();
+    }
+
+    private void verify(final Object instance) {
+        if (instance != null) {
+            final TypeContext<Object> type = TypeContext.of(instance);
+            for (final FieldContext<?> field : type.fields(Inject.class)) {
+                this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), type.name(), type.name());
+            }
+        }
     }
 }

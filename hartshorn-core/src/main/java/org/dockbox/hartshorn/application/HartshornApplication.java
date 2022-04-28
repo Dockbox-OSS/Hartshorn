@@ -60,7 +60,7 @@ public final class HartshornApplication {
                 .create();
     }
 
-    private static void setDebugActive() {
+    public static void setDebugActive() {
         final ILoggerFactory factory = LoggerFactory.getILoggerFactory();
 
         if (factory instanceof LoggerContext loggerContext) {

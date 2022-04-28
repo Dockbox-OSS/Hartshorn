@@ -49,7 +49,7 @@ import javax.inject.Named;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Component(lazy = true)
+@Component
 public @interface ComponentBinding {
 
     /**

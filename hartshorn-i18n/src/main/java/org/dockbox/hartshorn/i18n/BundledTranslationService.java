@@ -17,10 +17,12 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.Exceptional;
 
 import javax.inject.Inject;
 
+@Component
 public class BundledTranslationService implements TranslationService {
 
     @Inject

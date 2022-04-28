@@ -83,6 +83,16 @@ public class ComponentLocatorImpl implements ComponentLocator {
     }
 
     @Override
+    public void register(final TypeContext<?> type) {
+        if (this.container(type).absent()) {
+            final ComponentContainer container = new ComponentContainerImpl(this.applicationContext(), type);
+            if (!container.type().isAnnotation() && this.activationFilters.stream().allMatch(activationFilter -> activationFilter.doActivate(container.type(), container))) {
+                this.cache.put(type.type().getPackageName(), container);
+            }
+        }
+    }
+
+    @Override
     public Collection<ComponentContainer> containers() {
         return this.cache.entrySet().stream().flatMap(a -> a.getValue().stream()).toList();
     }

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.Exceptional;
 
 import java.util.List;
@@ -24,14 +25,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Default implementation of {@link CacheManager}.
  *
  * @see CacheManager
  */
-@Singleton
+@Component(singleton = true)
 public class CacheManagerImpl implements CacheManager {
 
     protected final Map<String, Cache<?>> caches = new ConcurrentHashMap<>();

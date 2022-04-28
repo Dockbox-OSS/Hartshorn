@@ -55,6 +55,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+@Component
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private Include include = Include.ALWAYS;

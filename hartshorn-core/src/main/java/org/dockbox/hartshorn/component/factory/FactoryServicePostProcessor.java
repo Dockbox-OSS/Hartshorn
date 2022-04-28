@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component.factory;
 
+import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.AutomaticActivation;
@@ -76,7 +77,8 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
 
     private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) {
         try {
-            context.populate(instance);
+            context.get(ComponentPopulator.class).populate(instance);
+
             if (enable) context.enable(instance);
             return instance;
         } catch (final ApplicationException e) {

@@ -575,28 +575,30 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public static <T> T toPrimitive(TypeContext<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
-        try {
-            if (type.isEnum()) {
-                return (T) Enum.valueOf((Class<? extends Enum>) type.type(), String.valueOf(value).toUpperCase());
-            }
-            else {
-                if (!type.isPrimitive()) {
-                    for (final Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPERS.entrySet()) {
-                        if (isPrimitiveWrapper(type.type(), entry.getKey())) type = TypeContext.of(entry.getKey());
+        if (type.isEnum()) {
+            return (T) Enum.valueOf((Class<? extends Enum>) type.type(), String.valueOf(value).toUpperCase());
+        }
+        else {
+            if (!type.isPrimitive()) {
+                for (final Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPERS.entrySet()) {
+                    if (isPrimitiveWrapper(type.type(), entry.getKey())) {
+                        type = TypeContext.of(entry.getKey());
                     }
                 }
-                if (!type.isPrimitive()) throw new NotPrimitiveException(type);
-                else {
+            }
+
+            if (!type.isPrimitive()) {
+                throw new NotPrimitiveException(type);
+            }
+            else {
+                try {
                     final Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type.type());
                     return (T) converter.apply(value);
                 }
+                catch (final Throwable e) {
+                    throw new TypeConversionException(type, value, e);
+                }
             }
-        }
-        catch (final NotPrimitiveException e) {
-            throw e;
-        }
-        catch (final Throwable t) {
-            throw new TypeConversionException(type, value, t);
         }
     }
 
@@ -694,11 +696,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public PropertyDescriptor[] propertyDescriptors() {
-        // TODO
+        // TODO #718: Implement this method.
         return new PropertyDescriptor[0];
     }
 
     public @Nullable PropertyDescriptor propertyDescriptor(final String propertyName) {
+        // TODO #718: Implement this method.
         return null;
     }
 }

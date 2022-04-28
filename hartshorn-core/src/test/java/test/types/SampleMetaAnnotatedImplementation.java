@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package test.types.scan;
+package test.types;
 
 import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import test.types.SampleInterface;
 
-@ComponentBinding(SampleInterface.class)
-public class SampleAnnotatedImplementation implements SampleInterface {
+import javax.inject.Named;
+
+@ComponentBinding(value = SampleInterface.class, named = @Named("meta"))
+public class SampleMetaAnnotatedImplementation implements SampleInterface {
     @Override
     public String name() {
-        return "AnnotatedHartshorn";
+        return "MetaAnnotatedHartshorn";
     }
 }
