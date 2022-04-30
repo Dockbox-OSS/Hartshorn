@@ -35,7 +35,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.TransactionRequiredException;
 
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
 @HartshornTest
 public class QueryRepositoryTests {
