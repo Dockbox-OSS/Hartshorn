@@ -36,7 +36,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
         final Exceptional<Component> annotated = component.annotation(Component.class);
-        if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate has no assigned decorator");
+        if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
 
         this.component = component;
         this.annotation = annotated.get();

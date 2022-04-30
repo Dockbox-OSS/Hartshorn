@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.AnnotationHelper.AnnotationInvocationHandler;
+import org.dockbox.hartshorn.util.reflect.AnnotationInvocationHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;

@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package test.types.meta;
+package test.types;
 
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-import test.types.SampleInterface;
+import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.Service;
 
-import javax.inject.Named;
+import javax.inject.Singleton;
 
-@ComponentBinding(value = SampleInterface.class, named = @Named("meta"))
-public class SampleMetaAnnotatedImplementation implements SampleInterface {
-    @Override
-    public String name() {
-        return "MetaAnnotatedHartshorn";
-    }
+@Service
+public class FieldProviderService {
+
+    @Provider("field")
+    private final ProvidedInterface field = () -> "Field";
+
+    @Singleton
+    @Provider("singletonField")
+    private final ProvidedInterface singletonField = () -> "Field";
 }

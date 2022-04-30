@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package test.types.provision;
+package test.types;
 
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import test.types.SampleField;
 
 @Service
 public class SampleProviderService {

@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
@@ -40,6 +41,7 @@ import java.net.URL;
 import javax.inject.Inject;
 import javax.servlet.Servlet;
 
+@Component
 public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     private final ServletContextHandler contextHandler;

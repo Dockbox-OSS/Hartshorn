@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package test.types.bound;
+package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import test.types.SampleInterface;
-
-@ComponentBinding(value = SampleInterface.class, permitProxying = false)
-public class SampleBoundAnnotatedImplementation implements SampleInterface {
-
-    private final String name;
-
-    @Bound
-    public SampleBoundAnnotatedImplementation(final String name) {
-        this.name = name;
-    }
-
-    public String name() {
-        return this.name;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface TestComponents {
+    Class<?>[] value();
 }

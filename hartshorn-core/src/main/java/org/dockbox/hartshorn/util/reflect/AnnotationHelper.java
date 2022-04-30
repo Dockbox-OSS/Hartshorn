@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +100,7 @@ public final class AnnotationHelper {
                 new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy));
     }
 
-    private static Annotation actualAnnotationBehindProxy(final Annotation annotation) {
+    static Annotation actualAnnotationBehindProxy(final Annotation annotation) {
         if (annotation instanceof AnnotationAdapter) {
             return ((AnnotationAdapter) annotation).actualAnnotation();
         }
@@ -138,7 +137,7 @@ public final class AnnotationHelper {
     public static <A extends Annotation> Annotation actual(final A annotation) {
         final InvocationHandler handler = Proxy.getInvocationHandler(annotation);
         if (handler instanceof AnnotationAdapterProxy<?> proxy) {
-            return proxy.actual;
+            return proxy.actual();
         }
         return annotation;
     }
@@ -148,7 +147,7 @@ public final class AnnotationHelper {
         return cached(Arrays.asList(4, annotationType), () -> annotationHierarchy(annotationType)).contains(type);
     }
 
-    private static Exceptional<Object> searchInHierarchy(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Collection<Class<? extends Annotation>> hierarchy, final String name) {
+    static Exceptional<Object> searchInHierarchy(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Collection<Class<? extends Annotation>> hierarchy, final String name) {
         try {
             final Method method = actual.annotationType().getMethod(name);
             return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
@@ -157,7 +156,9 @@ public final class AnnotationHelper {
             // search for AliasFor in same annotation type
             for (final Method method : actual.annotationType().getMethods()) {
                 final AliasFor aliasFor = method.getAnnotation(AliasFor.class);
-                if (aliasFor != null && (aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
+                if (aliasFor == null) continue;
+
+                if ((aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
                     // Bingo! We found it!
                     return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
                 }
@@ -210,111 +211,4 @@ public final class AnnotationHelper {
         }
     }
 
-    @FunctionalInterface
-    public interface AnnotationAdapter {
-        Annotation actualAnnotation();
-    }
-
-    private static class AnnotationAdapterProxy<A extends Annotation> implements InvocationHandler {
-        private final Annotation actual;
-        private final Class<A> targetAnnotationClass;
-        private final LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy;
-        private final Map<String, Exceptional<Object>> methodsCache = new ConcurrentHashMap<>();
-
-        AnnotationAdapterProxy(final Annotation actual, final Class<A> targetAnnotationClass, final LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy) {
-            this.actual = actual;
-            this.targetAnnotationClass = targetAnnotationClass;
-            this.actualAnnotationHierarchy = actualAnnotationHierarchy;
-        }
-
-        @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) {
-            if (method.getDeclaringClass() == AnnotationAdapter.class) {
-                return this.actual;
-            }
-
-            if ("hashCode".equals(method.getName())) {
-                return actualAnnotationBehindProxy(this.actual).hashCode();
-            }
-
-            if ("equals".equals(method.getName()) && method.getParameters().length == 1) {
-                if (args[0] instanceof Annotation) {
-                    return this.actual.equals(actualAnnotationBehindProxy((Annotation) args[0]));
-                }
-                else {
-                    return this.actual.equals(args[0]);
-                }
-            }
-
-            Exceptional<Object> cachedField = this.methodsCache.get(method.getName());
-            if (cachedField == null) {
-                cachedField = searchInHierarchy(this.actual, this.targetAnnotationClass, this.actualAnnotationHierarchy, method.getName());
-                this.methodsCache.put(method.getName(), cachedField);
-            }
-            return cachedField.orNull();
-        }
-    }
-
-    public static class AnnotationInvocationHandler implements InvocationHandler {
-
-        final Map<String, Object> cache;
-        private final Class<?> klass;
-        private final Annotation annotation;
-
-        public AnnotationInvocationHandler(final Class<?> klass, final Annotation annotation) {
-            this.klass = klass;
-            this.annotation = annotation;
-            this.cache = new HashMap<>();
-        }
-
-        public Annotation annotation() {
-            return this.annotation;
-        }
-
-        @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            if ("annotationType".equals(method.getName())) {
-                return this.klass;
-            }
-            if ("toString".equals(method.getName())) {
-                return "@" + this.klass;
-            }
-            Object result = this.cache.get(method.getName());
-            if (result != null) {
-                return result;
-            }
-
-            for (final Method methodInCompositeAnnotation : this.annotation.annotationType().getMethods()) {
-                final AliasFor aliasFor = methodInCompositeAnnotation.getAnnotation(AliasFor.class);
-                if (aliasFor != null && (this.directAlias(aliasFor, method) || this.indirectAlias(aliasFor, method))) {
-                    result = methodInCompositeAnnotation.invoke(this.annotation);
-                    this.cache.put(method.getName(), result);
-                    return result;
-                }
-            }
-
-            try {
-                final Object ret = this.klass.getMethod(method.getName()).getDefaultValue();
-                if (ret == null) {
-                    throw new IllegalStateException("Can't invoke " + this.klass.getName() + "." + method.getName() + "() on composite annotation " + this.annotation);
-                }
-                return ret;
-            }
-            catch (final NoSuchMethodError e) {
-                throw new IllegalStateException("Can't invoke " + this.klass.getName() + "." + method.getName() + "() on composite annotation " + this.annotation, e);
-            }
-        }
-
-        private boolean directAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-            return aliasFor.target() == this.klass && aliasFor.value().equals(methodBeingInvoked.getName());
-        }
-
-        private boolean indirectAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-            if (aliasFor.target() != this.klass) {
-                return false;
-            }
-            final AliasFor redirect = methodBeingInvoked.getAnnotation(AliasFor.class);
-            return redirect != null && redirect.target() == AliasFor.DefaultThis.class && redirect.value().equals(aliasFor.value());
-        }
-    }
 }

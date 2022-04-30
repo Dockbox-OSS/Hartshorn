@@ -71,7 +71,7 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
         }
     }
 
-    protected Exceptional<T> interfaceProxy(final MethodHandler methodHandler) throws ApplicationException {
+    protected Exceptional<T> interfaceProxy(final MethodHandler methodHandler) {
         final Class[] interfaces = CollectionUtilities.merge(new Class[]{ this.type(), Proxy.class }, this.interfaces().toArray(new Class[0]));
         final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
                 this.type().getClassLoader(),

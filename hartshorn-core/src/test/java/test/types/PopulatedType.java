@@ -16,8 +16,11 @@
 
 package test.types;
 
+import org.dockbox.hartshorn.component.Component;
+
 import javax.inject.Inject;
 
+@Component
 public class PopulatedType {
     @Inject
     private SampleInterface sampleInterface;

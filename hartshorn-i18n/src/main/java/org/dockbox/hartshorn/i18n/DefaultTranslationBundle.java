@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+@Component
 public class DefaultTranslationBundle implements TranslationBundle {
 
     private final Map<String, Message> messages = new ConcurrentHashMap<>();

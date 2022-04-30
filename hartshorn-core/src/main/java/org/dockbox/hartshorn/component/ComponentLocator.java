@@ -26,9 +26,19 @@ public interface ComponentLocator {
 
     void register(String prefix);
 
+    default void register(final Class<?> type) {
+        this.register(TypeContext.of(type));
+    }
+
+    void register(TypeContext<?> type);
+
     Collection<ComponentContainer> containers();
 
     Collection<ComponentContainer> containers(ComponentType functional);
+
+    default Exceptional<ComponentContainer> container(final Class<?> type) {
+        return this.container(TypeContext.of(type));
+    }
 
     Exceptional<ComponentContainer> container(TypeContext<?> type);
 

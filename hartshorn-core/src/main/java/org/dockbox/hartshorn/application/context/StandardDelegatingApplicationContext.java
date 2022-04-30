@@ -130,10 +130,10 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
         this.populateArguments(args);
 
+        this.modifiers = modifiers;
         this.locator = componentLocator.apply(this);
         this.resourceLocator = resourceLocator.apply(this);
         this.metaProvider = metaProvider.apply(this);
-        this.modifiers = modifiers;
 
         this.registerDefaultBindings();
     }
@@ -403,7 +403,7 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         }
     }
 
-    private <T> void handleBinder(final TypeContext<T> implementer, final ComponentBinding annotation) {
+    protected <T> void handleBinder(final TypeContext<T> implementer, final ComponentBinding annotation) {
         final TypeContext<T> target = TypeContext.of((Class<T>) annotation.value());
 
         if (implementer.boundConstructors().isEmpty()) {
@@ -415,7 +415,7 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         }
     }
 
-    private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final ComponentBinding bindAnnotation) {
+    protected <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final ComponentBinding bindAnnotation) {
         final Named meta = bindAnnotation.named();
         Key<C> key = Key.of(binds);
         if (!"".equals(meta.value())) {

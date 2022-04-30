@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.StandardDelegatingApplicationContext;
+import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.proxy.AbstractProxy;
 import org.dockbox.hartshorn.core.types.CircularConstructorA;
@@ -41,6 +41,7 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -60,10 +61,11 @@ import test.types.SampleField;
 import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
-import test.types.meta.SampleMetaAnnotatedImplementation;
-import test.types.provision.FieldProviderService;
-import test.types.provision.ProvidedInterface;
-import test.types.scan.SampleAnnotatedImplementation;
+import test.types.SampleMetaAnnotatedImplementation;
+import test.types.FieldProviderService;
+import test.types.ProvidedInterface;
+import test.types.SampleProviderService;
+import test.types.SampleAnnotatedImplementation;
 
 @HartshornTest
 @UseServiceProvision
@@ -175,12 +177,8 @@ public class ApplicationContextTests {
     }
 
     @Test
+    @TestComponents(SampleAnnotatedImplementation.class)
     public void testScannedBindingCanBeProvided() {
-        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
-        // you'd do this through a service activator.
-        this.applicationContext.bind("test.types.scan");
-        ((StandardDelegatingApplicationContext) this.applicationContext).process();
-
         final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -191,11 +189,8 @@ public class ApplicationContextTests {
     }
 
     @Test
+    @TestComponents(SampleMetaAnnotatedImplementation.class)
     public void testScannedMetaBindingsCanBeProvided() {
-        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
-        // you'd do this through a service activator.
-        this.applicationContext.bind("test.types.meta");
-        ((StandardDelegatingApplicationContext) this.applicationContext).process();
 
         // Ensure that the binding is not bound to the default name
         final SampleInterface sample = this.applicationContext.get(SampleInterface.class);
@@ -236,12 +231,13 @@ public class ApplicationContextTests {
         final PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 
-        this.applicationContext.populate(populatedType);
+        this.applicationContext.get(ComponentPopulator.class).populate(populatedType);
         Assertions.assertNotNull(populatedType.sampleInterface());
         Assertions.assertEquals("Hartshorn", populatedType.sampleInterface().name());
     }
 
     @Test
+    @TestComponents(PopulatedType.class)
     public void unboundTypesCanBeProvided() {
         this.applicationContext.bind(SampleInterface.class).to(SampleImplementation.class);
         final PopulatedType provided = this.applicationContext.get(PopulatedType.class);
@@ -251,12 +247,8 @@ public class ApplicationContextTests {
 
     @ParameterizedTest
     @MethodSource("providers")
+    @TestComponents({SampleFieldImplementation.class, SampleProviderService.class})
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {
-        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
-        // you'd do this through a service activator.
-        this.applicationContext.bind("test.types.provision");
-        ((StandardDelegatingApplicationContext) this.applicationContext).process();
-
         if (field) {
             if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
             else this.applicationContext.bind(Key.of(SampleField.class, fieldMeta)).to(SampleFieldImplementation.class);
@@ -281,19 +273,16 @@ public class ApplicationContextTests {
     }
 
     @Test
+    @TestComponents(FieldProviderService.class)
     void testFieldProviders() {
-        this.applicationContext.bind("test.types.provision");
-        ((StandardDelegatingApplicationContext) this.applicationContext).process();
         final ProvidedInterface field = this.applicationContext.get(Key.of(ProvidedInterface.class, "field"));
         Assertions.assertNotNull(field);
         Assertions.assertEquals("Field", field.name());
     }
 
     @Test
+    @TestComponents(FieldProviderService.class)
     void testSingletonFieldProviders() {
-        this.applicationContext.bind("test.types.provision");
-        ((StandardDelegatingApplicationContext) this.applicationContext).process();
-        this.applicationContext.get(FieldProviderService.class);
         final ProvidedInterface field = this.applicationContext.get(Key.of(ProvidedInterface.class, "singletonField"));
         Assertions.assertNotNull(field);
 
@@ -306,7 +295,7 @@ public class ApplicationContextTests {
     @Test
     void testContextFieldsAreInjected() {
         this.applicationContext.add(new SampleContext("InjectedContext"));
-        final ContextInjectedType instance = this.applicationContext.populate(new ContextInjectedType());
+        final ContextInjectedType instance = this.applicationContext.get(ComponentPopulator.class).populate(new ContextInjectedType());
         Assertions.assertNotNull(instance.context());
         Assertions.assertEquals("InjectedContext", instance.context().name());
     }
@@ -314,7 +303,7 @@ public class ApplicationContextTests {
     @Test
     void testNamedContextFieldsAreInjected() {
         this.applicationContext.add("another", new SampleContext("InjectedContext"));
-        final ContextInjectedType instance = this.applicationContext.populate(new ContextInjectedType());
+        final ContextInjectedType instance = this.applicationContext.get(ComponentPopulator.class).populate(new ContextInjectedType());
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals("InjectedContext", instance.anotherContext().name());
     }

@@ -14,27 +14,11 @@
  * limitations under the License.
  */
 
-package test.types.dual;
+package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
+import java.lang.annotation.Annotation;
 
-import test.types.SampleInterface;
-
-public class DualConstructableType implements SampleInterface {
-
-    private final String name;
-
-    @Bound
-    public DualConstructableType(final String name) {
-        this.name = name;
-    }
-
-    public DualConstructableType() {
-        this.name = "DefaultConstructor";
-    }
-
-    @Override
-    public String name() {
-        return this.name;
-    }
+@FunctionalInterface
+public interface AnnotationAdapter {
+    Annotation actualAnnotation();
 }

@@ -17,15 +17,16 @@
 package org.dockbox.hartshorn.events;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -34,13 +35,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
-@Singleton
+@Component(singleton = true)
 public class EventBusImpl implements EventBus {
 
     protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = ConcurrentHashMap.newKeySet();
