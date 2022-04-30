@@ -61,7 +61,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 @HartshornTest
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
 class SqlServiceTest {
 

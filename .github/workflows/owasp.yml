@@ -1,9 +1,10 @@
-name: Gradle dependency check
+name: Hartshorn
 
 on: pull_request
 
 jobs:
   depCheck:
+    name: Gradle dependency check
     runs-on: ubuntu-latest
 
     steps:
