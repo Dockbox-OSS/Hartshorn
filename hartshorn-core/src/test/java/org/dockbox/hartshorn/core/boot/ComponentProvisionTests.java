@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.application.HartshornApplicationFactory;
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.testsuite.HartshornExtension;
+import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,17 +34,19 @@ import javax.inject.Inject;
 
 @HartshornTest
 @UseServiceProvision
+@TestInstance(Lifecycle.PER_CLASS)
 public class ComponentProvisionTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
-    public static Stream<Arguments> components() {
-        return HartshornExtension.createContext(new HartshornApplicationFactory().loadDefaults(), ComponentProvisionTests.class)
-                .rethrowUnchecked().get()
+    public Stream<Arguments> components() {
+        return this.applicationContext()
                 .locator()
                 .containers().stream()
                 .map(ComponentContainer::type)
+                // org.dockbox.hartshorn.core.types is test-specific and includes a few test-specific types
+                // that are not part of the core types, and thus should not be tested here.
                 .filter(type -> !type.isDeclaredIn("org.dockbox.hartshorn.core.types"))
                 .filter(type -> type.boundConstructors().size() != type.constructors().size())
                 .map(Arguments::of);
