@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.Activator;
@@ -37,7 +53,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 @Activator
-public class HartshornExtension implements
+public class HartshornLifecycleExtension implements
         ParameterResolver,
         BeforeAllCallback, AfterAllCallback,
         BeforeEachCallback, AfterEachCallback {
@@ -84,12 +100,12 @@ public class HartshornExtension implements
         }
 
         final ApplicationFactory applicationFactory = this.prepareFactory(testClass, testComponentSources);
-        final ApplicationContext applicationContext = HartshornExtension.createTestContext(applicationFactory, testClass).orNull();
+        final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationFactory, testClass).orNull();
         if (applicationContext == null) {
             if (applicationContext == null) throw new IllegalStateException("Could not create application context");
         }
 
-        applicationContext.bind(HartshornExtension.class).singleton(this);
+        applicationContext.bind(HartshornLifecycleExtension.class).singleton(this);
 
         if (testInstance != null) {
             this.populateTestInstance(testInstance, applicationContext);
@@ -130,7 +146,7 @@ public class HartshornExtension implements
         TypeContext<?> applicationActivator = TypeContext.of(activator);
 
         if (applicationActivator.annotation(Activator.class).absent()) {
-            applicationActivator = TypeContext.of(HartshornExtension.class);
+            applicationActivator = TypeContext.of(HartshornLifecycleExtension.class);
             final Set<Annotation> serviceActivators = TypeContext.of(activator).annotations().stream()
                     .filter(annotation -> TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present())
                     .collect(Collectors.toSet());

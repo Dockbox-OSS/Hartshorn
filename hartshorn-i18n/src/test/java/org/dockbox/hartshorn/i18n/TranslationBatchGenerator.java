@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
-import org.dockbox.hartshorn.testsuite.HartshornExtension;
+import org.dockbox.hartshorn.testsuite.HartshornLifecycleExtension;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -82,7 +82,7 @@ public final class TranslationBatchGenerator {
     private TranslationBatchGenerator() {}
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = HartshornExtension
+        final ApplicationContext context = HartshornLifecycleExtension
                 .createTestContext(new HartshornApplicationFactory().loadDefaults(), TranslationBatchGenerator.class)
                 .orNull();
         final Map<String, String> batches = migrateBatches(context);
