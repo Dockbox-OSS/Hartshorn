@@ -17,20 +17,19 @@
 package org.dockbox.hartshorn.util.reflect;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -693,15 +692,5 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isDeclaredIn(final String prefix) {
         return this.type().getPackageName().startsWith(prefix);
-    }
-
-    public PropertyDescriptor[] propertyDescriptors() {
-        // TODO #718: Implement this method.
-        return new PropertyDescriptor[0];
-    }
-
-    public @Nullable PropertyDescriptor propertyDescriptor(final String propertyName) {
-        // TODO #718: Implement this method.
-        return null;
     }
 }
