@@ -74,7 +74,7 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
     protected Exceptional<T> interfaceProxy(final MethodHandler methodHandler) {
         final Class[] interfaces = CollectionUtilities.merge(new Class[]{ this.type(), Proxy.class }, this.interfaces().toArray(new Class[0]));
         final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
-                this.type().getClassLoader(),
+                this.defaultClassLoader(),
                 interfaces,
                 (final var self, final var method, final var args) -> methodHandler.invoke(self, method, null, args));
         return Exceptional.of(proxy);
@@ -88,5 +88,13 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
             if (field.isStatic()) continue;
             field.set(proxy, field.get(existing).orNull());
         }
+    }
+
+    private ClassLoader defaultClassLoader() {
+        return Exceptional.of(Thread.currentThread()::getContextClassLoader)
+                .orElse(JavassistProxyFactory.class::getClassLoader)
+                .orElse(ClassLoader::getSystemClassLoader)
+                .orElse(this.type()::getClassLoader)
+                .orNull();
     }
 }

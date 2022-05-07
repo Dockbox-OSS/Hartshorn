@@ -21,5 +21,5 @@ import org.dockbox.hartshorn.util.Exceptional;
 
 @FunctionalInterface
 public interface ComponentInstanceFactory {
-    <T>Exceptional<T> instantiate(Key<T> key);
+    <T> Exceptional<T> instantiate(Key<T> key);
 }
