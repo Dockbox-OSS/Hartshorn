@@ -1,19 +1,3 @@
-/*
- * Copyright 2019-2022 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.Activator;
@@ -29,7 +13,10 @@ import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -38,6 +25,7 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,63 +36,70 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-/**
- * This extension is used to create a unique {@link ApplicationContext} for each test. This ensures that the
- * {@link ApplicationContext} is reset after each test, to avoid leaking state between tests.
- *
- * <p>If a test is annotated with {@link InjectTest} or {@link Inject}, its parameters will be resolved using the
- * active {@link ApplicationContext}. Likewise, fields annotated with {@link Inject} will be resolved using the
- * active {@link ApplicationContext}. Like the {@link ApplicationContext}, fields are reset after each test.
- *
- * <p>If a test class is annotated with {@link Activator}, it is used as the primary application activator. Which
- * allows the test class to define its own activators. If the test class is not annotated with {@link Activator},
- * the {@link HartshornExtension} is used as the primary activator, which doesn't activate any non-default
- * services.
- *
- * <p>After each test, the active {@link Mockito} cache is cleared. This ensures that the mocks are reset between
- * tests.
- *
- * <p>This extension is automatically applied by the {@link HartshornTest} annotation.
- *
- * @author Guus Lieben
- * @since 22.1
- */
 @Activator
-public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+public class HartshornExtension implements
+        ParameterResolver,
+        BeforeAllCallback, AfterAllCallback,
+        BeforeEachCallback, AfterEachCallback {
 
-    private Method activeMethod;
     private ApplicationContext applicationContext;
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
-        final Optional<Method> testMethod = context.getTestMethod();
-        if (testMethod.isEmpty()) throw new IllegalStateException("Test method was not provided to runner");
-
-        final Optional<Class<?>> testClass = context.getTestClass();
-        if (testClass.isEmpty()) throw new IllegalStateException("Test class was not provided to runner");
-
-        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(context);
-        final ApplicationContext applicationContext = createContext(applicationFactory, testClass.get()).orNull();
-        if (applicationContext == null) throw new IllegalStateException("Could not create application context");
-
-        applicationContext.bind(HartshornExtension.class).singleton(this);
-        context.getTestInstance().ifPresent(instance -> this.populateTestInstance(instance, applicationContext));
-
-        this.activeMethod = testMethod.get();
-        this.applicationContext = applicationContext;
-    }
-
-    protected void populateTestInstance(final Object instance, final ApplicationContext applicationContext) {
-        final ComponentPopulator populator = applicationContext.get(ComponentPopulator.class);
-        populator.populate(instance);
+        final Class<?> testClass = context.getTestClass().orElse(null);
+        final Object testInstance = context.getTestInstance().orElse(null);
+        final Method testMethod = context.getTestMethod().orElse(null);
+        this.beforeLifecycle(testClass, testInstance, testMethod);
     }
 
     @Override
     public void afterEach(final ExtensionContext context) {
-        // To ensure static mocking does not affect other tests
-        Mockito.clearAllCaches();
+        this.afterLifecycle();
+    }
 
-        this.activeMethod = null;
+    @Override
+    public void beforeAll(final ExtensionContext context) throws Exception {
+        if (this.isClassLifecycle(context)) {
+            final Class<?> testClass = context.getTestClass().orElse(null);
+            final Object testInstance = context.getTestInstance().orElse(null);
+            this.beforeLifecycle(testClass, testInstance);
+        }
+    }
+
+    @Override
+    public void afterAll(final ExtensionContext context) {
+        if (this.isClassLifecycle(context)) {
+            this.afterLifecycle();
+        }
+    }
+
+    private boolean isClassLifecycle(final ExtensionContext context) {
+        final Optional<Lifecycle> lifecycle = context.getTestInstanceLifecycle();
+        return lifecycle.isPresent() && Lifecycle.PER_CLASS.equals(lifecycle.get());
+    }
+
+    protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) throws Exception {
+        if (testClass == null) {
+            throw new IllegalArgumentException("Test class cannot be null");
+        }
+
+        final ApplicationFactory applicationFactory = this.prepareFactory(testClass, testComponentSources);
+        final ApplicationContext applicationContext = HartshornExtension.createTestContext(applicationFactory, testClass).orNull();
+        if (applicationContext == null) {
+            if (applicationContext == null) throw new IllegalStateException("Could not create application context");
+        }
+
+        applicationContext.bind(HartshornExtension.class).singleton(this);
+
+        if (testInstance != null) {
+            this.populateTestInstance(testInstance, applicationContext);
+        }
+
+        this.applicationContext = applicationContext;
+    }
+
+    protected void afterLifecycle() {
+        Mockito.clearAllCaches();
         this.applicationContext = null;
     }
 
@@ -122,12 +117,16 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
 
         final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
-        if (!testMethod.get().equals(this.activeMethod)) throw new IllegalStateException("Active context is not the same as the test method");
 
         return this.applicationContext.get(parameterContext.getParameter().getType());
     }
 
-    public static Exceptional<ApplicationContext> createContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
+    protected void populateTestInstance(final Object instance, final ApplicationContext applicationContext) {
+        final ComponentPopulator populator = applicationContext.get(ComponentPopulator.class);
+        populator.populate(instance);
+    }
+
+    public static Exceptional<ApplicationContext> createTestContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
         TypeContext<?> applicationActivator = TypeContext.of(activator);
 
         if (applicationActivator.annotation(Activator.class).absent()) {
@@ -143,47 +142,44 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         return Exceptional.of(context);
     }
 
-    public ApplicationFactory<?, ?> prepareFactory(final ExtensionContext context) throws Exception {
+    private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) throws Exception {
         ApplicationFactory<?, ?> applicationFactory = new TestApplicationFactory()
                 .loadDefaults()
                 .applicationFSProvider(new JUnitFSProvider())
-                .componentLocator(applicationContext -> this.getComponentLocator(applicationContext, context));
+                .componentLocator(applicationContext -> this.getComponentLocator(applicationContext, testComponentSources));
 
+        final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
+        for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
+            if (!factoryModifier.has(AccessModifier.STATIC)) {
+                throw new IllegalStateException("Factory modifiers must be static");
+            }
+            if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
 
-        if (context.getTestClass().isPresent()) {
-            final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(context.getTestClass().get()).methods(HartshornFactory.class);
-            for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
-                if (!factoryModifier.has(AccessModifier.STATIC)) {
-                    throw new IllegalStateException("Factory modifiers must be static");
+                final Method jlrMethod = factoryModifier.method();
+                if (!jlrMethod.canAccess(null)) jlrMethod.setAccessible(true);
+
+                final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
+                if (parameters.isEmpty()) {
+                    applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
                 }
-                if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
-
-                    final Method jlrMethod = factoryModifier.method();
-                    if (!jlrMethod.canAccess(null)) jlrMethod.setAccessible(true);
-
-                    final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
-                    if (parameters.isEmpty()) {
-                        applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
-                    }
-                    else if (parameters.get(0).childOf(ApplicationFactory.class)) {
-                        applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
-                    }
-                    else {
-                        throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
-                    }
-
-                    jlrMethod.setAccessible(false);
+                else if (parameters.get(0).childOf(ApplicationFactory.class)) {
+                    applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
                 }
                 else {
-                    throw new IllegalStateException("Invalid return type for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + factoryModifier.returnType().name());
+                    throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
                 }
+
+                jlrMethod.setAccessible(false);
+            }
+            else {
+                throw new IllegalStateException("Invalid return type for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + factoryModifier.returnType().name());
             }
         }
 
         return applicationFactory;
     }
 
-    private ComponentLocator getComponentLocator(final ApplicationContext applicationContext, final ExtensionContext context) {
+    private ComponentLocator getComponentLocator(final ApplicationContext applicationContext, final AnnotatedElement... testComponentSources) {
         final ComponentLocator componentLocator = new ComponentLocatorImpl(applicationContext);
 
         ((TestApplicationContext) applicationContext).addActivator(new ServiceImpl());
@@ -201,13 +197,12 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
             }
         };
 
-        Exceptional.of(context.getTestMethod()).map(MethodContext::of)
-                .flatMap(method -> method.annotation(TestComponents.class))
-                .present(testComponentsConsumer);
-
-        Exceptional.of(context.getTestClass()).map(TypeContext::of)
-                .flatMap(method -> method.annotation(TestComponents.class))
-                .present(testComponentsConsumer);
+        for (final AnnotatedElement testComponentSource : testComponentSources) {
+            if (testComponentSource == null) continue;
+            if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
+                testComponentsConsumer.accept(testComponentSource.getAnnotation(TestComponents.class));
+            }
+        }
 
         return componentLocator;
     }
