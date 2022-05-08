@@ -45,10 +45,7 @@ public interface ApplicationContext extends
         ExceptionHandler,
         ApplicationLogger,
         ActivatorHolder,
-        Closeable
-{
-
-    <T> T populate(T type);
+        Closeable {
 
     void add(ComponentProcessor<?> processor);
 

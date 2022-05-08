@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
@@ -26,8 +27,11 @@ import java.lang.annotation.Annotation;
 public abstract class FunctionalComponentPostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        return ComponentPostProcessor.super.preconditions(context, key, instance)
-                && context.locator().container(key.type()).get().componentType() == ComponentType.FUNCTIONAL;
+    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+        final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
+        if (container.componentType() != ComponentType.FUNCTIONAL) {
+            return false;
+        }
+        return ComponentPostProcessor.super.preconditions(context, key, instance, processingContext);
     }
 }

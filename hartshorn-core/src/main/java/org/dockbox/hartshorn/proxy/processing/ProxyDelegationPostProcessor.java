@@ -31,7 +31,7 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
     protected abstract Class<P> parentTarget();
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return key.type().childOf(this.parentTarget());
     }
 

@@ -160,17 +160,17 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         // See ServiceOrder#PHASE_2
         if (doProcess) this.process(key, instance, ProcessingOrder.PHASE_2, false, processingContext);
 
-        if (container.permitsProxying()) {
-            instance = this.finalize(key, instance, processingContext);
-        }
-
-        instance = this.applicationContext().populate(instance);
+        // Finalize the instance during phase 3. This allows discarding the existing instance, but expects the state of the instance to be final.
+        // See ServiceOrder#PHASE_3
+        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_3, true, processingContext);
 
         return instance;
     }
 
     protected <T> ComponentProcessingContext prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
         final ComponentProcessingContext processingContext = new ComponentProcessingContext(this.applicationContext());
+        processingContext.put(Key.of(ComponentContainer.class), container);
+
         if (container.permitsProxying()) {
             final StateAwareProxyFactory<T, ?> factory = this.applicationContext().environment().manager().factory(key.type());
 
@@ -206,7 +206,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         for (final Integer priority : this.postProcessors.keySet()) {
             if (orders.test(priority)) {
                 for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(priority)) {
-                    if (postProcessor.preconditions(this.applicationContext(), key, result)) {
+                    if (postProcessor.preconditions(this.applicationContext(), key, result, processingContext)) {
                         final T modified = postProcessor.process(this.applicationContext(), key, result, processingContext);
                         if (modifiable) result = modified;
                         else if (!modifiable && modified != instance) {
@@ -218,13 +218,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
             }
         }
         return result;
-    }
-
-    protected <T> T populateAndStore(final Key<T> key, final T instance) {
-        this.storeSingletons(key, instance);
-        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
-        // points to apply correctly
-        return this.applicationContext().populate(instance);
     }
 
     protected <T> void storeSingletons(final Key<T> key, final T instance) {

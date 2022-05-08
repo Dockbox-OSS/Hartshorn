@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -29,7 +30,7 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation, A extends Annotation> extends FunctionalComponentPostProcessor<A> {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return !key.type().methods(this.annotation()).isEmpty();
     }
 

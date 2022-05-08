@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.inject.Key;
@@ -39,7 +40,7 @@ import java.util.Collection;
 public class ConfigurationComponentPostProcessor implements ComponentPostProcessor<UseConfigurations> {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return !key.type().fields(Value.class).isEmpty();
     }
 

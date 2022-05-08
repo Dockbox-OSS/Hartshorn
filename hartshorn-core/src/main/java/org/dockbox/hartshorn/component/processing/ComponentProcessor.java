@@ -73,23 +73,29 @@ public interface ComponentProcessor<A extends Annotation> extends ActivatorFilte
      * @param <T> The type of the component.
      * @return True if the processor should be called, false otherwise.
      */
-    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        return context.locator().container(key.type()).present() && this.modifies(context, key, instance);
+    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+        return processingContext.get(Key.of(ComponentContainer.class)) != null && this.modifies(context, key, instance, processingContext);
     }
 
     /**
      * Determines whether the component processor should be called for the given component. This method
-     * will only be called if the preconditions of {@link #preconditions(ApplicationContext, Key, Object)}
-     * are met, assuming the {@link #preconditions(ApplicationContext, Key, Object)} are not modified
+     * will only be called if the preconditions of {@link #preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)}
+     * are met, assuming the {@link #preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)} are not modified
      * by the implementing class.
      *
-     * @param context The application context.
-     * @param key The key of the component.
-     * @param instance The instance of the component.
-     * @param <T> The type of the component.
+     * @param <T>
+     *         The type of the component.
+     * @param context
+     *         The application context.
+     * @param key
+     *         The key of the component.
+     * @param instance
+     *         The instance of the component.
+     * @param processingContext
+     *
      * @return <code>true</code> if the component processor modifies the component, <code>false</code>
-     * otherwise.
+     *         otherwise.
      */
-    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance);
+    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, final ComponentProcessingContext processingContext);
 
 }
