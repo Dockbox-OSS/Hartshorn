@@ -38,7 +38,7 @@ public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> ext
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(context, key, instance);
 
         final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));

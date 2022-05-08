@@ -59,7 +59,7 @@ public class HartshornApplicationProxier implements ApplicationProxier, Applicat
         if (instance instanceof Proxy proxy) {
             return Exceptional.of(proxy.manager());
         }
-        return null;
+        return Exceptional.empty();
     }
 
     @Override

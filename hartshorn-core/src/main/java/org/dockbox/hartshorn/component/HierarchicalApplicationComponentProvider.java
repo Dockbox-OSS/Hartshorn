@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
@@ -35,6 +36,7 @@ import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
+import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -46,7 +48,6 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
 import javax.inject.Inject;
 
@@ -148,27 +149,21 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     protected <T> T process(final Key<T> key, T instance, final ComponentContainer container) {
         final boolean doProcess = container.permitsProcessing();
 
-        final ComponentProcessingContext processingContext = this.prepareProcessingContext(key, instance, container);
+        final ComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, instance, container);
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
-        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_1, true, processingContext);
-
-        this.storeSingletons(key, instance);
+        if (doProcess) instance = this.process(key, instance, ProcessingOrder.INITIALIZING, processingContext);
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
-        if (doProcess) this.process(key, instance, ProcessingOrder.PHASE_2, false, processingContext);
-
-        // Finalize the instance during phase 3. This allows discarding the existing instance, but expects the state of the instance to be final.
-        // See ServiceOrder#PHASE_3
-        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_3, true, processingContext);
+        if (doProcess) instance = this.process(key, instance, ProcessingOrder.MODIFYING, processingContext);
 
         return instance;
     }
 
-    protected <T> ComponentProcessingContext prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
-        final ComponentProcessingContext processingContext = new ComponentProcessingContext(this.applicationContext());
+    protected <T> ComponentProcessingContext<T> prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
+        final ComponentProcessingContext<T> processingContext = new ComponentProcessingContext(this.applicationContext());
         processingContext.put(Key.of(ComponentContainer.class), container);
 
         if (container.permitsProxying()) {
@@ -184,7 +179,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return processingContext;
     }
 
-    protected <T> T finalize(final Key<T> key, final T instance, final ComponentProcessingContext context) {
+    protected <T> T finalize(final Key<T> key, final T instance, final ComponentProcessingContext<T> context) {
         if (context.containsKey(Key.of(ProxyFactory.class))) {
             final ProxyFactory<T, ?> factory = context.get(Key.of(ProxyFactory.class));
             try {
@@ -201,22 +196,40 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return instance;
     }
 
-    protected <T> T process(final Key<T> key, final T instance, final Predicate<Integer> orders, final boolean modifiable, final ComponentProcessingContext processingContext) {
+    protected <T> T process(final Key<T> key, final T instance, final ProcessingPhase phase, final ComponentProcessingContext<T> processingContext) {
         T result = instance;
+        processingContext.phase(phase);
+
         for (final Integer priority : this.postProcessors.keySet()) {
-            if (orders.test(priority)) {
+            if (phase.test(priority)) {
                 for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(priority)) {
+
                     if (postProcessor.preconditions(this.applicationContext(), key, result, processingContext)) {
                         final T modified = postProcessor.process(this.applicationContext(), key, result, processingContext);
-                        if (modifiable) result = modified;
-                        else if (!modifiable && modified != instance) {
+
+                        if (processingContext.phase() != phase) {
+                            throw new IllegalStateException("Post-processor " + postProcessor + " changed the processing phase from " + processingContext.phase() + " to " + phase);
+                        }
+
+                        checkForIllegalModification:
+                        if (instance != modified) {
+                            if (modified instanceof Proxy) {
+                                final Proxy<T> proxy = (Proxy<T>) modified;
+                                final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
+
+                                if (delegateMatches)
+                                    break checkForIllegalModification;
+                            }
                             throw new IllegalStateException(("Component %s was modified during phase with priority %s by %s. " +
                                     "Component processors are only able to discard existing instances in phases with priority < 0").formatted(key.type().name(), priority, TypeContext.of(postProcessor).name()));
                         }
+
+                        result = modified;
                     }
                 }
             }
         }
+        this.storeSingletons(key, result);
         return result;
     }
 

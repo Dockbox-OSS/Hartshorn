@@ -58,7 +58,7 @@ public interface ComponentProcessor<A extends Annotation> extends ActivatorFilte
      */
     <T> T process(ApplicationContext context, Key<T> key, @Nullable T instance);
 
-    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         return this.process(context, key, instance);
     }
 
@@ -73,7 +73,7 @@ public interface ComponentProcessor<A extends Annotation> extends ActivatorFilte
      * @param <T> The type of the component.
      * @return True if the processor should be called, false otherwise.
      */
-    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         return processingContext.get(Key.of(ComponentContainer.class)) != null && this.modifies(context, key, instance, processingContext);
     }
 
@@ -96,6 +96,6 @@ public interface ComponentProcessor<A extends Annotation> extends ActivatorFilte
      * @return <code>true</code> if the component processor modifies the component, <code>false</code>
      *         otherwise.
      */
-    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, final ComponentProcessingContext processingContext);
+    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, final ComponentProcessingContext<T> processingContext);
 
 }

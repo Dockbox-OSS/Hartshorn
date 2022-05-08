@@ -27,12 +27,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-public class ComponentProcessingContext extends DefaultCarrierContext {
+public class ComponentProcessingContext<O> extends DefaultCarrierContext {
 
+    private ProcessingPhase phase;
     private final Map<Key<?>, Object> data = new ConcurrentHashMap<>();
 
     public ComponentProcessingContext(final ApplicationContext applicationContext) {
         super(applicationContext);
+    }
+
+    public ProcessingPhase phase() {
+        return this.phase;
+    }
+
+    public ComponentProcessingContext phase(final ProcessingPhase phase) {
+        this.phase = phase;
+        return this;
     }
 
     public int size() {

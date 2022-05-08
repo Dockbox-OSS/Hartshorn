@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
 public abstract class FunctionalComponentPostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
         if (container.componentType() != ComponentType.FUNCTIONAL) {
             return false;

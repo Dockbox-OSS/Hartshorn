@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import java.util.function.Predicate;
-
 public class ProcessingOrder {
 
     public static final int FIRST = -256;
@@ -31,20 +29,13 @@ public class ProcessingOrder {
      * processors are allowed to discard existing instances and return new ones. This can be used to
      * create proxy instances.
      */
-    public static final Predicate<Integer> PHASE_1 = i -> i < 0;
+    public static final ProcessingPhase INITIALIZING = new ProcessingPhase("Initializing", i -> i < 0, true);
 
     /**
      * Indicates which service orders can be performed during phase 2. During this phase, component
      * processors are not allowed to discard existing instances and return new ones. This limits the
      * behavior of these processors to only return the same instance, albeit with different state.
      */
-    public static final Predicate<Integer> PHASE_2 = i -> i >= 0 && i < Integer.MAX_VALUE / 2;
+    public static final ProcessingPhase MODIFYING = new ProcessingPhase("Modifying", i -> i >= 0, false);
 
-    /**
-     * Indicates which service orders can be performed during phase 3. During this phase, component
-     * processors are expected to finalize the state of the instance. This can be used to perform
-     * any finalization tasks. This allows the component processor to return a new instance, but the
-     * new instance is expected to carry the same state as the old instance.
-     */
-    public static final Predicate<Integer> PHASE_3 = i -> i >= Integer.MAX_VALUE / 2;
 }
