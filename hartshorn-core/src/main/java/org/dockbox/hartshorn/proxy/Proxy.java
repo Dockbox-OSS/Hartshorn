@@ -24,10 +24,10 @@ package org.dockbox.hartshorn.proxy;
  * @author Guus Lieben
  * @since 22.2
  */
-public interface Proxy {
+public interface Proxy<T> {
     /**
      * Returns the {@link ProxyManager} that is responsible for this proxy.
      * @return the {@link ProxyManager} that is responsible for this proxy
      */
-    ProxyManager manager();
+    ProxyManager<T> manager();
 }

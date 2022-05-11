@@ -364,11 +364,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     }
 
     @Override
-    public <T> T populate(final T type) {
-        return this.componentPopulator.populate(type);
-    }
-
-    @Override
     public <T> T invoke(final MethodContext<T, ?> method) {
         return this.invoke((MethodContext<? extends T, Object>) method, this.get(method.parent()));
     }

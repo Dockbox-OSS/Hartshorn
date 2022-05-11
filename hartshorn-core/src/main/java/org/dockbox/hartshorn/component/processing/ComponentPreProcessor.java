@@ -48,7 +48,7 @@ import java.lang.annotation.Annotation;
 public interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {
 
     @Override
-    default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+    default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         throw new UnsupportedOperationException("Component pre-processor does not support instance processing, use modifies(ApplicationContext, Key) instead.");
     }
 
@@ -65,8 +65,8 @@ public interface ComponentPreProcessor<A extends Annotation> extends ComponentPr
      * @param key The type context of the component.
      * @return <code>true</code> if the component pre-processor modifies the component, <code>false</code>
      * otherwise.
-     * @see ComponentProcessor#modifies(ApplicationContext, Key, Object)
-     * @see ComponentProcessor#preconditions(ApplicationContext, Key, Object)
+     * @see ComponentProcessor#modifies(ApplicationContext, Key, Object, ComponentProcessingContext)
+     * @see ComponentProcessor#preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)
      */
     boolean modifies(ApplicationContext context, Key<?> key);
 

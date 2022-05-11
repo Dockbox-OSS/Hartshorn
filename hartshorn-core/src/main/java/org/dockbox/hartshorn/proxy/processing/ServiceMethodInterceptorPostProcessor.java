@@ -38,7 +38,7 @@ public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final TypeContext<T> type = key.type();
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
