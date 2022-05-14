@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.jms.annotations.UseActiveMQ;
 
 import javax.jms.ConnectionFactory;
 
-@Service(activators = UseActiveMQ.class)
+@Service(activators = UseActiveMQ.class, requires = "org.apache.activemq.ActiveMQConnectionFactory")
 public class ActiveMQProviders {
 
     @Value("hartshorn.jms.url")
