@@ -203,7 +203,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this;
     }
 
-    protected ObjectMapper configureMapper() {
+    public ObjectMapper configureMapper() {
         if (null == this.objectMapper) {
             this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
             final MapperBuilder<?, ?> builder = this.mapper(this.fileType());

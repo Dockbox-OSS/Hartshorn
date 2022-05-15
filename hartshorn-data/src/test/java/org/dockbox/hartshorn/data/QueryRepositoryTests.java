@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.objects.JpaUser;
 import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
@@ -37,6 +38,7 @@ import javax.persistence.TransactionRequiredException;
 
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
+@UseConfigurations
 @HartshornTest
 public class QueryRepositoryTests {
 

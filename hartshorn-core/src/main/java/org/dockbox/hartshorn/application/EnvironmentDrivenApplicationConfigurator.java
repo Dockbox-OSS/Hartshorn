@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Set;
 
@@ -78,9 +78,7 @@ public class EnvironmentDrivenApplicationConfigurator implements ApplicationConf
                 .property(property)
                 .map(value -> {
                     try {
-                        if (value instanceof String str)
-                            return TypeContext.toPrimitive(TypeContext.of(type), str);
-                        else return (T) value;
+                        return (T) TypeContext.toPrimitive(TypeContext.of(type), value);
                     } catch (final TypeConversionException e) {
                         throw new ApplicationException(e);
                     }

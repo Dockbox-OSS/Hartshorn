@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data;
 
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
@@ -112,7 +113,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testNormalValuesAreAccessible() {
-        this.applicationContext.property("demo", "Hartshorn");
+        this.applicationContext.get(PropertyHolder.class).set("demo", "Hartshorn");
         final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.string());
@@ -121,7 +122,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testNestedValuesAreAccessible() {
-        this.applicationContext.property("nested.demo", "Hartshorn");
+        this.applicationContext.get(PropertyHolder.class).set("nested.demo", "Hartshorn");
         final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);

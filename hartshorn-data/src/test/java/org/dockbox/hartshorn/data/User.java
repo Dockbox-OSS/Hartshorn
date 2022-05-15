@@ -27,6 +27,7 @@ public class User {
     @GeneratedValue
     private long id;
     private String name;
+    @SuppressWarnings("JpaAttributeTypeInspection") private Address address;
 
     public User() {
     }

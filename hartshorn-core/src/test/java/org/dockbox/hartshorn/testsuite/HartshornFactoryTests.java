@@ -31,7 +31,7 @@ public class HartshornFactoryTests {
 
     @InjectTest
     void testFactoryWasModified(final ApplicationContext applicationContext) {
-        final Exceptional<Object> property = applicationContext.property("factory.modified");
+        final Exceptional<String> property = applicationContext.property("factory.modified");
         Assertions.assertTrue(property.present());
         Assertions.assertEquals("true", property.get());
     }

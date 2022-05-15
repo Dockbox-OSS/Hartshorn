@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.hibernate.dialect.Dialect;
 
 import javax.inject.Inject;
@@ -34,13 +34,13 @@ public class HibernateRemoteImpl implements HibernateRemote {
     private final String url;
 
     @Inject
-    public HibernateRemoteImpl(final ApplicationContext context) {
-        final Exceptional<String> remoteType = context.property("hartshorn.data.remote");
+    public HibernateRemoteImpl(final PropertyHolder propertyHolder) {
+        final Exceptional<String> remoteType = propertyHolder.get("hartshorn.data.remote");
 
-        this.driver = (String) context.property("hartshorn.data.hibernate.driver_class").orNull();
+        this.driver = (String) propertyHolder.get("hartshorn.data.hibernate.driver_class").orNull();
         if (this.driver == null) throw new IllegalStateException("Driver class was not configured, expected hartshorn.data.hibernate.driver_class or hartshorn.data.remote to be set, but got null");
 
-        final String dialect = (String) context.property("hartshorn.data.hibernate.dialect").orNull();
+        final String dialect = (String) propertyHolder.get("hartshorn.data.hibernate.dialect").orNull();
         if (dialect == null) throw new IllegalStateException("Dialect was not configured, expected hartshorn.data.hibernate.dialect or hartshorn.data.remote to be set, but got null");
 
         final TypeContext<?> dialectContext = TypeContext.lookup(dialect);
@@ -48,10 +48,10 @@ public class HibernateRemoteImpl implements HibernateRemote {
 
         this.dialect = (Class<? extends Dialect>) dialectContext.type();
 
-        this.username = (String) context.property("hartshorn.data.username").orNull();
-        this.password = (String) context.property("hartshorn.data.password").orNull();
+        this.username = (String) propertyHolder.get("hartshorn.data.username").orNull();
+        this.password = (String) propertyHolder.get("hartshorn.data.password").orNull();
 
-        this.url = (String) context.property("hartshorn.data.url").orNull();
+        this.url = (String) propertyHolder.get("hartshorn.data.url").orNull();
         if (this.url == null) throw new IllegalStateException("Connection string was not configured, expected hartshorn.data.url to be set, but got null");
     }
 

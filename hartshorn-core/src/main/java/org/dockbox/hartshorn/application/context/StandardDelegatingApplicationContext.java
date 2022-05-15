@@ -66,8 +66,6 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Queue;
@@ -76,7 +74,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
@@ -85,13 +82,12 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         HierarchicalComponentProvider {
 
     public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
-
     private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient MultiMap<Integer, ComponentPreProcessor<?>> preProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
     protected final transient Queue<String> prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
-    protected final transient Properties environmentValues = new Properties();
 
+    protected final transient Properties environmentValues;
     private final transient StandardComponentProvider componentProvider;
 
     private final Set<StartupModifiers> modifiers;
@@ -114,6 +110,8 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
                                                 final Set<String> args,
                                                 final Set<StartupModifiers> modifiers) {
 
+        this.environmentValues = this.parseProperties(args);
+
         this.componentProvider = new HierarchicalApplicationComponentProvider(this);
         this.componentPopulator = new ContextualComponentPopulator(this);
 
@@ -128,14 +126,21 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
 
-        this.populateArguments(args);
-
         this.modifiers = modifiers;
         this.locator = componentLocator.apply(this);
         this.resourceLocator = resourceLocator.apply(this);
         this.metaProvider = metaProvider.apply(this);
 
         this.registerDefaultBindings();
+    }
+
+    protected Properties parseProperties(final Set<String> args) {
+        final Properties properties = new Properties();
+        for (final String arg : args) {
+            final Matcher matcher = ARGUMENTS.matcher(arg);
+            if (matcher.find()) properties.put(matcher.group(1), matcher.group(2));
+        }
+        return properties;
     }
 
     protected void registerDefaultBindings() {
@@ -161,6 +166,16 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         this.bind(LifecycleObservable.class).singleton(this.environment().manager());
 
         this.bind(Logger.class).to(this::log);
+    }
+
+    @Override
+    public Properties properties() {
+        return this.environmentValues;
+    }
+
+    @Override
+    public Exceptional<String> property(final String key) {
+        return Exceptional.of(this.environmentValues.get(key)).map(String::valueOf);
     }
 
     @Override
@@ -242,60 +257,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
                     serviceProcessor.process(this, key);
                 }
             }
-        }
-    }
-
-    @Override
-    public <T> Exceptional<T> property(final String key) {
-        return Exceptional.of(() -> (T) this.environmentValues.getOrDefault(key, System.getenv(key)));
-    }
-
-    @Override
-    public <T> Exceptional<Collection<T>> properties(final String key) {
-        // List values are stored as key[0], key[1], ...
-        // We use regex to match this pattern, so we can restore the collection
-        final String regex = key + "\\[[0-9]+]";
-        final List<T> properties = this.environmentValues.entrySet().stream()
-                .filter(e -> {
-                    final String k = (String) e.getKey();
-                    return k.matches(regex);
-                })
-                // Sort the collection using the key, as these are formatted to contain the index this means we
-                // restore the original order of the collection.
-                .sorted(Comparator.comparing(e -> (String) e.getKey()))
-                .map(Entry::getValue)
-                .map(v -> (T) v)
-                .collect(Collectors.toList());
-
-        if (properties.isEmpty()) return Exceptional.empty();
-        return Exceptional.of(properties);
-    }
-
-    @Override
-    public boolean hasProperty(final String key) {
-        return this.property(key).present();
-    }
-
-    @Override
-    public <T> void property(final String key, final T value) {
-        this.environmentValues.put(key, value);
-    }
-
-    @Override
-    public void properties(final Map<String, Object> tree) {
-        for (final Entry<String, Object> entry : tree.entrySet())
-            this.property(entry.getKey(), entry.getValue());
-    }
-
-    @Override
-    public Properties properties() {
-        return this.environmentValues;
-    }
-
-    private void populateArguments(final Set<String> args) {
-        for (final String arg : args) {
-            final Matcher matcher = ARGUMENTS.matcher(arg);
-            if (matcher.find()) this.property(matcher.group(1), matcher.group(2));
         }
     }
 

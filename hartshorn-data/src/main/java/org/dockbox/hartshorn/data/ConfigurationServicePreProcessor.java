@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data;
 
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
 import java.io.File;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +38,7 @@ import java.util.regex.Pattern;
 
 /**
  * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
- * properties to {@link ApplicationContext#property(String, Object)}. To support different file sources
+ * properties to {@link PropertyHolder#set(String, Object)}. To support different file sources
  * {@link ResourceLookupStrategy strategies} are used. Each strategy is able to define behavior specific to sources
  * defined with its name. Strategies can be indicated in the {@link Configuration#value()} of a {@link Configuration}
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
@@ -114,10 +116,12 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor<U
 
             final Map<String, Object> cache = context.get(ObjectMapper.class)
                     .fileType(format)
-                    .flat(uri);
+                    .read(uri, Map.class)
+                    .orElse(HashMap::new)
+                    .get();
 
             context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
-            context.properties(cache);
+            context.get(PropertyHolder.class).set(cache);
         }
         return true;
     }
