@@ -9,6 +9,7 @@ import org.dockbox.hartshorn.util.GenericType;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,7 +54,20 @@ public class StandardPropertyHolder implements PropertyHolder {
                     .flatMap(serialized -> this.objectMapper.read(serialized, type));
         }
         else {
-            return Exceptional.of(value).map(o -> (T) o);
+            return Exceptional.of(value).map(o -> (T) o).map(this::copyOf);
+        }
+    }
+
+    private <T> T copyOf(final T value) {
+        if (value instanceof Collection collection) {
+            return (T) new ArrayList<>(collection);
+        }
+        else if (value instanceof Map map) {
+            return (T) new LinkedHashMap<>(map);
+        }
+        else {
+            // Primitive or String
+            return value;
         }
     }
 
