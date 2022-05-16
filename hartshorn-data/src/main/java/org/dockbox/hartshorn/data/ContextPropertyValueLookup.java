@@ -16,12 +16,9 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.util.Exceptional;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -29,15 +26,10 @@ import javax.inject.Inject;
 public class ContextPropertyValueLookup implements ValueLookup {
 
     @Inject
-    private ApplicationContext applicationContext;
+    private PropertyHolder propertyHolder;
 
     @Override
-    public Exceptional<?> getValue(final String key) {
-        return this.applicationContext.property(key);
-    }
-
-    @Override
-    public Collection<?> getValues(final String key) {
-        return this.applicationContext.properties(key).orElse(ArrayList::new).get();
+    public <T> Exceptional<T> getValue(final String key, final Class<T> type) {
+        return this.propertyHolder.get(key, type);
     }
 }

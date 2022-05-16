@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
+import org.dockbox.hartshorn.data.config.StandardPropertyHolder;
 
 @Service(activators = UseConfigurations.class)
 @Configuration("application")
@@ -29,5 +31,10 @@ public class ConfigurationProviders {
     @Provider
     public ValueLookup valueLookup(final ApplicationContext applicationContext) {
         return applicationContext.get(ContextPropertyValueLookup.class);
+    }
+
+    @Provider
+    public PropertyHolder propertyHolder(final ApplicationContext applicationContext) {
+        return applicationContext.get(StandardPropertyHolder.class);
     }
 }

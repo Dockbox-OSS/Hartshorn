@@ -329,6 +329,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
         if (this.interfaceTypeParameters == null) {
             this.interfaceTypeParameters = new ArrayListMultiMap<>();
+        }
+
+        if (!this.interfaceTypeParameters.containsKey(superInterface)) {
             for (final Type genericSuper : this.type().getGenericInterfaces()) {
                 if (genericSuper instanceof ParameterizedType parameterized) {
                     final Type raw = parameterized.getRawType();
@@ -338,6 +341,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 }
             }
         }
+
         return List.copyOf(this.interfaceTypeParameters.get(superInterface));
     }
 

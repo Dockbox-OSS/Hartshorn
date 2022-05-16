@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.ExceptionHandler;
@@ -140,7 +141,8 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
         this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver, dialect));
 
-        this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) this.applicationContext().property("hibernate.hbm2ddl.auto").or("update"));
+        final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
+        this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto").or("update"));
         this.configuration.setProperty("hibernate.connection.driver_class", driver);
         this.configuration.setProperty("hibernate.dialect", dialect);
 
@@ -157,7 +159,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             this.configuration.addAnnotatedClass(entity.type());
         }
 
-        this.configuration.addProperties(this.applicationContext.properties());
+        this.configuration.addProperties(propertyHolder.properties());
 
         try {
             this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));

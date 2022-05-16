@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.data.annotations.Value;
 
-import java.util.Properties;
+@Component
+public class ComponentWithUserValue {
 
-/**
- * This class is used to store application properties.
- */
-public interface ApplicationPropertyHolder {
+    @Value("user")
+    private User user;
 
-    Properties properties();
-
-    /**
-     * Attempts to obtain a single configuration value from the given key. Configuration
-     * values can also represent system/environment variables.
-     *
-     * @param key The key used to look up the value
-     *
-     * @return The value if it exists, or {@link Exceptional#empty()}
-     */
-    Exceptional<String> property(String key);
+    public User user() {
+        return this.user;
+    }
 }

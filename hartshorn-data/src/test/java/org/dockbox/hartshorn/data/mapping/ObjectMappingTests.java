@@ -17,7 +17,8 @@
 package org.dockbox.hartshorn.data.mapping;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.data.Address;
+import org.dockbox.hartshorn.data.ComponentWithUserValue;
 import org.dockbox.hartshorn.data.Element;
 import org.dockbox.hartshorn.data.EntityElement;
 import org.dockbox.hartshorn.data.FileFormat;
@@ -25,10 +26,15 @@ import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.MultiElement;
 import org.dockbox.hartshorn.data.NestedElement;
 import org.dockbox.hartshorn.data.PersistentElement;
+import org.dockbox.hartshorn.data.User;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -39,7 +45,54 @@ import javax.inject.Inject;
 
 @HartshornTest
 @UsePersistence
+@UseConfigurations
 public class ObjectMappingTests {
+
+    @Test
+    void testPropertyHolder() {
+        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class);
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+
+        propertyHolder.set("user.name", "John Doe");
+
+        final Exceptional<User> user = propertyHolder.get("user", User.class);
+        Assertions.assertTrue(user.present());
+        Assertions.assertEquals("John Doe", user.get().name());
+
+        propertyHolder.set("user.address", new Address("Darwin City", "Darwin Street", 12));
+
+        final Exceptional<Address> address = propertyHolder.get("user.address", Address.class);
+        Assertions.assertTrue(address.present());
+        Assertions.assertEquals("Darwin City", address.get().city());
+        Assertions.assertEquals("Darwin Street", address.get().street());
+        Assertions.assertEquals(12, address.get().number());
+
+        propertyHolder.set("user.address.street", "Darwin Lane");
+
+        final Exceptional<Address> address2 = propertyHolder.get("user.address", Address.class);
+        Assertions.assertTrue(address2.present());
+        Assertions.assertEquals("Darwin City", address2.get().city());
+        Assertions.assertEquals("Darwin Lane", address2.get().street());
+        Assertions.assertEquals(12, address2.get().number());
+    }
+
+    @Test
+    void testValueComponents() {
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        propertyHolder.set("user.name", "John Doe");
+        propertyHolder.set("user.address.city", "Darwin City");
+        propertyHolder.set("user.address.street", "Darwin Lane");
+        propertyHolder.set("user.address.number", 12);
+
+        final ComponentWithUserValue component = this.applicationContext.get(ComponentWithUserValue.class);
+        Assertions.assertNotNull(component);
+        Assertions.assertNotNull(component.user());
+
+        Assertions.assertEquals("John Doe", component.user().name());
+        Assertions.assertEquals("Darwin City", component.user().address().city());
+        Assertions.assertEquals("Darwin Lane", component.user().address().street());
+        Assertions.assertEquals(12, component.user().address().number());
+    }
 
     @Inject
     private ApplicationContext applicationContext;

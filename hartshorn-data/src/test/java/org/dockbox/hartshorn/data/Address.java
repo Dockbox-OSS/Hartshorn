@@ -14,26 +14,37 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
-import java.util.Properties;
+@Entity
+public class Address {
 
-/**
- * This class is used to store application properties.
- */
-public interface ApplicationPropertyHolder {
+    private String street;
+    private String city;
+    @Id
+    private int number;
 
-    Properties properties();
+    public Address(final String city, final String street, final int number) {
+        this.street = street;
+        this.city = city;
+        this.number = number;
+    }
 
-    /**
-     * Attempts to obtain a single configuration value from the given key. Configuration
-     * values can also represent system/environment variables.
-     *
-     * @param key The key used to look up the value
-     *
-     * @return The value if it exists, or {@link Exceptional#empty()}
-     */
-    Exceptional<String> property(String key);
+    public Address() {
+    }
+
+    public String street() {
+        return this.street;
+    }
+
+    public String city() {
+        return this.city;
+    }
+
+    public int number() {
+        return this.number;
+    }
 }
