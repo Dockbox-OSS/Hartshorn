@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity(name = "users")
 public class User {
@@ -27,7 +28,9 @@ public class User {
     @GeneratedValue
     private long id;
     private String name;
-    @SuppressWarnings("JpaAttributeTypeInspection") private Address address;
+
+    @Transient // Exclude from JPA, but not from object mapping
+    private Address address;
 
     public User() {
     }
@@ -42,6 +45,10 @@ public class User {
 
     public String name() {
         return this.name;
+    }
+
+    public Address address() {
+        return this.address;
     }
 
     public User name(final String name) {

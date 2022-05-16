@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.data.mapping;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.Address;
+import org.dockbox.hartshorn.data.ComponentWithUserValue;
 import org.dockbox.hartshorn.data.Element;
 import org.dockbox.hartshorn.data.EntityElement;
 import org.dockbox.hartshorn.data.FileFormat;
@@ -73,6 +74,24 @@ public class ObjectMappingTests {
         Assertions.assertEquals("Darwin City", address2.get().city());
         Assertions.assertEquals("Darwin Lane", address2.get().street());
         Assertions.assertEquals(12, address2.get().number());
+    }
+
+    @Test
+    void testValueComponents() {
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        propertyHolder.set("user.name", "John Doe");
+        propertyHolder.set("user.address.city", "Darwin City");
+        propertyHolder.set("user.address.street", "Darwin Lane");
+        propertyHolder.set("user.address.number", 12);
+
+        final ComponentWithUserValue component = this.applicationContext.get(ComponentWithUserValue.class);
+        Assertions.assertNotNull(component);
+        Assertions.assertNotNull(component.user());
+
+        Assertions.assertEquals("John Doe", component.user().name());
+        Assertions.assertEquals("Darwin City", component.user().address().city());
+        Assertions.assertEquals("Darwin Lane", component.user().address().street());
+        Assertions.assertEquals(12, component.user().address().number());
     }
 
     @Inject
