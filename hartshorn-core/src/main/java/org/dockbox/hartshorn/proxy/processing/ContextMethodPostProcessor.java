@@ -16,21 +16,14 @@
 
 package org.dockbox.hartshorn.proxy.processing;
 
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.proxy.UseProxying;
-import org.dockbox.hartshorn.proxy.Provided;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.Provided;
+import org.dockbox.hartshorn.proxy.UseProxying;
 
-@AutomaticActivation
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided, UseProxying> {
-
-    @Override
-    public Class<UseProxying> activator() {
-        return UseProxying.class;
-    }
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {

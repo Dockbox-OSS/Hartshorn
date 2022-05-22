@@ -17,29 +17,22 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.proxy.ProxyCallback;
-import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.Transactional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.proxy.ProxyCallback;
+import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 import javax.persistence.EntityManager;
 
-@AutomaticActivation
 public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallbackPostProcessor<UsePersistence> {
-
-    @Override
-    public Class<UsePersistence> activator() {
-        return UsePersistence.class;
-    }
 
     @Override
     public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {

@@ -32,6 +32,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(processors = {
+        ProviderServicePreProcessor.class,
+        ComponentContextInjectionPreProcessor.class,
+})
 public @interface UseServiceProvision {
 }

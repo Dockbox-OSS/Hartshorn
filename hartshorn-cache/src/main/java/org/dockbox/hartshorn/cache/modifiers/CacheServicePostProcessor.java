@@ -85,9 +85,4 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return true;
     }
-
-    @Override
-    public Class<UseCaching> activator() {
-        return UseCaching.class;
-    }
 }

@@ -16,12 +16,7 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.DataStorageType;
@@ -30,11 +25,14 @@ import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.data.context.SerialisationContext;
 import org.dockbox.hartshorn.data.context.SerialisationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.nio.file.Path;
 
-@AutomaticActivation
 public class SerialisationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Serialise, SerialisationContext> {
 
     @Override

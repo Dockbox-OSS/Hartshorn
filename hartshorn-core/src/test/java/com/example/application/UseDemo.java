@@ -21,6 +21,9 @@ import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import java.lang.annotation.Retention;
 
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-@ServiceActivator(scanPackages = "com.example.application")
+@ServiceActivator(
+        scanPackages = "com.example.application",
+        processors = DemoProcessor.class
+)
 public @interface UseDemo {
 }

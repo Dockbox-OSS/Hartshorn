@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
  * @since 22.1
  * @param <A> The activator annotation type.
  */
-public interface ComponentProcessor<A extends Annotation> extends ActivatorFiltered<A>, OrderedComponentProcessor {
+public sealed interface ComponentProcessor<A extends Annotation> extends ActivatorFiltered<A>, OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 
     /**
      * Processes a given component. The given <code>instance</code> may be null, if the component could not

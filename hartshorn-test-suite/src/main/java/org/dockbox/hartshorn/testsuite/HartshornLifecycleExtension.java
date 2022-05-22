@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
+import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -43,8 +44,11 @@ import org.mockito.Mockito;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -163,6 +167,32 @@ public class HartshornLifecycleExtension implements
                 .loadDefaults()
                 .applicationFSProvider(new JUnitFSProvider())
                 .componentLocator(applicationContext -> this.getComponentLocator(applicationContext, testComponentSources));
+
+        final TypeContext<VirtualServiceActivator> virtualActivator = TypeContext.of(VirtualServiceActivator.class);
+        final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
+        elements.add(testClass);
+
+        final AnnotatedElementModifier<Class<VirtualServiceActivator>> modifier = AnnotatedElementModifier.of(virtualActivator);
+        modifier.clear();
+
+        final ServiceActivatorImpl serviceActivator = new ServiceActivatorImpl();
+        modifier.add(serviceActivator);
+
+        elements.stream().map(e -> {
+            if (e instanceof Class<?> clazz) {
+                return TypeContext.of(clazz);
+            }
+            else if (e instanceof Method method) {
+                return MethodContext.of(method);
+            }
+            return null;
+        }).filter(Objects::nonNull).forEach(context -> {
+            context.annotation(HartshornTest.class).present(annotation -> {
+                serviceActivator.addProcessors(annotation.processors());
+            });
+        });
+
+        applicationFactory.serviceActivator(new VirtualServiceActivator.Impl());
 
         final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
         for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {

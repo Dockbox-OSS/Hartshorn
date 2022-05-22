@@ -16,24 +16,22 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link UpdateCache}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to update specific {@link org.dockbox.hartshorn.cache.Cache caches}.
  */
-@AutomaticActivation
 public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<UpdateCache> {
 
     @Override

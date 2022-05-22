@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
+import org.dockbox.hartshorn.commands.service.ArgumentServicePreProcessor;
+import org.dockbox.hartshorn.commands.service.CommandParameters;
+import org.dockbox.hartshorn.commands.service.CommandServiceScanner;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
@@ -30,7 +33,11 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(processors = {
+        ArgumentServicePreProcessor.class,
+        CommandParameters.class,
+        CommandServiceScanner.class
+})
 @UseTranslations
 @UseEvents
 public @interface UseCommands {

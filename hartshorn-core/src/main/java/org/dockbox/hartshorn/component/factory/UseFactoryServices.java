@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.processing;
+package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Annotation used to indicate a {@link ComponentProcessor} can be registered
- * automatically when detected on the classpath. This indicates the processor does not need to be registered manually.
- *
- * @see ApplicationFactory#serviceActivator(Annotation)
- * @see ComponentProcessor
- * @author Guus Lieben
- * @since 21.9
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface AutomaticActivation {
-    boolean value() default true;
+@ServiceActivator(processors = {
+        FactoryServicePostProcessor.class,
+        FactoryServicePreProcessor.class,
+})
+@UseServiceProvision
+public @interface UseFactoryServices {
 }

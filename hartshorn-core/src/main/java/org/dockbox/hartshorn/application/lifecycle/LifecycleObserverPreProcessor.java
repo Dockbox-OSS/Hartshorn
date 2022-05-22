@@ -17,18 +17,11 @@
 package org.dockbox.hartshorn.application.lifecycle;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 
-@AutomaticActivation
 public class LifecycleObserverPreProcessor implements ServicePreProcessor<UseBootstrap> {
-
-    @Override
-    public Class<UseBootstrap> activator() {
-        return UseBootstrap.class;
-    }
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

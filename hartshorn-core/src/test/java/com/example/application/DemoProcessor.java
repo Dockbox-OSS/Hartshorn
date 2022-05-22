@@ -16,16 +16,14 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.Key;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-@AutomaticActivation
 public class DemoProcessor implements ComponentPreProcessor<UseDemo> {
 
     @Inject
@@ -40,11 +38,6 @@ public class DemoProcessor implements ComponentPreProcessor<UseDemo> {
 
     public Demo demo() {
         return this.demo;
-    }
-
-    @Override
-    public Class<UseDemo> activator() {
-        return UseDemo.class;
     }
 
     @Override

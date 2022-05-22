@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.processing;
+package org.dockbox.hartshorn.testsuite;
+
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
 import java.lang.annotation.Annotation;
 
-/**
- * An interface which can be used to indicate an activator is required for the implementing
- * class.
- *
- * @param <A> The annotation which is used to indicate the activator.
- *
- * @author Guus Lieben
- * @since 22.1
- * @see ComponentPreProcessor
- * @see ComponentPostProcessor
- */
-public interface ActivatorFiltered<A extends Annotation> {
+@ServiceActivator
+public @interface VirtualServiceActivator {
+
+    class Impl implements VirtualServiceActivator {
+        @Override
+        public Class<? extends Annotation> annotationType() {
+            return VirtualServiceActivator.class;
+        }
+    }
 }

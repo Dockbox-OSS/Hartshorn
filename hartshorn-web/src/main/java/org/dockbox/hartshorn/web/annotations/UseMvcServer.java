@@ -17,15 +17,18 @@
 package org.dockbox.hartshorn.web.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.web.mvc.MvcControllerPreProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ServiceActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UseHttpServer
+@ServiceActivator(processors = {
+        MvcControllerPreProcessor.class
+})
 public @interface UseMvcServer {
 }

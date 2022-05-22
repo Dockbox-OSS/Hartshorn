@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
+import org.dockbox.hartshorn.inject.Key;
 
-@AutomaticActivation
 public class EventServicePreProcessor implements ServicePreProcessor<UseEvents> {
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {
@@ -33,10 +31,5 @@ public class EventServicePreProcessor implements ServicePreProcessor<UseEvents> 
     @Override
     public <T> void process(final ApplicationContext context, final Key<T> key) {
         context.get(EventBus.class).subscribe(key);
-    }
-
-    @Override
-    public Class<UseEvents> activator() {
-        return UseEvents.class;
     }
 }

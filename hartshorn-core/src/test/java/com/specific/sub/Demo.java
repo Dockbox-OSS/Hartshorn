@@ -23,7 +23,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ServiceActivator(scanPackages = "com.specific")
+@ServiceActivator(
+        scanPackages = "com.specific",
+        processors = DemoServicePreProcessor.class
+)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Demo {

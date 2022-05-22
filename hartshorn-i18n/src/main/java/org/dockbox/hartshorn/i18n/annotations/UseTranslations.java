@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.i18n.annotations;
 
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.i18n.services.LanguageProviderServicePreProcessor;
+import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +28,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(processors = {
+        LanguageProviderServicePreProcessor.class,
+        TranslationInjectPostProcessor.class,
+})
 @UseConfigurations
 public @interface UseTranslations {
 }

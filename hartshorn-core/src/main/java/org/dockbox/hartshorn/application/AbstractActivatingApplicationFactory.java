@@ -115,7 +115,6 @@ public abstract class AbstractActivatingApplicationFactory<
             configurator.bind(manager, prefix);
 
         applicationContext.processPrefixQueue();
-        applicationContext.lookupActivatables();
 
         this.componentPreProcessors.forEach(applicationContext::add);
         applicationContext.process();

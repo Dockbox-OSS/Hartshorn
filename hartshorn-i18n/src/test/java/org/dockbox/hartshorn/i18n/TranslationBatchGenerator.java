@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.application.HartshornApplicationFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
 import org.dockbox.hartshorn.testsuite.HartshornLifecycleExtension;
@@ -190,7 +189,6 @@ public final class TranslationBatchGenerator {
         return batch;
     }
 
-    @AutomaticActivation(false)
     private static class KeyGen extends TranslationInjectPostProcessor {
 
         private static final KeyGen INSTANCE = new KeyGen();

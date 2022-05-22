@@ -16,14 +16,12 @@
 
 package com.specific.sub;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
+import org.dockbox.hartshorn.inject.Key;
 
 import javax.inject.Singleton;
 
-@AutomaticActivation
 @Singleton
 public class DemoServicePreProcessor implements ServicePreProcessor<Demo> {
 
@@ -42,10 +40,5 @@ public class DemoServicePreProcessor implements ServicePreProcessor<Demo> {
     public <T> void process(final ApplicationContext context, final Key<T> key) {
         context.log().debug("Processing %s".formatted(key));
         this.processed++;
-    }
-
-    @Override
-    public Class<Demo> activator() {
-        return Demo.class;
     }
 }

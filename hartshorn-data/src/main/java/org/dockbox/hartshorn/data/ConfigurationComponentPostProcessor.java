@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.data;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
@@ -32,7 +31,6 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 /**
  * Looks up and populates fields annotated with {@link Value}.
  */
-@AutomaticActivation
 public class ConfigurationComponentPostProcessor implements ComponentPostProcessor<UseConfigurations> {
 
     @Override
@@ -69,10 +67,5 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
         }
 
         return instance;
-    }
-
-    @Override
-    public Class<UseConfigurations> activator() {
-        return UseConfigurations.class;
     }
 }

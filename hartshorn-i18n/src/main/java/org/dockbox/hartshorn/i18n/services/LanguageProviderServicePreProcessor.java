@@ -16,24 +16,17 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-@AutomaticActivation
 public class LanguageProviderServicePreProcessor implements ServicePreProcessor<UseTranslations> {
-
-    @Override
-    public Class<UseTranslations> activator() {
-        return UseTranslations.class;
-    }
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

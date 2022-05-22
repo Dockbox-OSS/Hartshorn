@@ -16,15 +16,9 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.annotations.EntityModifier;
 import org.dockbox.hartshorn.data.annotations.Query;
@@ -33,17 +27,16 @@ import org.dockbox.hartshorn.data.annotations.Transactional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.QueryContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Collection;
 import java.util.List;
 
-@AutomaticActivation
 public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Query, UsePersistence> {
-
-    @Override
-    public Class<UsePersistence> activator() {
-        return UsePersistence.class;
-    }
 
     @Override
     public Class<Query> annotation() {

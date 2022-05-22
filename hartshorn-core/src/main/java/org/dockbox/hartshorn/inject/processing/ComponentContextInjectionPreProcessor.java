@@ -16,31 +16,24 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.inject.Context;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.reflect.TypedElementContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.CollectionUtilities;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AutomaticActivation
 public class ComponentContextInjectionPreProcessor extends ComponentPreValidator<Service> {
-
-    @Override
-    public Class<Service> activator() {
-        return Service.class;
-    }
 
     @Override
     public <T> void process(final ApplicationContext context, final Key<T> key) {

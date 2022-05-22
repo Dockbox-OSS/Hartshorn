@@ -16,25 +16,23 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.ProviderContext;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.ObtainableElement;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.reflect.TypedElementContext;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.ProviderContext;
 
 import java.util.List;
 import java.util.function.Function;
 
 import javax.inject.Singleton;
 
-@AutomaticActivation
 public final class ProviderServicePreProcessor implements ServicePreProcessor<UseServiceProvision> {
 
     @Override
@@ -105,11 +103,6 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
         }
 
         context.bind(key).to(element.obtain(context).rethrowUnchecked().get().type());
-    }
-
-    @Override
-    public Class<UseServiceProvision> activator() {
-        return UseServiceProvision.class;
     }
 
     @Override
