@@ -66,4 +66,8 @@ public final class AnnotatedElementModifier<A extends AnnotatedElement> implemen
         if (!annotation.isAnnotation()) return;
         this.element().validate().remove(annotation);
     }
+
+    public void clear() {
+        this.element().validate().clear();
+    }
 }

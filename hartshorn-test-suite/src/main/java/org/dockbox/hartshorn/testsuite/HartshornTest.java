@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.util.reflect.Extends;
-import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.util.reflect.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,11 +41,11 @@ import javax.inject.Inject;
  *
  * @see HartshornLifecycleExtension
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(HartshornLifecycleExtension.class)
 @Extends(Populate.class)
 @Populate(executables = false)
 public @interface HartshornTest {
-    Class<? extends Annotation>[] activators() default {};
+    Class<? extends ComponentProcessor<?>>[] processors() default  {};
 }
