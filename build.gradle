@@ -38,7 +38,7 @@ group project.projectGroup
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(16)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -61,8 +61,8 @@ subprojects { final Project subProject ->
         include '**/*.java'
     }
 
-    sourceCompatibility = 16
-    targetCompatibility = 16
+    sourceCompatibility = 17
+    targetCompatibility = 17
 
     group = projectGroup
     version = projectVersion
