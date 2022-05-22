@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.commands.service;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.reflect.FieldContext;
 
 import java.util.List;
 
@@ -35,7 +34,6 @@ import java.util.List;
  * the {@link ArgumentConverterContext} contained in the {@link ApplicationContext}. Requires
  * the presence of {@link UseCommands}.
  */
-@AutomaticActivation
 public class ArgumentServicePreProcessor implements ServicePreProcessor<UseCommands> {
 
     @Override
@@ -59,11 +57,6 @@ public class ArgumentServicePreProcessor implements ServicePreProcessor<UseComma
             }
             return null;
         }).rethrowUnchecked();
-    }
-
-    @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
     }
 
     @Override

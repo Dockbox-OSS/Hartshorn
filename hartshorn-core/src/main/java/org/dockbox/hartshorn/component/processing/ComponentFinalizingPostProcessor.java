@@ -27,13 +27,7 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-@AutomaticActivation
 public class ComponentFinalizingPostProcessor implements ComponentPostProcessor<Service> {
-
-    @Override
-    public Class<Service> activator() {
-        return Service.class;
-    }
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {

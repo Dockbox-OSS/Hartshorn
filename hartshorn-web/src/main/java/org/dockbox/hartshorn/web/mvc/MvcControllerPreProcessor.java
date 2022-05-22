@@ -16,25 +16,18 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.web.MvcControllerContext;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.annotations.MvcController;
 import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-@AutomaticActivation
 public class MvcControllerPreProcessor implements ServicePreProcessor<UseMvcServer> {
-
-    @Override
-    public Class<UseMvcServer> activator() {
-        return UseMvcServer.class;
-    }
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

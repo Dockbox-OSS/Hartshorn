@@ -16,24 +16,22 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
-import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.inject.TypedOwner;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.TypedOwner;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-@AutomaticActivation
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation, UseTranslations> {
 
     @Override
@@ -57,11 +55,6 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     @Override
     public Class<InjectTranslation> annotation() {
         return InjectTranslation.class;
-    }
-
-    @Override
-    public Class<UseTranslations> activator() {
-        return UseTranslations.class;
     }
 
     protected String key(final ApplicationContext context, final TypeContext<?> type, final MethodContext<?, ?> method) {

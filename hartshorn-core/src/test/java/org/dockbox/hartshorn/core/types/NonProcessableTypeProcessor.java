@@ -17,20 +17,14 @@
 package org.dockbox.hartshorn.core.types;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
-@AutomaticActivation
 public class NonProcessableTypeProcessor implements ComponentPostProcessor<Service> {
-    @Override
-    public Class<Service> activator() {
-        return Service.class;
-    }
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {

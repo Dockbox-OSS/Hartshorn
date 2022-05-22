@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.events.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.events.EventServicePreProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,6 +26,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(processors = {
+        EventServicePreProcessor.class,
+})
 public @interface UseEvents {
 }

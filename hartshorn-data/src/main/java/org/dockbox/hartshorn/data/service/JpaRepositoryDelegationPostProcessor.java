@@ -16,23 +16,16 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
 
-@AutomaticActivation
 public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository, UsePersistence> {
-
-    @Override
-    public Class<UsePersistence> activator() {
-        return UsePersistence.class;
-    }
 
     @Override
     protected Class<JpaRepository> parentTarget() {

@@ -16,29 +16,22 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Exceptional;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.Exceptional;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 
-@AutomaticActivation
 public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory, Service> {
-
-    @Override
-    public Class<Service> activator() {
-        return Service.class;
-    }
 
     @Override
     public Class<Factory> annotation() {

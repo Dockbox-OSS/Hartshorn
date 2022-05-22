@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.proxy.AbstractProxy;
+import org.dockbox.hartshorn.core.proxy.DemoProxyDelegationPostProcessor;
 import org.dockbox.hartshorn.core.types.CircularConstructorA;
 import org.dockbox.hartshorn.core.types.CircularConstructorB;
 import org.dockbox.hartshorn.core.types.CircularDependencyA;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.NonComponentType;
 import org.dockbox.hartshorn.core.types.NonProcessableType;
+import org.dockbox.hartshorn.core.types.NonProcessableTypeProcessor;
 import org.dockbox.hartshorn.core.types.NonProxyComponentType;
 import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
@@ -56,16 +58,16 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import test.types.FieldProviderService;
 import test.types.PopulatedType;
+import test.types.ProvidedInterface;
+import test.types.SampleAnnotatedImplementation;
 import test.types.SampleField;
 import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 import test.types.SampleMetaAnnotatedImplementation;
-import test.types.FieldProviderService;
-import test.types.ProvidedInterface;
 import test.types.SampleProviderService;
-import test.types.SampleAnnotatedImplementation;
 
 @HartshornTest
 @UseServiceProvision
@@ -90,12 +92,14 @@ public class ApplicationContextTests {
     }
 
     @Test
+    @HartshornTest(processors = DemoProxyDelegationPostProcessor.class)
     void testMethodCanDelegateToImplementation() {
         final AbstractProxy abstractProxy = this.applicationContext.get(AbstractProxy.class);
         Assertions.assertEquals("concrete", abstractProxy.name());
     }
 
     @Test
+    @HartshornTest(processors = DemoProxyDelegationPostProcessor.class)
     void testMethodOverrideDoesNotDelegateToImplementation() {
         final AbstractProxy abstractProxy = this.applicationContext.get(AbstractProxy.class);
         Assertions.assertEquals(21, abstractProxy.age());
@@ -417,6 +421,7 @@ public class ApplicationContextTests {
     }
 
     @Test
+    @HartshornTest(processors = NonProcessableTypeProcessor.class)
     void testNonProcessableComponent() {
         final NonProcessableType nonProcessableType = this.applicationContext.get(NonProcessableType.class);
         Assertions.assertNotNull(nonProcessableType);

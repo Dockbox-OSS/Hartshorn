@@ -29,7 +29,5 @@ import java.lang.annotation.Annotation;
  * @see ComponentPreProcessor
  * @see ComponentPostProcessor
  */
-@FunctionalInterface
 public interface ActivatorFiltered<A extends Annotation> {
-    Class<A> activator();
 }

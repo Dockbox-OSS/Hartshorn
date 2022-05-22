@@ -14,31 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands.annotations;
+package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.commands.service.ArgumentServicePreProcessor;
-import org.dockbox.hartshorn.commands.service.CommandParameters;
-import org.dockbox.hartshorn.commands.service.CommandServiceScanner;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.events.annotations.UseEvents;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
+import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Service activator for the command module.
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator(processors = {
-        ArgumentServicePreProcessor.class,
-        CommandParameters.class,
-        CommandServiceScanner.class
+        FactoryServicePostProcessor.class,
+        FactoryServicePreProcessor.class,
 })
-@UseTranslations
-@UseEvents
-public @interface UseCommands {
+@UseServiceProvision
+public @interface UseFactoryServices {
 }

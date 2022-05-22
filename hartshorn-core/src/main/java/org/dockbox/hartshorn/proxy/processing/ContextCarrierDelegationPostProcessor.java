@@ -16,17 +16,10 @@
 
 package org.dockbox.hartshorn.proxy.processing;
 
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
-@AutomaticActivation
 public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
-    @Override
-    public Class<Service> activator() {
-        return Service.class;
-    }
-
     @Override
     protected Class<ContextCarrier> parentTarget() {
         return ContextCarrier.class;

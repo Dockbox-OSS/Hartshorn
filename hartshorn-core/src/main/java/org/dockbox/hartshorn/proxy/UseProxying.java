@@ -16,9 +16,12 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.application.HartshornApplicationFactory;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.proxy.processing.ContextCarrierDelegationPostProcessor;
+import org.dockbox.hartshorn.proxy.processing.ContextMethodPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -35,6 +38,10 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(processors = {
+        ComponentFinalizingPostProcessor.class,
+        ContextCarrierDelegationPostProcessor.class,
+        ContextMethodPostProcessor.class,
+})
 public @interface UseProxying {
 }

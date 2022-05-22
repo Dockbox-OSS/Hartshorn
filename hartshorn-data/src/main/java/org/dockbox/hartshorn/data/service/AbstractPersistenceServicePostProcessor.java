@@ -41,11 +41,6 @@ import java.nio.file.Path;
 public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerialisationContext> extends ServiceAnnotatedMethodInterceptorPostProcessor<M, UsePersistence> {
 
     @Override
-    public Class<UsePersistence> activator() {
-        return UsePersistence.class;
-    }
-
-    @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final Exceptional<C> serialisationContext = methodContext.first(context, this.contextType());
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");

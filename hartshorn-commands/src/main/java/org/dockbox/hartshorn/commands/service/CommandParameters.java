@@ -16,32 +16,25 @@
 
 package org.dockbox.hartshorn.commands.service;
 
+import org.dockbox.hartshorn.application.UseBootstrap;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
-import org.dockbox.hartshorn.application.UseBootstrap;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.inject.Key;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
  * for each type found. Requires the use of a {@link ApplicationManager} and
  * presence of {@link UseBootstrap}.
  */
-@AutomaticActivation
 public class CommandParameters implements ComponentPreProcessor<UseCommands> {
-
-    @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
-    }
 
     @Override
     public boolean modifies(final ApplicationContext context, final Key<?> key) {
