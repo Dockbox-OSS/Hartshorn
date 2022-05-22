@@ -42,5 +42,5 @@ import java.lang.annotation.Annotation;
  * @author Guus Lieben
  * @since 22.1
  */
-public interface ComponentPostProcessor<A extends Annotation> extends ComponentProcessor<A> {
+public non-sealed interface ComponentPostProcessor<A extends Annotation> extends ComponentProcessor<A> {
 }

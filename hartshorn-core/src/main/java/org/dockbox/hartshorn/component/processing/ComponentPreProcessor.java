@@ -45,7 +45,7 @@ import java.lang.annotation.Annotation;
  * @since 22.1
  * @param <A>
  */
-public interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {
+public non-sealed interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {
 
     @Override
     default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
