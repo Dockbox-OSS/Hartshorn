@@ -104,15 +104,15 @@ Additionally, if you go to http://localhost:8080/greeting?name=YourName, the res
 <br>  
   
 ## Building Hartshorn
-If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to set up your Gradle environment.  All platforms require a Java installation, with JDK 16 or more recent version.
+If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to set up your Gradle environment.  All platforms require a Java installation, with JDK 17 or more recent version.
 
 Set the JAVA\_HOME environment variable. For example:
 
-| Platform | Command |
-| :---: | --- |
-|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-16-jdk``            |
-|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 16` ``  |
-|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-16.0.1"`` |
+| Platform | Command                                              |
+| :---: |------------------------------------------------------|
+|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-17-jdk``     |
+|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 17` `` |
+|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-17.0.3"`` |
 
 Hartshorn uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
 Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  
