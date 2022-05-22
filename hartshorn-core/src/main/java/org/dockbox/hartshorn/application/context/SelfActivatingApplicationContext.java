@@ -25,5 +25,4 @@ public interface SelfActivatingApplicationContext extends ApplicationContext {
 
     void process();
 
-    void lookupActivatables();
 }

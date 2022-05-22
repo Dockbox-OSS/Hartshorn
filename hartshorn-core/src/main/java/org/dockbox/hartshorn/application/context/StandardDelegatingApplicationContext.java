@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
@@ -122,14 +121,13 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
         this.activator = activator.get();
-        this.environment().annotationsWith(activationSource, ServiceActivator.class).forEach(this::addActivator);
-
-        this.log().debug("Located %d service activators".formatted(this.activators().size()));
-
         this.modifiers = modifiers;
         this.locator = componentLocator.apply(this);
         this.resourceLocator = resourceLocator.apply(this);
         this.metaProvider = metaProvider.apply(this);
+
+        this.environment().annotationsWith(activationSource, ServiceActivator.class).forEach(this::addActivator);
+        this.log().debug("Located %d service activators".formatted(this.activators().size()));
 
         this.registerDefaultBindings();
     }
@@ -188,6 +186,12 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
             for (final String scan : activator.get().scanPackages()) {
                 this.bind(scan);
             }
+
+            for (final Class<? extends ComponentProcessor<?>> processor : activator.get().processors()) {
+                final ComponentProcessor componentProcessor = this.get(processor);
+                this.add(componentProcessor);
+            }
+
             this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
         }
     }
@@ -379,20 +383,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         }
         final BindingHierarchy<C> hierarchy = this.hierarchy(key);
         hierarchy.add(bindAnnotation.priority(), new ContextDrivenProvider<>(binder));
-    }
-
-    @Override
-    public void lookupActivatables() {
-        final Collection<TypeContext<? extends ComponentProcessor>> children = this.environment().children(ComponentProcessor.class);
-        for (final TypeContext<? extends ComponentProcessor> processor : children) {
-            if (processor.isAbstract()) continue;
-
-            if (processor.annotation(AutomaticActivation.class).map(AutomaticActivation::value).or(false)) {
-                final ComponentProcessor componentProcessor = this.get(processor);
-                if (this.hasActivator(componentProcessor.activator()))
-                    this.add(componentProcessor);
-            }
-        }
     }
 
     @Override
