@@ -22,17 +22,12 @@ import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.GenericType;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
 
 @Component(singleton = true)
 public class StandardPropertyHolder implements PropertyHolder {
@@ -155,6 +150,9 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     protected Object find(final String key) {
+        if (StringUtilities.empty(key)) {
+            return this.properties;
+        }
         final String[] split = key.split("\\.");
         if (split.length == 1) {
             return this.properties.get(key);

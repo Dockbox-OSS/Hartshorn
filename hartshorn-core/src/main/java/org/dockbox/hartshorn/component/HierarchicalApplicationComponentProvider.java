@@ -29,13 +29,7 @@ import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.inject.binding.BindingFunction;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.ConcurrentHashSingletonCache;
-import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
-import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.SingletonCache;
+import org.dockbox.hartshorn.inject.binding.*;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
@@ -46,10 +40,9 @@ import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.inject.Inject;
 
 public class HierarchicalApplicationComponentProvider extends DefaultContext implements StandardComponentProvider, ContextCarrier {
 
@@ -212,7 +205,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                         }
 
                         checkForIllegalModification:
-                        if (instance != modified) {
+                        if (!phase.modifiable() && instance != modified) {
                             if (modified instanceof Proxy) {
                                 final Proxy<T> proxy = (Proxy<T>) modified;
                                 final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
