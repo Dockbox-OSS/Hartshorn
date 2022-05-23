@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application;
 
+import java.util.Arrays;
+
 /**
  * The exception handler is used to handle exceptions that occur during the application lifecycle.
  *
@@ -61,6 +63,22 @@ public interface ExceptionHandler {
      * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
      */
     static <T extends Throwable, R> R unchecked(final Throwable t) throws T {
+        StackTraceElement[] currentStack = Thread.currentThread().getStackTrace();
+        // Discard the first two stack frames, which are Thread.getStackTrace() and this method.
+        currentStack = Arrays.copyOfRange(currentStack, 2, currentStack.length);
+
+        final StackTraceElement[] errorStack = t.getStackTrace();
+        final StackTraceElement[] stackTrace = new StackTraceElement[errorStack.length + currentStack.length + 2];
+
+        final String name = t.getClass().getSimpleName();
+
+        stackTrace[0] = new StackTraceElement("\rUnchecked: " + name + " was rethrown as unchecked! Rethrowing source stacktrace is inserted below", "", "", -1);
+        System.arraycopy(currentStack, 0, stackTrace, 1, currentStack.length);
+
+        stackTrace[currentStack.length + 1] = new StackTraceElement("\rUnchecked: " + name + " was rethrown as unchecked! Source stacktrace is inserted below", "", "", -1);
+        System.arraycopy(errorStack, 0, stackTrace, currentStack.length + 2, errorStack.length);
+
+        t.setStackTrace(stackTrace);
         throw (T) t;
     }
 }
