@@ -25,9 +25,10 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.nio.file.Path;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.inject.Inject;
 
 @HartshornTest
 @UseConfigurations
@@ -131,11 +132,11 @@ public class ConfigurationManagerTests {
 
     @Test
     void testConfigurationObjects() {
-        PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
         propertyHolder.set("user.age", 21);
 
-        SampleConfigurationObject configurationObject = this.applicationContext.get(SampleConfigurationObject.class);
+        final SampleConfigurationObject configurationObject = this.applicationContext.get(SampleConfigurationObject.class);
         Assertions.assertNotNull(configurationObject);
         Assertions.assertEquals("Hartshorn", configurationObject.name());
         Assertions.assertEquals(21, configurationObject.age());
@@ -143,11 +144,11 @@ public class ConfigurationManagerTests {
 
     @Test
     void testSetterConfigurationObjects() {
-        PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
         propertyHolder.set("user.age", 21);
 
-        SampleSetterConfigurationObject configurationObject = this.applicationContext.get(SampleSetterConfigurationObject.class);
+        final SampleSetterConfigurationObject configurationObject = this.applicationContext.get(SampleSetterConfigurationObject.class);
         Assertions.assertNotNull(configurationObject);
         Assertions.assertEquals("Hartshorn!", configurationObject.name(), "Bean-style setter (public)");
         Assertions.assertEquals(31, configurationObject.age(), "Fluent-style setter (private)");

@@ -2,32 +2,28 @@ package org.dockbox.hartshorn.data.service;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.*;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
-@AutomaticActivation
 public class ConfigurationObjectPostProcessor implements ComponentPostProcessor<UseConfigurations> {
 
     @Override
-    public Class<UseConfigurations> activator() {
-        return UseConfigurations.class;
-    }
-
-    @Override
-    public <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         return key.type().annotation(ConfigurationObject.class).present();
     }
 
     @Override
-    public <T> T process(ApplicationContext context, Key<T> key, @Nullable T instance) {
-        ConfigurationObject configurationObject = key.type().annotation(ConfigurationObject.class).get();
-        PropertyHolder propertyHolder = context.get(PropertyHolder.class);
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        final ConfigurationObject configurationObject = key.type().annotation(ConfigurationObject.class).get();
+        final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
 
-        Exceptional<T> configuration = propertyHolder.get(configurationObject.prefix(), key.type().type());
+        final Result<T> configuration = propertyHolder.get(configurationObject.prefix(), key.type().type());
         return configuration.or(instance);
     }
 

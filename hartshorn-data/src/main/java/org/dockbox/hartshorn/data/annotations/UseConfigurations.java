@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data.annotations;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.data.ConfigurationComponentPostProcessor;
 import org.dockbox.hartshorn.data.ConfigurationServicePreProcessor;
+import org.dockbox.hartshorn.data.service.ConfigurationObjectPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,6 +34,7 @@ import java.lang.annotation.Target;
 @ServiceActivator(processors = {
         ConfigurationComponentPostProcessor.class,
         ConfigurationServicePreProcessor.class,
+        ConfigurationObjectPostProcessor.class,
 })
 @UsePersistence
 public @interface UseConfigurations {
