@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Properties;
 
@@ -33,7 +33,7 @@ public interface ApplicationPropertyHolder {
      *
      * @param key The key used to look up the value
      *
-     * @return The value if it exists, or {@link Exceptional#empty()}
+     * @return The value if it exists, or {@link Result#empty()}
      */
-    Exceptional<String> property(String key);
+    Result<String> property(String key);
 }

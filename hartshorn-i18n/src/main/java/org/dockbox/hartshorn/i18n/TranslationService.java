@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import javax.inject.Singleton;
 
 @Singleton
 public interface TranslationService extends ContextCarrier {
 
-    Exceptional<Message> get(String key);
+    Result<Message> get(String key);
 
     Message getOrCreate(String key, String value);
 

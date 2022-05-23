@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentUtilities;
 
@@ -37,12 +37,12 @@ public class InjectorMetaProvider implements MetaProvider {
 
     @Override
     public TypedOwner lookup(final TypeContext<?> type) {
-        final Exceptional<Entity> annotated = type.annotation(Entity.class);
+        final Result<Entity> annotated = type.annotation(Entity.class);
         if (annotated.present()) {
             return TypedOwnerImpl.of(annotated.get().name());
         }
         else {
-            final Exceptional<ComponentContainer> container = this.context.locator().container(type);
+            final Result<ComponentContainer> container = this.context.locator().container(type);
             if (container.present()) {
                 final ComponentContainer service = container.get();
                 if (!service.owner().isVoid()) return this.lookup(service.owner());

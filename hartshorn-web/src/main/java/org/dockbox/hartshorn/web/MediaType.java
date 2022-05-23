@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 
@@ -62,8 +62,8 @@ public enum MediaType {
         return this.format != null;
     }
 
-    public Exceptional<FileFormat> fileFormat() {
-        return Exceptional.of(this.format);
+    public Result<FileFormat> fileFormat() {
+        return Result.of(this.format);
     }
 
     public String value() {

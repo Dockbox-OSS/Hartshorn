@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Vector3N;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.i18n.Message;
@@ -74,10 +74,10 @@ public final class DefaultArgumentConverters {
             .build();
 
     public static final ArgumentConverter<Vector3N> VECTOR = ArgumentConverterImpl.builder(Vector3N.class, "vec3", "vector", "v3n")
-            .withConverter(in -> Exceptional.of(
+            .withConverter(in -> Result.of(
                     () -> {
                         String[] xyz = in.split(",");
-                        // IndexOutOfBounds is caught by Callable handle in Exceptional
+                        // IndexOutOfBounds is caught by Callable handle in Result
                         double x = Double.parseDouble(xyz[0]);
                         double y = Double.parseDouble(xyz[1]);
                         double z = Double.parseDouble(xyz[2]);
@@ -96,7 +96,7 @@ public final class DefaultArgumentConverters {
             }).build();
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
-            .withConverter((src, in) -> Exceptional.of(src.applicationContext()
+            .withConverter((src, in) -> Result.of(src.applicationContext()
                     .locator().containers().stream()
                     .filter(container -> container.id().equalsIgnoreCase(in))
                     .findFirst()))
@@ -108,7 +108,7 @@ public final class DefaultArgumentConverters {
             .build();
 
     public static final ArgumentConverter<String> REMAINING_STRING = ArgumentConverterImpl.builder(String.class, "remaining", "remainingString")
-            .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
+            .withConverter((Function<String, Result<String>>) Result::of)
             .withSize(-1)
             .build();
 
@@ -120,7 +120,7 @@ public final class DefaultArgumentConverters {
                     String part = parts[i];
                     integers[i] = INTEGER.convert(null, parts[i]).get();
                 }
-                return Exceptional.of(integers);
+                return Result.of(integers);
             })
             .withSize(-1)
             .build();

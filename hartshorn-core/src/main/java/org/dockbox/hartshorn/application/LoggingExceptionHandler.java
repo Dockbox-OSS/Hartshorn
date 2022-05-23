@@ -76,7 +76,12 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
 
                     for (final StackTraceElement element : trace) {
                         final String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
-                        log.error("  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")");
+                        String logMessage = "  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")";
+                        if (logMessage.indexOf('\r') >= 0) {
+                            // Use half indentation, \r is permitted to be in the message to request additional visual focus.
+                            logMessage = " " + logMessage.substring(logMessage.indexOf('\r') + 1);
+                        }
+                        log.error(logMessage);
                     }
                     nextException = nextException.getCause();
                 }

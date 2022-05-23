@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import javax.inject.Inject;
 
@@ -29,7 +29,7 @@ public class ContextPropertyValueLookup implements ValueLookup {
     private PropertyHolder propertyHolder;
 
     @Override
-    public <T> Exceptional<T> getValue(final String key, final Class<T> type) {
+    public <T> Result<T> getValue(final String key, final Class<T> type) {
         return this.propertyHolder.get(key, type);
     }
 }

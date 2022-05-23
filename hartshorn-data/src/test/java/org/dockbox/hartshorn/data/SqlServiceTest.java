@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
@@ -179,7 +179,7 @@ class SqlServiceTest {
         guus.name("NotGuus");
         sql.update(guus);
 
-        final Exceptional<User> persisted = sql.findById(guus.id());
+        final Result<User> persisted = sql.findById(guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
     }

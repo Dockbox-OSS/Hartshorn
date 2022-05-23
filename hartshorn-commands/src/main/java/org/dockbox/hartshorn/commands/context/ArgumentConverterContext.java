@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,10 +55,10 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @param key The key to use during lookup
      *
-     * @return The converter if it exists, or {@link Exceptional#empty()}
+     * @return The converter if it exists, or {@link Result#empty()}
      */
-    public Exceptional<ArgumentConverter<?>> converter(final String key) {
-        return Exceptional.of(this.converterMap.get(key.toLowerCase()));
+    public Result<ArgumentConverter<?>> converter(final String key) {
+        return Result.of(this.converterMap.get(key.toLowerCase()));
     }
 
     /**
@@ -79,10 +79,10 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @param type The type the converter should convert into.
      * @param <T> The type parameter of the type
      *
-     * @return The converter if it exists, or {@link Exceptional#empty()}
+     * @return The converter if it exists, or {@link Result#empty()}
      */
-    public <T> Exceptional<ArgumentConverter<T>> converter(final TypeContext<T> type) {
-        return Exceptional.of(this.converterMap.values().stream()
+    public <T> Result<ArgumentConverter<T>> converter(final TypeContext<T> type) {
+        return Result.of(this.converterMap.values().stream()
                 .filter(converter -> type.childOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());

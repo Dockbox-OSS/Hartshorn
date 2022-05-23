@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 /**
  * The default implementation of {@link CarrierContext}. This implementation stores the active
@@ -36,7 +36,7 @@ public class DefaultCarrierContext extends DefaultContext implements CarrierCont
     }
 
     @Override
-    public <C extends Context> Exceptional<C> first(final Class<C> context) {
+    public <C extends Context> Result<C> first(final Class<C> context) {
         return super.first(this.applicationContext(), context);
     }
 }

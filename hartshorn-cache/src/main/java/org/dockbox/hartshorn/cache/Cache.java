@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 /**
  * Represents a collection of entries of type <code>T</code>.
@@ -27,11 +27,11 @@ public interface Cache<T> {
 
     /**
      * Provides the stored values of the cache. If the cache is not
-     * populated, this will return {@link Exceptional#empty()}.
+     * populated, this will return {@link Result#empty()}.
      *
-     * @return The content of the cache, or {@link Exceptional#empty()}
+     * @return The content of the cache, or {@link Result#empty()}
      */
-    Exceptional<T> get();
+    Result<T> get();
 
     /**
      * Populates the cache with the given content. If the cache is

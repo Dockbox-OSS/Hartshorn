@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.CustomMultiMap;
 import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeMap;
 
 import java.lang.reflect.Method;
@@ -124,23 +124,23 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
     }
 
     @Override
-    public Exceptional<T> delegate() {
-        return Exceptional.of(this.delegate);
+    public Result<T> delegate() {
+        return Result.of(this.delegate);
     }
 
     @Override
-    public Exceptional<T> delegate(final Method method) {
-        return Exceptional.of(this.delegates).map(map -> map.get(method)).map(delegate -> (T) delegate);
+    public Result<T> delegate(final Method method) {
+        return Result.of(this.delegates).map(map -> map.get(method)).map(delegate -> (T) delegate);
     }
 
     @Override
-    public <S> Exceptional<S> delegate(final Class<S> type) {
-        return Exceptional.of(this.typeDelegates).map(map -> map.get(type)).map(type::cast);
+    public <S> Result<S> delegate(final Class<S> type) {
+        return Result.of(this.typeDelegates).map(map -> map.get(type)).map(type::cast);
     }
 
     @Override
-    public Exceptional<MethodInterceptor<T>> interceptor(final Method method) {
-        return Exceptional.of(this.interceptors).map(map -> map.get(method));
+    public Result<MethodInterceptor<T>> interceptor(final Method method) {
+        return Result.of(this.interceptors).map(map -> map.get(method));
     }
 
     @Override

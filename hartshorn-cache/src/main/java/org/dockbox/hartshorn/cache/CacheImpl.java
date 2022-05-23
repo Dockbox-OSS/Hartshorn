@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,8 +46,8 @@ public class CacheImpl<T> implements Cache<T>, Enableable {
     }
 
     @Override
-    public Exceptional<T> get() {
-        return Exceptional.of(this.content);
+    public Result<T> get() {
+        return Result.of(this.content);
     }
 
     @Override

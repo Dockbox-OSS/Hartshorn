@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
@@ -71,7 +71,7 @@ public class RequestArgumentProcessorTests {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Exceptional<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
+        final Result<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Unparsed body", result.get());
     }
@@ -89,13 +89,13 @@ public class RequestArgumentProcessorTests {
         final ExecutableElementContext<?, ?> declaring = Mockito.mock(ExecutableElementContext.class);
         final HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
         Mockito.when(httpRequest.consumes()).thenReturn(mediaType);
-        Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Exceptional.of(httpRequest));
+        Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Result.of(httpRequest));
         // Different order due to generic return type
         Mockito.doReturn(declaring).when(context).declaredBy();
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Exceptional<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
+        final Result<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Hello world!", result.get().message());
     }
@@ -109,11 +109,11 @@ public class RequestArgumentProcessorTests {
         Mockito.when(context.type()).thenReturn(TypeContext.of(String.class));
         final RequestHeader requestHeader = Mockito.mock(RequestHeader.class);
         Mockito.when(requestHeader.value()).thenReturn("string-header");
-        Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
+        Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Result.of(requestHeader));
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Exceptional<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
+        final Result<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Header!", result.get());
     }
@@ -127,11 +127,11 @@ public class RequestArgumentProcessorTests {
         Mockito.when(context.type()).thenReturn(TypeContext.of(Integer.class));
         final RequestHeader requestHeader = Mockito.mock(RequestHeader.class);
         Mockito.when(requestHeader.value()).thenReturn("int-header");
-        Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
+        Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Result.of(requestHeader));
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Exceptional<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
+        final Result<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(1, result.get().intValue());
     }

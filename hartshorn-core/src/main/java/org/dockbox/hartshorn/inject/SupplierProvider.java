@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.function.Supplier;
 
 /**
  * A {@link Supplier} that is able to provide instances using the given {@link Supplier}.
- * If the {@link Supplier} is unable to provide an instance, an empty {@link Exceptional}
+ * If the {@link Supplier} is unable to provide an instance, an empty {@link Result}
  * will be returned without throwing an exception.
  *
  * @param <C> The type to be provided.
@@ -46,7 +46,7 @@ public class SupplierProvider<C> implements Provider<C> {
     }
 
     @Override
-    public Exceptional<C> provide(final ApplicationContext context) {
-        return Exceptional.of(this.supplier::get);
+    public Result<C> provide(final ApplicationContext context) {
+        return Result.of(this.supplier::get);
     }
 }

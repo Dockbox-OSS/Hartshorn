@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.annotations.Value;
@@ -85,7 +85,7 @@ public class ServletHandler implements Enableable {
                 final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.methodContext, this.methodContext.parent(), null, this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
 
-                final Exceptional<?> result = this.methodContext.invoke(this.context, arguments);
+                final Result<?> result = this.methodContext.invoke(this.context, arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
@@ -97,7 +97,7 @@ public class ServletHandler implements Enableable {
                         else {
                             res.setContentType(this.httpRequest.produces().value());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
-                            final Exceptional<String> write = this.mapper.write(result.get());
+                            final Result<String> write = this.mapper.write(result.get());
                             if (write.present()) {
                                 this.context.log().debug("Printing response body to response writer");
                                 res.getWriter().print(write.get());

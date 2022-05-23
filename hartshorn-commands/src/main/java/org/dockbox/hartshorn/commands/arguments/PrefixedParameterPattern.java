@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -32,8 +32,8 @@ import java.util.List;
 public abstract class PrefixedParameterPattern implements CustomParameterPattern {
 
     @Override
-    public <T> Exceptional<Boolean> preconditionsMatch(final TypeContext<T> type, final CommandSource source, final String raw) {
-        return Exceptional.of(() -> {
+    public <T> Result<Boolean> preconditionsMatch(final TypeContext<T> type, final CommandSource source, final String raw) {
+        return Result.of(() -> {
                     String prefix = this.prefix() + "";
                     if (this.requiresTypeName()) {
                         final String parameterName = type.annotation(Parameter.class).get().value();
@@ -71,8 +71,8 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public Exceptional<String> parseIdentifier(final String argument) {
-        return Exceptional.of(() -> argument.startsWith(this.prefix() + ""),
+    public Result<String> parseIdentifier(final String argument) {
+        return Result.of(() -> argument.startsWith(this.prefix() + ""),
                 () -> argument.substring(1, argument.indexOf(this.opening())),
                 () -> new IllegalArgumentException(this.wrongFormat().string())
         );

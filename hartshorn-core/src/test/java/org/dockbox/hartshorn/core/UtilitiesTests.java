@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -137,7 +137,7 @@ public class UtilitiesTests {
     @ParameterizedTest
     @MethodSource("durations")
     void testDurationOf(final String in, final long expected) {
-        final Exceptional<Duration> duration = StringUtilities.durationOf(in);
+        final Result<Duration> duration = StringUtilities.durationOf(in);
         Assertions.assertTrue(duration.present());
         Assertions.assertEquals(expected, duration.get().getSeconds());
     }

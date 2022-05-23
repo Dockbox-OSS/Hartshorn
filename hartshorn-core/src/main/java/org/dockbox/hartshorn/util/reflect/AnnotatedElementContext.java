@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.util.reflect;
 
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -107,36 +107,36 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
 
     /**
      * Returns the annotation associated with the given annotation {@link TypeContext}. If the annotation is
-     * not present, {@link Exceptional#empty()} is returned.
+     * not present, {@link Result#empty()} is returned.
      *
      * @param annotation The annotation type
      * @param <T> The type of the annotation
      * @return The annotated element associated with the given {@link TypeContext}.
      * @see #annotation(Class)
      */
-    public <T extends Annotation> Exceptional<T> annotation(final TypeContext<T> annotation) {
+    public <T extends Annotation> Result<T> annotation(final TypeContext<T> annotation) {
         return this.annotation(annotation.type());
     }
 
     /**
      * Returns the annotation associated with the given annotation type. If the annotation is not present,
-     * {@link Exceptional#empty()} is returned.
+     * {@link Result#empty()} is returned.
      *
      * @param annotation The annotation type
      * @param <T> The type of the annotation
      * @return The annotation associated with the given annotation type.
      * @see #annotation(TypeContext)
      */
-    public <T extends Annotation> Exceptional<T> annotation(final Class<T> annotation) {
-        if (!annotation.isAnnotation()) return Exceptional.empty();
+    public <T extends Annotation> Result<T> annotation(final Class<T> annotation) {
+        if (!annotation.isAnnotation()) return Result.empty();
 
         final Map<Class<?>, Annotation> annotations = this.validate();
         if (annotations.containsKey(annotation))
-            return Exceptional.of(() -> (T) annotations.get(annotation));
+            return Result.of(() -> (T) annotations.get(annotation));
 
         final T oneOrNull = AnnotationHelper.oneOrNull(this.element(), annotation);
         if (oneOrNull != null) annotations.put(annotation, oneOrNull);
-        return Exceptional.of(oneOrNull);
+        return Result.of(oneOrNull);
     }
 
     /**

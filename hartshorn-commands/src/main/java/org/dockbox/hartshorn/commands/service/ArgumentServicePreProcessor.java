@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class ArgumentServicePreProcessor implements ServicePreProcessor<UseComma
         context.first(ArgumentConverterContext.class).map(converterContext -> {
             for (final FieldContext<ArgumentConverter> field : fields) {
                 if (field.isStatic()) {
-                    final Exceptional<ArgumentConverter> converter = field.getStatic();
+                    final Result<ArgumentConverter> converter = field.getStatic();
                     converter.present(converterContext::register);
                 }
                 else {

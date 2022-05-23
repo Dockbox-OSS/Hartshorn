@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
@@ -50,7 +50,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
-            final Exceptional<? extends ConstructorContext<?>> constructorCandidate = factoryContext.get(method);
+            final Result<? extends ConstructorContext<?>> constructorCandidate = factoryContext.get(method);
             if (constructorCandidate.present()) {
                 final ConstructorContext<?> constructor = constructorCandidate.get();
                 return interceptorContext -> this.processInstance(context, (R) constructor.createInstance(interceptorContext.args()).orNull(), enable);

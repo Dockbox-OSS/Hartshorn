@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
 
@@ -51,7 +51,7 @@ public class CommandElementImpl<T> implements CommandElement<T> {
     }
 
     @Override
-    public Exceptional<T> parse(final CommandSource source, final String argument) {
+    public Result<T> parse(final CommandSource source, final String argument) {
         return this.converter.convert(source, argument);
     }
 

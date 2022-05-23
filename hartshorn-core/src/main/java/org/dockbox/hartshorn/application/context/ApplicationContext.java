@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
@@ -66,11 +66,11 @@ public interface ApplicationContext extends
         return this.environment().manager().log();
     }
 
-    default <C extends Context> Exceptional<C> first(final TypeContext<C> context) {
+    default <C extends Context> Result<C> first(final TypeContext<C> context) {
         return this.first(context.type());
     }
 
-    default <C extends Context> Exceptional<C> first(final Class<C> context) {
+    default <C extends Context> Result<C> first(final Class<C> context) {
         return this.first(this, context);
     }
 

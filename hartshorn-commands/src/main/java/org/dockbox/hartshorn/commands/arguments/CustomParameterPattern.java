@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,18 +43,18 @@ public interface CustomParameterPattern {
      * @param raw The raw argument
      * @param <T> The generic type of the target
      *
-     * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()} if {@code null}
+     * @return An instance of {@code T}, wrapped in a {@link Result}, or {@link Result#empty()} if {@code null}
      */
-    default <T> Exceptional<T> request(final TypeContext<T> type, final CommandSource source, final String raw) {
+    default <T> Result<T> request(final TypeContext<T> type, final CommandSource source, final String raw) {
         final ApplicationContext context = source.applicationContext();
-        final Exceptional<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
+        final Result<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
         if (preconditionsMatch.caught()) {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
-            return Exceptional.of(preconditionsMatch.error());
+            return Result.of(preconditionsMatch.error());
         }
         else if (!preconditionsMatch.get()) {
             context.log().debug("Preconditions failed, rejecting raw argument " + raw);
-            return Exceptional.empty();
+            return Result.empty();
         }
 
         final List<String> rawArguments = this.splitArguments(raw);
@@ -63,7 +63,7 @@ public interface CustomParameterPattern {
 
         for (final String rawArgument : rawArguments) {
             context.log().debug("Parsing raw argument " + rawArgument);
-            final Exceptional<String> argumentIdentifier = this.parseIdentifier(rawArgument);
+            final Result<String> argumentIdentifier = this.parseIdentifier(rawArgument);
             if (argumentIdentifier.absent()) {
                 context.log().debug("Could not determine argument identifier for raw argument '%s', this is not a error as the value likely needs to be looked up by its type instead.".formatted(rawArgument));
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
@@ -73,13 +73,13 @@ public interface CustomParameterPattern {
             }
             final String typeIdentifier = argumentIdentifier.get();
 
-            final Exceptional<ArgumentConverter<?>> converter = context
+            final Result<ArgumentConverter<?>> converter = context
                     .first(ArgumentConverterContext.class)
                     .flatMap(argumentConverterContext -> argumentConverterContext.converter(typeIdentifier));
 
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
-                return Exceptional.of(new IllegalArgumentException(context
+                return Result.of(new IllegalArgumentException(context
                         .get(CommandParameterResources.class)
                         .missingConverter(type.qualifiedName())
                         .string())
@@ -95,13 +95,13 @@ public interface CustomParameterPattern {
                 .flatMap(constructor -> constructor.createInstance(arguments.toArray(new Object[0])));
     }
 
-    <T> Exceptional<Boolean> preconditionsMatch(TypeContext<T> type, CommandSource source, String raw);
+    <T> Result<Boolean> preconditionsMatch(TypeContext<T> type, CommandSource source, String raw);
 
     List<String> splitArguments(String raw);
 
-    Exceptional<String> parseIdentifier(String argument);
+    Result<String> parseIdentifier(String argument);
 
-    default <T> Exceptional<ConstructorContext<T>> constructor(final List<TypeContext<?>> argumentTypes, final List<Object> arguments, final TypeContext<T> type, final CommandSource source) {
+    default <T> Result<ConstructorContext<T>> constructor(final List<TypeContext<?>> argumentTypes, final List<Object> arguments, final TypeContext<T> type, final CommandSource source) {
         for (final ConstructorContext<T> constructor : type.constructors()) {
             if (constructor.parameterCount() != arguments.size()) continue;
             final LinkedList<TypeContext<?>> parameters = constructor.parameterTypes();
@@ -112,11 +112,11 @@ public interface CustomParameterPattern {
                 final TypeContext<?> argument = argumentTypes.get(i);
 
                 if (argument == null) {
-                    final Exceptional<? extends ArgumentConverter<?>> converter = source.applicationContext()
+                    final Result<? extends ArgumentConverter<?>> converter = source.applicationContext()
                             .first(ArgumentConverterContext.class)
                             .flatMap(context -> context.converter(parameter));
                     if (converter.present()) {
-                        final Exceptional<?> result = converter.get().convert(source, (String) arguments.get(i));
+                        final Result<?> result = converter.get().convert(source, (String) arguments.get(i));
                         if (result.present()) {
                             arguments.set(i, result.get());
                             continue; // Generic type, will be parsed later
@@ -130,9 +130,9 @@ public interface CustomParameterPattern {
             }
             if (passed) {
                 source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
-                return Exceptional.of(constructor);
+                return Result.of(constructor);
             }
         }
-        return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().string()));
+        return Result.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().string()));
     }
 }

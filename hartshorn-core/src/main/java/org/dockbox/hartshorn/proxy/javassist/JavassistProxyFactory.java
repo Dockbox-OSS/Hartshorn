@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.proxy.DefaultProxyFactory;
 import org.dockbox.hartshorn.proxy.LazyProxyManager;
@@ -42,11 +42,11 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
     }
 
     @Override
-    public Exceptional<T> proxy() throws ApplicationException {
+    public Result<T> proxy() throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
         final MethodHandler methodHandler = new JavassistProxyMethodHandler(manager, this.applicationContext());
 
-        final Exceptional<T> proxy = this.type().isInterface()
+        final Result<T> proxy = this.type().isInterface()
                 ? this.interfaceProxy(methodHandler)
                 : this.concreteOrAbstractProxy(methodHandler);
 
@@ -54,7 +54,7 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
         return proxy;
     }
 
-    protected Exceptional<T> concreteOrAbstractProxy(final MethodHandler methodHandler) throws ApplicationException {
+    protected Result<T> concreteOrAbstractProxy(final MethodHandler methodHandler) throws ApplicationException {
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
 
@@ -64,20 +64,20 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
         try {
             final T proxy = (T) factory.create(new Class<?>[0], new Object[0], methodHandler);
             if (this.typeDelegate() != null) this.restoreFields(this.typeDelegate(), proxy);
-            return Exceptional.of(proxy);
+            return Result.of(proxy);
         }
         catch (final RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }
 
-    protected Exceptional<T> interfaceProxy(final MethodHandler methodHandler) {
+    protected Result<T> interfaceProxy(final MethodHandler methodHandler) {
         final Class[] interfaces = CollectionUtilities.merge(new Class[]{ this.type(), Proxy.class }, this.interfaces().toArray(new Class[0]));
         final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 interfaces,
                 (final var self, final var method, final var args) -> methodHandler.invoke(self, method, null, args));
-        return Exceptional.of(proxy);
+        return Result.of(proxy);
     }
 
     protected void restoreFields(final T existing, final T proxy) {
@@ -91,7 +91,7 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
     }
 
     private ClassLoader defaultClassLoader() {
-        return Exceptional.of(Thread.currentThread()::getContextClassLoader)
+        return Result.of(Thread.currentThread()::getContextClassLoader)
                 .orElse(JavassistProxyFactory.class::getClassLoader)
                 .orElse(ClassLoader::getSystemClassLoader)
                 .orElse(this.type()::getClassLoader)

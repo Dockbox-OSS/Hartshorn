@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.reflect;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 import java.lang.reflect.Field;
@@ -39,7 +39,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
     private TypeContext<T> type;
     private TypeContext<T> genericType;
 
-    private Function<Object, Exceptional<T>> getter;
+    private Function<Object, Result<T>> getter;
     private BiConsumer<Object, T> setter;
 
     private FieldContext(final Field field) {
@@ -51,7 +51,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
         return this.field;
     }
 
-    public static Exceptional<FieldContext<?>> of(final TypeContext<?> type, final String field) {
+    public static Result<FieldContext<?>> of(final TypeContext<?> type, final String field) {
         return type.field(field);
     }
 
@@ -67,10 +67,10 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
         if (!this.accessible) return;
 
         if (this.setter == null) {
-            final Exceptional<Property> property = this.annotation(Property.class);
+            final Result<Property> property = this.annotation(Property.class);
             if (property.present() && !"".equals(property.get().setter())) {
                 final String setter = property.get().setter();
-                final Exceptional<? extends MethodContext<?, ?>> method = this.declaredBy().method(setter, List.of(this.type()));
+                final Result<? extends MethodContext<?, ?>> method = this.declaredBy().method(setter, List.of(this.type()));
                 final MethodContext<?, Object> methodContext = (MethodContext<?, Object>) method.orThrowUnchecked(() -> new ApplicationException("Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
                 this.setter = (o, v) -> methodContext.invoke(instance, v);
             } else {
@@ -87,24 +87,24 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
         this.setter.accept(instance, (T) value);
     }
 
-    public Exceptional<T> getStatic() {
+    public Result<T> getStatic() {
         return this.get(null);
     }
 
-    public Exceptional<T> get(final Object instance) {
+    public Result<T> get(final Object instance) {
         // Silently fail if field is not accessible
         if (!this.accessible)
-            return Exceptional.of(new ApplicationException("Field '" + this.name() + "' is not accessible!"));
+            return Result.of(new ApplicationException("Field '" + this.name() + "' is not accessible!"));
 
         if (this.getter == null) {
-            final Exceptional<Property> property = this.annotation(Property.class);
+            final Result<Property> property = this.annotation(Property.class);
             if (property.present() && !"".equals(property.get().getter())) {
                 final String getter = property.get().getter();
-                final Exceptional<? extends MethodContext<?, ?>> method = this.declaredBy().method(getter);
+                final Result<? extends MethodContext<?, ?>> method = this.declaredBy().method(getter);
                 final MethodContext<?, Object> methodContext = (MethodContext<?, Object>) method.orThrowUnchecked(() -> new ApplicationException("Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
                 this.getter = o -> methodContext.invoke(instance).map(v -> (T) v);
             } else {
-                this.getter = o -> Exceptional.of(() -> (T) this.field.get(o));
+                this.getter = o -> Result.of(() -> (T) this.field.get(o));
             }
         }
         return this.getter.apply(instance).orElse(() -> this.type().defaultOrNull());
@@ -157,7 +157,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
     }
 
     @Override
-    public Exceptional<T> obtain(final ApplicationContext applicationContext) {
+    public Result<T> obtain(final ApplicationContext applicationContext) {
         return this.get(applicationContext.get(this.declaredBy()));
     }
 }

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 
@@ -83,9 +83,9 @@ public interface CommandGateway {
      *
      * @param context The context to apply
      *
-     * @return The first {@link CommandExecutorContext}, or {@link Exceptional#empty()}
+     * @return The first {@link CommandExecutorContext}, or {@link Result#empty()}
      */
-    Exceptional<CommandExecutorContext> get(CommandContext context);
+    Result<CommandExecutorContext> get(CommandContext context);
 
     /**
      * Adds the given {@link CommandExecutorExtension} to any {@link CommandExecutorContext} stored in the

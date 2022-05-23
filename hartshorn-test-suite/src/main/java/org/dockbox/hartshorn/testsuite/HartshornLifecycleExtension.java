@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
@@ -146,7 +146,7 @@ public class HartshornLifecycleExtension implements
         populator.populate(instance);
     }
 
-    public static Exceptional<ApplicationContext> createTestContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
+    public static Result<ApplicationContext> createTestContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
         TypeContext<?> applicationActivator = TypeContext.of(activator);
 
         if (applicationActivator.annotation(Activator.class).absent()) {
@@ -159,7 +159,7 @@ public class HartshornLifecycleExtension implements
         }
 
         final ApplicationContext context = applicationFactory.activator(applicationActivator).create();
-        return Exceptional.of(context);
+        return Result.of(context);
     }
 
     private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) throws Exception {

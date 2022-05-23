@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.HttpAction;
@@ -64,7 +64,7 @@ public class MvcServlet implements WebServlet {
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 
-        final Exceptional<ViewTemplate> result = this.methodContext.invoke(this.applicationContext, arguments);
+        final Result<ViewTemplate> result = this.methodContext.invoke(this.applicationContext, arguments);
 
         if (result.present()) {
             final ViewTemplate template = result.get();

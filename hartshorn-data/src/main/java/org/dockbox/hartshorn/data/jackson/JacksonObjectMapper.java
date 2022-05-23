@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.DefaultObjectMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -69,71 +69,71 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Exceptional<T> read(final String content, final TypeContext<T> type) {
+    public <T> Result<T> read(final String content, final TypeContext<T> type) {
         return super.read(content, type);
     }
 
     @Override
-    public <T> Exceptional<T> read(final String content, final Class<T> type) {
+    public <T> Result<T> read(final String content, final Class<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.getName());
-        return Exceptional.of(() -> this.configureMapper().readValue(content, type));
+        return Result.of(() -> this.configureMapper().readValue(content, type));
     }
 
     @Override
-    public <T> Exceptional<T> read(final Path path, final Class<T> type) {
+    public <T> Result<T> read(final Path path, final Class<T> type) {
         this.context.log().debug("Reading content from path " + path + " to type " + type.getName());
-        return Exceptional.of(() -> this.configureMapper().readValue(path.toFile(), type));
+        return Result.of(() -> this.configureMapper().readValue(path.toFile(), type));
     }
 
     @Override
-    public <T> Exceptional<T> read(final URL url, final Class<T> type) {
+    public <T> Result<T> read(final URL url, final Class<T> type) {
         this.context.log().debug("Reading content from url " + url + " to type " + type.getName());
-        return Exceptional.of(() -> this.configureMapper().readValue(url, type));
+        return Result.of(() -> this.configureMapper().readValue(url, type));
     }
 
     @Override
-    public <T> Exceptional<T> read(final String content, final GenericType<T> type) {
+    public <T> Result<T> read(final String content, final GenericType<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.type().getTypeName());
-        return Exceptional.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)));
+        return Result.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)));
     }
 
     @Override
-    public <T> Exceptional<T> read(final Path path, final GenericType<T> type) {
+    public <T> Result<T> read(final Path path, final GenericType<T> type) {
         this.context.log().debug("Reading content from path " + path + " to type " + type.type().getTypeName());
-        return Exceptional.of(() -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type)));
+        return Result.of(() -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type)));
     }
 
     @Override
-    public <T> Exceptional<T> read(final URL url, final GenericType<T> type) {
+    public <T> Result<T> read(final URL url, final GenericType<T> type) {
         this.context.log().debug("Reading content from url " + url + " to type " + type.type().getTypeName());
-        return Exceptional.of(() -> this.configureMapper().readValue(url, new GenericTypeReference<>(type)));
+        return Result.of(() -> this.configureMapper().readValue(url, new GenericTypeReference<>(type)));
     }
 
     @Override
-    public <T> Exceptional<Boolean> write(final Path path, final T content) {
+    public <T> Result<Boolean> write(final Path path, final T content) {
         this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to path " + path);
         if (content instanceof String string) return this.writePlain(path, string);
-        return Exceptional.of(() -> {
+        return Result.of(() -> {
             this.writer(content).writeValue(path.toFile(), content);
             return true;
         }).orElse(() -> false);
     }
 
     @Override
-    public <T> Exceptional<String> write(final T content) {
+    public <T> Result<String> write(final T content) {
         this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to string value");
-        return Exceptional.of(() -> this.writer(content).writeValueAsString(content))
+        return Result.of(() -> this.writer(content).writeValueAsString(content))
                 .map(out -> out.replace("\\r", ""));
     }
 
-    protected Exceptional<Boolean> writePlain(final Path path, final String content) {
+    protected Result<Boolean> writePlain(final Path path, final String content) {
         try (final FileWriter writer = new FileWriter(path.toFile())) {
             writer.write(content);
             writer.flush();
-            return Exceptional.of(true);
+            return Result.of(true);
         }
         catch (final IOException e) {
-            return Exceptional.of(false, e);
+            return Result.of(false, e);
         }
     }
 
@@ -172,7 +172,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private ObjectWriter writer(final Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        final Exceptional<Component> annotated = TypeContext.of(content).annotation(Component.class);
+        final Result<Component> annotated = TypeContext.of(content).annotation(Component.class);
 
         // Currently, only XML supports changing the root name, if XML is used we can change the
         // root name to be equal to the ID of the component.

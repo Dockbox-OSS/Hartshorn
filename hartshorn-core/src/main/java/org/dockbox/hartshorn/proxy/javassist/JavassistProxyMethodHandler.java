@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.MethodInvoker;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.proxy.CustomInvocation;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.MethodInterceptorContext;
@@ -85,12 +85,12 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
 
         try {
             final Object result;
-            final Exceptional<MethodInterceptor<T>> interceptor = this.manager.interceptor(thisMethod);
+            final Result<MethodInterceptor<T>> interceptor = this.manager.interceptor(thisMethod);
             if (interceptor.present()) {
                 result = this.invokeInterceptor(interceptor.get(), callbackTarget, thisMethod, proceedCallable, customInvocation, arguments);
             }
             else {
-                final Exceptional<T> delegate = this.manager.delegate(thisMethod);
+                final Result<T> delegate = this.manager.delegate(thisMethod);
                 if (delegate.present()) {
                     result = this.invokeDelegate(delegate.get(), callbackTarget, thisMethod, arguments);
                 }

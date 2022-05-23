@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 /**
@@ -41,11 +41,11 @@ public interface ApplicationProxier extends ProxyLookup {
      * @return The type of the instance.
      * @see ProxyLookup#unproxy(Object)
      */
-    <T> Exceptional<TypeContext<T>> real(T instance);
+    <T> Result<TypeContext<T>> real(T instance);
 
-    <T> Exceptional<ProxyManager<T>> manager(T instance);
+    <T> Result<ProxyManager<T>> manager(T instance);
 
-    <D, T extends D> Exceptional<D> delegate(TypeContext<D> type, T instance);
+    <D, T extends D> Result<D> delegate(TypeContext<D> type, T instance);
 
     <T> StateAwareProxyFactory<T, ?> factory(TypeContext<T> type);
 

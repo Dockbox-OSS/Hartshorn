@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -159,7 +159,7 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
 
     @Override
     public Self activator(final TypeContext<?> activator) {
-        final Exceptional<Activator> annotation = activator.annotation(Activator.class);
+        final Result<Activator> annotation = activator.annotation(Activator.class);
         if (annotation.absent())
             throw new IllegalArgumentException("Application type should be decorated with @Activator");
 

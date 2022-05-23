@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.events.handle;
 
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class EventParameterRule implements ParameterLoaderRule<EventParameterLoaderContext> {
@@ -28,7 +28,7 @@ public class EventParameterRule implements ParameterLoaderRule<EventParameterLoa
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
-        return Exceptional.of((T) context.event());
+    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
+        return Result.of((T) context.event());
     }
 }

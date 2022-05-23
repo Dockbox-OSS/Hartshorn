@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.data.context.SerialisationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
@@ -39,7 +39,7 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
             final Path path = serialisationContext.predeterminedPath();
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<?> result = objectMapper.read(path, serialisationContext.type());
+            final Result<?> result = objectMapper.read(path, serialisationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
@@ -55,7 +55,7 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
 
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<?> result = objectMapper.read(path, serialisationContext.type());
+            final Result<?> result = objectMapper.read(path, serialisationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
@@ -66,7 +66,7 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
             final String raw = (String) interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<?> result = objectMapper.read(raw, serialisationContext.type());
+            final Result<?> result = objectMapper.read(raw, serialisationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
@@ -76,8 +76,8 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
         return DeserialisationContext.class;
     }
 
-    private <R> R wrapResult(final Exceptional<?> result, final MethodProxyContext<?> methodContext) {
-        if (methodContext.method().returnType().childOf(Exceptional.class)) return (R) result;
+    private <R> R wrapResult(final Result<?> result, final MethodProxyContext<?> methodContext) {
+        if (methodContext.method().returnType().childOf(Result.class)) return (R) result;
         else return (R) result.orNull();
     }
 
@@ -121,7 +121,7 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
 
     private TypeContext<?> outputType(final MethodProxyContext<?> context) {
         final TypeContext<?> returnType = context.method().returnType();
-        if (returnType.childOf(Exceptional.class)) {
+        if (returnType.childOf(Result.class)) {
             return returnType.typeParameters().get(0);
         }
         else {

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 
@@ -41,9 +41,9 @@ public interface CacheManager {
      * @param cache The cache ID
      * @param <T> The type of objects stored by the cache
      *
-     * @return The cache, or {@link Exceptional#empty()}
+     * @return The cache, or {@link Result#empty()}
      */
-    <T> Exceptional<Cache<T>> get(String cache);
+    <T> Result<Cache<T>> get(String cache);
 
     /**
      * Updates the {@link Cache} associated with the given <code>cache</code>

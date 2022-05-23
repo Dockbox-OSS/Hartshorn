@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
@@ -142,7 +142,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
             final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listenerType.type(), this.listener, this.context, event);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
-            final Exceptional<?> result = this.method.invoke(this.listener, arguments);
+            final Result<?> result = this.method.invoke(this.listener, arguments);
             if (result.caught()) {
                 this.context().handle("Could not finish event runner for " + eventName, result.error());
             }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.config;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.GenericType;
 
 import java.util.Map;
@@ -26,11 +26,11 @@ public interface PropertyHolder {
 
     boolean has(String key);
 
-    <T> Exceptional<T> get(String key, Class<T> type);
+    <T> Result<T> get(String key, Class<T> type);
 
-    <T> Exceptional<T> get(String key, GenericType<T> type);
+    <T> Result<T> get(String key, GenericType<T> type);
 
-    default <T> Exceptional<T> get(final String key) {
+    default <T> Result<T> get(final String key) {
         return this.get(key, (Class<T>) null);
     }
 

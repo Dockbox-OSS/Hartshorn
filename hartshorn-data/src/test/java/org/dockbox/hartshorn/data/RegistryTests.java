@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.registry.Registry;
 import org.dockbox.hartshorn.data.registry.RegistryColumn;
 import org.junit.jupiter.api.Assertions;
@@ -66,7 +66,7 @@ public class RegistryTests {
                     r.add(TestIdentifier.STAIR, "Cobblestone Stair1");
                 });
 
-        final Exceptional<Registry<String>> eCobblestoneRegistry =
+        final Result<Registry<String>> eCobblestoneRegistry =
                 testRegistry.matchingColumns(TestIdentifier.COBBLESTONE).first();
 
         final Registry<String> cobblestoneRegistry = eCobblestoneRegistry.get();

@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.TypeConversionException;
@@ -143,8 +143,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<ConstructorContext<T>> constructors;
     private Map<Class<?>, Annotation> annotations;
     private MultiMap<String, MethodContext<?, T>> methods;
-    private Exceptional<ConstructorContext<T>> defaultConstructor;
-    private Exceptional<TypeContext<?>> elementType;
+    private Result<ConstructorContext<T>> defaultConstructor;
+    private Result<TypeContext<?>> elementType;
     private Tristate isProxy = Tristate.UNDEFINED;
 
     protected TypeContext(final Class<T> type) {
@@ -378,10 +378,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 .collect(Collectors.toList());
     }
 
-    public Exceptional<FieldContext<?>> field(final String field) {
+    public Result<FieldContext<?>> field(final String field) {
         this.collectFields();
         if (this.fields.containsKey(field))
-            return Exceptional.of(this.fields.get(field));
+            return Result.of(this.fields.get(field));
         else
             return this.parent().field(field);
     }
@@ -405,7 +405,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public <P> List<FieldContext<P>> fieldsOf(final GenericType<P> type) {
-        final Exceptional<Class<P>> real = type.asClass();
+        final Result<Class<P>> real = type.asClass();
         if (real.absent()) return List.of();
         else return this.fieldsOf(real.get());
     }
@@ -495,12 +495,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.isNative;
     }
 
-    public Exceptional<TypeContext<?>> elementType() {
+    public Result<TypeContext<?>> elementType() {
         if (this.elementType == null) {
             this.verifyMetadataAvailable();
             this.elementType = this.isArray()
-                    ? Exceptional.of(of(this.type().getComponentType()))
-                    : Exceptional.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
+                    ? Result.of(of(this.type().getComponentType()))
+                    : Result.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
         }
         return this.elementType;
     }
@@ -516,12 +516,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.constructors;
     }
 
-    public Exceptional<ConstructorContext<T>> constructor(final Class<?>... parameterTypes) {
+    public Result<ConstructorContext<T>> constructor(final Class<?>... parameterTypes) {
         return this.constructor(Arrays.asList(parameterTypes));
     }
 
-    public Exceptional<ConstructorContext<T>> constructor(final List<Class<?>> parameterTypes) {
-        return Exceptional.of(this.constructors().stream()
+    public Result<ConstructorContext<T>> constructor(final List<Class<?>> parameterTypes) {
+        return Result.of(this.constructors().stream()
                 .filter(constructor -> {
                     final List<? extends Class<?>> parameters = constructor.parameterTypes().stream()
                             .map(TypeContext::type)
@@ -545,10 +545,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.constructors(Inject.class);
     }
 
-    public Exceptional<ConstructorContext<T>> defaultConstructor() {
+    public Result<ConstructorContext<T>> defaultConstructor() {
         if (this.defaultConstructor == null) {
             this.verifyMetadataAvailable();
-            this.defaultConstructor = Exceptional.of(() -> ConstructorContext.of(this.type.getDeclaredConstructor()));
+            this.defaultConstructor = Result.of(() -> ConstructorContext.of(this.type.getDeclaredConstructor()));
         }
         return this.defaultConstructor;
     }
@@ -614,7 +614,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (instance == null) return null;
         final TypeContext<T> type = TypeContext.of(instance);
         for (final Entry<String, Object> field : data.entrySet()) {
-            final Exceptional<FieldContext<?>> declaredField = type.field(field.getKey());
+            final Result<FieldContext<?>> declaredField = type.field(field.getKey());
             if (declaredField.present()) {
                 declaredField.get().set(instance, field.getValue());
             }
@@ -626,11 +626,11 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.type().equals(type);
     }
 
-    public Exceptional<MethodContext<?, T>> method(final String name) {
+    public Result<MethodContext<?, T>> method(final String name) {
         return this.method(name, List.of());
     }
 
-    public Exceptional<MethodContext<?, T>> method(final String name, final List<TypeContext<?>> arguments) {
+    public Result<MethodContext<?, T>> method(final String name, final List<TypeContext<?>> arguments) {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
             // so instead we only link it by name and perform the list comparison on request.
@@ -642,10 +642,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (this.methods.containsKey(name)) {
             final Collection<MethodContext<?, T>> overloadingMethods = this.methods.get(name);
             for (final MethodContext<?, T> method : overloadingMethods) {
-                if (method.parameterTypes().equals(arguments)) return Exceptional.of(method);
+                if (method.parameterTypes().equals(arguments)) return Result.of(method);
             }
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     @Override
@@ -668,11 +668,11 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.annotations;
     }
 
-    public Exceptional<MethodContext<?, T>> method(final String name, final TypeContext<?>... arguments) {
+    public Result<MethodContext<?, T>> method(final String name, final TypeContext<?>... arguments) {
         return this.method(name, Arrays.asList(arguments));
     }
 
-    public Exceptional<MethodContext<?, T>> method(final String name, final Class<?>... arguments) {
+    public Result<MethodContext<?, T>> method(final String name, final Class<?>... arguments) {
         return this.method(name, Arrays.stream(arguments).map(TypeContext::of).collect(Collectors.toList()));
     }
 

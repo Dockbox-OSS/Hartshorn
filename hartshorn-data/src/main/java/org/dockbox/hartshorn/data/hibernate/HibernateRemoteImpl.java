@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.hibernate.dialect.Dialect;
 
@@ -35,7 +35,7 @@ public class HibernateRemoteImpl implements HibernateRemote {
 
     @Inject
     public HibernateRemoteImpl(final PropertyHolder propertyHolder) {
-        final Exceptional<String> remoteType = propertyHolder.get("hartshorn.data.remote");
+        final Result<String> remoteType = propertyHolder.get("hartshorn.data.remote");
 
         this.driver = (String) propertyHolder.get("hartshorn.data.hibernate.driver_class").orNull();
         if (this.driver == null) throw new IllegalStateException("Driver class was not configured, expected hartshorn.data.hibernate.driver_class or hartshorn.data.remote to be set, but got null");

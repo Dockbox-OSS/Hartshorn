@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class CommandContextParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
@@ -29,7 +29,7 @@ public class CommandContextParameterRule implements ParameterLoaderRule<CommandP
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        return Exceptional.of((T) context.commandContext());
+    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
+        return Result.of((T) context.commandContext());
     }
 }

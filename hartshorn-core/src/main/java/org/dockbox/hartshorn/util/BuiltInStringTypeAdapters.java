@@ -29,18 +29,18 @@ public final class BuiltInStringTypeAdapters {
 
     /**
      * A basic passthrough adapter, to support dynamic usages of type adapters. Returns the given value, wrapped in a
-     * {@link Exceptional}.
+     * {@link Result}.
      */
-    public static final StringTypeAdapter<String> STRING = StringTypeAdapterImpl.of(String.class, Exceptional::of);
+    public static final StringTypeAdapter<String> STRING = StringTypeAdapterImpl.of(String.class, Result::of);
 
     /**
-     * A character adapter, converting a string to a {@link Character}. If the input is empty, {@link Exceptional#empty()}
+     * A character adapter, converting a string to a {@link Character}. If the input is empty, {@link Result#empty()}
      * is returned. If the input is longer than one character, the first character of the input is returned. If the input
      * is exactly one character, the character is returned.
      */
     public static final StringTypeAdapter<Character> CHARACTER = StringTypeAdapterImpl.of(Character.class, in -> {
         int length = in.length();
-        return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
+        return 1 == length ? Result.of(in.charAt(0)) : Result.empty();
     });
 
     /**
@@ -49,51 +49,51 @@ public final class BuiltInStringTypeAdapters {
      * the result is always {@code false}.
      */
     public static final StringTypeAdapter<Boolean> BOOLEAN = StringTypeAdapterImpl.of(Boolean.class, in -> switch (in) {
-        case "yes" -> Exceptional.of(true);
-        case "no" -> Exceptional.of(false);
-        default -> Exceptional.of(in).map(Boolean::parseBoolean);
+        case "yes" -> Result.of(true);
+        case "no" -> Result.of(false);
+        default -> Result.of(in).map(Boolean::parseBoolean);
     });
 
     /**
-     * A double adapter, converting a string to an {@link Double}. If the input is empty, {@link Exceptional#empty()}
-     * is returned. If the input is not a valid double, {@link Exceptional#empty()} is returned. Otherwise, the result
+     * A double adapter, converting a string to an {@link Double}. If the input is empty, {@link Result#empty()}
+     * is returned. If the input is not a valid double, {@link Result#empty()} is returned. Otherwise, the result
      * is the double value of the input as produced by {@link Double#parseDouble(String)}.
      */
-    public static final StringTypeAdapter<Double> DOUBLE = StringTypeAdapterImpl.of(Double.class, in -> Exceptional.of(in).map(Double::parseDouble));
+    public static final StringTypeAdapter<Double> DOUBLE = StringTypeAdapterImpl.of(Double.class, in -> Result.of(in).map(Double::parseDouble));
 
     /**
-     * A float adapter, converting a string to an {@link Float}. If the input is empty, {@link Exceptional#empty()}
-     * is returned. If the input is not a valid float, {@link Exceptional#empty()} is returned. Otherwise, the result
+     * A float adapter, converting a string to an {@link Float}. If the input is empty, {@link Result#empty()}
+     * is returned. If the input is not a valid float, {@link Result#empty()} is returned. Otherwise, the result
      * is the float value of the input as produced by {@link Float#parseFloat(String)}.
      */
-    public static final StringTypeAdapter<Float> FLOAT = StringTypeAdapterImpl.of(Float.class, in -> Exceptional.of(in).map(Float::parseFloat));
+    public static final StringTypeAdapter<Float> FLOAT = StringTypeAdapterImpl.of(Float.class, in -> Result.of(in).map(Float::parseFloat));
 
     /**
-     * An integer adapter, converting a string to an {@link Integer}. If the input is empty, {@link Exceptional#empty()}
-     * is returned. If the input is not a valid integer, {@link Exceptional#empty()} is returned. Otherwise, the result
+     * An integer adapter, converting a string to an {@link Integer}. If the input is empty, {@link Result#empty()}
+     * is returned. If the input is not a valid integer, {@link Result#empty()} is returned. Otherwise, the result
      * is the integer value of the input as produced by {@link Integer#parseInt(String)}.
      */
-    public static final StringTypeAdapter<Integer> INTEGER = StringTypeAdapterImpl.of(Integer.class, in -> Exceptional.of(in).map(Integer::parseInt));
+    public static final StringTypeAdapter<Integer> INTEGER = StringTypeAdapterImpl.of(Integer.class, in -> Result.of(in).map(Integer::parseInt));
 
     /**
-     * A long adapter, converting a string to an {@link Long}. If the input is empty, {@link Exceptional#empty()}
-     * is returned. If the input is not a valid long, {@link Exceptional#empty()} is returned. Otherwise, the result
+     * A long adapter, converting a string to an {@link Long}. If the input is empty, {@link Result#empty()}
+     * is returned. If the input is not a valid long, {@link Result#empty()} is returned. Otherwise, the result
      * is the long value of the input as produced by {@link Long#parseLong(String)}.
      */
-    public static final StringTypeAdapter<Long> LONG = StringTypeAdapterImpl.of(Long.class, in -> Exceptional.of(in).map(Long::parseLong));
+    public static final StringTypeAdapter<Long> LONG = StringTypeAdapterImpl.of(Long.class, in -> Result.of(in).map(Long::parseLong));
 
     /**
-     * A short adapter, converting a string to an {@link Short}. If the input is empty, {@link Exceptional#empty()}
-     * is returned. If the input is not a valid short, {@link Exceptional#empty()} is returned. Otherwise, the result
+     * A short adapter, converting a string to an {@link Short}. If the input is empty, {@link Result#empty()}
+     * is returned. If the input is not a valid short, {@link Result#empty()} is returned. Otherwise, the result
      * is the short value of the input as produced by {@link Short#parseShort(String)}.
      */
-    public static final StringTypeAdapter<Short> SHORT = StringTypeAdapterImpl.of(Short.class, in -> Exceptional.of(in).map(Short::parseShort));
+    public static final StringTypeAdapter<Short> SHORT = StringTypeAdapterImpl.of(Short.class, in -> Result.of(in).map(Short::parseShort));
 
     /**
      * A UUID adapter, converting a string to a {@link UUID}. If the input is a valid UUID according to the specifications
      * in {@link UUID}, the result is the UUID value of the input as produced by {@link UUID#fromString(String)}.
      */
-    public static final StringTypeAdapter<UUID> UNIQUE_ID = StringTypeAdapterImpl.of(UUID.class, in -> Exceptional.of(in).map(UUID::fromString));
+    public static final StringTypeAdapter<UUID> UNIQUE_ID = StringTypeAdapterImpl.of(UUID.class, in -> Result.of(in).map(UUID::fromString));
 
     private BuiltInStringTypeAdapters() {}
 }

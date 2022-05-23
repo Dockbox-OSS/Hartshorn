@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -150,7 +150,7 @@ public class CommandDefinitionContextTests {
         final CommandElement<?> enumElement = context.elements().get(2);
         Assertions.assertTrue(enumElement.optional());
         Assertions.assertEquals("enum", enumElement.name());
-        final Exceptional<?> one = enumElement.parse(null, "ONE");
+        final Result<?> one = enumElement.parse(null, "ONE");
         Assertions.assertTrue(one.present());
         Assertions.assertTrue(one.get() instanceof CommandValueEnum);
         Assertions.assertEquals(CommandValueEnum.ONE, one.get());

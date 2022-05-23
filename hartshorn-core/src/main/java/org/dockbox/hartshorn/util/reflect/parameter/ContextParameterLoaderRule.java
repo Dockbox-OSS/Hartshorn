@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
@@ -35,12 +35,12 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final TypeContext<org.dockbox.hartshorn.context.Context> type = (TypeContext<org.dockbox.hartshorn.context.Context>) parameter.type();
         final ApplicationContext applicationContext = context.applicationContext();
         final String name = parameter.annotation(Context.class).map(Context::value).orNull();
 
-        final Exceptional<org.dockbox.hartshorn.context.Context> out = name == null
+        final Result<org.dockbox.hartshorn.context.Context> out = name == null
                 ? applicationContext.first(type)
                 : applicationContext.first(applicationContext, type.type(), name);
 

@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.mapping;
 
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -39,7 +39,7 @@ public class PersistenceModifiersTests {
     void testSkipEmptyKeepsNonEmpty() {
         final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of("sample", "other"));
-        final Exceptional<String> out = mapper.write(element);
+        final Result<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
         Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", StringUtilities.strip(out.get()));
@@ -49,7 +49,7 @@ public class PersistenceModifiersTests {
     void testSkipEmptySkipsEmpty() {
         final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of());
-        final Exceptional<String> out = mapper.write(element);
+        final Result<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
         Assertions.assertEquals("{}", StringUtilities.strip(out.get()));

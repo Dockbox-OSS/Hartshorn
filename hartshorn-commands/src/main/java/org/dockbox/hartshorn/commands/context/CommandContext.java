@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -53,40 +53,40 @@ public interface CommandContext extends ParserContext, ContextCarrier {
     /**
      * Gets the argument or flag associated with the given <code>key</code>, if it exists. The
      * value of the argument is cast to type <code>T</code>. If the argument or flag is not of type
-     * <code>T</code>, or does not exist, {@link Exceptional#empty()} is returned instead.
+     * <code>T</code>, or does not exist, {@link Result#empty()} is returned instead.
      *
      * @param key The key of the argument or flag
      * @param <T> The expected type of the argument or flag
      *
-     * @return The argument or flag wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     * @return The argument or flag wrapped in a {@link Result}, or {@link Result#empty()}
      */
-    <T> Exceptional<T> find(String key);
+    <T> Result<T> find(String key);
 
     /**
      * Gets the first {@link CommandParameter} in the form of an argument associated with the given
      * <code>key</code>, if it exists. If the argument is not of type <code>T</code>, or does not exist,
-     * {@link Exceptional#empty()} is returned instead. The {@link CommandParameter} contains both the
+     * {@link Result#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the argument.
      *
      * @param key The key of the argument
      * @param <T> The expected type of the argument
      *
-     * @return The argument wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     * @return The argument wrapped in a {@link Result}, or {@link Result#empty()}
      */
-    <T> Exceptional<CommandParameter<T>> argument(String key);
+    <T> Result<CommandParameter<T>> argument(String key);
 
     /**
      * Gets the first {@link CommandParameter} in the form of a flag associated with the given
      * <code>key</code>, if it exists. If the flag is not of type <code>T</code>, or does not exist,
-     * {@link Exceptional#empty()} is returned instead. The {@link CommandParameter} contains both the
+     * {@link Result#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the flag.
      *
      * @param key The key of the flag
      * @param <T> The expected type of the flag
      *
-     * @return The flag wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     * @return The flag wrapped in a {@link Result}, or {@link Result#empty()}
      */
-    <T> Exceptional<CommandParameter<T>> flag(String key);
+    <T> Result<CommandParameter<T>> flag(String key);
 
     /**
      * Gets the {@link CommandSource} responsible for executing the command. The source is capable

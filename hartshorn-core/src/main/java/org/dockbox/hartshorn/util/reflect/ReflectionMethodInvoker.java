@@ -16,22 +16,22 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.reflect.Method;
 
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
-    public Exceptional<T> invoke(final MethodContext<T, P> method, final P instance, final Object[] args) {
-        final Exceptional<T> result = Exceptional.of(() -> {
+    public Result<T> invoke(final MethodContext<T, P> method, final P instance, final Object[] args) {
+        final Result<T> result = Result.of(() -> {
             final Method jlrMethod = method.method();
             return (T) jlrMethod.invoke(instance, args);
         });
         if (result.caught()) {
             Throwable cause = result.error();
             if (result.error().getCause() != null) cause = result.error().getCause();
-            return Exceptional.of(result.orNull(), cause);
+            return Result.of(result.orNull(), cause);
         }
         return result;
     }
