@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
@@ -159,17 +159,17 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     }
 
     @Override
-    public <T> Exceptional<TypeContext<T>> real(final T instance) {
+    public <T> Result<TypeContext<T>> real(final T instance) {
         return this.applicationProxier.real(instance);
     }
 
     @Override
-    public <T> Exceptional<ProxyManager<T>> manager(final T instance) {
+    public <T> Result<ProxyManager<T>> manager(final T instance) {
         return this.applicationProxier.manager(instance);
     }
 
     @Override
-    public <D, T extends D> Exceptional<D> delegate(final TypeContext<D> type, final T instance) {
+    public <D, T extends D> Result<D> delegate(final TypeContext<D> type, final T instance) {
         return this.applicationProxier.delegate(type, instance);
     }
 

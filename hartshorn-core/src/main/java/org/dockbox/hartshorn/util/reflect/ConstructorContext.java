@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 import java.lang.reflect.Constructor;
@@ -36,7 +36,7 @@ import java.util.function.Function;
 public final class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>, T> implements TypedElementContext<T> {
 
     private final Constructor<T> constructor;
-    private Function<Object[], Exceptional<T>> invoker;
+    private Function<Object[], Result<T>> invoker;
 
     private ConstructorContext(final Constructor<T> constructor) {
         this.constructor = constructor;
@@ -65,7 +65,7 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
      * @param args The arguments to pass to the constructor.
      * @return The result of the invocation.
      */
-    public Exceptional<T> createInstance(final Object... args) {
+    public Result<T> createInstance(final Object... args) {
         this.prepareHandle();
         return this.invoker.apply(args);
     }
@@ -77,7 +77,7 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
      * @param context The application context to use for resolving the required arguments.
      * @return The result of the invocation.
      */
-    public Exceptional<T> createInstance(final ApplicationContext context) {
+    public Result<T> createInstance(final ApplicationContext context) {
         this.prepareHandle();
         try {
             final Object[] args = this.arguments(context);
@@ -90,17 +90,17 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
             //       cycle and provide a more specific error message.
             final LinkedList<TypeContext<?>> parameterTypes = this.parameterTypes();
             if (parameterTypes.size() == 1) {
-                return Exceptional.of(new CyclicComponentException(this, parameterTypes.get(0)));
+                return Result.of(new CyclicComponentException(this, parameterTypes.get(0)));
             }
             else {
                 for (final TypeContext<?> parameterType : parameterTypes) {
                     for (final ConstructorContext<?> constructor : parameterType.injectConstructors()) {
                         if (constructor.parameterTypes().contains(this.type())) {
-                            return Exceptional.of(new CyclicComponentException(this, parameterType));
+                            return Result.of(new CyclicComponentException(this, parameterType));
                         }
                     }
                 }
-                return Exceptional.of(new CyclicComponentException(this, null));
+                return Result.of(new CyclicComponentException(this, null));
             }
         }
     }
@@ -122,7 +122,7 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
 
     private void prepareHandle() {
         if (this.invoker == null) {
-            this.invoker = args -> Exceptional.of(() -> {
+            this.invoker = args -> Result.of(() -> {
                 try {
                     return this.constructor.newInstance(args);
                 } catch (final InvocationTargetException e) {

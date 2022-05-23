@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.data.context.SerialisationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
             final Path target = serialisationContext.predeterminedPath();
             final Object content = interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
-            final Exceptional<Boolean> result = objectMapper.write(target, content);
+            final Result<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
         };
     }
@@ -60,7 +60,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
             if (target == null || content == null) throw new IllegalArgumentException("Expected one argument to be a subtype of File or Path, expected one argument to be a content type");
 
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
-            final Exceptional<Boolean> result = objectMapper.write(target, content);
+            final Result<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
         };
     }
@@ -71,7 +71,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
             final Object content = interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<String> result = objectMapper.write(content);
+            final Result<String> result = objectMapper.write(content);
             if (methodContext.method().returnType().childOf(String.class)) {
                 return (R) result.orNull();
             }
@@ -86,7 +86,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
         return SerialisationContext.class;
     }
 
-    private <R> R wrapBooleanResult(final Exceptional<Boolean> result, final MethodProxyContext<?> methodContext) {
+    private <R> R wrapBooleanResult(final Result<Boolean> result, final MethodProxyContext<?> methodContext) {
         if (methodContext.method().returnType().childOf(Boolean.class))
             return (R) result.or(false);
         else return (R) result;
@@ -143,7 +143,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
 
         if (returnType.childOf(String.class)) return true;
 
-        else if (returnType.childOf(Exceptional.class)) {
+        else if (returnType.childOf(Result.class)) {
             final TypeContext<?> type = returnType.typeParameters().get(0);
 
             if (!type.isVoid()) {

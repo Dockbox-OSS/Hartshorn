@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.GenericType;
 
 import java.io.IOException;
@@ -57,20 +57,20 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     @Override
-    public <T> Exceptional<T> get(final String key, final Class<T> type) {
+    public <T> Result<T> get(final String key, final Class<T> type) {
         final Object value = this.find(key);
 
         if (type != null) {
             if (type.isInstance(value)) {
-                return Exceptional.of(type.cast(value));
+                return Result.of(type.cast(value));
             }
 
-            return Exceptional.of(value)
+            return Result.of(value)
                     .flatMap(object -> this.objectMapper.write(object))
                     .flatMap(serialized -> this.objectMapper.read(serialized, type));
         }
         else {
-            return Exceptional.of(value).map(o -> (T) o).map(this::copyOf);
+            return Result.of(value).map(o -> (T) o).map(this::copyOf);
         }
     }
 
@@ -88,8 +88,8 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     @Override
-    public <T> Exceptional<T> get(final String key, final GenericType<T> type) {
-        return Exceptional.of(this.find(key))
+    public <T> Result<T> get(final String key, final GenericType<T> type) {
+        return Result.of(this.find(key))
                 .flatMap(value -> this.objectMapper.write(value))
                 .flatMap(serialized -> this.objectMapper.read(serialized, type));
     }

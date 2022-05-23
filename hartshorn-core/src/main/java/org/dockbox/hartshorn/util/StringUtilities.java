@@ -49,11 +49,11 @@ public final class StringUtilities {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
 
-    public static Exceptional<Duration> durationOf(final String in) {
+    public static Result<Duration> durationOf(final String in) {
         // First, if just digits, return the number in seconds.
 
         if (StringUtilities.minorTimeString.matcher(in).matches()) {
-            return Exceptional.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
+            return Result.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
         }
 
         final Matcher m = StringUtilities.timeString.matcher(in);
@@ -65,10 +65,10 @@ public final class StringUtilities {
             time += StringUtilities.durationAmount(m.group(10), 1);
 
             if (0 < time) {
-                return Exceptional.of(Duration.ofSeconds(time));
+                return Result.of(Duration.ofSeconds(time));
             }
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     private static long durationAmount(@Nullable final String g, final int multiplier) {

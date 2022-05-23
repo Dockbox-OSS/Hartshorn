@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -85,10 +85,10 @@ public class CacheTests {
         final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
         cacheManager.update("sample", 3L);
 
-        final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
+        final Result<Cache<Long>> cache = cacheManager.get("sample");
         Assertions.assertTrue(cache.present());
 
-        final Exceptional<Long> content = cache.get().get();
+        final Result<Long> content = cache.get().get();
         Assertions.assertTrue(content.present());
 
         final long object = content.get();
@@ -105,10 +105,10 @@ public class CacheTests {
         final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
         cacheManager.evict("sample");
 
-        final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
+        final Result<Cache<Long>> cache = cacheManager.get("sample");
         Assertions.assertTrue(cache.present());
 
-        final Exceptional<Long> content = cache.get().get();
+        final Result<Long> content = cache.get().get();
         Assertions.assertTrue(content.absent());
     }
 

@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.util.reflect;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
@@ -68,42 +68,42 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> imp
         return context;
     }
 
-    public Exceptional<T> invoke(final P instance, final Object... arguments) {
+    public Result<T> invoke(final P instance, final Object... arguments) {
         if (this.invoker == null) {
             this.invoker = (MethodInvoker<T, P>) defaultInvoker;
         }
         return this.invoker.invoke(this, instance, arguments);
     }
 
-    public Exceptional<T> invoke(final ApplicationContext context, final P instance) {
+    public Result<T> invoke(final ApplicationContext context, final P instance) {
         final Object[] args = this.arguments(context);
         return this.invoke(instance, args);
     }
 
-    public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
+    public Result<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
         return this.invoke(context.get(this.parent()), arguments);
     }
 
-    public Exceptional<T> invoke(final P instance, final Collection<Object> arguments) {
+    public Result<T> invoke(final P instance, final Collection<Object> arguments) {
         return this.invoke(instance, arguments.toArray());
     }
 
-    public Exceptional<T> invoke(final ApplicationContext context) {
+    public Result<T> invoke(final ApplicationContext context) {
         final Object[] args = this.arguments(context);
         final P instance = context.get(this.parent());
         return this.invoke(instance, args);
     }
 
-    public Exceptional<T> invokeStatic(final Object... arguments) {
+    public Result<T> invokeStatic(final Object... arguments) {
         if (this.has(AccessModifier.STATIC)) return this.invoke(null, arguments);
-        else return Exceptional.of(new IllegalAccessException("Method is not static"));
+        else return Result.of(new IllegalAccessException("Method is not static"));
     }
 
-    public Exceptional<T> invokeStatic(final Collection<Object> arguments) {
+    public Result<T> invokeStatic(final Collection<Object> arguments) {
         return this.invokeStatic(arguments.toArray());
     }
 
-    public Exceptional<T> invokeStatic(final ApplicationContext context) {
+    public Result<T> invokeStatic(final ApplicationContext context) {
         final Object[] args = this.arguments(context);
         return this.invokeStatic(args);
     }
@@ -150,7 +150,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> imp
     }
 
     @Override
-    public Exceptional<T> obtain(final ApplicationContext applicationContext) {
+    public Result<T> obtain(final ApplicationContext applicationContext) {
         return this.invoke(applicationContext);
     }
 

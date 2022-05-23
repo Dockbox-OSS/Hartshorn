@@ -30,9 +30,9 @@ import java.util.function.Function;
 public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
 
     private final Class<T> type;
-    private final Function<String, Exceptional<T>> function;
+    private final Function<String, Result<T>> function;
 
-    private StringTypeAdapterImpl(final Class<T> type, final Function<String, Exceptional<T>> function) {
+    private StringTypeAdapterImpl(final Class<T> type, final Function<String, Result<T>> function) {
         this.type = type;
         this.function = function;
     }
@@ -42,7 +42,7 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
     }
 
     @Override
-    public Exceptional<T> adapt(final String value) {
+    public Result<T> adapt(final String value) {
         return this.function.apply(value);
     }
 
@@ -54,7 +54,7 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
      * @param <T> The type to convert to.
      * @return The new {@link StringTypeAdapterImpl} instance.
      */
-    public static <T> StringTypeAdapterImpl<T> of(final Class<T> type, final Function<String, Exceptional<T>> function) {
+    public static <T> StringTypeAdapterImpl<T> of(final Class<T> type, final Function<String, Result<T>> function) {
         return new StringTypeAdapterImpl<>(type, function);
     }
 }

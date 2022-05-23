@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -51,8 +51,8 @@ public final class EnumCommandElement<E extends Enum<E>> implements CommandEleme
     }
 
     @Override
-    public Exceptional<E> parse(final CommandSource source, final String argument) {
-        return Exceptional.of(this.values.get(argument.toLowerCase()));
+    public Result<E> parse(final CommandSource source, final String argument) {
+        return Result.of(this.values.get(argument.toLowerCase()));
     }
 
     @Override

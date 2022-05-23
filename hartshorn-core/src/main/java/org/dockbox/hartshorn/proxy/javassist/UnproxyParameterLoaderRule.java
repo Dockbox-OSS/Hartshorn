@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.proxy.Unproxy;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
@@ -32,10 +32,10 @@ public class UnproxyParameterLoaderRule implements ParameterLoaderRule<Parameter
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Exceptional<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
-        return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Exceptional<Object>>) ProxyManager::delegate).orElse(() -> {
+        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
+        return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Result<Object>>) ProxyManager::delegate).orElse(() -> {
             final Unproxy unproxy = parameter.annotation(Unproxy.class).orElse(() -> parameter.declaredBy().annotation(Unproxy.class).orNull()).get();
             if (unproxy.fallbackToProxy()) return argument;
             else return null;

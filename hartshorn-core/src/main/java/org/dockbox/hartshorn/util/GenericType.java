@@ -43,11 +43,11 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
         return this._type;
     }
 
-    public Exceptional<Class<T>> asClass() {
+    public Result<Class<T>> asClass() {
         final Type type = this.type();
         if (type instanceof Class<?> clazz)
-            return Exceptional.of((Class<T>) clazz);
-        return Exceptional.empty();
+            return Result.of((Class<T>) clazz);
+        return Result.empty();
     }
 
     @Override

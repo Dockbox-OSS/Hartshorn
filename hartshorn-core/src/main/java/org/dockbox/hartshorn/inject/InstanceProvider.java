@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 /**
  * A singleton-like provider, which uses an existing instance of type {@code T} to
@@ -43,7 +43,7 @@ public class InstanceProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Exceptional<T> provide(final ApplicationContext context) {
-        return Exceptional.of(this.instance);
+    public Result<T> provide(final ApplicationContext context) {
+        return Result.of(this.instance);
     }
 }

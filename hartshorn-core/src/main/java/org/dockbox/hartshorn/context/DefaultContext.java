@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 import java.util.Set;
@@ -56,8 +56,8 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
-        return Exceptional.of(this.contexts.stream()
+    public <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Class<C> context) {
+        return Result.of(this.contexts.stream()
                         .filter(c -> TypeContext.unproxy(applicationContext, c).childOf(context))
                         .findFirst())
                 .orElse(() -> {
@@ -74,8 +74,8 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
-        return Exceptional.of(this.namedContexts.get(name).stream()
+    public <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
+        return Result.of(this.namedContexts.get(name).stream()
                         .filter(c -> TypeContext.of(c).childOf(context))
                         .findFirst())
                 .orElse(() -> {
@@ -92,19 +92,19 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Key<C> key) {
+    public <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Key<C> key) {
         if (key.name() == null) return this.first(applicationContext, key.type().type());
         else return this.first(applicationContext, key.type().type(), key.name().value());
     }
 
     @Override
-    public Exceptional<Context> first(final String name) {
-        return Exceptional.of(this.namedContexts.get(name).stream().findFirst());
+    public Result<Context> first(final String name) {
+        return Result.of(this.namedContexts.get(name).stream().findFirst());
     }
 
     @Override
-    public <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
-        return Exceptional.of(this.namedContexts.get(name).stream()
+    public <N extends Context> Result<N> first(final String name, final Class<N> context) {
+        return Result.of(this.namedContexts.get(name).stream()
                         .filter(c -> TypeContext.of(c).childOf(context))
                         .findFirst())
                 .map(c -> (N) c);

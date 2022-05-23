@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -44,7 +44,7 @@ public final class AnnotationHelper {
      * The annotation-magic-lookup is a relatively expensive operation, so we'd better
      * cache the result as much as possible.
      */
-    private static final Map<Object, Exceptional<Object>> cache = new ConcurrentHashMap<>();
+    private static final Map<Object, Result<Object>> cache = new ConcurrentHashMap<>();
 
     private AnnotationHelper() {}
 
@@ -69,9 +69,9 @@ public final class AnnotationHelper {
     }
 
     private static <T> T cached(final List<Object> keys, final Supplier<T> supplier) {
-        Exceptional<Object> ret = cache.get(keys);
+        Result<Object> ret = cache.get(keys);
         if (ret == null) {
-            ret = Exceptional.of(supplier::get);
+            ret = Result.of(supplier::get);
             cache.put(keys, ret);
         }
         ret.rethrowUnchecked();
@@ -147,10 +147,10 @@ public final class AnnotationHelper {
         return cached(Arrays.asList(4, annotationType), () -> annotationHierarchy(annotationType)).contains(type);
     }
 
-    static Exceptional<Object> searchInHierarchy(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Collection<Class<? extends Annotation>> hierarchy, final String name) {
+    static Result<Object> searchInHierarchy(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Collection<Class<? extends Annotation>> hierarchy, final String name) {
         try {
             final Method method = actual.annotationType().getMethod(name);
-            return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
+            return Result.of(safeInvokeAnnotationMethod(method, actual));
         }
         catch (final NoSuchMethodException e) {
             // search for AliasFor in same annotation type
@@ -160,7 +160,7 @@ public final class AnnotationHelper {
 
                 if ((aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
                     // Bingo! We found it!
-                    return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
+                    return Result.of(safeInvokeAnnotationMethod(method, actual));
                 }
             }
 
@@ -170,7 +170,7 @@ public final class AnnotationHelper {
                     final Method klassMethod = klass.getMethod(name);
                     if (klassMethod != null) {
                         final Object defaultValue = klassMethod.getDefaultValue();
-                        if (defaultValue != null) return Exceptional.of(defaultValue);
+                        if (defaultValue != null) return Result.of(defaultValue);
                     }
                 } catch (final NoSuchMethodException ignored) {
                     // Do not break yet, we might find it in a super class
@@ -181,7 +181,7 @@ public final class AnnotationHelper {
                     if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {
                         try {
                             final Method method = annotationOnCurrentAnnotationClass.annotationType().getMethod(name);
-                            return Exceptional.of(safeInvokeAnnotationMethod(method, annotationOnCurrentAnnotationClass));
+                            return Result.of(safeInvokeAnnotationMethod(method, annotationOnCurrentAnnotationClass));
                         }
                         catch (final NoSuchMethodException ignored) {
                             break;
@@ -191,7 +191,7 @@ public final class AnnotationHelper {
             }
             try {
                 final Method method = targetAnnotationClass.getMethod(name);
-                return Exceptional.of(method.getDefaultValue());
+                return Result.of(method.getDefaultValue());
             }
             catch (final NoSuchMethodException noSuchMethodException) {
                 throw new RuntimeException(e);

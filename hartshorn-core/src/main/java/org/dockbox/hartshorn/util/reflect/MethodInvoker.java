@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 @FunctionalInterface
 public interface MethodInvoker<T, P> {
-    Exceptional<T> invoke(MethodContext<T, P> method, P instance, Object[] args);
+    Result<T> invoke(MethodContext<T, P> method, P instance, Object[] args);
 }

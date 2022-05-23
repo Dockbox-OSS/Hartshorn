@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class ContextTests {
 
         context.add(child);
 
-        final Exceptional<TestContext> first = context.first(this.applicationContext, TestContext.class);
+        final Result<TestContext> first = context.first(this.applicationContext, TestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -67,7 +67,7 @@ public class ContextTests {
 
         context.add(named);
 
-        final Exceptional<Context> first = context.first(NamedTestContext.NAME);
+        final Result<Context> first = context.first(NamedTestContext.NAME);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -79,7 +79,7 @@ public class ContextTests {
 
         context.add(named);
 
-        final Exceptional<NamedTestContext> first = context.first(NamedTestContext.NAME, NamedTestContext.class);
+        final Result<NamedTestContext> first = context.first(NamedTestContext.NAME, NamedTestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -91,7 +91,7 @@ public class ContextTests {
 
         context.add(NamedTestContext.NAME, child);
 
-        final Exceptional<Context> first = context.first(NamedTestContext.NAME);
+        final Result<Context> first = context.first(NamedTestContext.NAME);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -135,7 +135,7 @@ public class ContextTests {
     @Test
     void testAutoCreatingContext() {
         final Context context = new TestContext();
-        final Exceptional<AutoCreatingContext> first = context.first(this.applicationContext, AutoCreatingContext.class);
+        final Result<AutoCreatingContext> first = context.first(this.applicationContext, AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 

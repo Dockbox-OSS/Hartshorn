@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -100,9 +100,9 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
      * Gets the {@link Provider} at the given priority, if it exists.
      *
      * @param priority The priority of the potential provider.
-     * @return The provider if it exists, or {@link Exceptional#empty()}
+     * @return The provider if it exists, or {@link Result#empty()}
      */
-    Exceptional<Provider<C>> get(int priority);
+    Result<Provider<C>> get(int priority);
 
     /**
      * Gets the {@link Key} of the current hierarchy, containing a {@link TypeContext}

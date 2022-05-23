@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.inject.TypedOwner;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -72,7 +72,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     }
 
     protected String extract(final MethodContext<?, ?> method, final String prefix) {
-        final Exceptional<InjectTranslation> resource = method.annotation(InjectTranslation.class);
+        final Result<InjectTranslation> resource = method.annotation(InjectTranslation.class);
         if (resource.present()) {
             final String key = resource.get().key();
             if (!"".equals(key)) return key;

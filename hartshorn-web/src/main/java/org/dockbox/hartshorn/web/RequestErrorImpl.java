@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
 
@@ -31,7 +31,7 @@ public class RequestErrorImpl extends DefaultCarrierContext implements RequestEr
     private final HttpServletResponse response;
     private final int statusCode;
     private final PrintWriter writer;
-    private final Exceptional<Throwable> cause;
+    private final Result<Throwable> cause;
     private String message;
     private boolean yieldDefaults;
 
@@ -42,7 +42,7 @@ public class RequestErrorImpl extends DefaultCarrierContext implements RequestEr
         this.statusCode = statusCode;
         this.writer = writer;
         this.message = message;
-        this.cause = Exceptional.of(cause, cause);
+        this.cause = Result.of(cause, cause);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RequestErrorImpl extends DefaultCarrierContext implements RequestEr
     }
 
     @Override
-    public Exceptional<Throwable> cause() {
+    public Result<Throwable> cause() {
         return this.cause;
     }
 

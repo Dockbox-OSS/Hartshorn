@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 
@@ -64,7 +64,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type.
      */
-    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
+    <C extends Context> Result<C> first(ApplicationContext applicationContext, Class<C> context);
 
     /**
      * Returns the first context of the given type and name. If it doesn't exist, but the context is annotated with
@@ -77,7 +77,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
-    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context, String name);
+    <C extends Context> Result<C> first(ApplicationContext applicationContext, Class<C> context, String name);
 
     /**
      * Returns the first context of the given type and name, which are represented by the given key. If it doesn't exist,
@@ -89,7 +89,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
-    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Key<C> context);
+    <C extends Context> Result<C> first(ApplicationContext applicationContext, Key<C> context);
 
     /**
      * Returns the first context of the given name.
@@ -97,7 +97,7 @@ public interface Context {
      * @param name The name of the context.
      * @return The first context of the given name, if it exists.
      */
-    Exceptional<Context> first(String name);
+    Result<Context> first(String name);
 
     /**
      * Returns the first named context of the given named and type.
@@ -107,9 +107,9 @@ public interface Context {
      * @param <N> The type of the context.
      * @return The first named context of the given named and type, if it exists.
      */
-    <N extends Context> Exceptional<N> first(String name, Class<N> context);
+    <N extends Context> Result<N> first(String name, Class<N> context);
 
-    default <N extends Context> Exceptional<N> first(final String name, final TypeContext<N> context) {
+    default <N extends Context> Result<N> first(final String name, final TypeContext<N> context) {
         return this.first(name, context.type());
     }
 

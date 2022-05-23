@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
@@ -36,9 +36,9 @@ public interface CommandParser {
      * @param source The {@link CommandSource} executing the command
      * @param context The {@link CommandExecutorContext} executing and handling the command
      *
-     * @return The {@link CommandContext} if the command was parsed, or {@link Exceptional#empty()}
+     * @return The {@link CommandContext} if the command was parsed, or {@link Result#empty()}
      * @throws ParsingException If the command could not be parsed
      */
-    Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
+    Result<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
 
 }

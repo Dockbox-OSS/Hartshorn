@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -46,7 +46,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
+        final Result<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertTrue(result.get());
@@ -57,7 +57,7 @@ public class HashtagParameterPatternTests {
             @Override
             protected Message wrongFormat() {
                 // Override resources as these are otherwise requested through bound resource references
-                return new MessageTemplate("failed", "test.failed", Locale.getDefault());
+                return new MessageTemplate("JUnit placeholder: wrong format", "test.failed", Locale.getDefault());
             }
         };
     }
@@ -67,10 +67,11 @@ public class HashtagParameterPatternTests {
         final String pattern = "@cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
+        final Result<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertFalse(result.get());
+        Assertions.assertTrue(result.caught());
+        Assertions.assertFalse(result.discardError().get());
     }
 
     @Test
@@ -78,10 +79,11 @@ public class HashtagParameterPatternTests {
         final String pattern = "#sphere[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
+        final Result<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertFalse(result.get());
+        Assertions.assertTrue(result.caught());
+        Assertions.assertFalse(result.discardError().get());
     }
 
     @Test
@@ -100,7 +102,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<String> identifier = parameterPattern.parseIdentifier(pattern);
+        final Result<String> identifier = parameterPattern.parseIdentifier(pattern);
 
         Assertions.assertTrue(identifier.present());
         Assertions.assertEquals("cuboid", identifier.get());
@@ -111,7 +113,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.applicationContext), pattern);
+        final Result<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
 

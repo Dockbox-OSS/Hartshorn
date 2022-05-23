@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,7 @@ public class ViewModelImpl implements ViewModel {
     }
 
     @Override
-    public Exceptional<Object> attribute(final String name) {
-        return Exceptional.of(this.attributes.get(name));
+    public Result<Object> attribute(final String name) {
+        return Result.of(this.attributes.get(name));
     }
 }

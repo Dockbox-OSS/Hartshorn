@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.util.reflect;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 public interface ObtainableElement<R> {
-    Exceptional<R> obtain(ApplicationContext applicationContext);
+    Result<R> obtain(ApplicationContext applicationContext);
 }

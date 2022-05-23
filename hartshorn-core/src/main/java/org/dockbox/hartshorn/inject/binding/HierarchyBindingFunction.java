@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.binding;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.SupplierProvider;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.function.Supplier;
@@ -91,7 +91,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     public Binder lazySingleton(final TypeContext<T> type) {
         this.lazySingleton(() -> {
             final Key<T> key = Key.of(type);
-            final Exceptional<T> object = this.instanceFactory().instantiate(key);
+            final Result<T> object = this.instanceFactory().instantiate(key);
             return object.rethrowUnchecked().orNull();
         });
         return this.binder();

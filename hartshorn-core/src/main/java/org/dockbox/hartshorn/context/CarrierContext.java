@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 /**
  * A carrier context is a context that is bound to an active {@link ApplicationContext}.
@@ -27,11 +27,11 @@ public interface CarrierContext extends Context, ContextCarrier {
      * Requests the first available context of the given type. If there is no such context, the active
      * {@link ApplicationContext} is used to create a new context, if the type is annotated with {@link AutoCreating}.
      * If the context does not exist, or the type is not annotated with {@link AutoCreating}, an empty
-     * {@link Exceptional} is returned.
+     * {@link Result} is returned.
      *
      * @param context Type The type of the context to request.
      * @param <C> Type The type of the context to request.
      * @return The requested context.
      */
-    <C extends Context> Exceptional<C> first(final Class<C> context);
+    <C extends Context> Result<C> first(final Class<C> context);
 }

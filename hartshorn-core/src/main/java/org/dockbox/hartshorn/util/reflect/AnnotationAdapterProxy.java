@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -29,7 +29,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     private final Annotation actual;
     private final Class<A> targetAnnotationClass;
     private final LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy;
-    private final Map<String, Exceptional<Object>> methodsCache = new ConcurrentHashMap<>();
+    private final Map<String, Result<Object>> methodsCache = new ConcurrentHashMap<>();
 
     AnnotationAdapterProxy(final Annotation actual, final Class<A> targetAnnotationClass, final LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy) {
         this.actual = actual;
@@ -60,7 +60,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
             }
         }
 
-        Exceptional<Object> cachedField = this.methodsCache.get(method.getName());
+        Result<Object> cachedField = this.methodsCache.get(method.getName());
         if (cachedField == null) {
             cachedField = AnnotationHelper.searchInHierarchy(this.actual, this.targetAnnotationClass, this.actualAnnotationHierarchy, method.getName());
             this.methodsCache.put(method.getName(), cachedField);

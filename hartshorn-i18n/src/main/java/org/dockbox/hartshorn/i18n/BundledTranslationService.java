@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import javax.inject.Inject;
 
@@ -42,7 +42,7 @@ public class BundledTranslationService implements TranslationService {
     }
 
     @Override
-    public Exceptional<Message> get(final String key) {
+    public Result<Message> get(final String key) {
         return this.bundle.message(this.clean(key));
     }
 

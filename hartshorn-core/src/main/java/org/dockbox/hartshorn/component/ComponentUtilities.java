@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.Locale;
@@ -39,7 +39,7 @@ public class ComponentUtilities {
     }
 
     protected static String format(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
-        final Exceptional<ComponentContainer> container = context.locator().container(type);
+        final Result<ComponentContainer> container = context.locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String name = attribute.apply(container.get());
             if (!"".equals(name)) return name;

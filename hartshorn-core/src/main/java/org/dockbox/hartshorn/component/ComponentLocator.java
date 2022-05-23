@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
 
@@ -36,11 +36,11 @@ public interface ComponentLocator {
 
     Collection<ComponentContainer> containers(ComponentType functional);
 
-    default Exceptional<ComponentContainer> container(final Class<?> type) {
+    default Result<ComponentContainer> container(final Class<?> type) {
         return this.container(TypeContext.of(type));
     }
 
-    Exceptional<ComponentContainer> container(TypeContext<?> type);
+    Result<ComponentContainer> container(TypeContext<?> type);
 
     <T> void validate(Key<T> key);
 }

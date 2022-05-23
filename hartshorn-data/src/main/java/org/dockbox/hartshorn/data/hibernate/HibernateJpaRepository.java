@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.context.EntityContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
@@ -146,12 +146,12 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         this.configuration.setProperty("hibernate.connection.driver_class", driver);
         this.configuration.setProperty("hibernate.dialect", dialect);
 
-        Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
+        Result<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) {
             final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
             final EntityContext entityContext = new EntityContext(entities);
             this.applicationContext.add(entityContext);
-            context = Exceptional.of(entityContext);
+            context = Result.of(entityContext);
         }
 
         final Collection<TypeContext<?>> entities = context.get().entities();
@@ -227,9 +227,9 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     }
 
     @Override
-    public Exceptional<T> findById(final ID id) {
+    public Result<T> findById(final ID id) {
         final Session session = this.session();
-        return Exceptional.of(session.find(this.reify(), id));
+        return Result.of(session.find(this.reify(), id));
     }
 
     @Override

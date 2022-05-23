@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -64,7 +64,7 @@ public interface ProxyManager<T> {
      * @return the original instance delegate of the proxy
      * @see ProxyFactory#typeDelegate()
      */
-    Exceptional<T> delegate();
+    Result<T> delegate();
 
     /**
      * Returns the delegate for the given method. This method is used to obtain the delegate for the given method, which
@@ -73,7 +73,7 @@ public interface ProxyManager<T> {
      * @param method the method for which to obtain the delegate
      * @return the delegate for the given method
      */
-    Exceptional<T> delegate(Method method);
+    Result<T> delegate(Method method);
 
     /**
      * Returns the delegate for the given type. This method is used to obtain the delegate for the given type, which is
@@ -83,16 +83,16 @@ public interface ProxyManager<T> {
      * @param <S> the type of the delegate
      * @return the delegate for the given type
      */
-    <S> Exceptional<S> delegate(Class<S> type);
+    <S> Result<S> delegate(Class<S> type);
 
     /**
      * Gets the interceptor for the given method. This method is used to obtain the interceptor for the given method,
-     * which may be a chained or single interceptor. If the method is not intercepted, this method returns {@link Exceptional#empty()}
+     * which may be a chained or single interceptor. If the method is not intercepted, this method returns {@link Result#empty()}
      *
      * @param method the method for which to obtain the interceptor
      * @return the interceptor for the given method
      */
-    Exceptional<MethodInterceptor<T>> interceptor(Method method);
+    Result<MethodInterceptor<T>> interceptor(Method method);
 
     /**
      * Gets all method wrappers for the given method. If the method is not intercepted, this method returns an empty set.

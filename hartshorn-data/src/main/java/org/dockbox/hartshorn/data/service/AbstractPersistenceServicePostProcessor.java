@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.inject.TypedOwner;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
@@ -42,7 +42,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final Exceptional<C> serialisationContext = methodContext.first(context, this.contextType());
+        final Result<C> serialisationContext = methodContext.first(context, this.contextType());
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serialisationContext.get();
@@ -74,7 +74,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
         TypeContext<?> owner = TypeContext.of(annotationContext.file().owner());
 
         if (owner.isVoid()) {
-            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.method().parent());
+            final Result<ComponentContainer> container = context.locator().container(methodContext.method().parent());
             if (container.present()) {
                 owner = container.get().owner();
             }

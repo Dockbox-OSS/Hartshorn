@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,12 +42,12 @@ public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
     }
 
     @Override
-    public Exceptional<T> convert(final CommandSource source, final String argument) {
+    public Result<T> convert(final CommandSource source, final String argument) {
         return this.pattern.request(this.type(), source, argument);
     }
 
     @Override
-    public Exceptional<T> convert(final CommandSource source, final CommandParameter<String> value) {
+    public Result<T> convert(final CommandSource source, final CommandParameter<String> value) {
         return this.pattern.request(this.type(), source, value.value());
     }
 

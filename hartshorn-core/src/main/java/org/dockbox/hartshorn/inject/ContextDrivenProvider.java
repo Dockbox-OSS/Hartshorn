@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 
@@ -54,17 +54,17 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     @Override
-    public final Exceptional<C> provide(final ApplicationContext context) {
+    public final Result<C> provide(final ApplicationContext context) {
         this.optimalConstructor = this.findOptimalConstructor().orNull();
         return this.create(context);
     }
 
-    protected Exceptional<? extends ConstructorContext<? extends C>> findOptimalConstructor() {
-        if (this.context().isAbstract()) return Exceptional.empty();
+    protected Result<? extends ConstructorContext<? extends C>> findOptimalConstructor() {
+        if (this.context().isAbstract()) return Result.empty();
         if (this.optimalConstructor == null) {
             final List<? extends ConstructorContext<? extends C>> constructors = this.context().injectConstructors();
             if (constructors.isEmpty()) {
-                final Exceptional<? extends ConstructorContext<? extends C>> defaultConstructor = this.context().defaultConstructor();
+                final Result<? extends ConstructorContext<? extends C>> defaultConstructor = this.context().defaultConstructor();
                 if (defaultConstructor.absent()) {
                     throw new IllegalStateException("No injectable constructors found for " + this.context().type());
                 }
@@ -84,11 +84,11 @@ public class ContextDrivenProvider<C> implements Provider<C> {
                 }
             }
         }
-        return Exceptional.of(this.optimalConstructor);
+        return Result.of(this.optimalConstructor);
     }
 
-    protected Exceptional<C> create(final ApplicationContext context) {
-        if (this.optimalConstructor() == null) return Exceptional.empty();
+    protected Result<C> create(final ApplicationContext context) {
+        if (this.optimalConstructor() == null) return Result.empty();
         return this.optimalConstructor().createInstance(context).rethrowUnchecked().map(instance -> (C) instance);
     }
 

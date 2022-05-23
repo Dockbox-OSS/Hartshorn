@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 import java.util.Map;
@@ -45,8 +45,8 @@ public class CacheManagerImpl implements CacheManager {
     }
 
     @Override
-    public <T> Exceptional<Cache<T>> get(final String cache) {
-        return Exceptional.of(this.caches.get(cache)).map(c -> (Cache<T>) c);
+    public <T> Result<Cache<T>> get(final String cache) {
+        return Result.of(this.caches.get(cache)).map(c -> (Cache<T>) c);
     }
 
     @Override

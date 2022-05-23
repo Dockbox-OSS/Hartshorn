@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.context.CarrierContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
 
@@ -32,7 +32,7 @@ public interface RequestError extends CarrierContext {
 
     int statusCode();
     String message();
-    Exceptional<Throwable> cause();
+    Result<Throwable> cause();
     boolean yieldDefaults();
 
     RequestError message(String message);

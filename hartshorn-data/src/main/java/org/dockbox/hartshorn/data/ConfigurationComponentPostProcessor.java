@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.NotPrimitiveException;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -50,7 +50,7 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                 final Value annotation = field.annotation(Value.class).get();
 
                 final String valueKey = annotation.value();
-                final Exceptional<?> property = valueLookup.getValue(valueKey, field.genericType().type());
+                final Result<?> property = valueLookup.getValue(valueKey, field.genericType().type());
 
                 if (property.absent()) {
                     context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());

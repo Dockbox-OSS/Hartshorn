@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
 import java.util.List;
@@ -105,8 +105,8 @@ public class ComponentLocatorImpl implements ComponentLocator {
     }
 
     @Override
-    public Exceptional<ComponentContainer> container(final TypeContext<?> type) {
-        return Exceptional.of(this.containers()
+    public Result<ComponentContainer> container(final TypeContext<?> type) {
+        return Result.of(this.containers()
                 .stream()
                 .filter(container -> container.type().equals(type))
                 .findFirst()

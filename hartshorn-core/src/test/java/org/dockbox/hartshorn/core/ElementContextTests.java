@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.core.types.AnnotatedElement;
 import org.dockbox.hartshorn.core.types.BoundUserImpl;
@@ -381,11 +381,11 @@ public class ElementContextTests {
 
     @Test
     void testStaticMethodCanInvokeStatic() {
-        final Exceptional<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testStatic");
+        final Result<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testStatic");
         Assertions.assertTrue(test.present());
         final MethodContext<?, ElementContextTests> methodContext = test.get();
         Assertions.assertTrue(methodContext.has(AccessModifier.STATIC));
-        final Exceptional<?> result = methodContext.invokeStatic();
+        final Result<?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
 
@@ -393,11 +393,11 @@ public class ElementContextTests {
 
     @Test
     void testNonStaticMethodCannotInvokeStatic() {
-        final Exceptional<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testNonStatic");
+        final Result<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testNonStatic");
         Assertions.assertTrue(test.present());
         final MethodContext<?, ElementContextTests> methodContext = test.get();
         Assertions.assertFalse(methodContext.has(AccessModifier.STATIC));
-        final Exceptional<?> result = methodContext.invokeStatic();
+        final Result<?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.caught());
         Assertions.assertTrue(result.error() instanceof IllegalAccessException);
     }

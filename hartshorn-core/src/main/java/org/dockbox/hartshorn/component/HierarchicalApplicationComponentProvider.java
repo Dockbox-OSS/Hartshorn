@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -84,7 +84,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
             type = TypeContext.of(instance);
         }
 
-        final Exceptional<ComponentContainer> container = this.applicationContext().locator().container(type);
+        final Result<ComponentContainer> container = this.applicationContext().locator().container(type);
         if (container.present()) {
             instance = this.process(key, instance, container.get());
         }
@@ -107,7 +107,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     @Nullable
-    private <T> Exceptional<T> create(final Key<T> key) {
+    private <T> Result<T> create(final Key<T> key) {
         return this.provide(key)
                 .orFlat(() -> this.raw(key))
                 .rethrowUnchecked();
@@ -133,16 +133,16 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         else return new ContextWrappedHierarchy<>(hierarchy, this.applicationContext(), updated -> this.hierarchies.put(key, updated));
     }
 
-    public <T> Exceptional<T> provide(final Key<T> key) {
-        return Exceptional.of(key)
+    public <T> Result<T> provide(final Key<T> key) {
+        return Result.of(key)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
                     for (final Provider<T> provider : hierarchy.providers()) {
-                        final Exceptional<T> provided = provider.provide(this.applicationContext()).rethrowUnchecked();
+                        final Result<T> provided = provider.provide(this.applicationContext()).rethrowUnchecked();
                         if (provided.present()) return provided;
                     }
-                    return Exceptional.empty();
+                    return Result.empty();
                 });
     }
 
@@ -246,7 +246,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         this.postProcessors.put(postProcessor.order(), postProcessor);
     }
 
-    public <T> Exceptional<T> raw(final Key<T> key) {
+    public <T> Result<T> raw(final Key<T> key) {
         return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext()).rethrowUnchecked();
     }
 

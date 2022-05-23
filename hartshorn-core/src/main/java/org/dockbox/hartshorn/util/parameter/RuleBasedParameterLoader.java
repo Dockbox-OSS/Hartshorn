@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.parameter;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +49,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
             final ParameterContext<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
                 if (rule.accepts(parameter, i, context, args)) {
-                    final Exceptional<Object> argument = rule.load((ParameterContext<Object>) parameter, i, context, args);
+                    final Result<Object> argument = rule.load((ParameterContext<Object>) parameter, i, context, args);
                     arguments.add(argument.orNull());
                     continue parameters;
                 }

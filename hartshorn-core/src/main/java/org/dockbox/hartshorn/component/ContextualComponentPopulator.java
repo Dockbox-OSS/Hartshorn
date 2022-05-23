@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
@@ -51,7 +51,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             if (this.applicationContext().environment().manager().isProxy(instance)) {
                 modifiableInstance = this.applicationContext().environment().manager()
                         .manager(instance)
-                        .flatMap((CheckedFunction<ProxyManager<T>, @NonNull Exceptional<T>>) ProxyManager::delegate)
+                        .flatMap((CheckedFunction<ProxyManager<T>, @NonNull Result<T>>) ProxyManager::delegate)
                         .or(modifiableInstance);
             }
             final TypeContext<T> unproxied = TypeContext.unproxy(this.applicationContext(), modifiableInstance);
@@ -76,7 +76,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             Key<?> fieldKey = Key.of(field.type());
             if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
 
-            final Exceptional<Enable> enableAnnotation = field.annotation(Enable.class);
+            final Result<Enable> enableAnnotation = field.annotation(Enable.class);
             final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
             final Object fieldInstance = this.applicationContext().get(fieldKey, enable);
@@ -96,7 +96,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final TypeContext<?> type = field.type();
         final org.dockbox.hartshorn.inject.Context annotation = field.annotation(org.dockbox.hartshorn.inject.Context.class).get();
 
-        final Exceptional<Context> context;
+        final Result<Context> context;
         if ("".equals(annotation.value())) {
             context = this.applicationContext().first((Class<Context>) type.type());
         }

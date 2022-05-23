@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
@@ -74,10 +74,10 @@ public interface CommandDefinitionContext extends Context {
      *
      * @param name The name of the flag.
      *
-     * @return The flag definition, or {@link Exceptional#empty()}
+     * @return The flag definition, or {@link Result#empty()}
      * @see CommandFlag#value()
      */
-    Exceptional<CommandFlag> flag(String name);
+    Result<CommandFlag> flag(String name);
 
     /**
      * Checks if a provided raw command matches the contained definition. This typically validates the given

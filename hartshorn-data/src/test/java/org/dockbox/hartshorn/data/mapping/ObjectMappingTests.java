@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,13 +55,13 @@ public class ObjectMappingTests {
 
         propertyHolder.set("user.name", "John Doe");
 
-        final Exceptional<User> user = propertyHolder.get("user", User.class);
+        final Result<User> user = propertyHolder.get("user", User.class);
         Assertions.assertTrue(user.present());
         Assertions.assertEquals("John Doe", user.get().name());
 
         propertyHolder.set("user.address", new Address("Darwin City", "Darwin Street", 12));
 
-        final Exceptional<Address> address = propertyHolder.get("user.address", Address.class);
+        final Result<Address> address = propertyHolder.get("user.address", Address.class);
         Assertions.assertTrue(address.present());
         Assertions.assertEquals("Darwin City", address.get().city());
         Assertions.assertEquals("Darwin Street", address.get().street());
@@ -69,7 +69,7 @@ public class ObjectMappingTests {
 
         propertyHolder.set("user.address.street", "Darwin Lane");
 
-        final Exceptional<Address> address2 = propertyHolder.get("user.address", Address.class);
+        final Result<Address> address2 = propertyHolder.get("user.address", Address.class);
         Assertions.assertTrue(address2.present());
         Assertions.assertEquals("Darwin City", address2.get().city());
         Assertions.assertEquals("Darwin Lane", address2.get().street());
@@ -133,7 +133,7 @@ public class ObjectMappingTests {
         mapper.fileType(fileFormat);
 
         content.name("sample");
-        final Exceptional<String> result = mapper.write(content);
+        final Result<String> result = mapper.write(content);
 
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(expected.replaceAll("[ \n]+", ""), result.get().replaceAll("[ \n\r]+", ""));
@@ -146,7 +146,7 @@ public class ObjectMappingTests {
         mapper.fileType(fileFormat);
         expected.name("sample");
 
-        final Exceptional<? extends Element> result = mapper.read(content, expected.getClass());
+        final Result<? extends Element> result = mapper.read(content, expected.getClass());
 
         if (result.absent()) throw new RuntimeException(result.error().getMessage());
         Assertions.assertTrue(result.present());

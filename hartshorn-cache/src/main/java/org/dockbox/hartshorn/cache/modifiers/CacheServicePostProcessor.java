@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.ComponentUtilities;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
@@ -48,7 +48,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
         final CacheManager manager = context.get(CacheManager.class);
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Exceptional<CacheService> annotation = methodContext.type().annotation(CacheService.class);
+            final Result<CacheService> annotation = methodContext.type().annotation(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }

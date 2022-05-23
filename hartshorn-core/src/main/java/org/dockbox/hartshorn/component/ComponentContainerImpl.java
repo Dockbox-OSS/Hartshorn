@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -35,14 +35,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     private final ApplicationContext context;
 
     public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
-        final Exceptional<Component> annotated = component.annotation(Component.class);
+        final Result<Component> annotated = component.annotation(Component.class);
         if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
 
         this.component = component;
         this.annotation = annotated.get();
         this.context = context;
 
-        final Exceptional<Service> service = component.annotation(Service.class);
+        final Result<Service> service = component.annotation(Service.class);
         if (service.present()) {
             this.activators.addAll(List.of(service.get().activators()));
         }

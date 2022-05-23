@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
@@ -65,7 +65,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key) {
         super(context);
-        final Exceptional<Command> annotated = method.annotation(Command.class);
+        final Result<Command> annotated = method.annotation(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
@@ -74,7 +74,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         this.key = key;
         this.command = annotated.get();
 
-        final Exceptional<Command> annotation = key.type().annotation(Command.class);
+        final Result<Command> annotation = key.type().annotation(Command.class);
         final Command parent;
         if (annotation.present()) {
             parent = annotation.get();
@@ -230,7 +230,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
     }
 
     private CommandDefinitionContext definition() {
-        final Exceptional<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        final Result<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
         if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
         return definition.get();
     }

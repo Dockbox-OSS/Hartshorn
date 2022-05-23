@@ -55,7 +55,7 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyLookup;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -116,7 +116,7 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
         this.componentProvider.bind(ApplicationContext.class).singleton(this);
         this.environment = environment;
-        final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
+        final Result<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
@@ -172,15 +172,15 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     }
 
     @Override
-    public Exceptional<String> property(final String key) {
-        return Exceptional.of(this.environmentValues.get(key)).map(String::valueOf);
+    public Result<String> property(final String key) {
+        return Result.of(this.environmentValues.get(key)).map(String::valueOf);
     }
 
     @Override
     public void addActivator(final Annotation annotation) {
         if (this.activators.contains(annotation)) return;
         final TypeContext<? extends Annotation> annotationType = TypeContext.of(annotation.annotationType());
-        final Exceptional<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
+        final Result<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
             this.activators.add(annotation);
             for (final String scan : activator.get().scanPackages()) {
@@ -276,7 +276,7 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
-        final Exceptional<ServiceActivator> annotation = TypeContext.of(activator).annotation(ServiceActivator.class);
+        final Result<ServiceActivator> annotation = TypeContext.of(activator).annotation(ServiceActivator.class);
         if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
@@ -340,7 +340,7 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         final Object[] invokingParameters = new Object[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {
             final TypeContext<?> parameter = parameters.get(i);
-            final Exceptional<Named> annotation = parameter.annotation(Named.class);
+            final Result<Named> annotation = parameter.annotation(Named.class);
             if (annotation.present()) {
                 invokingParameters[i] = this.get(parameter, annotation.get());
             }

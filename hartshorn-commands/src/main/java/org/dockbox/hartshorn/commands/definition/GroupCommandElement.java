@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.CommandSource;
 
 import java.util.Collection;
@@ -52,8 +52,8 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     }
 
     @Override
-    public Exceptional<List<CommandElement<?>>> parse(final CommandSource source, final String argument) {
-        return Exceptional.of(this.elements);
+    public Result<List<CommandElement<?>>> parse(final CommandSource source, final String argument) {
+        return Result.of(this.elements);
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.definition;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,9 +53,9 @@ public interface ArgumentConverter<T> {
      * @param source The command source executing a command containing the argument
      * @param argument The raw argument without the associated key
      *
-     * @return The converted object of type <code>T</code>, or {@link Exceptional#empty()}
+     * @return The converted object of type <code>T</code>, or {@link Result#empty()}
      */
-    Exceptional<T> convert(CommandSource source, String argument);
+    Result<T> convert(CommandSource source, String argument);
 
     /**
      * Converts a given argument into type <code>T</code>. The {@link CommandParameter}
@@ -66,9 +66,9 @@ public interface ArgumentConverter<T> {
      * @param source The command source executing a command containing the argument
      * @param value The argument with the associated key
      *
-     * @return The converted object of type <code>T</code>, or {@link Exceptional#empty()}
+     * @return The converted object of type <code>T</code>, or {@link Result#empty()}
      */
-    Exceptional<T> convert(CommandSource source, CommandParameter<String> value);
+    Result<T> convert(CommandSource source, CommandParameter<String> value);
 
     /**
      * Gets the suggestions to complete a currently incomplete argument value. Suggestions

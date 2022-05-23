@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -62,7 +62,7 @@ public class MessageTemplateServiceTests {
 
     @Test
     public void testResourceReturnsCopyOnTranslateLanguage() {
-        final Exceptional<Message> demo = this.bundle().message("demo");
+        final Result<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final Message entry = demo.get();
@@ -73,7 +73,7 @@ public class MessageTemplateServiceTests {
 
     @Test
     public void testResourceReturnsSelfOnTranslateMessageReceiver() {
-        final Exceptional<Message> demo = this.bundle().message("demo");
+        final Result<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final MessageReceiver mock = Mockito.mock(MessageReceiver.class);
@@ -87,7 +87,7 @@ public class MessageTemplateServiceTests {
 
     @Test
     void testMessageReturnsCloneOnDetach() {
-        final Exceptional<Message> demo = this.bundle().message("demo");
+        final Result<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final Message message = demo.get();
@@ -98,14 +98,14 @@ public class MessageTemplateServiceTests {
 
     @Test
     public void testResourceBundleUsesBundle() {
-        final Exceptional<Message> demo = this.bundle().message("demo");
+        final Result<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
         Assertions.assertEquals("demo", demo.get().key());
     }
 
     @Test
     public void testResourceBundleKeepsTranslations() {
-        final Exceptional<Message> demo = this.bundle().message("demo");
+        final Result<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
         final Message entry = demo.get();
 
@@ -149,7 +149,7 @@ public class MessageTemplateServiceTests {
     @InjectTest
     void testTranslationProvidersGetRegistered(final ApplicationContext applicationContext) {
         final TranslationService translationService = applicationContext.get(TranslationService.class);
-        final Exceptional<Message> message = translationService.get("lang.name");
+        final Result<Message> message = translationService.get("lang.name");
         Assertions.assertTrue(message.present());
         Assertions.assertEquals("English", message.get().translate(EN_US).string());
         Assertions.assertEquals("Nederlands", message.get().translate(NL_NL).string());

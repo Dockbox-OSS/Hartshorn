@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.util.parameter;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 public interface ParameterLoaderRule<C extends ParameterLoaderContext> {
     boolean accepts(ParameterContext<?> parameter, int index, C context, Object... args);
-    <T> Exceptional<T> load(ParameterContext<T> parameter, int index, C context, Object... args);
+    <T> Result<T> load(ParameterContext<T> parameter, int index, C context, Object... args);
 }

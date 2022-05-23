@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -43,7 +43,7 @@ import javax.inject.Inject;
 @Component(singleton = true)
 public class EventBusImpl implements EventBus {
 
-    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = ConcurrentHashMap.newKeySet();
+    protected final Set<Function<MethodContext<?, ?>, Result<Boolean>>> validators = ConcurrentHashMap.newKeySet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
     protected final Map<Key<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();
@@ -58,23 +58,23 @@ public class EventBusImpl implements EventBus {
         // Event listeners need a @Listener annotation
         this.addValidationRule(method -> {
             if (method.annotation(Listener.class).absent()) {
-                return Exceptional.of(false, new IllegalArgumentException("Needs @Listener annotation: " + method.qualifiedName()));
+                return Result.of(false, new IllegalArgumentException("Needs @Listener annotation: " + method.qualifiedName()));
             }
-            return Exceptional.of(true);
+            return Result.of(true);
         });
         // Event listeners cannot be abstract
         this.addValidationRule(method -> {
             if (method.isAbstract()) {
-                return Exceptional.of(false, new IllegalArgumentException("Method cannot be abstract: " + method.qualifiedName()));
+                return Result.of(false, new IllegalArgumentException("Method cannot be abstract: " + method.qualifiedName()));
             }
-            return Exceptional.of(true);
+            return Result.of(true);
         });
         // Event listeners must have one and only parameter which is a subclass of Event
         this.addValidationRule(method -> {
             if (1 != method.parameterCount() || !method.parameterTypes().get(0).childOf(Event.class)) {
-                return Exceptional.of(false, new IllegalArgumentException("Must have one (and only one) parameter, which is a subclass of Event: " + method.qualifiedName()));
+                return Result.of(false, new IllegalArgumentException("Must have one (and only one) parameter, which is a subclass of Event: " + method.qualifiedName()));
             }
-            return Exceptional.of(true);
+            return Result.of(true);
         });
     }
 
@@ -140,7 +140,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public void addValidationRule(final Function<MethodContext<?, ?>, Exceptional<Boolean>> validator) {
+    public void addValidationRule(final Function<MethodContext<?, ?>, Result<Boolean>> validator) {
         this.validators.add(validator);
     }
 
@@ -154,7 +154,7 @@ public class EventBusImpl implements EventBus {
     protected <T> Set<EventWrapper> invokers(final Key<T> key) {
         final Set<EventWrapper> result = new HashSet<>();
         for (final MethodContext<?, T> method : key.type().methods()) {
-            final Exceptional<Listener> annotation = method.annotation(Listener.class);
+            final Result<Listener> annotation = method.annotation(Listener.class);
             if (annotation.present()) {
                 this.checkListenerMethod(method);
                 result.addAll(EventWrapperImpl.create(this.context, key, method, annotation.get().value().priority()));
@@ -178,7 +178,7 @@ public class EventBusImpl implements EventBus {
      * @throws IllegalArgumentException the illegal argument exception
      */
     protected void checkListenerMethod(final MethodContext<?, ?> method) throws IllegalArgumentException {
-        for (final Function<MethodContext<?, ?>, Exceptional<Boolean>> validator : this.validators) {
+        for (final Function<MethodContext<?, ?>, Result<Boolean>> validator : this.validators) {
             final boolean result = validator.apply(method).rethrowUnchecked().get();
             if (!result) throw new IllegalArgumentException("Unspecified validation error while validating: " + method.qualifiedName());
         }

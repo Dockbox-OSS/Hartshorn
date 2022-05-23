@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.proxy;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.proxy.javassist.JavassistProxyFactory;
 import org.dockbox.hartshorn.proxy.javassist.JavassistProxyLookup;
 
@@ -47,28 +47,28 @@ public class HartshornApplicationProxier implements ApplicationProxier, Applicat
     }
 
     @Override
-    public <T> Exceptional<TypeContext<T>> real(final T instance) {
+    public <T> Result<TypeContext<T>> real(final T instance) {
         if (instance instanceof Proxy proxy) {
-            return Exceptional.of(TypeContext.of(proxy.manager().targetClass()));
+            return Result.of(TypeContext.of(proxy.manager().targetClass()));
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     @Override
-    public <T> Exceptional<ProxyManager<T>> manager(final T instance) {
+    public <T> Result<ProxyManager<T>> manager(final T instance) {
         if (instance instanceof Proxy proxy) {
-            return Exceptional.of(proxy.manager());
+            return Result.of(proxy.manager());
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     @Override
-    public <D, T extends D> Exceptional<D> delegate(final TypeContext<D> type, final T instance) {
+    public <D, T extends D> Result<D> delegate(final TypeContext<D> type, final T instance) {
         if (instance instanceof Proxy proxy) {
             final ProxyManager manager = proxy.manager();
             return manager.delegate(type.type());
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     @Override
