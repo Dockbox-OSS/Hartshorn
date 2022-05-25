@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -128,5 +128,29 @@ public class ConfigurationManagerTests {
         Assertions.assertNotNull(typed);
         Assertions.assertNotNull(typed.nestedString());
         Assertions.assertEquals("Hartshorn", typed.nestedString());
+    }
+
+    @Test
+    void testConfigurationObjects() {
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        propertyHolder.set("user.name", "Hartshorn");
+        propertyHolder.set("user.age", 21);
+
+        final SampleConfigurationObject configurationObject = this.applicationContext.get(SampleConfigurationObject.class);
+        Assertions.assertNotNull(configurationObject);
+        Assertions.assertEquals("Hartshorn", configurationObject.name());
+        Assertions.assertEquals(21, configurationObject.age());
+    }
+
+    @Test
+    void testSetterConfigurationObjects() {
+        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        propertyHolder.set("user.name", "Hartshorn");
+        propertyHolder.set("user.age", 21);
+
+        final SampleSetterConfigurationObject configurationObject = this.applicationContext.get(SampleSetterConfigurationObject.class);
+        Assertions.assertNotNull(configurationObject);
+        Assertions.assertEquals("Hartshorn!", configurationObject.name(), "Bean-style setter (public)");
+        Assertions.assertEquals(31, configurationObject.age(), "Fluent-style setter (private)");
     }
 }

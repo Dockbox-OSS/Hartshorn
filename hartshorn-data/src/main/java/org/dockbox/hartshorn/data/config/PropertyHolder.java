@@ -26,6 +26,14 @@ public interface PropertyHolder {
 
     boolean has(String key);
 
+    default <T> Result<T> update(final T object, final String key) {
+        return this.update(object, key, (Class<T>) null);
+    }
+
+    <T> Result<T> update(T object, String key, Class<T> type);
+
+    <T> Result<T> update(T object, String key, GenericType<T> type);
+
     <T> Result<T> get(String key, Class<T> type);
 
     <T> Result<T> get(String key, GenericType<T> type);

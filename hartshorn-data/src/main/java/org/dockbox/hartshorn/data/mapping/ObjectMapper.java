@@ -65,6 +65,16 @@ public interface ObjectMapper {
         return Result.of(() -> this.read(uri.toURL(), type).orNull());
     }
 
+    <T> Result<T> update(T object, String content, Class<T> type);
+
+    <T> Result<T> update(T object, Path path, Class<T> type);
+
+    <T> Result<T> update(T object, URL url, Class<T> type);
+
+    default <T> Result<T> update(final T object, final URI uri, final Class<T> type) {
+        return Result.of(() -> this.update(object, uri.toURL(), type).orNull());
+    }
+
     Map<String, Object> flat(String content);
 
     Map<String, Object> flat(Path path);

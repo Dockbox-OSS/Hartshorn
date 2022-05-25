@@ -16,26 +16,17 @@
 
 package org.dockbox.hartshorn.data.annotations;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.ConfigurationComponentPostProcessor;
-import org.dockbox.hartshorn.data.ConfigurationServicePreProcessor;
-import org.dockbox.hartshorn.data.service.ConfigurationObjectPostProcessor;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.util.reflect.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Service activator for the configuration module.
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator(processors = {
-        ConfigurationComponentPostProcessor.class,
-        ConfigurationServicePreProcessor.class,
-        ConfigurationObjectPostProcessor.class,
-})
-@UsePersistence
-public @interface UseConfigurations {
+@Extends(Component.class)
+public @interface ConfigurationObject {
+    String prefix() default "";
 }
