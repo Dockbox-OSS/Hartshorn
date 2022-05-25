@@ -110,6 +110,24 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
+    public <T> Result<T> update(final T object, final String content, final Class<T> type) {
+        this.context.log().debug("Updating object " + object + " with content from string value to type " + type.getName());
+        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(content, type));
+    }
+
+    @Override
+    public <T> Result<T> update(final T object, final Path path, final Class<T> type) {
+        this.context.log().debug("Updating object " + object + " with content from path " + path + " to type " + type.getName());
+        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(path.toFile(), type));
+    }
+
+    @Override
+    public <T> Result<T> update(final T object, final URL url, final Class<T> type) {
+        this.context.log().debug("Updating object " + object + " with content from url " + url + " to type " + type.getName());
+        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(url, type));
+    }
+
+    @Override
     public <T> Result<Boolean> write(final Path path, final T content) {
         this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to path " + path);
         if (content instanceof String string) return this.writePlain(path, string);

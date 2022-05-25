@@ -16,30 +16,39 @@
 
 package org.dockbox.hartshorn.data.config;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.inject.Inject;
 
 @Component(singleton = true)
 public class StandardPropertyHolder implements PropertyHolder {
 
     protected final transient Map<String, Object> properties;
 
-    @Inject
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private final ObjectMapper propertyMapper;
 
     @Inject
-    public StandardPropertyHolder(final ApplicationContext applicationContext, final ObjectMapper propertyMapper) {
+    public StandardPropertyHolder(final ApplicationPropertyHolder applicationContext,
+                                  final ObjectMapper objectMapper,
+                                  final ObjectMapper propertyMapper) {
+        this.objectMapper = objectMapper.fileType(FileFormats.JSON);
         this.propertyMapper = propertyMapper.fileType(FileFormats.PROPERTIES);
         this.properties = this.createConfigurationMap();
         applicationContext.properties()
@@ -52,7 +61,11 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     @Override
-    public <T> Result<T> get(final String key, final Class<T> type) {
+    public <T> Result<T> update(final T object, final String key, final Class<T> type) {
+        return this.restore(key, type, serialized -> this.objectMapper.update(object, serialized, type));
+    }
+
+    private <T> Result<T> restore(final String key, final Class<T> type, final CheckedFunction<String, Result<T>> mapper) {
         final Object value = this.find(key);
 
         if (type != null) {
@@ -62,18 +75,30 @@ public class StandardPropertyHolder implements PropertyHolder {
 
             return Result.of(value)
                     .flatMap(object -> this.objectMapper.write(object))
-                    .flatMap(serialized -> this.objectMapper.read(serialized, type));
+                    .flatMap(mapper);
         }
         else {
             return Result.of(value).map(o -> (T) o).map(this::copyOf);
         }
     }
 
+    @Override
+    public <T> Result<T> update(final T object, final String key, final GenericType<T> type) {
+        return Result.of(this.find(key))
+                .flatMap(value -> this.objectMapper.write(value))
+                .flatMap(serialized -> this.objectMapper.read(serialized, type));
+    }
+
+    @Override
+    public <T> Result<T> get(final String key, final Class<T> type) {
+        return this.restore(key, type, serialized -> this.objectMapper.read(serialized, type));
+    }
+
     private <T> T copyOf(final T value) {
-        if (value instanceof Collection collection) {
+        if (value instanceof Collection<?> collection) {
             return (T) new ArrayList<>(collection);
         }
-        else if (value instanceof Map map) {
+        else if (value instanceof Map<?, ?> map) {
             return (T) new LinkedHashMap<>(map);
         }
         else {
@@ -109,7 +134,7 @@ public class StandardPropertyHolder implements PropertyHolder {
             if (i == split.length - 1) {
                 final Object origin = current.get(part);
                 if (origin instanceof Map map && patch instanceof Map) {
-                    this.patchConfigurationMap(map, (Map) patch);
+                    this.patchConfigurationMap(map, (Map<String, Object>) patch);
                     return;
                 }
                 current.put(part, patch); // Overwrite
@@ -137,13 +162,13 @@ public class StandardPropertyHolder implements PropertyHolder {
                 if (originValue instanceof Map && patchValue instanceof Map)
                     this.patchConfigurationMap((Map<String, Object>) originValue, (Map<String, Object>) patchValue);
                 else if (originValue instanceof Collection<?> && patchValue instanceof Collection<?>)
-                    origin.put(key, this.merge((List) originValue, (List) patchValue));
+                    origin.put(key, this.merge((List<Object>) originValue, (List<Object>) patchValue));
                 else origin.put(key, patchValue);
             } else origin.put(key, patchValue);
         }
     }
 
-    protected Collection<?> merge(final Collection first, final Collection second) {
+    protected <T> Collection<T> merge(final Collection<T> first, final Collection<T> second) {
         second.removeAll(first);
         first.addAll(second);
         return first;
