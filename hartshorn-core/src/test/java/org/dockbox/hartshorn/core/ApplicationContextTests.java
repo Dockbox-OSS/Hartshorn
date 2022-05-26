@@ -40,6 +40,7 @@ import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -329,7 +330,7 @@ public class ApplicationContextTests {
 
     @Test
     void servicesAreSingletonsByDefault() {
-        Assertions.assertTrue(this.applicationContext.meta().singleton(TypeContext.of(EmptyService.class)));
+        Assertions.assertTrue(this.applicationContext.get(MetaProvider.class).singleton(TypeContext.of(EmptyService.class)));
 
         final EmptyService emptyService = this.applicationContext.get(EmptyService.class);
         final EmptyService emptyService2 = this.applicationContext.get(EmptyService.class);

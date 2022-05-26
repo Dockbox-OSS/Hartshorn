@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
 import org.dockbox.hartshorn.component.Service;
@@ -97,11 +98,11 @@ public final class DefaultArgumentConverters {
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
             .withConverter((src, in) -> Result.of(src.applicationContext()
-                    .locator().containers().stream()
+                    .get(ComponentLocator.class).containers().stream()
                     .filter(container -> container.id().equalsIgnoreCase(in))
                     .findFirst()))
             .withSuggestionProvider((src, in) -> src.applicationContext()
-                    .locator().containers().stream()
+                    .get(ComponentLocator.class).containers().stream()
                     .map(ComponentContainer::id)
                     .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
                     .toList())

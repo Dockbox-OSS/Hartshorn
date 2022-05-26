@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -38,7 +39,7 @@ public class TranslationProviderService {
     @TranslationProvider
     public TranslationBundle english(final ApplicationContext context) {
         final TranslationBundle bundle = context.get(TranslationBundle.class);
-        final Path path = context.resourceLocator().resource("i18n/en_us.yml").get();
+        final Path path = context.get(ClasspathResourceLocator.class).resource("i18n/en_us.yml").get();
         bundle.register(path, Locale.US, FileFormats.YAML);
         return bundle;
     }

@@ -39,7 +39,7 @@ public class ComponentUtilities {
     }
 
     protected static String format(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
-        final Result<ComponentContainer> container = context.locator().container(type);
+        final Result<ComponentContainer> container = context.get(ComponentLocator.class).container(type);
         if (!ignoreExisting && container.present()) {
             final String name = attribute.apply(container.get());
             if (!"".equals(name)) return name;

@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.ProviderContext;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
@@ -65,7 +66,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor {
     }
 
     private <T extends AnnotatedElementContext<?> & ObtainableElement<?>> void processInstanceBinding(final ApplicationContext context, final T element, final Function<T, TypeContext<?>> type) {
-        final boolean singleton = context.meta().singleton(element);
+        final boolean singleton = context.get(MetaProvider.class).singleton(element);
         final Provider annotation = element.annotation(Provider.class).get();
         final Key<?> key = Key.of(type.apply(element), annotation.value());
         final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, annotation.priority(), () -> element.obtain(context).rethrowUnchecked().orNull(), annotation.lazy());
@@ -79,7 +80,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor {
         final Key<R> key = Key.of(typeContext, annotation.value());
         final boolean singleton = element.annotation(Singleton.class).present();
 
-        if (context.meta().singleton(element)) {
+        if (context.get(MetaProvider.class).singleton(element)) {
             final C target = element.obtain(context).rethrowUnchecked().orNull();
             final ProviderContext<R> providerContext = new ProviderContext<>(key, singleton, annotation.priority(), () -> context.get(target), annotation.lazy());
             context.add(providerContext);
@@ -95,7 +96,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor {
         final Key<R> key = Key.of(typeContext, annotation.value());
         final boolean singleton = element.annotation(Singleton.class).present();
 
-        if (context.meta().singleton(element)) {
+        if (context.get(MetaProvider.class).singleton(element)) {
             final C target = element.obtain(context).rethrowUnchecked().orNull();
             final ProviderContext<R> providerContext = new ProviderContext<>(key, singleton, annotation.priority(), () -> context.get(target), annotation.lazy());
             context.add(providerContext);

@@ -47,13 +47,6 @@ public interface ApplicationContext extends
         ActivatorHolder,
         Closeable {
 
-    void add(ComponentProcessor<?> processor);
-
-    ComponentLocator locator();
-
-    ClasspathResourceLocator resourceLocator();
-
-    MetaProvider meta();
 
     ApplicationEnvironment environment();
 

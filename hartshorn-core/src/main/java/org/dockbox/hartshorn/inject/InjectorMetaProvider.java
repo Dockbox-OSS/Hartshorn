@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
@@ -42,7 +43,7 @@ public class InjectorMetaProvider implements MetaProvider {
             return TypedOwnerImpl.of(annotated.get().name());
         }
         else {
-            final Result<ComponentContainer> container = this.context.locator().container(type);
+            final Result<ComponentContainer> container = this.context.get(ComponentLocator.class).container(type);
             if (container.present()) {
                 final ComponentContainer service = container.get();
                 if (!service.owner().isVoid()) return this.lookup(service.owner());
@@ -58,7 +59,7 @@ public class InjectorMetaProvider implements MetaProvider {
     public boolean singleton(final TypeContext<?> type) {
         if (type.annotation(Singleton.class).present()) return true;
 
-        return this.context.locator()
+        return this.context.get(ComponentLocator.class)
                 .container(type)
                 .map(ComponentContainer::singleton)
                 .or(false);

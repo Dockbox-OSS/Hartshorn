@@ -59,7 +59,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     protected String key(final ApplicationContext context, final TypeContext<?> type, final MethodContext<?, ?> method) {
         String prefix = "";
 
-        final MetaProvider provider = context.meta();
+        final MetaProvider provider = context.get(MetaProvider.class);
         if (provider.isComponent(type)) {
             final TypedOwner lookup = provider.lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';

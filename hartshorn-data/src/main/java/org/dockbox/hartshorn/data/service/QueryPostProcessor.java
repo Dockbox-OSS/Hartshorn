@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.data.annotations.EntityModifier;
 import org.dockbox.hartshorn.data.annotations.Query;
 import org.dockbox.hartshorn.data.annotations.Query.QueryType;
 import org.dockbox.hartshorn.data.annotations.Transactional;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.QueryContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
@@ -36,7 +35,7 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import java.util.Collection;
 import java.util.List;
 
-public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Query, UsePersistence> {
+public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Query> {
 
     @Override
     public Class<Query> annotation() {

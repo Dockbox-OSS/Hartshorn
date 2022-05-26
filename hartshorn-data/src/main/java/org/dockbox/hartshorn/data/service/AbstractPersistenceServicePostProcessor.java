@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
@@ -73,7 +75,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
         TypeContext<?> owner = TypeContext.of(annotationContext.file().owner());
 
         if (owner.isVoid()) {
-            final Result<ComponentContainer> container = context.locator().container(methodContext.method().parent());
+            final Result<ComponentContainer> container = context.get(ComponentLocator.class).container(methodContext.method().parent());
             if (container.present()) {
                 owner = container.get().owner();
             }
@@ -81,7 +83,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
         Path root = context.environment().manager().applicationPath();
         if (!owner.isVoid()) {
-            final TypedOwner typedOwner = context.meta().lookup(owner);
+            final TypedOwner typedOwner = context.get(MetaProvider.class).lookup(owner);
             root = root.resolve(typedOwner.id());
         }
 
