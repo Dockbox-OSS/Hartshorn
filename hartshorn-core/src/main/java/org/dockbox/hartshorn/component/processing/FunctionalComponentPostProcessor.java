@@ -22,12 +22,10 @@ import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 
-import java.lang.annotation.Annotation;
-
-public abstract class FunctionalComponentPostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
+public abstract class FunctionalComponentPostProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
         if (container.componentType() != ComponentType.FUNCTIONAL) {
             return false;

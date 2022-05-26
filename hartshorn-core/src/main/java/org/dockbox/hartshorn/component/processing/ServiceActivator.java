@@ -54,5 +54,5 @@ public @interface ServiceActivator {
      * @return The base packages to scan for services.
      */
     String[] scanPackages() default { Hartshorn.PACKAGE_PREFIX };
-    Class<? extends ComponentProcessor<?>>[] processors() default {};
+    Class<? extends ComponentProcessor>[] processors() default {};
 }

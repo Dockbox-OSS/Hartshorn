@@ -21,21 +21,20 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-public class ComponentFinalizingPostProcessor implements ComponentPostProcessor<Service> {
+public class ComponentFinalizingPostProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         T finalizingInstance = instance;
         if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
             final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
             try {
-                if (((StateAwareProxyFactory) factory).modified() || (instance == null && key.type().isAbstract())) {
+                if (((StateAwareProxyFactory<?, ?>) factory).modified() || (instance == null && key.type().isAbstract())) {
                     finalizingInstance = factory.proxy().or(instance);
                 }
             }
@@ -52,7 +51,7 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor<
     }
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return processingContext.get(Key.of(ComponentContainer.class)).permitsProxying();
     }
 

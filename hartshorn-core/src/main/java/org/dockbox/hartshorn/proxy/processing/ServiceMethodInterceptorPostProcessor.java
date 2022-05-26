@@ -27,10 +27,9 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor<A> {
+public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
@@ -38,7 +37,7 @@ public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         final TypeContext<T> type = key.type();
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 

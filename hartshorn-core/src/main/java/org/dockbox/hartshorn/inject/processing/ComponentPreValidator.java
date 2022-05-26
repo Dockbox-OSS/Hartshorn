@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 
-import java.lang.annotation.Annotation;
-
-public abstract class ComponentPreValidator<A extends Annotation> implements ComponentPreProcessor<A> {
+public abstract class ComponentPreValidator implements ComponentPreProcessor {
 
     @Override
     public boolean modifies(final ApplicationContext context, final Key<?> key) {

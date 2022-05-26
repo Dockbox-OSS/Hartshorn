@@ -20,7 +20,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
@@ -31,10 +30,10 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 /**
  * Looks up and populates fields annotated with {@link Value}.
  */
-public class ConfigurationComponentPostProcessor implements ComponentPostProcessor<UseConfigurations> {
+public class ConfigurationComponentPostProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return !key.type().fields(Value.class).isEmpty();
     }
 

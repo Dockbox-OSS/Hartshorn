@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.Configuration;
-import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.inject.Key;
@@ -43,7 +42,7 @@ import java.util.regex.Pattern;
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
  * defaults to {@link FileSystemLookupStrategy}.
  */
-public class ConfigurationServicePreProcessor implements ComponentPreProcessor<UseConfigurations> {
+public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
 
     private final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();

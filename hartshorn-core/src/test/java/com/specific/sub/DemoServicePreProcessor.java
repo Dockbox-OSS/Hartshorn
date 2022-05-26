@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.inject.Key;
 import javax.inject.Singleton;
 
 @Singleton
-public class DemoServicePreProcessor implements ServicePreProcessor<Demo> {
+public class DemoServicePreProcessor implements ServicePreProcessor {
 
     private int processed = 0;
 

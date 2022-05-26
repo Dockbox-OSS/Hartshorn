@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -33,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentContextInjectionPreProcessor extends ComponentPreValidator<Service> {
+public class ComponentContextInjectionPreProcessor extends ComponentPreValidator {
 
     @Override
     public <T> void process(final ApplicationContext context, final Key<T> key) {

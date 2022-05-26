@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.data.context.SerialisationContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
@@ -38,7 +37,7 @@ import java.lang.annotation.Annotation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerialisationContext> extends ServiceAnnotatedMethodInterceptorPostProcessor<M, UsePersistence> {
+public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerializationContext> extends ServiceAnnotatedMethodInterceptorPostProcessor<M> {
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
@@ -57,11 +56,11 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
     protected abstract Class<C> contextType();
 
-    protected abstract <T, R> MethodInterceptor<T> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract <T> MethodInterceptor<T> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
-    protected abstract <T, R> MethodInterceptor<T> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract <T> MethodInterceptor<T> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
-    protected abstract <T, R> MethodInterceptor<T> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract <T> MethodInterceptor<T> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
     protected ObjectMapper mapper(final ApplicationContext context, final C serialisationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);

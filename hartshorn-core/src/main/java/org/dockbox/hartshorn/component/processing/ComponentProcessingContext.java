@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-public class ComponentProcessingContext<O> extends DefaultCarrierContext {
+public class ComponentProcessingContext extends DefaultCarrierContext {
 
     private ProcessingPhase phase;
     private final Map<Key<?>, Object> data = new ConcurrentHashMap<>();

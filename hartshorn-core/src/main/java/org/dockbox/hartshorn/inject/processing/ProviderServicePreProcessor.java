@@ -33,7 +33,7 @@ import java.util.function.Function;
 
 import javax.inject.Singleton;
 
-public final class ProviderServicePreProcessor implements ServicePreProcessor<UseServiceProvision> {
+public final class ProviderServicePreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {
