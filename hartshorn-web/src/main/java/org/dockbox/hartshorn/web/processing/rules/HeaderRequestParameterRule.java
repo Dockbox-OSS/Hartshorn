@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.web.processing.rules;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
@@ -33,7 +34,13 @@ public class HeaderRequestParameterRule extends AnnotatedParameterLoaderRule<Req
 
     @Override
     public boolean accepts(final ParameterContext<?> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        return super.accepts(parameter, index, context, args) && (parameter.type().childOf(String.class) || parameter.type().childOf(int.class) || parameter.type().childOf(long.class));
+        return super.accepts(parameter, index, context, args) && this.isValidType(parameter.type());
+    }
+
+    private boolean isValidType(final TypeContext<?> type) {
+        return type.childOf(String.class)
+                || type.childOf(int.class)
+                || type.childOf(long.class);
     }
 
     @Override

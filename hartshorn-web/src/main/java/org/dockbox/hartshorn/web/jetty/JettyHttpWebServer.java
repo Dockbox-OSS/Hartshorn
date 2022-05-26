@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.web.HttpWebServer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -141,6 +142,22 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
                 throw new ApplicationException(e);
             }
         }
+    }
+
+    @Override
+    public int port() {
+        if (this.server.getConnectors().length != 1) {
+            return -1;
+        }
+        final Connector connector = this.server.getConnectors()[0];
+        if (connector instanceof NetworkConnector networkConnector) {
+            int port = networkConnector.getPort();
+            if (port == 0) {
+                port = networkConnector.getLocalPort();
+            }
+            return port;
+        }
+        return 0;
     }
 
     public HttpWebServer staticContent(final URL location) {
