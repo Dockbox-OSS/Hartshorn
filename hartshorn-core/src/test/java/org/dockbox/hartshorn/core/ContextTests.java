@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
 import org.dockbox.hartshorn.util.Result;
@@ -38,7 +40,7 @@ public class ContextTests {
 
     @Test
     void testUnnamedContextFirst() {
-        final Context context = new TestContext();
+        final ApplicationAwareContext context = new TestContext();
         final Context child = new TestContext();
 
         context.add(child);
@@ -134,12 +136,12 @@ public class ContextTests {
 
     @Test
     void testAutoCreatingContext() {
-        final Context context = new TestContext();
+        final ApplicationAwareContext context = new TestContext();
         final Result<AutoCreatingContext> first = context.first(this.applicationContext, AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 
-    static class TestContext extends DefaultContext {
+    static class TestContext extends DefaultApplicationAwareContext {
     }
 
     @AutoCreating

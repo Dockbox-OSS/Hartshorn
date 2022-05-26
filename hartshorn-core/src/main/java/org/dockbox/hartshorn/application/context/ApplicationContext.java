@@ -20,18 +20,14 @@ import org.dockbox.hartshorn.application.ActivatorHolder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
-import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
@@ -39,20 +35,18 @@ import java.io.Closeable;
 
 @LogExclude
 public interface ApplicationContext extends
-        ApplicationBinder,
         HierarchicalComponentProvider,
         ApplicationPropertyHolder,
-        ExceptionHandler,
+        ApplicationAwareContext,
+        ApplicationBinder,
         ApplicationLogger,
+        ExceptionHandler,
         ActivatorHolder,
         Closeable {
 
+    void add(ComponentProcessor processor);
 
     ApplicationEnvironment environment();
-
-    <T> T invoke(MethodContext<T, ?> method);
-
-    <T, P> T invoke(MethodContext<T, P> method, P instance);
 
     @Override
     default Logger log() {
@@ -67,5 +61,5 @@ public interface ApplicationContext extends
         return this.first(this, context);
     }
 
-    void enable(Object instance) throws ApplicationException;
+    boolean isClosed();
 }

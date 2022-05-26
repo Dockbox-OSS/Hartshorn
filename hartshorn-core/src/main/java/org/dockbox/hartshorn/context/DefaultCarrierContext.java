@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.Result;
  * The default implementation of {@link CarrierContext}. This implementation stores the active
  * {@link ApplicationContext} directly as a field.
  */
-public class DefaultCarrierContext extends DefaultContext implements CarrierContext {
+public class DefaultCarrierContext extends DefaultApplicationAwareContext implements CarrierContext {
 
     private final ApplicationContext applicationContext;
 

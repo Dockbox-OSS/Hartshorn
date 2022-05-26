@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.logging;
+package org.dockbox.hartshorn.core.types;
 
-import org.slf4j.Logger;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 
-/**
- * The {@link ApplicationLogger} is a wrapper for the {@link Logger} class. This allows for modification and validation
- * of the logger used throughout an active application.
- *
- * @author Guus Lieben
- * @since 21.9
- */
-@LogExclude
-public interface ApplicationLogger {
+import javax.inject.Inject;
 
-    /**
-     * Gets the logger.
-     * @return The logger.
-     */
-    Logger log();
+@Component
+public class SimpleComponent {
 
-    /**
-     * Sets whether the logger should log at debug level.
-     * @param active Whether the logger should log at debug level.
-     */
-    void setDebugActive(boolean active);
+    @Inject
+    private ApplicationContext applicationContext;
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 }

@@ -18,19 +18,10 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import java.lang.management.ManagementFactory;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 
 /**
  * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
- * which provides application metadata, and a set of {@link StartupModifiers modifiers}.
+ * which provides application metadata, and a set of command line arguments.
  *
  * @author Guus Lieben
  * @since 21.2
@@ -40,37 +31,33 @@ public final class HartshornApplication {
     private HartshornApplication() {}
 
     /**
-     * Creates the bootstrapped server instance using the provided {@link Activator} metadata.
+     * Creates a new application context for the given application type, arguments, and modifiers. This initializes the
+     * required environment and starts the application.
      *
-     * @param activator The activator type, providing application metadata
-     * @param modifiers The modifiers to use when bootstrapping
-     * @see StartupModifiers
+     * @param activator The application type annotated with {@link Activator}
+     * @param args The application arguments
+     * @return The application context
      */
-    public static ApplicationContext create(final Class<?> activator, final String[] args, final StartupModifiers... modifiers) {
-        for (final StartupModifiers modifier : modifiers)
-            if (modifier == StartupModifiers.DEBUG) setDebugActive();
-
-        MDC.put("process_id", ManagementFactory.getRuntimeMXBean().getName());
-
-        return new HartshornApplicationFactory()
+    public static ApplicationContext create(final Class<?> activator, final String... args) {
+        return new StandardApplicationFactory()
                 .loadDefaults()
                 .activator(TypeContext.of(activator))
                 .arguments(args)
-                .modifiers(modifiers)
                 .create();
     }
 
-    public static void setDebugActive() {
-        final ILoggerFactory factory = LoggerFactory.getILoggerFactory();
-
-        if (factory instanceof LoggerContext loggerContext) {
-            for (final Logger logger : loggerContext.getLoggerList()) {
-                logger.setLevel(Level.DEBUG);
-            }
-        }
-        else {
-            final Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-            rootLogger.setLevel(Level.DEBUG);
-        }
+    /**
+     * Creates a new application context using the provided arguments and modifiers. This is a convenience method
+     * which deduces the activator type from the current thread's stacktrace.
+     *
+     * @param args The arguments to use when bootstrapping
+     * @return The application context
+     */
+    public static ApplicationContext create(final String... args) {
+        return new StandardApplicationFactory()
+                .loadDefaults()
+                .deduceActivator()
+                .arguments(args)
+                .create();
     }
 }

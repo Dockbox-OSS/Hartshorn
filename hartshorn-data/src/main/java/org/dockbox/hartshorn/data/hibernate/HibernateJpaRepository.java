@@ -252,7 +252,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         if (this.connection != null) throw new IllegalStateException("Connection has already been configured!");
         this.connection = connection;
         try {
-            this.applicationContext().enable(this);
+            this.enable();
         } catch (final ApplicationException e) {
             this.applicationContext().handle(e);
         }
@@ -279,7 +279,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         // repository should fall back to constructing the default remote through the active HibernateRemote binding.
         if (this.factory == null) {
             try {
-                this.applicationContext().enable(this);
+                this.enable();
             } catch (final ApplicationException e) {
                 return ExceptionHandler.unchecked(e);
             }

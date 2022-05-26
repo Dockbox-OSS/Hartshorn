@@ -16,13 +16,8 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import java.lang.annotation.Annotation;
+import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 
-public interface SelfActivatingApplicationContext extends ApplicationContext {
-    void addActivator(Annotation annotation);
-
-    void processPrefixQueue();
-
+public interface ProcessableApplicationContext extends ApplicationContext, ModifiableActivatorHolder {
     void process();
-
 }

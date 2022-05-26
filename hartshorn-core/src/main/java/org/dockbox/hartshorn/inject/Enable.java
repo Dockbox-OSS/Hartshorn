@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 import java.lang.annotation.ElementType;
@@ -26,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that the value of a field or method should be enabled through
- * {@link ApplicationContext#enable(Object)}.
+ * {@link org.dockbox.hartshorn.component.Enableable#enable(Object)}.
  *
  * <p>If the annotated element is a field, the value of the field will be enabled,
  * if it is not {@code null}.

@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.HashSetMultiMap;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.application.context.ObservingApplicationContext;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.HashSetMultiMap;
+import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -79,7 +80,12 @@ public class ComponentLocatorImpl implements ComponentLocator {
         final long duration = System.currentTimeMillis() - start;
         this.applicationContext().log().info("Located %d components with prefix %s in %dms".formatted(filteredComponentContainers.size(), prefix, duration));
 
-        this.cache.putAll(prefix, filteredComponentContainers);
+        filteredComponentContainers.forEach(container -> {
+            if (this.applicationContext() instanceof ObservingApplicationContext context) {
+                context.componentAdded(container);
+            }
+            this.cache.put(prefix, container);
+        });
     }
 
     @Override
@@ -88,6 +94,9 @@ public class ComponentLocatorImpl implements ComponentLocator {
             final ComponentContainer container = new ComponentContainerImpl(this.applicationContext(), type);
             if (!container.type().isAnnotation() && this.activationFilters.stream().allMatch(activationFilter -> activationFilter.doActivate(container.type(), container))) {
                 this.cache.put(type.type().getPackageName(), container);
+                if (this.applicationContext() instanceof ObservingApplicationContext context) {
+                    context.componentAdded(container);
+                }
             }
         }
     }

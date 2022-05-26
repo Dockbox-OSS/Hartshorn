@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.application.HartshornApplicationFactory;
+import org.dockbox.hartshorn.application.StandardApplicationFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -83,7 +83,7 @@ public final class TranslationBatchGenerator {
 
     public static void main(final String[] args) throws Exception {
         final ApplicationContext context = HartshornLifecycleExtension
-                .createTestContext(new HartshornApplicationFactory().loadDefaults(), TranslationBatchGenerator.class)
+                .createTestContext(new StandardApplicationFactory().loadDefaults(), TranslationBatchGenerator.class)
                 .orNull();
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(LocalDateTime.now());

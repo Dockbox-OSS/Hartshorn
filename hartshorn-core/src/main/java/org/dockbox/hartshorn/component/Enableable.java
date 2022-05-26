@@ -26,4 +26,10 @@ public interface Enableable {
     }
 
     void enable() throws ApplicationException;
+
+    static void enable(final Object object) throws ApplicationException {
+        if (object instanceof Enableable enableable && enableable.canEnable()) {
+            enableable.enable();
+        }
+    }
 }

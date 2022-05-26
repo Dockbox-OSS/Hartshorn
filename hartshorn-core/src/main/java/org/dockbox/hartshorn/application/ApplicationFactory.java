@@ -17,28 +17,28 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
-import org.dockbox.hartshorn.component.processing.ActivatorFiltered;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
-import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.application.scan.PrefixContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentProvider;
-import org.dockbox.hartshorn.application.scan.PrefixContext;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.processing.ActivatorFiltered;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -52,22 +52,6 @@ import java.util.function.Function;
  * @since 21.9
  */
 public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> {
-
-    /**
-     * Modifiers to add to the application, such as {@link StartupModifiers#DEBUG}.
-     *
-     * @param modifiers The modifiers to add.
-     * @return The {@link ApplicationFactory} instance.
-     */
-    Self modifiers(StartupModifiers... modifiers);
-
-    /**
-     * Adds a modifier to the application, such as {@link StartupModifiers#ACTIVATE_ALL}.
-     *
-     * @param modifier The modifier to add.
-     * @return The {@link ApplicationFactory} instance.
-     */
-    Self modifier(StartupModifiers modifier);
 
     /**
      * Sets the application activator to use. Depending on the type of application environment, this may require the
@@ -125,7 +109,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ApplicationConfigurator
      */
-    Self applicationConfigurator(ApplicationConfigurator applicationConfigurator);
+    Self applicationConfigurator(Initializer<ApplicationConfigurator> applicationConfigurator);
 
     /**
      * Sets the {@link ApplicationProxier} to use. This is responsible for component and service proxying during the entire
@@ -135,7 +119,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ApplicationProxier
      */
-    Self applicationProxier(ApplicationProxier applicationProxier);
+    Self applicationProxier(Initializer<ApplicationProxier> applicationProxier);
 
     /**
      * Sets the {@link ApplicationLogger} to use. This is responsible for all logging purposes and should expose a valid
@@ -144,7 +128,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @param applicationLogger The application logger to use.
      * @return The {@link ApplicationFactory} instance.
      */
-    Self applicationLogger(ApplicationLogger applicationLogger);
+    Self applicationLogger(Initializer<ApplicationLogger> applicationLogger);
 
     /**
      * Sets the {@link ApplicationFSProvider} to use. This is responsible for all filesystem operations and should expose
@@ -153,7 +137,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @param applicationFSProvider The application filesystem provider to use.
      * @return The {@link ApplicationFactory} instance.
      */
-    Self applicationFSProvider(ApplicationFSProvider applicationFSProvider);
+    Self applicationFSProvider(Initializer<ApplicationFSProvider> applicationFSProvider);
 
     /**
      * Sets the {@link ApplicationEnvironment} to use. The environment is responsible for keeping track of known prefixes
@@ -164,7 +148,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ApplicationEnvironment
      */
-    Self applicationEnvironment(BiFunction<PrefixContext, ApplicationManager, ApplicationEnvironment> applicationEnvironment);
+    Self applicationEnvironment(Initializer<ApplicationEnvironment> applicationEnvironment);
 
     /**
      * Sets the {@link ComponentLocator} to use. The locator is responsible for locating components and services, as well
@@ -176,7 +160,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ComponentLocator
      */
-    Self componentLocator(Function<ApplicationContext, ComponentLocator> componentLocator);
+    Self componentLocator(Initializer<ComponentLocator> componentLocator);
 
     /**
      * Sets the {@link MetaProvider} to use. The meta provider is responsible for providing meta information about types.
@@ -185,7 +169,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see MetaProvider
      */
-    Self metaProvider(Function<ApplicationContext, MetaProvider> metaProvider);
+    Self metaProvider(Initializer<MetaProvider> metaProvider);
 
     /**
      * Sets the {@link ClasspathResourceLocator} to use. The classpath resource locator is responsible for locating resources on
@@ -195,7 +179,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ClasspathResourceLocator
      */
-    Self resourceLocator(Function<ApplicationContext, ClasspathResourceLocator> resourceLocator);
+    Self resourceLocator(Initializer<ClasspathResourceLocator> resourceLocator);
 
     /**
      * Sets the {@link ExceptionHandler} to use. The exception handler is responsible for handling exceptions during the entire
@@ -205,7 +189,16 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ExceptionHandler
      */
-    Self exceptionHandler(ExceptionHandler exceptionHandler);
+    Self exceptionHandler(Initializer<ExceptionHandler> exceptionHandler);
+
+    /**
+     * Sets the {@link ApplicationArgumentParser} to use. The argument parser is responsible for parsing command line
+     * arguments and making them available to the application.
+     *
+     * @param argumentParser The argument parser to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self argumentParser(Initializer<ApplicationArgumentParser> argumentParser);
 
     /**
      * Sets the {@link PrefixContext} to use. The prefix context is responsible for keeping track of known prefixes and provide
@@ -215,7 +208,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see PrefixContext
      */
-    Self prefixContext(Function<ApplicationManager, PrefixContext> prefixContext);
+    Self prefixContext(Initializer<PrefixContext> prefixContext);
 
     /**
      * Sets the {@link ComponentProvider} to use. The component provider is responsible for providing components and services
@@ -224,7 +217,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @param componentProvider The component provider to use.
      * @return The {@link ApplicationFactory} instance.
      */
-    Self componentProvider(Function<ApplicationContext, ComponentProvider> componentProvider);
+    Self componentProvider(Initializer<ComponentProvider> componentProvider);
 
     /**
      * Sets the {@link ComponentPopulator} to use. The component populator is responsible for populating components and services
@@ -233,7 +226,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @param componentPopulator The component populator to use.
      * @return The {@link ApplicationFactory} instance.
      */
-    Self componentPopulator(Function<ApplicationContext, ComponentPopulator> componentPopulator);
+    Self componentPopulator(Initializer<ComponentPopulator> componentPopulator);
 
     /**
      * Registers a custom {@link ComponentPostProcessor}. Unlike automatically activated {@link ComponentPostProcessor}s,
@@ -243,7 +236,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ComponentPostProcessor
      */
-    Self postProcessor(ComponentPostProcessor<?> postProcessor);
+    Self postProcessor(ComponentPostProcessor postProcessor);
 
     /**
      * Registers a custom {@link ComponentPreProcessor}. Unlike automatically activated {@link ComponentPreProcessor}s,
@@ -253,7 +246,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ComponentPreProcessor
      */
-    Self preProcessor(ComponentPreProcessor<?> preProcessor);
+    Self preProcessor(ComponentPreProcessor preProcessor);
 
     /**
      * Registers a custom package prefix which should be known to the application. These prefixes are bound using the
@@ -297,6 +290,14 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @see ApplicationConfigurator#apply(ApplicationManager, Set)
      */
     Self configuration(InjectConfiguration injectConfiguration);
+
+    /**
+     * Registers a custom {@link ActivatorHolder} which should be known to the application.
+     *
+     * @param activatorHolder The activator holder to register.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self activatorHolder(Initializer<ActivatorHolder> activatorHolder);
 
     /**
      * Returns itself, for chaining without losing the fluent API.

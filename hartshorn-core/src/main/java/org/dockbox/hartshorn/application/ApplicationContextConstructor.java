@@ -16,28 +16,8 @@
 
 package org.dockbox.hartshorn.application;
 
-/**
- * A class that contains the default modifiers for the framework. Each entry may
- * modify the behavior of the framework in a specific way.
- *
- * @author Guus Lieben
- * @since 21.2
- */
-public enum StartupModifiers {
-    /**
-     * Makes it so application activators do not need to have service activator
-     * annotationsWith present, and will indicate all activators are present when
-     * requested.
-     *
-     * @since 21.2
-     */
-    ACTIVATE_ALL,
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
-    /**
-     * Makes it so the logging level of the application is changed to {@code DEBUG}.
-     * This allows for finer logging and debugging.
-     *
-     * @since 22.1
-     */
-    DEBUG,
+public interface ApplicationContextConstructor<C extends ApplicationContext> {
+    <F extends ApplicationFactory<F, C>> C createContext(ApplicationContextConfiguration configuration);
 }

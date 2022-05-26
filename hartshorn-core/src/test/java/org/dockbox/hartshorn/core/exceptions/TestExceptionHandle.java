@@ -36,6 +36,12 @@ public class TestExceptionHandle extends LoggingExceptionHandler {
         return this;
     }
 
+    public void reset() {
+        this.message = null;
+        this.exception = null;
+        this.stacktrace = false;
+    }
+
     public boolean stacktrace() {
         return this.stacktrace;
     }

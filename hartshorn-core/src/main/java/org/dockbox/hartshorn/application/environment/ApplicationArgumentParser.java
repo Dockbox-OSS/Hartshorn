@@ -14,29 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.logging;
+package org.dockbox.hartshorn.application.environment;
 
-import org.slf4j.Logger;
+import java.util.Properties;
+import java.util.Set;
 
-/**
- * The {@link ApplicationLogger} is a wrapper for the {@link Logger} class. This allows for modification and validation
- * of the logger used throughout an active application.
- *
- * @author Guus Lieben
- * @since 21.9
- */
-@LogExclude
-public interface ApplicationLogger {
-
-    /**
-     * Gets the logger.
-     * @return The logger.
-     */
-    Logger log();
-
-    /**
-     * Sets whether the logger should log at debug level.
-     * @param active Whether the logger should log at debug level.
-     */
-    void setDebugActive(boolean active);
+public interface ApplicationArgumentParser {
+    Properties parse(Set<String> arguments);
 }
