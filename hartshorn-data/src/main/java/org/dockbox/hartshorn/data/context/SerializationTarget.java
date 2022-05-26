@@ -16,6 +16,6 @@
 
 package org.dockbox.hartshorn.data.context;
 
-public enum SerialisationTarget {
+public enum SerializationTarget {
     ANNOTATED_PATH, PARAMETER_PATH, STRING
 }

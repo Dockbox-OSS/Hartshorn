@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class DeserializationContext extends SerializationContext {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Serialise {
-    FileFormats filetype() default FileFormats.JSON;
+    private final TypeContext<?> type;
 
-    File path();
+    public DeserializationContext(final TypeContext<?> type) {
+        this.type = type;
+    }
+
+    public TypeContext<?> type() {
+        return this.type;
+    }
 }

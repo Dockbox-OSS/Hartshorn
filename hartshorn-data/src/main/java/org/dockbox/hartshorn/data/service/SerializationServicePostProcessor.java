@@ -18,12 +18,13 @@ package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.DataStorageType;
-import org.dockbox.hartshorn.data.annotations.Serialise;
+import org.dockbox.hartshorn.data.annotations.Serialize;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
-import org.dockbox.hartshorn.data.context.SerialisationContext;
-import org.dockbox.hartshorn.data.context.SerialisationTarget;
+import org.dockbox.hartshorn.data.context.SerializationContext;
+import org.dockbox.hartshorn.data.context.SerializationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
@@ -33,21 +34,21 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import java.io.File;
 import java.nio.file.Path;
 
-public class SerialisationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Serialise, SerialisationContext> {
+public class SerializationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Serialize, SerializationContext> {
 
     @Override
-    protected <T, R> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+    protected <T> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerializationContext serializationContext) {
         return interceptorContext -> {
-            final Path target = serialisationContext.predeterminedPath();
+            final Path target = serializationContext.predeterminedPath();
             final Object content = interceptorContext.args()[0];
-            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serializationContext);
             final Result<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
         };
     }
 
     @Override
-    protected <T, R> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+    protected <T> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerializationContext serializationContext) {
         return interceptorContext -> {
             Path target = null;
             Object content = null;
@@ -59,44 +60,44 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
 
             if (target == null || content == null) throw new IllegalArgumentException("Expected one argument to be a subtype of File or Path, expected one argument to be a content type");
 
-            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serializationContext);
             final Result<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
         };
     }
 
     @Override
-    protected <T, R> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+    protected <T> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerializationContext serializationContext) {
         return interceptorContext -> {
             final Object content = interceptorContext.args()[0];
-            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serializationContext);
 
             final Result<String> result = objectMapper.write(content);
             if (methodContext.method().returnType().childOf(String.class)) {
-                return (R) result.orNull();
+                return result.orNull();
             }
             else {
-                return (R) result;
+                return result;
             }
         };
     }
 
     @Override
-    protected Class<SerialisationContext> contextType() {
-        return SerialisationContext.class;
+    protected Class<SerializationContext> contextType() {
+        return SerializationContext.class;
     }
 
-    private <R> R wrapBooleanResult(final Result<Boolean> result, final MethodProxyContext<?> methodContext) {
+    private Object wrapBooleanResult(final Result<Boolean> result, final MethodProxyContext<?> methodContext) {
         if (methodContext.method().returnType().childOf(Boolean.class))
-            return (R) result.or(false);
-        else return (R) result;
+            return result.or(false);
+        else return result;
     }
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         if (methodContext.method().parameterCount() < 1) return false;
 
-        final Serialise annotation = methodContext.annotation(Serialise.class);
+        final Serialize annotation = methodContext.annotation(Serialize.class);
         if (annotation.filetype().type() != DataStorageType.RAW) return false;
 
         boolean hasPath = false;
@@ -107,19 +108,19 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
             }
         }
 
-        final SerialisationContext serialisationContext = new SerialisationContext();
-        serialisationContext.fileFormat(annotation.filetype());
-        methodContext.add(serialisationContext);
+        final SerializationContext serializationContext = new SerializationContext();
+        serializationContext.fileFormat(annotation.filetype());
+        methodContext.add(serializationContext);
 
         if (hasPath) {
-            serialisationContext.target(SerialisationTarget.PARAMETER_PATH);
+            serializationContext.target(SerializationTarget.PARAMETER_PATH);
             return methodContext.method().parameterCount() == 2;
         }
         else {
             final TypeContext<?> owner = this.owner(context, TypeContext.of(annotation.path().owner()), methodContext);
             if (!owner.isVoid()) {
-                serialisationContext.target(SerialisationTarget.ANNOTATED_PATH);
-                serialisationContext.predeterminedPath(this.determineAnnotationPath(
+                serializationContext.target(SerializationTarget.ANNOTATED_PATH);
+                serializationContext.predeterminedPath(this.determineAnnotationPath(
                         context,
                         methodContext,
                         new PersistenceAnnotationContext(annotation))
@@ -127,7 +128,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
                 return methodContext.method().parameterCount() == 1;
             }
             else {
-                serialisationContext.target(SerialisationTarget.STRING);
+                serializationContext.target(SerializationTarget.STRING);
                 return this.stringTargetPreconditions(methodContext);
             }
         }
@@ -135,7 +136,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
 
     private TypeContext<?> owner(final ApplicationContext context, final TypeContext<?> annotationOwner, final MethodProxyContext<?> methodContext) {
         if (!annotationOwner.isVoid()) return annotationOwner;
-        return context.locator().container(methodContext.method().parent()).map(ComponentContainer::owner).orNull();
+        return context.get(ComponentLocator.class).container(methodContext.method().parent()).map(ComponentContainer::owner).orNull();
     }
 
     private boolean stringTargetPreconditions(final MethodProxyContext<?> context) {
@@ -155,7 +156,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    public Class<Serialise> annotation() {
-        return Serialise.class;
+    public Class<Serialize> annotation() {
+        return Serialize.class;
     }
 }

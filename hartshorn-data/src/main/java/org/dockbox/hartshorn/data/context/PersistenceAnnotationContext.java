@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.data.context;
 
 import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.annotations.Deserialise;
+import org.dockbox.hartshorn.data.annotations.Deserialize;
 import org.dockbox.hartshorn.data.annotations.File;
-import org.dockbox.hartshorn.data.annotations.Serialise;
+import org.dockbox.hartshorn.data.annotations.Serialize;
 
 public class PersistenceAnnotationContext {
 
@@ -31,14 +31,14 @@ public class PersistenceAnnotationContext {
         this.file = file;
     }
 
-    public PersistenceAnnotationContext(final Serialise serialise) {
-        this.file = serialise.path();
-        this.filetype = serialise.filetype();
+    public PersistenceAnnotationContext(final Serialize serialize) {
+        this.file = serialize.path();
+        this.filetype = serialize.filetype();
     }
 
-    public PersistenceAnnotationContext(final Deserialise deserialise) {
-        this.file = deserialise.path();
-        this.filetype = deserialise.filetype();
+    public PersistenceAnnotationContext(final Deserialize deserialize) {
+        this.file = deserialize.path();
+        this.filetype = deserialize.filetype();
     }
 
     public FileFormats filetype() {

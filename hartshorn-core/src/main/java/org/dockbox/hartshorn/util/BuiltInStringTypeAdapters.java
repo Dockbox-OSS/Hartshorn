@@ -28,7 +28,7 @@ import java.util.UUID;
 public final class BuiltInStringTypeAdapters {
 
     /**
-     * A basic passthrough adapter, to support dynamic usages of type adapters. Returns the given value, wrapped in a
+     * A basic pass-through adapter, to support dynamic usages of type adapters. Returns the given value, wrapped in a
      * {@link Result}.
      */
     public static final StringTypeAdapter<String> STRING = StringTypeAdapterImpl.of(String.class, Result::of);

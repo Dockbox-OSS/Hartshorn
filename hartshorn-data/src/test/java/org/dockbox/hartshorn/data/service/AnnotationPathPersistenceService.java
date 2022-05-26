@@ -19,17 +19,17 @@ package org.dockbox.hartshorn.data.service;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.PersistentElement;
-import org.dockbox.hartshorn.data.annotations.Deserialise;
+import org.dockbox.hartshorn.data.annotations.Deserialize;
 import org.dockbox.hartshorn.data.annotations.File;
-import org.dockbox.hartshorn.data.annotations.Serialise;
+import org.dockbox.hartshorn.data.annotations.Serialize;
 
 @Service
 public interface AnnotationPathPersistenceService {
 
-    @Serialise(path = @File(owner = Hartshorn.class, value = "test"))
+    @Serialize(path = @File(owner = Hartshorn.class, value = "test"))
     boolean writeToPath(PersistentElement element);
 
-    @Deserialise(path = @File(owner = Hartshorn.class, value = "test"))
+    @Deserialize(path = @File(owner = Hartshorn.class, value = "test"))
     PersistentElement readFromPath();
 
 }

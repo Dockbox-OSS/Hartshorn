@@ -54,7 +54,7 @@ public class JettyErrorHandler extends ErrorHandler {
     @Inject
     private ErrorServlet errorServlet;
 
-    @Value(value = "hartshorn.web.headers.hartshorn")
+    @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
 
     @Override

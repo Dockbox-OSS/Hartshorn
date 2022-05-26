@@ -38,7 +38,7 @@ public class CommandListenerImpl implements CommandListener {
     private CommandSource source;
 
     @Inject
-    protected void context(ApplicationContext applicationContext) {
+    protected void context(final ApplicationContext applicationContext) {
         this.context = applicationContext;
         this.source(SystemSubject.instance(applicationContext));
     }

@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Deserialise {
+public @interface Serialize {
     FileFormats filetype() default FileFormats.JSON;
 
     File path();

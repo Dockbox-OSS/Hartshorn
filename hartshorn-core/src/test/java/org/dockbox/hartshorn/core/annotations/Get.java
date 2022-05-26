@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.core.annotations;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.reflect.AliasFor;
+import org.dockbox.hartshorn.util.reflect.Extends;
 
-/**
- * A supplier of {@link TypeContext}s. These are the default values used by the framework.
- *
- * @author Guus Lieben
- * @since 21.4
- */
-public final class Providers {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    private Providers() {}
+@Retention(RetentionPolicy.RUNTIME)
+@Extends(Route.class)
+public @interface Get {
+    @AliasFor("path")
+    String value() default "";
 
+    String regex() default "";
+
+    String path() default "";
 }

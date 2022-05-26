@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.annotations;
+package org.dockbox.hartshorn.data.annotations;
 
-import org.dockbox.hartshorn.util.reflect.AliasFor;
-import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.data.FileFormats;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-// This is not a typo. On case-insensitive OS, Get and GET in same compiler output directory might cause issues
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(Route.class)
-public @interface Gett {
-    @AliasFor("path")
-    String value() default "";
+@Target(ElementType.METHOD)
+public @interface Deserialize {
+    FileFormats filetype() default FileFormats.JSON;
 
-    String regex() default "";
-
-    String path() default "";
+    File path();
 }

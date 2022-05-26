@@ -25,20 +25,20 @@ public class SampleSetterConfigurationObject {
     private int age;
 
     public String name() {
-        return name;
+        return this.name;
     }
 
     // Classic bean-style setter
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name + "!";
     }
 
     public int age() {
-        return age;
+        return this.age;
     }
 
     // Fluent-style setter, private
-    private SampleSetterConfigurationObject setAge(int age) {
+    private SampleSetterConfigurationObject setAge(final int age) {
         this.age = age + 10;
         return this;
     }

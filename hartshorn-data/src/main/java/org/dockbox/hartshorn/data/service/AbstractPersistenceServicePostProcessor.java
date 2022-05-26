@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
-import org.dockbox.hartshorn.data.context.SerialisationContext;
+import org.dockbox.hartshorn.data.context.SerializationContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
 import java.io.IOException;
@@ -43,16 +43,16 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final Result<C> serialisationContext = methodContext.first(context, this.contextType());
-        if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
+        final Result<C> serializationContext = methodContext.first(context, this.contextType());
+        if (serializationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
-        final C ctx = serialisationContext.get();
-        context.log().debug("Processing persistence path of " + methodContext.method().name() + " with serialisation target " + ctx.target());
+        final C ctx = serializationContext.get();
+        context.log().debug("Processing persistence path of " + methodContext.method().name() + " with serialization target " + ctx.target());
         return switch (ctx.target()) {
             case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
             case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);
             case STRING -> this.processString(context, methodContext, ctx);
-            default -> throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.target());
+            default -> throw new IllegalArgumentException("Unsupported serialization target: " + ctx.target());
         };
     }
 
@@ -64,9 +64,9 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
     protected abstract <T> MethodInterceptor<T> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
-    protected ObjectMapper mapper(final ApplicationContext context, final C serialisationContext) {
+    protected ObjectMapper mapper(final ApplicationContext context, final C serializationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);
-        final FileFormats fileFormat = serialisationContext.fileFormat();
+        final FileFormats fileFormat = serializationContext.fileFormat();
         objectMapper.fileType(fileFormat);
         return objectMapper;
     }

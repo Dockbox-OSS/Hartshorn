@@ -97,7 +97,7 @@ public class ObjectMappingTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    private static Stream<Arguments> serialisationElements() {
+    private static Stream<Arguments> serializationElements() {
         return Stream.of(
                 Arguments.of(FileFormats.JSON, new PersistentElement(), "{\"name\":\"sample\"}"),
                 Arguments.of(FileFormats.YAML, new PersistentElement(), "name: sample"),
@@ -127,8 +127,8 @@ public class ObjectMappingTests {
     }
 
     @ParameterizedTest
-    @MethodSource("serialisationElements")
-    void testObjectSerialisation(final FileFormat fileFormat, final Element content, final String expected) {
+    @MethodSource("serializationElements")
+    void testObjectSerialization(final FileFormat fileFormat, final Element content, final String expected) {
         final ObjectMapper mapper = this.applicationContext.get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
 
@@ -140,8 +140,8 @@ public class ObjectMappingTests {
     }
 
     @ParameterizedTest
-    @MethodSource("serialisationElements")
-    void testObjectDeserialisation(final FileFormat fileFormat, final Element expected, final String content) {
+    @MethodSource("serializationElements")
+    void testObjectDeserialization(final FileFormat fileFormat, final Element expected, final String content) {
         final ObjectMapper mapper = this.applicationContext.get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
         expected.name("sample");

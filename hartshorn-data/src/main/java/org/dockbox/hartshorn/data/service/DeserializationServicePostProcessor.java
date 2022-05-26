@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.data.annotations.Deserialise;
-import org.dockbox.hartshorn.data.context.DeserialisationContext;
+import org.dockbox.hartshorn.data.annotations.Deserialize;
+import org.dockbox.hartshorn.data.context.DeserializationContext;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
-import org.dockbox.hartshorn.data.context.SerialisationTarget;
+import org.dockbox.hartshorn.data.context.SerializationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
@@ -31,21 +31,21 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import java.io.File;
 import java.nio.file.Path;
 
-public class DeserialisationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Deserialise, DeserialisationContext> {
+public class DeserializationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Deserialize, DeserializationContext> {
 
     @Override
-    protected <T, R> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
+    protected <T> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserializationContext deserializationContext) {
         return interceptorContext -> {
-            final Path path = serialisationContext.predeterminedPath();
-            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
+            final Path path = deserializationContext.predeterminedPath();
+            final ObjectMapper objectMapper = this.mapper(context, deserializationContext);
 
-            final Result<?> result = objectMapper.read(path, serialisationContext.type());
+            final Result<?> result = objectMapper.read(path, deserializationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
 
     @Override
-    protected <T, R> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
+    protected <T> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserializationContext deserializationContext) {
         return interceptorContext -> {
             final Path path;
             final Object[] args = interceptorContext.args();
@@ -53,27 +53,27 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
             else if (args[0] instanceof File) path = ((File) args[0]).toPath();
             else throw new IllegalArgumentException("Expected one argument to be a subtype of File or Path");
 
-            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, deserializationContext);
 
-            final Result<?> result = objectMapper.read(path, serialisationContext.type());
+            final Result<?> result = objectMapper.read(path, deserializationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
 
     @Override
-    protected <T, R> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
+    protected <T> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserializationContext deserializationContext) {
         return interceptorContext -> {
             final String raw = (String) interceptorContext.args()[0];
-            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, deserializationContext);
 
-            final Result<?> result = objectMapper.read(raw, serialisationContext.type());
+            final Result<?> result = objectMapper.read(raw, deserializationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
 
     @Override
-    protected Class<DeserialisationContext> contextType() {
-        return DeserialisationContext.class;
+    protected Class<DeserializationContext> contextType() {
+        return DeserializationContext.class;
     }
 
     private <R> R wrapResult(final Result<?> result, final MethodProxyContext<?> methodContext) {
@@ -86,18 +86,18 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
         if (methodContext.method().parameterCount() > 1) return false;
         if (methodContext.method().returnType().isVoid()) return false;
 
-        final Deserialise annotation = methodContext.annotation(Deserialise.class);
+        final Deserialize annotation = methodContext.annotation(Deserialize.class);
 
         final TypeContext<?> outputType = this.outputType(methodContext);
         if (outputType == null) return false;
 
-        final DeserialisationContext deserialisationContext = new DeserialisationContext(outputType);
-        deserialisationContext.fileFormat(annotation.filetype());
-        methodContext.add(deserialisationContext);
+        final DeserializationContext deserializationContext = new DeserializationContext(outputType);
+        deserializationContext.fileFormat(annotation.filetype());
+        methodContext.add(deserializationContext);
 
         if (methodContext.method().parameterCount() == 0) {
-            deserialisationContext.target(SerialisationTarget.ANNOTATED_PATH);
-            deserialisationContext.predeterminedPath(this.determineAnnotationPath(
+            deserializationContext.target(SerializationTarget.ANNOTATED_PATH);
+            deserializationContext.predeterminedPath(this.determineAnnotationPath(
                     context,
                     methodContext,
                     new PersistenceAnnotationContext(annotation))
@@ -108,11 +108,11 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
             final TypeContext<?> parameterType = methodContext.method().parameterTypes().get(0);
 
             if (parameterType.childOf(String.class)) {
-                deserialisationContext.target(SerialisationTarget.STRING);
+                deserializationContext.target(SerializationTarget.STRING);
                 return true;
             }
             else if (parameterType.childOf(Path.class) || parameterType.childOf(File.class)) {
-                deserialisationContext.target(SerialisationTarget.PARAMETER_PATH);
+                deserializationContext.target(SerializationTarget.PARAMETER_PATH);
                 return true;
             }
         }
@@ -130,7 +130,7 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
     }
 
     @Override
-    public Class<Deserialise> annotation() {
-        return Deserialise.class;
+    public Class<Deserialize> annotation() {
+        return Deserialize.class;
     }
 }

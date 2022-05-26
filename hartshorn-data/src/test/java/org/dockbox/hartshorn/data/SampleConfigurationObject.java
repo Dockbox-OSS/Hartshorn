@@ -25,10 +25,10 @@ public class SampleConfigurationObject {
     private int age;
 
     public String name() {
-        return name;
+        return this.name;
     }
 
     public int age() {
-        return age;
+        return this.age;
     }
 }
