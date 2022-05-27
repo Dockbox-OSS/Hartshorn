@@ -108,10 +108,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.bind(ComponentLocator.class).singleton(this.locator);
         this.bind(ApplicationEnvironment.class).singleton(this.environment);
         this.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator);
+        this.bind(ComponentProvider.class).singleton(this.componentProvider);
+        this.bind(ActivatorHolder.class).singleton(this.activatorHolder);
 
-        this.bind(ComponentProvider.class).singleton(this);
         this.bind(ApplicationContext.class).singleton(this);
-        this.bind(ActivatorHolder.class).singleton(this);
         this.bind(ApplicationPropertyHolder.class).singleton(this);
         this.bind(ApplicationBinder.class).singleton(this);
 
