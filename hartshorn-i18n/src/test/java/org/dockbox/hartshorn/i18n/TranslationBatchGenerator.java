@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.application.HartshornApplicationFactory;
+import org.dockbox.hartshorn.application.StandardApplicationFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
 import org.dockbox.hartshorn.testsuite.HartshornLifecycleExtension;
@@ -82,7 +83,7 @@ public final class TranslationBatchGenerator {
 
     public static void main(final String[] args) throws Exception {
         final ApplicationContext context = HartshornLifecycleExtension
-                .createTestContext(new HartshornApplicationFactory().loadDefaults(), TranslationBatchGenerator.class)
+                .createTestContext(new StandardApplicationFactory().loadDefaults(), TranslationBatchGenerator.class)
                 .orNull();
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(LocalDateTime.now());
@@ -177,7 +178,7 @@ public final class TranslationBatchGenerator {
 
     public static Map<String, String> collect(final ApplicationContext context) {
         final Map<String, String> batch = new HashMap<>();
-        for (final ComponentContainer container : context.locator().containers()) {
+        for (final ComponentContainer container : context.get(ComponentLocator.class).containers()) {
             final TypeContext<?> type = container.type();
             final List<? extends MethodContext<?, ?>> methods = type.methods(InjectTranslation.class);
             for (final MethodContext<?, ?> method : methods) {

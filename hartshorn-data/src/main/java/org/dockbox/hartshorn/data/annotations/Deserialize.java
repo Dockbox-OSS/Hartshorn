@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.context;
+package org.dockbox.hartshorn.data.annotations;
 
-import java.lang.annotation.Annotation;
+import org.dockbox.hartshorn.data.FileFormats;
 
-public interface SelfActivatingApplicationContext extends ApplicationContext {
-    void addActivator(Annotation annotation);
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    void processPrefixQueue();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Deserialize {
+    FileFormats filetype() default FileFormats.JSON;
 
-    void process();
-
+    File path();
 }

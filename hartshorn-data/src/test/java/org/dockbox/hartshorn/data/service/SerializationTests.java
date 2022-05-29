@@ -30,13 +30,13 @@ import javax.inject.Inject;
 
 @HartshornTest
 @UsePersistence
-public class SerialisationTests {
+public class SerializationTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testToStringSerialisation() {
+    void testToStringSerialization() {
         final PersistenceService service = this.applicationContext.get(PersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final String json = service.writeToString(element);
@@ -46,7 +46,7 @@ public class SerialisationTests {
     }
 
     @Test
-    void testFromStringDeserialisation() {
+    void testFromStringDeserialization() {
         final PersistenceService service = this.applicationContext.get(PersistenceService.class);
         final String json = "{\"name\":\"sample\"}";
         final PersistentElement element = service.readFromString(json);
@@ -56,7 +56,7 @@ public class SerialisationTests {
     }
 
     @Test
-    void testToPathSerialisation() {
+    void testToPathSerialization() {
         final PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final boolean result = service.writeToPath(element, this.path());
@@ -69,7 +69,7 @@ public class SerialisationTests {
     }
 
     @Test
-    void testFromPathDeserialisation() {
+    void testFromPathDeserialization() {
         final PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final Path path = this.path();
@@ -83,7 +83,7 @@ public class SerialisationTests {
     }
 
     @Test
-    void testToAnnotationPathSerialisation() {
+    void testToAnnotationPathSerialization() {
         final AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final boolean result = service.writeToPath(element);
@@ -92,7 +92,7 @@ public class SerialisationTests {
     }
 
     @Test
-    void testFromAnnotationPathDeserialisation() {
+    void testFromAnnotationPathDeserialization() {
         final AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
 

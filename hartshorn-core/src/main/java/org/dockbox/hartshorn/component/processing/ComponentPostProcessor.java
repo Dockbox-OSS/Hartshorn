@@ -16,11 +16,9 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
-import java.lang.annotation.Annotation;
 
 /**
  * A component post processor is responsible for processing a component after it has been created. This
@@ -38,9 +36,8 @@ import java.lang.annotation.Annotation;
  * <p>The component post processor will be called for each component that is created, and will be called
  * in the order of the specified {@link OrderedComponentProcessor#order()} value.
  *
- * @param <A> The type of the activator annotation.
  * @author Guus Lieben
  * @since 22.1
  */
-public non-sealed interface ComponentPostProcessor<A extends Annotation> extends ComponentProcessor<A> {
+public non-sealed interface ComponentPostProcessor extends ComponentProcessor {
 }

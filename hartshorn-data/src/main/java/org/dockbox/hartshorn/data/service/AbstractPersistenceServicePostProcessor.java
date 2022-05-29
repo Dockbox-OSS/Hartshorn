@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
@@ -28,9 +30,8 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
-import org.dockbox.hartshorn.data.context.SerialisationContext;
+import org.dockbox.hartshorn.data.context.SerializationContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
 import java.io.IOException;
@@ -38,34 +39,34 @@ import java.lang.annotation.Annotation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerialisationContext> extends ServiceAnnotatedMethodInterceptorPostProcessor<M, UsePersistence> {
+public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerializationContext> extends ServiceAnnotatedMethodInterceptorPostProcessor<M> {
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final Result<C> serialisationContext = methodContext.first(context, this.contextType());
-        if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
+        final Result<C> serializationContext = methodContext.first(context, this.contextType());
+        if (serializationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
-        final C ctx = serialisationContext.get();
-        context.log().debug("Processing persistence path of " + methodContext.method().name() + " with serialisation target " + ctx.target());
+        final C ctx = serializationContext.get();
+        context.log().debug("Processing persistence path of " + methodContext.method().name() + " with serialization target " + ctx.target());
         return switch (ctx.target()) {
             case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
             case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);
             case STRING -> this.processString(context, methodContext, ctx);
-            default -> throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.target());
+            default -> throw new IllegalArgumentException("Unsupported serialization target: " + ctx.target());
         };
     }
 
     protected abstract Class<C> contextType();
 
-    protected abstract <T, R> MethodInterceptor<T> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract <T> MethodInterceptor<T> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
-    protected abstract <T, R> MethodInterceptor<T> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract <T> MethodInterceptor<T> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
-    protected abstract <T, R> MethodInterceptor<T> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract <T> MethodInterceptor<T> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serializationContext);
 
-    protected ObjectMapper mapper(final ApplicationContext context, final C serialisationContext) {
+    protected ObjectMapper mapper(final ApplicationContext context, final C serializationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);
-        final FileFormats fileFormat = serialisationContext.fileFormat();
+        final FileFormats fileFormat = serializationContext.fileFormat();
         objectMapper.fileType(fileFormat);
         return objectMapper;
     }
@@ -74,7 +75,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
         TypeContext<?> owner = TypeContext.of(annotationContext.file().owner());
 
         if (owner.isVoid()) {
-            final Result<ComponentContainer> container = context.locator().container(methodContext.method().parent());
+            final Result<ComponentContainer> container = context.get(ComponentLocator.class).container(methodContext.method().parent());
             if (container.present()) {
                 owner = container.get().owner();
             }
@@ -82,7 +83,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
         Path root = context.environment().manager().applicationPath();
         if (!owner.isVoid()) {
-            final TypedOwner typedOwner = context.meta().lookup(owner);
+            final TypedOwner typedOwner = context.get(MetaProvider.class).lookup(owner);
             root = root.resolve(typedOwner.id());
         }
 

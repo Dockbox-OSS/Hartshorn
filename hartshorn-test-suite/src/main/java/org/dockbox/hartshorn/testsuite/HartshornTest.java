@@ -47,5 +47,5 @@ import javax.inject.Inject;
 @Extends(Populate.class)
 @Populate(executables = false)
 public @interface HartshornTest {
-    Class<? extends ComponentProcessor<?>>[] processors() default  {};
+    Class<? extends ComponentProcessor>[] processors() default  {};
 }

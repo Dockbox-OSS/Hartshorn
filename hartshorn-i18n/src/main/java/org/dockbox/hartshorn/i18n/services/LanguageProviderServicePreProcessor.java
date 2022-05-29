@@ -22,11 +22,10 @@ import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-public class LanguageProviderServicePreProcessor implements ServicePreProcessor<UseTranslations> {
+public class LanguageProviderServicePreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

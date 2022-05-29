@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.data.FileFormats;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Deserialise {
-    FileFormats filetype() default FileFormats.JSON;
-
-    File path();
+public enum SerializationTarget {
+    ANNOTATED_PATH, PARAMETER_PATH, STRING
 }

@@ -26,10 +26,10 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation, A extends Annotation> extends ServiceMethodInterceptorPostProcessor<A> {
+public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends ServiceMethodInterceptorPostProcessor {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return !key.type().methods(this.annotation()).isEmpty();
     }
 

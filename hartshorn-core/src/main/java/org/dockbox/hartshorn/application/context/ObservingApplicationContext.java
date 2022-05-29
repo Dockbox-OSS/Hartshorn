@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.context;
+package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 
-public class DeserialisationContext extends SerialisationContext {
-
-    private final TypeContext<?> type;
-
-    public DeserialisationContext(final TypeContext<?> type) {
-        this.type = type;
-    }
-
-    public TypeContext<?> type() {
-        return this.type;
-    }
+public interface ObservingApplicationContext {
+    void componentAdded(ComponentContainer componentType);
 }

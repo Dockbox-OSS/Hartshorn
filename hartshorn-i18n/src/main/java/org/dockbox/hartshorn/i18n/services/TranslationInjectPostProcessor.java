@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.TypedOwner;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
@@ -32,7 +31,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation, UseTranslations> {
+public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
@@ -60,7 +59,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     protected String key(final ApplicationContext context, final TypeContext<?> type, final MethodContext<?, ?> method) {
         String prefix = "";
 
-        final MetaProvider provider = context.meta();
+        final MetaProvider provider = context.get(MetaProvider.class);
         if (provider.isComponent(type)) {
             final TypedOwner lookup = provider.lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';

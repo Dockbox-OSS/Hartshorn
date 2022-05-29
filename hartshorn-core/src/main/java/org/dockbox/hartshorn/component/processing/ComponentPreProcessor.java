@@ -17,12 +17,10 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
-import java.lang.annotation.Annotation;
 
 /**
  * A component pre-processor is responsible for pre-processing a component. This can be used to
@@ -43,12 +41,11 @@ import java.lang.annotation.Annotation;
  *
  * @author Guus Lieben
  * @since 22.1
- * @param <A>
  */
-public non-sealed interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {
+public non-sealed interface ComponentPreProcessor extends ComponentProcessor {
 
     @Override
-    default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         throw new UnsupportedOperationException("Component pre-processor does not support instance processing, use modifies(ApplicationContext, Key) instead.");
     }
 

@@ -18,13 +18,12 @@ package org.dockbox.hartshorn.core.types;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-public class NonProcessableTypeProcessor implements ComponentPostProcessor<Service> {
+public class NonProcessableTypeProcessor implements ComponentPostProcessor {
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
@@ -34,7 +33,7 @@ public class NonProcessableTypeProcessor implements ComponentPostProcessor<Servi
     }
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return instance instanceof NonProcessableType;
     }
 }

@@ -22,10 +22,9 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.web.annotations.RestController;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-public class RestControllerPreProcessor implements ServicePreProcessor<UseHttpServer> {
+public class RestControllerPreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

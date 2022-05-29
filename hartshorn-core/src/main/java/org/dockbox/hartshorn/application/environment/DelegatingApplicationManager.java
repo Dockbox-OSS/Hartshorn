@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import org.dockbox.hartshorn.application.ApplicationContextConfiguration;
+import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.application.ExceptionHandler;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,36 +64,28 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     private final ApplicationFSProvider applicationFSProvider;
     private final ApplicationLogger applicationLogger;
     private final ApplicationProxier applicationProxier;
+    private final ExceptionHandler exceptionHandler;
     private final boolean isCI;
 
     private ApplicationContext applicationContext;
-    private ExceptionHandler exceptionHandler;
 
-    public DelegatingApplicationManager(
-            final TypeContext<?> activator,
-            final ApplicationLogger applicationLogger,
-            final ApplicationProxier applicationProxier,
-            final ApplicationFSProvider applicationFSProvider,
-            final ExceptionHandler exceptionHandler) {
-        if (applicationLogger instanceof ApplicationManaged applicationManaged)
-            applicationManaged.applicationManager(this);
-        this.exceptionHandler = exceptionHandler;
+    public DelegatingApplicationManager(final ApplicationContextConfiguration configuration) {
+        final InitializingContext context = new InitializingContext(null, null, this, configuration);
 
-        if (applicationLogger instanceof ApplicationManaged applicationManaged)
-            applicationManaged.applicationManager(this);
-        this.applicationLogger = applicationLogger;
-
-        if (applicationProxier instanceof ApplicationManaged applicationManaged)
-            applicationManaged.applicationManager(this);
-        this.applicationProxier = applicationProxier;
-
-        if (applicationFSProvider instanceof ApplicationManaged applicationManaged)
-            applicationManaged.applicationManager(this);
-        this.applicationFSProvider = applicationFSProvider;
-
+        this.exceptionHandler = this.configure(configuration.exceptionHandler(context));
+        this.applicationFSProvider = this.configure(configuration.applicationFSProvider(context));
+        this.applicationLogger = this.configure(configuration.applicationLogger(context));
+        this.applicationProxier = this.configure(configuration.applicationProxier(context));
         this.isCI = this.checkCI();
+        this.checkForDebugging(context);
 
-        if (!this.isCI()) this.printHeader(activator);
+        if (!this.isCI()) this.printHeader(configuration.activator());
+    }
+
+    private <T> T configure(final T instance) {
+        if (instance instanceof ApplicationManaged managed)
+            managed.applicationManager(this);
+        return instance;
     }
 
     @Override
@@ -110,22 +105,17 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
         return this.applicationProxier;
     }
 
+    public ExceptionHandler exceptionHandler() {
+        return this.exceptionHandler;
+    }
+
     public boolean CI() {
         return this.isCI;
     }
 
     @Override
     public ApplicationContext applicationContext() {
-        return this.applicationContext;
-    }
-
-    public ExceptionHandler exceptionHandler() {
-        return this.exceptionHandler;
-    }
-
-    public DelegatingApplicationManager exceptionHandler(final ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-        return this;
+        return Objects.requireNonNull(this.applicationContext, "Application context has not been initialized yet");
     }
 
     protected boolean checkCI() {
@@ -148,6 +138,18 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
         logger.info("");
     }
 
+    private void checkForDebugging(final InitializingContext context) {
+        final Set<String> arguments = context.configuration().arguments();
+        final ApplicationArgumentParser parser = context.argumentParser();
+
+        final boolean debug = Result.of(parser.parse(arguments).get("debug"))
+                .map(String.class::cast)
+                .map(Boolean::valueOf)
+                .or(false);
+
+        this.setDebugActive(debug);
+    }
+
     @Override
     public boolean isCI() {
         return this.isCI;
@@ -156,6 +158,11 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     @Override
     public Logger log() {
         return this.applicationLogger.log();
+    }
+
+    @Override
+    public void setDebugActive(final boolean active) {
+        this.applicationLogger.setDebugActive(active);
     }
 
     @Override

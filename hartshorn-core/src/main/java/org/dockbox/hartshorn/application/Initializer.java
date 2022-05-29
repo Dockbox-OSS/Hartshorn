@@ -16,28 +16,19 @@
 
 package org.dockbox.hartshorn.application;
 
-/**
- * A class that contains the default modifiers for the framework. Each entry may
- * modify the behavior of the framework in a specific way.
- *
- * @author Guus Lieben
- * @since 21.2
- */
-public enum StartupModifiers {
-    /**
-     * Makes it so application activators do not need to have service activator
-     * annotationsWith present, and will indicate all activators are present when
-     * requested.
-     *
-     * @since 21.2
-     */
-    ACTIVATE_ALL,
+import java.util.concurrent.atomic.AtomicReference;
 
-    /**
-     * Makes it so the logging level of the application is changed to {@code DEBUG}.
-     * This allows for finer logging and debugging.
-     *
-     * @since 22.1
-     */
-    DEBUG,
+@FunctionalInterface
+public interface Initializer<T> {
+    T initialize(InitializingContext context);
+
+    default Initializer<T> cached() {
+        final AtomicReference<T> value = new AtomicReference<>();
+        return (context) -> {
+            if (value.get() == null) {
+                value.set(this.initialize(context));
+            }
+            return value.get();
+        };
+    }
 }

@@ -25,7 +25,6 @@ import org.slf4j.Logger;
  * @author Guus Lieben
  * @since 21.9
  */
-@FunctionalInterface
 @LogExclude
 public interface ApplicationLogger {
 
@@ -34,4 +33,10 @@ public interface ApplicationLogger {
      * @return The logger.
      */
     Logger log();
+
+    /**
+     * Sets whether the logger should log at debug level.
+     * @param active Whether the logger should log at debug level.
+     */
+    void setDebugActive(boolean active);
 }

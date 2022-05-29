@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.application.lifecycle;
 
-import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
 
-public class LifecycleObserverPreProcessor implements ServicePreProcessor<UseBootstrap> {
+public class LifecycleObserverPreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

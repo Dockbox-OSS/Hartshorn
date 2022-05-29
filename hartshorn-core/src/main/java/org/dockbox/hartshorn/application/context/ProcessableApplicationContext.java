@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.annotations;
+package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.util.reflect.AliasFor;
-import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-// This is not a typo. On case-insensitive OS, Get and GET in same compiler output directory might cause issues
-@Retention(RetentionPolicy.RUNTIME)
-@Extends(Route.class)
-public @interface Gett {
-    @AliasFor("path")
-    String value() default "";
-
-    String regex() default "";
-
-    String path() default "";
+public interface ProcessableApplicationContext extends ApplicationContext, ModifiableActivatorHolder {
+    void process();
 }

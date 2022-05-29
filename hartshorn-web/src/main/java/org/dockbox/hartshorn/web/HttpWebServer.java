@@ -47,4 +47,6 @@ public interface HttpWebServer {
     HttpWebServer staticContent(URI location);
 
     void stop() throws ApplicationException;
+
+    int port();
 }

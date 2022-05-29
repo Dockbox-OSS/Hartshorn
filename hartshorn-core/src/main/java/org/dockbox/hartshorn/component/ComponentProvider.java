@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -29,7 +28,7 @@ import javax.inject.Named;
  * {@link ApplicationContext} and are therefore available to all components in the application. Unmanaged components are
  * typically not explicitly registered, and are treated as injectable beans.
  */
-public interface ComponentProvider extends Context {
+public interface ComponentProvider {
 
     /**
      * Returns the component for the given type and name metadata. If <code>named</code> is null, the given

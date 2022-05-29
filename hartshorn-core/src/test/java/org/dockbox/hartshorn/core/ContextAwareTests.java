@@ -51,21 +51,11 @@ public class ContextAwareTests {
     void testMetaProviderIsBound() {
         final MetaProvider metaProvider = this.applicationContext.get(MetaProvider.class);
         Assertions.assertNotNull(metaProvider);
-
-        final MetaProvider directMetaProvider = this.applicationContext.meta();
-        Assertions.assertNotNull(directMetaProvider);
-
-        Assertions.assertSame(metaProvider, directMetaProvider);
     }
 
     @Test
     void testServiceLocatorIsBound() {
         final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
         Assertions.assertNotNull(componentLocator);
-
-        final ComponentLocator directComponentLocator = this.applicationContext.locator();
-        Assertions.assertNotNull(directComponentLocator);
-
-        Assertions.assertSame(componentLocator, directComponentLocator);
     }
 }

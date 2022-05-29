@@ -26,6 +26,6 @@ import java.lang.annotation.RetentionPolicy;
 @Extends(Route.class)
 @Route(method = HttpMethod.POST, path = "joint")
 public @interface Joint2 {
-    @AliasFor(target = Gett.class, value = "path")
+    @AliasFor(target = Get.class, value = "path")
     String path();
 }

@@ -29,32 +29,60 @@ import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.inject.binding.*;
+import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
+import org.dockbox.hartshorn.inject.binding.ConcurrentHashSingletonCache;
+import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
+import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
+import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.SingletonCache;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+
 public class HierarchicalApplicationComponentProvider extends DefaultContext implements StandardComponentProvider, ContextCarrier {
 
-    private final ApplicationContext applicationContext;
+    private final transient ApplicationContext applicationContext;
+    private final transient ComponentLocator locator;
+    private final transient MetaProvider metaProvider;
 
     private final transient SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final transient Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
-    private final transient MultiMap<Integer, ComponentPostProcessor<?>> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+    private final transient MultiMap<Integer, ComponentPostProcessor> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+    private final transient ComponentInstanceFactory factory;
 
-    public HierarchicalApplicationComponentProvider(final ApplicationContext applicationContext) {
+    public HierarchicalApplicationComponentProvider(
+            final ApplicationContext applicationContext,
+            final ComponentLocator locator,
+            final MetaProvider metaProvider) {
         this.applicationContext = applicationContext;
+        this.locator = locator;
+        this.metaProvider = metaProvider;
+        this.factory = this::raw;
+    }
+
+    public HierarchicalApplicationComponentProvider(
+            final ApplicationContext applicationContext,
+            final ComponentLocator locator,
+            final MetaProvider metaProvider,
+            final ComponentInstanceFactory factory) {
+        this.applicationContext = applicationContext;
+        this.locator = locator;
+        this.metaProvider = metaProvider;
+        this.factory = factory;
     }
 
     @Override
@@ -68,7 +96,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
             return this.singletonCache.get(key);
         }
 
-        this.applicationContext().locator().validate(key);
+        this.locator.validate(key);
 
         T instance = this.create(key).orNull();
 
@@ -77,7 +105,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
             type = TypeContext.of(instance);
         }
 
-        final Result<ComponentContainer> container = this.applicationContext().locator().container(type);
+        final Result<ComponentContainer> container = this.locator.container(type);
         if (container.present()) {
             instance = this.process(key, instance, container.get());
         }
@@ -90,7 +118,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         // Inject properties if applicable
         if (enable) {
             try {
-                this.applicationContext().enable(instance);
+                Enableable.enable(instance);
             }
             catch (final ApplicationException e) {
                 ExceptionHandler.unchecked(e);
@@ -115,7 +143,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     public <C> BindingFunction<C> bind(final Key<C> key) {
         final BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
-        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this::raw);
+        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.factory);
     }
 
     @Override
@@ -142,7 +170,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     protected <T> T process(final Key<T> key, T instance, final ComponentContainer container) {
         final boolean doProcess = container.permitsProcessing();
 
-        final ComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, instance, container);
+        final ComponentProcessingContext processingContext = this.prepareProcessingContext(key, instance, container);
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
@@ -155,8 +183,8 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return instance;
     }
 
-    protected <T> ComponentProcessingContext<T> prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
-        final ComponentProcessingContext<T> processingContext = new ComponentProcessingContext(this.applicationContext());
+    protected <T> ComponentProcessingContext prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
+        final ComponentProcessingContext processingContext = new ComponentProcessingContext(this.applicationContext());
         processingContext.put(Key.of(ComponentContainer.class), container);
 
         if (container.permitsProxying()) {
@@ -172,11 +200,11 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return processingContext;
     }
 
-    protected <T> T finalize(final Key<T> key, final T instance, final ComponentProcessingContext<T> context) {
+    protected <T> T finalize(final Key<T> key, final T instance, final ComponentProcessingContext context) {
         if (context.containsKey(Key.of(ProxyFactory.class))) {
             final ProxyFactory<T, ?> factory = context.get(Key.of(ProxyFactory.class));
             try {
-                if (((StateAwareProxyFactory) factory).modified() || (instance == null && key.type().isAbstract())) {
+                if (((StateAwareProxyFactory<?, ?>) factory).modified() || (instance == null && key.type().isAbstract())) {
                     return factory.proxy().or(instance);
                 } else {
                     return instance;
@@ -189,13 +217,13 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return instance;
     }
 
-    protected <T> T process(final Key<T> key, final T instance, final ProcessingPhase phase, final ComponentProcessingContext<T> processingContext) {
+    protected <T> T process(final Key<T> key, final T instance, final ProcessingPhase phase, final ComponentProcessingContext processingContext) {
         T result = instance;
         processingContext.phase(phase);
 
         for (final Integer priority : this.postProcessors.keySet()) {
             if (phase.test(priority)) {
-                for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(priority)) {
+                for (final ComponentPostProcessor postProcessor : this.postProcessors.get(priority)) {
 
                     if (postProcessor.preconditions(this.applicationContext(), key, result, processingContext)) {
                         final T modified = postProcessor.process(this.applicationContext(), key, result, processingContext);
@@ -227,15 +255,14 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     protected <T> void storeSingletons(final Key<T> key, final T instance) {
-        final MetaProvider meta = this.applicationContext().meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this.applicationContext(), instance)))) {
+        if (instance != null && (this.metaProvider.singleton(key.type()) || this.metaProvider.singleton(TypeContext.unproxy(this.applicationContext(), instance)))) {
             this.bind(key).singleton(instance);
         }
     }
 
-    public void postProcessor(final ComponentPostProcessor<?> postProcessor) {
+    public void postProcessor(final ComponentPostProcessor postProcessor) {
         this.postProcessors.put(postProcessor.order(), postProcessor);
     }
 

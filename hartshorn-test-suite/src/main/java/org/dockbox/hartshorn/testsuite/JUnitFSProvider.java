@@ -34,8 +34,12 @@ public class JUnitFSProvider implements ApplicationFSProvider {
         return this.applicationPath;
     }
 
-    public JUnitFSProvider() throws IOException {
-        this.applicationPath = Files.createTempDirectory("hartshorn");
-        this.applicationPath.toFile().deleteOnExit();
+    public JUnitFSProvider() {
+        try {
+            this.applicationPath = Files.createTempDirectory("hartshorn");
+            this.applicationPath.toFile().deleteOnExit();
+        } catch (final IOException e) {
+            throw new RuntimeException("Unable to create temporary directory for application files", e);
+        }
     }
 }

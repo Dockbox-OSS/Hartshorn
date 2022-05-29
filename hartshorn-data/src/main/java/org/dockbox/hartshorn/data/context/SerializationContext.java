@@ -22,19 +22,19 @@ import org.dockbox.hartshorn.data.FileFormats;
 
 import java.nio.file.Path;
 
-public class SerialisationContext extends DefaultContext {
+public class SerializationContext extends DefaultContext {
 
-    private SerialisationTarget target;
+    private SerializationTarget target;
     private FileFormats fileFormat;
 
     @Nullable
     private Path predeterminedPath;
 
-    public SerialisationTarget target() {
+    public SerializationTarget target() {
         return this.target;
     }
 
-    public SerialisationContext target(final SerialisationTarget target) {
+    public SerializationContext target(final SerializationTarget target) {
         this.target = target;
         return this;
     }
@@ -43,7 +43,7 @@ public class SerialisationContext extends DefaultContext {
         return this.fileFormat;
     }
 
-    public SerialisationContext fileFormat(final FileFormats fileFormat) {
+    public SerializationContext fileFormat(final FileFormats fileFormat) {
         this.fileFormat = fileFormat;
         return this;
     }
@@ -52,7 +52,7 @@ public class SerialisationContext extends DefaultContext {
         return this.predeterminedPath;
     }
 
-    public SerialisationContext predeterminedPath(final Path predeterminedPath) {
+    public SerializationContext predeterminedPath(final Path predeterminedPath) {
         this.predeterminedPath = predeterminedPath;
         return this;
     }

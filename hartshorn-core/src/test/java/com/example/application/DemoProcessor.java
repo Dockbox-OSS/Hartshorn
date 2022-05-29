@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DemoProcessor implements ComponentPreProcessor<UseDemo> {
+public class DemoProcessor implements ComponentPreProcessor {
 
     @Inject
     private DemoService demoService;

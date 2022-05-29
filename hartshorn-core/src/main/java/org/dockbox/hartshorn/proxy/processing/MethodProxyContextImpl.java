@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.proxy.processing;
 
-import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
 
-public class MethodProxyContextImpl<T> extends DefaultContext implements MethodProxyContext<T> {
+public class MethodProxyContextImpl<T> extends DefaultApplicationAwareContext implements MethodProxyContext<T> {
 
     private final ApplicationContext context;
     private final TypeContext<T> type;

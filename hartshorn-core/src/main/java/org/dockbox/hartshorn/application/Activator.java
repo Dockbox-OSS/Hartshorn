@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 public @interface Activator {
 
     /**
-     * Whether to include the base package of the activator class explicitely, or to only
+     * Whether to include the base package of the activator class explicitly, or to only
      * use the {@link #scanPackages() custom defined packages}.
      */
     boolean includeBasePackage() default true;

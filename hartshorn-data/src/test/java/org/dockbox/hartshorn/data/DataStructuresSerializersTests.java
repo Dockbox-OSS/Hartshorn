@@ -41,7 +41,7 @@ public class DataStructuresSerializersTests {
     private ApplicationContext applicationContext;
 
     @Test
-    public void testThatRegistryCanBeSerialised() {
+    public void testThatRegistryCanBeSerialized() {
         Assertions.assertDoesNotThrow(() -> {
             final File copy = File.createTempFile("tmp", null);
             final Path tempFile = copy.toPath();

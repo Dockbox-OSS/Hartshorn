@@ -111,7 +111,7 @@ public class UtilitiesTests {
 
     @Test
     void testIsEmptyStringTrueIfNull() {
-        Assertions.assertTrue(StringUtilities.empty((String) null));
+        Assertions.assertTrue(StringUtilities.empty(null));
     }
 
     @Test

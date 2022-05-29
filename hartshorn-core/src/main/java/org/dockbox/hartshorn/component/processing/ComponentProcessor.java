@@ -24,8 +24,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.inject.Provider;
 
-import java.lang.annotation.Annotation;
-
 /**
  * The {@link ComponentProcessor} is a service that can be used to process components, whether
  * that is during the initialization of the framework, or after a component has been created.
@@ -35,9 +33,8 @@ import java.lang.annotation.Annotation;
  *
  * @author Guus Lieben
  * @since 22.1
- * @param <A> The activator annotation type.
  */
-public sealed interface ComponentProcessor<A extends Annotation> extends ActivatorFiltered<A>, OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
+public sealed interface ComponentProcessor extends OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 
     /**
      * Processes a given component. The given <code>instance</code> may be null, if the component could not
@@ -58,7 +55,7 @@ public sealed interface ComponentProcessor<A extends Annotation> extends Activat
      */
     <T> T process(ApplicationContext context, Key<T> key, @Nullable T instance);
 
-    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return this.process(context, key, instance);
     }
 
@@ -73,7 +70,7 @@ public sealed interface ComponentProcessor<A extends Annotation> extends Activat
      * @param <T> The type of the component.
      * @return True if the processor should be called, false otherwise.
      */
-    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return processingContext.get(Key.of(ComponentContainer.class)) != null && this.modifies(context, key, instance, processingContext);
     }
 
@@ -96,6 +93,6 @@ public sealed interface ComponentProcessor<A extends Annotation> extends Activat
      * @return <code>true</code> if the component processor modifies the component, <code>false</code>
      *         otherwise.
      */
-    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, final ComponentProcessingContext<T> processingContext);
+    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, final ComponentProcessingContext processingContext);
 
 }

@@ -49,7 +49,7 @@ public class ServletHandler implements Enableable {
     @Inject
     private ObjectMapper mapper;
 
-    @Value(value = "hartshorn.web.headers.hartshorn")
+    @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
 
     @Bound

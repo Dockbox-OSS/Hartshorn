@@ -23,10 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GetJson {
-    @AliasFor(value = "path", target = Gett.class)
+    @AliasFor(value = "path", target = Get.class)
     String path() default "";
 
-    @AliasFor(value = "regex", target = Gett.class)
+    @AliasFor(value = "regex", target = Get.class)
     String regex() default "";
 
     @AliasFor(value = "pretty", target = Json.class)

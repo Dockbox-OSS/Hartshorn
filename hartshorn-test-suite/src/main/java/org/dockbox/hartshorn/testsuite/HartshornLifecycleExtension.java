@@ -18,13 +18,14 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 import org.dockbox.hartshorn.application.ServiceImpl;
+import org.dockbox.hartshorn.application.StandardApplicationFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.AccessModifier;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -51,7 +53,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -65,7 +66,7 @@ public class HartshornLifecycleExtension implements
     private ApplicationContext applicationContext;
 
     @Override
-    public void beforeEach(final ExtensionContext context) throws Exception {
+    public void beforeEach(final ExtensionContext context) {
         final Class<?> testClass = context.getTestClass().orElse(null);
         final Object testInstance = context.getTestInstance().orElse(null);
         final Method testMethod = context.getTestMethod().orElse(null);
@@ -73,12 +74,12 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterEach(final ExtensionContext context) {
+    public void afterEach(final ExtensionContext context) throws IOException {
         this.afterLifecycle();
     }
 
     @Override
-    public void beforeAll(final ExtensionContext context) throws Exception {
+    public void beforeAll(final ExtensionContext context) {
         if (this.isClassLifecycle(context)) {
             final Class<?> testClass = context.getTestClass().orElse(null);
             final Object testInstance = context.getTestInstance().orElse(null);
@@ -87,7 +88,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) {
+    public void afterAll(final ExtensionContext context) throws IOException {
         if (this.isClassLifecycle(context)) {
             this.afterLifecycle();
         }
@@ -98,7 +99,7 @@ public class HartshornLifecycleExtension implements
         return lifecycle.isPresent() && Lifecycle.PER_CLASS.equals(lifecycle.get());
     }
 
-    protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) throws Exception {
+    protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) {
         if (testClass == null) {
             throw new IllegalArgumentException("Test class cannot be null");
         }
@@ -118,9 +119,12 @@ public class HartshornLifecycleExtension implements
         this.applicationContext = applicationContext;
     }
 
-    protected void afterLifecycle() {
+    protected void afterLifecycle() throws IOException {
         Mockito.clearAllCaches();
-        this.applicationContext = null;
+        if (this.applicationContext != null) {
+            this.applicationContext.close();
+            this.applicationContext = null;
+        }
     }
 
     @Override
@@ -162,11 +166,11 @@ public class HartshornLifecycleExtension implements
         return Result.of(context);
     }
 
-    private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) throws Exception {
-        ApplicationFactory<?, ?> applicationFactory = new TestApplicationFactory()
+    private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
+        ApplicationFactory<?, ?> applicationFactory = new StandardApplicationFactory()
                 .loadDefaults()
-                .applicationFSProvider(new JUnitFSProvider())
-                .componentLocator(applicationContext -> this.getComponentLocator(applicationContext, testComponentSources));
+                .applicationFSProvider(ctx -> new JUnitFSProvider())
+                .componentLocator(ctx -> this.getComponentLocator(ctx.applicationContext(), testComponentSources));
 
         final TypeContext<VirtualServiceActivator> virtualActivator = TypeContext.of(VirtualServiceActivator.class);
         final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
@@ -197,7 +201,7 @@ public class HartshornLifecycleExtension implements
         final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
         for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
             if (!factoryModifier.has(AccessModifier.STATIC)) {
-                throw new IllegalStateException("Factory modifiers must be static");
+                throw new IllegalStateException("Expected " + factoryModifier.qualifiedName() + " to be static.");
             }
             if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
 
@@ -227,26 +231,15 @@ public class HartshornLifecycleExtension implements
 
     private ComponentLocator getComponentLocator(final ApplicationContext applicationContext, final AnnotatedElement... testComponentSources) {
         final ComponentLocator componentLocator = new ComponentLocatorImpl(applicationContext);
-
-        ((TestApplicationContext) applicationContext).addActivator(new ServiceImpl());
-
-        final Consumer<TestComponents> testComponentsConsumer = testComponents -> {
-            for (final Class<?> testComponent : testComponents.value()) {
-                componentLocator.register(testComponent);
-
-                if (applicationContext instanceof TestApplicationContext) {
-                    final TypeContext<?> testComponentType = TypeContext.of(testComponent);
-                    testComponentType.annotation(ComponentBinding.class).present(binding -> {
-                        ((TestApplicationContext) applicationContext).handleBinder(testComponentType, binding);
-                    });
-                }
-            }
-        };
+        ((ModifiableActivatorHolder) applicationContext).addActivator(new ServiceImpl());
 
         for (final AnnotatedElement testComponentSource : testComponentSources) {
             if (testComponentSource == null) continue;
             if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
-                testComponentsConsumer.accept(testComponentSource.getAnnotation(TestComponents.class));
+                final TestComponents testComponents = testComponentSource.getAnnotation(TestComponents.class);
+                for (final Class<?> component : testComponents.value()) {
+                    componentLocator.register(component);
+                }
             }
         }
 

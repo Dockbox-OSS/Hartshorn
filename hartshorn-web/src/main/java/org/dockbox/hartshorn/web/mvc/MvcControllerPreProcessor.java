@@ -24,10 +24,9 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.web.MvcControllerContext;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.annotations.MvcController;
-import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-public class MvcControllerPreProcessor implements ServicePreProcessor<UseMvcServer> {
+public class MvcControllerPreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

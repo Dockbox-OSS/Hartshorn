@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 public interface ProcessableComponentProvider extends ComponentProvider {
-    void postProcessor(ComponentPostProcessor<?> postProcessor);
+    void postProcessor(ComponentPostProcessor postProcessor);
 }

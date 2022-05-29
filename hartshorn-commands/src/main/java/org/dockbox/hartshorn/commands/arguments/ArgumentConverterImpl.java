@@ -77,7 +77,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         private final TypeContext<T> type;
         private int size;
         private BiFunction<CommandSource, String, Result<T>> converter = (source, in) -> Result.empty();
-        private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> new ArrayList<>();;
+        private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> new ArrayList<>();
 
         private CommandValueConverterBuilder(final TypeContext<T> type, final String... keys) {
             this.type = type;

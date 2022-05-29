@@ -28,7 +28,7 @@ import java.util.List;
  * create a new instance of a class. The constructor is looked up based on its parameters, where the
  * constructor with the most parameters is chosen in order to satisfy as many dependencies as possible.
  *
- * <p>If no injectable constructors can be found, the default constructro is used instead. If this
+ * <p>If no injectable constructors can be found, the default constructor is used instead. If this
  * constructor is not injectable, an {@link IllegalStateException} is thrown.
  *
  * @param <C>
@@ -37,7 +37,6 @@ import java.util.List;
  * @author Guus Lieben
  * @see Provider
  * @see SupplierProvider
- * @see InstanceProvider
  * @since 21.4
  */
 public class ContextDrivenProvider<C> implements Provider<C> {
@@ -71,11 +70,10 @@ public class ContextDrivenProvider<C> implements Provider<C> {
                 else this.optimalConstructor = defaultConstructor.get();
             }
             else {
-
-            /*
-             An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
-             can be satiated at once.
-             */
+                /*
+                 An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
+                 can be satiated at once.
+                 */
                 this.optimalConstructor = constructors.get(0);
                 for (final ConstructorContext<? extends C> constructor : constructors) {
                     if (this.optimalConstructor.parameterCount() < constructor.parameterCount()) {

@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
@@ -40,21 +38,6 @@ public interface DelegatingContext<D extends Context> extends Context {
     @Override
     default <C extends Context> void add(final String name, final C context) {
         this.get().add(name, context);
-    }
-
-    @Override
-    default <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Class<C> context) {
-        return this.get().first(applicationContext, context);
-    }
-
-    @Override
-    default <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
-        return this.get().first(applicationContext, context, name);
-    }
-
-    @Override
-    default <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Key<C> context) {
-        return this.get().first(applicationContext, context);
     }
 
     @Override

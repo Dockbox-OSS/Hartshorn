@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * Similar to class inheritance, if annotation X extends annotation Y, when searching Y
  * annotation, X annotation will also be returned.
  *
- * <p>A common example of this inheritence is {@link Service}, which extends {@link Component}.
+ * <p>A common example of this inheritance is {@link Service}, which extends {@link Component}.
  *
  * <p>If an attribute in the extended (Component) annotation is also present in the extending
  * (Service) annotation, the extending annotation will override the attribute value of the

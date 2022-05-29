@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
-import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
@@ -34,7 +33,7 @@ import org.dockbox.hartshorn.inject.Key;
  * for each type found. Requires the use of a {@link ApplicationManager} and
  * presence of {@link UseBootstrap}.
  */
-public class CommandParameters implements ComponentPreProcessor<UseCommands> {
+public class CommandParameters implements ComponentPreProcessor {
 
     @Override
     public boolean modifies(final ApplicationContext context, final Key<?> key) {

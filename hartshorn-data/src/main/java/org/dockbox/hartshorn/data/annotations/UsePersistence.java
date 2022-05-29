@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.data.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.service.DeserialisationServicePostProcessor;
+import org.dockbox.hartshorn.data.service.DeserializationServicePostProcessor;
 import org.dockbox.hartshorn.data.service.JpaRepositoryDelegationPostProcessor;
 import org.dockbox.hartshorn.data.service.QueryPostProcessor;
-import org.dockbox.hartshorn.data.service.SerialisationServicePostProcessor;
+import org.dockbox.hartshorn.data.service.SerializationServicePostProcessor;
 import org.dockbox.hartshorn.data.service.TransactionalProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.proxy.UseProxying;
 
@@ -30,8 +30,8 @@ import java.lang.annotation.RetentionPolicy;
 @UseProxying
 @Retention(RetentionPolicy.RUNTIME)
 @ServiceActivator(processors = {
-        DeserialisationServicePostProcessor.class,
-        SerialisationServicePostProcessor.class,
+        DeserializationServicePostProcessor.class,
+        SerializationServicePostProcessor.class,
         JpaRepositoryDelegationPostProcessor.class,
         QueryPostProcessor.class,
         TransactionalProxyCallbackPostProcessor.class,

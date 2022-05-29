@@ -34,7 +34,7 @@ import java.util.List;
  * the {@link ArgumentConverterContext} contained in the {@link ApplicationContext}. Requires
  * the presence of {@link UseCommands}.
  */
-public class ArgumentServicePreProcessor implements ServicePreProcessor<UseCommands> {
+public class ArgumentServicePreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

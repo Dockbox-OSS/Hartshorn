@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.core.annotations;
 
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.util.reflect.AliasFor;
+import org.dockbox.hartshorn.util.reflect.Extends;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Serialise {
-    FileFormats filetype() default FileFormats.JSON;
+@Extends(Route.class)
+public @interface Get {
+    @AliasFor("path")
+    String value() default "";
 
-    File path();
+    String regex() default "";
+
+    String path() default "";
 }

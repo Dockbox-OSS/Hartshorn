@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.Provided;
-import org.dockbox.hartshorn.proxy.UseProxying;
 
-public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided, UseProxying> {
+public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {

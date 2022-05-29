@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.inject.Key;
 
-import java.lang.annotation.Annotation;
-
-public interface ServicePreProcessor<A extends Annotation> extends ComponentPreProcessor<A> {
+public interface ServicePreProcessor extends ComponentPreProcessor {
 
     @Override
     default boolean modifies(final ApplicationContext context, final Key<?> key) {

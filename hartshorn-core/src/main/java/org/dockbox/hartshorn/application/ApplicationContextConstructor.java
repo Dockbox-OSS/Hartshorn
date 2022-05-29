@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
-/**
- * A supplier of {@link TypeContext}s. These are the default values used by the framework.
- *
- * @author Guus Lieben
- * @since 21.4
- */
-public final class Providers {
-
-    private Providers() {}
-
+public interface ApplicationContextConstructor<C extends ApplicationContext> {
+    <F extends ApplicationFactory<F, C>> C createContext(ApplicationContextConfiguration configuration);
 }

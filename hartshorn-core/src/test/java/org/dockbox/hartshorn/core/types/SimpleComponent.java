@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.context;
+package org.dockbox.hartshorn.core.types;
 
-public enum SerialisationTarget {
-    ANNOTATED_PATH, PARAMETER_PATH, STRING
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+
+import javax.inject.Inject;
+
+@Component
+public class SimpleComponent {
+
+    @Inject
+    private ApplicationContext applicationContext;
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 }

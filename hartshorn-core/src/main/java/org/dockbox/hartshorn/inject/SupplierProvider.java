@@ -30,7 +30,6 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 21.4
  * @see Provider
- * @see InstanceProvider
  * @see ContextDrivenProvider
  */
 public class SupplierProvider<C> implements Provider<C> {

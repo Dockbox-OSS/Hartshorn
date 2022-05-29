@@ -31,8 +31,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.testsuite.HartshornFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.junit.jupiter.api.AfterEach;
 
@@ -45,10 +47,14 @@ import javax.inject.Inject;
 @HartshornTest
 public abstract class RestIntegrationTest {
 
+    @HartshornFactory
+    protected static ApplicationFactory<?, ?> modifyEnvironment(final ApplicationFactory<?, ?> factory) {
+        return factory.argument("--hartshorn.web.port=0");
+    }
+
     @Inject
     private HttpWebServer server;
-
-    protected static final String ADDRESS = "http://localhost:" + HttpWebServerInitializer.DEFAULT_PORT;
+    protected static final String ADDRESS = "http://localhost:";
 
     protected CloseableHttpResponse request(final String uri, final HttpMethod method, final String body, final Header... headers) throws IOException {
         final CloseableHttpClient client = HttpClients.createDefault();
@@ -63,7 +69,7 @@ public abstract class RestIntegrationTest {
             case PATCH -> HttpPatch::new;
             default -> throw new IllegalArgumentException("Method %s is unsupported".formatted(method));
         };
-        final HttpUriRequest request = requestProvider.apply(ADDRESS + uri);
+        final HttpUriRequest request = requestProvider.apply(ADDRESS + this.getPort() + uri);
         if (body != null && request instanceof HttpEntityEnclosingRequest entityEnclosingRequest)
             entityEnclosingRequest.setEntity(new StringEntity(body));
 
@@ -72,6 +78,10 @@ public abstract class RestIntegrationTest {
         }
 
         return client.execute(request);
+    }
+
+    protected int getPort() {
+        return this.server.port();
     }
 
     @AfterEach

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.component.factory;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.Enable;
@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory, Service> {
+public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory> {
 
     @Override
     public Class<Factory> annotation() {
@@ -72,7 +72,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
         try {
             context.get(ComponentPopulator.class).populate(instance);
 
-            if (enable) context.enable(instance);
+            if (enable) Enableable.enable(instance);
             return instance;
         } catch (final ApplicationException e) {
             return ExceptionHandler.unchecked(e);

@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceActivatorImpl implements ServiceActivator {
 
-    private Set<String> packages = ConcurrentHashMap.newKeySet();
-    private Set<Class<? extends ComponentProcessor<?>>> processors = ConcurrentHashMap.newKeySet();
+    private final Set<String> packages = ConcurrentHashMap.newKeySet();
+    private final Set<Class<? extends ComponentProcessor>> processors = ConcurrentHashMap.newKeySet();
 
     public boolean addPackages(final Collection<String> packages) {
         return this.packages.addAll(packages);
@@ -42,16 +42,16 @@ public class ServiceActivatorImpl implements ServiceActivator {
         return this.packages.add(pkg);
     }
 
-    public boolean addProcessors(final Collection<Class<? extends ComponentProcessor<?>>> processors) {
+    public boolean addProcessors(final Collection<Class<? extends ComponentProcessor>> processors) {
         return this.processors.addAll(processors);
     }
 
     @SafeVarargs
-    public final boolean addProcessors(final Class<? extends ComponentProcessor<?>>... processors) {
+    public final boolean addProcessors(final Class<? extends ComponentProcessor>... processors) {
         return this.processors.addAll(Arrays.asList(processors));
     }
 
-    public boolean addProcessor(final Class<? extends ComponentProcessor<?>> processor) {
+    public boolean addProcessor(final Class<? extends ComponentProcessor> processor) {
         return this.processors.add(processor);
     }
 
@@ -61,7 +61,7 @@ public class ServiceActivatorImpl implements ServiceActivator {
     }
 
     @Override
-    public Class<? extends ComponentProcessor<?>>[] processors() {
+    public Class<? extends ComponentProcessor>[] processors() {
         return this.processors.toArray(new Class[0]);
     }
 

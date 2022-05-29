@@ -19,10 +19,9 @@ package org.dockbox.hartshorn.events;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.inject.Key;
 
-public class EventServicePreProcessor implements ServicePreProcessor<UseEvents> {
+public class EventServicePreProcessor implements ServicePreProcessor {
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {
         return !key.type().methods(Listener.class).isEmpty();
