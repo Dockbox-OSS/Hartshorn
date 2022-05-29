@@ -42,6 +42,7 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -65,7 +66,7 @@ public class HartshornLifecycleExtension implements
     private ApplicationContext applicationContext;
 
     @Override
-    public void beforeEach(final ExtensionContext context) throws Exception {
+    public void beforeEach(final ExtensionContext context) {
         final Class<?> testClass = context.getTestClass().orElse(null);
         final Object testInstance = context.getTestInstance().orElse(null);
         final Method testMethod = context.getTestMethod().orElse(null);
@@ -73,12 +74,12 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterEach(final ExtensionContext context) {
+    public void afterEach(final ExtensionContext context) throws IOException {
         this.afterLifecycle();
     }
 
     @Override
-    public void beforeAll(final ExtensionContext context) throws Exception {
+    public void beforeAll(final ExtensionContext context) {
         if (this.isClassLifecycle(context)) {
             final Class<?> testClass = context.getTestClass().orElse(null);
             final Object testInstance = context.getTestInstance().orElse(null);
@@ -87,7 +88,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) {
+    public void afterAll(final ExtensionContext context) throws IOException {
         if (this.isClassLifecycle(context)) {
             this.afterLifecycle();
         }
@@ -118,9 +119,12 @@ public class HartshornLifecycleExtension implements
         this.applicationContext = applicationContext;
     }
 
-    protected void afterLifecycle() {
+    protected void afterLifecycle() throws IOException {
         Mockito.clearAllCaches();
-        this.applicationContext = null;
+        if (this.applicationContext != null) {
+            this.applicationContext.close();
+            this.applicationContext = null;
+        }
     }
 
     @Override
