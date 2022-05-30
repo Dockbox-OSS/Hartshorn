@@ -28,8 +28,10 @@ public interface CacheContext {
 
     CacheManager manager();
 
-    <T> Cache<T> cache();
+    <T> Cache<String, T> cache();
 
-    String name();
+    String cacheName();
+
+    String key();
 
 }

@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.cache.annotations;
 
+import org.dockbox.hartshorn.cache.KeyGenerator;
+import org.dockbox.hartshorn.util.reflect.AliasFor;
+import org.dockbox.hartshorn.util.reflect.Extends;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,6 +32,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Extends(CacheDecorator.class)
 public @interface UpdateCache {
     /**
      * The ID of the target cache. If this is left empty a name will be
@@ -35,5 +40,8 @@ public @interface UpdateCache {
      *
      * @return the cache ID
      */
+    @AliasFor("cacheName")
     String value() default "";
+
+    Class<? extends KeyGenerator> keyGenerator() default KeyGenerator.class;
 }

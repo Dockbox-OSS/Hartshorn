@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.Expire;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,8 +42,11 @@ public class Expiration {
         return this.unit;
     }
 
+    public Duration toDuration() {
+        return Duration.of(this.amount, this.unit.toChronoUnit());
+    }
+
     public static Expiration of(final Expire expire) {
         return new Expiration(expire.amount(), expire.unit());
     }
-
 }

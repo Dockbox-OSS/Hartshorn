@@ -19,4 +19,5 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
+    api "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"
 }

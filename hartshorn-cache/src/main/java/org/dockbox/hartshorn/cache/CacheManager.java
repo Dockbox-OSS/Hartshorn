@@ -32,7 +32,7 @@ public interface CacheManager {
      *
      * @return all caches, or an empty list.
      */
-    List<Cache<?>> caches();
+    List<Cache<?, ?>> caches();
 
     /**
      * Gets the {@link Cache} associated with the given <code>cache</code>
@@ -43,25 +43,7 @@ public interface CacheManager {
      *
      * @return The cache, or {@link Result#empty()}
      */
-    <T> Result<Cache<T>> get(String cache);
-
-    /**
-     * Updates the {@link Cache} associated with the given <code>cache</code>
-     * ID, if it exists.
-     *
-     * @param cache The cache ID
-     * @param object The object to update the cache with
-     * @param <T> The type of the object
-     */
-    <T> void update(String cache, T object);
-
-    /**
-     * Evicts the {@link Cache} associated with the given <code>cache</code>
-     * ID, if it exists.
-     *
-     * @param cache The cache ID
-     */
-    void evict(String cache);
+    <K, V> Result<Cache<K, V>> get(String cache);
 
     /**
      * Gets the {@link Cache} associated with the given <code>cache</code>
@@ -75,5 +57,5 @@ public interface CacheManager {
      *
      * @return The existing or created {@link Cache}
      */
-    <T> Cache<T> getOrCreate(String name, Expiration expiration);
+    <K, V> Cache<K, V> getOrCreate(String name, Expiration expiration);
 }

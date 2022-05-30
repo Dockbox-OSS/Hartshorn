@@ -16,24 +16,10 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.cache.annotations.CacheService;
-import org.dockbox.hartshorn.cache.annotations.Cached;
-import org.dockbox.hartshorn.cache.annotations.EvictCache;
-import org.dockbox.hartshorn.cache.annotations.UpdateCache;
+import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 
-@CacheService("sample")
-public abstract class TestCacheService {
+import java.lang.reflect.AnnotatedElement;
 
-    @Cached(keyGenerator = TestKeyGenerator.class)
-    public long getCachedTime() {
-        // Return nanoseconds, as some tests evict and request within 1ms.
-        return System.nanoTime();
-    }
-
-    @UpdateCache(keyGenerator = TestKeyGenerator.class)
-    public abstract void update(long s);
-
-    @EvictCache
-    public abstract void evict();
-
+public interface KeyGenerator {
+    <A extends AnnotatedElement> String generateKey(AnnotatedElementContext<A> element, Object result);
 }

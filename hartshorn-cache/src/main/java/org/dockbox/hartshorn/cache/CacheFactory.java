@@ -26,5 +26,5 @@ import org.dockbox.hartshorn.component.Service;
 @RequiresActivator(UseCaching.class)
 public interface CacheFactory {
     @Factory
-    Cache<?> cache(Expiration expiration);
+    Cache<Object, Object> cache(Expiration expiration);
 }

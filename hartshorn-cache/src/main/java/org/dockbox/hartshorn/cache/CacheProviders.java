@@ -17,24 +17,29 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
+import org.dockbox.hartshorn.cache.caffeine.CaffeineCache;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Provider;
-
-import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UseCaching.class)
 public class CacheProviders {
 
     @Provider
+    @RequiresClass("com.github.benmanes.caffeine.cache.Caffeine")
     public Class<? extends Cache> cache() {
-        return CacheImpl.class;
+        return CaffeineCache.class;
     }
 
     @Provider
-    @Singleton
     public Class<? extends CacheManager> cacheManager() {
         return CacheManagerImpl.class;
+    }
+
+    @Provider
+    public KeyGenerator keyGenerator() {
+        return new HashCodeKeyGenerator();
     }
 }

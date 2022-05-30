@@ -17,40 +17,16 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.cache.KeyGenerator;
-import org.dockbox.hartshorn.util.reflect.AliasFor;
-import org.dockbox.hartshorn.util.reflect.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
 
-/**
- * Method decorator which indicates the return value of the method can and
- * should be cached.
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Extends(CacheDecorator.class)
-public @interface Cached {
-    /**
-     * The ID of the target cache. If this is left empty a name will be
-     * generated based on the owning service.
-     *
-     * @return the cache ID
-     */
-    @AliasFor("cacheName")
-    String value() default "";
+public @interface CacheDecorator {
+    String cacheName() default "";
 
     Class<? extends KeyGenerator> keyGenerator() default KeyGenerator.class;
-
-    /**
-     * Indicates whether the cache should automatically expire. If this is
-     * left empty the cache will never expire unless manually evicted. The
-     * duration indicated is activated the moment the method is first called.
-     *
-     * @return the lifetime
-     */
-    Expire expires() default @Expire(amount = -1, unit = TimeUnit.NANOSECONDS);
 }

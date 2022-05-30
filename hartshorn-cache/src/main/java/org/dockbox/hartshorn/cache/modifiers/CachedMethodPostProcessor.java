@@ -38,16 +38,17 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
 
     @Override
     protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
-        return (interceptorContext) -> {
-            final Cache<Object> cache = cacheContext.cache();
+        final String elementKey = cacheContext.key();
 
-            final Result<Object> content = cache.get();
+        return (interceptorContext) -> {
+            final Cache<String, Object> cache = cacheContext.cache();
+            final Result<Object> content = cache.get(elementKey);
 
             return content.orElse(() -> {
-                context.log().debug("Cache " + cacheContext.name() + " has not been populated yet, or content has expired.");
+                context.log().debug("Cache " + cacheContext.cacheName() + " has not been populated yet, or content has expired.");
                 try {
                     final Object out = interceptorContext.invokeDefault();
-                    cache.populate(out);
+                    cache.putIfAbsent(elementKey, out);
                     return out;
                 }
                 catch (final Throwable e) {

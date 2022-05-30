@@ -24,6 +24,8 @@ def includeAll(final File dir, final String prefix) {
     dir.listFiles().each {
         if (it.directory && new File(it, "${it.name}.gradle").exists()) {
             include("${prefix}:${it.name}")
+            // Include all nested projects
+            includeAll(it, it.name)
         }
     }
 }

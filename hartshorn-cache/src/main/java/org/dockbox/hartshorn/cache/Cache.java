@@ -21,9 +21,10 @@ import org.dockbox.hartshorn.util.Result;
 /**
  * Represents a collection of entries of type <code>T</code>.
  *
- * @param <T> The type of object stored in the cache.
+ * @param <T>
+ *         The type of object stored in the cache.
  */
-public interface Cache<T> {
+public interface Cache<K, V> {
 
     /**
      * Provides the stored values of the cache. If the cache is not
@@ -31,29 +32,28 @@ public interface Cache<T> {
      *
      * @return The content of the cache, or {@link Result#empty()}
      */
-    Result<T> get();
+    Result<V> get(K key);
 
-    /**
-     * Populates the cache with the given content. If the cache is
-     * already populated the new content is rejected.
-     *
-     * @param content The content to populate the cache with.
-     *
-     * @throws IllegalStateException When the cache is already populated.
-     */
-    void populate(T content);
+    boolean contains(K key);
+
+    void putIfAbsent(K key, V value);
 
     /**
      * Updates the cache by adding the provided object to the cache. If
      * the cache has not been populated, this will initialize an empty
      * cache before adding the object.
      *
-     * @param object The object to add.
+     * @param object
+     *         The object to add.
      */
-    void update(T object);
+    void put(K key, V value);
+
+    void invalidate(K key);
+
+    int size();
 
     /**
      * Evicts the cache, removing all content.
      */
-    void evict();
+    void invalidate();
 }
