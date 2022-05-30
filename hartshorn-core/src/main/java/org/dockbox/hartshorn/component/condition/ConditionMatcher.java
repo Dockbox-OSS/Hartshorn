@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 public class ConditionMatcher {
