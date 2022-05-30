@@ -29,7 +29,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Extends a command by providing a cooldown on its execution. If a command is

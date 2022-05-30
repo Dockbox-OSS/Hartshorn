@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Simple implementation of {@link CommandGateway}.

@@ -59,8 +59,8 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 
 @HartshornTest
 @Testcontainers(disabledWithoutDocker = true)

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @UseCommands
 @HartshornTest

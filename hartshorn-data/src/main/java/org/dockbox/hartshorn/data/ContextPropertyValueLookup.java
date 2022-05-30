@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.util.Result;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 public class ContextPropertyValueLookup implements ValueLookup {

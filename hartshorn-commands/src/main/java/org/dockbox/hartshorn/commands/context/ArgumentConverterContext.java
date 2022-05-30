@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.Result;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.

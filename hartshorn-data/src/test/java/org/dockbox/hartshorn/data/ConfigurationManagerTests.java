@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UseConfigurations

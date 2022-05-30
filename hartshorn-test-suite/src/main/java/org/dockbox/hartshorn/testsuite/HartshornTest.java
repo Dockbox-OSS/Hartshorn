@@ -27,7 +27,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Annotation for test classes that should be run with the Hartshorn test suite. This will automatically

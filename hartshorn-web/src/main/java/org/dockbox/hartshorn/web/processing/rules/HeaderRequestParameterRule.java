@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class HeaderRequestParameterRule extends AnnotatedParameterLoaderRule<RequestHeader, HttpRequestParameterLoaderContext> {
 

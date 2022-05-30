@@ -19,7 +19,7 @@ package test.types;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 public class SampleContextAwareType {

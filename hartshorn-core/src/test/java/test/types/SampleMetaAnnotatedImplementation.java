@@ -19,7 +19,7 @@ package test.types;
 import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import test.types.SampleInterface;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @ComponentBinding(value = SampleInterface.class, named = @Named("meta"))
 public class SampleMetaAnnotatedImplementation implements SampleInterface {

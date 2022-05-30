@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class SetterInjectedComponentWithNonRequiredAbsentBinding {
 

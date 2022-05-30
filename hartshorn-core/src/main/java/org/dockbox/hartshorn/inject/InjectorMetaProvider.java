@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentUtilities;
 
-import javax.inject.Singleton;
-import javax.persistence.Entity;
+import jakarta.inject.Singleton;
+import jakarta.persistence.Entity;
 
 public class InjectorMetaProvider implements MetaProvider {
 

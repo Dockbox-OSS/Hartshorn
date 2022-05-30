@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallbackPostProcessor<UsePersistence> {
 

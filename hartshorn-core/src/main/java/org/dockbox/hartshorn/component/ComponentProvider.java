@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * A component provider is a class that is capable of providing components. Components are identified using

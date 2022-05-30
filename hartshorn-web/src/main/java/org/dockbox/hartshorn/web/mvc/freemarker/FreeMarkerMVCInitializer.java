@@ -35,7 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

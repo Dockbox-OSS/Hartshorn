@@ -44,8 +44,10 @@ public class LogbackApplicationLogger extends CallerLookupApplicationLogger {
             }
         }
         else {
-            final Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-            rootLogger.setLevel(level);
+            final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+            if (logger instanceof Logger) {
+                ((Logger) logger).setLevel(level);
+            }
         }
     }
 }

@@ -33,8 +33,8 @@ import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class ContextualComponentPopulator implements ComponentPopulator, ContextCarrier {
 

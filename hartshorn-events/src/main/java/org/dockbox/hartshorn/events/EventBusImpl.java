@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * A simple default implementation of {@link EventBus}, used for internal event posting and

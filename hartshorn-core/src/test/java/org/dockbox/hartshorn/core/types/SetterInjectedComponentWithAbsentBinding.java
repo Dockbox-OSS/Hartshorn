@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.core.types;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.Required;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 public class SetterInjectedComponentWithAbsentBinding {

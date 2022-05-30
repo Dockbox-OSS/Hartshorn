@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.handle.EventParameterLoader;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Service(activators = UseEvents.class)
 public class EventProviders {

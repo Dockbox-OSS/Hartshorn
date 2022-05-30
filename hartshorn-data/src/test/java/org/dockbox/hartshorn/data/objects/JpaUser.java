@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.data.objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 /**
  * A simple JPA compatible user type with an auto-generated {@link #id()}.

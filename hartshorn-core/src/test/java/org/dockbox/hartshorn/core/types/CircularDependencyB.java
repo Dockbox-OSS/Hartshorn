@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.core.types;
 
 import org.dockbox.hartshorn.component.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component(singleton = true)
 public class CircularDependencyB {

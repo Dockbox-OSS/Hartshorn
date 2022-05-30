@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.hibernate.dialect.Dialect;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class HibernateRemoteImpl implements HibernateRemote {
 

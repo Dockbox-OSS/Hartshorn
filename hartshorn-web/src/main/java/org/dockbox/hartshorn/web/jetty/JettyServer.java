@@ -27,9 +27,9 @@ import org.eclipse.jetty.server.Server;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
+import jakarta.inject.Inject;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 
 public class JettyServer extends Server {
 

@@ -19,8 +19,8 @@ package test.types;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 @Service
 public class SampleProviderService {

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.AfterEach;
 import java.io.IOException;
 import java.util.function.Function;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @UseHttpServer
 @HartshornTest

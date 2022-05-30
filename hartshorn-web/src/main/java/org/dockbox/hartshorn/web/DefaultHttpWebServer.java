@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.web;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public abstract class DefaultHttpWebServer implements HttpWebServer {
 

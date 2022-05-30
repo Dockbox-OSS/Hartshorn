@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UsePersistence

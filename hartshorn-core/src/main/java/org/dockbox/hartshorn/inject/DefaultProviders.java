@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ConcreteContextCarrier;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Service(activators = { UseBootstrap.class, UseServiceProvision.class })
 public class DefaultProviders {

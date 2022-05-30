@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link Key} to

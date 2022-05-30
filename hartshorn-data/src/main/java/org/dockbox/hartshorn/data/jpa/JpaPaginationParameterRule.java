@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.data.context.JpaParameterLoaderContext;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParameterLoaderContext> {
 

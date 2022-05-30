@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import java.lang.annotation.Annotation;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * An implementation of the {@link Named} annotation. This is used by {@link Key}s to allow for {@link String}

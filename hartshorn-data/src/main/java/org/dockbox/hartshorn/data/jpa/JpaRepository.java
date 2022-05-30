@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public interface JpaRepository<T, ID> extends ContextCarrier {
 

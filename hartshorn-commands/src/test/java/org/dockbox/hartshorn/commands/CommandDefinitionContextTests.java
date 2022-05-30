@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @UseCommands
 @HartshornTest

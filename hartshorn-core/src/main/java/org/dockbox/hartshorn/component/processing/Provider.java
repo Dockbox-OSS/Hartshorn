@@ -34,9 +34,9 @@ import java.lang.annotation.Target;
  * class.
  *
  * <p>Provider methods can have parameters, which will be injected through the active
- * {@link ApplicationContext}. This includes support for {@link javax.inject.Named} parameters.
+ * {@link ApplicationContext}. This includes support for {@link jakarta.inject.Named} parameters.
  *
- * <p>If {@link javax.inject.Singleton} is used on the provider method, the result of the provider
+ * <p>If {@link jakarta.inject.Singleton} is used on the provider method, the result of the provider
  * method will be cached immediately, and the same instance will be returned on subsequent calls.
  *
  * @author Guus Lieben
