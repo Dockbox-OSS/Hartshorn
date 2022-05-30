@@ -124,6 +124,10 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                 ExceptionHandler.unchecked(e);
             }
         }
+
+        if (instance == null) {
+            ExceptionHandler.unchecked(new ApplicationException("Unable to create instance of " + key));
+        }
         return instance;
     }
 
