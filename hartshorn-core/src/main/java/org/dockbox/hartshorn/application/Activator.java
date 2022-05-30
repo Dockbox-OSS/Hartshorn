@@ -48,5 +48,6 @@ public @interface Activator {
     /**
      * @return The applicable {@link InjectConfig configurations} which should be used for this activator
      */
+    @Deprecated(since = "22.3", forRemoval = true)
     InjectConfig[] configs() default {};
 }

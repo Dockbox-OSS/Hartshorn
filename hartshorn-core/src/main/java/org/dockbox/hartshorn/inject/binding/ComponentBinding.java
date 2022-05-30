@@ -50,6 +50,7 @@ import jakarta.inject.Named;
 @Target(ElementType.TYPE)
 @Extends(Component.class)
 @Component
+@Deprecated(since = "22.3", forRemoval = true)
 public @interface ComponentBinding {
 
     /**

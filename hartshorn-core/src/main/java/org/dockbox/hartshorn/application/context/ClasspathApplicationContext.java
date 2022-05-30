@@ -168,6 +168,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         this.prefixQueue.add(prefix);
     }
 
+    @Deprecated(since = "22.3", forRemoval = true)
     protected <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final ComponentBinding bindAnnotation) {
         final Named meta = bindAnnotation.named();
         Key<C> key = Key.of(binds);
@@ -184,10 +185,12 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         type.annotation(ComponentBinding.class).present(binding -> this.componentBinding(type, binding));
     }
 
+    @Deprecated(since = "22.3", forRemoval = true)
     protected  <T> void componentBinding(final TypeContext<T> implementer, final ComponentBinding annotation) {
         this.bindingQueue.add(new BindingContext(implementer, annotation));
     }
 
+    @Deprecated(since = "22.3", forRemoval = true)
     private static final class BindingContext {
         private final TypeContext<?> implementer;
         private final ComponentBinding binding;

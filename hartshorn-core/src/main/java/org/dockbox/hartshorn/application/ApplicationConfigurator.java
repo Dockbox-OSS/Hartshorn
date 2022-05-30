@@ -47,6 +47,7 @@ public interface ApplicationConfigurator {
      * @param manager The {@link ApplicationManager} to configure.
      * @param configurations The {@link InjectConfiguration}s to apply.
      */
+    @Deprecated(since = "22.3", forRemoval = true)
     void apply(ApplicationManager manager, Set<InjectConfiguration> configurations);
 
     /**

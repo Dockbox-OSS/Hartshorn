@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+@Deprecated(since = "22.3", forRemoval = true)
 public abstract class InjectConfiguration implements DelegatedBinder {
 
     private Binder binder;

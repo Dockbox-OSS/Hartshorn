@@ -289,6 +289,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ApplicationConfigurator#apply(ApplicationManager, Set)
      */
+    @Deprecated(since = "22.3", forRemoval = true)
     Self configuration(InjectConfiguration injectConfiguration);
 
     /**
