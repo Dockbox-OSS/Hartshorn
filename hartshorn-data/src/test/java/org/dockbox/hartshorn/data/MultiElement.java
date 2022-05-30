@@ -16,22 +16,52 @@
 
 package org.dockbox.hartshorn.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class MultiElement implements Element {
 
     private String name;
     private String other;
 
+    public MultiElement() {
+    }
+
+    public MultiElement(final String name, final String other) {
+        this.name = name;
+        this.other = other;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    @Override
     public MultiElement name(final String name) {
         this.name = name;
         this.other = name;
         return this;
     }
 
+    public String other() {
+        return this.other;
+    }
+
+    public MultiElement other(final String other) {
+        this.other = other;
+        return this;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final MultiElement that = (MultiElement) o;
+        return Objects.equals(this.name, that.name) && Objects.equals(this.other, that.other);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name, this.other);
+    }
 }

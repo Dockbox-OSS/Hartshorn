@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.component.factory.Factory;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;

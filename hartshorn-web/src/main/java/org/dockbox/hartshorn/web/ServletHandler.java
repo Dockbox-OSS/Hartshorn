@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
@@ -32,11 +32,9 @@ import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import java.io.IOException;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class ServletHandler implements Enableable {
 
@@ -49,10 +47,9 @@ public class ServletHandler implements Enableable {
     private ApplicationContext context;
 
     @Inject
-    @Getter
     private ObjectMapper mapper;
 
-    @Value(value = "hartshorn.web.headers.hartshorn")
+    @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
 
     @Bound
@@ -62,6 +59,10 @@ public class ServletHandler implements Enableable {
         this.methodContext = methodContext;
         this.httpRequest = methodContext.annotation(HttpRequest.class)
                 .orThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(methodContext.qualifiedName())));
+    }
+
+    public ObjectMapper mapper() {
+        return this.mapper;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class ServletHandler implements Enableable {
                 final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.methodContext, this.methodContext.parent(), null, this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
 
-                final Exceptional<?> result = this.methodContext.invoke(this.context, arguments);
+                final Result<?> result = this.methodContext.invoke(this.context, arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
@@ -96,7 +97,7 @@ public class ServletHandler implements Enableable {
                         else {
                             res.setContentType(this.httpRequest.produces().value());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
-                            final Exceptional<String> write = this.mapper.write(result.get());
+                            final Result<String> write = this.mapper.write(result.get());
                             if (write.present()) {
                                 this.context.log().debug("Printing response body to response writer");
                                 res.getWriter().print(write.get());

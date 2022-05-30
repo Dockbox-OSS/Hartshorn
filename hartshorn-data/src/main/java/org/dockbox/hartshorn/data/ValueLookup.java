@@ -16,11 +16,8 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-
-import java.util.Collection;
+import org.dockbox.hartshorn.util.Result;
 
 public interface ValueLookup {
-    public Exceptional<?> getValue(String key);
-    public Collection<?> getValues(String key);
+    <T> Result<T> getValue(String key, Class<T> type);
 }

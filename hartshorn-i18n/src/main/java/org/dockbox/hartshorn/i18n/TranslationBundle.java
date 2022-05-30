@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormats;
 
 import java.nio.file.Path;
@@ -33,9 +33,9 @@ public interface TranslationBundle {
 
     Set<Message> messages();
 
-    Exceptional<Message> message(String key);
+    Result<Message> message(String key);
 
-    Exceptional<Message> message(String key, Locale language);
+    Result<Message> message(String key, Locale language);
 
     TranslationBundle merge(TranslationBundle bundle);
 

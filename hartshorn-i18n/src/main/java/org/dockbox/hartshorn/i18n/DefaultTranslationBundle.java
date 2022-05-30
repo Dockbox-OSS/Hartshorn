@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
@@ -31,20 +32,25 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import lombok.Getter;
-import lombok.Setter;
-
+@Component
 public class DefaultTranslationBundle implements TranslationBundle {
+
+    private final Map<String, Message> messages = new ConcurrentHashMap<>();
 
     @Inject
     private ApplicationContext applicationContext;
-
-    @Getter @Setter
     private Locale primaryLanguage = Locale.getDefault();
 
-    private final Map<String, Message> messages = new ConcurrentHashMap<>();
+    public Locale primaryLanguage() {
+        return this.primaryLanguage;
+    }
+
+    public DefaultTranslationBundle primaryLanguage(final Locale primaryLanguage) {
+        this.primaryLanguage = primaryLanguage;
+        return this;
+    }
 
     @Override
     public Set<Message> messages() {
@@ -52,13 +58,13 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public Exceptional<Message> message(final String key) {
+    public Result<Message> message(final String key) {
         return this.message(key, this.primaryLanguage());
     }
 
     @Override
-    public Exceptional<Message> message(final String key, final Locale language) {
-        return Exceptional.of(this.messages.get(key))
+    public Result<Message> message(final String key, final Locale language) {
+        return Result.of(this.messages.get(key))
                 .map(message -> message.translate(language).detach());
     }
 

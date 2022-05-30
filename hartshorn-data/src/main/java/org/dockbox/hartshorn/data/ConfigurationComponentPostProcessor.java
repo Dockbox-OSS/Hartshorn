@@ -17,29 +17,23 @@
 package org.dockbox.hartshorn.data;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.data.annotations.UseConfigurations;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.ConstructorContext;
-import org.dockbox.hartshorn.core.context.element.FieldContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
-import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
-import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
-
-import java.util.Collection;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.FieldContext;
+import org.dockbox.hartshorn.util.reflect.NotPrimitiveException;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 /**
  * Looks up and populates fields annotated with {@link Value}.
  */
-@AutomaticActivation
-public class ConfigurationComponentPostProcessor implements ComponentPostProcessor<UseConfigurations> {
+public class ConfigurationComponentPostProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return !key.type().fields(Value.class).isEmpty();
     }
 
@@ -55,50 +49,22 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                 final Value annotation = field.annotation(Value.class).get();
 
                 final String valueKey = annotation.value();
-                final Exceptional<?> property;
-
-                if (field.type().childOf(Collection.class)) {
-                    final Collection<?> values = valueLookup.getValues(valueKey);
-                    if (!field.type().is(Collection.class)) {
-                        final Exceptional<? extends ConstructorContext<?>> constructor = field.type().constructor(Collection.class);
-                        if (constructor.absent()) throw new IllegalStateException("No compatible constructor found to convert collection to " + field.type().qualifiedName());
-                        else {
-                            final ConstructorContext<?> constructorContext = constructor.get();
-                            final Collection<?> collection = (Collection<?>) constructorContext.createInstance(values).orNull();
-                            property = Exceptional.of(collection);
-                        }
-                    } else {
-                        property = Exceptional.of(values);
-                    }
-                }
-                else {
-                    property = valueLookup.getValue(valueKey);
-                }
+                final Result<?> property = valueLookup.getValue(valueKey, field.genericType().type());
 
                 if (property.absent()) {
                     context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
                     continue;
                 }
 
-                Object value = property.get();
                 context.log().debug("Populating value for configuration field '%s' in %s (key: %s), value is not logged.".formatted(field.name(), valueKey, field.type().name()));
-
-                if ((!field.type().childOf(String.class)) && (value instanceof String stringValue)) {
-                    value = TypeContext.toPrimitive(field.type(), stringValue);
-                }
-                field.set(instance, value);
+                field.set(instance, property.get());
             }
-            catch (final TypeConversionException | NotPrimitiveException e) {
+            catch (final NotPrimitiveException e) {
                 context.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());
                 context.handle(e);
             }
         }
 
         return instance;
-    }
-
-    @Override
-    public Class<UseConfigurations> activator() {
-        return UseConfigurations.class;
     }
 }

@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.commands.service;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.boot.LifecycleObserver;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 @Service(activators = UseCommands.class)
 public class CommandParameterValidator implements LifecycleObserver {

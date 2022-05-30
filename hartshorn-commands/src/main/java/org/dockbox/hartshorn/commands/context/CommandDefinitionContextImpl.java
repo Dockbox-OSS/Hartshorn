@@ -26,11 +26,11 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -210,7 +210,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(final String type, final String name, final boolean optional) {
-        final Exceptional<ArgumentConverter<?>> converter = this.context
+        final Result<ArgumentConverter<?>> converter = this.context
                 .first(ArgumentConverterContext.class)
                 .flatMap(context -> context.converter(type.toLowerCase()));
         if (converter.present()) {
@@ -304,10 +304,10 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public Exceptional<CommandFlag> flag(final String name) {
+    public Result<CommandFlag> flag(final String name) {
         for (final CommandFlag flag : this.flags()) {
-            if (flag.name().equals(name)) return Exceptional.of(flag);
+            if (flag.name().equals(name)) return Result.of(flag);
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 }

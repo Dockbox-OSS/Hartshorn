@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.annotations.AliasFor;
-import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.util.reflect.AliasFor;
+import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.util.reflect.AnnotationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

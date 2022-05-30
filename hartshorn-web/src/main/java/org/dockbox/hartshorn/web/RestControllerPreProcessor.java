@@ -16,22 +16,15 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ServicePreProcessor;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.web.annotations.RestController;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-@AutomaticActivation
-public class RestControllerPreProcessor implements ServicePreProcessor<UseHttpServer> {
-    @Override
-    public Class<UseHttpServer> activator() {
-        return UseHttpServer.class;
-    }
+public class RestControllerPreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

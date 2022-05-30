@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.cache.annotations;
 
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
+import org.dockbox.hartshorn.cache.modifiers.CacheEvictionMethodPostProcessor;
+import org.dockbox.hartshorn.cache.modifiers.CacheUpdateMethodPostProcessor;
+import org.dockbox.hartshorn.cache.modifiers.CachedMethodPostProcessor;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,6 +31,10 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(processors = {
+        CachedMethodPostProcessor.class,
+        CacheEvictionMethodPostProcessor.class,
+        CacheUpdateMethodPostProcessor.class
+})
 public @interface UseCaching {
 }

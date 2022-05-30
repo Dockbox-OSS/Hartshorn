@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.core.context.ContextCarrier;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public interface JpaRepository<T, ID> extends ContextCarrier {
 
@@ -36,7 +36,7 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
 
     Set<T> findAll();
 
-    Exceptional<T> findById(ID id);
+    Result<T> findById(ID id);
 
     EntityManager entityManager();
 

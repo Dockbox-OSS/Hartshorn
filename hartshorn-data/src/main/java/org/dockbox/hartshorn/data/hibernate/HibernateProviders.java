@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.inject.Provider;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;

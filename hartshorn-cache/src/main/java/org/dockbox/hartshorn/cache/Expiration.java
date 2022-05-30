@@ -20,18 +20,26 @@ import org.dockbox.hartshorn.cache.annotations.Expire;
 
 import java.util.concurrent.TimeUnit;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Simple bean indicating the expiration of a {@link Cache}.
  */
-@Getter
-@AllArgsConstructor
 public class Expiration {
 
     private final int amount;
     private final TimeUnit unit;
+
+    public Expiration(final int amount, final TimeUnit unit) {
+        this.amount = amount;
+        this.unit = unit;
+    }
+
+    public int amount() {
+        return this.amount;
+    }
+
+    public TimeUnit unit() {
+        return this.unit;
+    }
 
     public static Expiration of(final Expire expire) {
         return new Expiration(expire.amount(), expire.unit());

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events.parents;
 
-import org.dockbox.hartshorn.core.domain.Subject;
+import org.dockbox.hartshorn.util.Subject;
 
 public interface SubjectHolder {
 

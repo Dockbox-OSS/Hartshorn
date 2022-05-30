@@ -6,42 +6,49 @@ name: Hartshorn
 on: [pull_request]
 
 jobs:
-  build:
-    name: Build all
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 16
-        uses: actions/setup-java@v1
-        with:
-          java-version: 16
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build all
-        run: ./gradlew build -x test
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 16
-        uses: actions/setup-java@v1
-        with:
-          java-version: 16
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Tests
-        run: ./gradlew test
   license:
     name: License check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 16
+      - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
-          java-version: 16
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Tests
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Check license headers
         run: ./gradlew checkLicenses
+  build:
+    needs: [license]
+    name: Build all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build all
+        run: ./gradlew build -x test
+  test:
+    needs: [license, build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-latest, macos-latest]
+        java: [17]
+    name: Unit tests
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: "Unit testing (OS: ${{ matrix.os }}, Java: ${{ matrix.java }})"
+        run: ./gradlew test

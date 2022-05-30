@@ -16,20 +16,34 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.domain.Subject;
+import org.dockbox.hartshorn.util.Subject;
 import org.dockbox.hartshorn.events.parents.CancellableContextCarrierEvent;
 import org.dockbox.hartshorn.events.parents.SubjectHolder;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public abstract class AbstractTargetCancellableEvent extends CancellableContextCarrierEvent implements SubjectHolder {
+
     private boolean cancelled;
     private Subject subject;
 
     protected AbstractTargetCancellableEvent(final Subject subject) {
+        this.subject = subject;
+    }
+
+    @Override
+    public boolean cancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public Subject subject() {
+        return this.subject;
+    }
+
+    public void setCancelled(final boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public void setSubject(final Subject subject) {
         this.subject = subject;
     }
 }

@@ -16,13 +16,17 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultContext;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class SampleContext extends DefaultContext {
-    private String name;
+
+    private final String name;
+
+    public SampleContext(final String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return this.name;
+    }
 }

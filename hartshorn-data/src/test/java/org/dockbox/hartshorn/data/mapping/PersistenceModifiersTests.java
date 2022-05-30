@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -26,23 +26,20 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UsePersistence
 public class PersistenceModifiersTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     void testSkipEmptyKeepsNonEmpty() {
-        final ObjectMapper mapper = this.applicationContext().get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of("sample", "other"));
-        final Exceptional<String> out = mapper.write(element);
+        final Result<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
         Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", StringUtilities.strip(out.get()));
@@ -50,9 +47,9 @@ public class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptySkipsEmpty() {
-        final ObjectMapper mapper = this.applicationContext().get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of());
-        final Exceptional<String> out = mapper.write(element);
+        final Result<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
         Assertions.assertEquals("{}", StringUtilities.strip(out.get()));

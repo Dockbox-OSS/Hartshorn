@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
@@ -26,9 +26,9 @@ import org.eclipse.jetty.util.resource.Resource;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class JettyDirectoryServlet implements DirectoryServlet {
 

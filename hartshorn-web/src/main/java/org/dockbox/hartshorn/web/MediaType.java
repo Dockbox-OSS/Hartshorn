@@ -16,18 +16,10 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@AllArgsConstructor
-@RequiredArgsConstructor
 public enum MediaType {
     ALL("*", "*"),
     APPLICATION_JSON("application", "json", FileFormats.JSON),
@@ -45,16 +37,33 @@ public enum MediaType {
 
     private final String type;
     private final String subtype;
-
-    @Getter(AccessLevel.NONE)
     private FileFormat format;
+
+    MediaType(final String type, final String subtype) {
+        this.type = type;
+        this.subtype = subtype;
+    }
+
+    MediaType(final String type, final String subtype, final FileFormat format) {
+        this.type = type;
+        this.subtype = subtype;
+        this.format = format;
+    }
+
+    public String type() {
+        return this.type;
+    }
+
+    public String subtype() {
+        return this.subtype;
+    }
 
     public boolean isSerializable() {
         return this.format != null;
     }
 
-    public Exceptional<FileFormat> fileFormat() {
-        return Exceptional.of(this.format);
+    public Result<FileFormat> fileFormat() {
+        return Result.of(this.format);
     }
 
     public String value() {

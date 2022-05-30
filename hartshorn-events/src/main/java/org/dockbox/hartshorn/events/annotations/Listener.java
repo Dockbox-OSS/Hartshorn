@@ -21,9 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * The interface to mark a method as an event listener.
  *
@@ -40,8 +37,6 @@ public @interface Listener {
      */
     Priority value() default Priority.NORMAL;
 
-    @AllArgsConstructor
-    @Getter
     enum Priority {
         /** Execute the listener after all other listeners are done. */
         LAST(0x14),
@@ -55,5 +50,13 @@ public @interface Listener {
         FIRST(0x0);
 
         private final int priority;
+
+        Priority(final int priority) {
+            this.priority = priority;
+        }
+
+        public int priority() {
+            return this.priority;
+        }
     }
 }

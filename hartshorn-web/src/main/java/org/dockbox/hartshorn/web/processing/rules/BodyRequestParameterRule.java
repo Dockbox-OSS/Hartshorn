@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.services.parameter.AnnotatedParameterLoaderRule;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.MediaType;
@@ -36,14 +36,14 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        final Exceptional<String> body = Exceptional.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        final Result<String> body = Result.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())));
         if (parameter.type().is(String.class))
-            return (Exceptional<T>) body;
+            return (Result<T>) body;
         final MediaType mediaType = parameter.declaredBy().annotation(HttpRequest.class).get().consumes();
-        if (!mediaType.isSerializable()) return Exceptional.empty();
+        if (!mediaType.isSerializable()) return Result.empty();
         final FileFormat bodyFormat = mediaType.fileFormat().get();
-        final ObjectMapper objectMapper = context.applicationContext().get(ObjectMapper.class).fileType(bodyFormat);
+        final ObjectMapper objectMapper = context.provider().get(ObjectMapper.class).fileType(bodyFormat);
 
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
     }

@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.boot.ApplicationFactory;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 
 @HartshornTest
@@ -31,7 +31,7 @@ public class HartshornFactoryTests {
 
     @InjectTest
     void testFactoryWasModified(final ApplicationContext applicationContext) {
-        final Exceptional<Object> property = applicationContext.property("factory.modified");
+        final Result<String> property = applicationContext.property("factory.modified");
         Assertions.assertTrue(property.present());
         Assertions.assertEquals("true", property.get());
     }

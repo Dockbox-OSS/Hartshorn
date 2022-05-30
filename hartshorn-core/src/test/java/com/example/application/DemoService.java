@@ -16,7 +16,7 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.Service;
 
 @Service
 public interface DemoService {

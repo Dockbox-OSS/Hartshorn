@@ -16,11 +16,15 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class ClassPathViewTemplate implements ViewTemplate {
-    private String location;
+
+    private final String location;
+
+    public ClassPathViewTemplate(final String location) {
+        this.location = location;
+    }
+
+    public String location() {
+        return this.location;
+    }
 }

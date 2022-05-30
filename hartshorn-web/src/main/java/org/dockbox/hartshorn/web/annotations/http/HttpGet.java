@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.annotations.http;
 
-import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.util.reflect.Extends;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.MediaType;
 

@@ -16,21 +16,13 @@
 
 package org.dockbox.hartshorn.commands.service;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ServicePreProcessor;
+import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
+import org.dockbox.hartshorn.inject.Key;
 
-@AutomaticActivation
-public class CommandServiceScanner implements ServicePreProcessor<UseCommands> {
-
-    @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
-    }
+public class CommandServiceScanner implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

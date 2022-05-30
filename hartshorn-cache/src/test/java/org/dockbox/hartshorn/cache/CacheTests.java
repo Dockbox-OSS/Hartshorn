@@ -17,41 +17,38 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
 
 @UseCaching
 @HartshornTest
 public class CacheTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     void testEvictMethodIsCalled() {
-        final NonAbstractCacheService service = this.applicationContext().get(NonAbstractCacheService.class);
+        final NonAbstractCacheService service = this.applicationContext.get(NonAbstractCacheService.class);
         Assertions.assertTrue(service.evict());
     }
 
     @Test
     void testUpdateMethodIsCalled() {
-        final NonAbstractCacheService service = this.applicationContext().get(NonAbstractCacheService.class);
+        final NonAbstractCacheService service = this.applicationContext.get(NonAbstractCacheService.class);
         final long update = service.update(3L);
         Assertions.assertEquals(6, update);
     }
 
     @Test
     void testCacheIsReused() {
-        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long first = service.getCachedTime();
         Assertions.assertTrue(first > 0);
 
@@ -61,7 +58,7 @@ public class CacheTests {
 
     @Test
     void testCacheCanBeUpdated() {
-        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
@@ -72,7 +69,7 @@ public class CacheTests {
 
     @Test
     void testCacheCanBeEvicted() {
-        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long first = service.getCachedTime();
         service.evict();
         final long second = service.getCachedTime();
@@ -81,17 +78,17 @@ public class CacheTests {
 
     @Test
     void testCacheCanBeUpdatedThroughManager() {
-        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.applicationContext().get(CacheManager.class);
+        final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
         cacheManager.update("sample", 3L);
 
-        final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
+        final Result<Cache<Long>> cache = cacheManager.get("sample");
         Assertions.assertTrue(cache.present());
 
-        final Exceptional<Long> content = cache.get().get();
+        final Result<Long> content = cache.get().get();
         Assertions.assertTrue(content.present());
 
         final long object = content.get();
@@ -101,22 +98,22 @@ public class CacheTests {
     @Test
     void testCacheCanBeEvictedThroughManager() {
         // Initial population through source service
-        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.applicationContext().get(CacheManager.class);
+        final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
         cacheManager.evict("sample");
 
-        final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
+        final Result<Cache<Long>> cache = cacheManager.get("sample");
         Assertions.assertTrue(cache.present());
 
-        final Exceptional<Long> content = cache.get().get();
+        final Result<Long> content = cache.get().get();
         Assertions.assertTrue(content.absent());
     }
 
     @AfterEach
     void reset() {
-        this.applicationContext().get(JUnitCacheManager.class).reset();
+        this.applicationContext.get(JUnitCacheManager.class).reset();
     }
 }

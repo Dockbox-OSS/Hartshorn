@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.data.context.JpaParameterLoaderContext;
 
 public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoaderContext> {

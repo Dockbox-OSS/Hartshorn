@@ -16,11 +16,8 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
-import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
+import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 
-import lombok.Getter;
-
-@Getter
 public class TestExceptionHandle extends LoggingExceptionHandler {
 
     private boolean stacktrace;
@@ -37,5 +34,23 @@ public class TestExceptionHandle extends LoggingExceptionHandler {
     public TestExceptionHandle stacktraces(final boolean stacktraces) {
         this.stacktrace = stacktraces;
         return this;
+    }
+
+    public void reset() {
+        this.message = null;
+        this.exception = null;
+        this.stacktrace = false;
+    }
+
+    public boolean stacktrace() {
+        return this.stacktrace;
+    }
+
+    public String message() {
+        return this.message;
+    }
+
+    public Throwable exception() {
+        return this.exception;
     }
 }

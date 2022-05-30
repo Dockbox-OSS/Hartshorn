@@ -16,15 +16,19 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
 @ComponentBinding(User.class)
-@AllArgsConstructor(onConstructor_ = @Bound)
 public class BoundUserImpl implements User {
     private final String name;
+
+    @Bound
+    public BoundUserImpl(final String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return this.name;
+    }
 }

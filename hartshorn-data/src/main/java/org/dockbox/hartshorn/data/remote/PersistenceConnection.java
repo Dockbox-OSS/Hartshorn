@@ -16,14 +16,32 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class PersistenceConnection {
     private final String url;
     private final String username;
     private final String password;
     private final Remote remote;
+
+    public PersistenceConnection(final String url, final String username, final String password, final Remote remote) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+        this.remote = remote;
+    }
+
+    public String url() {
+        return this.url;
+    }
+
+    public String username() {
+        return this.username;
+    }
+
+    public String password() {
+        return this.password;
+    }
+
+    public Remote remote() {
+        return this.remote;
+    }
 }

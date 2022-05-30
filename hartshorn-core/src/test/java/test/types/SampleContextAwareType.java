@@ -16,15 +16,18 @@
 
 package test.types;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import lombok.Getter;
-
+@Component
 public class SampleContextAwareType {
 
     @Inject
-    @Getter private ApplicationContext context;
+    private ApplicationContext context;
 
+    public ApplicationContext context() {
+        return this.context;
+    }
 }

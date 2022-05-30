@@ -16,7 +16,8 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.objects.JpaUser;
 import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
@@ -32,18 +33,16 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.persistence.TransactionRequiredException;
+import jakarta.inject.Inject;
+import jakarta.persistence.TransactionRequiredException;
 
-import lombok.Getter;
-
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
+@UseConfigurations
 @HartshornTest
 public class QueryRepositoryTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
@@ -56,7 +55,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testRepositoryDeleteAll() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext().get(UserQueryRepository.class).connection(connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 17);
         repository.save(user);
         repository.deleteAll();
@@ -66,7 +65,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testRepositoryQueries() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext().get(UserQueryRepository.class).connection(connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
         repository.deleteAll();
         final JpaUser userA = new JpaUser("JUnit", 17);
         final JpaUser userB = new JpaUser("JUnitAdult", 21);
@@ -79,7 +78,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonTransactional() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext().get(UserQueryRepository.class).connection(connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(TransactionRequiredException.class, () -> repository.nonTransactionalEntityUpdate(user.id(), 22));
@@ -87,7 +86,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonEntityModifier() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext().get(UserQueryRepository.class).connection(connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(IllegalArgumentException.class, () -> repository.nonModifierEntityUpdate(user.id(), 22));
@@ -95,7 +94,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateEntity() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext().get(UserQueryRepository.class).connection(connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         final int updated = repository.entityUpdate(user.id(), 22);

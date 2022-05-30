@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandContextImpl;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -27,10 +28,10 @@ import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,11 +41,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Simple implementation of {@link CommandParser}.
  */
+@Component
 public class CommandParserImpl implements CommandParser {
 
     // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag
@@ -55,10 +57,10 @@ public class CommandParserImpl implements CommandParser {
     private CommandResources resources;
 
     @Override
-    public Exceptional<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {
+    public Result<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {
         final ApplicationContext applicationContext = context.applicationContext();
-        final Exceptional<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
-        if (container.absent()) return Exceptional.empty();
+        final Result<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        if (container.absent()) return Result.empty();
 
         final CommandDefinitionContext containerContext = container.get();
         final List<CommandElement<?>> elements = containerContext.elements();
@@ -78,7 +80,7 @@ public class CommandParserImpl implements CommandParser {
 
         if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(this.resources.tooManyArguments());
 
-        return Exceptional.of(new CommandContextImpl(command,
+        return Result.of(new CommandContextImpl(command,
                 parsedElements,
                 parsedFlags,
                 source,
@@ -102,7 +104,7 @@ public class CommandParserImpl implements CommandParser {
             final String token = String.join(" ", elementTokens).trim();
             tokens.removeAll(elementTokens);
 
-            final Exceptional<?> value = element.parse(source, token);
+            final Result<?> value = element.parse(source, token);
             parameters.addAll(this.parameter(value, token, "argument", element.name(), element, source));
 
             if (size == -1) {
@@ -120,7 +122,7 @@ public class CommandParserImpl implements CommandParser {
             final String flag = matcher.group().trim();
             final String nameUntrimmed = flag.split(" ")[0];
             final String name = StringUtilities.trimWith('-', nameUntrimmed);
-            final Exceptional<CommandFlag> commandFlag = context.flag(name);
+            final Result<CommandFlag> commandFlag = context.flag(name);
             if (commandFlag.absent()) throw new ParsingException(this.resources.unknownFlag(name));
 
             final CommandFlag contextFlag = commandFlag.get();
@@ -134,7 +136,7 @@ public class CommandParserImpl implements CommandParser {
 
                     final String token = String.join(" ", tokens.subList(i, end)).trim();
 
-                    final Exceptional<?> value = ((CommandElement<?>) contextFlag).parse(source, token);
+                    final Result<?> value = ((CommandElement<?>) contextFlag).parse(source, token);
                     flags.addAll(this.parameter(value, token, "flag", name, contextFlag, source));
                     command = command.replace(flag, "");
                 }
@@ -147,7 +149,7 @@ public class CommandParserImpl implements CommandParser {
         return command.trim();
     }
 
-    private Collection<CommandParameter<?>> parameter(final Exceptional<?> value, final String token, final String elementType, final String elementName, final CommandPartial partial, final CommandSource source) throws ParsingException {
+    private Collection<CommandParameter<?>> parameter(final Result<?> value, final String token, final String elementType, final String elementName, final CommandPartial partial, final CommandSource source) throws ParsingException {
         if (value.absent()) {
             final Message resource = this.resources.couldNotParse(elementType, elementName);
             throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);

@@ -16,31 +16,28 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.Key;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 @Singleton
-@AutomaticActivation
-public class DemoProcessor implements ComponentPreProcessor<UseDemo> {
+public class DemoProcessor implements ComponentPreProcessor {
 
     @Inject
-    @Getter
     private DemoService demoService;
 
     @Inject
-    @Getter
     private Demo demo;
 
-    @Override
-    public Class<UseDemo> activator() {
-        return UseDemo.class;
+    public DemoService demoService() {
+        return this.demoService;
+    }
+
+    public Demo demo() {
+        return this.demo;
     }
 
     @Override

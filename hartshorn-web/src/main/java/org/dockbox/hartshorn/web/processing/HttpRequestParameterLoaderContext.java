@@ -16,17 +16,14 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.Getter;
-
-@Getter
 public class HttpRequestParameterLoaderContext extends ParameterLoaderContext {
 
     private final HttpServletRequest request;
@@ -36,5 +33,13 @@ public class HttpRequestParameterLoaderContext extends ParameterLoaderContext {
         super(method, type, instance, applicationContext);
         this.request = request;
         this.response = response;
+    }
+
+    public HttpServletRequest request() {
+        return this.request;
+    }
+
+    public HttpServletResponse response() {
+        return this.response;
     }
 }

@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
@@ -32,16 +32,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UseEvents
 public class EventBusTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
@@ -52,7 +49,7 @@ public class EventBusTests {
     }
 
     private EventBus bus() {
-        return this.applicationContext().get(EventBusImpl.class);
+        return this.applicationContext.get(EventBusImpl.class);
     }
 
     @Test
@@ -92,7 +89,7 @@ public class EventBusTests {
     void testGenericWildcardsArePosted() {
         final EventBus bus = this.bus();
         // Ensure the values have not been affected by previous tests
-        GenericEventListener.objects().clear();
+        GenericEventListener.objects.clear();
         bus.subscribe(Key.of(GenericEventListener.class));
         final Event stringEvent = new GenericEvent<>("String") {
         };
@@ -100,7 +97,7 @@ public class EventBusTests {
         };
         bus.post(stringEvent);
         bus.post(integerEvent);
-        final List<Object> objects = GenericEventListener.objects();
+        final List<Object> objects = List.copyOf(GenericEventListener.objects);
         Assertions.assertEquals(2, objects.size());
         Assertions.assertEquals("String", objects.get(0));
         Assertions.assertEquals(1, objects.get(1));

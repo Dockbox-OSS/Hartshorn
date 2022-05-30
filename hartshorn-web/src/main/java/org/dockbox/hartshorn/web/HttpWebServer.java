@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.net.URI;
 
-import javax.inject.Singleton;
-import javax.servlet.Servlet;
+import jakarta.inject.Singleton;
+import jakarta.servlet.Servlet;
 
 @Singleton
 public interface HttpWebServer {
@@ -47,4 +47,6 @@ public interface HttpWebServer {
     HttpWebServer staticContent(URI location);
 
     void stop() throws ApplicationException;
+
+    int port();
 }

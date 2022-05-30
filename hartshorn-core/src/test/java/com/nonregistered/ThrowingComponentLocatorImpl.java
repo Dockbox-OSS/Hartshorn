@@ -16,10 +16,10 @@
 
 package com.nonregistered;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 

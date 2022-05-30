@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.HttpWebServer;
@@ -25,20 +25,21 @@ import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.ServletFactory;
 import org.dockbox.hartshorn.web.ServletHandler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import lombok.Getter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class WebServletImpl implements WebServlet {
 
-    @Getter
     private final ServletHandler handler;
 
     @Bound
     public WebServletImpl(final HttpWebServer starter, final RequestHandlerContext context) {
         this.handler = context.applicationContext().get(ServletFactory.class)
                 .servletHandler(starter, context.httpRequest().method(), context.methodContext());
+    }
+
+    public ServletHandler handler() {
+        return this.handler;
     }
 
     @Override

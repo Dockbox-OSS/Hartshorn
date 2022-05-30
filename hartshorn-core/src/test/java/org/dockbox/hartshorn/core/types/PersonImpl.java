@@ -16,16 +16,27 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 
 @ComponentBinding(Person.class)
-@AllArgsConstructor(onConstructor_ = @Bound)
-@Getter
 public class PersonImpl implements Person{
     private final String name;
     private final int age;
+
+    @Bound
+    public PersonImpl(final String name, final int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    @Override
+    public int age() {
+        return this.age;
+    }
 }

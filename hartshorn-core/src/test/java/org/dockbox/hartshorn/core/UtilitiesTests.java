@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.tuple.Tuple;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.Tuple;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -109,7 +111,7 @@ public class UtilitiesTests {
 
     @Test
     void testIsEmptyStringTrueIfNull() {
-        Assertions.assertTrue(StringUtilities.empty((String) null));
+        Assertions.assertTrue(StringUtilities.empty(null));
     }
 
     @Test
@@ -135,7 +137,7 @@ public class UtilitiesTests {
     @ParameterizedTest
     @MethodSource("durations")
     void testDurationOf(final String in, final long expected) {
-        final Exceptional<Duration> duration = StringUtilities.durationOf(in);
+        final Result<Duration> duration = StringUtilities.durationOf(in);
         Assertions.assertTrue(duration.present());
         Assertions.assertEquals(expected, duration.get().getSeconds());
     }

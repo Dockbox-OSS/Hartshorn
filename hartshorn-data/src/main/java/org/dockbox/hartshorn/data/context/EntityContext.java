@@ -16,15 +16,20 @@
 
 package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Collection;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
 public class EntityContext extends DefaultContext {
-    @Getter private final Collection<TypeContext<?>> entities;
+
+    private final Collection<TypeContext<?>> entities;
+
+    public EntityContext(final Collection<TypeContext<?>> entities) {
+        this.entities = entities;
+    }
+
+    public Collection<TypeContext<?>> entities() {
+        return this.entities;
+    }
 }

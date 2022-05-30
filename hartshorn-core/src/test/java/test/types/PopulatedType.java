@@ -16,14 +16,16 @@
 
 package test.types;
 
-import javax.inject.Inject;
+import org.dockbox.hartshorn.component.Component;
 
-import lombok.Getter;
+import jakarta.inject.Inject;
 
-@Getter
+@Component
 public class PopulatedType {
-
     @Inject
-    SampleInterface sampleInterface;
+    private SampleInterface sampleInterface;
 
+    public SampleInterface sampleInterface() {
+        return this.sampleInterface;
+    }
 }

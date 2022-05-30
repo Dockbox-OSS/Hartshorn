@@ -16,19 +16,22 @@
 
 package org.dockbox.hartshorn.web.annotations;
 
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
+import org.dockbox.hartshorn.web.RestControllerPreProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ServiceActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UseEvents
 @UseConfigurations
+@ServiceActivator(processors = {
+        RestControllerPreProcessor.class
+})
 public @interface UseHttpServer {
 }

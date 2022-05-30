@@ -16,17 +16,21 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SqlServerRemote extends JdbcRemote {
 
     public static final SqlServerRemote INSTANCE = new SqlServerRemote();
 
+    private SqlServerRemote() {
+    }
+
     @Override
     protected boolean includeDatabase() {
         return false;
+    }
+
+    @Override
+    protected String connectionString(final JdbcRemoteConfiguration server) {
+        return super.connectionString(server) + ";encrypt=true;trustServerCertificate=true;";
     }
 
     @Override

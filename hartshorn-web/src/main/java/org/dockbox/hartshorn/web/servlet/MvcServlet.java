@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
@@ -32,10 +32,10 @@ import org.dockbox.hartshorn.web.processing.MvcParameterLoaderContext;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class MvcServlet implements WebServlet {
 
@@ -64,7 +64,7 @@ public class MvcServlet implements WebServlet {
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 
-        final Exceptional<ViewTemplate> result = this.methodContext.invoke(this.applicationContext, arguments);
+        final Result<ViewTemplate> result = this.methodContext.invoke(this.applicationContext, arguments);
 
         if (result.present()) {
             final ViewTemplate template = result.get();

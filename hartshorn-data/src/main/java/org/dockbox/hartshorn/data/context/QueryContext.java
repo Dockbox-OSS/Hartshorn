@@ -16,20 +16,16 @@
 
 package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.annotations.Query;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class QueryContext {
 
     private ParameterLoader<JpaParameterLoaderContext> parameterLoader;
@@ -39,9 +35,34 @@ public class QueryContext {
     private final MethodContext<?, ?> method;
     private final TypeContext<?> entityType;
 
-    @Getter private final ApplicationContext applicationContext;
-    @Getter private final JpaRepository<?, ?> repository;
-    @Getter private final boolean modifiesEntity;
+    private final ApplicationContext applicationContext;
+    private final JpaRepository<?, ?> repository;
+    private final boolean modifiesEntity;
+
+    public QueryContext(
+            final Query annotation, final Object[] args, final MethodContext<?, ?> method,
+            final TypeContext<?> entityType, final ApplicationContext applicationContext,
+            final JpaRepository<?, ?> repository, final boolean modifiesEntity) {
+        this.annotation = annotation;
+        this.args = args;
+        this.method = method;
+        this.entityType = entityType;
+        this.applicationContext = applicationContext;
+        this.repository = repository;
+        this.modifiesEntity = modifiesEntity;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    public JpaRepository<?, ?> repository() {
+        return this.repository;
+    }
+
+    public boolean modifiesEntity() {
+        return this.modifiesEntity;
+    }
 
     public boolean automaticClear() {
         return this.annotation.automaticClear();
@@ -51,14 +72,14 @@ public class QueryContext {
         return this.annotation.automaticFlush();
     }
 
-    public javax.persistence.Query query(final EntityManager entityManager) {
-        final javax.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
+    public jakarta.persistence.Query query(final EntityManager entityManager) {
+        final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
         final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
         return persistenceQuery;
     }
 
-    protected javax.persistence.Query persistenceQuery(final EntityManager entityManager, final Query query) throws IllegalArgumentException {
+    protected jakarta.persistence.Query persistenceQuery(final EntityManager entityManager, final Query query) throws IllegalArgumentException {
         return switch (query.type()) {
             case JPQL -> {
                 if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createQuery(query.value());

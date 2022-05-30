@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.events.handle;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
 
@@ -31,8 +31,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import lombok.Getter;
 
 /**
  * Wrapper type for future invocation of a {@link Method} listening for {@link Event} posting. This
@@ -54,14 +52,15 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         throw new AssertionError(); // ensures the comparator will never return 0 if the two wrapper
         // aren't equal
     };
-    @Getter private final ParameterLoader<EventParameterLoaderContext> parameterLoader;
-    @Getter private final TypeContext<? extends Event> eventType;
-    @Getter private final List<TypeContext<?>> eventParameters;
-    @Getter private final Key<T> listenerType;
-    @Getter private final ApplicationContext context;
-    @Getter private final MethodContext<?, T> method;
-    @Getter private final int priority;
-    @Getter private T listener;
+
+    private final ParameterLoader<EventParameterLoaderContext> parameterLoader;
+    private final TypeContext<? extends Event> eventType;
+    private final List<TypeContext<?>> eventParameters;
+    private final Key<T> listenerType;
+    private final ApplicationContext context;
+    private final MethodContext<?, T> method;
+    private final int priority;
+    private T listener;
 
     private EventWrapperImpl(
             final ParameterLoader<EventParameterLoaderContext> parameterLoader,
@@ -79,6 +78,38 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         this.method = method;
         this.priority = priority;
         this.eventParameters = method.parameters().get(0).typeParameters();
+    }
+
+    public ParameterLoader<EventParameterLoaderContext> parameterLoader() {
+        return this.parameterLoader;
+    }
+
+    public TypeContext<? extends Event> eventType() {
+        return this.eventType;
+    }
+
+    public List<TypeContext<?>> eventParameters() {
+        return this.eventParameters;
+    }
+
+    public Key<T> listenerType() {
+        return this.listenerType;
+    }
+
+    public ApplicationContext context() {
+        return this.context;
+    }
+
+    public MethodContext<?, T> method() {
+        return this.method;
+    }
+
+    public int priority() {
+        return this.priority;
+    }
+
+    public T listener() {
+        return this.listener;
     }
 
     /**
@@ -111,7 +142,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
             final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listenerType.type(), this.listener, this.context, event);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
-            final Exceptional<?> result = this.method.invoke(this.listener, arguments);
+            final Result<?> result = this.method.invoke(this.listener, arguments);
             if (result.caught()) {
                 this.context().handle("Could not finish event runner for " + eventName, result.error());
             }

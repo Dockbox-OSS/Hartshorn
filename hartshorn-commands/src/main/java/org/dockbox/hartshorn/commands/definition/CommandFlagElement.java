@@ -17,12 +17,10 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
-
-import lombok.AllArgsConstructor;
 
 /**
  * Simple implementation of a value-based {@link CommandFlag}. Using an underlying
@@ -30,10 +28,13 @@ import lombok.AllArgsConstructor;
  *
  * @param <T> The type of the expected value
  */
-@AllArgsConstructor
 public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
     private final CommandElement<T> element;
+
+    public CommandFlagElement(final CommandElement<T> element) {
+        this.element = element;
+    }
 
     @Override
     public boolean optional() {
@@ -41,7 +42,7 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     }
 
     @Override
-    public Exceptional<T> parse(final CommandSource source, final String argument) {
+    public Result<T> parse(final CommandSource source, final String argument) {
         return this.element.parse(source, argument);
     }
 

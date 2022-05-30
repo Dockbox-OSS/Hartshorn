@@ -16,5 +16,8 @@
 
 package test.types;
 
+import org.dockbox.hartshorn.component.Component;
+
+@Component
 public class SampleFieldImplementation implements SampleField {
 }

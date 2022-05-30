@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.web;
 
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public enum HttpMethod {
     GET,

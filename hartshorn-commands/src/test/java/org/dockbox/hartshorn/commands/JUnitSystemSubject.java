@@ -16,8 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
-import org.dockbox.hartshorn.core.exceptions.NotImplementedException;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import org.dockbox.hartshorn.i18n.Message;
 
 @ComponentBinding(value = SystemSubject.class, priority = 0)
@@ -26,6 +25,6 @@ public class JUnitSystemSubject extends SystemSubject {
     @Override
     public void send(final Message text) {
         // TODO: Test implementation, mocking client?
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

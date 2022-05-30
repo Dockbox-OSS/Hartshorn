@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 public class ServletResponseParameterRule implements ParameterLoaderRule<HttpRequestParameterLoaderContext> {
@@ -29,7 +29,7 @@ public class ServletResponseParameterRule implements ParameterLoaderRule<HttpReq
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        return Exceptional.of((T) context.response());
+    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        return Result.of((T) context.response());
     }
 }

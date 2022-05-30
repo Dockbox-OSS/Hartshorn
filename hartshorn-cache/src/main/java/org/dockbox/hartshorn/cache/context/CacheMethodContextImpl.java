@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.cache.context;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.dockbox.hartshorn.cache.Expiration;
 
 /**
@@ -25,9 +23,21 @@ import org.dockbox.hartshorn.cache.Expiration;
  *
  * @see CacheMethodContext
  */
-@Getter
-@AllArgsConstructor
 public class CacheMethodContextImpl implements CacheMethodContext {
+
     private final String name;
     private final Expiration expiration;
+
+    public CacheMethodContextImpl(final String name, final Expiration expiration) {
+        this.name = name;
+        this.expiration = expiration;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public Expiration expiration() {
+        return this.expiration;
+    }
 }

@@ -51,39 +51,45 @@ Before creating a REST controller, we'll first need a domain object representing
 }
 ```
 To model the greeting, you can use a Plain Old Java Object (POJO), no annotations required.
+
 ```java
 public class Greeting {
 
     private final String content;
 
-    public Greeting(String content) {
+    public Greeting(final String content) {
         this.content = content;
     }
 
     public String getContent() {
-        return content;
+        return this.content;
     }
 }
 ```
 Next we'll create a REST controller capable of handling HTTP requests. In Hartshorn, REST controllers are a component stereotype, meaning they are automatically managed by the application. This allows you to simply mark the controller with `@RestController`, without needing to register the component manually.
+
 ```java
+
 @RestController
 public class GreetingController {
 
     @HttpGet("/greeting")
-    public Greeting greeting(@RequestParam(value = "name", or = "World") String name) {
+    public Greeting greeting(@RequestParam(value = "name", or = "World") final String name) {
         return new Greeting("Hello, %s!".formatted(name)); // If no value is provided for 'name', the default value 'World' will be used
 
     }
 }
 ```
 Finally, we start the application from our main application class. Here we can use the `HartshornApplication` starter, which will automatically perform all steps required to bootstrap your application and start the RESTful web service.
+
 ```java
-@Activator // Indicates this class is allowed to be used as an application starter. You can also define additional metadata here
+
+@Activator
+// Indicates this class is allowed to be used as an application starter. You can also define additional metadata here
 @UseHttpServer // Indicates we should start a web server and process controllers
 public class GreetingApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         HartshornApplication.create(GreetingApplication.class, args);
     }
 }
@@ -104,15 +110,15 @@ Additionally, if you go to http://localhost:8080/greeting?name=YourName, the res
 <br>  
   
 ## Building Hartshorn
-If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to set up your Gradle environment.  All platforms require a Java installation, with JDK 16 or more recent version.
+If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to set up your Gradle environment.  All platforms require a Java installation, with JDK 17 or more recent version.
 
 Set the JAVA\_HOME environment variable. For example:
 
-| Platform | Command |
-| :---: | --- |
-|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-16-jdk``            |
-|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 16` ``  |
-|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-16.0.1"`` |
+| Platform | Command                                              |
+| :---: |------------------------------------------------------|
+|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-17-jdk``     |
+|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 17` `` |
+|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-17.0.3"`` |
 
 Hartshorn uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
 Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  

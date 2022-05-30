@@ -18,14 +18,17 @@ package org.dockbox.hartshorn.data.registry;
 
 import java.util.Objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class RegistryIdentifierImpl implements RegistryIdentifier {
 
     private final String key;
+
+    public RegistryIdentifierImpl(final String key) {
+        this.key = key;
+    }
+
+    public String key() {
+        return this.key;
+    }
 
     @Override
     public int hashCode() {
@@ -34,6 +37,7 @@ public class RegistryIdentifierImpl implements RegistryIdentifier {
 
     // Intended to support RegistryIdentifier implementations
     @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(final Object o) {
         return RegistryIdentifier.super.same(o);
     }

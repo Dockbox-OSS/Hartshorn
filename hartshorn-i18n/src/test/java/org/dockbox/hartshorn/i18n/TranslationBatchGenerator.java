@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.CollectionUtilities;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.application.StandardApplicationFactory;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
-import org.dockbox.hartshorn.testsuite.HartshornExtension;
+import org.dockbox.hartshorn.testsuite.HartshornLifecycleExtension;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -82,7 +82,9 @@ public final class TranslationBatchGenerator {
     private TranslationBatchGenerator() {}
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = HartshornExtension.createContext(new HartshornApplicationFactory().loadDefaults(), TranslationBatchGenerator.class).orNull();
+        final ApplicationContext context = HartshornLifecycleExtension
+                .createTestContext(new StandardApplicationFactory().loadDefaults(), TranslationBatchGenerator.class)
+                .orNull();
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(LocalDateTime.now());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
@@ -176,7 +178,7 @@ public final class TranslationBatchGenerator {
 
     public static Map<String, String> collect(final ApplicationContext context) {
         final Map<String, String> batch = new HashMap<>();
-        for (final ComponentContainer container : context.locator().containers()) {
+        for (final ComponentContainer container : context.get(ComponentLocator.class).containers()) {
             final TypeContext<?> type = container.type();
             final List<? extends MethodContext<?, ?>> methods = type.methods(InjectTranslation.class);
             for (final MethodContext<?, ?> method : methods) {
@@ -188,7 +190,6 @@ public final class TranslationBatchGenerator {
         return batch;
     }
 
-    @AutomaticActivation(false)
     private static class KeyGen extends TranslationInjectPostProcessor {
 
         private static final KeyGen INSTANCE = new KeyGen();

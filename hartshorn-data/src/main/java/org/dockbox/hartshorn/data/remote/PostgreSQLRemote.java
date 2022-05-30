@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PostgreSQLRemote extends JdbcRemote {
 
     public static final PostgreSQLRemote INSTANCE = new PostgreSQLRemote();
+
+    private PostgreSQLRemote() {
+    }
 
     @Override
     protected String type() {

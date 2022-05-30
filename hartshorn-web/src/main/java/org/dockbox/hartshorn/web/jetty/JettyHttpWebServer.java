@@ -16,15 +16,17 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -37,21 +39,17 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import javax.inject.Inject;
-import javax.servlet.Servlet;
+import jakarta.inject.Inject;
+import jakarta.servlet.Servlet;
 
-import lombok.Getter;
-import lombok.Setter;
-
+@Component
 public class JettyHttpWebServer extends DefaultHttpWebServer {
 
-    @Inject @Getter
-    private ApplicationContext context;
-    @Getter
     private final ServletContextHandler contextHandler;
-    @Getter
     private final HandlerWrapper servletHandler;
-    @Getter @Setter
+
+    @Inject
+    private ApplicationContext context;
     private JsonInclusionRule skipBehavior = JsonInclusionRule.SKIP_NONE;
     private JettyServer server;
 
@@ -69,6 +67,27 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
             this.staticContent(staticContent);
         }
         this.listStaticDirectories(true);
+    }
+
+    public ApplicationContext context() {
+        return this.context;
+    }
+
+    public ServletContextHandler contextHandler() {
+        return this.contextHandler;
+    }
+
+    public HandlerWrapper servletHandler() {
+        return this.servletHandler;
+    }
+
+    public JsonInclusionRule skipBehavior() {
+        return this.skipBehavior;
+    }
+
+    public JettyHttpWebServer skipBehavior(final JsonInclusionRule skipBehavior) {
+        this.skipBehavior = skipBehavior;
+        return this;
     }
 
     @Override
@@ -123,6 +142,22 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
                 throw new ApplicationException(e);
             }
         }
+    }
+
+    @Override
+    public int port() {
+        if (this.server.getConnectors().length != 1) {
+            return -1;
+        }
+        final Connector connector = this.server.getConnectors()[0];
+        if (connector instanceof NetworkConnector networkConnector) {
+            int port = networkConnector.getPort();
+            if (port == 0) {
+                port = networkConnector.getLocalPort();
+            }
+            return port;
+        }
+        return 0;
     }
 
     public HttpWebServer staticContent(final URL location) {

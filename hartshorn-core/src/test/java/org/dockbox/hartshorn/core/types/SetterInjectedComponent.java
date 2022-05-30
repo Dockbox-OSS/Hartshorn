@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.inject.Context;
-import org.dockbox.hartshorn.core.annotations.inject.Required;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.inject.Required;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import lombok.Getter;
-
-@Getter
+@Component
 public class SetterInjectedComponent {
 
     private ComponentType component;
@@ -37,5 +36,13 @@ public class SetterInjectedComponent {
     @Inject
     public void setContext(@Context("setter") final SampleContext context) {
         this.context = context;
+    }
+
+    public ComponentType component() {
+        return this.component;
+    }
+
+    public SampleContext context() {
+        return this.context;
     }
 }

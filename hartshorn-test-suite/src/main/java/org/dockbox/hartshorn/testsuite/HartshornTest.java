@@ -16,35 +16,36 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.annotations.Extends;
-import org.dockbox.hartshorn.core.annotations.inject.Populate;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.util.reflect.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Annotation for test classes that should be run with the Hartshorn test suite. This will automatically
- * provide the test class with a {@link HartshornExtension} that will provide an active {@link ApplicationContext}
- * for the test class. The provided {@link ApplicationContext} is refreshed for every test case, to avoid
- * leaking context data between test cases.
+ * provide the test class with a {@link HartshornLifecycleExtension} that will provide an active
+ * {@link ApplicationContext} for the test class. The provided {@link ApplicationContext} is refreshed
+ * according to the lifecycle of the test class.
  *
- * <p>Additionally, the {@link HartshornExtension} will inject fields annotated with {@link Inject} within
- * the test class. Like the active {@link ApplicationContext}, this will be refreshed for every test case.
+ * <p>Additionally, the {@link HartshornLifecycleExtension} will inject fields annotated with {@link Inject}
+ * within the test class. Like the active {@link ApplicationContext}, this will be refreshed according to
+ * the lifecycle of the test class.
  *
- * @see HartshornExtension
+ * @see HartshornLifecycleExtension
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(HartshornExtension.class)
+@ExtendWith(HartshornLifecycleExtension.class)
 @Extends(Populate.class)
 @Populate(executables = false)
 public @interface HartshornTest {
-    Class<? extends Annotation>[] activators() default {};
+    Class<? extends ComponentProcessor>[] processors() default  {};
 }

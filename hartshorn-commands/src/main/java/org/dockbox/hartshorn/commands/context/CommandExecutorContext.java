@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.core.context.CarrierContext;
-import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.context.CarrierContext;
+import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;

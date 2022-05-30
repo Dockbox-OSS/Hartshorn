@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.core.boot.activators.AbstractActivator;
 import org.dockbox.hartshorn.core.boot.activators.InterfaceActivator;
 import org.dockbox.hartshorn.core.boot.activators.NonDecoratedActivator;
@@ -27,21 +28,26 @@ public class HartshornApplicationTests {
 
     @Test
     void testCreationFailsWithAbsentDecorator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(NonDecoratedActivator.class, new String[0]));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(NonDecoratedActivator.class));
     }
 
     @Test
     void testCreationFailsWithAbstractActivator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(AbstractActivator.class, new String[0]));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(AbstractActivator.class));
     }
 
     @Test
     void testCreationFailsWithInterfaceActivator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(InterfaceActivator.class, new String[0]));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(InterfaceActivator.class));
     }
 
     @Test
     void testCreationSucceedsWithValidActivator() {
-        Assertions.assertDoesNotThrow(() -> HartshornApplication.create(ValidActivator.class, new String[0]));
+        Assertions.assertDoesNotThrow(() -> HartshornApplication.create(ValidActivator.class));
+    }
+
+    @Test
+    void testCreationSucceedsWithValidDeducedActivator() {
+        Assertions.assertDoesNotThrow(() -> ValidActivator.main());
     }
 }

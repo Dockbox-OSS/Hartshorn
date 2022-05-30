@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.data.registry.Registry;
@@ -31,25 +31,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import javax.inject.Inject;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UsePersistence
 public class DataStructuresSerializersTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
-    public void testThatRegistryCanBeSerialised() {
+    public void testThatRegistryCanBeSerialized() {
         Assertions.assertDoesNotThrow(() -> {
             final File copy = File.createTempFile("tmp", null);
             final Path tempFile = copy.toPath();
 
-            final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
+            final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
             objectMapper.write(this.buildTestRegistry());
         });
     }
@@ -77,13 +74,13 @@ public class DataStructuresSerializersTests {
         final File copy = File.createTempFile("tmp", null);
         final Path tempFile = copy.toPath();
 
-        final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
+        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
 
-        final Exceptional<String> serializedRegistry = objectMapper.write(this.buildTestRegistry());
+        final Result<String> serializedRegistry = objectMapper.write(this.buildTestRegistry());
         Assertions.assertTrue(serializedRegistry.present());
 
         final String serialized = serializedRegistry.get();
-        final Exceptional<Registry<Registry<String>>> registry = objectMapper.read(serializedRegistry.get(), new GenericType<>() {});
+        final Result<Registry<Registry<String>>> registry = objectMapper.read(serializedRegistry.get(), new GenericType<>() {});
 
         Assertions.assertTrue(registry.present());
 

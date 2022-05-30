@@ -17,20 +17,20 @@
 package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.annotations.Base;
-import org.dockbox.hartshorn.core.boot.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.core.bridge.BridgeImpl;
-import org.dockbox.hartshorn.core.context.PrefixContext;
-import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
-import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
-import org.dockbox.hartshorn.core.context.element.ConstructorContext;
-import org.dockbox.hartshorn.core.context.element.FieldContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.MethodModifier;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.context.element.WildcardTypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.application.scan.PrefixContext;
+import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
+import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
+import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.reflect.FieldContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.MethodModifier;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.reflect.WildcardTypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.core.types.AnnotatedImpl;
 import org.dockbox.hartshorn.core.types.ParentTestType;
 import org.dockbox.hartshorn.core.types.ReflectTestType;
@@ -137,7 +137,7 @@ public class ReflectTests {
     void testFieldValueReturnsValue(final String field) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        final Exceptional<?> value = type.field(field).get().get(instance);
+        final Result<?> value = type.field(field).get().get(instance);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
@@ -147,7 +147,7 @@ public class ReflectTests {
     void testRunMethodReturnsValue(final String method) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        final Exceptional<?> value = type.method(method, List.of(TypeContext.of(String.class))).get().invoke(instance, "value");
+        final Result<?> value = type.method(method, List.of(TypeContext.of(String.class))).get().invoke(instance, "value");
         Assertions.assertTrue(value.present());
         Assertions.assertEquals("VALUE", value.get());
     }
@@ -210,7 +210,7 @@ public class ReflectTests {
 
     @Test
     void testHasAnnotationOnMethod() {
-        final Exceptional<MethodContext<?, ReflectTestType>> method = TypeContext.of(ReflectTestType.class).method("publicAnnotatedMethod");
+        final Result<MethodContext<?, ReflectTestType>> method = TypeContext.of(ReflectTestType.class).method("publicAnnotatedMethod");
         Assertions.assertTrue(method.present());
         Assertions.assertTrue(method.get().annotation(Demo.class).present());
     }
@@ -389,7 +389,7 @@ public class ReflectTests {
 
         AnnotatedElementModifier.of(string).add(demo);
 
-        final Exceptional<Demo> annotation = string.annotation(Demo.class);
+        final Result<Demo> annotation = string.annotation(Demo.class);
         Assertions.assertTrue(annotation.present());
         Assertions.assertSame(demo, annotation.get());
     }
@@ -431,33 +431,33 @@ public class ReflectTests {
 
     @Test
     void testMethodInvokerCanBeChanged() {
-        final Exceptional<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
+        final Result<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
                 .method("helloWorld")
                 .map(method -> (MethodContext<String, ReflectTests>) method);
         Assertions.assertTrue(helloWorld.present());
         final MethodContext<String, ReflectTests> method = helloWorld.get();
 
-        final Exceptional<?> unmodifiedResult = method.invoke(this);
+        final Result<?> unmodifiedResult = method.invoke(this);
         Assertions.assertTrue(unmodifiedResult.present());
         Assertions.assertEquals("Hello World", unmodifiedResult.get());
 
         final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
-        modifier.invoker((methodContext, instance, args) -> Exceptional.of("Goodbye World"));
+        modifier.invoker((methodContext, instance, args) -> Result.of("Goodbye World"));
 
-        final Exceptional<String> modifiedResult = method.invoke(this);
+        final Result<String> modifiedResult = method.invoke(this);
         Assertions.assertTrue(modifiedResult.present());
         Assertions.assertEquals("Goodbye World", modifiedResult.get());
     }
 
     @Test
     void testMethodAccessorCanBeChanged() {
-        final Exceptional<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
+        final Result<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
                 .method("privateHelloWorld")
                 .map(method -> (MethodContext<String, ReflectTests>) method);
         Assertions.assertTrue(helloWorld.present());
         final MethodContext<String, ReflectTests> method = helloWorld.get();
 
-        final Exceptional<String> unmodifiedResult = method.invoke(this);
+        final Result<String> unmodifiedResult = method.invoke(this);
         Assertions.assertTrue(unmodifiedResult.absent());
         Assertions.assertTrue(unmodifiedResult.caught());
         final Throwable error = unmodifiedResult.error();
@@ -466,7 +466,7 @@ public class ReflectTests {
         final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
         modifier.access(true);
 
-        final Exceptional<String> modifiedResult = method.invoke(this);
+        final Result<String> modifiedResult = method.invoke(this);
         Assertions.assertTrue(modifiedResult.present());
         Assertions.assertEquals("Hello World", modifiedResult.get());
     }
@@ -482,7 +482,7 @@ public class ReflectTests {
     @Test
     void testRedefinedAnnotationsTakePriority() {
         final TypeContext<AnnotatedImpl> typeContext = TypeContext.of(AnnotatedImpl.class);
-        final Exceptional<Base> annotation = typeContext.annotation(Base.class);
+        final Result<Base> annotation = typeContext.annotation(Base.class);
         Assertions.assertTrue(annotation.present());
         Assertions.assertEquals("impl", annotation.get().value());
     }

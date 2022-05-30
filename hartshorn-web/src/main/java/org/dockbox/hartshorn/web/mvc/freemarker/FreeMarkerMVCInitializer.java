@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.web.mvc.freemarker;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.mvc.ClassPathViewTemplate;
 import org.dockbox.hartshorn.web.mvc.FileViewTemplate;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
@@ -35,7 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

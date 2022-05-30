@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.core.parameterloaders.RuleBasedParameterLoaderImpl;
 import org.dockbox.hartshorn.core.parameterloaders.StringParameterRule;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

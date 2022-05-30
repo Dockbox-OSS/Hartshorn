@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.events.parents;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.Context;
-import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.events.EventBus;
 
-public abstract class ContextCarrierEvent extends DefaultContext implements Event {
+public abstract class ContextCarrierEvent extends DefaultApplicationAwareContext implements Event {
 
     private ApplicationContext context;
 

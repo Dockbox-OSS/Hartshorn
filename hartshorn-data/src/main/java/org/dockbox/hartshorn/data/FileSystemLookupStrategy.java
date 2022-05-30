@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.net.URI;
@@ -25,8 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import lombok.Getter;
 
 /**
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
@@ -36,8 +34,10 @@ import lombok.Getter;
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
-    @Getter
-    private final String name = "fs";
+    @Override
+    public String name() {
+        return "fs";
+    }
 
     @Override
     public Set<URI> lookup(final ApplicationContext context, final String path) {

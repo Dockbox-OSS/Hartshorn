@@ -21,8 +21,6 @@ import org.dockbox.hartshorn.cache.CacheManager;
 
 import java.util.function.Supplier;
 
-import lombok.Getter;
-
 /**
  * Default implementation of {@link CacheContext}.
  *
@@ -30,14 +28,22 @@ import lombok.Getter;
  */
 public class CacheContextImpl implements CacheContext {
 
-    @Getter private final CacheManager manager;
-    @Getter private final String name;
+    private final CacheManager manager;
+    private final String name;
     private final Supplier<Cache<?>> supplier;
 
     public CacheContextImpl(final CacheManager manager, final Supplier<Cache<?>> supplier, final String name) {
         this.manager = manager;
         this.name = name;
         this.supplier = supplier;
+    }
+
+    public CacheManager manager() {
+        return this.manager;
+    }
+
+    public String name() {
+        return this.name;
     }
 
     @Override

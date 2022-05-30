@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Default implementation of {@link Cache}.
@@ -46,8 +46,8 @@ public class CacheImpl<T> implements Cache<T>, Enableable {
     }
 
     @Override
-    public Exceptional<T> get() {
-        return Exceptional.of(this.content);
+    public Result<T> get() {
+        return Result.of(this.content);
     }
 
     @Override

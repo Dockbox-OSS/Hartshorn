@@ -17,28 +17,35 @@
 package org.dockbox.hartshorn.data.context;
 
 import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.annotations.Deserialise;
+import org.dockbox.hartshorn.data.annotations.Deserialize;
 import org.dockbox.hartshorn.data.annotations.File;
-import org.dockbox.hartshorn.data.annotations.Serialise;
+import org.dockbox.hartshorn.data.annotations.Serialize;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class PersistenceAnnotationContext {
 
-    FileFormats filetype;
-    File file;
+    private final FileFormats filetype;
+    private final File file;
 
-    public PersistenceAnnotationContext(final Serialise serialise) {
-        this.file = serialise.path();
-        this.filetype = serialise.filetype();
+    public PersistenceAnnotationContext(final FileFormats filetype, final File file) {
+        this.filetype = filetype;
+        this.file = file;
     }
 
-    public PersistenceAnnotationContext(final Deserialise deserialise) {
-        this.file = deserialise.path();
-        this.filetype = deserialise.filetype();
+    public PersistenceAnnotationContext(final Serialize serialize) {
+        this.file = serialize.path();
+        this.filetype = serialize.filetype();
     }
 
+    public PersistenceAnnotationContext(final Deserialize deserialize) {
+        this.file = deserialize.path();
+        this.filetype = deserialize.filetype();
+    }
+
+    public FileFormats filetype() {
+        return this.filetype;
+    }
+
+    public File file() {
+        return this.file;
+    }
 }

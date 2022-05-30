@@ -16,25 +16,43 @@
 
 package org.dockbox.hartshorn.data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 @Entity(name = "users")
-@NoArgsConstructor
-@Getter
 public class User {
 
     @Id
     @GeneratedValue
     private long id;
-    @Setter private String name;
+    private String name;
+
+    @Transient // Exclude from JPA, but not from object mapping
+    private Address address;
+
+    public User() {
+    }
 
     public User(final String name) {
         this.name = name;
+    }
+
+    public long id() {
+        return this.id;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public Address address() {
+        return this.address;
+    }
+
+    public User name(final String name) {
+        this.name = name;
+        return this;
     }
 }

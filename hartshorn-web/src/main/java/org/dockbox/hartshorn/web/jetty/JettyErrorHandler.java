@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.RequestError;
 import org.dockbox.hartshorn.web.RequestErrorImpl;
 import org.dockbox.hartshorn.web.servlet.ErrorServlet;
@@ -41,10 +41,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JettyErrorHandler extends ErrorHandler {
@@ -54,7 +54,7 @@ public class JettyErrorHandler extends ErrorHandler {
     @Inject
     private ErrorServlet errorServlet;
 
-    @Value(value = "hartshorn.web.headers.hartshorn")
+    @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
 
     @Override

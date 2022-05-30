@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -26,15 +25,15 @@ import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.Message;
@@ -48,32 +47,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 /**
  * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
  */
-@Getter(AccessLevel.PROTECTED)
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
 public class MethodCommandExecutorContext<T> extends DefaultCarrierContext implements CommandExecutorContext {
 
-    @Getter private final ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
     private final MethodContext<?, T> method;
     private final Key<T> key;
     private final List<String> parentAliases;
     private final Command command;
-    @Nullable
-    private final Command parent;
     private final boolean isChild;
-
-    @Getter(AccessLevel.NONE)
-    private Map<String, CommandParameterContext> parameters;
     private final ParameterLoader<CommandParameterLoaderContext> parameterLoader;
+
+    private Map<String, CommandParameterContext> parameters;
 
     public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key) {
         super(context);
-        final Exceptional<Command> annotated = method.annotation(Command.class);
+        final Result<Command> annotated = method.annotation(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
@@ -82,25 +74,56 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         this.key = key;
         this.command = annotated.get();
 
-        final Exceptional<Command> annotation = key.type().annotation(Command.class);
+        final Result<Command> annotation = key.type().annotation(Command.class);
+        final Command parent;
         if (annotation.present()) {
-            this.parent = annotation.get();
+            parent = annotation.get();
             this.isChild = true;
         }
         else {
-            this.parent = null;
+            parent = null;
             this.isChild = false;
         }
 
         this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
 
         this.parentAliases = new CopyOnWriteArrayList<>();
-        if (this.parent != null) {
+        if (parent != null) {
             context.log().debug("Parent for executor context of " + method.qualifiedName() + " found, including parent aliases");
-            this.parentAliases.addAll(List.of(this.parent.value()));
+            this.parentAliases.addAll(List.of(parent.value()));
         }
         this.parameters = this.parameters();
         this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    protected MethodContext<?, T> method() {
+        return this.method;
+    }
+
+    protected Key<T> key() {
+        return this.key;
+    }
+
+    protected List<String> parentAliases() {
+        return this.parentAliases;
+    }
+
+    protected Command command() {
+        return this.command;
+    }
+
+    protected boolean child() {
+        return this.isChild;
+    }
+
+
+
+    protected ParameterLoader<CommandParameterLoaderContext> parameterLoader() {
+        return this.parameterLoader;
     }
 
     public Map<String, CommandParameterContext> parameters() {
@@ -207,7 +230,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
     }
 
     private CommandDefinitionContext definition() {
-        final Exceptional<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        final Result<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
         if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
         return definition.get();
     }

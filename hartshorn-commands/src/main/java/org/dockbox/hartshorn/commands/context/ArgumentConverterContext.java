@@ -17,18 +17,16 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
-
-import lombok.Getter;
+import jakarta.inject.Inject;
 
 /**
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.
@@ -36,7 +34,6 @@ import lombok.Getter;
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
-    @Getter
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
     @Inject
@@ -58,10 +55,10 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @param key The key to use during lookup
      *
-     * @return The converter if it exists, or {@link Exceptional#empty()}
+     * @return The converter if it exists, or {@link Result#empty()}
      */
-    public Exceptional<ArgumentConverter<?>> converter(final String key) {
-        return Exceptional.of(this.converterMap.get(key.toLowerCase()));
+    public Result<ArgumentConverter<?>> converter(final String key) {
+        return Result.of(this.converterMap.get(key.toLowerCase()));
     }
 
     /**
@@ -82,10 +79,10 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @param type The type the converter should convert into.
      * @param <T> The type parameter of the type
      *
-     * @return The converter if it exists, or {@link Exceptional#empty()}
+     * @return The converter if it exists, or {@link Result#empty()}
      */
-    public <T> Exceptional<ArgumentConverter<T>> converter(final TypeContext<T> type) {
-        return Exceptional.of(this.converterMap.values().stream()
+    public <T> Result<ArgumentConverter<T>> converter(final TypeContext<T> type) {
+        return Result.of(this.converterMap.values().stream()
                 .filter(converter -> type.childOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());

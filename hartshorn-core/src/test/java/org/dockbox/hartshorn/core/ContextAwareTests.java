@@ -16,30 +16,31 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ComponentLocator;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import lombok.Getter;
 import test.types.SampleContextAwareType;
 
 @HartshornTest
 public class ContextAwareTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
+    @TestComponents(SampleContextAwareType.class)
     void testApplicationContextIsBound() {
-        final ApplicationContext applicationContext = this.applicationContext().get(ApplicationContext.class);
+        final ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);
 
-        final SampleContextAwareType sampleContextAwareType = this.applicationContext().get(SampleContextAwareType.class);
+        final SampleContextAwareType sampleContextAwareType = this.applicationContext.get(SampleContextAwareType.class);
         Assertions.assertNotNull(sampleContextAwareType);
         Assertions.assertNotNull(sampleContextAwareType.context());
 
@@ -48,23 +49,13 @@ public class ContextAwareTests {
 
     @Test
     void testMetaProviderIsBound() {
-        final MetaProvider metaProvider = this.applicationContext().get(MetaProvider.class);
+        final MetaProvider metaProvider = this.applicationContext.get(MetaProvider.class);
         Assertions.assertNotNull(metaProvider);
-
-        final MetaProvider directMetaProvider = this.applicationContext().meta();
-        Assertions.assertNotNull(directMetaProvider);
-
-        Assertions.assertSame(metaProvider, directMetaProvider);
     }
 
     @Test
     void testServiceLocatorIsBound() {
-        final ComponentLocator componentLocator = this.applicationContext().get(ComponentLocator.class);
+        final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
         Assertions.assertNotNull(componentLocator);
-
-        final ComponentLocator directComponentLocator = this.applicationContext().locator();
-        Assertions.assertNotNull(directComponentLocator);
-
-        Assertions.assertSame(componentLocator, directComponentLocator);
     }
 }

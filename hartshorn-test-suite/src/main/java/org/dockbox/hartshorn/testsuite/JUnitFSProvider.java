@@ -16,24 +16,30 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.boot.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import lombok.Getter;
 
 /**
  * A {@link ApplicationFSProvider} that uses a temporary directory for the application's files.
  */
 public class JUnitFSProvider implements ApplicationFSProvider {
 
-    @Getter
     private final Path applicationPath;
 
-    public JUnitFSProvider() throws IOException {
-        this.applicationPath = Files.createTempDirectory("hartshorn");
-        this.applicationPath.toFile().deleteOnExit();
+    @Override
+    public Path applicationPath() {
+        return this.applicationPath;
+    }
+
+    public JUnitFSProvider() {
+        try {
+            this.applicationPath = Files.createTempDirectory("hartshorn");
+            this.applicationPath.toFile().deleteOnExit();
+        } catch (final IOException e) {
+            throw new RuntimeException("Unable to create temporary directory for application files", e);
+        }
     }
 }

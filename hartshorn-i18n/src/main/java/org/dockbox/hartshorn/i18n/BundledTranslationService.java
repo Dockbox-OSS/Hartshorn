@@ -16,25 +16,33 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.util.Result;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import lombok.Getter;
-
+@Component
 public class BundledTranslationService implements TranslationService {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Inject
-    @Getter
     private TranslationBundle bundle;
 
     @Override
-    public Exceptional<Message> get(final String key) {
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    @Override
+    public TranslationBundle bundle() {
+        return this.bundle;
+    }
+
+    @Override
+    public Result<Message> get(final String key) {
         return this.bundle.message(this.clean(key));
     }
 

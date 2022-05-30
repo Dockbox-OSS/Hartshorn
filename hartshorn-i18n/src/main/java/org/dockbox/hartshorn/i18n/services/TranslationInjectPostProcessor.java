@@ -16,25 +16,22 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
-import org.dockbox.hartshorn.core.MetaProvider;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.TypedOwner;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-@AutomaticActivation
-public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation, UseTranslations> {
+public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
@@ -59,15 +56,10 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
         return InjectTranslation.class;
     }
 
-    @Override
-    public Class<UseTranslations> activator() {
-        return UseTranslations.class;
-    }
-
     protected String key(final ApplicationContext context, final TypeContext<?> type, final MethodContext<?, ?> method) {
         String prefix = "";
 
-        final MetaProvider provider = context.meta();
+        final MetaProvider provider = context.get(MetaProvider.class);
         if (provider.isComponent(type)) {
             final TypedOwner lookup = provider.lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';
@@ -79,7 +71,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     }
 
     protected String extract(final MethodContext<?, ?> method, final String prefix) {
-        final Exceptional<InjectTranslation> resource = method.annotation(InjectTranslation.class);
+        final Result<InjectTranslation> resource = method.annotation(InjectTranslation.class);
         if (resource.present()) {
             final String key = resource.get().key();
             if (!"".equals(key)) return key;

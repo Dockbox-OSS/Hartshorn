@@ -16,6 +16,6 @@
 
 package org.dockbox.hartshorn.core.annotations;
 
-@Gett(path = "get")
+@Get(path = "get")
 public class TestClassWithGet {
 }

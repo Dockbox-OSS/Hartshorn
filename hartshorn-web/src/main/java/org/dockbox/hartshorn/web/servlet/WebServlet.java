@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpAction;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface WebServlet {
 
@@ -31,5 +31,5 @@ public interface WebServlet {
     void delete(final HttpServletRequest req, final HttpServletResponse res, HttpAction fallback) throws ApplicationException;
     void options(final HttpServletRequest req, final HttpServletResponse res, HttpAction fallback) throws ApplicationException;
     void trace(final HttpServletRequest req, final HttpServletResponse res, HttpAction fallback) throws ApplicationException;
-    
+
 }

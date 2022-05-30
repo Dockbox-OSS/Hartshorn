@@ -16,22 +16,23 @@
 
 package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.persistence.Query;
-
-import lombok.Getter;
+import jakarta.persistence.Query;
 
 public class JpaParameterLoaderContext extends ParameterLoaderContext {
 
-    @Getter
     private final Query query;
 
     public JpaParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final Query query) {
         super(method, type, instance, applicationContext);
         this.query = query;
+    }
+
+    public Query query() {
+        return this.query;
     }
 }

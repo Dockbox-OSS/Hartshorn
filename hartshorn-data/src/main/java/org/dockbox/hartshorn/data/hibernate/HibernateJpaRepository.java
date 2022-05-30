@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.boot.ExceptionHandler;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.context.EntityContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
@@ -52,14 +53,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
-import lombok.AccessLevel;
-import lombok.Getter;
+import jakarta.inject.Inject;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
 
@@ -67,21 +65,28 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
 
-    @Getter(AccessLevel.PROTECTED)
     private SessionFactory factory;
-
-    @Getter(AccessLevel.PROTECTED)
     private PersistenceConnection connection;
+    private Session session;
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
-
-    private Session session;
 
     @Bound
     public HibernateJpaRepository(final Class<T> type) {
         this.type = type;
+    }
+
+    protected SessionFactory factory() {
+        return this.factory;
+    }
+
+    protected PersistenceConnection connection() {
+        return this.connection;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 
     @Override
@@ -136,16 +141,17 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
         this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver, dialect));
 
-        this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) this.applicationContext().property("hibernate.hbm2ddl.auto").or("update"));
+        final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
+        this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto").or("update"));
         this.configuration.setProperty("hibernate.connection.driver_class", driver);
         this.configuration.setProperty("hibernate.dialect", dialect);
 
-        Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
+        Result<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) {
             final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
             final EntityContext entityContext = new EntityContext(entities);
             this.applicationContext.add(entityContext);
-            context = Exceptional.of(entityContext);
+            context = Result.of(entityContext);
         }
 
         final Collection<TypeContext<?>> entities = context.get().entities();
@@ -153,7 +159,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             this.configuration.addAnnotatedClass(entity.type());
         }
 
-        this.configuration.addProperties(this.applicationContext.properties());
+        this.configuration.addProperties(propertyHolder.properties());
 
         try {
             this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
@@ -221,9 +227,9 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     }
 
     @Override
-    public Exceptional<T> findById(final ID id) {
+    public Result<T> findById(final ID id) {
         final Session session = this.session();
-        return Exceptional.of(session.find(this.reify(), id));
+        return Result.of(session.find(this.reify(), id));
     }
 
     @Override
@@ -246,7 +252,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         if (this.connection != null) throw new IllegalStateException("Connection has already been configured!");
         this.connection = connection;
         try {
-            this.applicationContext().enable(this);
+            this.enable();
         } catch (final ApplicationException e) {
             this.applicationContext().handle(e);
         }
@@ -273,7 +279,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         // repository should fall back to constructing the default remote through the active HibernateRemote binding.
         if (this.factory == null) {
             try {
-                this.applicationContext().enable(this);
+                this.enable();
             } catch (final ApplicationException e) {
                 return ExceptionHandler.unchecked(e);
             }

@@ -24,14 +24,15 @@ import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
-import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.util.ArrayListMultiMap;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,26 +40,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.inject.Inject;
-
-import lombok.AccessLevel;
-import lombok.Getter;
+import jakarta.inject.Inject;
 
 /**
  * Simple implementation of {@link CommandGateway}.
  */
+@Component
 public class CommandGatewayImpl implements CommandGateway, Enableable {
 
-    @Getter(AccessLevel.PROTECTED)
     private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
-    @Getter(AccessLevel.PROTECTED)
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
+
     @Inject
     private CommandParser parser;
     @Inject
     private CommandResources resources;
     @Inject
     private ApplicationContext context;
+
+    protected MultiMap<String, CommandExecutorContext> contexts() {
+        return this.contexts;
+    }
+
+    protected List<CommandExecutorExtension> extensions() {
+        return this.extensions;
+    }
 
     @Override
     public boolean canEnable() {
@@ -75,10 +81,10 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Override
     public void accept(final CommandSource source, final String command) throws ParsingException {
-        final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
+        final Result<CommandExecutorContext> context = this.lookupContext(command);
         if (context.absent()) throw new ParsingException(this.resources.missingHandler(command));
         else {
-            final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
+            final Result<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
                 this.execute(context.get(), commandContext.get());
             }
@@ -91,7 +97,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
         }
     }
 
-    private Exceptional<CommandExecutorContext> lookupContext(final String command) {
+    private Result<CommandExecutorContext> lookupContext(final String command) {
         final String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
         this.context.log().debug("Looking up executor context for " + command + " in " + this.contexts.size() + " contexts");
@@ -110,7 +116,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
                 }
             }
         }
-        return Exceptional.of(bestContext);
+        return Result.of(bestContext);
     }
 
     protected void execute(final CommandExecutorContext context, final CommandContext commandContext) {
@@ -129,7 +135,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Override
     public void accept(final CommandContext context) throws ParsingException {
-        final Exceptional<CommandExecutorContext> executor = this.get(context);
+        final Result<CommandExecutorContext> executor = this.get(context);
         executor.present(e -> this.execute(e, context))
                 .orThrow(() -> new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size())));
     }
@@ -143,12 +149,12 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Override
     public void register(final CommandExecutorContext context) {
-        final Exceptional<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        final Result<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
         if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
 
         final List<String> aliases;
         final TypeContext<?> typeContext = context.parent();
-        final Exceptional<Command> annotated = typeContext.annotation(Command.class);
+        final Result<Command> annotated = typeContext.annotation(Command.class);
         if (!typeContext.isVoid() && annotated.present()) {
             aliases = List.of(annotated.get().value());
         }
@@ -167,7 +173,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Override
     public List<String> suggestions(final CommandSource source, final String command) {
-        final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
+        final Result<CommandExecutorContext> context = this.lookupContext(command);
         final List<String> suggestions = new ArrayList<>();
 
         if (context.present())
@@ -188,11 +194,11 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     }
 
     @Override
-    public Exceptional<CommandExecutorContext> get(final CommandContext context) {
+    public Result<CommandExecutorContext> get(final CommandContext context) {
         for (final CommandExecutorContext executorContext : this.contexts().get(context.alias())) {
-            if (executorContext.accepts(context.command())) return Exceptional.of(executorContext);
+            if (executorContext.accepts(context.command())) return Result.of(executorContext);
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     @Override

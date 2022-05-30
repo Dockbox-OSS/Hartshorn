@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentType;
 
-@Service
+@Component(type = ComponentType.FUNCTIONAL)
 public abstract class AbstractProxy implements InterfaceProxy {
     @Override
     public int age() {

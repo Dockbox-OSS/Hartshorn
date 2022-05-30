@@ -20,17 +20,16 @@ import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.CacheService;
-import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.services.ComponentUtilities;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.component.ComponentUtilities;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -40,7 +39,7 @@ import java.util.function.Supplier;
  *
  * @param <A> The cache-related annotation
  */
-public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A, UseCaching> {
+public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
@@ -48,7 +47,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
         final CacheManager manager = context.get(CacheManager.class);
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Exceptional<CacheService> annotation = methodContext.type().annotation(CacheService.class);
+            final Result<CacheService> annotation = methodContext.type().annotation(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }
@@ -84,10 +83,5 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return true;
-    }
-
-    @Override
-    public Class<UseCaching> activator() {
-        return UseCaching.class;
     }
 }

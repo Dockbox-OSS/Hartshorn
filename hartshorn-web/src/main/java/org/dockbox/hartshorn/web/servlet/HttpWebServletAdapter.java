@@ -16,24 +16,26 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpAction;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class HttpWebServletAdapter extends HttpServlet {
 
     private final ApplicationContext applicationContext;
     private final WebServlet webServlet;
+
+    public HttpWebServletAdapter(final ApplicationContext applicationContext, final WebServlet webServlet) {
+        this.applicationContext = applicationContext;
+        this.webServlet = webServlet;
+    }
 
     @Override
     protected synchronized void doGet(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {

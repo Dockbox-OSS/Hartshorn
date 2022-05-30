@@ -16,28 +16,24 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
 public class RequestErrorImpl extends DefaultCarrierContext implements RequestError {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final int statusCode;
     private final PrintWriter writer;
-    private final Exceptional<Throwable> cause;
-    @Setter private String message;
-    @Setter private boolean yieldDefaults;
+    private final Result<Throwable> cause;
+    private String message;
+    private boolean yieldDefaults;
 
     public RequestErrorImpl(final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response, final int statusCode, final PrintWriter writer, final String message, final Throwable cause) {
         super(applicationContext);
@@ -46,6 +42,53 @@ public class RequestErrorImpl extends DefaultCarrierContext implements RequestEr
         this.statusCode = statusCode;
         this.writer = writer;
         this.message = message;
-        this.cause = Exceptional.of(cause, cause);
+        this.cause = Result.of(cause, cause);
+    }
+
+    @Override
+    public RequestErrorImpl message(final String message) {
+        this.message = message;
+        return this;
+    }
+
+    @Override
+    public RequestErrorImpl yieldDefaults(final boolean yieldDefaults) {
+        this.yieldDefaults = yieldDefaults;
+        return this;
+    }
+
+    @Override
+    public HttpServletRequest request() {
+        return this.request;
+    }
+
+    @Override
+    public HttpServletResponse response() {
+        return this.response;
+    }
+
+    @Override
+    public int statusCode() {
+        return this.statusCode;
+    }
+
+    @Override
+    public PrintWriter writer() {
+        return this.writer;
+    }
+
+    @Override
+    public Result<Throwable> cause() {
+        return this.cause;
+    }
+
+    @Override
+    public String message() {
+        return this.message;
+    }
+
+    @Override
+    public boolean yieldDefaults() {
+        return this.yieldDefaults;
     }
 }

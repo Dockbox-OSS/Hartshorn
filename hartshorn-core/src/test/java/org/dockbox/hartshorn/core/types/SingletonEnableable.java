@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.component.Enableable;
 
-import javax.inject.Singleton;
-
-import lombok.Getter;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class SingletonEnableable implements Enableable {
-
-    @Getter
     private int enabled;
+
+    public int enabled() {
+        return this.enabled;
+    }
 
     @Override
     public void enable() {

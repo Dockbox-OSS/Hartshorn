@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.context.Context;
+import org.dockbox.hartshorn.context.Context;
 
 import java.util.List;
 

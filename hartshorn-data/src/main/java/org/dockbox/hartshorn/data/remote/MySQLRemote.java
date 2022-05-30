@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MySQLRemote extends JdbcRemote {
 
     public static final MySQLRemote INSTANCE = new MySQLRemote();
+
+    private MySQLRemote() {
+    }
 
     @Override
     protected String type() {

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
 public class EventParameterLoader extends RuleBasedParameterLoader<EventParameterLoaderContext> {
     public EventParameterLoader() {

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 
 @ComponentBinding(value = CacheManager.class, priority = 0, singleton = true)
 public class JUnitCacheManager extends CacheManagerImpl {

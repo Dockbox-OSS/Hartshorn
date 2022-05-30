@@ -16,13 +16,10 @@
 
 package test.types;
 
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import lombok.Getter;
-
-@Getter
 public class SampleBoundPopulatedType implements SampleInterface {
 
     private final String name;
@@ -35,4 +32,12 @@ public class SampleBoundPopulatedType implements SampleInterface {
         this.name = name;
     }
 
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    public SampleField field() {
+        return this.field;
+    }
 }

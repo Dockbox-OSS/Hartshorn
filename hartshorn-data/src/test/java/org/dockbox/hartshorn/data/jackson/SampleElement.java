@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.jackson;
 
-import org.dockbox.hartshorn.core.annotations.Property;
+import org.dockbox.hartshorn.util.reflect.Property;
 
 public class SampleElement {
 

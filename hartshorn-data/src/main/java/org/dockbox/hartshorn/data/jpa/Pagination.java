@@ -16,19 +16,32 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Pagination {
     private Integer start;
     private Integer max;
 
+    private Pagination() {
+    }
+
     public static Pagination create() {
         return new Pagination();
+    }
+
+    public Integer start() {
+        return this.start;
+    }
+
+    public Pagination start(final Integer start) {
+        this.start = start;
+        return this;
+    }
+
+    public Integer max() {
+        return this.max;
+    }
+
+    public Pagination max(final Integer max) {
+        this.max = max;
+        return this;
     }
 }

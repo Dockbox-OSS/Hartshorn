@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.context.CarrierContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.context.CarrierContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface RequestError extends CarrierContext {
 
@@ -32,7 +32,7 @@ public interface RequestError extends CarrierContext {
 
     int statusCode();
     String message();
-    Exceptional<Throwable> cause();
+    Result<Throwable> cause();
     boolean yieldDefaults();
 
     RequestError message(String message);

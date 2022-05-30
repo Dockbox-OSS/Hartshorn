@@ -18,11 +18,11 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
-import org.dockbox.hartshorn.core.annotations.inject.Provider;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Service(activators = UseCommands.class)
 public class CommandProviders {
@@ -34,8 +34,8 @@ public class CommandProviders {
 
     @Provider
     @Singleton
-    public SystemSubject systemSubject() {
-        return new ApplicationSystemSubject();
+    public Class<? extends SystemSubject> systemSubject() {
+        return ApplicationSystemSubject.class;
     }
 
     @Provider

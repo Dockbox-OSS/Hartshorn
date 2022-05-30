@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.core.annotations;
 
+import org.dockbox.hartshorn.util.reflect.AliasFor;
+import org.dockbox.hartshorn.util.reflect.Extends;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -23,6 +26,6 @@ import java.lang.annotation.RetentionPolicy;
 @Extends(Route.class)
 @Route(method = HttpMethod.POST, path = "joint")
 public @interface Joint2 {
-    @AliasFor(target = Gett.class, value = "path")
+    @AliasFor(target = Get.class, value = "path")
     String path();
 }

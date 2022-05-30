@@ -16,12 +16,9 @@
 
 package org.dockbox.hartshorn.data;
 
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
-import lombok.Getter;
-
-@Getter
 @Service(singleton = false)
 public class ValueTyped {
 
@@ -31,4 +28,11 @@ public class ValueTyped {
     @Value("nested.demo")
     private String nestedString;
 
+    public String string() {
+        return this.string;
+    }
+
+    public String nestedString() {
+        return this.nestedString;
+    }
 }

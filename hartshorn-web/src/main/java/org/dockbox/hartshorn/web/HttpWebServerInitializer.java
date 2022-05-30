@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.boot.ExceptionHandler;
-import org.dockbox.hartshorn.core.boot.LifecycleObserver;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
@@ -36,18 +36,18 @@ import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.Servlet;
+import jakarta.inject.Inject;
+import jakarta.servlet.Servlet;
 
 @Service(activators = UseHttpServer.class)
 public class HttpWebServerInitializer implements LifecycleObserver {
 
     public static final int DEFAULT_PORT = 8080;
 
-    @Value(value = "hartshorn.web.port")
+    @Value("hartshorn.web.port")
     private int port = DEFAULT_PORT;
 
-    @Value(value = "hartshorn.web.servlet.directory")
+    @Value("hartshorn.web.servlet.directory")
     private boolean useDirectoryServlet = true;
 
     @Inject

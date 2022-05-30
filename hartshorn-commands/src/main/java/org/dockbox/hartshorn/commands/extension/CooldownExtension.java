@@ -21,15 +21,15 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.core.domain.Identifiable;
-import org.dockbox.hartshorn.core.domain.tuple.Triad;
+import org.dockbox.hartshorn.util.Identifiable;
+import org.dockbox.hartshorn.util.Triad;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Extends a command by providing a cooldown on its execution. If a command is

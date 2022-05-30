@@ -18,12 +18,13 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.core.StringUtilities;
-import org.dockbox.hartshorn.core.adapter.BuiltInStringTypeAdapters;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.Vector3N;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 
@@ -74,10 +75,10 @@ public final class DefaultArgumentConverters {
             .build();
 
     public static final ArgumentConverter<Vector3N> VECTOR = ArgumentConverterImpl.builder(Vector3N.class, "vec3", "vector", "v3n")
-            .withConverter(in -> Exceptional.of(
+            .withConverter(in -> Result.of(
                     () -> {
                         String[] xyz = in.split(",");
-                        // IndexOutOfBounds is caught by Callable handle in Exceptional
+                        // IndexOutOfBounds is caught by Callable handle in Result
                         double x = Double.parseDouble(xyz[0]);
                         double y = Double.parseDouble(xyz[1]);
                         double z = Double.parseDouble(xyz[2]);
@@ -96,19 +97,19 @@ public final class DefaultArgumentConverters {
             }).build();
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
-            .withConverter((src, in) -> Exceptional.of(src.applicationContext()
-                    .locator().containers().stream()
+            .withConverter((src, in) -> Result.of(src.applicationContext()
+                    .get(ComponentLocator.class).containers().stream()
                     .filter(container -> container.id().equalsIgnoreCase(in))
                     .findFirst()))
             .withSuggestionProvider((src, in) -> src.applicationContext()
-                    .locator().containers().stream()
+                    .get(ComponentLocator.class).containers().stream()
                     .map(ComponentContainer::id)
                     .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
                     .toList())
             .build();
 
     public static final ArgumentConverter<String> REMAINING_STRING = ArgumentConverterImpl.builder(String.class, "remaining", "remainingString")
-            .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
+            .withConverter((Function<String, Result<String>>) Result::of)
             .withSize(-1)
             .build();
 
@@ -120,7 +121,7 @@ public final class DefaultArgumentConverters {
                     String part = parts[i];
                     integers[i] = INTEGER.convert(null, parts[i]).get();
                 }
-                return Exceptional.of(integers);
+                return Result.of(integers);
             })
             .withSize(-1)
             .build();

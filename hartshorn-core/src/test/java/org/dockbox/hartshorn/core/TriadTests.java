@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.tuple.Triad;
+import org.dockbox.hartshorn.util.Triad;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

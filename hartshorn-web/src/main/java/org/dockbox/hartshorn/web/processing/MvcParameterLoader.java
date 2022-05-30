@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.web.processing.rules.BodyRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.HeaderRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.RequestQueryParameterRule;
@@ -37,6 +37,6 @@ public class MvcParameterLoader extends RuleBasedParameterLoader<MvcParameterLoa
 
     @Override
     protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
-        return context.applicationContext().get(parameter.type());
+        return context.provider().get(parameter.type());
     }
 }

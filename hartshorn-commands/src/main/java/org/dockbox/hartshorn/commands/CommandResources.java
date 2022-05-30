@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.Message;
 
@@ -38,7 +38,7 @@ public interface CommandResources {
     @InjectTranslation(value = "$4Not enough arguments for parameter '{0}'", key = "command.parameter.missing.arguments")
     Message notEnoughParameterArguments(String parameter);
 
-    @InjectTranslation(value = "You are in cooldown", key = "command.cooldown")
+    @InjectTranslation(value = "You are in cool-down", key = "command.cooldown")
     Message cooldownActive();
 
     @InjectTranslation(value = "No supported command handler found for '{0}'", key = "command.missing.handler")

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.registry;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,32 +106,32 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *
      * @param predicate The predicate takes in a value of type {@code T} or its parents and returns true if that value is a match, otherwise it returns false.
      *
-     * @return An {@link Exceptional} containing the value of the first match, if one is found.
+     * @return An {@link Result} containing the value of the first match, if one is found.
      */
-    public Exceptional<T> firstMatch(final Predicate<? super T> predicate) {
+    public Result<T> firstMatch(final Predicate<? super T> predicate) {
         for (final T value : this) {
-            if (predicate.test(value)) return Exceptional.of(value);
+            if (predicate.test(value)) return Result.of(value);
         }
-        return Exceptional.empty();
+        return Result.empty();
     }
 
     /**
      * Safely returns the first element in the RegistryColumn.
      *
-     * @return An {@link Exceptional} containing the first element in the RegistryColumn, if one is found.
+     * @return An {@link Result} containing the first element in the RegistryColumn, if one is found.
      */
-    public Exceptional<T> first() {
+    public Result<T> first() {
         return this.safe(0);
     }
 
     /**
-     * Safely get an element by wrapping it within an {@link Exceptional}.
+     * Safely get an element by wrapping it within an {@link Result}.
      *
      * @param index The index of the element to retrieve.
      *
-     * @return An {@link Exceptional} containing the element at the provided index in the RegistryColumn, if one is found.
+     * @return An {@link Result} containing the element at the provided index in the RegistryColumn, if one is found.
      */
-    public Exceptional<T> safe(final int index) {
-        return Exceptional.of(() -> this.get(index));
+    public Result<T> safe(final int index) {
+        return Result.of(() -> this.get(index));
     }
 }

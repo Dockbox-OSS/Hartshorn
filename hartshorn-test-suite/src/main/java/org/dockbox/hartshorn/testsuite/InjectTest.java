@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.annotations.Extends;
-import org.dockbox.hartshorn.core.context.Context;
+import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.context.Context;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -25,7 +25,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Acts as a composite between {@link Inject} and {@link Test}. This allows test method parameters to be injected
