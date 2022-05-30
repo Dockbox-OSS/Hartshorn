@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.net.URI;
 
-import javax.inject.Singleton;
-import javax.servlet.Servlet;
+import jakarta.inject.Singleton;
+import jakarta.servlet.Servlet;
 
 @Singleton
 public interface HttpWebServer {

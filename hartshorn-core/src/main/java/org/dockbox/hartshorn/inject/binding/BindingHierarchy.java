@@ -106,7 +106,7 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
 
     /**
      * Gets the {@link Key} of the current hierarchy, containing a {@link TypeContext}
-     * of type {@code C}, and a potential {@link javax.inject.Named} instance.
+     * of type {@code C}, and a potential {@link jakarta.inject.Named} instance.
      *
      * @return The key of the current hierarchy.
      * @see Key

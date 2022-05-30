@@ -22,7 +22,7 @@ import org.hibernate.Session;
 
 import java.util.function.Function;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 public class HibernateQueryFunction implements QueryFunction {
 

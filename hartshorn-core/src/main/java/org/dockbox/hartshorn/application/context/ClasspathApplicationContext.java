@@ -40,7 +40,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 public class ClasspathApplicationContext extends DelegatingApplicationContext implements
         ProcessableApplicationContext, ObservingApplicationContext {

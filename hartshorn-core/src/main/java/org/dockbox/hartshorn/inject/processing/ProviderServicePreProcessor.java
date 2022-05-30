@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.reflect.TypedElementContext;
 import java.util.List;
 import java.util.function.Function;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 public final class ProviderServicePreProcessor implements ServicePreProcessor {
 

@@ -33,8 +33,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.persistence.TransactionRequiredException;
+import jakarta.inject.Inject;
+import jakarta.persistence.TransactionRequiredException;
 
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence

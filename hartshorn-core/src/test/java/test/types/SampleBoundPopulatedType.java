@@ -18,7 +18,7 @@ package test.types;
 
 import org.dockbox.hartshorn.inject.binding.Bound;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class SampleBoundPopulatedType implements SampleInterface {
 

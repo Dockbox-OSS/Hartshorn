@@ -19,7 +19,7 @@ package test.types;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Service
 public class FieldProviderService {

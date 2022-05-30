@@ -26,7 +26,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * Indicates the annotated type is to be bound to the specified type. This creates a basic entry

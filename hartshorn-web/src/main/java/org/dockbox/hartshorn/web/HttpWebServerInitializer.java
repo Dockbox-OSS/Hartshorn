@@ -36,8 +36,8 @@ import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.Servlet;
+import jakarta.inject.Inject;
+import jakarta.servlet.Servlet;
 
 @Service(activators = UseHttpServer.class)
 public class HttpWebServerInitializer implements LifecycleObserver {

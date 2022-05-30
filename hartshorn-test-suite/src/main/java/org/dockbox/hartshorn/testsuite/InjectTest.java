@@ -25,7 +25,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Acts as a composite between {@link Inject} and {@link Test}. This allows test method parameters to be injected

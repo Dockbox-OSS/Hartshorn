@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.annotations.Query;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class QueryContext {
 
@@ -72,14 +72,14 @@ public class QueryContext {
         return this.annotation.automaticFlush();
     }
 
-    public javax.persistence.Query query(final EntityManager entityManager) {
-        final javax.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
+    public jakarta.persistence.Query query(final EntityManager entityManager) {
+        final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
         final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
         return persistenceQuery;
     }
 
-    protected javax.persistence.Query persistenceQuery(final EntityManager entityManager, final Query query) throws IllegalArgumentException {
+    protected jakarta.persistence.Query persistenceQuery(final EntityManager entityManager, final Query query) throws IllegalArgumentException {
         return switch (query.type()) {
             case JPQL -> {
                 if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createQuery(query.value());

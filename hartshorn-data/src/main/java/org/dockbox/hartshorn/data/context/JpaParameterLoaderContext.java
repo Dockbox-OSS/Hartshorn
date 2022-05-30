@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 public class JpaParameterLoaderContext extends ParameterLoaderContext {
 

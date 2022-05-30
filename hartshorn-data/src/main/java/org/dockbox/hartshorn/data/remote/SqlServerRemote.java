@@ -29,6 +29,11 @@ public final class SqlServerRemote extends JdbcRemote {
     }
 
     @Override
+    protected String connectionString(final JdbcRemoteConfiguration server) {
+        return super.connectionString(server) + ";encrypt=true;trustServerCertificate=true;";
+    }
+
+    @Override
     protected String type() {
         return "sqlserver";
     }

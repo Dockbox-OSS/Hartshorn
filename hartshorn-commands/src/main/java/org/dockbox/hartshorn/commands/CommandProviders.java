@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Service(activators = UseCommands.class)
 public class CommandProviders {

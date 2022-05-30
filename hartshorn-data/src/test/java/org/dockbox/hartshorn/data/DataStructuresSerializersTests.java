@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UsePersistence

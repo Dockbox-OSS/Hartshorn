@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.Objects;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 public class Key<C> {
 

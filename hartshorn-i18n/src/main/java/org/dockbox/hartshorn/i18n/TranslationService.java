@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.Result;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public interface TranslationService extends ContextCarrier {

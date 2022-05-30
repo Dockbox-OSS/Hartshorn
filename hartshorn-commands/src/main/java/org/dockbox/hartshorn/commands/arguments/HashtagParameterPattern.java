@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.i18n.Message;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.

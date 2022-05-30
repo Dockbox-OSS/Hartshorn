@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Default implementation of {@link Cache}.

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * A concrete implementation of {@link ContextCarrier}.

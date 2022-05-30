@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @FunctionalInterface
 public interface HttpAction {

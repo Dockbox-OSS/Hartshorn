@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 @Service(activators = UsePersistence.class)
 public interface TransactionFactory {

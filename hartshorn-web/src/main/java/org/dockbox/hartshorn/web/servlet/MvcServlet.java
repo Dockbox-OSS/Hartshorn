@@ -32,10 +32,10 @@ import org.dockbox.hartshorn.web.processing.MvcParameterLoaderContext;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class MvcServlet implements WebServlet {
 

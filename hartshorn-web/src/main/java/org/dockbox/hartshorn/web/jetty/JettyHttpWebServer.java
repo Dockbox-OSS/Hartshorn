@@ -39,8 +39,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import javax.inject.Inject;
-import javax.servlet.Servlet;
+import jakarta.inject.Inject;
+import jakarta.servlet.Servlet;
 
 @Component
 public class JettyHttpWebServer extends DefaultHttpWebServer {

@@ -26,9 +26,9 @@ import org.eclipse.jetty.util.resource.Resource;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class JettyDirectoryServlet implements DirectoryServlet {
 

@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class CommandListenerImpl implements CommandListener {
 

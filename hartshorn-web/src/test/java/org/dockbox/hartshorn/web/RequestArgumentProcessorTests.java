@@ -42,8 +42,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 @HartshornTest
 @UsePersistence

@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class RequestErrorImpl extends DefaultCarrierContext implements RequestError {
 

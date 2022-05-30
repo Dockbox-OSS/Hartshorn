@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ParameterLoaderContext> {
 

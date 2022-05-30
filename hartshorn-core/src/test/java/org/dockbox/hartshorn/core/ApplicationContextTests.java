@@ -57,7 +57,7 @@ import org.slf4j.Logger;
 
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import test.types.FieldProviderService;
 import test.types.PopulatedType;

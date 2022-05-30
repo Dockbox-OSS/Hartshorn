@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.data.context.EntityContext;
 
 import java.util.Collection;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Service(activators = UsePersistence.class)
 public class PersistentTypeService implements LifecycleObserver {

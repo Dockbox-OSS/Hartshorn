@@ -53,7 +53,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 public class JacksonObjectMapper extends DefaultObjectMapper {

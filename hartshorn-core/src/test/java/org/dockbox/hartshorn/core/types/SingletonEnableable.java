@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.core.types;
 
 import org.dockbox.hartshorn.component.Enableable;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class SingletonEnableable implements Enableable {

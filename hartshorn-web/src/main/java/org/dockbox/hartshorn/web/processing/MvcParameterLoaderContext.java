@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.web.mvc.ViewModel;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class MvcParameterLoaderContext extends HttpRequestParameterLoaderContext{
 

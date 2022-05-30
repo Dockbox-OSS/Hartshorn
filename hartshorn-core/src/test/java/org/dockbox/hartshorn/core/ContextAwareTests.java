@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import test.types.SampleContextAwareType;
 
