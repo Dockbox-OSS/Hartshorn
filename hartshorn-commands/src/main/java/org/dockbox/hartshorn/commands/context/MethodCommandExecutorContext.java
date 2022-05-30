@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -25,18 +26,17 @@ import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.events.parents.Cancellable;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.Message;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -51,9 +51,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
  */
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
-public class MethodCommandExecutorContext<T> extends DefaultCarrierContext implements CommandExecutorContext {
+public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {
 
-    private final ApplicationContext applicationContext;
     private final MethodContext<?, T> method;
     private final Key<T> key;
     private final List<String> parentAliases;
@@ -69,7 +68,6 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
-        this.applicationContext = context;
         this.method = method;
         this.key = key;
         this.command = annotated.get();
@@ -94,10 +92,6 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         }
         this.parameters = this.parameters();
         this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
-    }
-
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
     }
 
     protected MethodContext<?, T> method() {

@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.annotations.PathSpec;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-public class RequestHandlerContext extends DefaultCarrierContext {
+public class RequestHandlerContext extends DefaultApplicationAwareContext {
 
     private final MethodContext<?, ?> methodContext;
     private final HttpRequest httpRequest;

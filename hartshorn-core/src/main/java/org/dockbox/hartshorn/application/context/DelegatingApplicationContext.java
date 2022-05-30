@@ -68,6 +68,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     protected boolean isRunning = false;
 
     public DelegatingApplicationContext(InitializingContext context) {
+        super(null);
         context = new InitializingContext(context.environment(), this, context.manager(), context.configuration());
         this.prepareInitialization();
 
@@ -271,5 +272,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     public ActivatorHolder activatorHolder() {
         return this.activatorHolder;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this;
     }
 }

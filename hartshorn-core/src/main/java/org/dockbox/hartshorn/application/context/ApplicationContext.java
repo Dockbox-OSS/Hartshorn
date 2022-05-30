@@ -58,7 +58,7 @@ public interface ApplicationContext extends
     }
 
     default <C extends Context> Result<C> first(final Class<C> context) {
-        return this.first(this, context);
+        return this.first(context);
     }
 
     boolean isClosed();

@@ -43,7 +43,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final Result<C> serializationContext = methodContext.first(context, this.contextType());
+        final Result<C> serializationContext = methodContext.first(this.contextType());
         if (serializationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serializationContext.get();

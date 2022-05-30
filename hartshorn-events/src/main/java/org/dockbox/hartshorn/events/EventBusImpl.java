@@ -121,7 +121,7 @@ public class EventBusImpl implements EventBus {
 
     @Override
     public void post(final Event event, final Key<?> target) {
-        if (event.first(this.context, ApplicationContext.class).absent()) {
+        if (event.first(ApplicationContext.class).absent()) {
             this.context.log().debug("Event " + TypeContext.of(event).name() + " was not enhanced with the active application context, adding it before handling event");
             event.add(this.context);
         }
