@@ -16,48 +16,17 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.hibernate.dialect.Dialect;
-
-import jakarta.inject.Inject;
 
 public class HibernateRemoteImpl implements HibernateRemote {
 
-    private final String driver;
     private final Class<? extends Dialect> dialect;
+    private final String driver;
 
-    private final String username;
-    private final String password;
-    private final String url;
-
-    @Inject
-    public HibernateRemoteImpl(final PropertyHolder propertyHolder) {
-        final Result<String> remoteType = propertyHolder.get("hartshorn.data.remote");
-
-        this.driver = (String) propertyHolder.get("hartshorn.data.hibernate.driver_class").orNull();
-        if (this.driver == null) throw new IllegalStateException("Driver class was not configured, expected hartshorn.data.hibernate.driver_class or hartshorn.data.remote to be set, but got null");
-
-        final String dialect = (String) propertyHolder.get("hartshorn.data.hibernate.dialect").orNull();
-        if (dialect == null) throw new IllegalStateException("Dialect was not configured, expected hartshorn.data.hibernate.dialect or hartshorn.data.remote to be set, but got null");
-
-        final TypeContext<?> dialectContext = TypeContext.lookup(dialect);
-        if (!dialectContext.childOf(Dialect.class)) throw new IllegalStateException("Expected dialect to be a subtype of " + Dialect.class.getCanonicalName());
-
-        this.dialect = (Class<? extends Dialect>) dialectContext.type();
-
-        this.username = (String) propertyHolder.get("hartshorn.data.username").orNull();
-        this.password = (String) propertyHolder.get("hartshorn.data.password").orNull();
-
-        this.url = (String) propertyHolder.get("hartshorn.data.url").orNull();
-        if (this.url == null) throw new IllegalStateException("Connection string was not configured, expected hartshorn.data.url to be set, but got null");
-    }
-
-    @Override
-    public String driver() {
-        return this.driver;
+    public HibernateRemoteImpl(final Class<? extends Dialect> dialect, final String driver) {
+        this.dialect = dialect;
+        this.driver = driver;
     }
 
     @Override
@@ -65,25 +34,13 @@ public class HibernateRemoteImpl implements HibernateRemote {
         return this.dialect;
     }
 
-    public String username() {
-        return this.username;
-    }
-
-    public String password() {
-        return this.password;
-    }
-
-    public String url() {
-        return this.url;
-    }
-
     @Override
     public PersistenceConnection connection(final Object target, final String user, final String password) {
-        throw new UnsupportedOperationException("Cannot create targeted connection from pre-configured remote.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public PersistenceConnection connection() {
-        return new PersistenceConnection(this.url(), this.username(), this.password(), this);
+    public String driver() {
+        return this.driver;
     }
 }

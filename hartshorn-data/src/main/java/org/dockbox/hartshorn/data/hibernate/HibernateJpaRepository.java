@@ -77,6 +77,12 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         this.type = type;
     }
 
+    @Bound
+    public HibernateJpaRepository(final Class<T> type, final PersistenceConnection connection) {
+        this.type = type;
+        this.connection = connection;
+    }
+
     protected SessionFactory factory() {
         return this.factory;
     }
@@ -122,9 +128,8 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     @Override
     public void enable() throws ApplicationException {
         if (this.connection == null) {
-            this.applicationContext().log().debug("No connection was set for JPA repository instance, using configuration values instead.");
-            final HibernateRemote remote = this.applicationContext().get(HibernateRemote.class);
-            this.connection = remote.connection();
+            this.applicationContext().log().debug("No connection was set for JPA repository instance, using default component instead.");
+            this.connection = this.applicationContext().get(PersistenceConnection.class);
         }
 
         this.registerDefaultDialects();
@@ -245,18 +250,6 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             if (transaction.isActive()) transaction.commit();
             this.close();
         }
-    }
-
-    @Override
-    public JpaRepository<T, ID> connection(final PersistenceConnection connection) {
-        if (this.connection != null) throw new IllegalStateException("Connection has already been configured!");
-        this.connection = connection;
-        try {
-            this.enable();
-        } catch (final ApplicationException e) {
-            this.applicationContext().handle(e);
-        }
-        return this;
     }
 
     @Override

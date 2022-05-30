@@ -18,13 +18,11 @@ package org.dockbox.hartshorn.data;
 
 import com.mysql.cj.jdbc.Driver;
 
-import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
-import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
@@ -36,7 +34,10 @@ import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
 import org.dockbox.hartshorn.data.remote.Remote;
 import org.dockbox.hartshorn.data.remote.SqlServerRemote;
 import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Result;
 import org.hibernate.Session;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.junit.jupiter.api.Assertions;
@@ -96,11 +97,11 @@ class SqlServiceTest {
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
-                Arguments.of(directory(DerbyFileRemote.INSTANCE, "derby")),
-                Arguments.of(connection(MySQLRemote.INSTANCE, mySql, MySQLContainer.MYSQL_PORT)),
-                Arguments.of(connection(PostgreSQLRemote.INSTANCE, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
-                Arguments.of(connection(MariaDbRemote.INSTANCE, mariaDb, 3306)),
-                Arguments.of(connection(SqlServerRemote.INSTANCE, mssqlServer, MSSQLServerContainer.MS_SQL_SERVER_PORT))
+                Arguments.of(directory(new DerbyFileRemote(), "derby")),
+                Arguments.of(connection(new MySQLRemote(), mySql, MySQLContainer.MYSQL_PORT)),
+                Arguments.of(connection(new PostgreSQLRemote(), postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
+                Arguments.of(connection(new MariaDbRemote(), mariaDb, 3306)),
+                Arguments.of(connection(new SqlServerRemote(), mssqlServer, MSSQLServerContainer.MS_SQL_SERVER_PORT))
         );
     }
 
@@ -137,7 +138,8 @@ class SqlServiceTest {
     }
 
     protected JpaRepository<User, Long> sql(final PersistenceConnection target) {
-        return this.applicationContext.get(UserJpaRepository.class).connection(target);
+        this.applicationContext.bind(Key.of(PersistenceConnection.class, "users")).singleton(target);
+        return this.applicationContext.get(UserJpaRepository.class);
     }
 
     @ParameterizedTest

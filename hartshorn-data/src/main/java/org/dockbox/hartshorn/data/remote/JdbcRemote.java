@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data.remote;
 
+// TODO #000: Refactor to single remote datasource with DataSourceConfiguration
 public abstract class JdbcRemote implements Remote<JdbcRemoteConfiguration> {
 
     protected String connectionString(final JdbcRemoteConfiguration server) {

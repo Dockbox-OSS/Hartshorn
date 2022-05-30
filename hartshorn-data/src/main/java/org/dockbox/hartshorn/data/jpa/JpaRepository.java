@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 
 import java.util.Set;
 
@@ -43,6 +42,4 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
     Class<T> reify();
 
     void flush();
-
-    JpaRepository<T, ID> connection(PersistenceConnection connection);
 }

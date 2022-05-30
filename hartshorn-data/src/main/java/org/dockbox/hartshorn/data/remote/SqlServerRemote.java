@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.data.remote;
 
+import jakarta.inject.Singleton;
+
+@Singleton
 public final class SqlServerRemote extends JdbcRemote {
 
-    public static final SqlServerRemote INSTANCE = new SqlServerRemote();
-
-    private SqlServerRemote() {
+    public SqlServerRemote() {
     }
 
     @Override

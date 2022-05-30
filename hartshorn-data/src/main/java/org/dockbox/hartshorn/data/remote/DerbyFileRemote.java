@@ -20,11 +20,6 @@ import java.nio.file.Path;
 
 public final class DerbyFileRemote implements Remote<Path> {
 
-    public static final DerbyFileRemote INSTANCE = new DerbyFileRemote();
-
-    private DerbyFileRemote() {
-    }
-
     @Override
     public PersistenceConnection connection(final Path target, final String user, final String password) {
         return new PersistenceConnection(

@@ -18,11 +18,6 @@ package org.dockbox.hartshorn.data.remote;
 
 public final class PostgreSQLRemote extends JdbcRemote {
 
-    public static final PostgreSQLRemote INSTANCE = new PostgreSQLRemote();
-
-    private PostgreSQLRemote() {
-    }
-
     @Override
     protected String type() {
         return "postgresql";

@@ -18,11 +18,6 @@ package org.dockbox.hartshorn.data.remote;
 
 public final class MySQLRemote extends JdbcRemote {
 
-    public static final MySQLRemote INSTANCE = new MySQLRemote();
-
-    private MySQLRemote() {
-    }
-
     @Override
     protected String type() {
         return "mysql";

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.data.objects.JpaUser;
 import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,12 +51,14 @@ public class QueryRepositoryTests {
 
     protected static PersistenceConnection connection() {
         final JdbcRemoteConfiguration server = JdbcRemoteConfiguration.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        return MySQLRemote.INSTANCE.connection(server, mySql.getUsername(), mySql.getPassword());
+
+        return new MySQLRemote().connection(server, mySql.getUsername(), mySql.getPassword());
     }
 
     @Test
     void testRepositoryDeleteAll() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.bind(Key.of(PersistenceConnection.class, "users")).singleton(connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 17);
         repository.save(user);
         repository.deleteAll();
@@ -65,7 +68,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testRepositoryQueries() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.bind(Key.of(PersistenceConnection.class, "users")).singleton(connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         repository.deleteAll();
         final JpaUser userA = new JpaUser("JUnit", 17);
         final JpaUser userB = new JpaUser("JUnitAdult", 21);
@@ -78,7 +82,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonTransactional() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.bind(Key.of(PersistenceConnection.class, "users")).singleton(connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(TransactionRequiredException.class, () -> repository.nonTransactionalEntityUpdate(user.id(), 22));
@@ -86,7 +91,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonEntityModifier() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.bind(Key.of(PersistenceConnection.class, "users")).singleton(connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(IllegalArgumentException.class, () -> repository.nonModifierEntityUpdate(user.id(), 22));
@@ -94,7 +100,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateEntity() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.bind(Key.of(PersistenceConnection.class, "users")).singleton(connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         final int updated = repository.entityUpdate(user.id(), 22);

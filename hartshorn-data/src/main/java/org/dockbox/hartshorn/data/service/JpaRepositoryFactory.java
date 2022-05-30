@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.inject.Enable;
 
 /**
@@ -31,6 +32,9 @@ import org.dockbox.hartshorn.inject.Enable;
 @Service
 @RequiresActivator(UsePersistence.class)
 public interface JpaRepositoryFactory {
+    @Factory
+    <T> JpaRepository<T, ?> repository(Class<T> type, PersistenceConnection connection);
+
     @Factory
     @Enable(false)
     <T> JpaRepository<T, ?> repository(Class<T> type);

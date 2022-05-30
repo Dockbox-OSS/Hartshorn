@@ -17,8 +17,10 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.data.annotations.DataSource;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
-@Service
+@Service(lazy = true)
+@DataSource("users")
 public interface UserJpaRepository extends JpaRepository<User, Long> {
 }
