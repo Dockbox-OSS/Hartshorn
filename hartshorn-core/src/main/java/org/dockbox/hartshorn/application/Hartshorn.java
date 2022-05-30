@@ -39,7 +39,7 @@ public final class Hartshorn {
     /**
      * The semantic version of the current/latest release of Hartshorn
      */
-    public static final String VERSION = "22.2";
+    public static final String VERSION = "22.3";
 
     private Hartshorn() {}
 }
