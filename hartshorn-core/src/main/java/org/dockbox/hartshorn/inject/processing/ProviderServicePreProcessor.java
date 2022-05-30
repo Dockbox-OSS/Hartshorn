@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
@@ -57,12 +58,15 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor {
     }
 
     private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void processContext(final ApplicationContext context, final E element) {
-        if (element.type().is(Class.class))
-            this.processClassBinding(context, element.genericType(), (AnnotatedElementContext<?> & ObtainableElement<Class<Object>>) element);
-        else if (element.type().is(TypeContext.class))
-            this.processTypeBinding(context, element.genericType(), (AnnotatedElementContext<?> & ObtainableElement<TypeContext<Object>>) element);
-        else
-            this.processInstanceBinding(context, element, E::type);
+        final ConditionMatcher conditionMatcher = context.get(ConditionMatcher.class);
+        if (conditionMatcher.match(element)) {
+            if (element.type().is(Class.class))
+                this.processClassBinding(context, element.genericType(), (AnnotatedElementContext<?> & ObtainableElement<Class<Object>>) element);
+            else if (element.type().is(TypeContext.class))
+                this.processTypeBinding(context, element.genericType(), (AnnotatedElementContext<?> & ObtainableElement<TypeContext<Object>>) element);
+            else
+                this.processInstanceBinding(context, element, E::type);
+        }
     }
 
     private <T extends AnnotatedElementContext<?> & ObtainableElement<?>> void processInstanceBinding(final ApplicationContext context, final T element, final Function<T, TypeContext<?>> type) {
