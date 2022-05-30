@@ -147,9 +147,11 @@ public final class AnnotationHelper {
         return cached(Arrays.asList(4, annotationType), () -> annotationHierarchy(annotationType)).contains(type);
     }
 
-    static Result<Object> searchInHierarchy(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Collection<Class<? extends Annotation>> hierarchy, final String name) {
+    static Result<Object> searchInHierarchy(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Collection<Class<? extends Annotation>> hierarchy, final Method proxyMethod) {
+        final String name = proxyMethod.getName();
         try {
             final Method method = actual.annotationType().getMethod(name);
+            checkAliasType(proxyMethod, method);
             return Result.of(safeInvokeAnnotationMethod(method, actual));
         }
         catch (final NoSuchMethodException e) {
@@ -159,6 +161,7 @@ public final class AnnotationHelper {
                 if (aliasFor == null) continue;
 
                 if ((aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
+                    checkAliasType(proxyMethod, method);
                     // Bingo! We found it!
                     return Result.of(safeInvokeAnnotationMethod(method, actual));
                 }
@@ -169,6 +172,7 @@ public final class AnnotationHelper {
                 try {
                     final Method klassMethod = klass.getMethod(name);
                     if (klassMethod != null) {
+                        checkAliasType(proxyMethod, klassMethod);
                         final Object defaultValue = klassMethod.getDefaultValue();
                         if (defaultValue != null) return Result.of(defaultValue);
                     }
@@ -181,6 +185,7 @@ public final class AnnotationHelper {
                     if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {
                         try {
                             final Method method = annotationOnCurrentAnnotationClass.annotationType().getMethod(name);
+                            checkAliasType(proxyMethod, method);
                             return Result.of(safeInvokeAnnotationMethod(method, annotationOnCurrentAnnotationClass));
                         }
                         catch (final NoSuchMethodException ignored) {
@@ -191,11 +196,18 @@ public final class AnnotationHelper {
             }
             try {
                 final Method method = targetAnnotationClass.getMethod(name);
+                checkAliasType(proxyMethod, method);
                 return Result.of(method.getDefaultValue());
             }
             catch (final NoSuchMethodException noSuchMethodException) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private static void checkAliasType(final Method expected, final Method actual) {
+        if (expected.getReturnType() != actual.getReturnType()) {
+            throw new IllegalArgumentException("Attribute " + actual.getName() + " in " + actual.getDeclaringClass().getSimpleName() + " has different return type than " + expected.getName() + " in " + expected.getDeclaringClass().getSimpleName());
         }
     }
 
