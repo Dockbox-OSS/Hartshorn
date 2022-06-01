@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.testsuite.TestProperties;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.Assertions;
@@ -46,6 +47,11 @@ import jakarta.inject.Inject;
 
 @HartshornTest
 @TestComponents(ConditionalProviders.class)
+@TestProperties({
+        "--property.c=o",
+        "--property.d=d",
+        "--property.e=otherValue"
+})
 public class ConditionTests {
 
     @Inject

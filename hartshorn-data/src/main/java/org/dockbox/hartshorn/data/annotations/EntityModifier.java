@@ -16,11 +16,30 @@
 
 package org.dockbox.hartshorn.data.annotations;
 
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates the annotated method will perform a modification to the entity (table).
+ * Typically, this is used to update or delete an entity. This is also required for
+ * {@link Query} methods, but not for default methods of {@link JpaRepository}.
+ *
+ * <p><pre>{@code
+ * @Service
+ * public interface EntityRepository extends JpaRepository<Entity, Long> {
+ *    @Query("delete from Entity e where e.id = :id")
+ *    @EntityModifier
+ *    void delete(int id);
+ * }
+ * }</pre>
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EntityModifier {

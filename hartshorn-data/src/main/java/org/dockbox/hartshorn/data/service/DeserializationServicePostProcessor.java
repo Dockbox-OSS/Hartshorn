@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class DeserializationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Deserialize, DeserializationContext> {
 
@@ -121,7 +122,7 @@ public class DeserializationServicePostProcessor extends AbstractPersistenceServ
 
     private TypeContext<?> outputType(final MethodProxyContext<?> context) {
         final TypeContext<?> returnType = context.method().returnType();
-        if (returnType.childOf(Result.class)) {
+        if (returnType.childOf(Result.class) || returnType.childOf(Optional.class)) {
             return returnType.typeParameters().get(0);
         }
         else {

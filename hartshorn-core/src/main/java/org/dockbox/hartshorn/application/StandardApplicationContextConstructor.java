@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class StandardApplicationContextConstructor implements ApplicationContextConstructor<ClasspathApplicationContext> {
+public class StandardApplicationContextConstructor implements ApplicationContextConstructor<ApplicationContext> {
 
     private final Logger logger;
 
@@ -50,9 +50,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     @Override
-    public ClasspathApplicationContext createContext(final ApplicationContextConfiguration configuration) {
+    public ApplicationContext createContext(final ApplicationContextConfiguration configuration) {
         final ApplicationManager manager = this.createManager(configuration);
-        final ClasspathApplicationContext applicationContext = this.createContext(manager, configuration);
+        final ApplicationContext applicationContext = this.createContext(manager, configuration);
 
         this.configure(manager, applicationContext, configuration);
         this.process(applicationContext, configuration);
@@ -77,6 +77,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return configuration.activator().annotation(Activator.class).get();
     }
 
+    // TODO: Make configurable in factory/configuration
     protected DelegatingApplicationManager createManager(final ApplicationContextConfiguration configuration) {
         return new DelegatingApplicationManager(configuration);
     }
@@ -87,18 +88,15 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return environment;
     }
 
-    protected ClasspathApplicationContext createContext(final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
+    protected ApplicationContext createContext(final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
         InitializingContext initializingContext = new InitializingContext(null, null, manager, configuration);
         final ApplicationEnvironment environment = this.createEnvironment(initializingContext);
 
         initializingContext = new InitializingContext(environment, null, manager, configuration);
-        final ClasspathApplicationContext context = this.createContext(initializingContext);
-        context.addActivator(new ServiceImpl());
-
-        return context;
+        return this.createContext(initializingContext);
     }
 
-    protected ClasspathApplicationContext createContext(final InitializingContext context) {
+    protected ApplicationContext createContext(final InitializingContext context) {
         return new ClasspathApplicationContext(context);
     }
 
@@ -111,9 +109,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         final ApplicationConfigurator configurator = configuration.applicationConfigurator(initializingContext);
         configurator.configure(manager);
 
-        if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
+        if (applicationContext instanceof ModifiableActivatorHolder modifiable) {
             for (final Annotation serviceActivator : configuration.serviceActivators())
-                activatingApplicationContext.addActivator(serviceActivator);
+                modifiable.addActivator(serviceActivator);
         }
 
         // Always load Hartshorn internals first

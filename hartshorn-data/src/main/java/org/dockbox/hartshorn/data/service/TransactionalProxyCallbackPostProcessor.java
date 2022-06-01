@@ -24,10 +24,13 @@ import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.Transactional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 import jakarta.persistence.EntityManager;
@@ -49,13 +52,23 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
 
         return (methodContext, target, args) -> {
-            if (target instanceof JpaRepository jpaRepository) {
-                final EntityManager entityManager = jpaRepository.entityManager();
-                final TransactionManager manager = transactionFactory.manager(entityManager);
-                manager.beginTransaction();
-            } else {
+            EntityManager entityManager = null;
+
+            if (target instanceof EntityManagerJpaRepository jpaRepository) {
+                entityManager = jpaRepository.manager();
+            }
+            else if (target instanceof Proxy<?> proxy) {
+                final Result<JpaRepository> repository = proxy.manager().delegate(JpaRepository.class);
+                if (repository.present() && repository.get() instanceof EntityManagerJpaRepository jpaRepository) {
+                    entityManager = jpaRepository.manager();
+                }
+            }
+            if (entityManager == null) {
                 throw new IllegalStateException("No entity manager found in execution cache for method " + methodContext.qualifiedName() + " in type " + methodContext.parent().name() + ". Expected target to be a JpaRepository.");
             }
+
+            final TransactionManager manager = transactionFactory.manager(entityManager);
+            manager.beginTransaction();
         };
     }
 

@@ -31,11 +31,6 @@ import org.dockbox.hartshorn.data.config.StandardPropertyHolder;
 public class ConfigurationProviders {
 
     @Provider
-    public ValueLookup valueLookup(final ApplicationContext applicationContext) {
-        return applicationContext.get(ContextPropertyValueLookup.class);
-    }
-
-    @Provider
     public PropertyHolder propertyHolder(final ApplicationContext applicationContext) {
         return applicationContext.get(StandardPropertyHolder.class);
     }

@@ -16,57 +16,38 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.component.Enableable;
-import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.context.EntityContext;
-import org.dockbox.hartshorn.data.jpa.JpaRepository;
-import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
-import org.dockbox.hartshorn.data.remote.MariaDbRemote;
-import org.dockbox.hartshorn.data.remote.MySQLRemote;
-import org.dockbox.hartshorn.data.remote.PersistenceConnection;
-import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
-import org.dockbox.hartshorn.data.remote.Remote;
-import org.dockbox.hartshorn.data.remote.SqlServerRemote;
+import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
+import org.dockbox.hartshorn.data.remote.HibernateDataSourceConfiguration;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.dialect.DerbyTenSevenDialect;
-import org.hibernate.dialect.MariaDB103Dialect;
-import org.hibernate.dialect.MySQL8Dialect;
-import org.hibernate.dialect.PostgreSQL95Dialect;
-import org.hibernate.dialect.SQLServer2012Dialect;
 
-import java.io.Closeable;
+import java.sql.Driver;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 
-public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
+public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T, ID> implements Enableable {
 
-    private final Map<Class<? extends Remote<?>>, String> dialects = new ConcurrentHashMap<>();
     private final Configuration configuration = new Configuration();
-    private final Class<T> type;
 
     private SessionFactory factory;
-    private PersistenceConnection connection;
+    private DataSourceConfiguration connection;
     private Session session;
 
     @Inject
@@ -74,12 +55,12 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
     @Bound
     public HibernateJpaRepository(final Class<T> type) {
-        this.type = type;
+        super(type);
     }
 
     @Bound
-    public HibernateJpaRepository(final Class<T> type, final PersistenceConnection connection) {
-        this.type = type;
+    public HibernateJpaRepository(final Class<T> type, final DataSourceConfiguration connection) {
+        super(type);
         this.connection = connection;
     }
 
@@ -87,7 +68,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         return this.factory;
     }
 
-    protected PersistenceConnection connection() {
+    protected DataSourceConfiguration connection() {
         return this.connection;
     }
 
@@ -100,40 +81,49 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         return this.factory == null;
     }
 
-    public void registerDialect(final Class<? extends Remote<?>> remote, final String dialectClass) {
-        this.dialects.put(remote, dialectClass);
-    }
-
-    protected String dialect(final PersistenceConnection connection) throws ApplicationException {
-        final Remote remote = connection.remote();
-
-        if (remote instanceof HibernateRemote hibernateRemote) {
-            return hibernateRemote.dialect().getCanonicalName();
+    protected String dialect() throws ApplicationException {
+        if (this.connection instanceof HibernateDataSourceConfiguration hibernateConfiguration) {
+            return hibernateConfiguration.dialect();
         }
 
-        final String dialect = this.dialects.get(remote.getClass());
-        if (dialect != null) return dialect;
-
-        throw new ApplicationException("Unexpected remote connection: " + remote);
-    }
-
-    protected void registerDefaultDialects() {
-        this.registerDialect(DerbyFileRemote.class, DerbyTenSevenDialect.class.getCanonicalName());
-        this.registerDialect(MySQLRemote.class, MySQL8Dialect.class.getCanonicalName());
-        this.registerDialect(PostgreSQLRemote.class, PostgreSQL95Dialect.class.getCanonicalName());
-        this.registerDialect(MariaDbRemote.class, MariaDB103Dialect.class.getCanonicalName());
-        this.registerDialect(SqlServerRemote.class, SQLServer2012Dialect.class.getCanonicalName());
+        return this.applicationContext()
+                .property("hartshorn.data.hibernate.dialect")
+                .orThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 
     @Override
     public void enable() throws ApplicationException {
-        if (this.connection == null) {
-            this.applicationContext().log().debug("No connection was set for JPA repository instance, using default component instead.");
-            this.connection = this.applicationContext().get(PersistenceConnection.class);
+        if (!this.hasValidConnection()) {
+            this.applicationContext().log().debug("No (valid) connection was set for JPA repository instance, using default component instead.");
+            this.connection = this.applicationContext().get(DataSourceList.class).defaultConnection();
+
+            if (!this.hasValidConnection()) {
+                throw new ApplicationException("No (valid) default connection was configured");
+            }
         }
 
-        this.registerDefaultDialects();
+        this.prepareProperties();
+        try {
+            this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
+            this.factory = this.configuration.buildSessionFactory();
+        }
+        catch (final Throwable e) {
+            throw new ApplicationException(e);
+        }
+    }
 
+    protected boolean hasValidConnection() {
+        if (this.connection != null) {
+            if (this.connection instanceof HibernateDataSourceConfiguration hibernateConfiguration && hibernateConfiguration.dialect() == null) {
+                return false;
+            }
+            // Username/password can be null, only check required properties
+            return this.connection.url() != null && this.connection.driver() != null;
+        }
+        return false;
+    }
+
+    protected void prepareProperties() throws ApplicationException {
         if (StringUtilities.notEmpty(this.connection.username()) || StringUtilities.notEmpty(this.connection.password())) {
             this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
             this.configuration.setProperty("hibernate.connection.username", this.connection.username());
@@ -141,14 +131,14 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         }
         this.configuration.setProperty("hibernate.connection.url", this.connection.url());
 
-        final String driver = this.connection.remote().driver();
-        final String dialect = this.dialect(this.connection);
+        final Class<? extends Driver> driver = this.connection.driver();
+        final String dialect = this.dialect();
 
-        this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver, dialect));
+        this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver.getCanonicalName(), dialect));
 
         final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
         this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto").or("update"));
-        this.configuration.setProperty("hibernate.connection.driver_class", driver);
+        this.configuration.setProperty("hibernate.connection.driver_class", driver.getCanonicalName());
         this.configuration.setProperty("hibernate.dialect", dialect);
 
         Result<EntityContext> context = this.applicationContext().first(EntityContext.class);
@@ -164,89 +154,15 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             this.configuration.addAnnotatedClass(entity.type());
         }
 
+        // Ensure that the user-defined properties take precedence over the defaults
         this.configuration.addProperties(propertyHolder.properties());
-
-        try {
-            this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
-            this.factory = this.configuration.buildSessionFactory();
-        }
-        catch (final Throwable e) {
-            throw new ApplicationException(e);
-        }
-    }
-
-    @Override
-    public Object save(final Object object) {
-        return this.transformTransactional(session -> {
-            session.save(object);
-            return object;
-        });
-    }
-
-    @Override
-    public Object update(final Object object) {
-        return this.transformTransactional(session -> {
-            session.update(object);
-            return object;
-        });
-    }
-
-    @Override
-    public Object updateOrSave(final Object object) {
-        return this.transformTransactional(session -> {
-            session.saveOrUpdate(object);
-            return object;
-        });
-    }
-
-    @Override
-    public void delete(final Object object) {
-        this.performTransactional(session -> session.delete(object));
-    }
-
-    private void performTransactional(final Consumer<Session> action) {
-        final Session session = this.session();
-        final Transaction transaction = session.beginTransaction();
-        action.accept(session);
-        transaction.commit();
-        this.close();
-    }
-
-    private <R> R transformTransactional(final Function<Session, R> action) {
-        final Session session = this.session();
-        final Transaction transaction = session.beginTransaction();
-        final R out = action.apply(session);
-        transaction.commit();
-        this.close();
-        return out;
-    }
-
-    @Override
-    public Set<T> findAll() {
-        final Session session = this.session();
-        final CriteriaBuilder builder = session.getCriteriaBuilder();
-        final CriteriaQuery<T> criteria = builder.createQuery(this.reify());
-        criteria.from(this.reify());
-        final List<T> data = session.createQuery(criteria).getResultList();
-        return Set.copyOf(data);
-    }
-
-    @Override
-    public Result<T> findById(final ID id) {
-        final Session session = this.session();
-        return Result.of(session.find(this.reify(), id));
-    }
-
-    @Override
-    public Class<T> reify() {
-        return this.type;
     }
 
     @Override
     public void flush() {
         if (this.session != null && this.session.isOpen()) {
             this.session.flush();
-            final Transaction transaction = this.session().getTransaction();
+            final Transaction transaction = this.manager().getTransaction();
             if (transaction.isActive()) transaction.commit();
             this.close();
         }
@@ -261,11 +177,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     }
 
     @Override
-    public EntityManager entityManager() {
-        return this.session();
-    }
-
-    public Session session() {
+    public Session manager() {
         if (this.session != null && this.session.isOpen()) return this.session;
 
         // If the factory was not constructed at this point, the connection was not configured. This indicates the
@@ -273,17 +185,23 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         if (this.factory == null) {
             try {
                 this.enable();
-            } catch (final ApplicationException e) {
+            }
+            catch (final ApplicationException e) {
                 return ExceptionHandler.unchecked(e);
             }
         }
 
-        final PersistenceConnection connection = this.connection();
+        final DataSourceConfiguration connection = this.connection();
         if (connection == null) throw new IllegalStateException("Connection has not been configured!");
 
         this.applicationContext().log().debug("Opening remote session to %s".formatted(connection.url()));
         this.session = this.factory().openSession();
 
         return this.session;
+    }
+
+    @Override
+    protected Transaction transaction(final EntityManager manager) {
+        return this.manager().beginTransaction();
     }
 }

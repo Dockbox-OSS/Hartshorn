@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.util.Result;
 
 import java.util.Set;
 
-import jakarta.persistence.EntityManager;
-
 public interface JpaRepository<T, ID> extends ContextCarrier {
+
+    T refresh(T entity);
 
     T save(final T object);
 
@@ -36,10 +36,6 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
     Set<T> findAll();
 
     Result<T> findById(ID id);
-
-    EntityManager entityManager();
-
-    Class<T> reify();
 
     void flush();
 }

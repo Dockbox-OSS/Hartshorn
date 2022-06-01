@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.Value;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
@@ -42,14 +43,14 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
         TypeContext<?> instanceType = key.type();
         if (instance != null) instanceType = TypeContext.unproxy(context, instance);
 
-        final ValueLookup valueLookup = context.get(ValueLookup.class);
+        final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
 
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
             try {
                 final Value annotation = field.annotation(Value.class).get();
 
                 final String valueKey = annotation.value();
-                final Result<?> property = valueLookup.getValue(valueKey, field.genericType().type());
+                final Result<?> property = propertyHolder.get(valueKey, field.genericType().type());
 
                 if (property.absent()) {
                     context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
