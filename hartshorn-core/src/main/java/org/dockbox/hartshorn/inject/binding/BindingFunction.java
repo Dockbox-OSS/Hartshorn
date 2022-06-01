@@ -22,6 +22,8 @@ import java.util.function.Supplier;
 
 public interface BindingFunction<T> {
 
+    BindingFunction<T> priority(int priority);
+
     /**
      * Binds to the given type, this will create a new instance of the given type
      * every time it is requested.
