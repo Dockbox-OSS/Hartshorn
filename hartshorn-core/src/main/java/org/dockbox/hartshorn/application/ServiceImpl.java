@@ -32,11 +32,6 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public Class<?> owner() {
-        return Service.class;
-    }
-
-    @Override
     public boolean singleton() {
         return false;
     }
@@ -47,18 +42,8 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public Class<? extends Annotation>[] activators() {
-        return new Class[0];
-    }
-
-    @Override
     public boolean permitProxying() {
         return true;
-    }
-
-    @Override
-    public String[] requires() {
-        return new String[0];
     }
 
     @Override

@@ -16,13 +16,17 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
 
-@Service(activators = UseHttpServer.class, requires = "org.eclipse.jetty.server.Server")
+@Service
+@RequiresActivator(UseHttpServer.class)
+@RequiresClass("org.eclipse.jetty.server.Server")
 public class JettyProviders {
 
     @Provider

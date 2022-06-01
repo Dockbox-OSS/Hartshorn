@@ -20,11 +20,13 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.proxy.HartshornApplicationProxier;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 
-@Service(activators = UsePersistence.class)
+@Service
+@RequiresActivator(UsePersistence.class)
 public class HibernateProxyLookupInitializer implements LifecycleObserver {
 
     @Override

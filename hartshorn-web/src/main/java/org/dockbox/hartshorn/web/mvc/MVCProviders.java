@@ -16,14 +16,16 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.processing.MvcParameterLoader;
 import org.dockbox.hartshorn.web.servlet.MvcServlet;
 
-@Service(activators = UseMvcServer.class)
+@Service
+@RequiresActivator(UseMvcServer.class)
 public class MVCProviders {
 
     @Provider("mvc_webserver")

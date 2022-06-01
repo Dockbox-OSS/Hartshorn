@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-public class TypePresenceActivationFilter implements ComponentActivationFilter {
+import org.dockbox.hartshorn.util.reflect.Extends;
 
-    @Override
-    public <T> boolean doActivate(final TypeContext<T> component, final ComponentContainer container) {
-        for (final String requiredType : container.requiredTypes()) {
-            if (TypeContext.lookup(requiredType).isVoid()) return false;
-        }
-        return true;
-    }
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Extends(RequiresCondition.class)
+@RequiresCondition(condition = ActivatorCondition.class)
+public @interface RequiresActivator {
+
+    Class<? extends Annotation>[] value();
+
+    boolean failOnNoMatch() default false;
 }

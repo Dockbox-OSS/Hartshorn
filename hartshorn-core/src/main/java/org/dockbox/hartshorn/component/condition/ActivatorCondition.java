@@ -16,20 +16,19 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-public class ClassCondition implements Condition {
+import java.lang.annotation.Annotation;
+
+public class ActivatorCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElementContext().annotation(RequiresClass.class).map(condition -> {
-            for (final String name : condition.value()) {
-                try {
-                    Class.forName(name);
-                }
-                catch (final ClassNotFoundException e) {
-                    return ConditionResult.notFound("Class", name);
+        return context.annotatedElementContext().annotation(RequiresActivator.class).map(condition -> {
+            for (final Class<? extends Annotation> activator : condition.value()) {
+                if (!context.applicationContext().hasActivator(activator)) {
+                    return ConditionResult.notFound("Activator", activator.getName());
                 }
             }
             return ConditionResult.matched();
-        }).or(ConditionResult.invalidCondition("class"));
+        }).or(ConditionResult.invalidCondition("activator"));
     }
 }

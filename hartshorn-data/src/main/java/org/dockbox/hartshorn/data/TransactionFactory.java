@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.data;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 
 import jakarta.persistence.EntityManager;
 
-@Service(activators = UsePersistence.class)
+@Service
+@RequiresActivator(UsePersistence.class)
 public interface TransactionFactory {
     @Factory
     TransactionManager manager(EntityManager entityManager);

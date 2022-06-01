@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.ExceptionHandler;
@@ -39,7 +40,8 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.servlet.Servlet;
 
-@Service(activators = UseHttpServer.class)
+@Service
+@RequiresActivator(UseHttpServer.class)
 public class HttpWebServerInitializer implements LifecycleObserver {
 
     public static final int DEFAULT_PORT = 8080;

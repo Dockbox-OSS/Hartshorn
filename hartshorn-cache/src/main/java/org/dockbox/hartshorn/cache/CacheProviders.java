@@ -17,12 +17,14 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 
 import jakarta.inject.Singleton;
 
-@Service(activators = UseCaching.class)
+@Service
+@RequiresActivator(UseCaching.class)
 public class CacheProviders {
 
     @Provider

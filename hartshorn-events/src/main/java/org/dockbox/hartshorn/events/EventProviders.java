@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
@@ -24,7 +25,8 @@ import org.dockbox.hartshorn.events.handle.EventParameterLoader;
 
 import jakarta.inject.Singleton;
 
-@Service(activators = UseEvents.class)
+@Service
+@RequiresActivator(UseEvents.class)
 public class EventProviders {
 
     @Singleton

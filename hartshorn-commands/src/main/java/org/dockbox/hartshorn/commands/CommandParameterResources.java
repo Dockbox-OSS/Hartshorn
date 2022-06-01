@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.Message;
 
-@Service(owner = CommandGateway.class)
+@Service
 public interface CommandParameterResources {
 
     @InjectTranslation(value = "Not enough arguments.", key = "missing_args")

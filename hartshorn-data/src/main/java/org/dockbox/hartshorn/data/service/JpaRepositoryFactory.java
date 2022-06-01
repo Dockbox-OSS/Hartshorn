@@ -16,13 +16,20 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.inject.Enable;
 
-@Service(activators = UsePersistence.class)
+/**
+ * Default factory for bound {@link JpaRepository} instances.
+ * @author Guus Lieben
+ * @since 22.3
+ */
+@Service
+@RequiresActivator(UsePersistence.class)
 public interface JpaRepositoryFactory {
     @Factory
     @Enable(false)

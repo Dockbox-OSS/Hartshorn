@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 
-public class JsonDataMapper implements JacksonDataMapper{
+public class JsonDataMapper implements JacksonDataMapper {
 
     @Override
     public FileFormat fileFormat() {

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.reflect.AliasFor;
 import org.dockbox.hartshorn.util.reflect.Extends;
 
@@ -35,7 +36,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Service.class)
-@Service(activators = UseCaching.class)
+@Service
+@RequiresActivator(UseCaching.class)
 public @interface CacheService {
     /**
      * The ID of the cache kept in the service. Also used as the ID of the

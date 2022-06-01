@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
-import java.util.Set;
 
 public interface ComponentContainer {
 
@@ -32,8 +31,6 @@ public interface ComponentContainer {
 
     TypeContext<?> owner();
 
-    List<Class<? extends Annotation>> activators();
-
     boolean singleton();
 
     boolean lazy();
@@ -44,5 +41,4 @@ public interface ComponentContainer {
 
     boolean permitsProcessing();
 
-    Set<String> requiredTypes();
 }

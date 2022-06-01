@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 
-@Service(activators = UseTranslations.class)
+@Service
+@RequiresActivator(UseTranslations.class)
 public class TranslationProviders {
 
     @Provider
