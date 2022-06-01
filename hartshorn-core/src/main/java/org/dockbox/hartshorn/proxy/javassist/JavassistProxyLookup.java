@@ -27,7 +27,7 @@ public class JavassistProxyLookup implements ProxyLookup {
     public <T> Class<T> unproxy(final T instance) {
         final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
         if (methodHandler instanceof JavassistProxyMethodHandler proxyHandler) {
-            return proxyHandler.manager().targetClass();
+            return proxyHandler.invocationHandler().manager().targetClass();
         }
         return instance != null ? (Class<T>) instance.getClass() : null;
     }
