@@ -91,7 +91,9 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor {
             return;
         }
 
-        context.bind(key).to(element.obtain(context).rethrowUnchecked().get());
+        context.bind(key)
+                .priority(annotation.priority())
+                .to(element.obtain(context).rethrowUnchecked().get());
     }
 
     private <R, C extends TypeContext<R>, E extends AnnotatedElementContext<?> & ObtainableElement<C>> void processTypeBinding(final ApplicationContext context, final TypeContext<?> generic, final E element) {

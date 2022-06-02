@@ -32,6 +32,11 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
+    public BindingFunction<T> priority(final int priority) {
+        return this.delegate.priority(priority);
+    }
+
+    @Override
     public ApplicationContext to(final Class<? extends T> type) {
         this.delegate.to(type);
         return this.applicationContext;
