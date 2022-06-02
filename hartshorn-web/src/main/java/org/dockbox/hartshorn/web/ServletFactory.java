@@ -16,12 +16,14 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-@Service(activators = UseHttpServer.class)
+@Service
+@RequiresActivator(UseHttpServer.class)
 @FunctionalInterface
 public interface ServletFactory {
     @Factory

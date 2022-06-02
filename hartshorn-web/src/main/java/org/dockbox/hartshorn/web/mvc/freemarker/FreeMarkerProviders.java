@@ -16,14 +16,18 @@
 
 package org.dockbox.hartshorn.web.mvc.freemarker;
 
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
+import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
 
 import jakarta.inject.Singleton;
 
-@Service(activators = UseMvcServer.class, requires = "freemarker.template.Template")
+@Service
+@RequiresActivator(UseMvcServer.class)
+@RequiresClass("freemarker.template.Template")
 public class FreeMarkerProviders {
 
     @Provider

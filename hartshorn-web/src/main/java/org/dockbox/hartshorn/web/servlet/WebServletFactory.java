@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
@@ -24,7 +25,8 @@ import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.mvc.ViewTemplate;
 
-@Service(activators = UseHttpServer.class)
+@Service
+@RequiresActivator(UseHttpServer.class)
 public interface WebServletFactory {
     @Factory
     WebServletImpl webServlet(final HttpWebServer starter, final RequestHandlerContext context);

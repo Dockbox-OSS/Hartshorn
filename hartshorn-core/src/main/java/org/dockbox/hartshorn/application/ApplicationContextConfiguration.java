@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
@@ -52,6 +53,7 @@ public class ApplicationContextConfiguration {
     protected Initializer<ComponentPopulator> componentPopulator;
     protected Initializer<PrefixContext> prefixContext;
     protected Initializer<ActivatorHolder> activatorHolder;
+    protected Initializer<ConditionMatcher> conditionMatcher;
 
     protected TypeContext<?> activator;
 
@@ -68,6 +70,10 @@ public class ApplicationContextConfiguration {
 
     public ApplicationProxier applicationProxier(final InitializingContext context) {
         return this.applicationProxier.initialize(context);
+    }
+
+    public ConditionMatcher conditionMatcher(final InitializingContext context) {
+        return this.conditionMatcher.initialize(context);
     }
 
     public ApplicationFSProvider applicationFSProvider(final InitializingContext context) {

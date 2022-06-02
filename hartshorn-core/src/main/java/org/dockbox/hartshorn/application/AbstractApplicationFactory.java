@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
@@ -199,6 +200,12 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     @Override
     public Self componentPopulator(final Initializer<ComponentPopulator> componentPopulator) {
         this.configuration.componentPopulator = componentPopulator.cached();
+        return this.self();
+    }
+
+    @Override
+    public Self conditionMatcher(final Initializer<ConditionMatcher> conditionMatcher) {
+        this.configuration.conditionMatcher = conditionMatcher.cached();
         return this.self();
     }
 }

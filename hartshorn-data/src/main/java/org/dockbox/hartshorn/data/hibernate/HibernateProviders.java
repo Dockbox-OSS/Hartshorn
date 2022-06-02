@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.QueryFunction;
@@ -23,7 +25,9 @@ import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
-@Service(activators = UsePersistence.class, requires = "org.hibernate.Hibernate")
+@Service
+@RequiresActivator(UsePersistence.class)
+@RequiresClass("org.hibernate.Hibernate")
 public class HibernateProviders {
 
     @Provider

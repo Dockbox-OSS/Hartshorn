@@ -42,7 +42,7 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
 
         final Result<org.dockbox.hartshorn.context.Context> out = name == null
                 ? applicationContext.first(type)
-                : applicationContext.first(applicationContext, type.type(), name);
+                : applicationContext.first(type.type(), name);
 
         final boolean required = parameter.annotation(Required.class).map(Required::value).or(false);
         if (required && out.absent()) return ExceptionHandler.unchecked(new ApplicationException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required"));

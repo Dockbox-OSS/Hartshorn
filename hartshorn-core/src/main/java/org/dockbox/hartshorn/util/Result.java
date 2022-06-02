@@ -643,11 +643,11 @@ public final class Result<T> {
      */
     @NonNull
     public T get() {
-        if (null == this.value) {
-            throw new NoSuchElementException("No value present");
-        }
         if (null != this.throwable) {
             this.rethrowUnchecked();
+        }
+        if (null == this.value) {
+            throw new NoSuchElementException("No value present");
         }
         return this.value;
     }

@@ -16,16 +16,18 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.config.StandardPropertyHolder;
 
-@Service(activators = UseConfigurations.class)
-@Configuration("application")
+@Service
+@RequiresActivator(UseConfigurations.class)
+@Configuration({"application", "classpath:application"})
 public class ConfigurationProviders {
 
     @Provider

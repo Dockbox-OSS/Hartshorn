@@ -124,6 +124,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                 ExceptionHandler.unchecked(e);
             }
         }
+
         return instance;
     }
 

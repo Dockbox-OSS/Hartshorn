@@ -65,15 +65,13 @@ public class ContextDrivenProvider<C> implements Provider<C> {
             if (constructors.isEmpty()) {
                 final Result<? extends ConstructorContext<? extends C>> defaultConstructor = this.context().defaultConstructor();
                 if (defaultConstructor.absent()) {
-                    throw new IllegalStateException("No injectable constructors found for " + this.context().type());
+                    return Result.of(new IllegalStateException("No injectable constructors found for " + this.context().type()));
                 }
                 else this.optimalConstructor = defaultConstructor.get();
             }
             else {
-                /*
-                 An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
-                 can be satiated at once.
-                 */
+                // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
+                // can be satiated at once.
                 this.optimalConstructor = constructors.get(0);
                 for (final ConstructorContext<? extends C> constructor : constructors) {
                     if (this.optimalConstructor.parameterCount() < constructor.parameterCount()) {

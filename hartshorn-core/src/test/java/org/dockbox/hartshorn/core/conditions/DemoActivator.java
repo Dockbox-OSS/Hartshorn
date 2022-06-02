@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.core.conditions;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
-public class TypePresenceActivationFilter implements ComponentActivationFilter {
-
-    @Override
-    public <T> boolean doActivate(final TypeContext<T> component, final ComponentContainer container) {
-        for (final String requiredType : container.requiredTypes()) {
-            if (TypeContext.lookup(requiredType).isVoid()) return false;
-        }
-        return true;
-    }
+@ServiceActivator
+public @interface DemoActivator {
 }

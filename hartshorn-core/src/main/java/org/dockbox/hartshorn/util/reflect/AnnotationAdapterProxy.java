@@ -62,7 +62,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
         Result<Object> cachedField = this.methodsCache.get(method.getName());
         if (cachedField == null) {
-            cachedField = AnnotationHelper.searchInHierarchy(this.actual, this.targetAnnotationClass, this.actualAnnotationHierarchy, method.getName());
+            cachedField = AnnotationHelper.searchInHierarchy(this.actual, this.targetAnnotationClass, this.actualAnnotationHierarchy, method);
             this.methodsCache.put(method.getName(), cachedField);
         }
         return cachedField.orNull();

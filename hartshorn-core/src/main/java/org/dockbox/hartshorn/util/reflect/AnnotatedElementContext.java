@@ -21,7 +21,9 @@ import org.dockbox.hartshorn.util.Result;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -70,10 +72,10 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
      * @param annotation The annotation type
      * @param <T> The type of the annotation
      * @return The annotations of the annotated element, when the annotation is annotated with the given
-     * @see #annotations(Class)
+     * @see #annotationsWith(Class)
      */
-    public <T extends Annotation> Set<Annotation> annotations(final TypeContext<T> annotation) {
-        return this.annotations(annotation.type());
+    public <T extends Annotation> Set<Annotation> annotationsWith(final TypeContext<T> annotation) {
+        return this.annotationsWith(annotation.type());
     }
 
     /**
@@ -97,9 +99,9 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
      * @param annotation The annotation type
      * @param <T> The type of the annotation
      * @return The annotations of the annotated element, when the annotation is annotated with the given
-     * @see #annotations(TypeContext)
+     * @see #annotationsWith(TypeContext)
      */
-    public <T extends Annotation> Set<Annotation> annotations(final Class<T> annotation) {
+    public <T extends Annotation> Set<Annotation> annotationsWith(final Class<T> annotation) {
         return this.annotations().stream()
                 .filter(a -> TypeContext.of(a.annotationType()).annotation(annotation).present())
                 .collect(Collectors.toSet());
@@ -137,6 +139,12 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
         final T oneOrNull = AnnotationHelper.oneOrNull(this.element(), annotation);
         if (oneOrNull != null) annotations.put(annotation, oneOrNull);
         return Result.of(oneOrNull);
+    }
+
+    public <T extends Annotation> Set<T> annotations(final Class<T> annotation) {
+        if (!annotation.isAnnotation()) return Collections.emptySet();
+        final List<T> annotations = AnnotationHelper.allOrEmpty(this.element(), annotation);
+        return Set.copyOf(annotations);
     }
 
     /**

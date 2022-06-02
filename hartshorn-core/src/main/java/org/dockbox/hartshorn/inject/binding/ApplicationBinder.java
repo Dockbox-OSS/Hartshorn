@@ -34,6 +34,7 @@ public interface ApplicationBinder extends Binder {
      *
      * @param configuration The configuration to bind.
      */
+    @Deprecated(since = "22.3", forRemoval = true)
     void bind(InjectConfiguration configuration);
 
     /**

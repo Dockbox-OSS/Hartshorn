@@ -26,6 +26,10 @@ public abstract class ContextCarrierEvent extends DefaultApplicationAwareContext
 
     private ApplicationContext context;
 
+    public ContextCarrierEvent() {
+        super(null);
+    }
+
     @Override
     public ApplicationContext applicationContext() {
         if (this.context == null) {

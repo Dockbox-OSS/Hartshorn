@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy.processing;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -30,6 +29,4 @@ public interface MethodProxyContext<T> extends ApplicationAwareContext {
     MethodContext<?, T> method();
 
     <A extends Annotation> A annotation(Class<A> annotation);
-
-    ApplicationContext context();
 }

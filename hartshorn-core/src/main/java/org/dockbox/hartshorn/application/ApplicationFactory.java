@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ActivatorFiltered;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -289,6 +290,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      * @see ApplicationConfigurator#apply(ApplicationManager, Set)
      */
+    @Deprecated(since = "22.3", forRemoval = true)
     Self configuration(InjectConfiguration injectConfiguration);
 
     /**
@@ -298,6 +300,16 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      */
     Self activatorHolder(Initializer<ActivatorHolder> activatorHolder);
+
+    /**
+     * Registers a custom {@link ConditionMatcher} which should be known to the application.
+     * The condition matcher is used to determine if a component should be activated or not,
+     * but can also be applied to any other annotated element.
+     *
+     * @param conditionMatcher The condition matcher to register.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self conditionMatcher(Initializer<ConditionMatcher> conditionMatcher);
 
     /**
      * Returns itself, for chaining without losing the fluent API.
