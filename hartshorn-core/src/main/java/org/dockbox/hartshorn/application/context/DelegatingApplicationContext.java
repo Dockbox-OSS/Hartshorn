@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
@@ -93,12 +94,12 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.resourceLocator = context.resourceLocator();
         this.metaProvider = context.metaProvider();
 
-        this.registerDefaultBindings();
+        this.registerDefaultBindings(context);
     }
 
     protected abstract void prepareInitialization();
 
-    protected void registerDefaultBindings() {
+    protected void registerDefaultBindings(final InitializingContext context) {
         this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
         this.bind(ComponentProvider.class).singleton(this);
         if (this.componentProvider instanceof StandardComponentProvider provider) {
@@ -111,6 +112,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator);
         this.bind(ComponentProvider.class).singleton(this.componentProvider);
         this.bind(ActivatorHolder.class).singleton(this.activatorHolder);
+        this.bind(ConditionMatcher.class).singleton(context.conditionMatcher());
 
         this.bind(ApplicationContext.class).singleton(this);
         this.bind(ApplicationPropertyHolder.class).singleton(this);

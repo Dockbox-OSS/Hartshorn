@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 import org.dockbox.hartshorn.application.ServiceImpl;
 import org.dockbox.hartshorn.application.StandardApplicationFactory;
@@ -170,7 +171,7 @@ public class HartshornLifecycleExtension implements
         ApplicationFactory<?, ?> applicationFactory = new StandardApplicationFactory()
                 .loadDefaults()
                 .applicationFSProvider(ctx -> new JUnitFSProvider())
-                .componentLocator(ctx -> this.getComponentLocator(ctx.applicationContext(), testComponentSources));
+                .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources));
 
         final TypeContext<VirtualServiceActivator> virtualActivator = TypeContext.of(VirtualServiceActivator.class);
         final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
@@ -229,9 +230,9 @@ public class HartshornLifecycleExtension implements
         return applicationFactory;
     }
 
-    private ComponentLocator getComponentLocator(final ApplicationContext applicationContext, final AnnotatedElement... testComponentSources) {
-        final ComponentLocator componentLocator = new ComponentLocatorImpl(applicationContext);
-        ((ModifiableActivatorHolder) applicationContext).addActivator(new ServiceImpl());
+    private ComponentLocator getComponentLocator(final InitializingContext context, final AnnotatedElement... testComponentSources) {
+        final ComponentLocator componentLocator = new ComponentLocatorImpl(context);
+        ((ModifiableActivatorHolder) context.applicationContext()).addActivator(new ServiceImpl());
 
         for (final AnnotatedElement testComponentSource : testComponentSources) {
             if (testComponentSource == null) continue;

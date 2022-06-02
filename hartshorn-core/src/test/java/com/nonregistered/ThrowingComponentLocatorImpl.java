@@ -16,10 +16,11 @@
 
 package com.nonregistered;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
@@ -28,9 +29,9 @@ public class ThrowingComponentLocatorImpl extends ComponentLocatorImpl {
     private final ApplicationContext proxy;
     private boolean mock = false;
 
-    public ThrowingComponentLocatorImpl(final ApplicationContext applicationContext) {
-        super(applicationContext);
-        this.proxy = Mockito.spy(applicationContext);
+    public ThrowingComponentLocatorImpl(final InitializingContext context) {
+        super(context);
+        this.proxy = Mockito.spy(context.applicationContext());
     }
 
     @Override

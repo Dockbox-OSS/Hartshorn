@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.InjectorMetaProvider;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
@@ -137,13 +138,14 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
                 .applicationEnvironment(ctx -> new ContextualApplicationEnvironment(ctx.configuration().prefixContext(ctx), ctx.manager()))
                 .exceptionHandler(ctx -> new LoggingExceptionHandler())
                 .prefixContext(ctx -> new ReflectionsPrefixContext(ctx.manager()))
-                .componentLocator(ctx -> new ComponentLocatorImpl(ctx.applicationContext()))
+                .componentLocator(ComponentLocatorImpl::new)
                 .resourceLocator(ctx -> new ClassLoaderClasspathResourceLocator(ctx.applicationContext()))
                 .metaProvider(ctx -> new InjectorMetaProvider(ctx.applicationContext()))
                 .componentProvider(ctx -> new HierarchicalApplicationComponentProvider(ctx.applicationContext(), ctx.componentLocator(), ctx.metaProvider()))
                 .componentPopulator(ctx -> new ContextualComponentPopulator(ctx.applicationContext()))
                 .argumentParser(ctx -> new StandardApplicationArgumentParser())
                 .activatorHolder(ctx -> new StandardActivatorHolder(ctx.applicationContext()))
+                .conditionMatcher(ctx -> new ConditionMatcher(ctx.applicationContext()))
                 .serviceActivator(new UseBootstrap() {
                     @Override
                     public Class<? extends Annotation> annotationType() {
