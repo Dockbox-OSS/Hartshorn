@@ -29,8 +29,8 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.InjectorMetaProvider;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
-import org.dockbox.hartshorn.proxy.HartshornApplicationProxier;
 import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.proxy.cglib.CglibApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,8 +104,6 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         this.require(this.configuration().componentPopulator, "Component populator");
         this.require(this.configuration().prefixContext, "Prefix context");
         this.require(this.configuration().activatorHolder, "Activator holder");
-
-        this.initialize();
     }
 
     protected void require(final Object instance, final String type) {
@@ -121,10 +119,6 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         return instance;
     }
 
-    protected void initialize() {
-
-    }
-
     public StandardApplicationFactory deduceActivator() {
         return this.activator(this.deduceApplicationActivator());
     }
@@ -133,7 +127,7 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         return this.constructor(StandardApplicationContextConstructor::new)
                 .applicationLogger(ctx -> new LogbackApplicationLogger())
                 .applicationConfigurator(ctx -> new EnvironmentDrivenApplicationConfigurator())
-                .applicationProxier(ctx -> new HartshornApplicationProxier())
+                .applicationProxier(ctx -> new CglibApplicationProxier())
                 .applicationFSProvider(ctx -> new ApplicationFSProviderImpl())
                 .applicationEnvironment(ctx -> new ContextualApplicationEnvironment(ctx.configuration().prefixContext(ctx), ctx.manager()))
                 .exceptionHandler(ctx -> new LoggingExceptionHandler())
