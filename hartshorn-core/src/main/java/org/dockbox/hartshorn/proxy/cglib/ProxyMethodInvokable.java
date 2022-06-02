@@ -54,7 +54,7 @@ public class ProxyMethodInvokable implements Invokable {
 
     @Override
     public void setAccessible(final boolean accessible) {
-        // Nothing to do
+        // Nothing to do. Setting the local method accessible does not affect the proxy method.
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ProxyMethodInvokable implements Invokable {
 
     @Override
     public boolean isDefault() {
-        return false;
+        return this.method.isDefault();
     }
 
     @Override
