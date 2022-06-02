@@ -21,20 +21,34 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
 
-import jakarta.inject.Singleton;
-
+/**
+ * Default providers for cache components. This implementation is active by
+ * default when {@link UseCaching} is used.
+ *
+ * @author Guus Lieben
+ * @since 21.2
+ */
 @Service
 @RequiresActivator(UseCaching.class)
 public class CacheProviders {
 
+    /**
+     * The default binding for {@link CacheManager}. This implementation is
+     * active by default when {@link UseCaching} is used.
+     * @return {@link CacheManagerImpl}
+     */
     @Provider
-    public Class<? extends Cache> cache() {
-        return CacheImpl.class;
-    }
-
-    @Provider
-    @Singleton
     public Class<? extends CacheManager> cacheManager() {
         return CacheManagerImpl.class;
+    }
+
+    /**
+     * The default binding for {@link KeyGenerator}. This implementation is
+     * active by default when {@link UseCaching} is used.
+     * @return {@link HashCodeKeyGenerator}
+     */
+    @Provider
+    public KeyGenerator keyGenerator() {
+        return new HashCodeKeyGenerator();
     }
 }

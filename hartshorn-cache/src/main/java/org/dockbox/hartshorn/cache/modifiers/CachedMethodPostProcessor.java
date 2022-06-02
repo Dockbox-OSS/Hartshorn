@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.Cached;
+import org.dockbox.hartshorn.cache.annotations.Expire;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
@@ -33,21 +34,25 @@ import org.dockbox.hartshorn.util.Result;
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to store or obtain {@link Cache} entries.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached> {
 
     @Override
     protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
-        return (interceptorContext) -> {
-            final Cache<Object> cache = cacheContext.cache();
+        final String elementKey = cacheContext.key();
 
-            final Result<Object> content = cache.get();
+        return (interceptorContext) -> {
+            final Cache<String, Object> cache = cacheContext.cache();
+            final Result<Object> content = cache.get(elementKey);
 
             return content.orElse(() -> {
-                context.log().debug("Cache " + cacheContext.name() + " has not been populated yet, or content has expired.");
+                context.log().debug("Cache " + cacheContext.cacheName() + " has not been populated yet, or content has expired.");
                 try {
                     final Object out = interceptorContext.invokeDefault();
-                    cache.populate(out);
+                    cache.putIfAbsent(elementKey, out);
                     return out;
                 }
                 catch (final Throwable e) {
@@ -61,7 +66,8 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final Cached cached = context.annotation(Cached.class);
-        return new CacheMethodContextImpl(cached.value(), Expiration.of(cached.expires()));
+        final Expire annotation = cached.expires();
+        return new CacheMethodContextImpl(cached.value(), Expiration.of(annotation.amount(), annotation.unit()));
     }
 
     @Override

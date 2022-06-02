@@ -16,33 +16,85 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.cache.annotations.Expire;
-
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Simple bean indicating the expiration of a {@link Cache}.
+ * Simple immutable object indicating the expiration of a {@link Cache}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class Expiration {
 
-    private final int amount;
+    private static final Expiration NEVER = new Expiration(-1, TimeUnit.MILLISECONDS);
+    private final long amount;
     private final TimeUnit unit;
 
-    public Expiration(final int amount, final TimeUnit unit) {
+    private Expiration(final long amount, final TimeUnit unit) {
         this.amount = amount;
         this.unit = unit;
     }
 
-    public int amount() {
+    /**
+     * The amount of time (units) before the cache expires.
+     * @return the amount of time before the cache expires
+     */
+    public long amount() {
         return this.amount;
     }
 
+    /**
+     * The unit of time before the cache expires.
+     * @return the unit of time before the cache expires
+     */
     public TimeUnit unit() {
         return this.unit;
     }
 
-    public static Expiration of(final Expire expire) {
-        return new Expiration(expire.amount(), expire.unit());
+    /**
+     * Creates a new {@link Duration} representing the amount of time before the cache expires.
+     * @return the new {@link Duration}
+     */
+    public Duration toDuration() {
+        return Duration.of(this.amount, this.unit.toChronoUnit());
     }
 
+    /**
+     * Returns a new {@link Expiration} using the given expiration time.
+     * @param amount the amount of time before the cache expires
+     * @param unit the unit of time before the cache expires
+     * @return the new {@link Expiration}
+     */
+    public static Expiration of(final long amount, final TimeUnit unit) {
+        return new Expiration(amount, unit);
+    }
+
+    /**
+     * Returns a new {@link Expiration} using the given expiration time.
+     * @param amount the amount of time before the cache expires
+     * @param unit the unit of time before the cache expires
+     * @return the new {@link Expiration}
+     */
+    public static Expiration of(final long amount, final ChronoUnit unit) {
+        return new Expiration(amount, TimeUnit.of(unit));
+    }
+
+    /**
+     * Returns a new {@link Expiration} using the given {@link Duration}.
+     * @param duration the {@link Duration} before the cache expires
+     * @return the new {@link Expiration}
+     */
+    public static Expiration of(final Duration duration) {
+        return new Expiration(duration.getSeconds(), TimeUnit.SECONDS);
+    }
+
+    /**
+     * Returns a {@link Expiration} that never expires.
+     * @return the {@link Expiration} that never expires
+     */
+    public static Expiration never() {
+        return NEVER;
+    }
 }

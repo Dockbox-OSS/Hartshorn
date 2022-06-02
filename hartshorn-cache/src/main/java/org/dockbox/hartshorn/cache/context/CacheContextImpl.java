@@ -25,29 +25,38 @@ import java.util.function.Supplier;
  * Default implementation of {@link CacheContext}.
  *
  * @see CacheContext
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheContextImpl implements CacheContext {
 
     private final CacheManager manager;
     private final String name;
-    private final Supplier<Cache<?>> supplier;
+    private final String key;
+    private final Supplier<Cache<?, ?>> supplier;
 
-    public CacheContextImpl(final CacheManager manager, final Supplier<Cache<?>> supplier, final String name) {
+    public CacheContextImpl(final CacheManager manager, final Supplier<Cache<?, ?>> supplier, final String name, final String key) {
         this.manager = manager;
-        this.name = name;
         this.supplier = supplier;
+        this.name = name;
+        this.key = key;
     }
 
     public CacheManager manager() {
         return this.manager;
     }
 
-    public String name() {
+    public String cacheName() {
         return this.name;
     }
 
     @Override
-    public <T> Cache<T> cache() {
-        return (Cache<T>) this.supplier.get();
+    public String key() {
+        return this.key;
+    }
+
+    @Override
+    public <T> Cache<String, T> cache() {
+        return (Cache<String, T>) this.supplier.get();
     }
 }

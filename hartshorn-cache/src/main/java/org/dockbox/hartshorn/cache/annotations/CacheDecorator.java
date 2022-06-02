@@ -17,49 +17,47 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.cache.KeyGenerator;
-import org.dockbox.hartshorn.util.reflect.AliasFor;
-import org.dockbox.hartshorn.util.reflect.Extends;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Method decorator which indicates the return value of the method can and
- * should be cached.
+ * Synthetic parent annotation for cache annotations.
+ * @see Cached
+ * @see EvictCache
+ * @see UpdateCache
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 22.4
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@Extends(CacheDecorator.class)
-public @interface Cached {
+public @interface CacheDecorator {
 
     /**
-     * @see CacheDecorator#cacheName()
+     * The ID of the target cache. If this is left empty a name will be
+     * generated based on the owning service.
+     *
+     * @return the cache ID
      */
-    @AliasFor("cacheName")
-    String value() default "";
+    String cacheName() default "";
 
     /**
-     * @see CacheDecorator#keyGenerator()
+     * The type of the key generator to use. The key generator is responsible for
+     * turning method signatures into cache keys. The default key generator is
+     * based on the binding of {@link KeyGenerator} so it blends in with the active
+     * application configuration.
+     *
+     * <p>This will only be used when {@link #key()} is left empty.
+     *
+     * @return the key generator type
      */
     Class<? extends KeyGenerator> keyGenerator() default KeyGenerator.class;
 
     /**
-     * Indicates whether the cache should automatically expire. If this is
-     * left empty the cache will never expire unless manually evicted. The
-     * duration indicated is activated the moment the method is first called.
+     *The cache key to use. If this is left empty a key will be generated based on
+     * the method signature.
      *
-     * @return the lifetime
-     */
-    Expire expires() default @Expire(amount = -1, unit = TimeUnit.NANOSECONDS);
-
-    /**
-     * @see CacheDecorator#key()
+     * @return the cache key
      */
     String key() default "";
 }

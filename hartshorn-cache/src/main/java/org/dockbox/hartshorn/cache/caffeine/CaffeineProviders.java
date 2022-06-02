@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.cache.caffeine;
 
+import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
+import org.dockbox.hartshorn.component.processing.Provider;
 
 /**
- * The factory for {@link Cache} implementations to allow for custom
- * {@link Expiration} values.
- *
- * @see Cache
+ * The provider configuration for Caffeine caches.
  * @author Guus Lieben
- * @since 21.2
+ * @since 22.4
  */
-@FunctionalInterface
 @Service
 @RequiresActivator(UseCaching.class)
-public interface CacheFactory {
+@RequiresClass("com.github.benmanes.caffeine.cache.Caffeine")
+public class CaffeineProviders {
 
     /**
-     * Creates a new {@link Cache} instance with the given {@link Expiration}.
-     * @param expiration the {@link Expiration} to use
-     * @return the new {@link Cache} instance
-     * @param <K> the type of keys
-     * @param <V> the type of values
+     * The provider for {@link Cache} instances. This uses class-based provision
+     * to support both injected and bound provision.
+     * @return {@link CaffeineCache}
      */
-    @Factory
-    <K, V> Cache<K, V> cache(Expiration expiration);
+    @Provider
+    public Class<? extends Cache> cache() {
+        return CaffeineCache.class;
+    }
 }

@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Indicates the expiration of a {@link Cached} decorator.
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Expire {
@@ -31,7 +33,7 @@ public @interface Expire {
      *
      * @return the amount
      */
-    int amount();
+    long amount();
 
     /**
      * The unit in which time passes.

@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.cache.modifiers;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
+import org.dockbox.hartshorn.cache.KeyGenerator;
+import org.dockbox.hartshorn.cache.annotations.CacheDecorator;
 import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
@@ -30,6 +32,7 @@ import org.dockbox.hartshorn.component.ComponentUtilities;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -38,42 +41,53 @@ import java.util.function.Supplier;
  * Common functionality for cache related {@link ServiceAnnotatedMethodInterceptorPostProcessor modifiers}.
  *
  * @param <A> The cache-related annotation
+ * @author Guus Lieben
+ * @since 21.2
  */
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final CacheMethodContext cacheMethodContext = this.context(methodContext);
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext processingContext) {
+        final CacheMethodContext cacheMethodContext = this.context(proxyContext);
         final CacheManager manager = context.get(CacheManager.class);
+
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Result<CacheService> annotation = methodContext.type().annotation(CacheService.class);
+            final Result<CacheService> annotation = proxyContext.type().annotation(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }
             else {
-                name = ComponentUtilities.id(context, methodContext.type());
+                name = ComponentUtilities.id(context, proxyContext.type());
             }
         }
 
         final Expiration expiration = cacheMethodContext.expiration();
         final String finalName = name;
 
-        context.log().debug("Determined cache name '" + finalName + "' for " + methodContext.method().qualifiedName());
+        context.log().debug("Determined cache name '" + finalName + "' for " + proxyContext.method().qualifiedName());
 
-        final Supplier<Cache<?>> cacheSupplier = () -> {
-            final Cache<Object> cache;
+        final Supplier<Cache<?, ?>> cacheSupplier = () -> {
+            final Cache<Object, Object> cache;
             if (expiration != null)
                 cache = manager.getOrCreate(finalName, expiration);
             else {
-                cache = manager.get(finalName).orThrow(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
+                cache = manager.get(finalName)
+                        .orThrow(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
             }
             return cache;
         };
 
-        final CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, name);
+        final CacheDecorator cacheDecorator = proxyContext.annotation(CacheDecorator.class);
+        final KeyGenerator keyGenerator = context.get(cacheDecorator.keyGenerator());
 
-        return this.process(context, methodContext, cacheContext);
+        String key = cacheDecorator.key();
+        if (StringUtilities.empty(key)) {
+            key = keyGenerator.generateKey(proxyContext.method());
+        }
+        final CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, finalName, key);
+
+        return this.process(context, proxyContext, cacheContext);
     }
 
     protected abstract CacheMethodContext context(MethodProxyContext<?> context);
