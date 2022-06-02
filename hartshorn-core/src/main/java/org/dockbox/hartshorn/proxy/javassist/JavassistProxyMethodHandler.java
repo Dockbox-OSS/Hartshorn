@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.proxy.MethodInvokable;
-import org.dockbox.hartshorn.proxy.StandardMethodInvocationHandler;
+import org.dockbox.hartshorn.proxy.StandardMethodInterceptor;
 
 import java.lang.reflect.Method;
 
@@ -25,18 +25,18 @@ import javassist.util.proxy.MethodHandler;
 
 public class JavassistProxyMethodHandler<T> implements MethodHandler {
 
-    private final StandardMethodInvocationHandler<T> invocationHandler;
+    private final StandardMethodInterceptor<T> interceptor;
 
-    public JavassistProxyMethodHandler(final StandardMethodInvocationHandler<T> invocationHandler) {
-        this.invocationHandler = invocationHandler;
+    public JavassistProxyMethodHandler(final StandardMethodInterceptor<T> interceptor) {
+        this.interceptor = interceptor;
     }
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
-        return this.invocationHandler.invoke(self, new MethodInvokable(thisMethod), new MethodInvokable(proceed), args);
+        return this.interceptor.intercept(self, new MethodInvokable(thisMethod), new MethodInvokable(proceed), args);
     }
 
-    public StandardMethodInvocationHandler<T> invocationHandler() {
-        return this.invocationHandler;
+    public StandardMethodInterceptor<T> interceptor() {
+        return this.interceptor;
     }
 }

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.DefaultProxyFactory;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.proxy.StandardMethodInvocationHandler;
+import org.dockbox.hartshorn.proxy.StandardMethodInterceptor;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,12 +39,12 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
     }
 
     @Override
-    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(final StandardMethodInvocationHandler<T> invocationHandler) {
+    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(final StandardMethodInterceptor<T> interceptor) {
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));
 
-        final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(invocationHandler);
+        final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor);
         return () -> {
             try {
                 return this.type().cast(factory.create(new Class<?>[0], new Object[0], methodHandler));
