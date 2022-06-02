@@ -45,9 +45,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>>, ContextCarrier {
 
-    private static final String MANAGER_FIELD = "$__manager";
-    private static final String DELEGATE_FIELD = "$__delegate";
-
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
      * generated proxy classes are unique. This field may be replaced at any time, and the factory will not be

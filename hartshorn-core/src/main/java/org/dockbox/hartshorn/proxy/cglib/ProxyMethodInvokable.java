@@ -5,18 +5,22 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.dockbox.hartshorn.proxy.Invokable;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
+import java.lang.reflect.Method;
+
 public class ProxyMethodInvokable implements Invokable {
 
     private final MethodProxy methodProxy;
     private final Object proxy;
     private final Class<?> returnType;
     private final Class<?>[] parameterTypes;
+    private final Method method;
 
-    public ProxyMethodInvokable(final MethodProxy methodProxy, final Object proxy, final Class<?> returnType, final Class<?>[] parameterTypes) {
+    public ProxyMethodInvokable(final MethodProxy methodProxy, final Object proxy, final Method method) {
         this.methodProxy = methodProxy;
         this.proxy = proxy;
-        this.returnType = returnType;
-        this.parameterTypes = parameterTypes;
+        this.returnType = method.getReturnType();
+        this.parameterTypes = method.getParameterTypes();
+        this.method = method;
     }
 
     @Override

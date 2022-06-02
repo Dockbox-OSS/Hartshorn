@@ -14,7 +14,7 @@ import org.dockbox.hartshorn.proxy.StandardMethodInvocationHandler;
 
 public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
-    private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> DefaultProxyFactory.NAME_GENERATOR.get(className);
+    private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> DefaultProxyFactory.NAME_GENERATOR.get(prefix);
 
     public CglibProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
         super(type, applicationContext);
@@ -26,10 +26,11 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         enhancer.setSuperclass(this.type());
         enhancer.setInterfaces(this.proxyInterfaces(false));
         enhancer.setNamingPolicy(NAMING_POLICY);
+        enhancer.setClassLoader(this.defaultClassLoader());
 
         enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> {
             final MethodInvokable realMethod = new MethodInvokable(method);
-            final Invokable proxyMethod = new ProxyMethodInvokable(proxy, obj, method.getReturnType(), method.getParameterTypes());
+            final Invokable proxyMethod = new ProxyMethodInvokable(proxy, obj, method);
             return invocationHandler.invoke(obj, realMethod, proxyMethod, args);
         });
         return () -> this.type().cast(enhancer.create());
