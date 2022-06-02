@@ -72,11 +72,21 @@ public class StandardMethodInvocationHandler<T> {
                     result = this.invokeDelegate(delegate.get(), callbackTarget, thisMethod.toMethod(), arguments);
                 }
                 else {
+                    // If no handler is known, default to the original method. This is delegated to the instance
+                    // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
+                    Invokable target = thisMethod;
+                    if (this.manager.delegate().absent() && thisMethod == null)
+                        target = proceed;
+
+                    if (this.isEqualsMethod(target)) {
+                        return this.proxyEquals(arguments[0]);
+                    }
+
                     if (callbackTarget == self && proceed != null) {
                         result = proceed.invoke(callbackTarget, arguments);
                     }
                     else {
-                        result = this.invokeUnregistered(self, new MethodInvokable(thisMethod.toMethod()), proceed, arguments);
+                        result = this.invokeUnregistered(self, new MethodInvokable(thisMethod.toMethod()), target, arguments);
                     }
                 }
             }
@@ -101,24 +111,10 @@ public class StandardMethodInvocationHandler<T> {
         return result;
     }
 
-    protected Object invokeUnregistered(final Object self, final Invokable thisMethod, final Invokable proceed, final Object[] args) throws Throwable {
-        // If no handler is known, default to the original method. This is delegated to the instance
-        // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
-        Invokable target = thisMethod;
-        if (this.manager.delegate().absent() && thisMethod == null)
-            target = proceed;
-
+    protected Object invokeUnregistered(final Object self, final Invokable thisMethod, final Invokable target, final Object[] args) throws Throwable {
         final Class<T> targetClass = this.manager.targetClass();
 
         if (target != null) {
-            // If the target type is a class, whether it is abstract or not, we can invoke the native method directly. However, when
-            // the target type is an interface, this method is not defined, requiring us to perform our own equality check.
-            if (target.getName().equals("equals")
-                    && target.getDeclaringClass().equals(Object.class)
-                    && this.manager.delegate().absent()
-                    && targetClass.isInterface()
-            ) return this.proxyEquals(args[0]);
-
             return this.invokeTarget(self, thisMethod, target, args);
         }
         else {
@@ -127,6 +123,12 @@ public class StandardMethodInvocationHandler<T> {
             final String className = targetClass == null ? "" : targetClass.getSimpleName() + ".";
             throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
         }
+    }
+
+    protected boolean isEqualsMethod(final Invokable invokable) {
+        return invokable.getName().equals("equals")
+                && invokable.getDeclaringClass().equals(Object.class)
+                && this.manager.delegate().absent();
     }
 
     protected boolean proxyEquals(final Object obj) {
