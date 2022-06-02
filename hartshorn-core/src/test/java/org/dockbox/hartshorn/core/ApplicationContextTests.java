@@ -428,4 +428,32 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(nonProcessableType);
         Assertions.assertNull(nonProcessableType.nonNullIfProcessed());
     }
+
+    @Test
+    void testPrioritySingletonBinding() {
+        this.applicationContext.bind(String.class).singleton("Hello world!");
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            this.applicationContext.bind(String.class).priority(0).singleton("Hello modified world!");
+        });
+
+        final String binding = this.applicationContext.get(String.class);
+        Assertions.assertEquals("Hello world!", binding);
+
+        this.applicationContext.bind(String.class).singleton("Hello modified world!");
+        final String binding2 = this.applicationContext.get(String.class);
+        Assertions.assertEquals("Hello modified world!", binding2);
+    }
+
+    @Test
+    void testPrioritySupplierBinding() {
+        this.applicationContext.bind(String.class).to(() -> "Hello world!");
+        this.applicationContext.bind(String.class).priority(0).to(() -> "Hello modified world!");
+
+        final String binding = this.applicationContext.get(String.class);
+        Assertions.assertEquals("Hello modified world!", binding);
+
+        this.applicationContext.bind(String.class).priority(-2).to(() -> "Hello low priority world!");
+        final String binding2 = this.applicationContext.get(String.class);
+        Assertions.assertEquals("Hello modified world!", binding2);
+    }
 }

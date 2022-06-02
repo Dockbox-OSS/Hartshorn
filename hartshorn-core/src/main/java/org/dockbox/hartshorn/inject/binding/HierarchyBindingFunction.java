@@ -85,6 +85,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder singleton(final T t) {
+        if (this.priority != -1) {
+            throw new IllegalStateException("Cannot set priority on singleton binding");
+        }
         this.singletonCache().put(this.hierarchy().key(), t);
         return this.binder();
     }
