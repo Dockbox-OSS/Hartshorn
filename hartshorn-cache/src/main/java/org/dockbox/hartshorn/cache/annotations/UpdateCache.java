@@ -29,19 +29,27 @@ import java.lang.annotation.Target;
  * Method decorator to indicate it can be used to update a cache. This
  * requires the method parameter to be assignable to the type stored in
  * the cache.
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Extends(CacheDecorator.class)
 public @interface UpdateCache {
+
     /**
-     * The ID of the target cache. If this is left empty a name will be
-     * generated based on the owning service.
-     *
-     * @return the cache ID
+     * @see CacheDecorator#cacheName() ()
      */
     @AliasFor("cacheName")
     String value() default "";
 
+    /**
+     * @see CacheDecorator#keyGenerator()
+     */
     Class<? extends KeyGenerator> keyGenerator() default KeyGenerator.class;
+
+    /**
+     * @see CacheDecorator#key()
+     */
+    String key() default "";
 }

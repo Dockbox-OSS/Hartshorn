@@ -23,11 +23,14 @@ import java.util.List;
 /**
  * Manager type responsible for storing and providing {@link Cache caches}. Caches can be
  * created, updated, and evicted through the manager.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public interface CacheManager {
 
     /**
-     * Gets a list of all currently known {@link Cache caches} managed
+     * Returns an unmodifiable list of all currently known {@link Cache caches} managed
      * by this manager.
      *
      * @return all caches, or an empty list.

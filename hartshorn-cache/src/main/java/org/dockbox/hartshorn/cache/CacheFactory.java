@@ -21,10 +21,26 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.component.Service;
 
+/**
+ * The factory for {@link Cache} implementations to allow for custom
+ * {@link Expiration} values.
+ *
+ * @see Cache
+ * @author Guus Lieben
+ * @since 21.2
+ */
 @FunctionalInterface
 @Service
 @RequiresActivator(UseCaching.class)
 public interface CacheFactory {
+
+    /**
+     * Creates a new {@link Cache} instance with the given {@link Expiration}.
+     * @param expiration the {@link Expiration} to use
+     * @return the new {@link Cache} instance
+     * @param <K> the type of keys
+     * @param <V> the type of values
+     */
     @Factory
-    Cache<Object, Object> cache(Expiration expiration);
+    <K, V> Cache<K, V> cache(Expiration expiration);
 }

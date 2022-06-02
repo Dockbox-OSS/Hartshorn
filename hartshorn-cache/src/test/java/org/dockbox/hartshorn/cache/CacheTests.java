@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.junit.jupiter.api.AfterEach;
+import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.TimeUnit;
 
 import jakarta.inject.Inject;
 
@@ -34,86 +35,155 @@ public class CacheTests {
     private ApplicationContext applicationContext;
 
     @Test
-    void testEvictMethodIsCalled() {
-        final NonAbstractCacheService service = this.applicationContext.get(NonAbstractCacheService.class);
-        Assertions.assertTrue(service.evict());
+    void testCacheCreation() {
+        final Cache<?, ?> cache = this.applicationContext.get(Cache.class);
+        Assertions.assertNotNull(cache);
     }
 
     @Test
-    void testUpdateMethodIsCalled() {
-        final NonAbstractCacheService service = this.applicationContext.get(NonAbstractCacheService.class);
-        final long update = service.update(3L);
-        Assertions.assertEquals(6, update);
+    void testCacheCanWrite() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+
+        cache.put("key", "value");
+        final Result<String> result = cache.get("key");
+
+        Assertions.assertTrue(result.present());
+        Assertions.assertEquals("value", result.get());
     }
 
     @Test
-    void testCacheIsReused() {
-        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
-        final long first = service.getCachedTime();
-        Assertions.assertTrue(first > 0);
+    void testCacheInvalidation() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
 
-        final long second = service.getCachedTime();
-        Assertions.assertEquals(first, second);
+        cache.put("key", "value");
+        cache.invalidate("key");
+        final Result<String> result = cache.get("key");
+
+        Assertions.assertTrue(result.absent());
     }
 
     @Test
-    void testCacheCanBeUpdated() {
-        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
-        long cached = service.getCachedTime();
-        Assertions.assertTrue(cached > 0);
+    void testCacheSize() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
 
-        service.update(3);
-        cached = service.getCachedTime();
-        Assertions.assertEquals(3, cached);
+        cache.put("key", "value");
+        final int size = cache.size();
+
+        Assertions.assertEquals(1, size);
     }
 
     @Test
-    void testCacheCanBeEvicted() {
-        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
-        final long first = service.getCachedTime();
-        service.evict();
-        final long second = service.getCachedTime();
-        Assertions.assertNotEquals(first, second);
+    void testCacheCanWriteAndReadMultiple() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+
+        cache.put("key", "value");
+        cache.put("key2", "value2");
+        final Result<String> result = cache.get("key");
+        final Result<String> result2 = cache.get("key2");
+
+        Assertions.assertTrue(result.present());
+        Assertions.assertEquals("value", result.get());
+        Assertions.assertTrue(result2.present());
+        Assertions.assertEquals("value2", result2.get());
     }
 
     @Test
-    void testCacheCanBeUpdatedThroughManager() {
-        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
-        final long cached = service.getCachedTime();
-        Assertions.assertTrue(cached > 0);
+    void testCacheMultipleInvalidation() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
 
-        final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
-        cacheManager.update("sample", 3L);
+        cache.put("key", "value");
+        cache.put("key2", "value2");
 
-        final Result<Cache<Long>> cache = cacheManager.get("sample");
-        Assertions.assertTrue(cache.present());
+        cache.invalidate("key");
+        final Result<String> result = cache.get("key");
+        final Result<String> result2 = cache.get("key2");
 
-        final Result<Long> content = cache.get().get();
-        Assertions.assertTrue(content.present());
-
-        final long object = content.get();
-        Assertions.assertEquals(3, object);
+        Assertions.assertTrue(result.absent());
+        Assertions.assertTrue(result2.present());
+        Assertions.assertEquals("value2", result2.get());
     }
 
     @Test
-    void testCacheCanBeEvictedThroughManager() {
-        // Initial population through source service
-        final TestCacheService service = this.applicationContext.get(TestCacheService.class);
-        final long cached = service.getCachedTime();
-        Assertions.assertTrue(cached > 0);
+    void testCacheInvalidateAll() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
 
-        final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
-        cacheManager.evict("sample");
+        cache.put("key", "value");
+        cache.put("key2", "value2");
 
-        final Result<Cache<Long>> cache = cacheManager.get("sample");
-        Assertions.assertTrue(cache.present());
+        cache.invalidate();
+        final Result<String> result = cache.get("key");
+        final Result<String> result2 = cache.get("key2");
 
-        final Result<Long> content = cache.get().get();
-        Assertions.assertTrue(content.absent());
+        Assertions.assertTrue(result.absent());
+        Assertions.assertTrue(result2.absent());
     }
 
-    @AfterEach
-    void reset() {
-        this.applicationContext.get(JUnitCacheManager.class).reset();
+    @Test
+    void testCacheCanWriteAndReadMultipleWithExpiration() throws InterruptedException {
+        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class).cache(Expiration.of(1, TimeUnit.MILLISECONDS));
+
+        cache.put("key", "value");
+        cache.put("key2", "value2");
+
+        Thread.sleep(2);
+
+        final Result<String> result = cache.get("key");
+        final Result<String> result2 = cache.get("key2");
+
+        Assertions.assertTrue(result.absent());
+        Assertions.assertTrue(result2.absent());
+    }
+
+    @Test
+    void testCacheCanWriteAndReadMultipleWithExpirationAndInvalidation() throws InterruptedException {
+        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class).cache(Expiration.of(1, TimeUnit.MILLISECONDS));
+
+        cache.put("key", "value");
+        cache.put("key2", "value2");
+
+        Thread.sleep(2);
+
+        Assertions.assertDoesNotThrow(() -> cache.invalidate("key"));
+
+        final Result<String> result = cache.get("key");
+        final Result<String> result2 = cache.get("key2");
+
+        Assertions.assertTrue(result.absent()); // Through expiration and invalidation
+        Assertions.assertTrue(result2.absent()); // Through expiration
+    }
+
+    @Test
+    void testCacheContainsBeforeAfterInvalidation() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+
+        cache.put("key", "value");
+        Assertions.assertTrue(cache.contains("key"));
+
+        cache.invalidate("key");
+        Assertions.assertFalse(cache.contains("key"));
+    }
+
+    @Test
+    void testCacheContainsBeforeAfterExpiration() throws InterruptedException {
+        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class).cache(Expiration.of(1, TimeUnit.MILLISECONDS));
+
+        cache.put("key", "value");
+        Assertions.assertTrue(cache.contains("key"));
+
+        Thread.sleep(2);
+
+        Assertions.assertFalse(cache.contains("key"));
+    }
+
+    @Test
+    void testCachePutIfAbsent() {
+        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+
+        cache.put("key", "value");
+        Assertions.assertTrue(cache.contains("key"));
+
+        cache.putIfAbsent("key", "value2");
+        Assertions.assertTrue(cache.contains("key"));
+        Assertions.assertEquals("value", cache.get("key").get());
     }
 }

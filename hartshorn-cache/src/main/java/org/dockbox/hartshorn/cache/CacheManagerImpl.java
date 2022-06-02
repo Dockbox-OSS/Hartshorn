@@ -30,6 +30,8 @@ import jakarta.inject.Inject;
  * Default implementation of {@link CacheManager}.
  *
  * @see CacheManager
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Component(singleton = true)
 public class CacheManagerImpl implements CacheManager {

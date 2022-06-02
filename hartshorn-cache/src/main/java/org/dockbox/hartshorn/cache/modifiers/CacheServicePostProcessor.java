@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.component.ComponentUtilities;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -40,6 +41,8 @@ import java.util.function.Supplier;
  * Common functionality for cache related {@link ServiceAnnotatedMethodInterceptorPostProcessor modifiers}.
  *
  * @param <A> The cache-related annotation
+ * @author Guus Lieben
+ * @since 21.2
  */
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
@@ -77,7 +80,11 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
 
         final CacheDecorator cacheDecorator = proxyContext.annotation(CacheDecorator.class);
         final KeyGenerator keyGenerator = context.get(cacheDecorator.keyGenerator());
-        final String key = keyGenerator.generateKey(proxyContext.method(), null);
+
+        String key = cacheDecorator.key();
+        if (StringUtilities.empty(key)) {
+            key = keyGenerator.generateKey(proxyContext.method());
+        }
         final CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, finalName, key);
 
         return this.process(context, proxyContext, cacheContext);

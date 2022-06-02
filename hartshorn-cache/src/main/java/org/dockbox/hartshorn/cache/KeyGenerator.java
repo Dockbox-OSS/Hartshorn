@@ -20,6 +20,21 @@ import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 
 import java.lang.reflect.AnnotatedElement;
 
+/**
+ * Standard service for generating keys for {@link Cache} entries from annotated elements.
+ * This is used by {@link org.dockbox.hartshorn.cache.modifiers.CacheServicePostProcessor}s
+ * to generate unique keys for cache entries.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public interface KeyGenerator {
-    <A extends AnnotatedElement> String generateKey(AnnotatedElementContext<A> element, Object result);
+
+    /**
+     * Generate a key for the given annotated element.
+     * @param element the annotated element
+     * @return the generated key
+     * @param <A> the type of annotated element
+     */
+    <A extends AnnotatedElement> String generateKey(AnnotatedElementContext<A> element);
 }

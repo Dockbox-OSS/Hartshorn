@@ -31,6 +31,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link UpdateCache}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to update specific {@link org.dockbox.hartshorn.cache.Cache caches}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<UpdateCache> {
 

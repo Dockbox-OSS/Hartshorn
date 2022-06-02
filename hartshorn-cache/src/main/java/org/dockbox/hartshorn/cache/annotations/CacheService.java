@@ -32,6 +32,9 @@ import java.lang.annotation.Target;
  * kept in the service.
  *
  * @see UseCaching
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

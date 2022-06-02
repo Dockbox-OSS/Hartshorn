@@ -31,6 +31,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link EvictCache}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to evict specific {@link org.dockbox.hartshorn.cache.Cache caches}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheEvictionMethodPostProcessor extends CacheServicePostProcessor<EvictCache> {
 

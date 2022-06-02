@@ -18,20 +18,38 @@ package org.dockbox.hartshorn.cache.context;
 
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
+import org.dockbox.hartshorn.cache.KeyGenerator;
 
 /**
  * Context carrier for cache service modifiers, indicating the {@link CacheManager},
  * {@link Cache}, and cache ID to use. These are typically derived from
- * {@link CacheMethodContext} during processing.
+ * {@link CacheMethodContext} during processing. {@link Cache Caches} in
+ * this context always use {@link String} as their key type.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public interface CacheContext {
 
+    /**
+     * The {@link CacheManager} to use, if any.
+     */
     CacheManager manager();
 
+    /**
+     * The {@link Cache} to use, if any.
+     */
     <T> Cache<String, T> cache();
 
+    /**
+     * The cache ID to use, if any.
+     */
     String cacheName();
 
+    /**
+     * The cache key to use, if any. The cache key represents the key of the
+     * method signature as determined by the active {@link KeyGenerator}.
+     */
     String key();
 
 }

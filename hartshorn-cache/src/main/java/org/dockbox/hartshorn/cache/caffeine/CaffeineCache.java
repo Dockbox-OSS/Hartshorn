@@ -23,9 +23,25 @@ import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 
+/**
+ * Caffeine-based {@link Cache} implementation. This implementation is active by
+ * default when {@link CaffeineProviders} is used.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
+ * @see CaffeineProviders
+ * @see Cache
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class CaffeineCache<K, V> implements Cache<K, V> {
 
     private final com.github.benmanes.caffeine.cache.Cache<K, V> cache;
+
+    public CaffeineCache() {
+        this(Expiration.never());
+    }
 
     @Bound
     public CaffeineCache(final Expiration expiration) {

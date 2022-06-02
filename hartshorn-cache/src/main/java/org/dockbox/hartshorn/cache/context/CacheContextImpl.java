@@ -25,6 +25,8 @@ import java.util.function.Supplier;
  * Default implementation of {@link CacheContext}.
  *
  * @see CacheContext
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheContextImpl implements CacheContext {
 

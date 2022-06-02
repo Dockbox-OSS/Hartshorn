@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.Cached;
+import org.dockbox.hartshorn.cache.annotations.Expire;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
@@ -33,6 +34,9 @@ import org.dockbox.hartshorn.util.Result;
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to store or obtain {@link Cache} entries.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached> {
 
@@ -62,7 +66,8 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final Cached cached = context.annotation(Cached.class);
-        return new CacheMethodContextImpl(cached.value(), Expiration.of(cached.expires()));
+        final Expire annotation = cached.expires();
+        return new CacheMethodContextImpl(cached.value(), Expiration.of(annotation.amount(), annotation.unit()));
     }
 
     @Override

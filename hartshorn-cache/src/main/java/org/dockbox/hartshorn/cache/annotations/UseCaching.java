@@ -28,6 +28,8 @@ import java.lang.annotation.Target;
 
 /**
  * The activator for cache service processing.
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -24,16 +24,16 @@ import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 @CacheService("sample")
 public abstract class TestCacheService {
 
-    @Cached(keyGenerator = TestKeyGenerator.class)
+    @Cached(key = "sample_key")
     public long getCachedTime() {
         // Return nanoseconds, as some tests evict and request within 1ms.
         return System.nanoTime();
     }
 
-    @UpdateCache(keyGenerator = TestKeyGenerator.class)
+    @UpdateCache(key = "sample_key")
     public abstract void update(long s);
 
-    @EvictCache
+    @EvictCache(key = "sample_key")
     public abstract void evict();
 
 }

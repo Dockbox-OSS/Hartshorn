@@ -21,14 +21,20 @@ import org.dockbox.hartshorn.util.reflect.TypedElementContext;
 
 import java.lang.reflect.AnnotatedElement;
 
+/**
+ * The default {@link KeyGenerator} implementation. This implementation uses the
+ * {@link #hashCode()} method of the annotated element to generate a key.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class HashCodeKeyGenerator implements KeyGenerator {
 
     @Override
-    public <A extends AnnotatedElement> String generateKey(final AnnotatedElementContext<A> element, final Object result) {
-        final String hash = String.valueOf(result == null ? element.hashCode() : result.hashCode());
+    public <A extends AnnotatedElement> String generateKey(final AnnotatedElementContext<A> element) {
         if (element instanceof TypedElementContext typedElement) {
-            return typedElement.name() + "_" + hash;
+            return typedElement.name() + "_" + typedElement.hashCode();
         }
-        return hash;
+        return String.valueOf(element.hashCode());
     }
 }
