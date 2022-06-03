@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.cglib;
+package org.dockbox.hartshorn.proxy;
 
-import net.sf.cglib.core.NamingPolicy;
-import net.sf.cglib.core.Predicate;
-
-public class CglibNameGenerator implements NamingPolicy {
+@FunctionalInterface
+public interface StandardProxyLookup extends ProxyLookup {
 
     @Override
-    public String getClassName(final String prefix, final String source, final Object key, final Predicate names) {
-        return null;
+    default  <T> Class<T> unproxy(final T instance) {
+        if (instance instanceof Proxy<?> proxy) {
+            return (Class<T>) proxy.manager().targetClass();
+        }
+        return instance != null ? (Class<T>) instance.getClass() : null;
+    }
+
+    @Override
+    default boolean isProxy(final Object instance) {
+        return instance != null && this.isProxy(instance.getClass());
     }
 }

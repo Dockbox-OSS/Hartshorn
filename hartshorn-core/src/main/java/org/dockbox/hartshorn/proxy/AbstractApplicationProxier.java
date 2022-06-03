@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.proxy.cglib.CglibProxyLookup;
-import org.dockbox.hartshorn.proxy.javassist.JavassistProxyLookup;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -32,9 +30,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public AbstractApplicationProxier() {
-        this.proxyLookups.add(new NativeProxyLookup());
-        this.proxyLookups.add(new JavassistProxyLookup());
-        this.proxyLookups.add(new CglibProxyLookup());
+        this.registerProxyLookup(new NativeProxyLookup());
     }
 
     public ApplicationManager applicationManager() {
