@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.CustomMultiMap;
 import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeMap;
 
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
+public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T> {
 
     private static final Method managerAccessor;
 
@@ -72,6 +72,8 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
 
     public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final TypeMap<Object> typeDelegates,
                             final Map<Method, MethodInterceptor<T>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
+        super(applicationContext);
+
         if (applicationContext.environment().manager().isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
