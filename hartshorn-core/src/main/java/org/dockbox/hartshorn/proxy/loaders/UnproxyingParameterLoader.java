@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.javassist;
+package org.dockbox.hartshorn.proxy.loaders;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;

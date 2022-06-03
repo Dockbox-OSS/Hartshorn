@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.javassist;
+package org.dockbox.hartshorn.proxy.loaders;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.proxy.Unproxy;

@@ -14,31 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.javassist;
+package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.ProxyLookup;
-
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
-
-public class JavassistProxyLookup implements ProxyLookup {
+@FunctionalInterface
+public interface StandardProxyLookup extends ProxyLookup {
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
-        final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
-        if (methodHandler instanceof JavassistProxyMethodHandler proxyHandler) {
-            return proxyHandler.manager().targetClass();
+    default  <T> Class<T> unproxy(final T instance) {
+        if (instance instanceof Proxy<?> proxy) {
+            return (Class<T>) proxy.manager().targetClass();
         }
         return instance != null ? (Class<T>) instance.getClass() : null;
     }
 
     @Override
-    public boolean isProxy(final Object instance) {
+    default boolean isProxy(final Object instance) {
         return instance != null && this.isProxy(instance.getClass());
-    }
-
-    @Override
-    public boolean isProxy(final Class<?> candidate) {
-        return ProxyFactory.isProxyClass(candidate);
     }
 }
