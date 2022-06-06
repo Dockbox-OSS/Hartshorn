@@ -25,4 +25,5 @@ dependencies {
 
     api "org.javassist:javassist:$javassistVersion"
     api "cglib:cglib:$cglibVersion"
+    api "net.bytebuddy:byte-buddy:$byteBuddyVersion"
 }
