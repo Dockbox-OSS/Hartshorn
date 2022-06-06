@@ -18,6 +18,5 @@
 apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-cache'
-    implementation "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"
+    implementation "cglib:cglib:$cglibVersion"
 }

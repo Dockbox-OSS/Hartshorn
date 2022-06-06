@@ -22,6 +22,7 @@ dependencies {
 
     implementation "org.reflections:reflections:$reflectionsVersion"
     implementation "ch.qos.logback:logback-classic:$logbackVersion"
-    implementation "org.javassist:javassist:$javassistVersion"
-    implementation "cglib:cglib:$cglibVersion"
+
+    api "org.javassist:javassist:$javassistVersion"
+    api "cglib:cglib:$cglibVersion"
 }
