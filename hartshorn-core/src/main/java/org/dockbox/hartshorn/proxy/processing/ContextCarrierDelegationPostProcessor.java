@@ -20,8 +20,14 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
 public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
+
     @Override
     protected Class<ContextCarrier> parentTarget() {
         return ContextCarrier.class;
+    }
+
+    @Override
+    protected boolean skipConcreteMethods() {
+        return true;
     }
 }
