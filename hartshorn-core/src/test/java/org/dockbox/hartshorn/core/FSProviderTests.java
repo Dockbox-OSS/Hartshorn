@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.environment;
+package org.dockbox.hartshorn.core;
+
+import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.junit.jupiter.api.Assertions;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-/**
- * A {@link ApplicationFSProviderImpl} that uses the current working directory as the root.
- *
- * @author Guus Lieben
- * @since 21.9
- */
-public class ApplicationFSProviderImpl implements ApplicationFSProvider {
+@HartshornTest
+public class FSProviderTests {
 
-    @Override
-    public Path applicationPath() {
-        // To absolute path, to make sure we don't get a relative path which may cause
-        // issues with looking up parent directories.
-        return Paths.get("").toAbsolutePath();
+    @InjectTest
+    void testApplicationPathIsAbsolute(final ApplicationFSProvider fsProvider) {
+        final Path path = fsProvider.applicationPath();
+
+        Assertions.assertNotNull(path);
+        Assertions.assertTrue(path.isAbsolute());
+        Assertions.assertNotNull(path.getParent());
     }
 }

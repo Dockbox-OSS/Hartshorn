@@ -44,7 +44,10 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
         final File resolved = context.environment().manager().applicationPath().resolve(path).toFile();
         if (resolved.exists()) return Collections.singleton(resolved.toURI());
 
-        final File[] children = resolved.getParentFile().listFiles((dir, file) -> file.startsWith(path));
+        final File parent = resolved.getParentFile();
+        if (parent == null) return Collections.emptySet();
+
+        final File[] children = parent.listFiles((dir, file) -> file.startsWith(path));
         if (children != null) {
             return Arrays.stream(children).map(File::toURI).collect(Collectors.toUnmodifiableSet());
         }
