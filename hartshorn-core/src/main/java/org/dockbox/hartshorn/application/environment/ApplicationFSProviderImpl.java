@@ -25,9 +25,12 @@ import java.nio.file.Paths;
  * @author Guus Lieben
  * @since 21.9
  */
-public class ApplicationFSProviderImpl implements ApplicationFSProvider{
+public class ApplicationFSProviderImpl implements ApplicationFSProvider {
+
     @Override
     public Path applicationPath() {
-        return Paths.get("");
+        // To absolute path, to make sure we don't get a relative path which may cause
+        // issues with looking up parent directories.
+        return Paths.get("").toAbsolutePath();
     }
 }

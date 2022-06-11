@@ -48,6 +48,14 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
 
     public ConfigurationServicePreProcessor() {
+        this.registerDefaultStrategies();
+    }
+
+    /**
+     * Registers the default strategies for this pre-processor. Protected to allow subclasses to
+     * override the default strategies.
+     */
+    protected void registerDefaultStrategies() {
         this.addStrategy(new ClassPathResourceLookupStrategy());
         this.addStrategy(new FileSystemLookupStrategy());
     }
