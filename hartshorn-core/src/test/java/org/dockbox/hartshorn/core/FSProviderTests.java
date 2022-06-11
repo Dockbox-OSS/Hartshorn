@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.junit.jupiter.api.Assertions;
 
-public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
+import java.nio.file.Path;
 
-    @Override
-    protected Class<ContextCarrier> parentTarget() {
-        return ContextCarrier.class;
-    }
+@HartshornTest
+public class FSProviderTests {
 
-    @Override
-    protected boolean skipConcreteMethods() {
-        return true;
+    @InjectTest
+    void testApplicationPathIsAbsolute(final ApplicationFSProvider fsProvider) {
+        final Path path = fsProvider.applicationPath();
+
+        Assertions.assertNotNull(path);
+        Assertions.assertTrue(path.isAbsolute());
+        Assertions.assertNotNull(path.getParent());
     }
 }

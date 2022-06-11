@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
@@ -102,6 +103,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     protected void registerDefaultBindings(final InitializingContext context) {
         this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
         this.bind(ComponentProvider.class).singleton(this);
+        this.bind(ExceptionHandler.class).singleton(this);
+        
         if (this.componentProvider instanceof StandardComponentProvider provider) {
             this.bind(StandardComponentProvider.class).singleton(provider);
         }
@@ -123,6 +126,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.bind(ApplicationProxier.class).singleton(this.environment().manager());
         this.bind(ApplicationManager.class).singleton(this.environment().manager());
         this.bind(LifecycleObservable.class).singleton(this.environment().manager());
+        this.bind(ApplicationFSProvider.class).singleton(this.environment().manager());
 
         this.bind(Logger.class).to(this::log);
     }

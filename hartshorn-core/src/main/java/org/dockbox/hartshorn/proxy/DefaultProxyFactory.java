@@ -111,9 +111,15 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (delegate != null) {
             this.updateState();
             for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                if (declaredMethod.getModifiers() == Modifier.ABSTRACT && !declaredMethod.isDefault()) {
-                    this.delegates.put(declaredMethod, delegate);
+                try {
+                    final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+                    if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
+                        continue;
+                    }
+                } catch (final NoSuchMethodException e) {
+                    // Ignore error, delegate is not concrete
                 }
+                this.delegates.put(declaredMethod, delegate);
             }
             this.typeDelegate = delegate;
         }
@@ -128,6 +134,28 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
                 this.delegates.put(declaredMethod, delegate);
             }
             this.typeDelegates.put((Class<Object>) type, delegate);
+        }
+        else {
+            throw new IllegalArgumentException(this.type.getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);
+        }
+        return this;
+    }
+
+    @Override
+    public <S> DefaultProxyFactory<T> delegateAbstract(final Class<S> type, final S delegate) {
+        if (type.isAssignableFrom(this.type)) {
+            this.updateState();
+            for (final Method declaredMethod : type.getDeclaredMethods()) {
+                try {
+                    final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+                    if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
+                        continue;
+                    }
+                } catch (final NoSuchMethodException e) {
+                    // Ignore error, delegate is not concrete
+                }
+                this.delegates.put(declaredMethod, delegate);
+            }
         }
         else {
             throw new IllegalArgumentException(this.type.getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);

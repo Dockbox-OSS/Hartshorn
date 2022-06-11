@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.core.types;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
-public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
+import jakarta.inject.Inject;
+
+@Service
+public class ContextCarrierService implements ContextCarrier {
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @Override
-    protected Class<ContextCarrier> parentTarget() {
-        return ContextCarrier.class;
-    }
-
-    @Override
-    protected boolean skipConcreteMethods() {
-        return true;
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 }

@@ -45,11 +45,23 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
         final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
 
-        factory.delegate(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
-        return null;
+        if (this.skipConcreteMethods()) {
+            // Ensure we keep the original instance as delegate, to avoid losing context. This rule is defined by the finalizing process.
+            factory.delegate(instance);
+            factory.delegateAbstract(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
+        }
+        else {
+            factory.delegate(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
+        }
+
+        return instance;
     }
 
     protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P, ?> handler, final TypeContext<? extends P> parent) {
         return context.get(this.parentTarget());
+    }
+
+    protected boolean skipConcreteMethods() {
+        return false;
     }
 }
