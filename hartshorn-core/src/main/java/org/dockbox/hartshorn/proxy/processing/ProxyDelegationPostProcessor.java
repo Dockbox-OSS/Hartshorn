@@ -46,7 +46,7 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
         if (factory == null) return instance;
 
         factory.delegate(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
-        return null;
+        return instance;
     }
 
     protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P, ?> handler, final TypeContext<? extends P> parent) {
