@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.core.types;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
-public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
-
-    @Override
-    protected Class<ContextCarrier> parentTarget() {
-        return ContextCarrier.class;
-    }
-
-    @Override
-    protected boolean skipConcreteMethods() {
-        return true;
-    }
+@Service
+public interface IContextCarrierService extends ContextCarrier {
 }

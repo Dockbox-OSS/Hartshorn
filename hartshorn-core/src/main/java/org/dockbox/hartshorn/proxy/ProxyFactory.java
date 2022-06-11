@@ -219,6 +219,19 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> {
     <S> F delegate(Class<S> type, S delegate);
 
     /**
+     * Delegates all methods defined by the given {@code type} which are not implemented to the given
+     * delegate instance. This means any method which is still abstract at the top-level will be delegated,
+     * and any method with a concrete implementation will invoke the default method without interception.
+     * This targets a backing implementation, not the original instance.
+     *
+     * @param type The type of the delegate
+     * @param delegate The delegate instance
+     * @param <S> The type of the delegate
+     * @return This factory
+     */
+    <S> F delegateAbstract(Class<S> type, S delegate);
+
+    /**
      * Delegates the given method to the given delegate instance. This targets a backing implementation,
      * not the original instance.
      *
