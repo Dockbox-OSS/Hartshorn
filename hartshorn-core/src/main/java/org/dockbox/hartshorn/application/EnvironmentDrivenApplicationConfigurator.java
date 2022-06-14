@@ -18,12 +18,9 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-
-import java.util.Set;
 
 /**
  * This class is responsible for configuring the application manager. This default implementation of the
@@ -38,12 +35,6 @@ public class EnvironmentDrivenApplicationConfigurator implements ApplicationConf
     @Override
     public void configure(final ApplicationManager manager) {
         manager.stacktraces(this.stacktraces(manager));
-    }
-
-    @Override
-    public void apply(final ApplicationManager manager, final Set<InjectConfiguration> configurations) {
-        for (final InjectConfiguration config : configurations)
-            manager.applicationContext().bind(config);
     }
 
     @Override

@@ -23,12 +23,9 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
@@ -51,14 +48,6 @@ public interface ApplicationContext extends
     @Override
     default Logger log() {
         return this.environment().manager().log();
-    }
-
-    default <C extends Context> Result<C> first(final TypeContext<C> context) {
-        return this.first(context.type());
-    }
-
-    default <C extends Context> Result<C> first(final Class<C> context) {
-        return this.first(context);
     }
 
     boolean isClosed();

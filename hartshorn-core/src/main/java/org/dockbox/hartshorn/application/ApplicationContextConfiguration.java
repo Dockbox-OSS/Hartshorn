@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -57,7 +56,6 @@ public class ApplicationContextConfiguration {
 
     protected TypeContext<?> activator;
 
-    protected final Set<InjectConfiguration> injectConfigurations = ConcurrentHashMap.newKeySet();
     protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
     protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
     protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
@@ -126,10 +124,6 @@ public class ApplicationContextConfiguration {
 
     public TypeContext<?> activator() {
         return this.activator;
-    }
-
-    public Set<InjectConfiguration> injectConfigurations() {
-        return this.injectConfigurations;
     }
 
     public Set<Annotation> serviceActivators() {

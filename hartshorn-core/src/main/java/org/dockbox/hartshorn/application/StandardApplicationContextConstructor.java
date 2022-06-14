@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.context.ClasspathApplicationContext;
+import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
@@ -28,18 +28,13 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.inject.binding.InjectConfig;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class StandardApplicationContextConstructor implements ApplicationContextConstructor<ApplicationContext> {
 
@@ -123,15 +118,6 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
         if (activator.includeBasePackage())
             scanPrefixes.add(configuration.activator().type().getPackageName());
-
-        final Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())
-                .map(InjectConfig::value)
-                .map(TypeContext::of)
-                .map(applicationContext::get)
-                .collect(Collectors.toSet());
-
-        configurator.apply(manager, configurations);
-        configurator.apply(manager, configuration.injectConfigurations());
 
         for (final String prefix : scanPrefixes)
             configurator.bind(manager, prefix);

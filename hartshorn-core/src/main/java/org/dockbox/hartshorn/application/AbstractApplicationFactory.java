@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.Result;
@@ -110,12 +109,6 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     @Override
     public Self prefixes(final String... prefixes) {
         this.configuration.prefixes.addAll(Set.of(prefixes));
-        return this.self();
-    }
-
-    @Override
-    public Self configuration(final InjectConfiguration injectConfiguration) {
-        this.configuration.injectConfigurations.add(injectConfiguration);
         return this.self();
     }
 

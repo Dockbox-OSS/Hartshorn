@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.inject.binding.InjectConfig;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -44,10 +42,4 @@ public @interface Activator {
      * @return The default prefix for the activator. If this is left empty the package of the activation source is used
      */
     String[] scanPackages() default {};
-
-    /**
-     * @return The applicable {@link InjectConfig configurations} which should be used for this activator
-     */
-    @Deprecated(since = "22.3", forRemoval = true)
-    InjectConfig[] configs() default {};
 }

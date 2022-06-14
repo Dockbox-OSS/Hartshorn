@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -281,17 +280,6 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @see ApplicationEnvironment#prefix(String)
      */
     Self prefixes(Set<String> prefixes);
-
-    /**
-     * Registers a custom {@link InjectConfiguration} which should be known to the application. The configuration is bound
-     * using the configured {@link ApplicationConfigurator} during application creation.
-     *
-     * @param injectConfiguration The configuration to register.
-     * @return The {@link ApplicationFactory} instance.
-     * @see ApplicationConfigurator#apply(ApplicationManager, Set)
-     */
-    @Deprecated(since = "22.3", forRemoval = true)
-    Self configuration(InjectConfiguration injectConfiguration);
 
     /**
      * Registers a custom {@link ActivatorHolder} which should be known to the application.

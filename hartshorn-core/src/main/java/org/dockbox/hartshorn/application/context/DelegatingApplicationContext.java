@@ -41,12 +41,10 @@ import org.dockbox.hartshorn.inject.ProviderContext;
 import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyLookup;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -163,12 +161,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public void bind(final InjectConfiguration configuration) {
-        this.log().debug("Activating configuration binder " + TypeContext.of(configuration).name());
-        configuration.binder(this).collect(this);
-    }
-
-    @Override
     public <T> void add(final ProviderContext<T> context) {
         final Key<T> key = context.key();
         final BindingFunction<T> function = this.bind(key);
@@ -260,6 +252,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
                 }
             }
             this.isClosed = true;
+            this.isRunning = false;
         }
     }
 
