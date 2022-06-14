@@ -16,9 +16,6 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-
-@ComponentBinding(Demo.class)
 public class DemoImpl implements Demo{
     @Override
     public String demo() {

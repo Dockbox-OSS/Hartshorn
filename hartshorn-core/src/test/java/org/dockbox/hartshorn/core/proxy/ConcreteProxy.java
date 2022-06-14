@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-
-@ComponentBinding(InterfaceProxy.class)
 public class ConcreteProxy implements InterfaceProxy {
     @Override
     public String name() {
