@@ -32,20 +32,20 @@ import java.util.function.Supplier;
  * @see Provider
  * @see ContextDrivenProvider
  */
-public class SupplierProvider<C> implements Provider<C> {
+public class ContainerSupplierProvider<C> implements Provider<C> {
 
-    private final Supplier<C> supplier;
+    private final Supplier<ObjectContainer<C>> supplier;
 
-    public SupplierProvider(final Supplier<C> supplier) {
+    public ContainerSupplierProvider(final Supplier<ObjectContainer<C>> supplier) {
         this.supplier = supplier;
     }
 
-    public Supplier<C> supplier() {
+    public Supplier<ObjectContainer<C>> supplier() {
         return this.supplier;
     }
 
     @Override
     public Result<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return Result.of(() -> new ObjectContainer<>(this.supplier.get(), false));
+        return Result.of(this.supplier::get);
     }
 }

@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -98,7 +99,21 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         this.locator.validate(key);
 
-        T instance = this.create(key).orNull();
+        final ObjectContainer<T> objectContainer = this.create(key)
+                .rethrowUnchecked()
+                .orElse(() -> new ObjectContainer<>(null, false))
+                .get();
+
+        T instance = objectContainer.instance();
+
+        // If the object is already processed at this point, it means that the object container was
+        // reused, so we don't need to process it again. Note that this is not the same as the object
+        // being a singleton, which is handled by the singleton cache. It is however possible that the
+        // reuse of the object container is due to it being a singleton, but we do not know that for
+        // sure.
+        if (objectContainer.processed()) {
+            return instance;
+        }
 
         TypeContext<? extends T> type = key.type();
         if (instance != null) {
@@ -107,7 +122,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         final Result<ComponentContainer> container = this.locator.container(type);
         if (container.present()) {
-            instance = this.process(key, instance, container.get());
+            instance = this.process(key, objectContainer, container.get());
         }
         else {
             this.verify(instance);
@@ -129,10 +144,10 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     @Nullable
-    private <T> Result<T> create(final Key<T> key) {
+    private <T> Result<ObjectContainer<T>> create(final Key<T> key) {
         return this.provide(key)
-                .orFlat(() -> this.raw(key))
-                .rethrowUnchecked();
+                .rethrowUnchecked()
+                .orFlat(() -> this.raw(key));
     }
 
     @Override
@@ -155,23 +170,25 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         else return new ContextWrappedHierarchy<>(hierarchy, this.applicationContext(), updated -> this.hierarchies.put(key, updated));
     }
 
-    public <T> Result<T> provide(final Key<T> key) {
+    public <T> Result<ObjectContainer<T>> provide(final Key<T> key) {
         return Result.of(key)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
                     for (final Provider<T> provider : hierarchy.providers()) {
-                        final Result<T> provided = provider.provide(this.applicationContext()).rethrowUnchecked();
+                        final Result<ObjectContainer<T>> provided = provider.provide(this.applicationContext()).rethrowUnchecked();
                         if (provided.present()) return provided;
                     }
                     return Result.empty();
                 });
     }
 
-    protected <T> T process(final Key<T> key, T instance, final ComponentContainer container) {
+    protected <T> T process(final Key<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer container) {
         final boolean doProcess = container.permitsProcessing();
 
+        T instance = objectContainer.instance();
         final ComponentProcessingContext processingContext = this.prepareProcessingContext(key, instance, container);
+        if (doProcess) objectContainer.processed(doProcess);
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
@@ -267,7 +284,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         this.postProcessors.put(postProcessor.order(), postProcessor);
     }
 
-    public <T> Result<T> raw(final Key<T> key) {
+    public <T> Result<ObjectContainer<T>> raw(final Key<T> key) {
         return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext()).rethrowUnchecked();
     }
 

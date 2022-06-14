@@ -23,12 +23,13 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StandardActivatorHolder implements ModifiableActivatorHolder {
 
-    private final Set<Annotation> activators = ConcurrentHashMap.newKeySet();
+    private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
     public StandardActivatorHolder(final ApplicationContext applicationContext) {
@@ -37,7 +38,7 @@ public class StandardActivatorHolder implements ModifiableActivatorHolder {
 
     @Override
     public Set<Annotation> activators() {
-        return Set.copyOf(this.activators);
+        return Set.copyOf(this.activators.values());
     }
 
     @Override
@@ -46,28 +47,25 @@ public class StandardActivatorHolder implements ModifiableActivatorHolder {
         if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
-        return this.activators.stream()
-                .map(Annotation::annotationType)
-                .toList()
-                .contains(activator);
+        return this.activators.containsKey(activator);
     }
 
     @Override
     public <A> A activator(final Class<A> activator) {
-        return this.activators.stream()
-                .filter(a -> a.annotationType().equals(activator))
-                .findFirst()
-                .map(activator::cast)
-                .orElse(null);
+        final Annotation annotation = this.activators.get(activator);
+        if (annotation != null) {
+            return activator.cast(annotation);
+        }
+        return null;
     }
 
     @Override
     public void addActivator(final Annotation annotation) {
-        if (this.activators.contains(annotation)) return;
+        if (this.activators.containsKey(annotation.annotationType())) return;
         final TypeContext<? extends Annotation> annotationType = TypeContext.of(annotation.annotationType());
         final Result<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
-            this.activators.add(annotation);
+            this.activators.put(annotation.annotationType(), annotation);
             for (final String scan : activator.get().scanPackages()) {
                 this.applicationContext.bind(scan);
             }

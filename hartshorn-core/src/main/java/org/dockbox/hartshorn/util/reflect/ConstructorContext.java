@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A context element that represents a constructor. This context element can be used to instantiate a component, as well as provide information
@@ -35,6 +35,7 @@ import java.util.function.Function;
  */
 public final class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>, T> implements TypedElementContext<T> {
 
+    private String qualifiedName;
     private final Constructor<T> constructor;
     private Function<Object[], Result<T>> invoker;
 
@@ -79,31 +80,10 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
      */
     public Result<T> createInstance(final ApplicationContext context) {
         this.prepareHandle();
-        try {
-            final Object[] args = this.arguments(context);
-            return this.invoker.apply(args);
-        } catch (final StackOverflowError e) {
-            // When the stack overflows, it typically indicates that there is a cycling dependency between the current component and one of its dependencies.
-            // To provide a more meaningful error message, we need to find the cycle and provide a more specific error message. We do this by traversing the
-            // dependency graph to find the cycle. If there is only one dependency, we can skip traversing and directly yield that as the cycling dependency.
-            // TODO: This is a very naive implementation, and it is possible that there are more than one cycle. In that case, we need to find the longest
-            //       cycle and provide a more specific error message.
-            final LinkedList<TypeContext<?>> parameterTypes = this.parameterTypes();
-            if (parameterTypes.size() == 1) {
-                return Result.of(new CyclicComponentException(this, parameterTypes.get(0)));
-            }
-            else {
-                for (final TypeContext<?> parameterType : parameterTypes) {
-                    for (final ConstructorContext<?> constructor : parameterType.injectConstructors()) {
-                        if (constructor.parameterTypes().contains(this.type())) {
-                            return Result.of(new CyclicComponentException(this, parameterType));
-                        }
-                    }
-                }
-                return Result.of(new CyclicComponentException(this, null));
-            }
-        }
+        final Object[] args = this.arguments(context);
+        return this.invoker.apply(args);
     }
+
 
     @Override
     public TypeContext<T> type() {
@@ -140,6 +120,12 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
 
     @Override
     public String qualifiedName() {
-        return "Constructor[%s]".formatted(this.type().qualifiedName());
+        if (this.qualifiedName == null) {
+            this.qualifiedName = "%s(%s)".formatted(
+                    this.type().qualifiedName(),
+                    this.parameterTypes().stream().map(TypeContext::name).collect(Collectors.joining(", "))
+            );
+        }
+        return this.qualifiedName;
     }
 }

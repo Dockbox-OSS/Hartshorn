@@ -18,6 +18,9 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.LazySingletonProvider;
+import org.dockbox.hartshorn.inject.ObjectContainer;
+import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -61,7 +64,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> priority(int priority) {
+    public BindingFunction<T> priority(final int priority) {
         this.priority = priority;
         return this;
     }
@@ -73,22 +76,25 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder to(final TypeContext<? extends T> type) {
+        if (this.singletonCache.contains(this.hierarchy().key())) {
+            throw new IllegalStateException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+        }
         this.hierarchy().add(this.priority, new ContextDrivenProvider<>(type));
         return this.binder();
     }
 
     @Override
     public Binder to(final Supplier<T> supplier) {
+        if (this.singletonCache.contains(this.hierarchy().key())) {
+            throw new IllegalStateException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+        }
         this.hierarchy().add(this.priority, new SupplierProvider<>(supplier));
         return this.binder();
     }
 
     @Override
     public Binder singleton(final T t) {
-        if (this.priority != -1) {
-            throw new IllegalStateException("Cannot set priority on singleton binding");
-        }
-        this.singletonCache().put(this.hierarchy().key(), t);
+        this.hierarchy().add(this.priority, new SingletonProvider<>(t, true));
         return this.binder();
     }
 
@@ -99,9 +105,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder lazySingleton(final TypeContext<T> type) {
-        this.lazySingleton(() -> {
+        this.lazyContainerSingleton(() -> {
             final Key<T> key = Key.of(type);
-            final Result<T> object = this.instanceFactory().instantiate(key);
+            final Result<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
             return object.rethrowUnchecked().orNull();
         });
         return this.binder();
@@ -110,14 +116,15 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public Binder lazySingleton(final Supplier<T> supplier) {
         final Key<T> key = this.hierarchy().key();
-        this.hierarchy().add(this.priority, new SupplierProvider<>(() -> {
-            if (this.singletonCache.contains(key)) {
-                return this.singletonCache.get(key);
-            }
-            final T t = supplier.get();
-            this.singletonCache.put(key, t);
-            return t;
-        }));
+        this.lazyContainerSingleton(() -> {
+            final T instance = supplier.get();
+            return new ObjectContainer<>(instance, false);
+        });
+        return this.binder();
+    }
+
+    public Binder lazyContainerSingleton(final Supplier<ObjectContainer<T>> supplier) {
+        this.hierarchy().add(this.priority, new LazySingletonProvider<>(supplier));
         return this.binder();
     }
 }
