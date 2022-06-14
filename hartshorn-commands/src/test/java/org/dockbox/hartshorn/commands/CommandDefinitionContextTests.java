@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -27,10 +28,8 @@ import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +40,6 @@ import jakarta.inject.Inject;
 
 @UseCommands
 @HartshornTest
-@UseTranslations
 public class CommandDefinitionContextTests {
 
     @Inject
