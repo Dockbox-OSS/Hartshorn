@@ -1,0 +1,3 @@
+native func System.osName();
+native func System.osEnvVar(program);
+native func System.osArch();

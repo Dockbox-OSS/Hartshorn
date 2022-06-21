@@ -1,0 +1,4 @@
+module time;
+
+var time = currentTime();
+print("Time : " + time);

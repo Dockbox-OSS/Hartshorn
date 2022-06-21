@@ -1,0 +1,7 @@
+func sum(x, y) {
+   return x + y;
+}
+
+test ("test sum function") {
+   return sum(1, 1) == 2;
+}
