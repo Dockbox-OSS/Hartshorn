@@ -79,7 +79,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
 
         final TypeContext<?> returnType = context.genericReturnType();
         if (returnType.isVoid()) {
-            final List<TypeContext<?>> parameters = context.type().typeParameters(JpaRepository.class);
+            final List<TypeContext<?>> parameters = context.parent().typeParameters(JpaRepository.class);
             return parameters.get(0);
         }
 
