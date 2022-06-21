@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -199,6 +200,12 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     @Override
     public Self conditionMatcher(final Initializer<ConditionMatcher> conditionMatcher) {
         this.configuration.conditionMatcher = conditionMatcher.cached();
+        return this.self();
+    }
+
+    @Override
+    public Self manager(final Initializer<ApplicationManager> manager) {
+        this.configuration.manager = manager.cached();
         return this.self();
     }
 }

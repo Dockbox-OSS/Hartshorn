@@ -29,11 +29,17 @@ import java.util.function.Function;
 
 public class ComponentProcessingContext extends DefaultApplicationAwareContext {
 
+    private final Key<?> key;
     private ProcessingPhase phase;
     private final Map<Key<?>, Object> data = new ConcurrentHashMap<>();
 
-    public ComponentProcessingContext(final ApplicationContext applicationContext) {
+    public ComponentProcessingContext(final ApplicationContext applicationContext, final Key<?> key) {
         super(applicationContext);
+        this.key = key;
+    }
+
+    public Key<?> key() {
+        return this.key;
     }
 
     public ProcessingPhase phase() {

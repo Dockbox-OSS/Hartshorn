@@ -51,7 +51,6 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.Assertions;
@@ -368,18 +367,18 @@ public class ApplicationContextTests {
 
     @ParameterizedTest
     @MethodSource("circular")
-    void testCircularDependenciesYieldExceptionOnConstructorInject(final Class<?> type, final Class<?>[] path) {
-        final TypeContext<?> context = TypeContext.of(type);
-        final CyclingConstructorAnalyzer analyzer = new CyclingConstructorAnalyzer(context);
-        final ConstructorContext<?> constructorContext = context.constructors().get(0);
-        // TODO :)
-        final List<TypeContext<?>> cyclicPath = analyzer.findCyclicPath(constructorContext);
-
-        Assertions.assertEquals(path.length, cyclicPath.size());
-        for (int i = 0; i < path.length; i++) {
-            Assertions.assertEquals(path[i], cyclicPath.get(i).type());
+    void testCircularDependencyPathCanBeDetermined(final Class<?> type, final Class<?>... expected) {
+        final List<TypeContext<?>> path = CyclingConstructorAnalyzer.findCyclicPath(TypeContext.of(type));
+        Assertions.assertNotNull(path);
+        Assertions.assertEquals(expected.length, path.size());
+        for (int i = 0; i < expected.length; i++) {
+            Assertions.assertSame(expected[i], path.get(i).type());
         }
+    }
 
+    @ParameterizedTest
+    @MethodSource("circular")
+    void testExceptionIsThrownOnCyclicProvision(final Class<?> type, final Class<?>... path) {
         Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext.get(type));
     }
 

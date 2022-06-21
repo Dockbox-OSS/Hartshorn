@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.util.reflect.Extends;
 
-import jakarta.inject.Singleton;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Service
-@RequiresActivator(UseCaching.class)
-public class TestCacheProviders {
-
-    @Provider(priority = 0)
-    @Singleton
-    public Class<? extends CacheManager> cacheManager = JUnitCacheManager.class;
-
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Extends(RequiresCondition.class)
+@RequiresCondition(condition = AbsentBindingCondition.class)
+public @interface RequiresAbsentBinding {
+    Class<?> value();
+    String name() default "";
 }

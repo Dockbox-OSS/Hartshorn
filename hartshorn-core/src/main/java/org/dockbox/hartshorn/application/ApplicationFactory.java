@@ -300,6 +300,15 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self conditionMatcher(Initializer<ConditionMatcher> conditionMatcher);
 
     /**
+     * Registers a custom {@link ApplicationManager} which is used to manage the lifecycle of
+     * the application.
+     *
+     * @param manager The application manager to register.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self manager(Initializer<ApplicationManager> manager);
+
+    /**
      * Returns itself, for chaining without losing the fluent API.
      *
      * @return The {@link ApplicationFactory} instance.

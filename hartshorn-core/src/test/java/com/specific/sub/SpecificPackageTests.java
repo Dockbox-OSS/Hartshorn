@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Assertions;
 public class SpecificPackageTests {
 
     @InjectTest
-    public void someTest(final ApplicationContext applicationContext) {
+    public void specificPackageFilterIsApplied(final ApplicationContext applicationContext) {
         Assertions.assertNotNull(applicationContext);
         final DemoServicePreProcessor processor = applicationContext.get(DemoServicePreProcessor.class);
         Assertions.assertEquals(1, processor.processed());

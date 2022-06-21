@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T> {
+public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T>, ModifiableProxyManager<T, LazyProxyManager<T>> {
 
     private static final Method managerAccessor;
 
@@ -64,7 +64,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     private final TypeMap<Object> typeDelegates;
     private final Map<Method, MethodInterceptor<T>> interceptors;
     private final MultiMap<Method, MethodWrapper<T>> wrappers;
-    private final T delegate;
+    private T delegate;
 
     public LazyProxyManager(final ApplicationContext applicationContext, final DefaultProxyFactory<T> proxyFactory) {
         this(applicationContext, null, proxyFactory.type(), proxyFactory.typeDelegate(), proxyFactory.delegates(), proxyFactory.typeDelegates(), proxyFactory.interceptors(), proxyFactory.wrappers());
@@ -153,5 +153,11 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
+    }
+
+    @Override
+    public LazyProxyManager<T> delegate(final T delegate) {
+        this.delegate = delegate;
+        return this;
     }
 }

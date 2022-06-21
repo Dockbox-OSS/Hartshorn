@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProviderImpl;
 import org.dockbox.hartshorn.application.environment.ClassLoaderClasspathResourceLocator;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser;
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
@@ -115,6 +116,7 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
 
     public StandardApplicationFactory loadDefaults() {
         return this.constructor(StandardApplicationContextConstructor::new)
+                .manager(ctx -> new DelegatingApplicationManager(ctx.configuration()))
                 .applicationLogger(ctx -> new LogbackApplicationLogger())
                 .applicationConfigurator(ctx -> new EnvironmentDrivenApplicationConfigurator())
                 .applicationProxier(ctx -> new CglibApplicationProxier())

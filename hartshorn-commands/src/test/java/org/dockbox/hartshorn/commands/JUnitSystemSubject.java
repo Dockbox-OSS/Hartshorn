@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JUnitSystemSubject extends SystemSubject {
 
     private final List<Message> received = new ArrayList<>();

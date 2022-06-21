@@ -94,7 +94,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder singleton(final T t) {
-        this.hierarchy().add(this.priority, new SingletonProvider<>(t, true));
+        // Set 'processed' to false to ensure that the singleton is processed the first time it is requested. As the object
+        // container is reused, this will only happen once.
+        this.hierarchy().add(this.priority, new SingletonProvider<>(t, false));
         return this.binder();
     }
 

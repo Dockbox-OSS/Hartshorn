@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+public interface ModifiableProxyManager<T, F extends ModifiableProxyManager<T, F>> {
 
-import jakarta.inject.Singleton;
-
-@Service
-@RequiresActivator(UseCaching.class)
-public class TestCacheProviders {
-
-    @Provider(priority = 0)
-    @Singleton
-    public Class<? extends CacheManager> cacheManager = JUnitCacheManager.class;
-
+    /**
+     * Delegates all methods defined by the active type to the given delegate instance.
+     * This targets an original instance, not the backing implementation.
+     *
+     * @param delegate The delegate instance
+     * @return This factory
+     */
+    F delegate(T delegate);
 }

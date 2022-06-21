@@ -122,10 +122,13 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         final Result<ComponentContainer> container = this.locator.container(type);
         if (container.present()) {
+            // Will only mark the object container as processed if the component container permits
+            // processing.
             instance = this.process(key, objectContainer, container.get());
         }
         else {
             this.verify(instance);
+            objectContainer.processed(true);
         }
 
         this.storeSingletons(key, instance);
@@ -158,7 +161,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     @Override
     public <C> BindingFunction<C> bind(final Key<C> key) {
         final BindingHierarchy<C> hierarchy = this.hierarchy(key);
-
         return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.factory);
     }
 
@@ -188,21 +190,23 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         T instance = objectContainer.instance();
         final ComponentProcessingContext processingContext = this.prepareProcessingContext(key, instance, container);
-        if (doProcess) objectContainer.processed(doProcess);
 
-        // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
-        // See ServiceOrder#PHASE_1
-        if (doProcess) instance = this.process(key, instance, ProcessingOrder.INITIALIZING, processingContext);
+        if (doProcess) {
+            objectContainer.processed(true);
 
-        // Modify the instance during phase 2. This does not allow discarding the existing instance.
-        // See ServiceOrder#PHASE_2
-        if (doProcess) instance = this.process(key, instance, ProcessingOrder.MODIFYING, processingContext);
+            // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
+            // See ServiceOrder#PHASE_1
+            instance = this.process(key, instance, ProcessingOrder.INITIALIZING, processingContext);
 
+            // Modify the instance during phase 2. This does not allow discarding the existing instance.
+            // See ServiceOrder#PHASE_2
+            instance = this.process(key, instance, ProcessingOrder.MODIFYING, processingContext);
+        }
         return instance;
     }
 
     protected <T> ComponentProcessingContext prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
-        final ComponentProcessingContext processingContext = new ComponentProcessingContext(this.applicationContext());
+        final ComponentProcessingContext processingContext = new ComponentProcessingContext(this.applicationContext(), key);
         processingContext.put(Key.of(ComponentContainer.class), container);
 
         if (container.permitsProxying()) {
@@ -276,12 +280,13 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null && (this.metaProvider.singleton(key.type()) || this.metaProvider.singleton(TypeContext.unproxy(this.applicationContext(), instance)))) {
-            this.bind(key).singleton(instance);
+            this.singletonCache.put(key, instance);
         }
     }
 
     public void postProcessor(final ComponentPostProcessor postProcessor) {
         this.postProcessors.put(postProcessor.order(), postProcessor);
+        this.singletonCache.put(Key.of((Class<ComponentPostProcessor>) postProcessor.getClass()), postProcessor);
     }
 
     public <T> Result<ObjectContainer<T>> raw(final Key<T> key) {
@@ -290,7 +295,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     private void verify(final Object instance) {
         if (instance != null) {
-            final TypeContext<Object> type = TypeContext.of(instance);
+            final TypeContext<Object> type = TypeContext.unproxy(this.applicationContext(), instance);
             for (final FieldContext<?> field : type.fields(Inject.class)) {
                 this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), type.name(), type.name());
             }

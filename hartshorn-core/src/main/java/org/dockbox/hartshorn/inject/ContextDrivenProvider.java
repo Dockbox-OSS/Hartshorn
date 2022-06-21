@@ -40,7 +40,6 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 public class ContextDrivenProvider<C> implements Provider<C> {
 
     private final TypeContext<? extends C> context;
-    private final CyclingConstructorAnalyzer<C> analyzer;
     private ConstructorContext<? extends C> optimalConstructor;
 
     public ContextDrivenProvider(final Class<? extends C> type) {
@@ -49,7 +48,6 @@ public class ContextDrivenProvider<C> implements Provider<C> {
 
     public ContextDrivenProvider(final TypeContext<? extends C> context) {
         this.context = context;
-        this.analyzer = new CyclingConstructorAnalyzer(context);
     }
 
     @Override
@@ -62,7 +60,7 @@ public class ContextDrivenProvider<C> implements Provider<C> {
 
     protected Result<? extends ConstructorContext<? extends C>> optimalConstructor() {
         if (this.optimalConstructor == null) {
-            this.optimalConstructor = this.analyzer.findOptimalConstructor()
+            this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(this.context())
                     .rethrowUnchecked()
                     .orNull();
         }

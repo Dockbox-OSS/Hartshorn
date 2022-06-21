@@ -22,17 +22,11 @@ public interface SingletonCache {
 
     <T> void put(Key<T> key, T instance);
 
-    <T> void put(Key<T> key, T instance, int priority);
-
     <T> T get(Key<T> key);
 
     <T> void remove(Key<T> key);
 
-    <T> void remove(Key<T> key, int priority);
-
     <T> boolean contains(Key<T> key);
-
-    <T> boolean contains(Key<T> key, int priority);
 
     <T> void clear();
 

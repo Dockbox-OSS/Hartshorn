@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.CustomMultiTreeMap;
@@ -73,11 +74,13 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         final String name = TypeContext.of(processor).name();
 
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof StandardComponentProvider provider) {
+            // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
             this.log().debug("Added " + name + " for component post-processing at phase " + order);
         }
         else if (processor instanceof ComponentPreProcessor preProcessor) {
             this.preProcessors.put(preProcessor.order(), preProcessor);
+            this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
             this.log().debug("Added " + name + " for component pre-processing at phase " + order);
         }
         else {
@@ -118,6 +121,9 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
                     this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), TypeContext.of(serviceProcessor).name()));
                     serviceProcessor.process(this, key);
                 }
+            }
+            if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
+                exiting.exit(this);
             }
         }
     }

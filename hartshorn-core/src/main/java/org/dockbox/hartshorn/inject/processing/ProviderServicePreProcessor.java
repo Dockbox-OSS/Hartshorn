@@ -17,12 +17,11 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.ProviderContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
@@ -31,11 +30,8 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.reflect.TypedElementContext;
 
 import java.util.List;
-import java.util.function.Function;
 
-import jakarta.inject.Singleton;
-
-public final class ProviderServicePreProcessor implements ServicePreProcessor {
+public final class ProviderServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {
@@ -50,66 +46,42 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor {
 
         context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + type.name());
 
-        for (final MethodContext<?, T> method : methods)
-            this.processContext(context, method);
-
-        for (final FieldContext<?> field : fields)
-            this.processContext(context, field);
-    }
-
-    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void processContext(final ApplicationContext context, final E element) {
-        final ConditionMatcher conditionMatcher = context.get(ConditionMatcher.class);
-        if (conditionMatcher.match(element)) {
-            if (element.type().is(Class.class))
-                this.processClassBinding(context, element.genericType(), (AnnotatedElementContext<?> & ObtainableElement<Class<Object>>) element);
-            else if (element.type().is(TypeContext.class))
-                this.processTypeBinding(context, element.genericType(), (AnnotatedElementContext<?> & ObtainableElement<TypeContext<Object>>) element);
-            else
-                this.processInstanceBinding(context, element, E::type);
+        final ProviderListContext providerContext = context.first(ProviderListContext.class).orNull();
+        for (final MethodContext<?, T> method : methods) {
+            this.register(providerContext, method);
+        }
+        for (final FieldContext<?> field : fields) {
+            this.register(providerContext, field);
         }
     }
 
-    private <T extends AnnotatedElementContext<?> & ObtainableElement<?>> void processInstanceBinding(final ApplicationContext context, final T element, final Function<T, TypeContext<?>> type) {
-        final boolean singleton = context.get(MetaProvider.class).singleton(element);
-        final Provider annotation = element.annotation(Provider.class).get();
-        final Key<?> key = Key.of(type.apply(element), annotation.value());
-        final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, annotation.priority(), () -> element.obtain(context).rethrowUnchecked().orNull(), annotation.lazy());
-
-        context.add(providerContext);
+    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void register(final ProviderListContext context, final E element) {
+        final Key<?> key = this.key(element);
+        context.add(key, element);
     }
 
-    private <R, C extends Class<R>, E extends AnnotatedElementContext<?> & ObtainableElement<C>> void processClassBinding(final ApplicationContext context, final TypeContext<?> generic, final E element) {
-        final TypeContext<R> typeContext = (TypeContext<R>) generic.typeParameters().get(0);
-        final Provider annotation = element.annotation(Provider.class).get();
-        final Key<R> key = Key.of(typeContext, annotation.value());
-        final boolean singleton = element.annotation(Singleton.class).present();
+    @Override
+    public void exit(final ApplicationContext context) {
+        final BindingProcessor processor = new BindingProcessor();
+        context.bind(BindingProcessor.class).singleton(processor);
 
-        if (context.get(MetaProvider.class).singleton(element)) {
-            final C target = element.obtain(context).rethrowUnchecked().orNull();
-            final ProviderContext<R> providerContext = new ProviderContext<>(key, singleton, annotation.priority(), () -> context.get(target), annotation.lazy());
-            context.add(providerContext);
-            return;
+        final ProviderListContext providerContext = context.first(ProviderListContext.class).orNull();
+        try {
+            processor.process(providerContext, context);
+        } catch (final ApplicationException e) {
+            context.handle(e);
         }
-
-        context.bind(key)
-                .priority(annotation.priority())
-                .to(element.obtain(context).rethrowUnchecked().get());
     }
 
-    private <R, C extends TypeContext<R>, E extends AnnotatedElementContext<?> & ObtainableElement<C>> void processTypeBinding(final ApplicationContext context, final TypeContext<?> generic, final E element) {
-        final TypeContext<R> typeContext = (TypeContext<R>) generic.typeParameters().get(0);
+    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> Key<?> key(final E element) {
         final Provider annotation = element.annotation(Provider.class).get();
-        final Key<R> key = Key.of(typeContext, annotation.value());
-        final boolean singleton = element.annotation(Singleton.class).present();
-
-        if (context.get(MetaProvider.class).singleton(element)) {
-            final C target = element.obtain(context).rethrowUnchecked().orNull();
-            final ProviderContext<R> providerContext = new ProviderContext<>(key, singleton, annotation.priority(), () -> context.get(target), annotation.lazy());
-            context.add(providerContext);
-            return;
+        if (element.type().is(Class.class) || element.type().is(TypeContext.class)) {
+            final TypeContext<?> typeContext = element.genericType().typeParameters().get(0);
+            return Key.of(typeContext, annotation.value());
         }
-
-        context.bind(key).to(element.obtain(context).rethrowUnchecked().get().type());
+        else {
+            return Key.of(element.type(), annotation.value());
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -53,6 +54,7 @@ public class ApplicationContextConfiguration {
     protected Initializer<PrefixContext> prefixContext;
     protected Initializer<ActivatorHolder> activatorHolder;
     protected Initializer<ConditionMatcher> conditionMatcher;
+    protected Initializer<ApplicationManager> manager;
 
     protected TypeContext<?> activator;
 
@@ -120,6 +122,10 @@ public class ApplicationContextConfiguration {
 
     public ActivatorHolder activatorHolder(final InitializingContext context) {
         return this.activatorHolder.initialize(context);
+    }
+
+    public ApplicationManager manager(final InitializingContext context) {
+        return this.manager.initialize(context);
     }
 
     public TypeContext<?> activator() {

@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.application.context.ClasspathApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -72,9 +71,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return configuration.activator().annotation(Activator.class).get();
     }
 
-    // TODO: Make configurable in factory/configuration
-    protected DelegatingApplicationManager createManager(final ApplicationContextConfiguration configuration) {
-        return new DelegatingApplicationManager(configuration);
+    protected ApplicationManager createManager(final ApplicationContextConfiguration configuration) {
+        final InitializingContext context = new InitializingContext(null, null, null, configuration);
+        return configuration.manager(context);
     }
 
     protected ApplicationEnvironment createEnvironment(final InitializingContext context) {
