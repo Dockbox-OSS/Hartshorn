@@ -70,6 +70,17 @@ public @interface Deserialize {
      * The path to the source to deserialize from.
      * TODO GLieben: Remove this as required. This should either be a parameter and not an annotation,
      *   or an optional attribute of the annotation.
+     * Sample of target:
+     * <pre>{@code
+     * @Deserialize
+     * @FileSource("filename.txt") // <-- requires a top-level annotation (@SerializationSource?) so it can be extended. Needs to indicate a converter to get the source object.
+     * public PersistentElement readFromPath();
+     *
+     * @Deserialize
+     * public Optional<PersistentElement> readFromPath(Path source);
+     *
+     * @Deserialize
+     * public Result<PersistentElement> readFromPath(String source);
      */
     File path();
 }

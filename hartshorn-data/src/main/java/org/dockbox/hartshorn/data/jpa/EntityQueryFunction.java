@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.context.QueryContext;
-import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.Result;
 
 import java.util.function.Function;
@@ -42,20 +41,11 @@ public class EntityQueryFunction implements QueryFunction {
     }
 
     private Object executeQuery(final QueryContext context, final Function<EntityManager, Object> action) {
-        EntityManager entityManager = null;
+        final Result<EntityManager> entityManager = context.applicationContext().get(EntityManagerLookup.class)
+                .lookup(context.repository());
 
-        // TODO: Move this to a common method (also in TransactionalProxyCallbackPostProcessor)
-        if (context.repository() instanceof EntityManagerJpaRepository jpaRepository) {
-            entityManager = jpaRepository.manager();
-        }
-        else if (context.repository() instanceof Proxy<?> proxy) {
-            final Result<JpaRepository> repository = proxy.manager().delegate(JpaRepository.class);
-            if (repository.present() && repository.get() instanceof EntityManagerJpaRepository jpaRepository) {
-                entityManager = jpaRepository.manager();
-            }
-        }
-        if (entityManager != null) {
-            try (final EntityManager manager = entityManager) {
+        if (entityManager.present()) {
+            try (final EntityManager manager = entityManager.get()) {
                 final Object result = action.apply(manager);
                 if (context.automaticClear()) manager.clear();
                 return result;

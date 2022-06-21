@@ -36,7 +36,6 @@ import java.lang.annotation.Target;
  * <p>By default the entity type is derived from the {@link #entityType()} attribute. If
  * this is not specified, the entity type is derived from the method return type.
  *
- * TODO GLieben: Derive type from repository if not specified. Also support Result, Optional in return type
  * @author Guus Lieben
  * @since 21.9
  */
