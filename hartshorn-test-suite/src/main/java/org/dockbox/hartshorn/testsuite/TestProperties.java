@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.remote;
+package org.dockbox.hartshorn.testsuite;
 
-public interface Remote<T> {
-    PersistenceConnection connection(T target, String user, String password);
-    String driver();
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TestProperties {
+    String[] value();
 }

@@ -18,13 +18,12 @@ package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 
 import java.util.Set;
 
-import jakarta.persistence.EntityManager;
-
 public interface JpaRepository<T, ID> extends ContextCarrier {
+
+    T refresh(T entity);
 
     T save(final T object);
 
@@ -38,11 +37,5 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
 
     Result<T> findById(ID id);
 
-    EntityManager entityManager();
-
-    Class<T> reify();
-
     void flush();
-
-    JpaRepository<T, ID> connection(PersistenceConnection connection);
 }

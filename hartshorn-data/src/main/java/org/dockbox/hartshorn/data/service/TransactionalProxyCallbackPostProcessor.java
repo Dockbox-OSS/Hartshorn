@@ -24,10 +24,12 @@ import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.Transactional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityManagerLookup;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 import jakarta.persistence.EntityManager;
@@ -47,15 +49,16 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     @Override
     public <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
+        final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
 
         return (methodContext, target, args) -> {
-            if (target instanceof JpaRepository jpaRepository) {
-                final EntityManager entityManager = jpaRepository.entityManager();
-                final TransactionManager manager = transactionFactory.manager(entityManager);
-                manager.beginTransaction();
-            } else {
+            final Result<EntityManager> entityManager = lookup.lookup(target);
+            if (entityManager.absent()) {
                 throw new IllegalStateException("No entity manager found in execution cache for method " + methodContext.qualifiedName() + " in type " + methodContext.parent().name() + ". Expected target to be a JpaRepository.");
             }
+
+            final TransactionManager manager = transactionFactory.manager(entityManager.get());
+            manager.beginTransaction();
         };
     }
 

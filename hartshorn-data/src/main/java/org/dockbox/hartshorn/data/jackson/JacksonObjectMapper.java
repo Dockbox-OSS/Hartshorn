@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.data.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.TreeNode;
@@ -32,16 +34,16 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.data.DefaultObjectMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -232,6 +234,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             builder.enable(SerializationFeature.INDENT_OUTPUT);
             builder.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
             builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            builder.defaultSetterInfo(JsonSetter.Value.forContentNulls(Nulls.AS_EMPTY));
             // Hartshorn convention uses fluent style getters/setters, these are not picked up by Jackson
             // which would otherwise cause it to fail due to it recognizing the object as an empty bean,
             // even if it is not empty.

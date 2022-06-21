@@ -23,12 +23,19 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityQueryFunction;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
 
 @Service
 @RequiresActivator(UsePersistence.class)
 @RequiresClass("org.hibernate.Hibernate")
 public class HibernateProviders {
+
+    @Provider(priority = 0)
+    public Class<? extends DataSourceList> dataSourceList() {
+        return HibernateDataSourceList.class;
+    }
 
     @Provider
     public Class<? extends JpaRepository> jpaRepository() {
@@ -42,11 +49,6 @@ public class HibernateProviders {
 
     @Provider
     public QueryFunction queryFunction() {
-        return new HibernateQueryFunction();
-    }
-
-    @Provider
-    public Class<? extends HibernateRemote> remote() {
-        return HibernateRemoteImpl.class;
+        return new EntityQueryFunction();
     }
 }

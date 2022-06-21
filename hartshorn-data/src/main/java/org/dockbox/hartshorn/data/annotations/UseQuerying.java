@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.remote;
+package org.dockbox.hartshorn.data.annotations;
 
-public final class PostgreSQLRemote extends JdbcRemote {
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.data.service.QueryPostProcessor;
+import org.dockbox.hartshorn.proxy.UseProxying;
 
-    public static final PostgreSQLRemote INSTANCE = new PostgreSQLRemote();
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    private PostgreSQLRemote() {
-    }
-
-    @Override
-    protected String type() {
-        return "postgresql";
-    }
-
-    @Override
-    public String driver() {
-        return "org.postgresql.Driver";
-    }
+@UseProxying
+@Retention(RetentionPolicy.RUNTIME)
+@ServiceActivator(processors = QueryPostProcessor.class)
+public @interface UseQuerying {
 }

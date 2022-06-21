@@ -24,23 +24,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates the annotated method will perform a modification to the entity (table).
- * Typically, this is used to update or delete an entity. This is also required for
- * {@link Query} methods, but not for default methods of {@link JpaRepository}.
+ * Represents the key of a data source for a {@link JpaRepository}. The key is used to identify the
+ * data source in the {@link org.dockbox.hartshorn.data.remote.DataSourceList}, and is <b>not</b>
+ * a representation of a {@link org.dockbox.hartshorn.inject.Key}.
  *
- * <p><pre>{@code
+ * <p>A sample usage may look like the following snippet:
+ * <pre>{@code
  * @Service
- * public interface EntityRepository extends JpaRepository<Entity, Long> {
- *    @Query("delete from Entity e where e.id = :id")
- *    @EntityModifier
- *    void delete(int id);
+ * @DataSource("my-data-source")
+ * public class EntityJpaRepository implements JpaRepository<Entity, Long> {
  * }
  * }</pre>
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 22.4
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface EntityModifier {
+@Target(ElementType.TYPE)
+public @interface DataSource {
+    String value();
 }

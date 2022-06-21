@@ -17,16 +17,27 @@
 package org.dockbox.hartshorn.data.annotations;
 
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.util.reflect.Property;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Component stereotype for components which are (de)serializable. These components are populated
+ * using application properties through the {@link PropertyHolder}, unless a property is explicitly
+ * marked with {@link Property#ignore()}, in which case the property is ignored.
+ *
+ * @author Guus Lieben
+ * @since 22.3
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
 public @interface ConfigurationObject {
     String prefix() default "";
+    boolean singleton() default true;
 }

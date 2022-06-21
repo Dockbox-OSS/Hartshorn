@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.hibernate;
+package org.dockbox.hartshorn.data.remote;
 
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.data.remote.PersistenceConnection;
-import org.dockbox.hartshorn.data.remote.Remote;
-import org.hibernate.dialect.Dialect;
+import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
+import org.dockbox.hartshorn.util.Result;
 
-@Component(singleton = true)
-public interface HibernateRemote extends Remote {
-    Class<? extends Dialect> dialect();
+import java.util.Map;
 
-    PersistenceConnection connection();
+@ConfigurationObject(prefix = "hartshorn.data")
+public class DataSourceConfigurations {
+
+    private Map<String, DataSourceConfiguration> sources;
+
+    public DataSourceConfigurations() {
+    }
+
+    public Map<String, DataSourceConfiguration> sources() {
+        return this.sources;
+    }
+
+    public Result<DataSourceConfiguration> source(final String id) {
+        return Result.of(this.sources.get(id));
+    }
 }

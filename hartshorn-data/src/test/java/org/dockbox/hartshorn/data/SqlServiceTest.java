@@ -16,29 +16,34 @@
 
 package org.dockbox.hartshorn.data;
 
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import com.mysql.cj.jdbc.Driver;
 
-import org.dockbox.hartshorn.component.Enableable;
+import org.apache.derby.jdbc.EmbeddedDriver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
-import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
+import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
-import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
-import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
-import org.dockbox.hartshorn.data.remote.MariaDbRemote;
-import org.dockbox.hartshorn.data.remote.MySQLRemote;
-import org.dockbox.hartshorn.data.remote.PersistenceConnection;
-import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
-import org.dockbox.hartshorn.data.remote.Remote;
-import org.dockbox.hartshorn.data.remote.SqlServerRemote;
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
+import org.dockbox.hartshorn.data.remote.HibernateDataSourceConfiguration;
+import org.dockbox.hartshorn.data.remote.RefreshableDataSourceList;
 import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Result;
 import org.hibernate.Session;
+import org.hibernate.dialect.DerbyDialect;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL8Dialect;
+import org.hibernate.dialect.MySQLDialect;
+import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.dialect.SQLServerDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -96,23 +101,37 @@ class SqlServiceTest {
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
-                Arguments.of(directory(DerbyFileRemote.INSTANCE, "derby")),
-                Arguments.of(connection(MySQLRemote.INSTANCE, mySql, MySQLContainer.MYSQL_PORT)),
-                Arguments.of(connection(PostgreSQLRemote.INSTANCE, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
-                Arguments.of(connection(MariaDbRemote.INSTANCE, mariaDb, 3306)),
-                Arguments.of(connection(SqlServerRemote.INSTANCE, mssqlServer, MSSQLServerContainer.MS_SQL_SERVER_PORT))
+                Arguments.of(derby()),
+                Arguments.of(mssql()),
+                Arguments.of(jdbc("mysql", com.mysql.cj.jdbc.Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT)),
+                Arguments.of(jdbc("postgresql", org.postgresql.Driver.class, postgreSql, PostgreSQLDialect.class, PostgreSQLContainer.POSTGRESQL_PORT)),
+                Arguments.of(jdbc("mariadb", org.mariadb.jdbc.Driver.class, mariaDb, MariaDBDialect.class, 3306))
         );
     }
 
-    protected static PersistenceConnection connection(final Remote<JdbcRemoteConfiguration> remote, final JdbcDatabaseContainer<?> container, final int defaultPort) {
-        final JdbcRemoteConfiguration server = JdbcRemoteConfiguration.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE);
-        return remote.connection(server, container.getUsername(), container.getPassword());
+    protected static DataSourceConfiguration jdbc(
+            final String type, final Class<? extends java.sql.Driver> driver, final JdbcDatabaseContainer<?> container,
+            final Class<? extends Dialect> dialect, final int defaultPort) {
+        final String url = "jdbc:%s://%s:%s/%s".formatted(
+                type,
+                "localhost",
+                container.getMappedPort(defaultPort),
+                DEFAULT_DATABASE
+        );
+        return new HibernateDataSourceConfiguration(url, container.getUsername(), container.getPassword(), driver, dialect);
     }
 
-    protected static PersistenceConnection directory(final Remote<Path> remote, final String prefix) {
+    protected static DataSourceConfiguration mssql() {
+        final Integer port = mssqlServer.getMappedPort(MSSQLServerContainer.MS_SQL_SERVER_PORT);
+        final String url = "jdbc:sqlserver://localhost:%s;encrypt=true;trustServerCertificate=true;".formatted(port);
+        return new HibernateDataSourceConfiguration(url, mssqlServer.getUsername(), mssqlServer.getPassword(), SQLServerDriver.class, SQLServerDialect.class);
+    }
+
+    protected static DataSourceConfiguration derby() {
         try {
-            final Path dir = Files.createTempDirectory(prefix);
-            return remote.connection(dir, "", "");
+            final Path dir = Files.createTempDirectory("derby");
+            final String connectionString = "jdbc:derby:directory:%s/db;create=true".formatted(dir.toFile().getAbsolutePath());
+            return new HibernateDataSourceConfiguration(connectionString, EmbeddedDriver.class, DerbyDialect.class);
         }
         catch (final Exception e) {
             Assumptions.assumeTrue(false);
@@ -122,7 +141,7 @@ class SqlServiceTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    public void testJpaSave(final PersistenceConnection target) {
+    public void testJpaSave(final DataSourceConfiguration target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
@@ -136,13 +155,14 @@ class SqlServiceTest {
         }
     }
 
-    protected JpaRepository<User, Long> sql(final PersistenceConnection target) {
-        return this.applicationContext.get(UserJpaRepository.class).connection(target);
+    protected JpaRepository<User, Long> sql(final DataSourceConfiguration target) {
+        this.applicationContext.get(DataSourceList.class).add("users", target);
+        return this.applicationContext.get(UserJpaRepository.class);
     }
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaDelete(final PersistenceConnection target) {
+    void testJpaDelete(final DataSourceConfiguration target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
         sql.save(guus);
@@ -160,7 +180,7 @@ class SqlServiceTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaPersists(final PersistenceConnection target) {
+    void testJpaPersists(final DataSourceConfiguration target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
@@ -171,7 +191,7 @@ class SqlServiceTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaUpdate(final PersistenceConnection target) {
+    void testJpaUpdate(final DataSourceConfiguration target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
 
@@ -195,20 +215,26 @@ class SqlServiceTest {
 
         final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
 
+
         // Data API specific
-        propertyHolder.set("hartshorn.data.username", mySql.getUsername());
-        propertyHolder.set("hartshorn.data.password", mySql.getPassword());
+        propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
+        propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
 
         final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        propertyHolder.set("hartshorn.data.url", connectionUrl);
+        propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
 
         // Hibernate specific
-        propertyHolder.set("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
-        propertyHolder.set("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+        propertyHolder.set("hartshorn.data.sources.default.dialect", MySQL8Dialect.class.getCanonicalName());
+        propertyHolder.set("hartshorn.data.sources.default.driver", Driver.class.getCanonicalName());
+
+        final DataSourceList dataSourceList = this.applicationContext.get(DataSourceList.class);
+        if (dataSourceList instanceof RefreshableDataSourceList refreshable) {
+            refreshable.refresh();
+        }
 
         ((Enableable) repository).enable();
 
-        final Session session = ((HibernateJpaRepository<User, ?>) repository).session();
+        final Session session = ((HibernateJpaRepository<User, ?>) repository).manager();
         Assertions.assertNotNull(session);
 
         ((HibernateJpaRepository<User, ?>) repository).close();
@@ -222,19 +248,31 @@ class SqlServiceTest {
         final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
 
         // Data API specific
-        propertyHolder.set("hartshorn.data.username", mySql.getUsername());
-        propertyHolder.set("hartshorn.data.password", mySql.getPassword());
+        propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
+        propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
 
         final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        propertyHolder.set("hartshorn.data.url", connectionUrl);
+        propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
 
         // Hibernate specific
-        propertyHolder.set("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
-        propertyHolder.set("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+        propertyHolder.set("hartshorn.data.sources.default.dialect", MySQL8Dialect.class.getCanonicalName());
+        propertyHolder.set("hartshorn.data.sources.default.driver", Driver.class.getCanonicalName());
+
+        final DataSourceList dataSourceList = this.applicationContext.get(DataSourceList.class);
+        if (dataSourceList instanceof RefreshableDataSourceList refreshable) {
+            refreshable.refresh();
+        }
 
         final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
+        final JpaRepository delegate = this.applicationContext.environment()
+                .manager()
+                .manager(repository).get()
+                .delegate(JpaRepository.class).get();
 
-        final EntityManager em = repository.entityManager();
+        Assertions.assertTrue(delegate instanceof EntityManagerJpaRepository);
+
+        final EntityManagerJpaRepository<?,?> entityJpaRepository = (EntityManagerJpaRepository<?, ?>) delegate;
+        final EntityManager em = entityJpaRepository.manager();
         Assertions.assertNotNull(em);
     }
 }

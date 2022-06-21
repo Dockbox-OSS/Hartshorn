@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.inject.Enable;
 
 /**
@@ -31,6 +32,32 @@ import org.dockbox.hartshorn.inject.Enable;
 @Service
 @RequiresActivator(UsePersistence.class)
 public interface JpaRepositoryFactory {
+
+    /**
+     * Creates a new {@link JpaRepository} instance for the given type and configuration.
+     * The connection is immediately set up.
+     *
+     * @param type The entity type
+     * @param connection The connection configuration
+     * @return A new {@link JpaRepository} instance
+     * @param <T> The entity type
+     * @since 22.4
+     */
+    @Factory
+    <T> JpaRepository<T, ?> repository(Class<T> type, DataSourceConfiguration connection);
+
+    /**
+     * Creates a new {@link JpaRepository} instance for the given type, without setting the
+     * connection. As the connection is not set, the repository will not be enabled automatically.
+     *
+     * This is useful for creating a repository that is configured manually. In scenarios where
+     * the connection is already known, use {@link #repository(Class, DataSourceConfiguration)}.
+     *
+     * @param type The entity type
+     * @return A new {@link JpaRepository} instance
+     * @param <T> The entity type
+     * @since 22.3
+     */
     @Factory
     @Enable(false)
     <T> JpaRepository<T, ?> repository(Class<T> type);

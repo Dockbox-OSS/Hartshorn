@@ -16,17 +16,30 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-public class PersistenceConnection {
-    private final String url;
-    private final String username;
-    private final String password;
-    private final Remote remote;
+import java.sql.Driver;
 
-    public PersistenceConnection(final String url, final String username, final String password, final Remote remote) {
+public class DataSourceConfiguration {
+    private String url;
+    private String username;
+    private String password;
+    private Class<? extends Driver> driver;
+
+    protected DataSourceConfiguration() {
+        // For configuration
+    }
+
+    public DataSourceConfiguration(final String url, final Class<? extends Driver> driver) {
+        this.url = url;
+        this.driver = driver;
+        this.username = null;
+        this.password = null;
+    }
+
+    public DataSourceConfiguration(final String url, final String username, final String password, final Class<? extends Driver> driver) {
         this.url = url;
         this.username = username;
         this.password = password;
-        this.remote = remote;
+        this.driver = driver;
     }
 
     public String url() {
@@ -41,7 +54,7 @@ public class PersistenceConnection {
         return this.password;
     }
 
-    public Remote remote() {
-        return this.remote;
+    public Class<? extends Driver> driver() {
+        return this.driver;
     }
 }

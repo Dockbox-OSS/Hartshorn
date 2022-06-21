@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data;
+package org.dockbox.hartshorn.data.remote;
 
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.util.Result;
+import java.util.Map;
 
-import jakarta.inject.Inject;
-
-@Component
-public class ContextPropertyValueLookup implements ValueLookup {
-
-    @Inject
-    private PropertyHolder propertyHolder;
-
-    @Override
-    public <T> Result<T> getValue(final String key, final Class<T> type) {
-        return this.propertyHolder.get(key, type);
-    }
+public interface DataSourceList {
+    void add(String id, DataSourceConfiguration configuration);
+    DataSourceConfiguration get(String id);
+    DataSourceConfiguration defaultConnection();
+    Map<String, DataSourceConfiguration> sources();
 }

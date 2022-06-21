@@ -19,9 +19,24 @@ package org.dockbox.hartshorn.data.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * Used by {@link Deserialize} and {@link Serialize} to indicate a potential
+ * file target.
+ *
+ * @author Guus Lieben
+ * @since 21.2
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface File {
+    /**
+     * The owner of the file, to act as synthetic hierarchical category.
+     * @deprecated To be removed in a future release.
+     */
+    @Deprecated(since = "22.4", forRemoval = true)
     Class<?> owner() default Void.class;
 
+    /**
+     * The name of the file.
+     */
     String value();
 }

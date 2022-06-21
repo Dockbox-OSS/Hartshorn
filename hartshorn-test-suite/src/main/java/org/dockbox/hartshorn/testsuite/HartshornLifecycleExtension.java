@@ -183,6 +183,7 @@ public class HartshornLifecycleExtension implements
         final ServiceActivatorImpl serviceActivator = new ServiceActivatorImpl();
         modifier.add(serviceActivator);
 
+        final List<String> arguments = new ArrayList<>();
         elements.stream().map(e -> {
             if (e instanceof Class<?> clazz) {
                 return TypeContext.of(clazz);
@@ -195,9 +196,14 @@ public class HartshornLifecycleExtension implements
             context.annotation(HartshornTest.class).present(annotation -> {
                 serviceActivator.addProcessors(annotation.processors());
             });
+            context.annotation(TestProperties.class).present(annotation -> {
+                arguments.addAll(Arrays.asList(annotation.value()));
+            });
         });
 
-        applicationFactory.serviceActivator(new VirtualServiceActivator.Impl());
+        applicationFactory
+                .arguments(arguments.toArray(new String[0]))
+                .serviceActivator(new VirtualServiceActivator.Impl());
 
         final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
         for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {

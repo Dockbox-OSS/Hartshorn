@@ -25,17 +25,23 @@ import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class ConfigurationObjectPostProcessor implements ComponentPostProcessor {
 
     @Override
     public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+        if (instance != null && TypeContext.of(instance).annotation(ConfigurationObject.class).present()) {
+            return true;
+        }
         return key.type().annotation(ConfigurationObject.class).present();
     }
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        final ConfigurationObject configurationObject = key.type().annotation(ConfigurationObject.class).get();
+        final ConfigurationObject configurationObject = key.type().annotation(ConfigurationObject.class)
+                .orElse(() -> TypeContext.of(instance).annotation(ConfigurationObject.class).orNull())
+                .get();
         final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
 
         final Result<T> configuration;
@@ -45,7 +51,7 @@ public class ConfigurationObjectPostProcessor implements ComponentPostProcessor 
         else {
             configuration = propertyHolder.update(instance, configurationObject.prefix(), key.type().type());
         }
-        return configuration.or(instance);
+        return configuration.rethrowUnchecked().or(instance);
     }
 
     @Override

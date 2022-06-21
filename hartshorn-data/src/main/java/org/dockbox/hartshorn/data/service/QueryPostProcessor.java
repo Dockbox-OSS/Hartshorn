@@ -75,19 +75,23 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
 
     protected TypeContext<?> entityType(final MethodContext<?, ?> context, final Query query) {
         final TypeContext<?> queryEntityType = TypeContext.of(query.entityType());
-        if (queryEntityType.isVoid()) {
-            final TypeContext<?> returnType = context.genericReturnType();
-            if (returnType.childOf(Collection.class)) {
-                final List<TypeContext<?>> typeParameters = returnType.typeParameters();
-                if (typeParameters.isEmpty()) {
-                    if (query.type() == QueryType.NATIVE)
-                        throw new IllegalStateException("Could not determine entity type of " + context.qualifiedName() + ". Alternatively, set the entityType in the @Query annotation on this method or change the query to JPQL.");
-                    else return TypeContext.VOID;
-                }
-                return typeParameters.get(0);
-            }
-            else return returnType;
+        if (!queryEntityType.isVoid()) return queryEntityType;
+
+        final TypeContext<?> returnType = context.genericReturnType();
+        if (returnType.isVoid()) {
+            final List<TypeContext<?>> parameters = context.parent().typeParameters(JpaRepository.class);
+            return parameters.get(0);
         }
-        else return queryEntityType;
+
+        if (returnType.childOf(Collection.class)) {
+            final List<TypeContext<?>> typeParameters = returnType.typeParameters();
+            if (typeParameters.isEmpty()) {
+                if (query.type() == QueryType.NATIVE)
+                    throw new IllegalStateException("Could not determine entity type of " + context.qualifiedName() + ". Alternatively, set the entityType in the @Query annotation on this method or change the query to JPQL.");
+                else return TypeContext.VOID;
+            }
+            return typeParameters.get(0);
+        }
+        else return returnType;
     }
 }

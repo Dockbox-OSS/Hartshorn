@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.hibernate;
+package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.context.QueryContext;
-import org.hibernate.Session;
+import org.dockbox.hartshorn.util.Result;
 
 import java.util.function.Function;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
-public class HibernateQueryFunction implements QueryFunction {
+public class EntityQueryFunction implements QueryFunction {
 
     @Override
     public Object execute(final QueryContext context) {
@@ -39,11 +40,17 @@ public class HibernateQueryFunction implements QueryFunction {
         else return query.getResultList();
     }
 
-    private Object executeQuery(final QueryContext context, final Function<Session, Object> action) {
-        try (final Session session = (Session) context.repository().entityManager()) {
-            final Object result = action.apply(session);
-            if (context.automaticClear()) session.clear();
-            return result;
+    private Object executeQuery(final QueryContext context, final Function<EntityManager, Object> action) {
+        final Result<EntityManager> entityManager = context.applicationContext().get(EntityManagerLookup.class)
+                .lookup(context.repository());
+
+        if (entityManager.present()) {
+            try (final EntityManager manager = entityManager.get()) {
+                final Object result = action.apply(manager);
+                if (context.automaticClear()) manager.clear();
+                return result;
+            }
         }
+        throw new UnsupportedOperationException("Unsupported repository type: " + context.repository().getClass());
     }
 }

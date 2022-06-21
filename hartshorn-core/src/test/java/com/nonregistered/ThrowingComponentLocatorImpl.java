@@ -31,7 +31,7 @@ public class ThrowingComponentLocatorImpl extends ComponentLocatorImpl {
 
     public ThrowingComponentLocatorImpl(final InitializingContext context) {
         super(context);
-        this.proxy = Mockito.spy(context.applicationContext());
+        this.proxy = Mockito.spy(this.applicationContext());
     }
 
     @Override

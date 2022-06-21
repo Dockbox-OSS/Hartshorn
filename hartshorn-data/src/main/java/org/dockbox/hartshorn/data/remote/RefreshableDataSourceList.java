@@ -16,20 +16,6 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-public final class MariaDbRemote extends JdbcRemote {
-
-    public static final MariaDbRemote INSTANCE = new MariaDbRemote();
-
-    private MariaDbRemote() {
-    }
-
-    @Override
-    protected String type() {
-        return "mariadb";
-    }
-
-    @Override
-    public String driver() {
-        return "org.mariadb.jdbc.Driver";
-    }
+public interface RefreshableDataSourceList extends DataSourceList {
+    void refresh();
 }

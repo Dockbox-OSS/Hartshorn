@@ -16,14 +16,16 @@
 
 package org.dockbox.hartshorn.data;
 
+import com.mysql.cj.jdbc.Driver;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.objects.JpaUser;
-import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
-import org.dockbox.hartshorn.data.remote.MySQLRemote;
-import org.dockbox.hartshorn.data.remote.PersistenceConnection;
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
@@ -44,18 +46,16 @@ public class QueryRepositoryTests {
 
     @Inject
     private ApplicationContext applicationContext;
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
 
-    protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
-
-    protected static PersistenceConnection connection() {
-        final JdbcRemoteConfiguration server = JdbcRemoteConfiguration.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        return MySQLRemote.INSTANCE.connection(server, mySql.getUsername(), mySql.getPassword());
+    protected static DataSourceConfiguration connection() {
+        return SqlServiceTest.jdbc("mysql", Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT);
     }
 
     @Test
     void testRepositoryDeleteAll() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 17);
         repository.save(user);
         repository.deleteAll();
@@ -65,7 +65,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testRepositoryQueries() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         repository.deleteAll();
         final JpaUser userA = new JpaUser("JUnit", 17);
         final JpaUser userB = new JpaUser("JUnitAdult", 21);
@@ -78,7 +79,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonTransactional() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(TransactionRequiredException.class, () -> repository.nonTransactionalEntityUpdate(user.id(), 22));
@@ -86,7 +88,8 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonEntityModifier() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(IllegalArgumentException.class, () -> repository.nonModifierEntityUpdate(user.id(), 22));
@@ -94,13 +97,15 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateEntity() {
-        final UserQueryRepository repository = (UserQueryRepository) this.applicationContext.get(UserQueryRepository.class).connection(connection());
+        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         final int updated = repository.entityUpdate(user.id(), 22);
         Assertions.assertEquals(1, updated);
         Assertions.assertEquals(21, user.age());
-        repository.entityManager().refresh(user);
+
+        repository.refresh(user);
         Assertions.assertEquals(22, user.age());
     }
 }

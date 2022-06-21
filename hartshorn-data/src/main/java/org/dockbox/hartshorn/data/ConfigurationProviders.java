@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
@@ -31,12 +30,7 @@ import org.dockbox.hartshorn.data.config.StandardPropertyHolder;
 public class ConfigurationProviders {
 
     @Provider
-    public ValueLookup valueLookup(final ApplicationContext applicationContext) {
-        return applicationContext.get(ContextPropertyValueLookup.class);
-    }
-
-    @Provider
-    public PropertyHolder propertyHolder(final ApplicationContext applicationContext) {
-        return applicationContext.get(StandardPropertyHolder.class);
+    public Class<? extends PropertyHolder> propertyHolder() {
+        return StandardPropertyHolder.class;
     }
 }

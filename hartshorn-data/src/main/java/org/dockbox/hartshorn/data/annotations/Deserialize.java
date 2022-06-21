@@ -23,10 +23,64 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates that the annotated method is able to deserialize from a given source.
+ * If {@link #path()} is specified, the given path will be used to deserialize.
+ * Otherwise, the first parameter of the method will be used to determine the source.
+ *
+ * <p>If the parameter is a {@link String}, the string will be used as the source. If
+ * the parameter is a {@link java.nio.file.Path} or {@link java.io.File}, the provided
+ * path will be used as the source.
+ *
+ * <p>The method can return either a {@link org.dockbox.hartshorn.util.Result}, a
+ * {@link java.util.Optional}, or the type it deserializes to. If it returns a
+ * {@link org.dockbox.hartshorn.util.Result} or {@link java.util.Optional}, the
+ * type is determined based on the type parameter.
+ *
+ * <p><pre>{@code
+ * @Service
+ * public interface PathPersistenceService {
+ *    @Deserialize(path = @File("test"))
+ *    PersistentElement readFromAnnotation();
+ *
+ *    @Deserialize
+ *    Optional<PersistentElement> readFromString(String source);
+ *
+ *    @Deserialize
+ *    Result<PersistentElement> readFromPath(Path source);
+ * }
+ * }</pre>
+ *
+ * <p>By default the file format is expected to be JSON. Different file formats can be
+ * used through {@link #filetype()}.
+ *
+ * @author Guus Lieben
+ * @since 21.1
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Deserialize {
+
+    /**
+     * The file format to use when deserializing.
+     */
     FileFormats filetype() default FileFormats.JSON;
 
+    /**
+     * The path to the source to deserialize from.
+     * TODO GLieben: Remove this as required. This should either be a parameter and not an annotation,
+     *   or an optional attribute of the annotation.
+     * Sample of target:
+     * <pre>{@code
+     * @Deserialize
+     * @FileSource("filename.txt") // <-- requires a top-level annotation (@SerializationSource?) so it can be extended. Needs to indicate a converter to get the source object.
+     * public PersistentElement readFromPath();
+     *
+     * @Deserialize
+     * public Optional<PersistentElement> readFromPath(Path source);
+     *
+     * @Deserialize
+     * public Result<PersistentElement> readFromPath(String source);
+     */
     File path();
 }
