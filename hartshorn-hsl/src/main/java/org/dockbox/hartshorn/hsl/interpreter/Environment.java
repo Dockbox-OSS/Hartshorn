@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Environment {
 
-    public final Environment enclosing;
+    private final Environment enclosing;
     private final Map<String, Object> valuesMap = new HashMap<>();
 
     public Environment() {
@@ -35,7 +35,7 @@ public class Environment {
         this.valuesMap.put(name, value);
     }
 
-    public boolean isContain(final String name) {
+    public boolean contains(final String name) {
         return this.valuesMap.containsKey(name);
     }
 
@@ -67,5 +67,9 @@ public class Environment {
         }
 
         return environment;
+    }
+
+    public Environment enclosing() {
+        return this.enclosing;
     }
 }

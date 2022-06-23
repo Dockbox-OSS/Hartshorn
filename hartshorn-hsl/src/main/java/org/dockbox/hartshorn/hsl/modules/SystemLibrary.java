@@ -1,6 +1,5 @@
 package org.dockbox.hartshorn.hsl.modules;
 
-@Library("system")
 public class SystemLibrary {
 
     public String osName() {

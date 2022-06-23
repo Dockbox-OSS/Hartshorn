@@ -9,7 +9,7 @@ public class Return extends RuntimeException {
         this.value = value;
     }
 
-    public Object getValue() {
+    public Object value() {
         return this.value;
     }
 }

@@ -1,45 +1,45 @@
 package org.dockbox.hartshorn.hsl.parser;
 
-import org.dockbox.hartshorn.hsl.ast.ArrayGetExp;
-import org.dockbox.hartshorn.hsl.ast.ArraySetExp;
-import org.dockbox.hartshorn.hsl.ast.ArrayVariable;
-import org.dockbox.hartshorn.hsl.ast.AssignExp;
-import org.dockbox.hartshorn.hsl.ast.BinaryExp;
-import org.dockbox.hartshorn.hsl.ast.BitwiseExp;
-import org.dockbox.hartshorn.hsl.ast.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.CallExp;
-import org.dockbox.hartshorn.hsl.ast.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.ContinueStatement;
-import org.dockbox.hartshorn.hsl.ast.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.ElvisExp;
-import org.dockbox.hartshorn.hsl.ast.Expression;
-import org.dockbox.hartshorn.hsl.ast.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.ExtensionStatement;
-import org.dockbox.hartshorn.hsl.ast.Function;
-import org.dockbox.hartshorn.hsl.ast.FunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.GetExp;
-import org.dockbox.hartshorn.hsl.ast.GroupingExp;
-import org.dockbox.hartshorn.hsl.ast.IfStatement;
-import org.dockbox.hartshorn.hsl.ast.InfixExpression;
-import org.dockbox.hartshorn.hsl.ast.LiteralExp;
-import org.dockbox.hartshorn.hsl.ast.LogicalExp;
-import org.dockbox.hartshorn.hsl.ast.ModuleStatement;
-import org.dockbox.hartshorn.hsl.ast.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.PrefixExpression;
-import org.dockbox.hartshorn.hsl.ast.PrintStatement;
-import org.dockbox.hartshorn.hsl.ast.RepeatStatement;
-import org.dockbox.hartshorn.hsl.ast.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.SetExp;
-import org.dockbox.hartshorn.hsl.ast.Statement;
-import org.dockbox.hartshorn.hsl.ast.SuperExp;
-import org.dockbox.hartshorn.hsl.ast.TernaryExp;
-import org.dockbox.hartshorn.hsl.ast.TestStatement;
-import org.dockbox.hartshorn.hsl.ast.ThisExp;
-import org.dockbox.hartshorn.hsl.ast.UnaryExp;
-import org.dockbox.hartshorn.hsl.ast.Var;
-import org.dockbox.hartshorn.hsl.ast.Variable;
-import org.dockbox.hartshorn.hsl.ast.WhileStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Function;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -55,7 +55,7 @@ public class Parser {
      * TODO : Create advanced error system for parser to show expect .... in line ....
      */
     private int current = 0;
-    private final List<Token> tokens;
+    private List<Token> tokens;
     private final ErrorReporter errorReporter;
 
     private static final int MAX_NUM_OF_ARGUMENTS = 8;
@@ -66,6 +66,14 @@ public class Parser {
     public Parser(final List<Token> tokens, final ErrorReporter errorReporter) {
         this.tokens = tokens;
         this.errorReporter = errorReporter;
+    }
+
+    public List<Token> tokens() {
+        return this.tokens;
+    }
+
+    public void tokens(final List<Token> tokens) {
+        this.tokens = tokens;
     }
 
     public List<Statement> parse() {
@@ -115,10 +123,10 @@ public class Parser {
     private Statement classDeclaration() {
         final Token name = this.consume(TokenType.IDENTIFIER, "Expected class name.");
 
-        Variable superclass = null;
+        VariableExpression superclass = null;
         if (this.match(TokenType.EXTENDS)) {
             this.consume(TokenType.IDENTIFIER, "Expected superclass name.");
-            superclass = new Variable(this.previous());
+            superclass = new VariableExpression(this.previous());
         }
 
         this.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.");
@@ -134,7 +142,7 @@ public class Parser {
     }
 
     private FunctionStatement methodDeclaration() {
-        this.consume(TokenType.FUN, "Expected func keyword");
+        this.consume(TokenType.FUN, "Expected fun keyword");
         final Token name = this.consume(TokenType.IDENTIFIER, "Expected method name.");
         this.consume(TokenType.LEFT_PAREN, "Expected '(' after method name.");
         final List<Token> parameters = new ArrayList<>();
@@ -199,7 +207,7 @@ public class Parser {
     }
 
     private Statement nativeFuncDeclaration() {
-        this.consume(TokenType.FUN, "Expected func keyword");
+        this.consume(TokenType.FUN, "Expected fun keyword");
         final Token moduleName = this.consume(TokenType.IDENTIFIER, "Expected module name.");
 
         while (this.match(TokenType.COLON)) {
@@ -236,7 +244,7 @@ public class Parser {
         }
 
         this.consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
-        return new Var(name, initializer);
+        return new VariableStatement(name, initializer);
     }
 
     private Statement breakStatement() {
@@ -370,16 +378,16 @@ public class Parser {
             final Token equals = this.previous();
             final Expression value = this.assignment();
 
-            if (expr instanceof Variable) {
-                final Token name = ((Variable) expr).getName();
-                return new AssignExp(name, value);
+            if (expr instanceof VariableExpression) {
+                final Token name = ((VariableExpression) expr).name();
+                return new AssignExpression(name, value);
             }
             else if (expr instanceof final ArrayVariable arrayVariable) {
-                final Token name = arrayVariable.getName();
-                return new ArraySetExp(name, arrayVariable.getIndex(), value);
+                final Token name = arrayVariable.name();
+                return new ArraySetExpression(name, arrayVariable.index(), value);
             }
-            else if (expr instanceof final GetExp get) {
-                return new SetExp(get.getObject(), get.getName(), value);
+            else if (expr instanceof final GetExpression get) {
+                return new SetExpression(get.object(), get.name(), value);
             }
             this.error(equals, "Invalid assignment target.");
         }
@@ -391,7 +399,7 @@ public class Parser {
         if (this.match(TokenType.ELVIS)) {
             final Token elvis = this.previous();
             final Expression rightExp = this.ternaryExp();
-            return new ElvisExp(expr, elvis, rightExp);
+            return new ElvisExpression(expr, elvis, rightExp);
         }
         return expr;
     }
@@ -405,7 +413,7 @@ public class Parser {
             final Token colon = this.peek();
             if (this.match(TokenType.COLON)) {
                 final Expression secondExp = this.or();
-                return new TernaryExp(expr, question, firstExp, colon, secondExp);
+                return new TernaryExpression(expr, question, firstExp, colon, secondExp);
             }
             this.errorReporter.error(colon, "Expected Expression after COLON");
         }
@@ -418,7 +426,7 @@ public class Parser {
         while (this.match(TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT, TokenType.LOGICAL_SHIFT_RIGHT)) {
             final Token operator = this.previous();
             final Expression right = this.xor();
-            expr = new BitwiseExp(expr, operator, right);
+            expr = new BitwiseExpression(expr, operator, right);
         }
 
         return expr;
@@ -430,7 +438,7 @@ public class Parser {
         while (this.match(TokenType.OR)) {
             final Token operator = this.previous();
             final Expression right = this.xor();
-            expr = new LogicalExp(expr, operator, right);
+            expr = new LogicalExpression(expr, operator, right);
         }
 
         return expr;
@@ -442,7 +450,7 @@ public class Parser {
         while (this.match(TokenType.XOR)) {
             final Token operator = this.previous();
             final Expression right = this.and();
-            expr = new LogicalExp(expr, operator, right);
+            expr = new LogicalExpression(expr, operator, right);
         }
         return expr;
     }
@@ -453,7 +461,7 @@ public class Parser {
         while (this.match(TokenType.AND)) {
             final Token operator = this.previous();
             final Expression right = this.equality();
-            expr = new LogicalExp(expr, operator, right);
+            expr = new LogicalExpression(expr, operator, right);
         }
         return expr;
     }
@@ -464,7 +472,7 @@ public class Parser {
         while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
             final Token operator = this.previous();
             final Expression right = this.parsePrefixFunctionCall();
-            expr = new BinaryExp(expr, operator, right);
+            expr = new BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -517,7 +525,7 @@ public class Parser {
         while (this.match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
             final Token operator = this.previous();
             final Expression right = this.addition();
-            expr = new BinaryExp(expr, operator, right);
+            expr = new BinaryExpression(expr, operator, right);
         }
 
         return expr;
@@ -528,7 +536,7 @@ public class Parser {
         while (this.match(TokenType.MINUS, TokenType.PLUS)) {
             final Token operator = this.previous();
             final Expression right = this.multiplication();
-            expr = new BinaryExp(expr, operator, right);
+            expr = new BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -539,7 +547,7 @@ public class Parser {
         while (this.match(TokenType.SLASH, TokenType.STAR)) {
             final Token operator = this.previous();
             final Expression right = this.parseInfixExpressions();
-            expr = new BinaryExp(expr, operator, right);
+            expr = new BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -560,7 +568,7 @@ public class Parser {
         if (this.match(TokenType.BANG, TokenType.MINUS, TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
             final Token operator = this.previous();
             final Expression right = this.unary();
-            return new UnaryExp(operator, right);
+            return new UnaryExpression(operator, right);
         }
         return this.call();
     }
@@ -573,7 +581,7 @@ public class Parser {
             }
             else if (this.match(TokenType.DOT)) {
                 final Token name = this.consume(TokenType.IDENTIFIER, "Expected property name after '.'.");
-                expr = new GetExp(name, expr);
+                expr = new GetExpression(name, expr);
             }
             else {
                 break;
@@ -596,15 +604,15 @@ public class Parser {
             while (this.match(TokenType.COMMA));
         }
         final Token paren = this.consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.");
-        return new CallExp(callee, paren, arguments);
+        return new FunctionCallExpression(callee, paren, arguments);
     }
 
     private Expression primary() {
-        if (this.match(TokenType.FALSE)) return new LiteralExp(false);
-        if (this.match(TokenType.TRUE)) return new LiteralExp(true);
-        if (this.match(TokenType.NIL)) return new LiteralExp(null);
-        if (this.match(TokenType.THIS)) return new ThisExp(this.previous());
-        if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExp(this.previous().literal());
+        if (this.match(TokenType.FALSE)) return new LiteralExpression(false);
+        if (this.match(TokenType.TRUE)) return new LiteralExpression(true);
+        if (this.match(TokenType.NIL)) return new LiteralExpression(null);
+        if (this.match(TokenType.THIS)) return new ThisExpression(this.previous());
+        if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExpression(this.previous().literal());
         if (this.match(TokenType.IDENTIFIER)) {
             final Token next = this.peek();
             if (next.type() == TokenType.ARRAY_OPEN) {
@@ -614,24 +622,24 @@ public class Parser {
                 this.consume(TokenType.ARRAY_CLOSE, "Expected ]");
                 return new ArrayVariable(name, index);
             }
-            return new Variable(this.previous());
+            return new VariableExpression(this.previous());
         }
         if (this.match(TokenType.LEFT_PAREN)) {
             final Expression expr = this.expression();
             this.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
-            return new GroupingExp(expr);
+            return new GroupingExpression(expr);
         }
         if (this.match(TokenType.ARRAY)) {
             this.consume(TokenType.ARRAY_OPEN, "Expected [");
             final Expression size = this.expression();
             this.consume(TokenType.ARRAY_CLOSE, "Expected ]");
-            return new ArrayGetExp(size);
+            return new ArrayGetExpression(size);
         }
         if (this.match(TokenType.SUPER)) {
             final Token keyword = this.previous();
             this.consume(TokenType.DOT, "Expected '.' after 'super'.");
             final Token method = this.consume(TokenType.IDENTIFIER, "Expected superclass method name.");
-            return new SuperExp(keyword, method);
+            return new SuperExpression(keyword, method);
         }
         throw this.error(this.peek(), "Expected expression. " + this.tokens.get(this.current));
     }

@@ -698,4 +698,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public boolean isDeclaredIn(final String prefix) {
         return this.type().getPackageName().startsWith(prefix);
     }
+
+    public boolean isInstance(final Object object) {
+        return this.type().isInstance(object);
+    }
 }

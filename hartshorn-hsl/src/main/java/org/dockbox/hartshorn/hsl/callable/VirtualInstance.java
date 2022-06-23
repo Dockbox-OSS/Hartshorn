@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VirtualInstance {
+public class VirtualInstance implements PropertyContainer {
 
     private final VirtualClass virtualClass;
     private final Map<String, Object> fields = new HashMap<>();
@@ -19,10 +19,12 @@ public class VirtualInstance {
         return this.virtualClass;
     }
 
+    @Override
     public void set(final Token name, final Object value) {
         this.fields.put(name.lexeme(), value);
     }
 
+    @Override
     public Object get(final Token name) {
         if (this.fields.containsKey(name.lexeme())) {
             return this.fields.get(name.lexeme());
@@ -34,6 +36,6 @@ public class VirtualInstance {
 
     @Override
     public String toString() {
-        return this.virtualClass.getName() + " instance";
+        return this.virtualClass.name() + " instance";
     }
 }

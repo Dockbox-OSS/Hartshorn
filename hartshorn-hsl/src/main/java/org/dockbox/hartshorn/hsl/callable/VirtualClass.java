@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import java.util.List;
 import java.util.Map;
 
-public class VirtualClass implements HslCallable {
+public class VirtualClass extends ArityCheckingCallable {
 
     private final String name;
     private final VirtualClass superClass;
@@ -20,15 +20,15 @@ public class VirtualClass implements HslCallable {
         this.environment = environment;
     }
 
-    public String getName() {
+    public String name() {
         return this.name;
     }
 
-    public VirtualClass getSuperClass() {
+    public VirtualClass superClass() {
         return this.superClass;
     }
 
-    public Map<String, VirtualFunction> getMethods() {
+    public Map<String, VirtualFunction> methods() {
         return this.methods;
     }
 
@@ -47,7 +47,7 @@ public class VirtualClass implements HslCallable {
         return null;
     }
 
-    public Environment getEnvironment() {
+    public Environment environment() {
         return this.environment;
     }
 

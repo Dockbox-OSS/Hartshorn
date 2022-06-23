@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class HslLexer {
 
-    private final String source;
     private final List<Token> tokens = new ArrayList<>();
     private final ErrorReporter errorReporter;
     private static final Map<String, TokenType> keywords;
 
+    private String source;
     private int start = 0;
     private int current = 0;
     private int line = 1;
@@ -26,9 +26,10 @@ public class HslLexer {
         keywords.put("else", TokenType.ELSE);
         keywords.put("false", TokenType.FALSE);
         keywords.put("for", TokenType.FOR);
-        keywords.put("func", TokenType.FUN);
+        keywords.put("fun", TokenType.FUN);
         keywords.put("if", TokenType.IF);
         keywords.put("nil", TokenType.NIL);
+        keywords.put("null", TokenType.NIL);
         keywords.put("and", TokenType.AND);
         keywords.put("or", TokenType.OR);
         keywords.put("xor", TokenType.XOR);
@@ -56,6 +57,14 @@ public class HslLexer {
     public HslLexer(final String source, final ErrorReporter errorReporter) {
         this.source = source;
         this.errorReporter = errorReporter;
+    }
+
+    public void source(final String source) {
+        this.source = source;
+    }
+
+    public String source() {
+        return this.source;
     }
 
     public List<Token> scanTokens() {
@@ -127,7 +136,7 @@ public class HslLexer {
                 break;
             case '/':
                 if (this.match('/')) {
-                    while (this.getCurrentChar() != '\n' && !this.isAtEnd()) this.pointToNextChar();
+                    while (this.currentChar() != '\n' && !this.isAtEnd()) this.pointToNextChar();
                 }
                 else {
                     this.addToken(TokenType.SLASH);
@@ -161,15 +170,15 @@ public class HslLexer {
     }
 
     private void scanNumber() {
-        while (this.isDigit(this.getCurrentChar()) || this.getCurrentChar() == '_') {
+        while (this.isDigit(this.currentChar()) || this.currentChar() == '_') {
             this.pointToNextChar();
         }
 
         // Look for a fractional part.
-        if (this.getCurrentChar() == '.' && this.isDigit(this.getNextChar())) {
+        if (this.currentChar() == '.' && this.isDigit(this.nextChar())) {
             // Consume the "."
             this.pointToNextChar();
-            while (this.isDigit(this.getCurrentChar())) this.pointToNextChar();
+            while (this.isDigit(this.currentChar())) this.pointToNextChar();
         }
 
         String number = this.source.substring(this.start, this.current);
@@ -178,8 +187,8 @@ public class HslLexer {
     }
 
     private void scanString() {
-        while (this.getCurrentChar() != '"' && !this.isAtEnd()) {
-            if (this.getCurrentChar() == '\n') this.line++;
+        while (this.currentChar() != '"' && !this.isAtEnd()) {
+            if (this.currentChar() == '\n') this.line++;
             this.pointToNextChar();
         }
 
@@ -200,7 +209,7 @@ public class HslLexer {
     private void scanChar() {
         final String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
-        if (this.getCurrentChar() != '\'') {
+        if (this.currentChar() != '\'') {
             this.errorReporter.error(this.line, "Unterminated char variable.");
             return;
         }
@@ -209,7 +218,7 @@ public class HslLexer {
     }
 
     private void scanIdentifier() {
-        while (this.isAlphaNumeric(this.getCurrentChar())) this.pointToNextChar();
+        while (this.isAlphaNumeric(this.currentChar())) this.pointToNextChar();
 
         // See if the scanIdentifier is a reserved word.
         final String text = this.source.substring(this.start, this.current);
@@ -249,12 +258,12 @@ public class HslLexer {
         return true;
     }
 
-    private char getCurrentChar() {
+    private char currentChar() {
         if (this.isAtEnd()) return '\0';
         return this.source.charAt(this.current);
     }
 
-    private char getNextChar() {
+    private char nextChar() {
         if (this.current + 1 >= this.source.length()) return '\0';
         return this.source.charAt(this.current + 1);
     }

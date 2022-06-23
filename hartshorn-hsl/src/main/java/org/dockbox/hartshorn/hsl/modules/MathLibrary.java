@@ -1,6 +1,5 @@
 package org.dockbox.hartshorn.hsl.modules;
 
-@Library("math")
 public class MathLibrary {
 
     public double log(final Double num) {

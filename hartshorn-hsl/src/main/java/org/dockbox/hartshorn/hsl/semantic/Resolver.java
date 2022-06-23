@@ -1,46 +1,47 @@
 package org.dockbox.hartshorn.hsl.semantic;
 
-import org.dockbox.hartshorn.hsl.ast.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
-import org.dockbox.hartshorn.hsl.ast.ArrayGetExp;
-import org.dockbox.hartshorn.hsl.ast.ArraySetExp;
-import org.dockbox.hartshorn.hsl.ast.ArrayVariable;
-import org.dockbox.hartshorn.hsl.ast.AssignExp;
-import org.dockbox.hartshorn.hsl.ast.BinaryExp;
-import org.dockbox.hartshorn.hsl.ast.BitwiseExp;
-import org.dockbox.hartshorn.hsl.ast.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.CallExp;
-import org.dockbox.hartshorn.hsl.ast.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.ContinueStatement;
-import org.dockbox.hartshorn.hsl.ast.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.ElvisExp;
-import org.dockbox.hartshorn.hsl.ast.Expression;
-import org.dockbox.hartshorn.hsl.ast.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.ExtensionStatement;
-import org.dockbox.hartshorn.hsl.ast.FunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.GetExp;
-import org.dockbox.hartshorn.hsl.ast.GroupingExp;
-import org.dockbox.hartshorn.hsl.ast.IfStatement;
-import org.dockbox.hartshorn.hsl.ast.InfixExpression;
-import org.dockbox.hartshorn.hsl.ast.LiteralExp;
-import org.dockbox.hartshorn.hsl.ast.LogicalExp;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
-import org.dockbox.hartshorn.hsl.ast.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.PrefixExpression;
-import org.dockbox.hartshorn.hsl.ast.PrintStatement;
-import org.dockbox.hartshorn.hsl.ast.RepeatStatement;
-import org.dockbox.hartshorn.hsl.ast.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.SetExp;
-import org.dockbox.hartshorn.hsl.ast.Statement;
-import org.dockbox.hartshorn.hsl.ast.SuperExp;
-import org.dockbox.hartshorn.hsl.ast.TernaryExp;
-import org.dockbox.hartshorn.hsl.ast.TestStatement;
-import org.dockbox.hartshorn.hsl.ast.ThisExp;
-import org.dockbox.hartshorn.hsl.ast.UnaryExp;
-import org.dockbox.hartshorn.hsl.ast.Var;
-import org.dockbox.hartshorn.hsl.ast.Variable;
-import org.dockbox.hartshorn.hsl.ast.WhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.callable.NativeModule;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
@@ -84,55 +85,55 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     private MoveKeyword.ScopeType currentScopeType = MoveKeyword.ScopeType.NONE;
 
     @Override
-    public Void visit(final BinaryExp expr) {
-        this.resolve(expr.getLeftExp());
-        this.resolve(expr.getRightExp());
+    public Void visit(final BinaryExpression expr) {
+        this.resolve(expr.leftExpression());
+        this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final GroupingExp expr) {
-        this.resolve(expr.getExpression());
+    public Void visit(final GroupingExpression expr) {
+        this.resolve(expr.expression());
         return null;
     }
 
     @Override
-    public Void visit(final LiteralExp expr) {
+    public Void visit(final LiteralExpression expr) {
         return null;
     }
 
     @Override
-    public Void visit(final AssignExp expr) {
-        this.resolve(expr.getValue());
-        this.resolveLocal(expr, expr.getName());
+    public Void visit(final AssignExpression expr) {
+        this.resolve(expr.value());
+        this.resolveLocal(expr, expr.name());
         return null;
     }
 
     @Override
-    public Void visit(final UnaryExp expr) {
-        this.resolve(expr.getRightExp());
+    public Void visit(final UnaryExpression expr) {
+        this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final LogicalExp expr) {
-        this.resolve(expr.getLeftExp());
-        this.resolve(expr.getRightExp());
+    public Void visit(final LogicalExpression expr) {
+        this.resolve(expr.leftExpression());
+        this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final BitwiseExp expr) {
-        this.resolve(expr.getLeftExp());
-        this.resolve(expr.getRightExp());
+    public Void visit(final BitwiseExpression expr) {
+        this.resolve(expr.leftExpression());
+        this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final CallExp expr) {
-        this.resolve(expr.getCallee());
+    public Void visit(final FunctionCallExpression expr) {
+        this.resolve(expr.callee());
 
-        for (final Expression argument : expr.getArguments()) {
+        for (final Expression argument : expr.arguments()) {
             this.resolve(argument);
         }
 
@@ -140,64 +141,64 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final GetExp expr) {
-        this.resolve(expr.getObject());
+    public Void visit(final GetExpression expr) {
+        this.resolve(expr.object());
         return null;
     }
 
     @Override
-    public Void visit(final SetExp expr) {
-        this.resolve(expr.getValue());
-        this.resolve(expr.getObject());
+    public Void visit(final SetExpression expr) {
+        this.resolve(expr.value());
+        this.resolve(expr.object());
         return null;
     }
 
     @Override
-    public Void visit(final ThisExp expr) {
+    public Void visit(final ThisExpression expr) {
         if (this.currentClass == ClassType.NONE) {
-            this.errorReporter.error(expr.getKeyword(), "Cannot use 'this' outside of a class.");
+            this.errorReporter.error(expr.keyword(), "Cannot use 'this' outside of a class.");
             return null;
         }
-        this.resolveLocal(expr, expr.getKeyword());
+        this.resolveLocal(expr, expr.keyword());
         return null;
     }
 
     @Override
-    public Void visit(final Variable expr) {
+    public Void visit(final VariableExpression expr) {
         if (!this.scopes.isEmpty() &&
-                this.scopes.peek().get(expr.getName().lexeme()) == Boolean.FALSE) {
-            this.errorReporter.error(expr.getName(), "Cannot read local variable in its own initializer.");
+                this.scopes.peek().get(expr.name().lexeme()) == Boolean.FALSE) {
+            this.errorReporter.error(expr.name(), "Cannot read local variable in its own initializer.");
         }
-        this.resolveLocal(expr, expr.getName());
+        this.resolveLocal(expr, expr.name());
         return null;
     }
 
     @Override
     public Void visit(final ExpressionStatement statement) {
-        this.resolve(statement.getExpression());
+        this.resolve(statement.expression());
         return null;
     }
 
     @Override
     public Void visit(final PrintStatement statement) {
-        this.resolve(statement.getExpression());
+        this.resolve(statement.expression());
         return null;
     }
 
     @Override
     public Void visit(final BlockStatement statement) {
         this.beginScope();
-        this.resolve(statement.getStatementList());
+        this.resolve(statement.statementList());
         this.endScope();
         return null;
     }
 
     @Override
     public Void visit(final IfStatement statement) {
-        this.resolve(statement.getCondition());
-        this.resolve(statement.getThenBranch());
+        this.resolve(statement.condition());
+        this.resolve(statement.thenBranch());
         //TODO : in future i will add resolve for every if else statement
-        if (statement.getElseBranch() != null) this.resolve(statement.getElseBranch());
+        if (statement.elseBranch() != null) this.resolve(statement.elseBranch());
         return null;
     }
 
@@ -205,8 +206,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final WhileStatement statement) {
         final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
-        this.resolve(statement.getCondition());
-        this.resolve(statement.getLoopBody());
+        this.resolve(statement.condition());
+        this.resolve(statement.loopBody());
         this.currentScopeType = enclosingType;
         return null;
     }
@@ -215,8 +216,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final DoWhileStatement statement) {
         final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
-        this.resolve(statement.getCondition());
-        this.resolve(statement.getLoopBody());
+        this.resolve(statement.condition());
+        this.resolve(statement.loopBody());
         this.currentScopeType = enclosingType;
         return null;
     }
@@ -225,8 +226,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final RepeatStatement statement) {
         final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
-        this.resolve(statement.getValue());
-        this.resolve(statement.getLoopBody());
+        this.resolve(statement.value());
+        this.resolve(statement.loopBody());
         this.currentScopeType = enclosingType;
         return null;
     }
@@ -235,7 +236,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType == MoveKeyword.ScopeType.NONE) {
-            this.errorReporter.error(statement.getKeyword(), "Continue can only used be inside loops.");
+            this.errorReporter.error(statement.keyword(), "Continue can only used be inside loops.");
         }
         return null;
     }
@@ -244,15 +245,14 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType == MoveKeyword.ScopeType.NONE) {
-            this.errorReporter.error(statement.getKeyword(), "Break can only used be inside loops.");
+            this.errorReporter.error(statement.keyword(), "Break can only used be inside loops.");
         }
         return null;
     }
 
     @Override
     public Void visit(final FunctionStatement statement) {
-        this.declare(statement.getName());
-        this.define(statement.getName());
+        this.define(statement.name());
 
         this.resolveFunction(statement, FunctionType.FUNCTION);
         return null;
@@ -262,20 +262,20 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ExtensionStatement statement) {
         final ClassType enclosingClass = this.currentClass;
         this.currentClass = ClassType.CLASS;
-        this.declare(statement.getClassName());
-        this.resolveFunction(statement.getFunctionStatement(), FunctionType.FUNCTION);
+        this.declare(statement.className());
+        this.resolveFunction(statement.functionStatement(), FunctionType.FUNCTION);
         this.currentClass = enclosingClass;
         return null;
     }
 
     @Override
-    public Void visit(final Var statement) {
+    public Void visit(final VariableStatement statement) {
         //Resolving a variable declaration adds a new entry to the current innermost scope’s map
-        this.declare(statement.getName());
-        if (statement.getInitializer() != null) {
-            this.resolve(statement.getInitializer());
+        this.declare(statement.name());
+        if (statement.initializer() != null) {
+            this.resolve(statement.initializer());
         }
-        this.define(statement.getName());
+        this.define(statement.name());
         return null;
     }
 
@@ -283,13 +283,13 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ReturnStatement statement) {
         //Make sure return is inside function
         if (this.currentFunction == FunctionType.NONE) {
-            this.errorReporter.error(statement.getKeyword(), "Cannot return from top-level code.");
+            this.errorReporter.error(statement.keyword(), "Cannot return from top-level code.");
         }
-        if (statement.getValue() != null) {
+        if (statement.value() != null) {
             if (this.currentFunction == FunctionType.INITIALIZER) {
-                this.errorReporter.error(statement.getKeyword(), "Cannot return a value from an initializer.");
+                this.errorReporter.error(statement.keyword(), "Cannot return a value from an initializer.");
             }
-            this.resolve(statement.getValue());
+            this.resolve(statement.value());
         }
         return null;
     }
@@ -299,46 +299,46 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         final ClassType enclosingClass = this.currentClass;
         this.currentClass = ClassType.CLASS;
 
-        this.declare(statement.getName());
+        this.declare(statement.name());
 
         //Class must not extends same class
-        if (statement.getSuperClass() != null &&
-                statement.getName().lexeme().equals(statement.getSuperClass().getName().lexeme())) {
-            this.errorReporter.error(statement.getSuperClass().getName(), "A class cannot inherit from itself.");
+        if (statement.superClass() != null &&
+                statement.name().lexeme().equals(statement.superClass().name().lexeme())) {
+            this.errorReporter.error(statement.superClass().name(), "A class cannot inherit from itself.");
         }
 
         //for Inheritance
-        if (statement.getSuperClass() != null) {
+        if (statement.superClass() != null) {
             this.currentClass = ClassType.SUBCLASS;
-            this.resolve(statement.getSuperClass());
+            this.resolve(statement.superClass());
         }
 
         //Support super keyword
-        if (statement.getSuperClass() != null) {
+        if (statement.superClass() != null) {
             this.beginScope();
             this.scopes.peek().put("super", true);
         }
 
         this.beginScope();
         this.scopes.peek().put("this", true);
-        for (final FunctionStatement method : statement.getMethods()) {
+        for (final FunctionStatement method : statement.methods()) {
             FunctionType declaration = FunctionType.METHOD;
-            if ("init".equals(method.getName().lexeme())) {
+            if ("init".equals(method.name().lexeme())) {
                 declaration = FunctionType.INITIALIZER;
             }
             this.resolveFunction(method, declaration);
         }
-        this.define(statement.getName());
+        this.define(statement.name());
         this.endScope();
-        if (statement.getSuperClass() != null) this.endScope();
+        if (statement.superClass() != null) this.endScope();
         this.currentClass = enclosingClass;
         return null;
     }
 
     @Override
     public Void visit(final NativeFunctionStatement statement) {
-        this.declare(statement.getName());
-        this.define(statement.getName());
+        this.declare(statement.name());
+        this.define(statement.name());
 
         return null;
     }
@@ -347,77 +347,81 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final TestStatement statement) {
         final FunctionType enclosingClass = this.currentFunction;
         this.currentFunction = FunctionType.TEST;
-        this.declare(statement.getName());
-        this.resolve(statement.getBody());
-        this.resolve(statement.getReturnValue());
+        this.declare(statement.name());
+        this.resolve(statement.body());
+        this.resolve(statement.returnValue());
         this.currentFunction = enclosingClass;
         return null;
     }
 
     @Override
     public Void visit(final ModuleStatement statement) {
-        // TODO: Implement me!
+        final Map<String, NativeModule> modules = this.interpreter.externalModules();
+        final String module = statement.name().lexeme();
+        if (!modules.containsKey(module)) {
+            this.errorReporter.error(statement.name(), "Cannot find module named '" + module + "'");
+        }
         return null;
     }
 
     @Override
-    public Void visit(final ElvisExp statement) {
-        this.resolve(statement.getCondition());
-        this.resolve(statement.getRightExp());
+    public Void visit(final ElvisExpression statement) {
+        this.resolve(statement.condition());
+        this.resolve(statement.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final TernaryExp statement) {
-        this.resolve(statement.getCondition());
-        this.resolve(statement.getFirstExp());
-        this.resolve(statement.getSecondExp());
+    public Void visit(final TernaryExpression statement) {
+        this.resolve(statement.condition());
+        this.resolve(statement.firstExpression());
+        this.resolve(statement.secondExpression());
         return null;
     }
 
     @Override
-    public Void visit(final ArraySetExp expr) {
-        this.declare(expr.getName());
-        this.resolve(expr.getIndex());
-        this.resolve(expr.getValue());
+    public Void visit(final ArraySetExpression expr) {
+        this.define(expr.name());
+        this.resolve(expr.index());
+        this.resolve(expr.value());
         return null;
     }
 
     @Override
-    public Void visit(final ArrayGetExp expr) {
-        this.resolve(expr.getSize());
+    public Void visit(final ArrayGetExpression expr) {
+        this.resolve(expr.size());
         return null;
     }
 
     @Override
     public Void visit(final ArrayVariable expr) {
-        this.declare(expr.getName());
-        this.resolve(expr.getIndex());
+        this.define(expr.name());
+        this.resolve(expr.index());
         return null;
     }
 
     @Override
     public Void visit(final PrefixExpression expr) {
-        this.resolve(expr.getRightExpression());
+        this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
     public Void visit(final InfixExpression expr) {
-        this.resolve(expr.getLeftExp());
-        this.resolve(expr.getRightExp());
+        this.resolve(expr.leftExpression());
+        this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final SuperExp expr) {
+    public Void visit(final SuperExpression expr) {
         if (this.currentClass == ClassType.NONE) {
-            this.errorReporter.error(expr.getKeyword(), "Cannot use 'super' outside of a class.");
+            this.errorReporter.error(expr.keyword(), "Cannot use 'super' outside of a class.");
         }
         else if (this.currentClass != ClassType.SUBCLASS) {
-            this.errorReporter.error(expr.getKeyword(), "Cannot use 'super' in a class with no superclass.");
+            this.errorReporter.error(expr.keyword(), "Cannot use 'super' in a class with no superclass.");
         }
-        this.resolveLocal(expr, expr.getKeyword());
+        this.resolveLocal(expr, expr.keyword());
         return null;
     }
 
@@ -458,11 +462,11 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.currentFunction = type;
 
         this.beginScope();
-        for (final Token param : func.getParams()) {
+        for (final Token param : func.parameters()) {
             this.declare(param);
             this.define(param);
         }
-        this.resolve(func.getFunctionBody());
+        this.resolve(func.functionBody());
         this.endScope();
 
         this.currentFunction = enclosingFunction;

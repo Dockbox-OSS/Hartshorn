@@ -1,52 +1,54 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.hsl.ast.ModuleStatement;
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
-import org.dockbox.hartshorn.hsl.ast.Array;
-import org.dockbox.hartshorn.hsl.ast.ArrayGetExp;
-import org.dockbox.hartshorn.hsl.ast.ArraySetExp;
-import org.dockbox.hartshorn.hsl.ast.ArrayVariable;
-import org.dockbox.hartshorn.hsl.ast.AssignExp;
-import org.dockbox.hartshorn.hsl.ast.BinaryExp;
-import org.dockbox.hartshorn.hsl.ast.BitwiseExp;
-import org.dockbox.hartshorn.hsl.ast.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.CallExp;
-import org.dockbox.hartshorn.hsl.ast.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.ContinueStatement;
-import org.dockbox.hartshorn.hsl.ast.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.ElvisExp;
-import org.dockbox.hartshorn.hsl.ast.Expression;
-import org.dockbox.hartshorn.hsl.ast.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.ExtensionStatement;
-import org.dockbox.hartshorn.hsl.ast.FunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.GetExp;
-import org.dockbox.hartshorn.hsl.ast.GroupingExp;
-import org.dockbox.hartshorn.hsl.ast.IfStatement;
-import org.dockbox.hartshorn.hsl.ast.InfixExpression;
-import org.dockbox.hartshorn.hsl.ast.LiteralExp;
-import org.dockbox.hartshorn.hsl.ast.LogicalExp;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
-import org.dockbox.hartshorn.hsl.ast.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.PrefixExpression;
-import org.dockbox.hartshorn.hsl.ast.PrintStatement;
-import org.dockbox.hartshorn.hsl.ast.RepeatStatement;
-import org.dockbox.hartshorn.hsl.ast.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.SetExp;
-import org.dockbox.hartshorn.hsl.ast.Statement;
-import org.dockbox.hartshorn.hsl.ast.SuperExp;
-import org.dockbox.hartshorn.hsl.ast.TernaryExp;
-import org.dockbox.hartshorn.hsl.ast.TestStatement;
-import org.dockbox.hartshorn.hsl.ast.ThisExp;
-import org.dockbox.hartshorn.hsl.ast.UnaryExp;
-import org.dockbox.hartshorn.hsl.ast.Var;
-import org.dockbox.hartshorn.hsl.ast.Variable;
-import org.dockbox.hartshorn.hsl.ast.WhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
+import org.dockbox.hartshorn.hsl.callable.ExternalInstance;
 import org.dockbox.hartshorn.hsl.callable.HslCallable;
+import org.dockbox.hartshorn.hsl.callable.HslLibrary;
+import org.dockbox.hartshorn.hsl.callable.NativeModule;
+import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
 import org.dockbox.hartshorn.hsl.callable.VirtualClass;
 import org.dockbox.hartshorn.hsl.callable.VirtualFunction;
 import org.dockbox.hartshorn.hsl.callable.VirtualInstance;
-import org.dockbox.hartshorn.hsl.callable.HslLibrary;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -54,11 +56,14 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.util.Result;
+import org.slf4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Interpreter implements
         ExpressionVisitor<Object>,
@@ -66,13 +71,26 @@ public class Interpreter implements
 
     private final Environment globals = new Environment();
     private final ErrorReporter errorReporter;
-    private final Map<String, Class<?>> externalModules;
+    private final ResultCollector resultCollector;
+    private final Logger logger;
+    private final Map<String, NativeModule> externalModules;
     private Environment environment = this.globals;
-    private final Map<Expression, Integer> locals = new HashMap<>();
+    private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
+    private final Map<String, Object> externalVariables = new ConcurrentHashMap<>();
 
-    public Interpreter(final ErrorReporter errorReporter, final Map<String, Class<?>> externalModules) {
+    public Interpreter(final ErrorReporter errorReporter, final ResultCollector resultCollector, final Logger logger, final Map<String, NativeModule> externalModules) {
         this.errorReporter = errorReporter;
-        this.externalModules = externalModules;
+        this.resultCollector = resultCollector;
+        this.logger = logger;
+        this.externalModules = new ConcurrentHashMap<>(externalModules);
+    }
+
+    public void externalModule(final String name, final NativeModule module) {
+        this.externalModules.put(name, module);
+    }
+
+    public Map<String, NativeModule> externalModules() {
+        return this.externalModules;
     }
 
     public void interpret(final List<Statement> statements) {
@@ -87,10 +105,14 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(final BinaryExp expr) {
-        final Object left = this.evaluate(expr.getLeftExp());
-        final Object right = this.evaluate(expr.getRightExp());
-        switch (expr.getOperator().type()) {
+    public Object visit(final BinaryExpression expr) {
+        Object left = this.evaluate(expr.leftExpression());
+        Object right = this.evaluate(expr.rightExpression());
+
+        left = this.unwrap(left);
+        right = this.unwrap(right);
+
+        switch (expr.operator().type()) {
             case PLUS -> {
                 //Math Plus
                 if (left instanceof Double && right instanceof Double) {
@@ -114,10 +136,10 @@ public class Interpreter implements
                     final int value = (Character) right;
                     return (double) left + value;
                 }
-                throw new RuntimeError(expr.getOperator(), "UnSupported childes for Operator.\n");
+                throw new RuntimeError(expr.operator(), "UnSupported childes for Operator.\n");
             }
             case MINUS -> {
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 return (double) left - (double) right;
             }
             case STAR -> {
@@ -129,30 +151,30 @@ public class Interpreter implements
                     result.append(strValue.repeat(Math.max(0, times)));
                     return result.toString();
                 }
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 return (double) left * (double) right;
             }
             case SLASH -> {
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 if ((double) right == 0) {
-                    throw new RuntimeError(expr.getOperator(), "Can't use slash with zero double.");
+                    throw new RuntimeError(expr.operator(), "Can't use slash with zero double.");
                 }
                 return (double) left / (double) right;
             }
             case GREATER -> {
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 return Double.parseDouble(left.toString()) > Double.parseDouble(right.toString());
             }
             case GREATER_EQUAL -> {
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 return Double.parseDouble(left.toString()) >= Double.parseDouble(right.toString());
             }
             case LESS -> {
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 return Double.parseDouble(left.toString()) < Double.parseDouble(right.toString());
             }
             case LESS_EQUAL -> {
-                this.checkNumberOperands(expr.getOperator(), left, right);
+                this.checkNumberOperands(expr.operator(), left, right);
                 return Double.parseDouble(left.toString()) <= Double.parseDouble(right.toString());
             }
             case BANG_EQUAL -> {
@@ -166,19 +188,19 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(final GroupingExp expr) {
-        return this.evaluate(expr.getExpression());
+    public Object visit(final GroupingExpression expr) {
+        return this.evaluate(expr.expression());
     }
 
     @Override
-    public Object visit(final LiteralExp expr) {
-        return expr.getValue();
+    public Object visit(final LiteralExpression expr) {
+        return expr.value();
     }
 
     @Override
-    public Object visit(final AssignExp expr) {
-        final Token name = expr.getName();
-        final Object value = this.evaluate(expr.getValue());
+    public Object visit(final AssignExpression expr) {
+        final Token name = expr.name();
+        final Object value = this.evaluate(expr.value());
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
@@ -191,11 +213,11 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(final UnaryExp expr) {
-        final Object right = this.evaluate(expr.getRightExp());
-        switch (expr.getOperator().type()) {
+    public Object visit(final UnaryExpression expr) {
+        final Object right = this.evaluate(expr.rightExpression());
+        switch (expr.operator().type()) {
             case MINUS: {
-                this.checkNumberOperand(expr.getOperator(), right);
+                this.checkNumberOperand(expr.operator(), right);
                 return -(double) right;
             }
             case BANG: {
@@ -205,34 +227,34 @@ public class Interpreter implements
                 if (right instanceof Double) {
                     return (double) right + 1;
                 }
-                this.checkNumberOperand(expr.getOperator(), right);
+                this.checkNumberOperand(expr.operator(), right);
             }
             case MINUS_MINUS: {
                 if (right instanceof Double) {
                     return (double) right - 1;
                 }
-                this.checkNumberOperand(expr.getOperator(), right);
+                this.checkNumberOperand(expr.operator(), right);
             }
         }
         return null;
     }
 
     @Override
-    public Object visit(final LogicalExp expr) {
-        final Object left = this.evaluate(expr.getLeftExp());
-        switch (expr.getOperator().type()) {
+    public Object visit(final LogicalExpression expr) {
+        final Object left = this.evaluate(expr.leftExpression());
+        switch (expr.operator().type()) {
             case AND -> {
-                final Object right = this.evaluate(expr.getRightExp());
+                final Object right = this.evaluate(expr.rightExpression());
                 if (this.isTruthy(left)) return this.isTruthy(right);
                 else return false;
             }
             case OR -> {
-                final Object right = this.evaluate(expr.getRightExp());
+                final Object right = this.evaluate(expr.rightExpression());
                 if (this.isTruthy(left)) return true;
                 else return this.isTruthy(right);
             }
             case XOR -> {
-                final Object right = this.evaluate(expr.getRightExp());
+                final Object right = this.evaluate(expr.rightExpression());
                 return this.isTruthy(left) ^ this.isTruthy(right);
             }
         }
@@ -240,15 +262,15 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(final BitwiseExp expr) {
-        final Object left = this.evaluate(expr.getLeftExp());
-        final Object right = this.evaluate(expr.getRightExp());
+    public Object visit(final BitwiseExpression expr) {
+        final Object left = this.evaluate(expr.leftExpression());
+        final Object right = this.evaluate(expr.rightExpression());
 
         if (left instanceof Double && right instanceof Double) {
             final int iLeft = (int) (double) left;
             final int iRight = (int) (double) right;
 
-            switch (expr.getOperator().type()) {
+            switch (expr.operator().type()) {
                 case SHIFT_RIGHT -> {
                     return iLeft >> iRight;
                 }
@@ -261,45 +283,45 @@ public class Interpreter implements
             }
         }
 
-        throw new RuntimeError(expr.getOperator(), "Bitwise left and right must be a Numbers");
+        throw new RuntimeError(expr.operator(), "Bitwise left and right must be a Numbers");
     }
 
     @Override
-    public Object visit(final ElvisExp expr) {
-        final Object condition = this.evaluate(expr.getCondition());
+    public Object visit(final ElvisExpression expr) {
+        final Object condition = this.evaluate(expr.condition());
         if (this.isTruthy(condition)) {
             return condition;
         }
-        return this.evaluate(expr.getRightExp());
+        return this.evaluate(expr.rightExpression());
     }
 
     @Override
-    public Object visit(final TernaryExp expr) {
-        final Object condition = this.evaluate(expr.getCondition());
+    public Object visit(final TernaryExpression expr) {
+        final Object condition = this.evaluate(expr.condition());
         if (this.isTruthy(condition)) {
-            return this.evaluate(expr.getFirstExp());
+            return this.evaluate(expr.firstExpression());
         }
-        return this.evaluate(expr.getSecondExp());
+        return this.evaluate(expr.secondExpression());
     }
 
     @Override
-    public Object visit(final ArraySetExp expr) {
-        final Array array = (Array) this.environment.get(expr.getName());
-        final Double indexValue = (Double) this.evaluate(expr.getIndex());
+    public Object visit(final ArraySetExpression expr) {
+        final Array array = (Array) this.environment.get(expr.name());
+        final Double indexValue = (Double) this.evaluate(expr.index());
         final int index = indexValue.intValue();
 
-        if (index < 0 || array.getLength() < index) {
+        if (index < 0 || array.length() < index) {
             throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
         }
 
-        final Object value = this.evaluate(expr.getValue());
-        array.setValue(value, index);
+        final Object value = this.evaluate(expr.value());
+        array.value(value, index);
         return value;
     }
 
     @Override
-    public Object visit(final ArrayGetExp expr) {
-        final Double value = (Double) this.evaluate(expr.getSize());
+    public Object visit(final ArrayGetExpression expr) {
+        final Double value = (Double) this.evaluate(expr.size());
         final int length = value.intValue();
         if (length < 0) {
             throw new ArrayIndexOutOfBoundsException("Size can't be negative");
@@ -309,22 +331,22 @@ public class Interpreter implements
 
     @Override
     public Object visit(final ArrayVariable expr) {
-        final Array array = (Array) this.environment.get(expr.getName());
-        final Double indexValue = (Double) this.evaluate(expr.getIndex());
+        final Array array = (Array) this.environment.get(expr.name());
+        final Double indexValue = (Double) this.evaluate(expr.index());
         final int index = indexValue.intValue();
 
-        if (index < 0 || array.getLength() < index) {
+        if (index < 0 || array.length() < index) {
             throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
         }
 
-        return array.getValue(index);
+        return array.value(index);
     }
 
     @Override
     public Object visit(final PrefixExpression expr) {
-        final HslCallable value = (HslCallable) this.environment.get(expr.getPrefixOperatorName());
+        final HslCallable value = (HslCallable) this.environment.get(expr.prefixOperatorName());
         final List<Object> args = new ArrayList<>();
-        args.add(this.evaluate(expr.getRightExpression()));
+        args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(this, args))
                 .rethrowUnchecked()
                 .orNull();
@@ -332,83 +354,76 @@ public class Interpreter implements
 
     @Override
     public Object visit(final InfixExpression expr) {
-        final HslCallable value = (HslCallable) this.environment.get(expr.getInfixOperatorName());
+        final HslCallable value = (HslCallable) this.environment.get(expr.infixOperatorName());
         final List<Object> args = new ArrayList<>();
-        args.add(this.evaluate(expr.getLeftExp()));
-        args.add(this.evaluate(expr.getRightExp()));
+        args.add(this.evaluate(expr.leftExpression()));
+        args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(this, args))
                 .rethrowUnchecked()
                 .orNull();
     }
 
     @Override
-    public Object visit(final CallExp expr) {
-        final Object callee = this.evaluate(expr.getCallee());
+    public Object visit(final FunctionCallExpression expr) {
+        final Object callee = this.evaluate(expr.callee());
 
         final List<Object> arguments = new ArrayList<>();
-        for (final Expression argument : expr.getArguments()) {
+        for (final Expression argument : expr.arguments()) {
             arguments.add(this.evaluate(argument));
         }
 
         //Make sure this is callable type
         if (!(callee instanceof final HslCallable function)) {
-            throw new RuntimeError(expr.getClosingParenthesis(), "Can only call functions and classes.");
+            throw new RuntimeError(expr.closingParenthesis(), "Can only call functions and classes.");
         }
 
-        if (arguments.size() != function.arity()) {
-            throw new RuntimeError(expr.getClosingParenthesis(), "Expected " +
-                    function.arity() + " arguments but got " +
-                    arguments.size() + ".");
-        }
-
+        function.verify(expr.closingParenthesis(), arguments);
         return Result.of(() -> function.call(this, arguments))
                 .rethrowUnchecked()
                 .orNull();
     }
 
     @Override
-    public Object visit(final GetExp expr) {
-        final Object object = this.evaluate(expr.getObject());
-        if (object instanceof VirtualInstance) {
-            return ((VirtualInstance) object).get(expr.getName());
+    public Object visit(final GetExpression expr) {
+        final Object object = this.evaluate(expr.object());
+        if (object instanceof PropertyContainer instance) {
+            return instance.get(expr.name());
         }
-        throw new RuntimeError(expr.getName(), "Only instances have properties.");
+        throw new RuntimeError(expr.name(), "Only instances have properties.");
     }
 
     @Override
-    public Object visit(final SetExp expr) {
-        final Object object = this.evaluate(expr.getObject());
+    public Object visit(final SetExpression expr) {
+        final Object object = this.evaluate(expr.object());
 
-        if (!(object instanceof VirtualInstance)) {
-            throw new RuntimeError(expr.getName(), "Only instances have fields.");
+        if (object instanceof PropertyContainer instance) {
+            final Object value = this.evaluate(expr.value());
+            instance.set(expr.name(), value);
+            return value;
         }
-
-        final Object value = this.evaluate(expr.getValue());
-        ((VirtualInstance) object).set(expr.getName(), value);
-        return value;
+        throw new RuntimeError(expr.name(), "Only instances have properties.");
     }
 
     @Override
-    public Object visit(final ThisExp expr) {
-        return this.lookUpVariable(expr.getKeyword(), expr);
+    public Object visit(final ThisExpression expr) {
+        return this.lookUpVariable(expr.keyword(), expr);
     }
 
     @Override
-    public Object visit(final Variable expr) {
-        return this.lookUpVariable(expr.getName(), expr);
+    public Object visit(final VariableExpression expr) {
+        return this.lookUpVariable(expr.name(), expr);
     }
 
     @Override
-    public Object visit(final SuperExp expr) {
+    public Object visit(final SuperExpression expr) {
         final int distance = this.locals.get(expr);
         final VirtualClass superclass = (VirtualClass) this.environment.getAt(distance, "super");
         final VirtualInstance object = (VirtualInstance) this.environment.getAt(distance - 1, "this");
-        final VirtualFunction method = superclass.findMethod(expr.getMethod().lexeme());
+        final VirtualFunction method = superclass.findMethod(expr.method().lexeme());
 
         //Can't find this property in super class so throw Runtime Exception
         if (method == null) {
-            throw new RuntimeError(expr.getMethod()
-                    , "Undefined property '" + expr.getMethod().lexeme() + "'.");
+            throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
         }
 
         return method.bind(object);
@@ -416,44 +431,44 @@ public class Interpreter implements
 
     @Override
     public Void visit(final ExpressionStatement statement) {
-        this.evaluate(statement.getExpression());
+        this.evaluate(statement.expression());
         return null;
     }
 
     @Override
     public Void visit(final PrintStatement statement) {
-        final Object value = this.evaluate(statement.getExpression());
-        System.out.print(this.stringify(value));
+        final Object value = this.evaluate(statement.expression());
+        this.logger.info(this.stringify(value));
         return null;
     }
 
     @Override
     public Void visit(final BlockStatement statement) {
-        this.execute(statement.getStatementList(), new Environment(this.environment));
+        this.execute(statement.statementList(), new Environment(this.environment));
         return null;
     }
 
     @Override
     public Void visit(final IfStatement statement) {
-        final Object conditionResult = this.evaluate(statement.getCondition());
+        final Object conditionResult = this.evaluate(statement.condition());
         if (this.isTruthy(conditionResult)) {
-            this.execute(statement.getThenBranch(), this.environment);
+            this.execute(statement.thenBranch(), this.environment);
         }
-        else if (statement.getElseBranch() != null) {
-            this.execute(statement.getElseBranch(), this.environment);
+        else if (statement.elseBranch() != null) {
+            this.execute(statement.elseBranch(), this.environment);
         }
         return null;
     }
 
     @Override
     public Void visit(final WhileStatement statement) {
-        while (this.isTruthy(this.evaluate(statement.getCondition()))) {
+        while (this.isTruthy(this.evaluate(statement.condition()))) {
             try {
-                this.execute(statement.getLoopBody());
+                this.execute(statement.loopBody());
             }
             catch (final MoveKeyword moveKeyword) {
                 //Break;
-                if (moveKeyword.getMoveType() == MoveKeyword.MoveType.BREAK) {
+                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                     break;
                 }
             }
@@ -469,16 +484,16 @@ public class Interpreter implements
 
         do {
             try {
-                this.execute(statement.getLoopBody());
+                this.execute(statement.loopBody());
             }
             catch (final MoveKeyword moveKeyword) {
                 //Break;
-                if (moveKeyword.getMoveType() == MoveKeyword.MoveType.BREAK) {
+                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                     break;
                 }
             }
         }
-        while (this.isTruthy(this.evaluate(statement.getCondition())));
+        while (this.isTruthy(this.evaluate(statement.condition())));
 
         this.environment = previous;
         return null;
@@ -490,7 +505,7 @@ public class Interpreter implements
         final Environment previous = this.environment;
         this.environment = repeatEnvironment;
 
-        final Object value = this.evaluate(statement.getValue());
+        final Object value = this.evaluate(statement.value());
 
         final boolean isNotNumber = !(value instanceof Number);
 
@@ -501,11 +516,11 @@ public class Interpreter implements
         final int counter = (int) Double.parseDouble(value.toString());
         for (int i = 0; i < counter; i++) {
             try {
-                this.execute(statement.getLoopBody());
+                this.execute(statement.loopBody());
             }
             catch (final MoveKeyword moveKeyword) {
                 //Break;
-                if (moveKeyword.getMoveType() == MoveKeyword.MoveType.BREAK) {
+                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                     break;
                 }
             }
@@ -515,20 +530,20 @@ public class Interpreter implements
     }
 
     @Override
-    public Void visit(final Var statement) {
+    public Void visit(final VariableStatement statement) {
         Object value = null;
-        if (statement.getInitializer() != null) {
-            value = this.evaluate(statement.getInitializer());
+        if (statement.initializer() != null) {
+            value = this.evaluate(statement.initializer());
         }
-        this.environment.define(statement.getName().lexeme(), value);
+        this.environment.define(statement.name().lexeme(), value);
         return null;
     }
 
     @Override
     public Void visit(final ReturnStatement statement) {
         Object value = null;
-        if (statement.getValue() != null) {
-            value = this.evaluate(statement.getValue());
+        if (statement.value() != null) {
+            value = this.evaluate(statement.value());
         }
         throw new Return(value);
     }
@@ -537,16 +552,16 @@ public class Interpreter implements
     public Void visit(final ClassStatement statement) {
         Object superclass = null;
         //Because superclass is variable expression assert it class not any other knid of expressions
-        if (statement.getSuperClass() != null) {
-            superclass = this.evaluate(statement.getSuperClass());
+        if (statement.superClass() != null) {
+            superclass = this.evaluate(statement.superClass());
             if (!(superclass instanceof VirtualClass)) {
-                throw new RuntimeError(statement.getSuperClass().getName(), "Superclass must be a class.");
+                throw new RuntimeError(statement.superClass().name(), "Superclass must be a class.");
             }
         }
 
-        this.environment.define(statement.getName().lexeme(), null);
+        this.environment.define(statement.name().lexeme(), null);
 
-        if (statement.getSuperClass() != null) {
+        if (statement.superClass() != null) {
             this.environment = new Environment(this.environment);
             this.environment.define("super", superclass);
         }
@@ -554,49 +569,53 @@ public class Interpreter implements
         final Map<String, VirtualFunction> methods = new HashMap<>();
 
         //Bind all method into the class to call them with this leter
-        for (final FunctionStatement method : statement.getMethods()) {
+        for (final FunctionStatement method : statement.methods()) {
             final VirtualFunction function = new VirtualFunction(method, this.environment,
-                    "init".equals(method.getName().lexeme()));
-            methods.put(method.getName().lexeme(), function);
+                    "init".equals(method.name().lexeme()));
+            methods.put(method.name().lexeme(), function);
         }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.getName().lexeme(), (VirtualClass) superclass, this.environment, methods);
+        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.environment, methods);
 
         if (superclass != null) {
-            this.environment = this.environment.enclosing;
+            this.environment = this.environment.enclosing();
         }
 
-        this.environment.assign(statement.getName(), virtualClass);
+        this.environment.assign(statement.name(), virtualClass);
         return null;
     }
 
     @Override
     public Void visit(final NativeFunctionStatement statement) {
         final HslLibrary hslLibrary = new HslLibrary(statement, this.externalModules);
-        this.environment.define(statement.getName().lexeme(), hslLibrary);
+        this.environment.define(statement.name().lexeme(), hslLibrary);
         return null;
     }
 
     @Override
     public Void visit(final TestStatement statement) {
-        final String name = statement.getName().literal().toString();
+        final String name = statement.name().literal().toString();
         final Environment environment = new Environment(this.globals);
-        this.execute(statement.getBody(), environment);
+        this.execute(statement.body(), environment);
         try {
-            this.execute(statement.getReturnValue());
+            this.execute(statement.returnValue());
         }
         catch (final Return r) {
-            final Object value = r.getValue();
+            final Object value = r.value();
             final boolean val = this.isTruthy(value);
-            final String state = (val) ? "Ok" : "Fail";
-            System.out.println("\nTest with name (" + name + ") is -> " + state);
+            this.resultCollector.addResult(name, val);
         }
         return null;
     }
 
     @Override
     public Void visit(final ModuleStatement statement) {
-        // TODO: Implement me!
+        final String moduleName = statement.name().lexeme();
+        final NativeModule module = this.externalModules().get(moduleName);
+        for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
+            final HslLibrary library = new HslLibrary(supportedFunction, this.externalModules);
+            this.globals.define(supportedFunction.name().lexeme(), library);
+        }
         return null;
     }
 
@@ -613,22 +632,22 @@ public class Interpreter implements
     @Override
     public Void visit(final FunctionStatement statement) {
         final VirtualFunction function = new VirtualFunction(statement, this.environment, false);
-        this.environment.define(statement.getName().lexeme(), function);
+        this.environment.define(statement.name().lexeme(), function);
         return null;
     }
 
     @Override
     public Void visit(final ExtensionStatement statement) {
-        final VirtualClass extensionClass = (VirtualClass) this.environment.get(statement.getClassName());
+        final VirtualClass extensionClass = (VirtualClass) this.environment.get(statement.className());
         if (extensionClass == null) {
             throw new RuntimeException("Can't find this extension class");
         }
-        final FunctionStatement functionStatement = statement.getFunctionStatement();
-        final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.getEnvironment(), false);
-        if (extensionClass.findMethod(functionStatement.getName().lexeme()) != null) {
-            throw new RuntimeException(extensionClass.getName() + " class already have method with same name = " + functionStatement.getName().lexeme());
+        final FunctionStatement functionStatement = statement.functionStatement();
+        final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.environment(), false);
+        if (extensionClass.findMethod(functionStatement.name().lexeme()) != null) {
+            throw new RuntimeException(extensionClass.name() + " class already have method with same name = " + functionStatement.name().lexeme());
         }
-        extensionClass.addMethod(functionStatement.getName().lexeme(), extension);
+        extensionClass.addMethod(functionStatement.name().lexeme(), extension);
         return null;
     }
 
@@ -646,8 +665,18 @@ public class Interpreter implements
         // nil is only equal to nil.
         if (a == null && b == null) return true;
         if (a == null) return false;
+        if (a instanceof Number na && b instanceof Number nb) {
+            final BigDecimal ba = BigDecimal.valueOf(na.doubleValue());
+            final BigDecimal bb = BigDecimal.valueOf(nb.doubleValue());
+            return ba.compareTo(bb) == 0;
+        }
 
         return a.equals(b);
+    }
+
+    private Object unwrap(final Object object) {
+        if (object instanceof ExternalInstance external) return external.instance();
+        return object;
     }
 
     private String stringify(final Object object) {
@@ -691,7 +720,7 @@ public class Interpreter implements
                     this.execute(statement);
                 }
                 catch (final MoveKeyword type) {
-                    if (type.getMoveType() == MoveKeyword.MoveType.CONTINUE) {
+                    if (type.moveType() == MoveKeyword.MoveType.CONTINUE) {
                         break;
                     }
                 }
@@ -704,27 +733,35 @@ public class Interpreter implements
     }
 
     private Object lookUpVariable(final Token name, final Expression expr) {
-        //TODO : Fix it should return distance 1 without check
         if (name.type() == TokenType.THIS) {
             return this.environment.getAt(1, name.lexeme());
         }
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
-            //find variable value in locales score
+            // Find variable value in locales score
             return this.environment.getAt(distance, name.lexeme());
         }
-        else {
-            //If can't find distance in locales so it must be global variable
+        else if (this.globals.contains(name.lexeme())) {
+            // Can't find distance in locales, so it must be global variable
             return this.globals.get(name);
         }
+        else if (this.externalVariables.containsKey(name.lexeme())) {
+            final Object external = this.externalVariables.get(name.lexeme());
+            return new ExternalInstance(external);
+        }
+        return null;
     }
 
     public void resolve(final Expression expr, final int depth) {
         this.locals.put(expr, depth);
     }
 
-    public Environment getEnvironment() {
+    public Environment environment() {
         return this.environment;
+    }
+
+    public void global(final Map<String, Object> globalVariables) {
+        this.externalVariables.putAll(globalVariables);
     }
 }

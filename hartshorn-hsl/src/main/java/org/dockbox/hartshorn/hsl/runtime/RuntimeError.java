@@ -11,7 +11,7 @@ public class RuntimeError extends RuntimeException {
         this.token = token;
     }
 
-    public Token getToken() {
+    public Token token() {
         return this.token;
     }
 }
