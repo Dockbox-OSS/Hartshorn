@@ -1,22 +1,22 @@
 package org.dockbox.hartshorn.hsl.visitors;
 
-import org.dockbox.hartshorn.hsl.ast.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.ModuleStatement;
-import org.dockbox.hartshorn.hsl.ast.PrintStatement;
-import org.dockbox.hartshorn.hsl.ast.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.IfStatement;
-import org.dockbox.hartshorn.hsl.ast.WhileStatement;
-import org.dockbox.hartshorn.hsl.ast.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.RepeatStatement;
-import org.dockbox.hartshorn.hsl.ast.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.ContinueStatement;
-import org.dockbox.hartshorn.hsl.ast.FunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.ExtensionStatement;
-import org.dockbox.hartshorn.hsl.ast.Var;
-import org.dockbox.hartshorn.hsl.ast.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 
 public interface StatementVisitor<R> {
     R visit(ExpressionStatement statement);
@@ -41,7 +41,7 @@ public interface StatementVisitor<R> {
 
     R visit(ExtensionStatement statement);
 
-    R visit(Var statement);
+    R visit(VariableStatement statement);
 
     R visit(ReturnStatement statement);
 

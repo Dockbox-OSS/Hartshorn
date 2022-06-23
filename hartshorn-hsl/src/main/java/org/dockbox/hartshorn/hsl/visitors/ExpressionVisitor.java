@@ -1,60 +1,60 @@
 package org.dockbox.hartshorn.hsl.visitors;
 
-import org.dockbox.hartshorn.hsl.ast.BinaryExp;
-import org.dockbox.hartshorn.hsl.ast.GroupingExp;
-import org.dockbox.hartshorn.hsl.ast.LiteralExp;
-import org.dockbox.hartshorn.hsl.ast.AssignExp;
-import org.dockbox.hartshorn.hsl.ast.UnaryExp;
-import org.dockbox.hartshorn.hsl.ast.LogicalExp;
-import org.dockbox.hartshorn.hsl.ast.BitwiseExp;
-import org.dockbox.hartshorn.hsl.ast.CallExp;
-import org.dockbox.hartshorn.hsl.ast.GetExp;
-import org.dockbox.hartshorn.hsl.ast.SetExp;
-import org.dockbox.hartshorn.hsl.ast.ThisExp;
-import org.dockbox.hartshorn.hsl.ast.SuperExp;
-import org.dockbox.hartshorn.hsl.ast.Variable;
-import org.dockbox.hartshorn.hsl.ast.ElvisExp;
-import org.dockbox.hartshorn.hsl.ast.TernaryExp;
-import org.dockbox.hartshorn.hsl.ast.ArraySetExp;
-import org.dockbox.hartshorn.hsl.ast.ArrayGetExp;
-import org.dockbox.hartshorn.hsl.ast.ArrayVariable;
-import org.dockbox.hartshorn.hsl.ast.PrefixExpression;
-import org.dockbox.hartshorn.hsl.ast.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 
 public interface ExpressionVisitor<R> {
-    R visit(BinaryExp expr);
+    R visit(BinaryExpression expr);
 
-    R visit(GroupingExp expr);
+    R visit(GroupingExpression expr);
 
-    R visit(LiteralExp expr);
+    R visit(LiteralExpression expr);
 
-    R visit(AssignExp expr);
+    R visit(AssignExpression expr);
 
-    R visit(UnaryExp expr);
+    R visit(UnaryExpression expr);
 
-    R visit(LogicalExp expr);
+    R visit(LogicalExpression expr);
 
-    R visit(BitwiseExp expr);
+    R visit(BitwiseExpression expr);
 
-    R visit(CallExp expr);
+    R visit(FunctionCallExpression expr);
 
-    R visit(GetExp expr);
+    R visit(GetExpression expr);
 
-    R visit(SetExp expr);
+    R visit(SetExpression expr);
 
-    R visit(ThisExp expr);
+    R visit(ThisExpression expr);
 
-    R visit(SuperExp expr);
+    R visit(SuperExpression expr);
 
-    R visit(Variable expr);
+    R visit(VariableExpression expr);
 
-    R visit(ElvisExp expr);
+    R visit(ElvisExpression expr);
 
-    R visit(TernaryExp expr);
+    R visit(TernaryExpression expr);
 
-    R visit(ArraySetExp expr);
+    R visit(ArraySetExpression expr);
 
-    R visit(ArrayGetExp expr);
+    R visit(ArrayGetExpression expr);
 
     R visit(ArrayVariable expr);
 

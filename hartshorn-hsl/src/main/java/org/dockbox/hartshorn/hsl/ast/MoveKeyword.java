@@ -19,7 +19,7 @@ public class MoveKeyword extends RuntimeException {
         this.moveType = type;
     }
 
-    public MoveType getMoveType() {
+    public MoveType moveType() {
         return this.moveType;
     }
 }
