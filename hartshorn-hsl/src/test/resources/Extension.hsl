@@ -1,15 +1,15 @@
 class Car{
 
-   func init(name){
+   fun init(name){
       this.name = name;
    }
 
-   func methodShowInfo(){
+   fun methodShowInfo(){
       print("Car name from Method : " + this.name + "\n");
    }
 }
 
-func Car:extensionShowInfo(){
+fun Car:extensionShowInfo(){
    print("Car name from Extension : " + this.name + "\n");
 }
 

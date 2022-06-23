@@ -1,6 +1,6 @@
 class MathSum{
 
-    func sum(x,y){
+    fun sum(x,y){
        return x + y;
     }
 }

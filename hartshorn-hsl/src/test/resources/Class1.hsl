@@ -1,5 +1,5 @@
 class ClassTestValue {
-  func serveOn() {
+  fun serveOn() {
     return "Scones";
   }
 }

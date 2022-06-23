@@ -1,4 +1,4 @@
-prefix func multiByTen(x) {
+prefix fun multiByTen(x) {
    return x * 10;
 }
 

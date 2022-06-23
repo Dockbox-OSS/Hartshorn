@@ -1,4 +1,4 @@
-func sum(x,y){
+fun sum(x,y){
    print(x + y);
 }
 

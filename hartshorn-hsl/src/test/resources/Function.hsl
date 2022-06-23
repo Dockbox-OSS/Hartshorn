@@ -1,4 +1,4 @@
-func count(n){
+fun count(n){
   if (n > 1){
      count(n - 1);
   }

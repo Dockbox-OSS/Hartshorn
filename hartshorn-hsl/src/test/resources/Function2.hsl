@@ -1,4 +1,4 @@
-func sayHi(first, last) {
+fun sayHi(first, last) {
   print("Hi, " + first + " " + last + "!");
 }
 

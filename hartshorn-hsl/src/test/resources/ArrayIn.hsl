@@ -1,6 +1,6 @@
 var length = 2;
 
-func arrayContains(arr, obj) {
+fun arrayContains(arr, obj) {
    var index = 0;
    while (index < length) {
       if (arr[index] == obj) {
@@ -15,7 +15,7 @@ var arr = array[length];
 arr[0] = "One";
 arr[1] = "Two";
 
-infix func in(obj, arr) {
+infix fun in(obj, arr) {
     return arrayContains(arr, obj);
 }
 

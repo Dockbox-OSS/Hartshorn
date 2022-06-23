@@ -1,5 +1,5 @@
 class Bacon {
-  func eat() {
+  fun eat() {
     print("Crunch crunch crunch!");
   }
 }

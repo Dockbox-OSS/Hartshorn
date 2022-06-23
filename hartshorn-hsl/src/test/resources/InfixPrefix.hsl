@@ -1,8 +1,8 @@
-prefix func say(message) {
+prefix fun say(message) {
    print(message + "\n");
 }
 
-infix func to(left, right) {
+infix fun to(left, right) {
    return left + " " + right;
 }
 

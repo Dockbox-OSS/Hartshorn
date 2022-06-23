@@ -1,4 +1,4 @@
-infix func orDefault(value, default) {
+infix fun orDefault(value, default) {
     if (value == nil) {
         return default;
     }

@@ -1,5 +1,5 @@
 class Bagel {
-   func sum(x,y){
+   fun sum(x,y){
       return x + y;
    }
 }

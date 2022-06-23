@@ -1,10 +1,8 @@
-func printCallback()
-{
+fun printCallback() {
    print("Callback is run :D");
 }
 
-func testCallback(callback)
-{
+fun testCallback(callback) {
     callback();
 }
 

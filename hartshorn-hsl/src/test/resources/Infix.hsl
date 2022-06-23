@@ -1,4 +1,4 @@
-infix func sum(x, y) {
+infix fun sum(x, y) {
    return x + y;
 }
 
