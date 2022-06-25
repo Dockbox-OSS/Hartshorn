@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
+import org.dockbox.hartshorn.data.config.URIConfigProcessor;
+import org.dockbox.hartshorn.data.context.ConfigurationURIContextList;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -42,8 +44,14 @@ public class ConfigurationObjectPostProcessor implements ComponentPostProcessor 
         final ConfigurationObject configurationObject = key.type().annotation(ConfigurationObject.class)
                 .orElse(() -> TypeContext.of(instance).annotation(ConfigurationObject.class).orNull())
                 .get();
-        final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
 
+        final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
+        this.verifyPropertiesAvailable(context, propertyHolder);
+
+        return this.createOrUpdate(key, instance, configurationObject, propertyHolder);
+    }
+
+    private <T> T createOrUpdate(final Key<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder) {
         final Result<T> configuration;
         if (instance == null) {
             configuration = propertyHolder.get(configurationObject.prefix(), key.type().type());
@@ -52,6 +60,14 @@ public class ConfigurationObjectPostProcessor implements ComponentPostProcessor 
             configuration = propertyHolder.update(instance, configurationObject.prefix(), key.type().type());
         }
         return configuration.rethrowUnchecked().or(instance);
+    }
+
+    private void verifyPropertiesAvailable(final ApplicationContext context, final PropertyHolder propertyHolder) {
+        if (propertyHolder.properties().isEmpty()) {
+            final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.class).get();
+            final URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
+            configProcessor.process(context, uriContextList.uris());
+        }
     }
 
     @Override
