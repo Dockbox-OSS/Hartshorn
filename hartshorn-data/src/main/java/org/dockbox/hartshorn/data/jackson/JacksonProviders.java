@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data.jackson;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
@@ -28,37 +29,39 @@ import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 @RequiresClass("com.fasterxml.jackson.databind.ObjectMapper")
 public class JacksonProviders {
 
-    @Provider("properties")
+    private static final int DATA_MAPPER_PHASE = ProcessingOrder.EARLY - 64;
+
+    @Provider(value = "properties", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")
     public JacksonDataMapper properties() {
         return new JavaPropsDataMapper();
     }
 
-    @Provider("json")
+    @Provider(value = "json", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.databind.json.JsonMapper")
     public JacksonDataMapper json() {
         return new JsonDataMapper();
     }
 
-    @Provider("toml")
+    @Provider(value = "toml", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.toml.TomlMapper")
     public JacksonDataMapper toml() {
         return new TomlDataMapper();
     }
 
-    @Provider("xml")
+    @Provider(value = "xml", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.xml.XmlMapper")
     public JacksonDataMapper xml() {
         return new XmlDataMapper();
     }
 
-    @Provider("yml")
+    @Provider(value = "yml", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
     public JacksonDataMapper yml() {
         return new YamlDataMapper();
     }
 
-    @Provider
+    @Provider(phase = DATA_MAPPER_PHASE + 32)
     public ObjectMapper objectMapper() {
         return new JacksonObjectMapper();
     }
