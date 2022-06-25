@@ -18,18 +18,15 @@ package org.dockbox.hartshorn.data.service;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.data.config.URIConfigProcessor;
-import org.dockbox.hartshorn.data.context.ConfigurationURIContextList;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-public class ConfigurationObjectPostProcessor implements ComponentPostProcessor {
+public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
     public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
@@ -60,14 +57,6 @@ public class ConfigurationObjectPostProcessor implements ComponentPostProcessor 
             configuration = propertyHolder.update(instance, configurationObject.prefix(), key.type().type());
         }
         return configuration.rethrowUnchecked().or(instance);
-    }
-
-    private void verifyPropertiesAvailable(final ApplicationContext context, final PropertyHolder propertyHolder) {
-        if (propertyHolder.properties().isEmpty()) {
-            final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.class).get();
-            final URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
-            configProcessor.process(context, uriContextList.uris());
-        }
     }
 
     @Override

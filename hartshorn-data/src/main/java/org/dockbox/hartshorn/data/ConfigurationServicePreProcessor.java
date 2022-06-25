@@ -105,8 +105,10 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
         }
 
         final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.class).get();
-        final ConfigurationURIContext uriContext = new ConfigurationURIContext(config.iterator().next(), key, matchedSource, strategy);
-        uriContextList.add(uriContext);
+        for (final URI uri : config) {
+            final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, matchedSource, strategy);
+            uriContextList.add(uriContext);
+        }
 
         return true;
     }
