@@ -46,7 +46,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
 
         context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + type.name());
 
-        final ProviderListContext providerContext = context.first(ProviderListContext.class).orNull();
+        final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
         for (final MethodContext<?, T> method : methods) {
             this.register(providerContext, method);
         }
@@ -55,9 +55,11 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
         }
     }
 
-    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void register(final ProviderListContext context, final E element) {
+    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void register(final ProviderContextList context, final E element) {
         final Key<?> key = this.key(element);
-        context.add(key, element);
+        final Provider provider = element.annotation(Provider.class).get();
+        final ProviderContext providerContext = new ProviderContext(key, element, provider);
+        context.add(providerContext);
     }
 
     @Override
@@ -65,7 +67,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
         final BindingProcessor processor = new BindingProcessor();
         context.bind(BindingProcessor.class).singleton(processor);
 
-        final ProviderListContext providerContext = context.first(ProviderListContext.class).orNull();
+        final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
         try {
             processor.process(providerContext, context);
         } catch (final ApplicationException e) {

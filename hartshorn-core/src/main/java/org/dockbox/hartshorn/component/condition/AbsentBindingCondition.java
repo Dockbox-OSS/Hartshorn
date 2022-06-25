@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.component.condition;
 
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.processing.ProviderListContext;
+import org.dockbox.hartshorn.inject.processing.ProviderContextList;
 
 public class AbsentBindingCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        final ProviderListContext listContext = context.applicationContext().first(ProviderListContext.class).orNull();
+        final ProviderContextList listContext = context.applicationContext().first(ProviderContextList.class).orNull();
         return context.annotatedElementContext().annotation(RequiresAbsentBinding.class).map(condition -> {
             final Key<?> key = Key.of(condition.value(), condition.name());
             if (listContext.containsKey(key)) {

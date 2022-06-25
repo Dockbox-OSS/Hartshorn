@@ -21,58 +21,42 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.proxy.ModifiableProxyManager;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.ObtainableElement;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.reflect.TypedElementContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
 public class BindingProcessor {
 
     private final Set<LateSingletonContext> proxiesToInitialize = ConcurrentHashMap.newKeySet();
 
-    public void process(final ProviderListContext context, final ApplicationContext applicationContext) throws ApplicationException {
-        final List<Entry<Key<?>, Collection<AnnotatedElementContext<?>>>> entries = context.entries().stream()
-                .sorted(Comparator.comparingInt(entry -> {
-                    return entry.getValue().stream().mapToInt(element -> {
-                        if (element instanceof MethodContext<?, ?> method) {
-                            return ((MethodContext<?, ?>) element).parameterCount();
-                        }
-                        else if (element instanceof FieldContext<?>) {
-                            return 1;
-                        }
-                        else return Integer.MAX_VALUE;
-                    }).min().orElse(-1);
-                })).toList();
+    public void process(final ProviderContextList context, final ApplicationContext applicationContext) throws ApplicationException {
+        final MultiMap<Integer, ProviderContext> elements = context.elements();
 
-        for (final Entry<Key<?>, Collection<AnnotatedElementContext<?>>> entry : entries) {
-            final Key<?> key = entry.getKey();
+        for (final Integer phase : elements.keySet()) {
+            for (final ProviderContext provider : elements.get(phase)) {
 
-            for (final AnnotatedElementContext<?> element : entry.getValue()) {
+                final Key<?> key = provider.key();
+                final AnnotatedElementContext<?> element = provider.element();
+
+                applicationContext.log().debug("Processing provider context of " + element.qualifiedName() + " for " + key + " in phase " + phase);
+
                 if (element instanceof MethodContext) {
                     this.process(key, (MethodContext<?, ?>) element, applicationContext, context);
                 }
@@ -84,11 +68,11 @@ public class BindingProcessor {
     }
 
     private <R, E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void process(final Key<R> key, final E element, final ApplicationContext applicationContext) throws ApplicationException {
-        final ProviderListContext providerContext = applicationContext.first(ProviderListContext.class).orNull();
+        final ProviderContextList providerContext = applicationContext.first(ProviderContextList.class).orNull();
         this.process(key, element, applicationContext, providerContext);
     }
 
-    private <R, E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void process(final Key<R> key, final E element, final ApplicationContext applicationContext, final ProviderListContext context) throws ApplicationException {
+    private <R, E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void process(final Key<R> key, final E element, final ApplicationContext applicationContext, final ProviderContextList context) throws ApplicationException {
         final MetaProvider metaProvider = applicationContext.get(MetaProvider.class);
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         final Provider annotation = element.annotation(Provider.class).get();
@@ -105,42 +89,42 @@ public class BindingProcessor {
         }
     }
 
-    private void checkRequiredTypeBindings(final ApplicationContext applicationContext, final ObtainableElement<?> element, final ProviderListContext providerContext, final TypeContext<?> target) throws ApplicationException {
-        final Result<? extends ConstructorContext<?>> optimalConstructor = CyclingConstructorAnalyzer.findConstructor(target).rethrowUnchecked();
-        if (optimalConstructor.present()) {
-            final ConstructorContext<?> constructor = optimalConstructor.get();
-            for (final TypeContext<?> parameterType : constructor.parameterTypes()) {
-                final Key<?> key = Key.of(parameterType);
-                if (providerContext.containsKey(key)) {
-                    for (final AnnotatedElementContext<?> context : providerContext.get(key)) {
-                        this.process(key, (AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>) context, applicationContext);
-                    }
-                }
-            }
-        }
+    private void checkRequiredTypeBindings(final ApplicationContext applicationContext, final ObtainableElement<?> element, final ProviderContextList providerContext, final TypeContext<?> target) throws ApplicationException {
+//        final Result<? extends ConstructorContext<?>> optimalConstructor = CyclingConstructorAnalyzer.findConstructor(target).rethrowUnchecked();
+//        if (optimalConstructor.present()) {
+//            final ConstructorContext<?> constructor = optimalConstructor.get();
+//            for (final TypeContext<?> parameterType : constructor.parameterTypes()) {
+//                final Key<?> key = Key.of(parameterType);
+//                if (providerContext.containsKey(key)) {
+//                    for (final AnnotatedElementContext<?> context : providerContext.get(key)) {
+//                        this.process(key, (AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>) context, applicationContext);
+//                    }
+//                }
+//            }
+//        }
     }
 
-    private void checkRequiredInjectionPoints(final ApplicationContext applicationContext, final TypeContext<?> target, final ObtainableElement<?> element, final ProviderListContext providerContext) throws ApplicationException {
-        for (final FieldContext<?> field : target.fields(Inject.class)) {
-            final TypeContext<?> fieldType = field.type();
-            final Key<?> key = Key.of(fieldType);
-            this.processIfExists(key, providerContext, applicationContext);
-        }
-
-        for (final MethodContext<?, ?> method : target.methods(Inject.class)) {
-            for (final ParameterContext<?> parameter : method.parameters()) {
-                final Key<?> key = Key.of(parameter.type()).name(parameter.annotation(Named.class).orNull());
-                this.processIfExists(key, providerContext, applicationContext);
-            }
-        }
+    private void checkRequiredInjectionPoints(final ApplicationContext applicationContext, final TypeContext<?> target, final ObtainableElement<?> element, final ProviderContextList providerContext) throws ApplicationException {
+//        for (final FieldContext<?> field : target.fields(Inject.class)) {
+//            final TypeContext<?> fieldType = field.type();
+//            final Key<?> key = Key.of(fieldType);
+//            this.processIfExists(key, providerContext, applicationContext);
+//        }
+//
+//        for (final MethodContext<?, ?> method : target.methods(Inject.class)) {
+//            for (final ParameterContext<?> parameter : method.parameters()) {
+//                final Key<?> key = Key.of(parameter.type()).name(parameter.annotation(Named.class).orNull());
+//                this.processIfExists(key, providerContext, applicationContext);
+//            }
+//        }
     }
 
-    private void processIfExists(final Key<?> key, final ProviderListContext context, final ApplicationContext applicationContext) throws ApplicationException {
-        if (context.containsKey(key)) {
-            for (final AnnotatedElementContext<?> element : context.get(key)) {
-                this.process(key, (AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>) element, applicationContext);
-            }
-        }
+    private void processIfExists(final Key<?> key, final ProviderContextList context, final ApplicationContext applicationContext) throws ApplicationException {
+//        if (context.containsKey(key)) {
+//            for (final AnnotatedElementContext<?> element : context.get(key)) {
+//                this.process(key, (AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>) element, applicationContext);
+//            }
+//        }
     }
 
     private <R> void processInstanceBinding(
@@ -158,13 +142,13 @@ public class BindingProcessor {
 
     private <R, C extends Class<R>> void processClassBinding(
             final ApplicationContext context, final ObtainableElement<C> element, final Key<R> key, boolean singleton, final Provider annotation,
-            final ProviderListContext providerListContext) throws ApplicationException {
+            final ProviderContextList providerContextList) throws ApplicationException {
 
         final C targetType = element.obtain(context).rethrowUnchecked().orNull();
         final MetaProvider metaProvider = context.get(MetaProvider.class);
         final TypeContext<R> typeContext = TypeContext.of(targetType);
 
-        this.checkRequiredTypeBindings(context, element, providerListContext, typeContext);
+        this.checkRequiredTypeBindings(context, element, providerContextList, typeContext);
 
         singleton = singleton || typeContext.annotation(Singleton.class).present() || metaProvider.singleton(typeContext);
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
@@ -185,12 +169,12 @@ public class BindingProcessor {
 
     private <R, C extends TypeContext<R>> void processTypeBinding(
             final ApplicationContext context, final ObtainableElement<C> element, final Key<R> key, boolean singleton, final Provider annotation,
-            final ProviderListContext providerListContext) throws ApplicationException {
+            final ProviderContextList providerContextList) throws ApplicationException {
 
         final C targetType = element.obtain(context).rethrowUnchecked().orNull();
         final MetaProvider metaProvider = context.get(MetaProvider.class);
 
-        this.checkRequiredTypeBindings(context, element, providerListContext, targetType);
+        this.checkRequiredTypeBindings(context, element, providerContextList, targetType);
 
         singleton = singleton || targetType.annotation(Singleton.class).present() || metaProvider.singleton(targetType);
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
@@ -212,7 +196,7 @@ public class BindingProcessor {
     public void finalizeProxies(final ApplicationContext applicationContext) throws ApplicationException {
         if (this.proxiesToInitialize.isEmpty()) return;
 
-        final ProviderListContext context = applicationContext.first(ProviderListContext.class).orNull();
+        final ProviderContextList context = applicationContext.first(ProviderContextList.class).orNull();
 
         for (final LateSingletonContext proxyContext : new ArrayList<>(this.proxiesToInitialize)) {
             this.proxiesToInitialize.remove(proxyContext);
