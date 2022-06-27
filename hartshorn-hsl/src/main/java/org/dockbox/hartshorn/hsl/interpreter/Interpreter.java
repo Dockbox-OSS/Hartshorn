@@ -1,52 +1,52 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
-import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
-import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
-import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
-import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
-import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
-import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
+import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
+import org.dockbox.hartshorn.hsl.callable.VerifiableCallableNode;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
-import org.dockbox.hartshorn.hsl.callable.VerifiableCallableNode;
 import org.dockbox.hartshorn.hsl.callable.module.HslLibrary;
 import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
-import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
 import org.dockbox.hartshorn.hsl.callable.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.callable.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.callable.virtual.VirtualInstance;
@@ -59,7 +59,6 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.util.Result;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -657,7 +656,6 @@ public class Interpreter implements
     }
 
     private boolean isEqual(final Object a, final Object b) {
-        // nil is only equal to nil.
         if (a == null && b == null) return true;
         if (a == null) return false;
         if (a instanceof Number na && b instanceof Number nb) {
@@ -729,15 +727,27 @@ public class Interpreter implements
 
     private Object lookUpVariable(final Token name, final Expression expr) {
         if (name.type() == TokenType.THIS) {
-            return this.environment().getAt(1, name.lexeme());
+            return this.environment.getAt(1, name.lexeme());
         }
-        return Result.of(this.locals.get(expr))
-                .map(distance -> this.environment().getAt(distance, name.lexeme()))
-                .orElse(() -> this.globals.get(name))
-                .orElse(() -> this.externalVariables.get(name.lexeme()))
-                .orElse(() -> this.imports.get(name.lexeme()))
-                .absent(() -> this.errorReporter.error(Phase.INTERPRETING, name, "Could not resolve variable " + name.lexeme() + "."))
-                .orNull();
+
+        final Integer distance = this.locals.get(expr);
+        if (distance != null) {
+            // Find variable value in locales score
+            return this.environment.getAt(distance, name.lexeme());
+        }
+        else if (this.globals.contains(name.lexeme())) {
+            // Can't find distance in locales, so it must be global variable
+            return this.globals.get(name);
+        }
+        else if (this.externalVariables.containsKey(name.lexeme())) {
+            return this.externalVariables.get(name.lexeme());
+        }
+        else if (this.imports.containsKey(name.lexeme())) {
+            return this.imports.get(name.lexeme());
+        }
+
+        this.errorReporter.error(Phase.INTERPRETING, name, "Could not resolve variable " + name.lexeme() + ".");
+        return null;
     }
 
     public void resolve(final Expression expr, final int depth) {
