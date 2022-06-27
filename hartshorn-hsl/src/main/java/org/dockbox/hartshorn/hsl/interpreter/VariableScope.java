@@ -6,16 +6,16 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Environment {
+public class VariableScope {
 
-    private final Environment enclosing;
+    private final VariableScope enclosing;
     private final Map<String, Object> valuesMap = new HashMap<>();
 
-    public Environment() {
+    public VariableScope() {
         this.enclosing = null;
     }
 
-    public Environment(final Environment enclosing) {
+    public VariableScope(final VariableScope enclosing) {
         this.enclosing = enclosing;
     }
 
@@ -43,7 +43,7 @@ public class Environment {
             this.valuesMap.put(name.lexeme(), value);
             return;
         }
-        // If the variable isn’t in this environment, it checks the outer one, recursively
+        // If the variable isn’t in this scope, it checks the outer one, recursively
         if (this.enclosing != null) {
             this.enclosing.assign(name, value);
             return;
@@ -59,16 +59,16 @@ public class Environment {
         return this.ancestor(distance).valuesMap.get(name);
     }
 
-    Environment ancestor(final int distance) {
-        Environment environment = this;
+    VariableScope ancestor(final int distance) {
+        VariableScope variableScope = this;
         for (int i = 0; i < distance; i++) {
-            environment = environment.enclosing;
+            variableScope = variableScope.enclosing;
         }
 
-        return environment;
+        return variableScope;
     }
 
-    public Environment enclosing() {
+    public VariableScope enclosing() {
         return this.enclosing;
     }
 }

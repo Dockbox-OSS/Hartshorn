@@ -72,12 +72,12 @@ public class Interpreter implements
         ExpressionVisitor<Object>,
         StatementVisitor<Void> {
 
-    private final Environment globals = new Environment();
+    private final VariableScope globals = new VariableScope();
     private final ErrorReporter errorReporter;
     private final ResultCollector resultCollector;
     private final Logger logger;
     private final Map<String, NativeModule> externalModules;
-    private Environment environment = this.globals;
+    private VariableScope scopes = this.globals;
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
     private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
@@ -207,7 +207,7 @@ public class Interpreter implements
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
-            this.environment().assignAt(distance, name, value);
+            this.variableScope().assignAt(distance, name, value);
         }
         else {
             this.globals.assign(name, value);
@@ -332,7 +332,7 @@ public class Interpreter implements
     }
 
     private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
-        final Array array = (Array) this.environment().get(name);
+        final Array array = (Array) this.variableScope().get(name);
         final Double indexValue = (Double) this.evaluate(indexExp);
         final int index = indexValue.intValue();
 
@@ -345,7 +345,7 @@ public class Interpreter implements
 
     @Override
     public Object visit(final PrefixExpression expr) {
-        final VerifiableCallableNode value = (VerifiableCallableNode) this.environment().get(expr.prefixOperatorName());
+        final VerifiableCallableNode value = (VerifiableCallableNode) this.variableScope().get(expr.prefixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(this, args))
@@ -355,7 +355,7 @@ public class Interpreter implements
 
     @Override
     public Object visit(final InfixExpression expr) {
-        final VerifiableCallableNode value = (VerifiableCallableNode) this.environment().get(expr.infixOperatorName());
+        final VerifiableCallableNode value = (VerifiableCallableNode) this.variableScope().get(expr.infixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.leftExpression()));
         args.add(this.evaluate(expr.rightExpression()));
@@ -420,8 +420,8 @@ public class Interpreter implements
     @Override
     public Object visit(final SuperExpression expr) {
         final int distance = this.locals.get(expr);
-        final VirtualClass superclass = (VirtualClass) this.environment().getAt(distance, TokenType.SUPER.representation());
-        final VirtualInstance object = (VirtualInstance) this.environment().getAt(distance - 1, TokenType.THIS.representation());
+        final VirtualClass superclass = (VirtualClass) this.variableScope().getAt(distance, TokenType.SUPER.representation());
+        final VirtualInstance object = (VirtualInstance) this.variableScope().getAt(distance - 1, TokenType.THIS.representation());
         final VirtualFunction method = superclass.findMethod(expr.method().lexeme());
 
         if (method == null) {
@@ -445,7 +445,7 @@ public class Interpreter implements
 
     @Override
     public Void visit(final BlockStatement statement) {
-        this.execute(statement.statementList(), new Environment(this.environment()));
+        this.execute(statement.statementList(), new VariableScope(this.variableScope()));
         return null;
     }
 
@@ -453,10 +453,10 @@ public class Interpreter implements
     public Void visit(final IfStatement statement) {
         final Object conditionResult = this.evaluate(statement.condition());
         if (this.isTruthy(conditionResult)) {
-            this.execute(statement.thenBranch(), this.environment());
+            this.execute(statement.thenBranch(), this.variableScope());
         }
         else if (statement.elseBranch() != null) {
-            this.execute(statement.elseBranch(), this.environment());
+            this.execute(statement.elseBranch(), this.variableScope());
         }
         return null;
     }
@@ -478,9 +478,9 @@ public class Interpreter implements
 
     @Override
     public Void visit(final DoWhileStatement statement) {
-        final Environment whileEnvironment = new Environment(this.environment());
-        final Environment previous = this.environment();
-        this.environment = whileEnvironment;
+        final VariableScope whileVariableScope = new VariableScope(this.variableScope());
+        final VariableScope previous = this.variableScope();
+        this.scopes = whileVariableScope;
 
         do {
             try {
@@ -492,15 +492,15 @@ public class Interpreter implements
         }
         while (this.isTruthy(this.evaluate(statement.condition())));
 
-        this.environment = previous;
+        this.scopes = previous;
         return null;
     }
 
     @Override
     public Void visit(final RepeatStatement statement) {
-        final Environment repeatEnvironment = new Environment(this.environment());
-        final Environment previous = this.environment();
-        this.environment = repeatEnvironment;
+        final VariableScope repeatVariableScope = new VariableScope(this.variableScope());
+        final VariableScope previous = this.variableScope();
+        this.scopes = repeatVariableScope;
 
         final Object value = this.evaluate(statement.value());
 
@@ -519,7 +519,7 @@ public class Interpreter implements
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
             }
         }
-        this.environment = previous;
+        this.scopes = previous;
         return null;
     }
 
@@ -529,7 +529,7 @@ public class Interpreter implements
         if (statement.initializer() != null) {
             value = this.evaluate(statement.initializer());
         }
-        this.environment().define(statement.name().lexeme(), value);
+        this.variableScope().define(statement.name().lexeme(), value);
         return null;
     }
 
@@ -553,44 +553,44 @@ public class Interpreter implements
             }
         }
 
-        this.environment().define(statement.name().lexeme(), null);
+        this.variableScope().define(statement.name().lexeme(), null);
 
         if (statement.superClass() != null) {
-            this.environment = new Environment(this.environment());
-            this.environment().define(TokenType.SUPER.representation(), superclass);
+            this.scopes = new VariableScope(this.variableScope());
+            this.variableScope().define(TokenType.SUPER.representation(), superclass);
         }
 
         final Map<String, VirtualFunction> methods = new HashMap<>();
 
         // Bind all method into the class
         for (final FunctionStatement method : statement.methods()) {
-            final VirtualFunction function = new VirtualFunction(method, this.environment(),
+            final VirtualFunction function = new VirtualFunction(method, this.variableScope(),
                     VirtualFunction.CLASS_INIT.equals(method.name().lexeme()));
             methods.put(method.name().lexeme(), function);
         }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.environment(), methods);
+        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.variableScope(), methods);
 
         if (superclass != null) {
-            this.environment = this.environment().enclosing();
+            this.scopes = this.variableScope().enclosing();
         }
 
-        this.environment().assign(statement.name(), virtualClass);
+        this.variableScope().assign(statement.name(), virtualClass);
         return null;
     }
 
     @Override
     public Void visit(final NativeFunctionStatement statement) {
         final HslLibrary hslLibrary = new HslLibrary(statement, this.externalModules);
-        this.environment().define(statement.name().lexeme(), hslLibrary);
+        this.variableScope().define(statement.name().lexeme(), hslLibrary);
         return null;
     }
 
     @Override
     public Void visit(final TestStatement statement) {
         final String name = statement.name().literal().toString();
-        final Environment environment = new Environment(this.globals);
-        this.execute(statement.body(), environment);
+        final VariableScope variableScope = new VariableScope(this.globals);
+        this.execute(statement.body(), variableScope);
         try {
             this.execute(statement.returnValue());
         }
@@ -625,19 +625,19 @@ public class Interpreter implements
 
     @Override
     public Void visit(final FunctionStatement statement) {
-        final VirtualFunction function = new VirtualFunction(statement, this.environment(), false);
-        this.environment().define(statement.name().lexeme(), function);
+        final VirtualFunction function = new VirtualFunction(statement, this.variableScope(), false);
+        this.variableScope().define(statement.name().lexeme(), function);
         return null;
     }
 
     @Override
     public Void visit(final ExtensionStatement statement) {
-        final VirtualClass extensionClass = (VirtualClass) this.environment().get(statement.className());
+        final VirtualClass extensionClass = (VirtualClass) this.variableScope().get(statement.className());
         if (extensionClass == null) {
-            throw new RuntimeException("Can't find this extension class");
+            throw new RuntimeException("Can't find extension class " + statement.className());
         }
         final FunctionStatement functionStatement = statement.functionStatement();
-        final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.environment(), false);
+        final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.variableScope(), false);
         if (extensionClass.findMethod(functionStatement.name().lexeme()) != null) {
             throw new RuntimeException(extensionClass.name() + " class already have method with same name = " + functionStatement.name().lexeme());
         }
@@ -663,7 +663,6 @@ public class Interpreter implements
             final BigDecimal bb = BigDecimal.valueOf(nb.doubleValue());
             return ba.compareTo(bb) == 0;
         }
-
         return a.equals(b);
     }
 
@@ -673,7 +672,7 @@ public class Interpreter implements
     }
 
     private String stringify(final Object object) {
-        if (object == null) return "null";
+        if (object == null) return TokenType.NULL.representation();
         // Hack. Work around Java adding ".0" to integer-valued doubles.
         if (object instanceof Double) {
             String text = object.toString();
@@ -702,11 +701,11 @@ public class Interpreter implements
         stmt.accept(this);
     }
 
-    public void execute(final List<Statement> statementList, final Environment localEnvironment) {
-        final Environment previous = this.environment();
+    public void execute(final List<Statement> statementList, final VariableScope localVariableScope) {
+        final VariableScope previous = this.variableScope();
         try {
-            // Make current environment block local and not global
-            this.environment = localEnvironment;
+            // Make current scope block local and not global
+            this.scopes = localVariableScope;
 
             for (final Statement statement : statementList) {
                 try {
@@ -720,20 +719,20 @@ public class Interpreter implements
             }
         }
         finally {
-            // 'Pop' environment from stack
-            this.environment = previous;
+            // 'Pop' scope from stack
+            this.scopes = previous;
         }
     }
 
     private Object lookUpVariable(final Token name, final Expression expr) {
         if (name.type() == TokenType.THIS) {
-            return this.environment.getAt(1, name.lexeme());
+            return this.scopes.getAt(1, name.lexeme());
         }
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
             // Find variable value in locales score
-            return this.environment.getAt(distance, name.lexeme());
+            return this.scopes.getAt(distance, name.lexeme());
         }
         else if (this.globals.contains(name.lexeme())) {
             // Can't find distance in locales, so it must be global variable
@@ -754,8 +753,8 @@ public class Interpreter implements
         this.locals.put(expr, depth);
     }
 
-    public Environment environment() {
-        return this.environment;
+    public VariableScope variableScope() {
+        return this.scopes;
     }
 
     public void global(final Map<String, Object> globalVariables) {

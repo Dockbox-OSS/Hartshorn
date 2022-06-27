@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.hsl.callable.virtual;
 
 import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
-import org.dockbox.hartshorn.hsl.interpreter.Environment;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 import java.util.List;
@@ -11,14 +11,14 @@ public class VirtualClass extends ArityCheckingCallableNode {
 
     private final String name;
     private final VirtualClass superClass;
-    private final Environment environment;
+    private final VariableScope variableScope;
     private final Map<String, VirtualFunction> methods;
 
-    public VirtualClass(final String name, final VirtualClass superClass, final Environment environment, final Map<String, VirtualFunction> methods) {
+    public VirtualClass(final String name, final VirtualClass superClass, final VariableScope variableScope, final Map<String, VirtualFunction> methods) {
         this.name = name;
         this.superClass = superClass;
         this.methods = methods;
-        this.environment = environment;
+        this.variableScope = variableScope;
     }
 
     public String name() {
@@ -48,8 +48,8 @@ public class VirtualClass extends ArityCheckingCallableNode {
         return null;
     }
 
-    public Environment environment() {
-        return this.environment;
+    public VariableScope variableScope() {
+        return this.variableScope;
     }
 
     @Override
