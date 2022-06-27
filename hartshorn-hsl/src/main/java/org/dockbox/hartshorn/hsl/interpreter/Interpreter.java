@@ -350,7 +350,7 @@ public class Interpreter implements
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(this, args))
-                .rethrowUnchecked()
+                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.prefixOperatorName().line(), e.getMessage()))
                 .orNull();
     }
 
@@ -361,7 +361,7 @@ public class Interpreter implements
         args.add(this.evaluate(expr.leftExpression()));
         args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(this, args))
-                .rethrowUnchecked()
+                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.infixOperatorName().line(), e.getMessage()))
                 .orNull();
     }
 
@@ -383,7 +383,7 @@ public class Interpreter implements
 
         function.verify(expr.closingParenthesis(), arguments);
         return Result.of(() -> function.call(this, arguments))
-                .rethrowUnchecked()
+                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.closingParenthesis().line(), e.getMessage()))
                 .orNull();
     }
 
