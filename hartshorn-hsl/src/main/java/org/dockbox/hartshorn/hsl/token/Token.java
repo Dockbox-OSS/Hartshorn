@@ -45,6 +45,6 @@ public class Token {
     }
 
     public String toString() {
-        return this.type + " " + this.lexeme() + " " + this.literal;
+        return "Token[%s @ line %d = %s / %s]".formatted(this.type, this.line, this.lexeme, this.literal);
     }
 }

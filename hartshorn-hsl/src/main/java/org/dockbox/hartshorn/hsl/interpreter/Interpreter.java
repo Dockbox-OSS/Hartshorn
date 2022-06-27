@@ -41,14 +41,16 @@ import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
-import org.dockbox.hartshorn.hsl.callable.ExternalInstance;
-import org.dockbox.hartshorn.hsl.callable.HslCallable;
-import org.dockbox.hartshorn.hsl.callable.HslLibrary;
-import org.dockbox.hartshorn.hsl.callable.NativeModule;
+import org.dockbox.hartshorn.hsl.callable.external.ExternalClass;
+import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.callable.VerifiableCallableNode;
+import org.dockbox.hartshorn.hsl.callable.module.HslLibrary;
+import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
-import org.dockbox.hartshorn.hsl.callable.VirtualClass;
-import org.dockbox.hartshorn.hsl.callable.VirtualFunction;
-import org.dockbox.hartshorn.hsl.callable.VirtualInstance;
+import org.dockbox.hartshorn.hsl.callable.virtual.VirtualClass;
+import org.dockbox.hartshorn.hsl.callable.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.callable.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -57,6 +59,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.util.Result;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -64,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 public class Interpreter implements
         ExpressionVisitor<Object>,
@@ -76,7 +80,8 @@ public class Interpreter implements
     private final Map<String, NativeModule> externalModules;
     private Environment environment = this.globals;
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
-    private final Map<String, Object> externalVariables = new ConcurrentHashMap<>();
+    private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
+    private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
 
     public Interpreter(final ErrorReporter errorReporter, final ResultCollector resultCollector, final Logger logger, final Map<String, NativeModule> externalModules) {
         this.errorReporter = errorReporter;
@@ -100,7 +105,7 @@ public class Interpreter implements
             }
         }
         catch (final RuntimeError error) {
-            this.errorReporter.runtimeError(error);
+            this.errorReporter.error(Phase.INTERPRETING, error.token(), error.getMessage());
         }
     }
 
@@ -114,24 +119,23 @@ public class Interpreter implements
 
         switch (expr.operator().type()) {
             case PLUS -> {
-                //Math Plus
+                // Math plus
                 if (left instanceof Double && right instanceof Double) {
                     return (double) left + (double) right;
                 }
-                //String Addition
+                // String Addition
                 if (left instanceof String || right instanceof String) {
                     return left.toString() + right.toString();
                 }
-                //Character + Character
+
+                // Special cases
                 if ((left instanceof Character && right instanceof Character)) {
                     return String.valueOf(left) + right;
                 }
-                //Character + Double
                 if ((left instanceof Character) && (right instanceof Double)) {
                     final int value = (Character) left;
                     return (double) right + value;
                 }
-                //Double + Character
                 if ((left instanceof Double) && (right instanceof Character)) {
                     final int value = (Character) right;
                     return (double) left + value;
@@ -204,7 +208,7 @@ public class Interpreter implements
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
-            this.environment.assignAt(distance, name, value);
+            this.environment().assignAt(distance, name, value);
         }
         else {
             this.globals.assign(name, value);
@@ -306,17 +310,11 @@ public class Interpreter implements
 
     @Override
     public Object visit(final ArraySetExpression expr) {
-        final Array array = (Array) this.environment.get(expr.name());
-        final Double indexValue = (Double) this.evaluate(expr.index());
-        final int index = indexValue.intValue();
-
-        if (index < 0 || array.length() < index) {
-            throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
-        }
-
-        final Object value = this.evaluate(expr.value());
-        array.value(value, index);
-        return value;
+        return this.accessArray(expr.name(), expr.index(), (array, index) -> {
+            final Object value = this.evaluate(expr.value());
+            array.value(value, index);
+            return value;
+        });
     }
 
     @Override
@@ -331,20 +329,24 @@ public class Interpreter implements
 
     @Override
     public Object visit(final ArrayVariable expr) {
-        final Array array = (Array) this.environment.get(expr.name());
-        final Double indexValue = (Double) this.evaluate(expr.index());
+        return this.accessArray(expr.name(), expr.index(), Array::value);
+    }
+
+    private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
+        final Array array = (Array) this.environment().get(name);
+        final Double indexValue = (Double) this.evaluate(indexExp);
         final int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
             throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
         }
 
-        return array.value(index);
+        return converter.apply(array, index);
     }
 
     @Override
     public Object visit(final PrefixExpression expr) {
-        final HslCallable value = (HslCallable) this.environment.get(expr.prefixOperatorName());
+        final VerifiableCallableNode value = (VerifiableCallableNode) this.environment().get(expr.prefixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(this, args))
@@ -354,7 +356,7 @@ public class Interpreter implements
 
     @Override
     public Object visit(final InfixExpression expr) {
-        final HslCallable value = (HslCallable) this.environment.get(expr.infixOperatorName());
+        final VerifiableCallableNode value = (VerifiableCallableNode) this.environment().get(expr.infixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.leftExpression()));
         args.add(this.evaluate(expr.rightExpression()));
@@ -369,12 +371,14 @@ public class Interpreter implements
 
         final List<Object> arguments = new ArrayList<>();
         for (final Expression argument : expr.arguments()) {
-            arguments.add(this.evaluate(argument));
+            Object evaluated = this.evaluate(argument);
+            if (evaluated instanceof ExternalInstance external) evaluated = external.instance();
+            arguments.add(evaluated);
         }
 
-        //Make sure this is callable type
-        if (!(callee instanceof final HslCallable function)) {
-            throw new RuntimeError(expr.closingParenthesis(), "Can only call functions and classes.");
+        // Can't call non-callable nodes..
+        if (!(callee instanceof final VerifiableCallableNode function)) {
+            throw new RuntimeError(expr.closingParenthesis(), "Can only call functions and classes, but received " + callee + ".");
         }
 
         function.verify(expr.closingParenthesis(), arguments);
@@ -417,15 +421,13 @@ public class Interpreter implements
     @Override
     public Object visit(final SuperExpression expr) {
         final int distance = this.locals.get(expr);
-        final VirtualClass superclass = (VirtualClass) this.environment.getAt(distance, "super");
-        final VirtualInstance object = (VirtualInstance) this.environment.getAt(distance - 1, "this");
+        final VirtualClass superclass = (VirtualClass) this.environment().getAt(distance, TokenType.SUPER.representation());
+        final VirtualInstance object = (VirtualInstance) this.environment().getAt(distance - 1, TokenType.THIS.representation());
         final VirtualFunction method = superclass.findMethod(expr.method().lexeme());
 
-        //Can't find this property in super class so throw Runtime Exception
         if (method == null) {
             throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
         }
-
         return method.bind(object);
     }
 
@@ -444,7 +446,7 @@ public class Interpreter implements
 
     @Override
     public Void visit(final BlockStatement statement) {
-        this.execute(statement.statementList(), new Environment(this.environment));
+        this.execute(statement.statementList(), new Environment(this.environment()));
         return null;
     }
 
@@ -452,10 +454,10 @@ public class Interpreter implements
     public Void visit(final IfStatement statement) {
         final Object conditionResult = this.evaluate(statement.condition());
         if (this.isTruthy(conditionResult)) {
-            this.execute(statement.thenBranch(), this.environment);
+            this.execute(statement.thenBranch(), this.environment());
         }
         else if (statement.elseBranch() != null) {
-            this.execute(statement.elseBranch(), this.environment);
+            this.execute(statement.elseBranch(), this.environment());
         }
         return null;
     }
@@ -467,7 +469,6 @@ public class Interpreter implements
                 this.execute(statement.loopBody());
             }
             catch (final MoveKeyword moveKeyword) {
-                //Break;
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                     break;
                 }
@@ -478,8 +479,8 @@ public class Interpreter implements
 
     @Override
     public Void visit(final DoWhileStatement statement) {
-        final Environment whileEnvironment = new Environment(this.environment);
-        final Environment previous = this.environment;
+        final Environment whileEnvironment = new Environment(this.environment());
+        final Environment previous = this.environment();
         this.environment = whileEnvironment;
 
         do {
@@ -487,10 +488,7 @@ public class Interpreter implements
                 this.execute(statement.loopBody());
             }
             catch (final MoveKeyword moveKeyword) {
-                //Break;
-                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
-                    break;
-                }
+                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
             }
         }
         while (this.isTruthy(this.evaluate(statement.condition())));
@@ -501,8 +499,8 @@ public class Interpreter implements
 
     @Override
     public Void visit(final RepeatStatement statement) {
-        final Environment repeatEnvironment = new Environment(this.environment);
-        final Environment previous = this.environment;
+        final Environment repeatEnvironment = new Environment(this.environment());
+        final Environment previous = this.environment();
         this.environment = repeatEnvironment;
 
         final Object value = this.evaluate(statement.value());
@@ -519,10 +517,7 @@ public class Interpreter implements
                 this.execute(statement.loopBody());
             }
             catch (final MoveKeyword moveKeyword) {
-                //Break;
-                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
-                    break;
-                }
+                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
             }
         }
         this.environment = previous;
@@ -535,7 +530,7 @@ public class Interpreter implements
         if (statement.initializer() != null) {
             value = this.evaluate(statement.initializer());
         }
-        this.environment.define(statement.name().lexeme(), value);
+        this.environment().define(statement.name().lexeme(), value);
         return null;
     }
 
@@ -551,7 +546,7 @@ public class Interpreter implements
     @Override
     public Void visit(final ClassStatement statement) {
         Object superclass = null;
-        //Because superclass is variable expression assert it class not any other knid of expressions
+        // Because superclass is a variable expression assert it's a class
         if (statement.superClass() != null) {
             superclass = this.evaluate(statement.superClass());
             if (!(superclass instanceof VirtualClass)) {
@@ -559,36 +554,36 @@ public class Interpreter implements
             }
         }
 
-        this.environment.define(statement.name().lexeme(), null);
+        this.environment().define(statement.name().lexeme(), null);
 
         if (statement.superClass() != null) {
-            this.environment = new Environment(this.environment);
-            this.environment.define("super", superclass);
+            this.environment = new Environment(this.environment());
+            this.environment().define(TokenType.SUPER.representation(), superclass);
         }
 
         final Map<String, VirtualFunction> methods = new HashMap<>();
 
-        //Bind all method into the class to call them with this leter
+        // Bind all method into the class
         for (final FunctionStatement method : statement.methods()) {
-            final VirtualFunction function = new VirtualFunction(method, this.environment,
-                    "init".equals(method.name().lexeme()));
+            final VirtualFunction function = new VirtualFunction(method, this.environment(),
+                    VirtualFunction.CLASS_INIT.equals(method.name().lexeme()));
             methods.put(method.name().lexeme(), function);
         }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.environment, methods);
+        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.environment(), methods);
 
         if (superclass != null) {
-            this.environment = this.environment.enclosing();
+            this.environment = this.environment().enclosing();
         }
 
-        this.environment.assign(statement.name(), virtualClass);
+        this.environment().assign(statement.name(), virtualClass);
         return null;
     }
 
     @Override
     public Void visit(final NativeFunctionStatement statement) {
         final HslLibrary hslLibrary = new HslLibrary(statement, this.externalModules);
-        this.environment.define(statement.name().lexeme(), hslLibrary);
+        this.environment().define(statement.name().lexeme(), hslLibrary);
         return null;
     }
 
@@ -631,14 +626,14 @@ public class Interpreter implements
 
     @Override
     public Void visit(final FunctionStatement statement) {
-        final VirtualFunction function = new VirtualFunction(statement, this.environment, false);
-        this.environment.define(statement.name().lexeme(), function);
+        final VirtualFunction function = new VirtualFunction(statement, this.environment(), false);
+        this.environment().define(statement.name().lexeme(), function);
         return null;
     }
 
     @Override
     public Void visit(final ExtensionStatement statement) {
-        final VirtualClass extensionClass = (VirtualClass) this.environment.get(statement.className());
+        final VirtualClass extensionClass = (VirtualClass) this.environment().get(statement.className());
         if (extensionClass == null) {
             throw new RuntimeException("Can't find this extension class");
         }
@@ -680,7 +675,7 @@ public class Interpreter implements
     }
 
     private String stringify(final Object object) {
-        if (object == null) return "nil";
+        if (object == null) return "null";
         // Hack. Work around Java adding ".0" to integer-valued doubles.
         if (object instanceof Double) {
             String text = object.toString();
@@ -710,11 +705,11 @@ public class Interpreter implements
     }
 
     public void execute(final List<Statement> statementList, final Environment localEnvironment) {
-        final Environment previous = this.environment;
+        final Environment previous = this.environment();
         try {
-            //Make current environment is block local not global
+            // Make current environment block local and not global
             this.environment = localEnvironment;
-            //Execute every statement in block
+
             for (final Statement statement : statementList) {
                 try {
                     this.execute(statement);
@@ -727,30 +722,22 @@ public class Interpreter implements
             }
         }
         finally {
-            //Same like pop environment from stack
+            // 'Pop' environment from stack
             this.environment = previous;
         }
     }
 
     private Object lookUpVariable(final Token name, final Expression expr) {
         if (name.type() == TokenType.THIS) {
-            return this.environment.getAt(1, name.lexeme());
+            return this.environment().getAt(1, name.lexeme());
         }
-
-        final Integer distance = this.locals.get(expr);
-        if (distance != null) {
-            // Find variable value in locales score
-            return this.environment.getAt(distance, name.lexeme());
-        }
-        else if (this.globals.contains(name.lexeme())) {
-            // Can't find distance in locales, so it must be global variable
-            return this.globals.get(name);
-        }
-        else if (this.externalVariables.containsKey(name.lexeme())) {
-            final Object external = this.externalVariables.get(name.lexeme());
-            return new ExternalInstance(external);
-        }
-        return null;
+        return Result.of(this.locals.get(expr))
+                .map(distance -> this.environment().getAt(distance, name.lexeme()))
+                .orElse(() -> this.globals.get(name))
+                .orElse(() -> this.externalVariables.get(name.lexeme()))
+                .orElse(() -> this.imports.get(name.lexeme()))
+                .absent(() -> this.errorReporter.error(Phase.INTERPRETING, name, "Could not resolve variable " + name.lexeme() + "."))
+                .orNull();
     }
 
     public void resolve(final Expression expr, final int depth) {
@@ -762,6 +749,10 @@ public class Interpreter implements
     }
 
     public void global(final Map<String, Object> globalVariables) {
-        this.externalVariables.putAll(globalVariables);
+        globalVariables.forEach((name, instance) -> this.externalVariables.put(name, new ExternalInstance(instance)));
+    }
+
+    public void imports(final Map<String, Class<?>> imports) {
+        imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
     }
 }

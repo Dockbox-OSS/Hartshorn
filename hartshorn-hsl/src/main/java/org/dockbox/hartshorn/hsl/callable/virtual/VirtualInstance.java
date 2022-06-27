@@ -1,5 +1,6 @@
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.callable.virtual;
 
+import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 

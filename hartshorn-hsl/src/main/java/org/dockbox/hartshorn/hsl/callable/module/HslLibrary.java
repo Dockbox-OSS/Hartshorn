@@ -1,12 +1,14 @@
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.callable.module;
 
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
+import org.dockbox.hartshorn.hsl.callable.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 import java.util.List;
 import java.util.Map;
 
-public class HslLibrary extends ArityCheckingCallable {
+public class HslLibrary extends ArityCheckingCallableNode {
 
     private final NativeFunctionStatement declaration;
     private final Map<String, NativeModule> externalModules;

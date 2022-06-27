@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 import java.util.List;
 
-public interface HslCallable {
+public interface VerifiableCallableNode {
     void verify(Token at, List<Object> arguments);
 
     Object call(Interpreter interpreter, List<Object> arguments) throws ApplicationException;

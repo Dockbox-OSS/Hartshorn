@@ -1,8 +1,8 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.callable.ApplicationBoundNativeModule;
-import org.dockbox.hartshorn.hsl.callable.NativeModule;
+import org.dockbox.hartshorn.hsl.callable.module.ApplicationBoundNativeModule;
+import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.MathLibrary;
 import org.dockbox.hartshorn.hsl.modules.SystemLibrary;
 

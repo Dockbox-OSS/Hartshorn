@@ -1,5 +1,6 @@
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.callable.external;
 
+import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 public class ExternalInstance implements PropertyContainer {
@@ -22,5 +23,10 @@ public class ExternalInstance implements PropertyContainer {
     @Override
     public Object get(final Token name) {
         return new ExternalFunction(this.instance, name.lexeme());
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.instance);
     }
 }

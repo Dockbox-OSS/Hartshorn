@@ -24,11 +24,10 @@ public class Environment {
             return this.valuesMap.get(name.lexeme());
         }
 
-        //If the variable isn’t found in this scope, we simply try the enclosing one
+        // If the variable isn’t found in this scope, we simply try the enclosing one
         if (this.enclosing != null) return this.enclosing.get(name);
 
-        throw new RuntimeError(name,
-                "Undefined variable '" + name.lexeme() + "'.");
+        throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
     }
 
     public void define(final String name, final Object value) {
@@ -44,7 +43,7 @@ public class Environment {
             this.valuesMap.put(name.lexeme(), value);
             return;
         }
-        //Again, if the variable isn’t in this environment, it checks the outer one, recursively.
+        // If the variable isn’t in this environment, it checks the outer one, recursively
         if (this.enclosing != null) {
             this.enclosing.assign(name, value);
             return;

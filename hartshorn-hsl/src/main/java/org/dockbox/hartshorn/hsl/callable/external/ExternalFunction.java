@@ -1,4 +1,4 @@
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.callable.external;
 
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
@@ -8,9 +8,10 @@ import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
-public class ExternalFunction implements HslCallable {
+public class ExternalFunction extends ExternalExecutable<Method, Object, MethodContext<?, Object>> {
 
     private final Object instance;
     private final String methodName;
@@ -51,18 +52,10 @@ public class ExternalFunction implements HslCallable {
         if (methods.isEmpty()) {
             throw new RuntimeError(at, "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name());
         }
-        for (final MethodContext<?, Object> method : methods) {
-            boolean pass = true;
-            for (int i = 0; i < method.parameterTypes().size(); i++) {
-                final TypeContext<?> parameter = method.parameterTypes().get(i);
-                final Object argument = arguments.get(i);
-                if (!parameter.isInstance(argument)) {
-                    pass = false;
-                    break;
-                }
-            }
-            if (pass) return method;
-        }
+
+        final MethodContext<?, Object> executable = this.matchingExecutable(this.type.methods(), arguments);
+        if (executable != null) return executable;
+
         throw new RuntimeError(at, "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name());
     }
 
@@ -75,5 +68,10 @@ public class ExternalFunction implements HslCallable {
             throw new ApplicationException(result.error());
         }
         return result.map(ExternalInstance::new).orNull();
+    }
+
+    @Override
+    public String toString() {
+        return this.type.qualifiedName() + "#" + this.methodName;
     }
 }

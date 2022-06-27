@@ -1,11 +1,11 @@
 package org.dockbox.hartshorn.hsl.lexer;
 
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,46 +13,12 @@ public class HslLexer {
 
     private final List<Token> tokens = new ArrayList<>();
     private final ErrorReporter errorReporter;
-    private static final Map<String, TokenType> keywords;
+    private static final Map<String, TokenType> keywords = TokenType.keywords();
 
     private String source;
     private int start = 0;
     private int current = 0;
     private int line = 1;
-
-    static {
-        keywords = new HashMap<>();
-        keywords.put("class", TokenType.CLASS);
-        keywords.put("else", TokenType.ELSE);
-        keywords.put("false", TokenType.FALSE);
-        keywords.put("for", TokenType.FOR);
-        keywords.put("fun", TokenType.FUN);
-        keywords.put("if", TokenType.IF);
-        keywords.put("nil", TokenType.NIL);
-        keywords.put("null", TokenType.NIL);
-        keywords.put("and", TokenType.AND);
-        keywords.put("or", TokenType.OR);
-        keywords.put("xor", TokenType.XOR);
-        keywords.put("print", TokenType.PRINT);
-        keywords.put("return", TokenType.RETURN);
-        keywords.put("super", TokenType.SUPER);
-        keywords.put("this", TokenType.THIS);
-        keywords.put("true", TokenType.TRUE);
-        keywords.put("var", TokenType.VAR);
-        keywords.put("do", TokenType.DO);
-        keywords.put("while", TokenType.WHILE);
-        keywords.put("repeat", TokenType.REPEAT);
-        keywords.put("break", TokenType.BREAK);
-        keywords.put("continue", TokenType.CONTINUE);
-        keywords.put("extends", TokenType.EXTENDS);
-        keywords.put("array", TokenType.ARRAY);
-        keywords.put("native", TokenType.NATIVE);
-        keywords.put("test", TokenType.TEST);
-        keywords.put("module", TokenType.MODULE);
-
-        keywords.put("prefix", TokenType.PREFIX);
-        keywords.put("infix", TokenType.INFIX);
-    }
 
     public HslLexer(final String source, final ErrorReporter errorReporter) {
         this.source = source;
@@ -132,7 +98,7 @@ public class HslLexer {
                 break;
             case '>':
                 this.addToken(this.match('=') ? TokenType.GREATER_EQUAL :
-                        this.match('>') ? this.match('>') ? TokenType.LOGICAL_SHIFT_RIGHT : TokenType.SHIFT_RIGHT : TokenType.GREATER);
+                        (this.match('>') ? this.match('>') ? TokenType.LOGICAL_SHIFT_RIGHT : TokenType.SHIFT_RIGHT : TokenType.GREATER));
                 break;
             case '/':
                 if (this.match('/')) {
@@ -164,7 +130,7 @@ public class HslLexer {
                     this.scanIdentifier();
                 }
                 else {
-                    this.errorReporter.error(this.line, "Unexpected character.");
+                    this.errorReporter.error(Phase.TOKENIZING, this.line, "Unexpected character.");
                 }
         }
     }
@@ -194,7 +160,7 @@ public class HslLexer {
 
         // Unterminated scanString.
         if (this.isAtEnd()) {
-            this.errorReporter.error(this.line, "Unterminated scanString.");
+            this.errorReporter.error(Phase.TOKENIZING, this.line, "Unterminated scanString.");
             return;
         }
 
@@ -210,7 +176,7 @@ public class HslLexer {
         final String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
         if (this.currentChar() != '\'') {
-            this.errorReporter.error(this.line, "Unterminated char variable.");
+            this.errorReporter.error(Phase.TOKENIZING, this.line, "Unterminated char variable.");
             return;
         }
         this.pointToNextChar();

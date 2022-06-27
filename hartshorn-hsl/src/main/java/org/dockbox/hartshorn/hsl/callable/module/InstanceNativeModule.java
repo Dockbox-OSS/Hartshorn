@@ -1,4 +1,4 @@
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.callable.module;
 
 import java.util.Objects;
 

@@ -5,7 +5,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.List;
 
-public abstract class ArityCheckingCallable implements HslCallable {
+public abstract class ArityCheckingCallableNode implements VerifiableCallableNode {
 
     public abstract int arity();
 

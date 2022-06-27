@@ -6,41 +6,42 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 
@@ -48,12 +49,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public class Parser {
 
-    /*
-     * TODO : Create advanced error system for parser to show expect .... in line ....
-     */
     private int current = 0;
     private List<Token> tokens;
     private final ErrorReporter errorReporter;
@@ -96,12 +95,18 @@ public class Parser {
         if (this.match(TokenType.CONTINUE)) return this.continueStatement();
         if (this.match(TokenType.TEST)) return this.testStatement();
         if (this.match(TokenType.MODULE)) return this.moduleStatement();
+
+        final TokenType type = this.peek().type();
+        if (type.standaloneStatement()) {
+            throw new IllegalStateException("Unsupported standalone statement type: " + type);
+        }
+
         return this.expressionStatement();
     }
 
     private Statement moduleStatement() {
-        final Token name = this.consume(TokenType.IDENTIFIER, "Expected module name.");
-        this.consume(TokenType.SEMICOLON, "Expected ';' after module.");
+        final Token name = this.expect(TokenType.IDENTIFIER, "module name");
+        this.expectAfter(TokenType.SEMICOLON, TokenType.MODULE);
         return new ModuleStatement(name);
     }
 
@@ -121,48 +126,35 @@ public class Parser {
     }
 
     private Statement classDeclaration() {
-        final Token name = this.consume(TokenType.IDENTIFIER, "Expected class name.");
+        final Token name = this.expect(TokenType.IDENTIFIER, "class name");
 
         VariableExpression superclass = null;
         if (this.match(TokenType.EXTENDS)) {
-            this.consume(TokenType.IDENTIFIER, "Expected superclass name.");
+            this.expect(TokenType.IDENTIFIER, "superclass name");
             superclass = new VariableExpression(this.previous());
         }
 
-        this.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.");
+        this.expectBefore(TokenType.LEFT_BRACE, "class body");
 
         final List<FunctionStatement> methods = new ArrayList<>();
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
             methods.add(this.methodDeclaration());
         }
 
-        this.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.");
+        this.expectAfter(TokenType.RIGHT_BRACE, "class body");
 
         return new ClassStatement(name, superclass, methods);
     }
 
     private FunctionStatement methodDeclaration() {
-        this.consume(TokenType.FUN, "Expected fun keyword");
-        final Token name = this.consume(TokenType.IDENTIFIER, "Expected method name.");
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after method name.");
-        final List<Token> parameters = new ArrayList<>();
-        if (!this.check(TokenType.RIGHT_PAREN)) {
-            do {
-                if (parameters.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    this.error(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " parameters.");
-                }
-                parameters.add(this.consume(TokenType.IDENTIFIER, "Expected parameter name."));
-            }
-            while (this.match(TokenType.COMMA));
-        }
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
-        this.consume(TokenType.LEFT_BRACE, "Expected '{' before method body.");
-        final List<Statement> body = this.block();
-        return new FunctionStatement(name, parameters, body);
+        return this.function(TokenType.FUN, TokenType.LEFT_BRACE, (name, parameters) -> {
+            final List<Statement> body = this.block();
+            return new FunctionStatement(name, parameters, body);
+        });
     }
 
     private Function funcDeclaration(final Token token) {
-        final Token name = this.consume(TokenType.IDENTIFIER, "Expected function name.");
+        final Token name = this.expect(TokenType.IDENTIFIER, "function name");
 
         int expectedNumberOrArguments = 8;
         if (token.type() == TokenType.PREFIX) {
@@ -177,24 +169,24 @@ public class Parser {
         Token extensionName = null;
 
         if (this.peek().type() == TokenType.COLON) {
-            this.consume(TokenType.COLON, "Expected : After Class name");
-            extensionName = this.consume(TokenType.IDENTIFIER, "Expected extension name.");
+            this.expectAfter(TokenType.COLON, "class name");
+            extensionName = this.expect(TokenType.IDENTIFIER, "extension name");
         }
 
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after function name.");
+        this.expectAfter(TokenType.LEFT_PAREN, "function name");
         final List<Token> parameters = new ArrayList<>();
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
-                    this.error(this.peek(), "Cannot have more than " + expectedNumberOrArguments + " parameters for " + token.type() + " functions");
+                    this.report(this.peek(), "Cannot have more than " + expectedNumberOrArguments + " parameters for " + token.type() + " functions");
                 }
-                parameters.add(this.consume(TokenType.IDENTIFIER, "Expected parameter name."));
+                parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
             }
             while (this.match(TokenType.COMMA));
         }
 
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
-        this.consume(TokenType.LEFT_BRACE, "Expected '{' before function body.");
+        this.expectAfter(TokenType.RIGHT_PAREN, "parameters");
+        this.expectBefore(TokenType.LEFT_BRACE, "function body");
         final List<Statement> body = this.block();
 
         if (extensionName != null) {
@@ -207,63 +199,68 @@ public class Parser {
     }
 
     private Statement nativeFuncDeclaration() {
-        this.consume(TokenType.FUN, "Expected fun keyword");
-        final Token moduleName = this.consume(TokenType.IDENTIFIER, "Expected module name.");
+        this.expect(TokenType.FUN);
+        final Token moduleName = this.expect(TokenType.IDENTIFIER, "module name");
 
         while (this.match(TokenType.COLON)) {
             final Token token = new Token(TokenType.DOT, ".", moduleName.line());
             moduleName.concat(token);
-            final Token moduleName2 = this.consume(TokenType.IDENTIFIER, "Expected module name.");
+            final Token moduleName2 = this.expect(TokenType.IDENTIFIER, "module name");
             moduleName.concat(moduleName2);
         }
 
-        this.consume(TokenType.DOT, "Expected '.' before method body.");
-        final Token funcName = this.consume(TokenType.IDENTIFIER, "Expected function name.");
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after method name.");
+        return this.function(TokenType.DOT, TokenType.SEMICOLON, (name, parameters) -> {
+            return new NativeFunctionStatement(name, moduleName, parameters);
+        });
+    }
+
+    private <T extends Statement> T function(final TokenType keyword, final TokenType end, final BiFunction<Token, List<Token>, T> converter) {
+        this.expectBefore(keyword, "method body");
+        final Token funcName = this.expect(TokenType.IDENTIFIER, "function name");
+        this.expectAfter(TokenType.LEFT_PAREN, "method name");
         final List<Token> parameters = new ArrayList<>();
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    this.error(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " parameters.");
+                    this.report(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " parameters.");
                 }
-                parameters.add(this.consume(TokenType.IDENTIFIER, "Expected parameter name."));
+                parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
             }
             while (this.match(TokenType.COMMA));
         }
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
-        this.consume(TokenType.SEMICOLON, "Expected ';' after value.");
-        return new NativeFunctionStatement(funcName, moduleName, parameters);
+        this.expectAfter(TokenType.RIGHT_PAREN, "parameters");
+        this.expectAfter(end, "value");
+        return converter.apply(funcName, parameters);
     }
 
     private Statement varDeclaration() {
-        final Token name = this.consume(TokenType.IDENTIFIER, "Expected variable name.");
+        final Token name = this.expect(TokenType.IDENTIFIER, "variable name");
 
         Expression initializer = null;
         if (this.match(TokenType.EQUAL)) {
             initializer = this.expression();
         }
 
-        this.consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
+        this.expectAfter(TokenType.SEMICOLON, "variable declaration");
         return new VariableStatement(name, initializer);
     }
 
     private Statement breakStatement() {
         final Token keyword = this.previous();
-        this.consume(TokenType.SEMICOLON, "Expected ';' after value.");
+        this.expectAfter(TokenType.SEMICOLON, "value");
         return new BreakStatement(keyword);
     }
 
     private Statement continueStatement() {
         final Token keyword = this.previous();
-        this.consume(TokenType.SEMICOLON, "Expected ';' after value.");
+        this.expectAfter(TokenType.SEMICOLON, "value");
         return new ContinueStatement(keyword);
     }
 
-    //TODO : improve if to work with multi time of else if before get else
     private Statement ifStatement() {
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.");
+        this.expectAfter(TokenType.LEFT_PAREN, TokenType.IF);
         final Expression condition = this.expression();
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.");
+        this.expectAfter(TokenType.RIGHT_PAREN, "if condition");
         this.consume(TokenType.LEFT_BRACE, "Expected '{' to start if body.");
         final List<Statement> thenBranch = new ArrayList<>();
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
@@ -273,37 +270,43 @@ public class Parser {
         List<Statement> elseBranch = null;
         if (this.match(TokenType.ELSE)) {
             elseBranch = new ArrayList<>();
-            this.consume(TokenType.LEFT_BRACE, "Expected '{' to start else body.");
-            while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
-                elseBranch.add(this.declaration());
+
+            if (this.match(TokenType.IF)) {
+                elseBranch.add(this.ifStatement());
             }
-            this.consume(TokenType.RIGHT_BRACE, "Expected '}' to end else body.");
+            else {
+                this.consume(TokenType.LEFT_BRACE, "Expected '{' to start else body.");
+                while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+                    elseBranch.add(this.declaration());
+                }
+                this.consume(TokenType.RIGHT_BRACE, "Expected '}' to end else body.");
+            }
         }
         return new IfStatement(condition, thenBranch, elseBranch);
     }
 
     private Statement whileStatement() {
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.");
+        this.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
         final Expression condition = this.expression();
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after while condition.");
+        this.expectAfter(TokenType.RIGHT_PAREN, "while condition");
         final Statement loopBody = this.statement();
         return new WhileStatement(condition, loopBody);
     }
 
     private Statement doWhileStatement() {
         final Statement loopBody = this.statement();
-        this.consume(TokenType.WHILE, "Expected while keyword.");
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.");
+        this.expect(TokenType.WHILE);
+        this.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
         final Expression condition = this.expression();
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after do while condition.");
-        this.consume(TokenType.SEMICOLON, "Expected ';' after do while condition.");
+        this.expectAfter(TokenType.RIGHT_PAREN, "do while condition");
+        this.expectAfter(TokenType.SEMICOLON, "do while condition");
         return new DoWhileStatement(condition, loopBody);
     }
 
     private Statement repeatStatement() {
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after 'repeat'.");
+        this.expectAfter(TokenType.LEFT_PAREN, "repeat");
         final Expression value = this.expression();
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after repeat value.");
+        this.expectAfter(TokenType.RIGHT_PAREN, "repeat value");
         final Statement loopBody = this.statement();
         return new RepeatStatement(value, loopBody);
     }
@@ -313,10 +316,10 @@ public class Parser {
         if (this.check(TokenType.LEFT_PAREN)) {
             this.advance();
             value = this.expression();
-            this.consume(TokenType.RIGHT_PAREN, "Expected ')' after print expression.");
+            this.expectAfter(TokenType.RIGHT_PAREN, "print expression");
         }
         else value = this.expression();
-        this.consume(TokenType.SEMICOLON, "Expected ';' after value.");
+        this.expectAfter(TokenType.SEMICOLON, "value");
         return new PrintStatement(value);
     }
 
@@ -326,22 +329,22 @@ public class Parser {
         if (!this.check(TokenType.SEMICOLON)) {
             value = this.expression();
         }
-        this.consume(TokenType.SEMICOLON, "Expected ';' after return value.");
+        this.expectAfter(TokenType.SEMICOLON, "return value");
         return new ReturnStatement(keyword, value);
     }
 
     private Statement testStatement() {
-        this.consume(TokenType.LEFT_PAREN, "Expected '(' after 'test statement'.");
-        final Token name = this.consume(TokenType.STRING, "Expected test name.");
-        this.consume(TokenType.RIGHT_PAREN, "Expected ')' after test statement name value.");
-        this.consume(TokenType.LEFT_BRACE, "Expected '{' before test body.");
+        this.expectAfter(TokenType.LEFT_PAREN, "test statement");
+        final Token name = this.expect(TokenType.STRING, "test name");
+        this.expectAfter(TokenType.RIGHT_PAREN, "test statement name value");
+        this.expectBefore(TokenType.LEFT_BRACE, "test body");
         final List<Statement> statements = new ArrayList<>();
         Statement returnStatement = null;
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
             final Statement statement = this.declaration();
             if (statement instanceof ReturnStatement) {
                 returnStatement = statement;
-                this.consume(TokenType.RIGHT_BRACE, "Expected '}' after block.");
+                this.expectAfter(TokenType.RIGHT_BRACE, "block");
                 break;
             }
             else {
@@ -353,7 +356,7 @@ public class Parser {
 
     private Statement expressionStatement() {
         final Expression expr = this.expression();
-        this.consume(TokenType.SEMICOLON, "Expected ';' after expression.");
+        this.expectAfter(TokenType.SEMICOLON, "expression");
         return new ExpressionStatement(expr);
     }
 
@@ -362,7 +365,7 @@ public class Parser {
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
             statements.add(this.declaration());
         }
-        this.consume(TokenType.RIGHT_BRACE, "Expected '}' after block.");
+        this.expectAfter(TokenType.RIGHT_BRACE, "block");
         return statements;
     }
 
@@ -371,7 +374,6 @@ public class Parser {
     }
 
     private Expression assignment() {
-        //equality lower than || lower than &&
         final Expression expr = this.elvisExp();
 
         if (this.match(TokenType.EQUAL)) {
@@ -389,7 +391,7 @@ public class Parser {
             else if (expr instanceof final GetExpression get) {
                 return new SetExpression(get.object(), get.name(), value);
             }
-            this.error(equals, "Invalid assignment target.");
+            this.report(equals, "Invalid assignment target.");
         }
         return expr;
     }
@@ -415,7 +417,7 @@ public class Parser {
                 final Expression secondExp = this.or();
                 return new TernaryExpression(expr, question, firstExp, colon, secondExp);
             }
-            this.errorReporter.error(colon, "Expected Expression after COLON");
+            this.errorReporter.error(Phase.PARSING, colon, "Expected Expression after " + TokenType.COLON.representation());
         }
         return expr;
     }
@@ -592,18 +594,17 @@ public class Parser {
 
     private Expression finishCall(final Expression callee) {
         final List<Expression> arguments = new ArrayList<>();
-        //For zero Arguments
+        // For zero arguments
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (arguments.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    //For now just report error but not throws it
-                    this.error(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.");
+                    this.report(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.");
                 }
                 arguments.add(this.expression());
             }
             while (this.match(TokenType.COMMA));
         }
-        final Token paren = this.consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.");
+        final Token paren = this.expectAfter(TokenType.RIGHT_PAREN, "arguments");
         return new FunctionCallExpression(callee, paren, arguments);
     }
 
@@ -617,36 +618,40 @@ public class Parser {
             final Token next = this.peek();
             if (next.type() == TokenType.ARRAY_OPEN) {
                 final Token name = this.previous();
-                this.consume(TokenType.ARRAY_OPEN, "Expected [");
+                this.expect(TokenType.ARRAY_OPEN);
                 final Expression index = this.expression();
-                this.consume(TokenType.ARRAY_CLOSE, "Expected ]");
+                this.expect(TokenType.ARRAY_CLOSE);
                 return new ArrayVariable(name, index);
             }
             return new VariableExpression(this.previous());
         }
         if (this.match(TokenType.LEFT_PAREN)) {
             final Expression expr = this.expression();
-            this.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
+            this.expectAfter(TokenType.RIGHT_PAREN, "expression");
             return new GroupingExpression(expr);
         }
         if (this.match(TokenType.ARRAY)) {
-            this.consume(TokenType.ARRAY_OPEN, "Expected [");
+            this.expect(TokenType.ARRAY_OPEN);
             final Expression size = this.expression();
-            this.consume(TokenType.ARRAY_CLOSE, "Expected ]");
+            this.expect(TokenType.ARRAY_CLOSE);
             return new ArrayGetExpression(size);
         }
         if (this.match(TokenType.SUPER)) {
             final Token keyword = this.previous();
-            this.consume(TokenType.DOT, "Expected '.' after 'super'.");
-            final Token method = this.consume(TokenType.IDENTIFIER, "Expected superclass method name.");
+            this.expectAfter(TokenType.DOT, TokenType.SUPER);
+            final Token method = this.expect(TokenType.IDENTIFIER, "superclass method name");
             return new SuperExpression(keyword, method);
         }
-        throw this.error(this.peek(), "Expected expression. " + this.tokens.get(this.current));
+        throw this.error(this.peek(), "Expected expression, but found " + this.tokens.get(this.current));
     }
 
     private ParseError error(final Token token, final String message) {
-        this.errorReporter.error(token.line(), message);
+        this.errorReporter.error(Phase.PARSING, token, message);
         return new ParseError();
+    }
+
+    private void report(final Token token, final String message) {
+        this.errorReporter.error(Phase.PARSING, token, message);
     }
 
     private Token consume(final TokenType type, final String message) {
@@ -673,5 +678,29 @@ public class Parser {
             }
             this.advance();
         }
+    }
+
+    private Token expect(final TokenType type) {
+        return this.expect(type, type.representation() + (type.keyword() ? " keyword" : ""));
+    }
+
+    private Token expect(final TokenType type, final String what) {
+        return this.consume(type, "Expected " + what + ".");
+    }
+
+    private Token expectBefore(final TokenType type, final String before) {
+        return this.expectAround(type, before, "before");
+    }
+
+    private Token expectAfter(final TokenType type, final TokenType after) {
+        return this.expectAround(type, after.representation(), "after");
+    }
+
+    private Token expectAfter(final TokenType type, final String after) {
+        return this.expectAround(type, after, "after");
+    }
+
+    private Token expectAround(final TokenType type, final String where, final String position) {
+        return this.consume(type, "Expected '%s' %s %s.".formatted(type.representation(), position, where));
     }
 }

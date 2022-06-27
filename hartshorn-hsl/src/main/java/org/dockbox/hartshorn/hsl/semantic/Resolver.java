@@ -41,9 +41,12 @@ import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
-import org.dockbox.hartshorn.hsl.callable.NativeModule;
+import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
+import org.dockbox.hartshorn.hsl.callable.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
@@ -156,7 +159,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final ThisExpression expr) {
         if (this.currentClass == ClassType.NONE) {
-            this.errorReporter.error(expr.keyword(), "Cannot use 'this' outside of a class.");
+            this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'this' outside of a class.");
             return null;
         }
         this.resolveLocal(expr, expr.keyword());
@@ -167,7 +170,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final VariableExpression expr) {
         if (!this.scopes.isEmpty() &&
                 this.scopes.peek().get(expr.name().lexeme()) == Boolean.FALSE) {
-            this.errorReporter.error(expr.name(), "Cannot read local variable in its own initializer.");
+            this.errorReporter.error(Phase.RESOLVING, expr.name(), "Cannot read local variable in its own initializer.");
         }
         this.resolveLocal(expr, expr.name());
         return null;
@@ -197,7 +200,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final IfStatement statement) {
         this.resolve(statement.condition());
         this.resolve(statement.thenBranch());
-        //TODO : in future i will add resolve for every if else statement
         if (statement.elseBranch() != null) this.resolve(statement.elseBranch());
         return null;
     }
@@ -236,7 +238,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType == MoveKeyword.ScopeType.NONE) {
-            this.errorReporter.error(statement.keyword(), "Continue can only used be inside loops.");
+            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Continue can only used be inside loops.");
         }
         return null;
     }
@@ -245,7 +247,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType == MoveKeyword.ScopeType.NONE) {
-            this.errorReporter.error(statement.keyword(), "Break can only used be inside loops.");
+            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops.");
         }
         return null;
     }
@@ -270,7 +272,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final VariableStatement statement) {
-        //Resolving a variable declaration adds a new entry to the current innermost scope’s map
+        // Resolving a variable declaration adds a new entry to the current innermost scope’s map
         this.declare(statement.name());
         if (statement.initializer() != null) {
             this.resolve(statement.initializer());
@@ -281,13 +283,13 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final ReturnStatement statement) {
-        //Make sure return is inside function
+        // Make sure return is inside function
         if (this.currentFunction == FunctionType.NONE) {
-            this.errorReporter.error(statement.keyword(), "Cannot return from top-level code.");
+            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Cannot return from top-level code.");
         }
         if (statement.value() != null) {
             if (this.currentFunction == FunctionType.INITIALIZER) {
-                this.errorReporter.error(statement.keyword(), "Cannot return a value from an initializer.");
+                this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Cannot return a value from an initializer.");
             }
             this.resolve(statement.value());
         }
@@ -301,29 +303,29 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
         this.declare(statement.name());
 
-        //Class must not extends same class
+        // Class must not extend itself
         if (statement.superClass() != null &&
                 statement.name().lexeme().equals(statement.superClass().name().lexeme())) {
-            this.errorReporter.error(statement.superClass().name(), "A class cannot inherit from itself.");
+            this.errorReporter.error(Phase.RESOLVING, statement.superClass().name(), "A class cannot inherit from itself.");
         }
 
-        //for Inheritance
+        // For inheritance
         if (statement.superClass() != null) {
             this.currentClass = ClassType.SUBCLASS;
             this.resolve(statement.superClass());
         }
 
-        //Support super keyword
+        // Support super keyword
         if (statement.superClass() != null) {
             this.beginScope();
-            this.scopes.peek().put("super", true);
+            this.scopes.peek().put(TokenType.SUPER.representation(), true);
         }
 
         this.beginScope();
-        this.scopes.peek().put("this", true);
+        this.scopes.peek().put(TokenType.THIS.representation(), true);
         for (final FunctionStatement method : statement.methods()) {
             FunctionType declaration = FunctionType.METHOD;
-            if ("init".equals(method.name().lexeme())) {
+            if (VirtualFunction.CLASS_INIT.equals(method.name().lexeme())) {
                 declaration = FunctionType.INITIALIZER;
             }
             this.resolveFunction(method, declaration);
@@ -359,7 +361,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         final Map<String, NativeModule> modules = this.interpreter.externalModules();
         final String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
-            this.errorReporter.error(statement.name(), "Cannot find module named '" + module + "'");
+            this.errorReporter.error(Phase.RESOLVING, statement.name(), "Cannot find module named '" + module + "'");
         }
         return null;
     }
@@ -416,10 +418,10 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final SuperExpression expr) {
         if (this.currentClass == ClassType.NONE) {
-            this.errorReporter.error(expr.keyword(), "Cannot use 'super' outside of a class.");
+            this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'super' outside of a class.");
         }
         else if (this.currentClass != ClassType.SUBCLASS) {
-            this.errorReporter.error(expr.keyword(), "Cannot use 'super' in a class with no superclass.");
+            this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'super' in a class with no superclass.");
         }
         this.resolveLocal(expr, expr.keyword());
         return null;
@@ -477,15 +479,15 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
         final Map<String, Boolean> scope = this.scopes.peek();
 
-        //Never declare variable twice in same scope
+        // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
-            this.errorReporter.error(name, "Variable with this name already declared in this scope.");
+            this.errorReporter.error(Phase.RESOLVING, name, "Variable with name '%s' already declared in this scope.".formatted(name.lexeme()));
         }
         scope.put(name.lexeme(), false);
     }
 
     private void define(final Token name) {
-        //set the variable’s value in the scope map to true to mark it as fully initialized and available for use
+        // set the variable’s value in the scope map to true to mark it as fully initialized and available for use
         if (this.scopes.isEmpty()) return;
         this.scopes.peek().put(name.lexeme(), true);
     }

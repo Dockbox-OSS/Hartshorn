@@ -1,12 +1,13 @@
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.callable.virtual;
 
+import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
 import org.dockbox.hartshorn.hsl.interpreter.Environment;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 import java.util.List;
 import java.util.Map;
 
-public class VirtualClass extends ArityCheckingCallable {
+public class VirtualClass extends ArityCheckingCallableNode {
 
     private final String name;
     private final VirtualClass superClass;
@@ -58,7 +59,7 @@ public class VirtualClass extends ArityCheckingCallable {
 
     @Override
     public int arity() {
-        final VirtualFunction initializer = this.findMethod("init");
+        final VirtualFunction initializer = this.findMethod(VirtualFunction.CLASS_INIT);
         if (initializer == null) return 0;
         return initializer.arity();
     }
@@ -66,8 +67,8 @@ public class VirtualClass extends ArityCheckingCallable {
     @Override
     public Object call(final Interpreter interpreter, final List<Object> arguments) {
         final VirtualInstance instance = new VirtualInstance(this);
-        //for Constructing the class
-        final VirtualFunction initializer = this.findMethod("init");
+        // Acts as a virtual constructor
+        final VirtualFunction initializer = this.findMethod(VirtualFunction.CLASS_INIT);
         if (initializer != null) {
             initializer.bind(instance).call(interpreter, arguments);
         }
