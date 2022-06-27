@@ -611,7 +611,7 @@ public class Parser {
     private Expression primary() {
         if (this.match(TokenType.FALSE)) return new LiteralExpression(false);
         if (this.match(TokenType.TRUE)) return new LiteralExpression(true);
-        if (this.match(TokenType.NIL)) return new LiteralExpression(null);
+        if (this.match(TokenType.NULL)) return new LiteralExpression(null);
         if (this.match(TokenType.THIS)) return new ThisExpression(this.previous());
         if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExpression(this.previous().literal());
         if (this.match(TokenType.IDENTIFIER)) {

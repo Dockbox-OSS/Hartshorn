@@ -1,9 +1,9 @@
 infix fun orDefault(value, default) {
-    if (value == nil) {
+    if (value == null) {
         return default;
     }
     return value;
 }
 
-var result = nil orDefault "Default Value";
+var result = null orDefault "Default Value";
 print(result);

@@ -47,7 +47,7 @@ public enum TokenType {
     SUPER(builder -> builder.keyword(true).ok()),
     THIS(builder -> builder.keyword(true).ok()),
     VAR(builder -> builder.keyword(true).ok()),
-    NIL(builder -> builder.keyword(true).ok()),
+    NULL(builder -> builder.keyword(true).ok()),
     ARRAY(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
