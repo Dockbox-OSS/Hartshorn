@@ -53,7 +53,7 @@ public class ExternalFunction extends ExternalExecutable<Method, Object, MethodC
             throw new RuntimeError(at, "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name());
         }
 
-        final MethodContext<?, Object> executable = this.matchingExecutable(this.type.methods(), arguments);
+        final MethodContext<?, Object> executable = this.matchingExecutable(methods, arguments);
         if (executable != null) return executable;
 
         throw new RuntimeError(at, "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name());
