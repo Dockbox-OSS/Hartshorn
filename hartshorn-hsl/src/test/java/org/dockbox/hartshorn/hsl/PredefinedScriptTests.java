@@ -1,8 +1,8 @@
 package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.callable.InstanceNativeModule;
-import org.dockbox.hartshorn.hsl.runtime.StandardLibraryHslRuntime;
+import org.dockbox.hartshorn.hsl.callable.module.InstanceNativeModule;
+import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -46,8 +47,18 @@ public class PredefinedScriptTests {
     @ParameterizedTest
     @MethodSource("scripts")
     void testPredefinedScript(final String content) {
-        final StandardLibraryHslRuntime runtime = new StandardLibraryHslRuntime(this.applicationContext);
+        final StandardRuntime runtime = new StandardRuntime(this.applicationContext);
         Assertions.assertDoesNotThrow(() -> runtime.run(content));
+        Assertions.assertTrue(runtime.errors().isEmpty());
+        Assertions.assertTrue(runtime.runtimeErrors().isEmpty());
+    }
+
+    @ParameterizedTest
+    @MethodSource("scripts")
+    void testPredefinedScriptWithOptionalSemicolons(final String content) {
+        final String source = content.replaceAll(";", "");
+        final StandardRuntime runtime = new StandardRuntime(this.applicationContext);
+        Assertions.assertDoesNotThrow(() -> runtime.run(source));
         Assertions.assertTrue(runtime.errors().isEmpty());
         Assertions.assertTrue(runtime.runtimeErrors().isEmpty());
     }
@@ -90,7 +101,7 @@ public class PredefinedScriptTests {
     void testExpressionWithGlobalFunctionAccess() {
         final ValidateExpressionRuntime runtime = new ValidateExpressionRuntime(this.applicationContext);
         runtime.global("context", this.applicationContext);
-        final String expression = "context != nil and context.log() != nil";
+        final String expression = "context != null and context.log() != null";
         runtime.run(expression);
 
         Assertions.assertTrue(runtime.errors().isEmpty());
@@ -100,9 +111,9 @@ public class PredefinedScriptTests {
 
     @Test
     void testScriptWithGlobalFunctionAccess() {
-        final StandardLibraryHslRuntime runtime = new StandardLibraryHslRuntime(this.applicationContext);
+        final StandardRuntime runtime = new StandardRuntime(this.applicationContext);
         runtime.global("context", this.applicationContext);
-        final String expression = "context.log().info(\"Hello world!\");";
+        final String expression = "context.log().info(\"Hello world!\")";
         runtime.run(expression);
 
         Assertions.assertTrue(runtime.errors().isEmpty());
@@ -119,5 +130,53 @@ public class PredefinedScriptTests {
         Assertions.assertTrue(runtime.errors().isEmpty());
         Assertions.assertTrue(runtime.runtimeErrors().isEmpty());
         Assertions.assertTrue(runtime.valid());
+    }
+
+    @Test
+    void testMultilineWithComments() {
+        final StandardRuntime runtime = new StandardRuntime(this.applicationContext);
+        final String expression = """
+                print("Hello world!");
+                
+                # This is a comment
+                print("Hello world 2!");
+                
+                // This is also a comment, print("Hello world 3!");
+                print("Hello world 4!");
+                
+                /* This is a multi-line comment
+                see?!
+                */
+                print("Hello world 5!");
+                """;
+        runtime.run(expression);
+
+        Assertions.assertTrue(runtime.errors().isEmpty());
+        Assertions.assertTrue(runtime.runtimeErrors().isEmpty());
+        Assertions.assertEquals(3, runtime.comments().size());
+
+        // Comments are not trimmed, so we need to include spaces in the expected result
+        Assertions.assertEquals(" This is a comment", runtime.comments().get(0).text());
+        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", runtime.comments().get(1).text());
+        Assertions.assertEquals(" This is a multi-line comment\nsee?!\n", runtime.comments().get(2).text());
+    }
+
+    @Test
+    void testGlobalResultTracking() {
+        final StandardRuntime runtime = new StandardRuntime(this.applicationContext);
+        final String expression = """
+                var a = 12;
+                var b = 13;
+                var c = a + b;
+                """;
+        final Map<String, Object> results = runtime.run(expression);
+
+        Assertions.assertTrue(runtime.errors().isEmpty());
+        Assertions.assertTrue(runtime.runtimeErrors().isEmpty());
+        Assertions.assertFalse(results.isEmpty());
+
+        Assertions.assertEquals(12d, results.get("a"));
+        Assertions.assertEquals(13d, results.get("b"));
+        Assertions.assertEquals(25d, results.get("c"));
     }
 }
