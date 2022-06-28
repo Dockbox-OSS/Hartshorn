@@ -2,7 +2,9 @@ package org.dockbox.hartshorn.hsl.callable.module;
 
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.callable.NativeExecutionException;
+import org.dockbox.hartshorn.hsl.callable.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
@@ -10,7 +12,6 @@ import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,22 +22,17 @@ public abstract class AbstractNativeModule implements NativeModule {
     protected abstract Object instance();
 
     @Override
-    public Object call(final Interpreter interpreter, final String function, final List<Object> arguments) throws NativeExecutionException {
+    public Object call(final Token at, final Interpreter interpreter, final String function, final List<Object> arguments) throws NativeExecutionException {
         try {
-            final Method method;
+            final TypeContext<Object> type = TypeContext.of((Class<Object>) this.moduleClass());
+            final MethodContext<?, Object> method;
             if (arguments.isEmpty()) {
-                method = this.moduleClass().getMethod(function);
-                return method.invoke(this.instance());
+                method = type.method(function).rethrow().get();
             }
             else {
-                final List<Class<?>> classArgs = new ArrayList<>();
-                for (final Object arg : arguments) {
-                    classArgs.add(arg.getClass());
-                }
-                // TODO: Match best method?
-                method = this.moduleClass().getMethod(function, classArgs.toArray(new Class[0]));
-                return method.invoke(this.instance(), arguments.toArray(new Object[0]));
+                method = ExecutableLookup.method(at, type, function, arguments);
             }
+            return method.invoke(this.instance(), arguments.toArray(new Object[0]));
         }
         catch (final InvocationTargetException e) {
             throw new NativeExecutionException("Invalid Module Loader", e);
@@ -46,6 +42,9 @@ public abstract class AbstractNativeModule implements NativeModule {
         }
         catch (final IllegalAccessException e) {
             throw new NativeExecutionException("Module Loader : Can't access function with name : " + function, e);
+        }
+        catch (final Throwable e) {
+            throw new RuntimeError(at, e.getMessage());
         }
     }
 

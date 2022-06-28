@@ -8,7 +8,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.List;
 
 public interface NativeModule {
-    Object call(Interpreter interpreter, String function, List<Object> arguments) throws NativeExecutionException;
+    Object call(Token at, Interpreter interpreter, String function, List<Object> arguments) throws NativeExecutionException;
 
     List<NativeFunctionStatement> supportedFunctions(Token moduleName);
 }

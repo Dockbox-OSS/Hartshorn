@@ -4,6 +4,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
 import org.dockbox.hartshorn.hsl.callable.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.List;
 import java.util.Map;
@@ -19,12 +20,7 @@ public class HslLibrary extends ArityCheckingCallableNode {
     }
 
     @Override
-    public int arity() {
-        return this.declaration.params().size();
-    }
-
-    @Override
-    public Object call(final Interpreter interpreter, final List<Object> arguments) throws NativeExecutionException {
+    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) throws NativeExecutionException {
         final String moduleName = this.declaration.moduleName().lexeme();
         final String functionName = this.declaration.name().lexeme();
 
@@ -33,6 +29,6 @@ public class HslLibrary extends ArityCheckingCallableNode {
         }
 
         final NativeModule module = this.externalModules.get(moduleName);
-        return module.call(interpreter, functionName, arguments);
+        return module.call(at, interpreter, functionName, arguments);
     }
 }

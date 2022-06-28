@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
-import org.dockbox.hartshorn.hsl.callable.VerifiableCallableNode;
+import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.callable.module.HslLibrary;
@@ -345,21 +345,22 @@ public class Interpreter implements
 
     @Override
     public Object visit(final PrefixExpression expr) {
-        final VerifiableCallableNode value = (VerifiableCallableNode) this.variableScope().get(expr.prefixOperatorName());
+        final CallableNode value = (CallableNode) this.variableScope().get(expr.prefixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
-        return Result.of(() -> value.call(this, args))
+        return Result.of(() -> value.call(expr.prefixOperatorName(), this, args))
                 .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.prefixOperatorName().line(), e.getMessage()))
                 .orNull();
     }
 
     @Override
     public Object visit(final InfixExpression expr) {
-        final VerifiableCallableNode value = (VerifiableCallableNode) this.variableScope().get(expr.infixOperatorName());
+        final CallableNode value = (CallableNode) this.variableScope().get(expr.infixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.leftExpression()));
         args.add(this.evaluate(expr.rightExpression()));
-        return Result.of(() -> value.call(this, args))
+
+        return Result.of(() -> value.call(expr.infixOperatorName(), this, args))
                 .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.infixOperatorName().line(), e.getMessage()))
                 .orNull();
     }
@@ -376,12 +377,11 @@ public class Interpreter implements
         }
 
         // Can't call non-callable nodes..
-        if (!(callee instanceof final VerifiableCallableNode function)) {
+        if (!(callee instanceof final CallableNode function)) {
             throw new RuntimeError(expr.closingParenthesis(), "Can only call functions and classes, but received " + callee + ".");
         }
 
-        function.verify(expr.closingParenthesis(), arguments);
-        return Result.of(() -> function.call(this, arguments))
+        return Result.of(() -> function.call(expr.closingParenthesis(), this, arguments))
                 .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.closingParenthesis().line(), e.getMessage()))
                 .orNull();
     }

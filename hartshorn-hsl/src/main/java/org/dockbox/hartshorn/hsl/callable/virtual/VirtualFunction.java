@@ -2,9 +2,10 @@ package org.dockbox.hartshorn.hsl.callable.virtual;
 
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
-import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.Return;
+import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 
 import java.util.List;
@@ -23,11 +24,6 @@ public class VirtualFunction extends ArityCheckingCallableNode {
         this.isInitializer = isInitializer;
     }
 
-    @Override
-    public int arity() {
-        return this.declaration.parameters().size();
-    }
-
     public VirtualFunction bind(final VirtualInstance instance) {
         final VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(TokenType.THIS.representation(), instance);
@@ -35,7 +31,7 @@ public class VirtualFunction extends ArityCheckingCallableNode {
     }
 
     @Override
-    public Object call(final Interpreter interpreter, final List<Object> arguments) {
+    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) {
         final VariableScope variableScope = new VariableScope(this.closure);
         for (int i = 0; i < this.declaration.parameters().size(); i++) {
             variableScope.define(this.declaration.parameters().get(i).lexeme(), arguments.get(i));

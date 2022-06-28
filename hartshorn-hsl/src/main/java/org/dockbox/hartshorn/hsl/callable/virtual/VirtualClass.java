@@ -1,8 +1,9 @@
 package org.dockbox.hartshorn.hsl.callable.virtual;
 
 import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
-import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.List;
 import java.util.Map;
@@ -58,19 +59,12 @@ public class VirtualClass extends ArityCheckingCallableNode {
     }
 
     @Override
-    public int arity() {
-        final VirtualFunction initializer = this.findMethod(VirtualFunction.CLASS_INIT);
-        if (initializer == null) return 0;
-        return initializer.arity();
-    }
-
-    @Override
-    public Object call(final Interpreter interpreter, final List<Object> arguments) {
+    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) {
         final VirtualInstance instance = new VirtualInstance(this);
         // Acts as a virtual constructor
         final VirtualFunction initializer = this.findMethod(VirtualFunction.CLASS_INIT);
         if (initializer != null) {
-            initializer.bind(instance).call(interpreter, arguments);
+            initializer.bind(instance).call(at, interpreter, arguments);
         }
         return instance;
     }
