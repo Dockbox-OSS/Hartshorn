@@ -12,6 +12,7 @@ public class TestStatement extends Statement {
     private final Statement returnValue;
 
     public TestStatement(final Token name, final List<Statement> body, final Statement returnValue) {
+        super(name);
         this.name = name;
         this.body = body;
         this.returnValue = returnValue;

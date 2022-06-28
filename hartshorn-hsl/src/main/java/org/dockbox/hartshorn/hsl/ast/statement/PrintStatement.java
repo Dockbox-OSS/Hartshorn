@@ -8,6 +8,7 @@ public class PrintStatement extends Statement {
     private final Expression expression;
 
     public PrintStatement(final Expression expression) {
+        super(expression.line());
         this.expression = expression;
     }
 

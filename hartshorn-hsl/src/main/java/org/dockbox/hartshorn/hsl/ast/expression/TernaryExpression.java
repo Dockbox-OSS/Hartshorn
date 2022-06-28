@@ -14,6 +14,7 @@ public class TernaryExpression extends Expression {
     public TernaryExpression(final Expression condition, final Token ternaryOp,
                              final Expression firstExp, final Token colon,
                              final Expression secondExp) {
+        super(condition.line());
         this.condition = condition;
         this.ternaryOp = ternaryOp;
         this.firstExp = firstExp;

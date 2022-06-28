@@ -12,6 +12,7 @@ public class NativeFunctionStatement extends Function {
     private final List<Token> params;
 
     public NativeFunctionStatement(final Token name, final Token moduleName, final List<Token> params) {
+        super(name);
         this.name = name;
         this.moduleName = moduleName;
         this.params = params;

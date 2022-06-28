@@ -1,7 +1,6 @@
 package org.dockbox.hartshorn.hsl.ast.statement;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
@@ -11,6 +10,7 @@ public class VariableStatement extends Statement {
     private final Expression initializer;
 
     public VariableStatement(final Token name, final Expression initializer) {
+        super(name);
         this.name = name;
         this.initializer = initializer;
     }

@@ -9,6 +9,7 @@ public class ArrayVariable extends Expression {
     private final Expression index;
 
     public ArrayVariable(final Token name, final Expression index) {
+        super(name);
         this.name = name;
         this.index = index;
     }

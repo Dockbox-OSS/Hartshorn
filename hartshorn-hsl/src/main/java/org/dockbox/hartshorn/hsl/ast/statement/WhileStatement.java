@@ -9,6 +9,7 @@ public class WhileStatement extends Statement {
     private final Statement loopBody;
 
     public WhileStatement(final Expression condition, final Statement loopBody) {
+        super(condition.line());
         this.condition = condition;
         this.loopBody = loopBody;
     }

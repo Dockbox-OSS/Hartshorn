@@ -9,6 +9,7 @@ public class SuperExpression extends Expression {
     private final Token method;
 
     public SuperExpression(final Token keyword, final Token method) {
+        super(keyword);
         this.keyword = keyword;
         this.method = method;
     }

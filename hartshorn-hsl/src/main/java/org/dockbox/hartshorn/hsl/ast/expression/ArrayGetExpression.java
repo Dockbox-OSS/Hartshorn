@@ -7,6 +7,7 @@ public class ArrayGetExpression extends Expression {
     private final Expression size;
 
     public ArrayGetExpression(final Expression size) {
+        super(size.line());
         this.size = size;
     }
 

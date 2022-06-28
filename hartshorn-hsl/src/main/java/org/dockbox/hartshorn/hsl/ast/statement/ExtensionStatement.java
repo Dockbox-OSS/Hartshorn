@@ -9,6 +9,7 @@ public class ExtensionStatement extends Function {
     private final FunctionStatement functionStatement;
 
     public ExtensionStatement(final Token className, final FunctionStatement function) {
+        super(className);
         this.className = className;
         this.functionStatement = function;
     }

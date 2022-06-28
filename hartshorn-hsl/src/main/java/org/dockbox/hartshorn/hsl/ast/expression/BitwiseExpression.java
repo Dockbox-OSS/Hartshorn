@@ -10,6 +10,7 @@ public class BitwiseExpression extends Expression {
     private final Expression rightExp;
 
     public BitwiseExpression(final Expression leftExp, final Token operator, final Expression rightExp) {
+        super(operator);
         this.leftExp = leftExp;
         this.operator = operator;
         this.rightExp = rightExp;

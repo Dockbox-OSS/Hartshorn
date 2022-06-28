@@ -9,6 +9,7 @@ public class PrefixExpression extends Expression {
     private final Expression rightExpression;
 
     public PrefixExpression(final Token prefixFunName, final Expression rightExpression) {
+        super(prefixFunName);
         this.prefixFunName = prefixFunName;
         this.rightExpression = rightExpression;
     }

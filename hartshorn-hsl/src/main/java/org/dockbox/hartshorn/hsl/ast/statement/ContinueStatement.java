@@ -8,6 +8,7 @@ public class ContinueStatement extends Statement {
     private final Token keyword;
 
     public ContinueStatement(final Token keyword) {
+        super(keyword);
         this.keyword = keyword;
     }
 

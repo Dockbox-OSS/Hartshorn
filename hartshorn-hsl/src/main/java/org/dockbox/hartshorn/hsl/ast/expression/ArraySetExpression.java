@@ -10,6 +10,7 @@ public class ArraySetExpression extends Expression {
     private final Expression value;
 
     public ArraySetExpression(final Token name, final Expression index, final Expression value) {
+        super(name);
         this.name = name;
         this.index = index;
         this.value = value;

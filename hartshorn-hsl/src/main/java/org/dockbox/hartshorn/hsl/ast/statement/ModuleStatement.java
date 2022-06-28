@@ -8,6 +8,7 @@ public class ModuleStatement extends Statement {
     private final Token name;
 
     public ModuleStatement(final Token name) {
+        super(name);
         this.name = name;
     }
 

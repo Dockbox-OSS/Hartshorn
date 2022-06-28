@@ -10,6 +10,7 @@ public class SetExpression extends Expression {
     private final Expression value;
 
     public SetExpression(final Expression object, final Token name, final Expression value) {
+        super(name);
         this.object = object;
         this.name = name;
         this.value = value;

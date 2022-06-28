@@ -10,6 +10,7 @@ public class ReturnStatement extends Statement {
     private final Expression value;
 
     public ReturnStatement(final Token keyword, final Expression value) {
+        super(keyword);
         this.keyword = keyword;
         this.value = value;
     }

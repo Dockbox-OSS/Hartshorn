@@ -9,6 +9,7 @@ public class AssignExpression extends Expression {
     private final Expression value;
 
     public AssignExpression(final Token name, final Expression value) {
+        super(name);
         this.name = name;
         this.value = value;
     }

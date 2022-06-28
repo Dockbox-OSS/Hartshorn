@@ -8,6 +8,7 @@ public class ExpressionStatement extends Statement {
     private final Expression expression;
 
     public ExpressionStatement(final Expression expression) {
+        super(expression.line());
         this.expression = expression;
     }
 

@@ -8,6 +8,7 @@ public class BreakStatement extends Statement {
     private final Token keyword;
 
     public BreakStatement(final Token keyword) {
+        super(keyword);
         this.keyword = keyword;
     }
 

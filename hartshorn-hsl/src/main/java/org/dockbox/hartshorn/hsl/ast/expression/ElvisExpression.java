@@ -12,6 +12,7 @@ public class ElvisExpression extends Expression {
     public ElvisExpression(final Expression condition,
                            final Token elvisOpe,
                            final Expression rightExp) {
+        super(elvisOpe);
         this.condition = condition;
         this.elvisOpe = elvisOpe;
         this.rightExp = rightExp;

@@ -9,6 +9,7 @@ public class UnaryExpression extends Expression {
     private final Expression rightExp;
 
     public UnaryExpression(final Token operator, final Expression rightExp) {
+        super(operator);
         this.operator = operator;
         this.rightExp = rightExp;
     }

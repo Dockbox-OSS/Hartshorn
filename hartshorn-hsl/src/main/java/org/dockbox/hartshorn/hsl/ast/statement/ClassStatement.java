@@ -13,6 +13,7 @@ public class ClassStatement extends Statement {
     private final List<FunctionStatement> methods;
 
     public ClassStatement(final Token name, final VariableExpression superClass, final List<FunctionStatement> methods) {
+        super(name);
         this.name = name;
         this.superClass = superClass;
         this.methods = methods;

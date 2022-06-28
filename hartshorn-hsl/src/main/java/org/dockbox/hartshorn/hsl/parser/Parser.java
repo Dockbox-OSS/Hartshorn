@@ -90,7 +90,7 @@ public class Parser {
         if (this.match(TokenType.REPEAT)) return this.repeatStatement();
         if (this.match(TokenType.PRINT)) return this.printStatement();
         if (this.match(TokenType.RETURN)) return this.returnStatement();
-        if (this.match(TokenType.LEFT_BRACE)) return new BlockStatement(this.block());
+        if (this.match(TokenType.LEFT_BRACE)) return new BlockStatement(this.peek(), this.block());
         if (this.match(TokenType.BREAK)) return this.breakStatement();
         if (this.match(TokenType.CONTINUE)) return this.continueStatement();
         if (this.match(TokenType.TEST)) return this.testStatement();
@@ -609,11 +609,11 @@ public class Parser {
     }
 
     private Expression primary() {
-        if (this.match(TokenType.FALSE)) return new LiteralExpression(false);
-        if (this.match(TokenType.TRUE)) return new LiteralExpression(true);
-        if (this.match(TokenType.NULL)) return new LiteralExpression(null);
+        if (this.match(TokenType.FALSE)) return new LiteralExpression(this.peek(), false);
+        if (this.match(TokenType.TRUE)) return new LiteralExpression(this.peek(), true);
+        if (this.match(TokenType.NULL)) return new LiteralExpression(this.peek(), null);
         if (this.match(TokenType.THIS)) return new ThisExpression(this.previous());
-        if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExpression(this.previous().literal());
+        if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExpression(this.peek(), this.previous().literal());
         if (this.match(TokenType.IDENTIFIER)) {
             final Token next = this.peek();
             if (next.type() == TokenType.ARRAY_OPEN) {
@@ -632,9 +632,9 @@ public class Parser {
         }
         if (this.match(TokenType.ARRAY)) {
             this.expect(TokenType.ARRAY_OPEN);
-            final Expression size = this.expression();
+            final Expression sizeOrIndex = this.expression();
             this.expect(TokenType.ARRAY_CLOSE);
-            return new ArrayGetExpression(size);
+            return new ArrayGetExpression(sizeOrIndex);
         }
         if (this.match(TokenType.SUPER)) {
             final Token keyword = this.previous();

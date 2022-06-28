@@ -11,8 +11,9 @@ public class FunctionCallExpression extends Expression {
     private final Token closingParenthesis;
     private final List<Expression> arguments;
 
-    public FunctionCallExpression(final Expression calle, final Token paren, final List<Expression> arguments) {
-        this.callee = calle;
+    public FunctionCallExpression(final Expression callee, final Token paren, final List<Expression> arguments) {
+        super(callee.line());
+        this.callee = callee;
         this.closingParenthesis = paren;
         this.arguments = arguments;
     }

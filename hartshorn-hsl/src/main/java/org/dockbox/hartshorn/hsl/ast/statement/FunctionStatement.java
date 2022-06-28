@@ -14,6 +14,7 @@ public class FunctionStatement extends Function {
     public FunctionStatement(final Token name,
                              final List<Token> params,
                              final List<Statement> funcBody) {
+        super(name);
         this.name = name;
         this.params = params;
         this.funcBody = funcBody;

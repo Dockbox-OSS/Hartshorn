@@ -10,6 +10,7 @@ public class InfixExpression extends Expression {
     private final Expression rightExp;
 
     public InfixExpression(final Expression leftExp, final Token infixOperator, final Expression rightExp) {
+        super(infixOperator);
         this.leftExp = leftExp;
         this.infixOperator = infixOperator;
         this.rightExp = rightExp;

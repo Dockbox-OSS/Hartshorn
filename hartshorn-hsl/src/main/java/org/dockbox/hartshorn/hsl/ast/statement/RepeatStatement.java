@@ -9,6 +9,7 @@ public class RepeatStatement extends Statement {
     private final Statement loopBody;
 
     public RepeatStatement(final Expression value, final Statement loopBody) {
+        super(value.line());
         this.value = value;
         this.loopBody = loopBody;
     }

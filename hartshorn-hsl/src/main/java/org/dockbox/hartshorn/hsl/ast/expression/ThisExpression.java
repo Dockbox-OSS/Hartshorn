@@ -8,6 +8,7 @@ public class ThisExpression extends Expression {
     private final Token keyword;
 
     public ThisExpression(final Token keyword) {
+        super(keyword);
         this.keyword = keyword;
     }
 

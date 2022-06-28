@@ -9,6 +9,7 @@ public class GetExpression extends Expression {
     private final Expression object;
 
     public GetExpression(final Token name, final Expression object) {
+        super(name);
         this.name = name;
         this.object = object;
     }

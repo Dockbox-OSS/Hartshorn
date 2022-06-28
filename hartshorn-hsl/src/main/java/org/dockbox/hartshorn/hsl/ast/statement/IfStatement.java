@@ -12,6 +12,7 @@ public class IfStatement extends Statement {
     private final List<Statement> elseBranch;
 
     public IfStatement(final Expression condition, final List<Statement> thenBranch, final List<Statement> elseBranch) {
+        super(condition.line());
         this.condition = condition;
         this.thenBranch = thenBranch;
         this.elseBranch = elseBranch;
