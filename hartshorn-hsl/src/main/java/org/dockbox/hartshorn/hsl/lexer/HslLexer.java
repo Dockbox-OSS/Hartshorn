@@ -12,6 +12,7 @@ import java.util.Map;
 public class HslLexer {
 
     private final List<Token> tokens = new ArrayList<>();
+    private final List<Comment> comments = new ArrayList<>();
     private final ErrorReporter errorReporter;
     private static final Map<String, TokenType> keywords = TokenType.keywords();
 
@@ -40,6 +41,10 @@ public class HslLexer {
         }
         this.tokens.add(new Token(TokenType.EOF, "", null, this.line));
         return this.tokens;
+    }
+
+    public List<Comment> comments() {
+        return this.comments;
     }
 
     private void scanToken() {
@@ -102,11 +107,17 @@ public class HslLexer {
                 break;
             case '/':
                 if (this.match('/')) {
-                    while (this.currentChar() != '\n' && !this.isAtEnd()) this.pointToNextChar();
+                    this.scanComment();
+                }
+                else if (this.match('*')) {
+                    this.scanMultilineComment();
                 }
                 else {
                     this.addToken(TokenType.SLASH);
                 }
+                break;
+            case '#':
+                this.scanComment();
                 break;
             case ' ':
             case '\r':
@@ -133,6 +144,31 @@ public class HslLexer {
                     this.errorReporter.error(Phase.TOKENIZING, this.line, "Unexpected character.");
                 }
         }
+    }
+
+    private void scanComment() {
+        final StringBuilder text = new StringBuilder();
+        final int line = this.line;
+        while (this.currentChar() != '\n' && !this.isAtEnd()) {
+            text.append(this.pointToNextChar());
+        }
+        this.comments.add(new Comment(line, text.toString()));
+    }
+
+    private void scanMultilineComment() {
+        final StringBuilder text = new StringBuilder();
+        final int line = this.line;
+        while (!this.isAtEnd()) {
+            if (this.currentChar() == '*' && this.nextChar() == '/') {
+                this.current += 2;
+                break;
+            }
+            if (this.currentChar() == '\n') {
+                this.line++;
+            }
+            text.append(this.pointToNextChar());
+        }
+        this.comments.add(new Comment(line, text.toString()));
     }
 
     private void scanNumber() {
