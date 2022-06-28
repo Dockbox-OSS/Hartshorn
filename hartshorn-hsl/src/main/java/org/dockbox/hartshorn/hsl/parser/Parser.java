@@ -656,7 +656,8 @@ public class Parser {
 
     private Token consume(final TokenType type, final String message) {
         if (this.check(type)) return this.advance();
-        throw this.error(this.peek(), message);
+        if (type != TokenType.SEMICOLON) throw this.error(this.peek(), message);
+        return null;
     }
 
     private void synchronize() {
