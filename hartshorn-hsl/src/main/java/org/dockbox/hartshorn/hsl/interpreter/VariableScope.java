@@ -19,6 +19,10 @@ public class VariableScope {
         this.enclosing = enclosing;
     }
 
+    public Map<String, Object> values() {
+        return this.valuesMap;
+    }
+
     public Object get(final Token name) {
         if (this.valuesMap.containsKey(name.lexeme())) {
             return this.valuesMap.get(name.lexeme());

@@ -4,7 +4,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.util.Result;
 
-public class ValidateExpressionRuntime extends StandardLibraryHslRuntime {
+public class ValidateExpressionRuntime extends StandardRuntime {
 
     public ValidateExpressionRuntime(final ApplicationContext applicationContext) {
         super(applicationContext);

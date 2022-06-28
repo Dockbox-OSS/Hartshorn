@@ -4,9 +4,11 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
+import org.dockbox.hartshorn.hsl.callable.module.StandardLibrary;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.HslLexer;
 import org.dockbox.hartshorn.hsl.parser.Parser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
@@ -23,14 +25,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class AbstractHslRuntime implements ErrorReporter, ResultCollector {
+public class StandardRuntime implements ErrorReporter, ResultCollector {
 
     private static final String GLOBAL_RESULT = "$__result__$";
+
     protected final List<String> errors = new CopyOnWriteArrayList<>();
     protected final List<String> runtimeErrors = new CopyOnWriteArrayList<>();
+    protected final List<Comment> comments = new CopyOnWriteArrayList<>();
+    protected final Map<String, Object> results = new ConcurrentHashMap<>();
+
+
     protected final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
     protected final Map<String, Class<?>> imports = new ConcurrentHashMap<>();
-    protected final Map<String, Object> results = new ConcurrentHashMap<>();
+
 
     protected final Interpreter interpreter;
 
@@ -38,7 +45,7 @@ public abstract class AbstractHslRuntime implements ErrorReporter, ResultCollect
     private final Set<CodeCustomizer> customizers = ConcurrentHashMap.newKeySet();
     private final ApplicationContext applicationContext;
 
-    public AbstractHslRuntime(final ApplicationContext applicationContext) {
+    public StandardRuntime(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         this.interpreter = new Interpreter(this, this, this.logger, this.standardLibraries());
     }
@@ -75,22 +82,37 @@ public abstract class AbstractHslRuntime implements ErrorReporter, ResultCollect
         this.imports.putAll(imports);
     }
 
-    protected abstract Map<String, NativeModule> standardLibraries();
+    protected Map<String, NativeModule> standardLibraries() {
+        return StandardLibrary.asModules(this.applicationContext());
+    }
 
-    public void run(final String source) {
+    public List<Comment> comments() {
+        return this.comments;
+    }
+
+    public Map<String, Object> run(final String source) {
+        this.reset();
+
         final List<Token> tokens = this.tokenize(source);
         List<Statement> statements = this.parse(tokens);
 
         // Stop if there was a syntax error.
-        if (!this.errors.isEmpty()) return;
+        if (!this.errors.isEmpty()) return Map.of();
 
         statements = this.resolve(statements);
 
         // Stop if there was a semantic error.
-        if (!this.errors.isEmpty()) return;
+        if (!this.errors.isEmpty()) return Map.of();
 
         // Start interpreter
-        this.interpret(statements);
+        return this.interpret(statements);
+    }
+
+    private void reset() {
+        this.errors.clear();
+        this.runtimeErrors.clear();
+        this.comments.clear();
+        this.results.clear();
     }
 
     protected List<Token> tokenize(final String source) {
@@ -98,7 +120,9 @@ public abstract class AbstractHslRuntime implements ErrorReporter, ResultCollect
         for (final CodeCustomizer customizer : this.customizers) {
             lexer.source(customizer.tokenizing(lexer.source(), lexer));
         }
-        return lexer.scanTokens();
+        final List<Token> tokens = lexer.scanTokens();
+        this.comments.addAll(lexer.comments());
+        return tokens;
     }
 
     protected List<Statement> parse(final List<Token> tokens) {
@@ -119,7 +143,7 @@ public abstract class AbstractHslRuntime implements ErrorReporter, ResultCollect
         return statementsToResolve;
     }
 
-    protected void interpret(final List<Statement> statements) {
+    protected Map<String, Object> interpret(final List<Statement> statements) {
         List<Statement> statementsToInterpret = statements;
         for (final CodeCustomizer customizer : this.customizers) {
             statementsToInterpret = customizer.interpreting(statementsToInterpret, this.interpreter);
@@ -127,6 +151,8 @@ public abstract class AbstractHslRuntime implements ErrorReporter, ResultCollect
         this.interpreter.global(this.globalVariables);
         this.interpreter.imports(this.imports);
         this.interpreter.interpret(statements);
+
+        return this.interpreter.global();
     }
 
     public List<String> errors() {

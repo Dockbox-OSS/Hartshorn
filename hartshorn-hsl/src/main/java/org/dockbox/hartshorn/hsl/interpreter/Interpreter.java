@@ -97,6 +97,10 @@ public class Interpreter implements
         return this.externalModules;
     }
 
+    public Map<String, Object> global() {
+        return this.globals.values();
+    }
+
     public void interpret(final List<Statement> statements) {
         try {
             for (final Statement statement : statements) {
