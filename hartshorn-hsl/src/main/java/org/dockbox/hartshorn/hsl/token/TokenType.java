@@ -6,18 +6,28 @@ import java.util.function.Function;
 
 public enum TokenType {
     // Literals
-    IDENTIFIER, STRING, NUMBER, CHAR, NATIVE, EOF,
+    IDENTIFIER, STRING, NUMBER, CHAR, EOF,
 
     // Single-character tokens
-    LEFT_PAREN("("), RIGHT_PAREN(")"),
-    LEFT_BRACE("{"), RIGHT_BRACE("}"),
-    ARRAY_OPEN("["), ARRAY_CLOSE("]"),
-    COMMA(","), DOT("."),
-    MINUS("-"), PLUS("+"),
-    SEMICOLON(";"), SLASH("/"), STAR("*"),
-    EQUAL("="), BANG("!"),
-    GREATER(">"), LESS("<"),
-    QUESTION_MARK("?"), COLON(":"),
+    LEFT_PAREN(TokenConstants.LEFT_PAREN),
+    RIGHT_PAREN(TokenConstants.RIGHT_PAREN),
+    LEFT_BRACE(TokenConstants.LEFT_BRACE),
+    RIGHT_BRACE(TokenConstants.RIGHT_BRACE),
+    ARRAY_OPEN(TokenConstants.ARRAY_OPEN),
+    ARRAY_CLOSE(TokenConstants.ARRAY_CLOSE),
+    COMMA(TokenConstants.COMMA),
+    DOT(TokenConstants.DOT),
+    MINUS(TokenConstants.MINUS),
+    PLUS(TokenConstants.PLUS),
+    SEMICOLON(TokenConstants.SEMICOLON),
+    SLASH(TokenConstants.SLASH),
+    STAR(TokenConstants.STAR),
+    EQUAL(TokenConstants.EQUAL),
+    BANG(TokenConstants.BANG),
+    GREATER(TokenConstants.GREATER),
+    LESS(TokenConstants.LESS),
+    QUESTION_MARK(TokenConstants.QUESTION_MARK),
+    COLON(TokenConstants.COLON),
 
     // Two character tokens combining single character tokens
     ELVIS(builder -> builder.combines(QUESTION_MARK, COLON).ok()),
@@ -49,6 +59,7 @@ public enum TokenType {
     VAR(builder -> builder.keyword(true).ok()),
     NULL(builder -> builder.keyword(true).ok()),
     ARRAY(builder -> builder.keyword(true).ok()),
+    NATIVE(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),
@@ -71,6 +82,10 @@ public enum TokenType {
      */
     TokenType() {
         this(TokenMetaDataBuilder::ok);
+    }
+
+    TokenType(final char representation) {
+        this(representation + "");
     }
 
     /**
