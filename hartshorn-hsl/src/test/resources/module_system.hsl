@@ -1,0 +1,7 @@
+module system;
+
+print("Current os name is : " + env("os.name") + "\n");
+
+print("JDK Path : " + env("JAVA_HOME") + "\n");
+
+print("OS Arch : " + env("os.arch") + "\n");
