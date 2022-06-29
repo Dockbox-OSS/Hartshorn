@@ -1,206 +1,105 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.callable.module.StandardLibrary;
+import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.lexer.Comment;
-import org.dockbox.hartshorn.hsl.lexer.HslLexer;
-import org.dockbox.hartshorn.hsl.parser.Parser;
-import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-public class StandardRuntime implements ErrorReporter, ResultCollector {
+import jakarta.inject.Inject;
 
-    private static final String GLOBAL_RESULT = "$__result__$";
+public class StandardRuntime extends ExpressionConditionContext {
 
-    protected final List<String> errors = new CopyOnWriteArrayList<>();
-    protected final List<String> runtimeErrors = new CopyOnWriteArrayList<>();
-    protected final List<Comment> comments = new CopyOnWriteArrayList<>();
-    protected final Map<String, Object> results = new ConcurrentHashMap<>();
-
-
-    protected final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
-    protected final Map<String, Class<?>> imports = new ConcurrentHashMap<>();
-
-
-    protected final Interpreter interpreter;
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getCanonicalName() + "/script" + this.hashCode());
-    private final Set<CodeCustomizer> customizers = ConcurrentHashMap.newKeySet();
     private final ApplicationContext applicationContext;
+    private final HslLanguageFactory factory;
 
-    public StandardRuntime(final ApplicationContext applicationContext) {
+    @Inject
+    public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
         this.applicationContext = applicationContext;
-        this.interpreter = new Interpreter(this, this, this.logger, this.standardLibraries());
-    }
-
-    public void customizer(final CodeCustomizer customizer) {
-        this.customizers.add(customizer);
+        this.factory = factory;
     }
 
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }
 
-    public void module(final String name, final NativeModule module) {
-        this.interpreter.externalModule(name, module);
-    }
-
-    public void global(final String name, final Object value) {
-        this.globalVariables.put(name, value);
-    }
-
-    public void global(final Map<String, Object> values) {
-        this.globalVariables.putAll(values);
-    }
-
-    public void imports(final String name, final Class<?> type) {
-        this.imports.put(name, type);
-    }
-
-    public void imports(final Class<?> type) {
-        this.imports(type.getSimpleName(), type);
-    }
-
-    public void imports(final Map<String, Class<?>> imports) {
-        this.imports.putAll(imports);
-    }
-
     protected Map<String, NativeModule> standardLibraries() {
         return StandardLibrary.asModules(this.applicationContext());
     }
 
-    public List<Comment> comments() {
-        return this.comments;
-    }
+    public ScriptContext run(final String source) {
+        final ScriptContext context = new ScriptContext(source);
+        context.interpreter(this.createInterpreter(context));
 
-    public Map<String, Object> run(final String source) {
-        this.reset();
-
-        final List<Token> tokens = this.tokenize(source);
-        List<Statement> statements = this.parse(tokens);
+        this.tokenize(context);
+        this.parse(context);
 
         // Stop if there was a syntax error.
-        if (!this.errors.isEmpty()) return Map.of();
+        if (!context.errors().isEmpty()) return context;
 
-        statements = this.resolve(statements);
+        this.resolve(context);
 
         // Stop if there was a semantic error.
-        if (!this.errors.isEmpty()) return Map.of();
+        if (!context.errors().isEmpty()) return context;
 
         // Start interpreter
-        return this.interpret(statements);
+        this.interpret(context);
+
+        return context;
     }
 
-    private void reset() {
-        this.errors.clear();
-        this.runtimeErrors.clear();
-        this.comments.clear();
-        this.results.clear();
+    protected Interpreter createInterpreter(final ScriptContext context) {
+        final Interpreter interpreter = this.factory.interpreter(context, context, context.logger(), this.standardLibraries());
+        interpreter.externalModules(this.externalModules());
+        return interpreter;
     }
 
-    protected List<Token> tokenize(final String source) {
-        final HslLexer lexer = new HslLexer(source, this);
-        for (final CodeCustomizer customizer : this.customizers) {
-            lexer.source(customizer.tokenizing(lexer.source(), lexer));
+    protected void tokenize(final ScriptContext context) {
+        context.lexer(this.factory.lexer(context.source(), context));
+        this.customizePhase(Phase.TOKENIZING, context);
+        final List<Token> tokens = context.lexer().scanTokens();
+        context.tokens(tokens);
+        context.comments(context.lexer().comments());
+    }
+
+    protected void parse(final ScriptContext context) {
+        context.parser(this.factory.parser(context.tokens(), context));
+        this.customizePhase(Phase.PARSING, context);
+        final List<Statement> statements = context.parser().parse();
+        context.statements(statements);
+    }
+
+    protected void resolve(final ScriptContext context) {
+        context.resolver(this.factory.resolver(context, context.interpreter()));
+        context.interpreter().restore();
+        this.customizePhase(Phase.RESOLVING, context);
+        context.resolver().resolve(context.statements());
+    }
+
+    protected Map<String, Object> interpret(final ScriptContext context) {
+        final Interpreter interpreter = context.interpreter();
+        // Interpreter modification is not allowed at this point, as it was restored before
+        // the resolve phase.
+        this.customizePhase(Phase.INTERPRETING, context);
+        interpreter.global(this.globalVariables());
+        interpreter.imports(this.imports());
+        interpreter.interpret(context.statements());
+
+        return interpreter.global();
+    }
+
+    protected void customizePhase(final Phase phase, final ScriptContext context) {
+        for (final CodeCustomizer customizer : this.customizers()) {
+            if (customizer.phase() == phase)
+                customizer.call(context);
         }
-        final List<Token> tokens = lexer.scanTokens();
-        this.comments.addAll(lexer.comments());
-        return tokens;
-    }
-
-    protected List<Statement> parse(final List<Token> tokens) {
-        final Parser parser = new Parser(tokens, this);
-        for (final CodeCustomizer customizer : this.customizers) {
-            parser.tokens(customizer.parsing(parser.tokens(), parser));
-        }
-        return parser.parse();
-    }
-
-    protected List<Statement> resolve(final List<Statement> statements) {
-        final Resolver resolver = new Resolver(this, this.interpreter);
-        List<Statement> statementsToResolve = statements;
-        for (final CodeCustomizer customizer : this.customizers) {
-            statementsToResolve = customizer.resolving(statementsToResolve, resolver, this.interpreter.externalModules());
-        }
-        resolver.resolve(statementsToResolve);
-        return statementsToResolve;
-    }
-
-    protected Map<String, Object> interpret(final List<Statement> statements) {
-        List<Statement> statementsToInterpret = statements;
-        for (final CodeCustomizer customizer : this.customizers) {
-            statementsToInterpret = customizer.interpreting(statementsToInterpret, this.interpreter);
-        }
-        this.interpreter.global(this.globalVariables);
-        this.interpreter.imports(this.imports);
-        this.interpreter.interpret(statements);
-
-        return this.interpreter.global();
-    }
-
-    public List<String> errors() {
-        return this.errors;
-    }
-
-    public List<String> runtimeErrors() {
-        return this.runtimeErrors;
-    }
-
-    @Override
-    public void error(final Phase phase, final int line, final String message) {
-        this.report(phase, line, "", message);
-    }
-
-    @Override
-    public void error(final Phase phase, final Token token, final String message) {
-        if (token.type() == TokenType.EOF) {
-            this.report(phase, token.line(), " at end", message);
-        }
-        else {
-            this.report(phase, token.line(), " at '" + token.lexeme() + "'", message);
-        }
-    }
-
-    private void report(final Phase phase, final int line, final String where, final String message) {
-        this.logger.warn("Error reported at line " + line + where + " while " + phase.name().toLowerCase(Locale.ROOT) + " script: " + message);
-        this.errors.add(message);
-    }
-
-    @Override
-    public void addResult(final Object value) {
-        this.addResult(GLOBAL_RESULT, value);
-    }
-
-    @Override
-    public void addResult(final String id, final Object value) {
-        this.results.put(id, value);
-    }
-
-    @Override
-    public <T> Result<T> result() {
-        return this.result(GLOBAL_RESULT);
-    }
-
-    @Override
-    public <T> Result<T> result(final String id) {
-        return Result.of(this.results.get(id))
-                .map(result -> (T) result);
     }
 }

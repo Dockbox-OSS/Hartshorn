@@ -3,35 +3,31 @@ package org.dockbox.hartshorn.hsl.lexer;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenConstants;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HslLexer {
+public class Lexer {
+
+    private static final Map<String, TokenType> keywords = TokenType.keywords();
 
     private final List<Token> tokens = new ArrayList<>();
     private final List<Comment> comments = new ArrayList<>();
     private final ErrorReporter errorReporter;
-    private static final Map<String, TokenType> keywords = TokenType.keywords();
+    private final String source;
 
-    private String source;
     private int start = 0;
     private int current = 0;
     private int line = 1;
 
-    public HslLexer(final String source, final ErrorReporter errorReporter) {
+    @Bound
+    public Lexer(final String source, final ErrorReporter errorReporter) {
         this.source = source;
         this.errorReporter = errorReporter;
-    }
-
-    public void source(final String source) {
-        this.source = source;
-    }
-
-    public String source() {
-        return this.source;
     }
 
     public List<Token> scanTokens() {
@@ -50,76 +46,101 @@ public class HslLexer {
     private void scanToken() {
         final char c = this.pointToNextChar();
         switch (c) {
-            case '[':
+            case TokenConstants.ARRAY_OPEN:
                 this.addToken(TokenType.ARRAY_OPEN);
                 break;
-            case ']':
+            case TokenConstants.ARRAY_CLOSE:
                 this.addToken(TokenType.ARRAY_CLOSE);
                 break;
-            case '(':
+            case TokenConstants.LEFT_PAREN:
                 this.addToken(TokenType.LEFT_PAREN);
                 break;
-            case ')':
+            case TokenConstants.RIGHT_PAREN:
                 this.addToken(TokenType.RIGHT_PAREN);
                 break;
-            case '{':
+            case TokenConstants.LEFT_BRACE:
                 this.addToken(TokenType.LEFT_BRACE);
                 break;
-            case '}':
+            case TokenConstants.RIGHT_BRACE:
                 this.addToken(TokenType.RIGHT_BRACE);
                 break;
-            case ',':
+            case TokenConstants.COMMA:
                 this.addToken(TokenType.COMMA);
                 break;
-            case '.':
+            case TokenConstants.DOT:
                 this.addToken(TokenType.DOT);
                 break;
-            case '-':
-                this.addToken(this.match('-') ? TokenType.MINUS_MINUS : TokenType.MINUS);
+            case TokenConstants.MINUS:
+                this.addToken(this.match(TokenConstants.MINUS)
+                        ? TokenType.MINUS_MINUS
+                        : TokenType.MINUS
+                );
                 break;
-            case '+':
-                this.addToken(this.match('+') ? TokenType.PLUS_PLUS : TokenType.PLUS);
+            case TokenConstants.PLUS:
+                this.addToken(this.match(TokenConstants.PLUS)
+                        ? TokenType.PLUS_PLUS
+                        : TokenType.PLUS
+                );
                 break;
-            case ';':
+            case TokenConstants.SEMICOLON:
                 this.addToken(TokenType.SEMICOLON);
                 break;
-            case '*':
+            case TokenConstants.STAR:
                 this.addToken(TokenType.STAR);
                 break;
-            case '?':
-                this.addToken(this.match(':') ? TokenType.ELVIS : TokenType.QUESTION_MARK);
+            case TokenConstants.QUESTION_MARK:
+                this.addToken(this.match(TokenConstants.COLON)
+                        ? TokenType.ELVIS
+                        : TokenType.QUESTION_MARK
+                );
                 break;
-            case ':':
+            case TokenConstants.COLON:
                 this.addToken(TokenType.COLON);
                 break;
-            case '!':
-                this.addToken(this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+            case TokenConstants.BANG:
+                this.addToken(this.match(TokenConstants.EQUAL)
+                        ? TokenType.BANG_EQUAL
+                        : TokenType.BANG
+                );
                 break;
-            case '=':
-                this.addToken(this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+            case TokenConstants.EQUAL:
+                this.addToken(this.match(TokenConstants.EQUAL)
+                        ? TokenType.EQUAL_EQUAL :
+                        TokenType.EQUAL
+                );
                 break;
-            case '<':
-                this.addToken(this.match('=') ? TokenType.LESS_EQUAL : this.match('<') ? TokenType.SHIFT_LEFT : TokenType.LESS);
+            case TokenConstants.LESS:
+                this.addToken(this.match(TokenConstants.EQUAL)
+                        ? TokenType.LESS_EQUAL
+                        : this.match(TokenConstants.LESS)
+                            ? TokenType.SHIFT_LEFT
+                            : TokenType.LESS
+                );
                 break;
-            case '>':
-                this.addToken(this.match('=') ? TokenType.GREATER_EQUAL :
-                        (this.match('>') ? this.match('>') ? TokenType.LOGICAL_SHIFT_RIGHT : TokenType.SHIFT_RIGHT : TokenType.GREATER));
+            case TokenConstants.GREATER:
+                this.addToken(this.match(TokenConstants.EQUAL)
+                        ? TokenType.GREATER_EQUAL
+                        : this.match(TokenConstants.GREATER)
+                            ? this.match(TokenConstants.GREATER)
+                                ? TokenType.LOGICAL_SHIFT_RIGHT
+                                : TokenType.SHIFT_RIGHT
+                            : TokenType.GREATER);
                 break;
-            case '/':
-                if (this.match('/')) {
+            case TokenConstants.SLASH:
+                if (this.match(TokenConstants.SLASH)) {
                     this.scanComment();
                 }
-                else if (this.match('*')) {
+                else if (this.match(TokenConstants.STAR)) {
                     this.scanMultilineComment();
                 }
                 else {
                     this.addToken(TokenType.SLASH);
                 }
                 break;
-            case '#':
+            case TokenConstants.HASH:
                 this.scanComment();
                 break;
-            case ' ':
+            case TokenConstants.SPACE:
             case '\r':
             case '\t':
                 // Ignore whitespace.
@@ -127,10 +148,10 @@ public class HslLexer {
             case '\n':
                 this.line++;
                 break;
-            case '"':
+            case TokenConstants.QUOTE:
                 this.scanString();
                 break;
-            case '\'':
+            case TokenConstants.SINGLE_QUOTE:
                 this.scanChar();
                 break;
             default:
@@ -159,13 +180,11 @@ public class HslLexer {
         final StringBuilder text = new StringBuilder();
         final int line = this.line;
         while (!this.isAtEnd()) {
-            if (this.currentChar() == '*' && this.nextChar() == '/') {
+            if (this.currentChar() == TokenConstants.STAR && this.nextChar() == TokenConstants.SLASH) {
                 this.current += 2;
                 break;
             }
-            if (this.currentChar() == '\n') {
-                this.line++;
-            }
+            if (this.currentChar() == '\n') this.line++;
             text.append(this.pointToNextChar());
         }
         this.comments.add(new Comment(line, text.toString()));
@@ -177,7 +196,7 @@ public class HslLexer {
         }
 
         // Look for a fractional part.
-        if (this.currentChar() == '.' && this.isDigit(this.nextChar())) {
+        if (this.currentChar() == TokenConstants.DOT && this.isDigit(this.nextChar())) {
             // Consume the "."
             this.pointToNextChar();
             while (this.isDigit(this.currentChar())) this.pointToNextChar();
@@ -189,7 +208,7 @@ public class HslLexer {
     }
 
     private void scanString() {
-        while (this.currentChar() != '"' && !this.isAtEnd()) {
+        while (this.currentChar() != TokenConstants.QUOTE && !this.isAtEnd()) {
             if (this.currentChar() == '\n') this.line++;
             this.pointToNextChar();
         }
@@ -211,7 +230,7 @@ public class HslLexer {
     private void scanChar() {
         final String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
-        if (this.currentChar() != '\'') {
+        if (this.currentChar() != TokenConstants.SINGLE_QUOTE) {
             this.errorReporter.error(Phase.TOKENIZING, this.line, "Unterminated char variable.");
             return;
         }

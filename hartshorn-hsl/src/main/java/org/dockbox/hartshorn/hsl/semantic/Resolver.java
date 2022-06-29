@@ -49,6 +49,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
 
+    @Bound
     public Resolver(final ErrorReporter errorReporter, final Interpreter interpreter) {
         this.errorReporter = errorReporter;
         this.interpreter = interpreter;

@@ -44,6 +44,7 @@ import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,6 +63,7 @@ public class Parser {
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();
 
+    @Bound
     public Parser(final List<Token> tokens, final ErrorReporter errorReporter) {
         this.tokens = tokens;
         this.errorReporter = errorReporter;
@@ -210,7 +212,7 @@ public class Parser {
         }
 
         return this.function(TokenType.DOT, TokenType.SEMICOLON, (name, parameters) -> {
-            return new NativeFunctionStatement(name, moduleName, parameters);
+            return new NativeFunctionStatement(name, moduleName, null, parameters);
         });
     }
 

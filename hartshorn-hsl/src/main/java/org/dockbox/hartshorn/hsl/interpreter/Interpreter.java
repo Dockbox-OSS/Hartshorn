@@ -57,6 +57,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
+import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 import org.slf4j.Logger;
 
@@ -68,20 +69,46 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
-public class Interpreter implements
-        ExpressionVisitor<Object>,
-        StatementVisitor<Void> {
+/**
+ * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
+ * step by step. The interpreter is capable of handling all types of statements and expressions. The
+ * interpreter is also capable of handling external classes and modules, as well as virtual classes and
+ * functions.
+ *
+ * <p>During the execution of a script, the interpreter will track its global variables in a
+ * {@link VariableScope}, and report any errors or results to the configured {@link ErrorReporter} and
+ * {@link ResultCollector} respectively.
+ *
+ * <p><code>print</code> statements are handled by the configured {@link Logger}, and are not persisted
+ * in a local state.
+ *
+ * <p>Any interpreter instance can only be used <b>once</b>, and should be disposed of after use. This
+ * is to prevent scope pollution, and potential leaking of errors and results.
+ *
+ * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of statements
+ * which have been previously parsed by a {@link org.dockbox.hartshorn.hsl.parser.Parser}, and
+ * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
+public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<Void> {
 
-    private final VariableScope globals = new VariableScope();
+    private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
+    private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
+    private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
+
+    private final Map<String, NativeModule> externalModules;
+
     private final ErrorReporter errorReporter;
     private final ResultCollector resultCollector;
     private final Logger logger;
-    private final Map<String, NativeModule> externalModules;
-    private VariableScope scopes = this.globals;
-    private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
-    private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
-    private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
 
+    private VariableScope global = new VariableScope();
+    private VariableScope visitingScope = this.global;
+    private boolean isRunning = false;
+
+    @Bound
     public Interpreter(final ErrorReporter errorReporter, final ResultCollector resultCollector, final Logger logger, final Map<String, NativeModule> externalModules) {
         this.errorReporter = errorReporter;
         this.resultCollector = resultCollector;
@@ -89,8 +116,29 @@ public class Interpreter implements
         this.externalModules = new ConcurrentHashMap<>(externalModules);
     }
 
+    /**
+     * Restores the interpreter to its initial state. This is to prevent scope pollution, and potential
+     * leaking of errors and results. This does not clear the external modules and variables, nor the
+     * dynamic imports, as these can be reused safely.
+     *
+     * <p>This method should be called before starting a new runtime. This should be at least before a
+     * potential {@link org.dockbox.hartshorn.hsl.semantic.Resolver} is called, as the resolver will
+     * typically modify the {@link #locals local variable} map.
+     */
+    public void restore() {
+        this.global = new VariableScope();
+        this.visitingScope = this.global;
+        this.locals.clear();
+        this.errorReporter.clear();
+        this.resultCollector.clear();
+    }
+
     public void externalModule(final String name, final NativeModule module) {
         this.externalModules.put(name, module);
+    }
+
+    public void externalModules(final Map<String, NativeModule> externalModules) {
+        this.externalModules.putAll(externalModules);
     }
 
     public Map<String, NativeModule> externalModules() {
@@ -98,10 +146,14 @@ public class Interpreter implements
     }
 
     public Map<String, Object> global() {
-        return this.globals.values();
+        return this.global.values();
     }
 
     public void interpret(final List<Statement> statements) {
+        if (this.isRunning) {
+            throw new IllegalStateException("Cannot reuse the same interpreter instance for multiple executions");
+        }
+        this.isRunning = true;
         try {
             for (final Statement statement : statements) {
                 this.execute(statement);
@@ -109,6 +161,9 @@ public class Interpreter implements
         }
         catch (final RuntimeError error) {
             this.errorReporter.error(Phase.INTERPRETING, error.token(), error.getMessage());
+        }
+        finally {
+            this.isRunning = false;
         }
     }
 
@@ -143,7 +198,7 @@ public class Interpreter implements
                     final int value = (Character) right;
                     return (double) left + value;
                 }
-                throw new RuntimeError(expr.operator(), "UnSupported childes for Operator.\n");
+                throw new RuntimeError(expr.operator(), "Unsupported child for PLUS.\n");
             }
             case MINUS -> {
                 this.checkNumberOperands(expr.operator(), left, right);
@@ -214,7 +269,7 @@ public class Interpreter implements
             this.variableScope().assignAt(distance, name, value);
         }
         else {
-            this.globals.assign(name, value);
+            this.global.assign(name, value);
         }
         return value;
     }
@@ -222,28 +277,22 @@ public class Interpreter implements
     @Override
     public Object visit(final UnaryExpression expr) {
         final Object right = this.evaluate(expr.rightExpression());
-        switch (expr.operator().type()) {
-            case MINUS: {
+        return switch (expr.operator().type()) {
+            case MINUS -> {
                 this.checkNumberOperand(expr.operator(), right);
-                return -(double) right;
+                yield -(double) right;
             }
-            case BANG: {
-                return !this.isTruthy(right);
-            }
-            case PLUS_PLUS: {
-                if (right instanceof Double) {
-                    return (double) right + 1;
-                }
+            case PLUS_PLUS -> {
                 this.checkNumberOperand(expr.operator(), right);
+                yield (double) right + 1;
             }
-            case MINUS_MINUS: {
-                if (right instanceof Double) {
-                    return (double) right - 1;
-                }
+            case MINUS_MINUS -> {
                 this.checkNumberOperand(expr.operator(), right);
+                yield (double) right - 1;
             }
-        }
-        return null;
+            case BANG -> !this.isTruthy(right);
+            default -> null;
+        };
     }
 
     @Override
@@ -251,14 +300,20 @@ public class Interpreter implements
         final Object left = this.evaluate(expr.leftExpression());
         switch (expr.operator().type()) {
             case AND -> {
+                if (!this.isTruthy(left)) {
+                    return false;
+                }
+                // Don't evaluate right if left is not truthy
                 final Object right = this.evaluate(expr.rightExpression());
-                if (this.isTruthy(left)) return this.isTruthy(right);
-                else return false;
+                return this.isTruthy(right);
             }
             case OR -> {
+                if (this.isTruthy(left)) {
+                    return true;
+                }
+                // No need to evaluate right if left is already truthy
                 final Object right = this.evaluate(expr.rightExpression());
-                if (this.isTruthy(left)) return true;
-                else return this.isTruthy(right);
+                return this.isTruthy(right);
             }
             case XOR -> {
                 final Object right = this.evaluate(expr.rightExpression());
@@ -277,19 +332,13 @@ public class Interpreter implements
             final int iLeft = (int) (double) left;
             final int iRight = (int) (double) right;
 
-            switch (expr.operator().type()) {
-                case SHIFT_RIGHT -> {
-                    return iLeft >> iRight;
-                }
-                case SHIFT_LEFT -> {
-                    return iLeft << iRight;
-                }
-                case LOGICAL_SHIFT_RIGHT -> {
-                    return iLeft >>> iRight;
-                }
-            }
+            return switch (expr.operator().type()) {
+                case SHIFT_RIGHT -> iLeft >> iRight;
+                case SHIFT_LEFT -> iLeft << iRight;
+                case LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
+                default -> throw new RuntimeError(expr.operator(), "Unsupported bitwise operator.");
+            };
         }
-
         throw new RuntimeError(expr.operator(), "Bitwise left and right must be a Numbers");
     }
 
@@ -484,7 +533,7 @@ public class Interpreter implements
     public Void visit(final DoWhileStatement statement) {
         final VariableScope whileVariableScope = new VariableScope(this.variableScope());
         final VariableScope previous = this.variableScope();
-        this.scopes = whileVariableScope;
+        this.visitingScope = whileVariableScope;
 
         do {
             try {
@@ -496,7 +545,7 @@ public class Interpreter implements
         }
         while (this.isTruthy(this.evaluate(statement.condition())));
 
-        this.scopes = previous;
+        this.visitingScope = previous;
         return null;
     }
 
@@ -504,7 +553,7 @@ public class Interpreter implements
     public Void visit(final RepeatStatement statement) {
         final VariableScope repeatVariableScope = new VariableScope(this.variableScope());
         final VariableScope previous = this.variableScope();
-        this.scopes = repeatVariableScope;
+        this.visitingScope = repeatVariableScope;
 
         final Object value = this.evaluate(statement.value());
 
@@ -523,7 +572,7 @@ public class Interpreter implements
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
             }
         }
-        this.scopes = previous;
+        this.visitingScope = previous;
         return null;
     }
 
@@ -560,7 +609,7 @@ public class Interpreter implements
         this.variableScope().define(statement.name().lexeme(), null);
 
         if (statement.superClass() != null) {
-            this.scopes = new VariableScope(this.variableScope());
+            this.visitingScope = new VariableScope(this.variableScope());
             this.variableScope().define(TokenType.SUPER.representation(), superclass);
         }
 
@@ -576,7 +625,7 @@ public class Interpreter implements
         final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.variableScope(), methods);
 
         if (superclass != null) {
-            this.scopes = this.variableScope().enclosing();
+            this.visitingScope = this.variableScope().enclosing();
         }
 
         this.variableScope().assign(statement.name(), virtualClass);
@@ -593,7 +642,7 @@ public class Interpreter implements
     @Override
     public Void visit(final TestStatement statement) {
         final String name = statement.name().literal().toString();
-        final VariableScope variableScope = new VariableScope(this.globals);
+        final VariableScope variableScope = new VariableScope(this.global);
         this.execute(statement.body(), variableScope);
         try {
             this.execute(statement.returnValue());
@@ -612,7 +661,7 @@ public class Interpreter implements
         final NativeModule module = this.externalModules().get(moduleName);
         for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
             final HslLibrary library = new HslLibrary(supportedFunction, this.externalModules);
-            this.globals.define(supportedFunction.name().lexeme(), library);
+            this.global.define(supportedFunction.name().lexeme(), library);
         }
         return null;
     }
@@ -709,7 +758,7 @@ public class Interpreter implements
         final VariableScope previous = this.variableScope();
         try {
             // Make current scope block local and not global
-            this.scopes = localVariableScope;
+            this.visitingScope = localVariableScope;
 
             for (final Statement statement : statementList) {
                 try {
@@ -724,23 +773,23 @@ public class Interpreter implements
         }
         finally {
             // 'Pop' scope from stack
-            this.scopes = previous;
+            this.visitingScope = previous;
         }
     }
 
     private Object lookUpVariable(final Token name, final Expression expr) {
         if (name.type() == TokenType.THIS) {
-            return this.scopes.getAt(1, name.lexeme());
+            return this.visitingScope.getAt(1, name.lexeme());
         }
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
             // Find variable value in locales score
-            return this.scopes.getAt(distance, name.lexeme());
+            return this.visitingScope.getAt(distance, name.lexeme());
         }
-        else if (this.globals.contains(name.lexeme())) {
+        else if (this.global.contains(name.lexeme())) {
             // Can't find distance in locales, so it must be global variable
-            return this.globals.get(name);
+            return this.global.get(name);
         }
         else if (this.externalVariables.containsKey(name.lexeme())) {
             return this.externalVariables.get(name.lexeme());
@@ -758,7 +807,7 @@ public class Interpreter implements
     }
 
     public VariableScope variableScope() {
-        return this.scopes;
+        return this.visitingScope;
     }
 
     public void global(final Map<String, Object> globalVariables) {
