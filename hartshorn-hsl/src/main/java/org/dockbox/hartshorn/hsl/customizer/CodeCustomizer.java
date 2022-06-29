@@ -1,22 +1,25 @@
 package org.dockbox.hartshorn.hsl.customizer;
 
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.lexer.HslLexer;
-import org.dockbox.hartshorn.hsl.parser.Parser;
-import org.dockbox.hartshorn.hsl.semantic.Resolver;
-import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 
-import java.util.List;
-import java.util.Map;
-
+/**
+ * Code customizers run during a specific {@link Phase phase} of a script's execution.
+ * During the customization, the customizer can modify the script runtime's behavior,
+ * either by modifying the script's AST or by modifying the various executors for each
+ * phase.
+ */
 public interface CodeCustomizer {
-    String tokenizing(String source, HslLexer lexer);
 
-    List<Token> parsing(List<Token> source, Parser parser);
+    /**
+     * The phase of the script's execution during which the customizer should be run.
+     * @return the phase of the script's execution during which the customizer should be run.
+     */
+    Phase phase();
 
-    List<Statement> resolving(List<Statement> statements, Resolver resolver, Map<String, NativeModule> modules);
+    /**
+     * Customize the script runtime's behavior during the given phase.
+     * @param context the script context.
+     */
+    void call(ScriptContext context);
 
-    List<Statement> interpreting(List<Statement> statements, Interpreter interpreter);
 }

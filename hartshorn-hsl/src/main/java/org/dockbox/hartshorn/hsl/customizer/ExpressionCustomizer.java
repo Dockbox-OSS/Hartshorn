@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
-import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 
@@ -14,15 +14,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Customizer to simplify the validation of standalone expressions. This customizer is used by the
+ * {@link org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime} to wrap the script body in
+ * a {@link TestStatement} and inline any required {@link NativeModule}s without the need for a
+ * standard library or a module header.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     public static final String VALIDATION_ID = "$__validation__$";
 
+    public ExpressionCustomizer() {
+        super(Phase.RESOLVING);
+    }
+
     @Override
-    public List<Statement> resolving(final List<Statement> statements, final Resolver resolver, final Map<String, NativeModule> modules) {
+    public void call(final ScriptContext context) {
+        final List<Statement> statements = context.statements();
         this.verifyIsExpression(statements);
         final List<Statement> testStatements = this.enhanceTestStatement(statements);
-        return this.enhanceModuleStatements(testStatements, modules);
+        final List<Statement> enhancedStatements = this.enhanceModuleStatements(testStatements, context.interpreter().externalModules());
+        context.statements(enhancedStatements);
     }
 
     private void verifyIsExpression(final List<Statement> statements) {
