@@ -34,6 +34,10 @@ public final class ConditionResult {
         return this.message;
     }
 
+    public static ConditionResult of(final boolean matched) {
+        return new ConditionResult(matched, null);
+    }
+
     public static ConditionResult matched() {
         return new ConditionResult(true, null);
     }

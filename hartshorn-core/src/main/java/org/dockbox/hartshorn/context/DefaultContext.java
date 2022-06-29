@@ -38,6 +38,7 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <C extends Context> void add(final C context) {
+        if (context instanceof NamedContext named) this.add(named);
         if (context != null) this.contexts.add(context);
     }
 
