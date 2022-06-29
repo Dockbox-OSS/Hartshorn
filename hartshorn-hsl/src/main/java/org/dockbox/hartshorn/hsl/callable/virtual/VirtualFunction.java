@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.hsl.callable.virtual;
 
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
-import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
+import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.Return;
@@ -10,7 +10,15 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 
 import java.util.List;
 
-public class VirtualFunction extends ArityCheckingCallableNode {
+/**
+ * Represents a function definition inside a script. The function is identified by its name, and
+ * parameters. The function can carry a variety of additional information such as the body, and
+ * its body.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
+public class VirtualFunction implements CallableNode {
 
     public static final String CLASS_INIT = "init";
     private final FunctionStatement declaration;
@@ -24,6 +32,12 @@ public class VirtualFunction extends ArityCheckingCallableNode {
         this.isInitializer = isInitializer;
     }
 
+    /**
+     * Creates a new {@link VirtualFunction} bound to the given instance. This will cause
+     * the function to use the given instance when invoking.
+     * @param instance The instance to bind to.
+     * @return A new {@link VirtualFunction} bound to the given instance.
+     */
     public VirtualFunction bind(final VirtualInstance instance) {
         final VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(TokenType.THIS.representation(), instance);

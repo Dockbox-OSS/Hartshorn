@@ -1,6 +1,7 @@
 package org.dockbox.hartshorn.hsl.callable.virtual;
 
-import org.dockbox.hartshorn.hsl.callable.ArityCheckingCallableNode;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -8,7 +9,15 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.List;
 import java.util.Map;
 
-public class VirtualClass extends ArityCheckingCallableNode {
+/**
+ * Represents a class definition inside a script. The class is identified by its name, and
+ * can carry a variety of additional information such as the superclass, methods, and an
+ * optional superclass.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
+public class VirtualClass implements CallableNode {
 
     private final String name;
     private final VirtualClass superClass;
@@ -22,22 +31,45 @@ public class VirtualClass extends ArityCheckingCallableNode {
         this.variableScope = variableScope;
     }
 
+    /**
+     * Gets the name of the class.
+     * @return The name of the class.
+     */
     public String name() {
         return this.name;
     }
 
+    /**
+     * Gets the superclass of the class.
+     * @return The superclass of the class.
+     */
+    @Nullable
     public VirtualClass superClass() {
         return this.superClass;
     }
 
+    /**
+     * Gets all methods of the class.
+     * @return All methods of the class.
+     */
     public Map<String, VirtualFunction> methods() {
         return this.methods;
     }
 
+    /**
+     * Adds a method to the class.
+     * @param name The name of the method.
+     * @param function The function to add.
+     */
     public void addMethod(final String name, final VirtualFunction function) {
         this.methods.put(name, function);
     }
 
+    /**
+     * Looks up a method by name. If no method is found, {@code null} is returned.
+     * @param name The name of the method.
+     * @return The method, or {@code null} if no method is found.
+     */
     public VirtualFunction findMethod(final String name) {
         if (this.methods.containsKey(name)) {
             return this.methods.get(name);
@@ -49,6 +81,10 @@ public class VirtualClass extends ArityCheckingCallableNode {
         return null;
     }
 
+    /**
+     * Gets the variable scope of the class.
+     * @return The variable scope of the class.
+     */
     public VariableScope variableScope() {
         return this.variableScope;
     }

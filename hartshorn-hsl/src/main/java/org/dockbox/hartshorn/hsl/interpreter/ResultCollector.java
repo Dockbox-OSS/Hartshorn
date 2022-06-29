@@ -10,4 +10,6 @@ public interface ResultCollector {
     <T> Result<T> result();
 
     <T> Result<T> result(String id);
+
+    void clear();
 }

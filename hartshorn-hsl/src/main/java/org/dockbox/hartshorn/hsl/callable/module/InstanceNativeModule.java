@@ -2,6 +2,13 @@ package org.dockbox.hartshorn.hsl.callable.module;
 
 import java.util.Objects;
 
+/**
+ * Implementation of {@link AbstractNativeModule} which provides the instance of the module
+ * based on a predefined instance.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class InstanceNativeModule extends AbstractNativeModule {
 
     private final Class<?> moduleClass;

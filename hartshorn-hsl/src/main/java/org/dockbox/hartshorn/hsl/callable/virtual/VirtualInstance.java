@@ -7,6 +7,14 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents an instance of a {@link VirtualClass} inside a script. The instance is
+ * identified by its {@link VirtualClass type}. The instance can carry a variety of
+ * properties, which are not bound to a specific contract.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class VirtualInstance implements PropertyContainer {
 
     private final VirtualClass virtualClass;
@@ -16,6 +24,10 @@ public class VirtualInstance implements PropertyContainer {
         this.virtualClass = virtualClass;
     }
 
+    /**
+     * Gets the {@link VirtualClass} type of the instance.
+     * @return The {@link VirtualClass} type of the instance.
+     */
     public VirtualClass virtualClass() {
         return this.virtualClass;
     }
