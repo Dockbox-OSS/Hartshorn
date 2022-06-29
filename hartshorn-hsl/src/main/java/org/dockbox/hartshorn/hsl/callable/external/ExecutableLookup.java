@@ -10,8 +10,28 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import java.lang.reflect.Executable;
 import java.util.List;
 
+/**
+ * Utility class to lookup an executable by name and a list of arguments. The lookup may either use
+ * a predefined list of executables, or by matching methods with the given name and argument types.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class ExecutableLookup {
 
+    /**
+     * Lookup a method by name and a list of arguments. This will first try to get all methods of
+     * the declaring type, and filter them based on the given name. If the list of arguments is
+     * empty, the method will be looked up without arguments. If the list of arguments is not empty,
+     * the method will be looked up with the given arguments through {@link #executable(List, List)}.
+     *
+     * @param at The token at which the lookup is performed. This is used for error reporting.
+     * @param declaring The declaring type of the method.
+     * @param function The name of the method.
+     * @param arguments The list of arguments.
+     * @return The found executable.
+     * @param <T> The type of the declaring type.
+     */
     public static <T> MethodContext<?, T> method(final Token at, final TypeContext<T> declaring, final String function, List<Object> arguments) {
         final Result<MethodContext<?, T>> zeroParameterMethod = declaring.method(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
@@ -31,6 +51,18 @@ public class ExecutableLookup {
         throw new RuntimeError(at, "Method '" + function + "' with parameters accepting " + arguments + " does not exist on external instance of type " + declaring.name());
     }
 
+    /**
+     * Lookup an executable based on a list of arguments. This will filter the list of executables based on
+     * the number of arguments. If the amount of parameters matches the amount of arguments, the parameter
+     * types are checked against the argument types. If the arguments are compatible, the executable is returned.
+     *
+     * @param executables The list of executables.
+     * @param arguments The list of arguments.
+     * @return The found executable.
+     * @param <A> The type of the executable.
+     * @param <P> The type of the declaring parent of the executable.
+     * @param <T> The context type representing the executable.
+     */
     public static <A extends Executable, P, T extends ExecutableElementContext<A, P>> T executable(final List<T> executables, final List<Object> arguments) {
         for (final T executable : executables) {
             boolean pass = true;
