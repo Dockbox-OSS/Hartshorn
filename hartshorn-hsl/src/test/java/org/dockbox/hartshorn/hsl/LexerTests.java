@@ -105,11 +105,14 @@ public class LexerTests {
     void testCorrectToken(final String text, final TokenType expected) {
         final Lexer lexer = new Lexer(text, this.errorReporter());
         final List<Token> tokens = lexer.scanTokens();
+
         Assertions.assertNotNull(tokens);
         Assertions.assertEquals(2, tokens.size());
+
         final Token token = tokens.get(0);
         Assertions.assertEquals(expected, token.type());
         Assertions.assertEquals(1, token.line());
+
         final Token eof = tokens.get(1);
         Assertions.assertEquals(TokenType.EOF, eof.type());
     }
