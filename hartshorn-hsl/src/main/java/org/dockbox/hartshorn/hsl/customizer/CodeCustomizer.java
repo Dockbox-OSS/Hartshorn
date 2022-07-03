@@ -7,6 +7,9 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
  * During the customization, the customizer can modify the script runtime's behavior,
  * either by modifying the script's AST or by modifying the various executors for each
  * phase.
+ *
+ * @author Guus Lieben
+ * @since 22.4
  */
 public interface CodeCustomizer {
 

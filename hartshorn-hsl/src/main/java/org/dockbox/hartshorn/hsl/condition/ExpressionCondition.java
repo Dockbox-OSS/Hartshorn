@@ -7,6 +7,23 @@ import org.dockbox.hartshorn.component.condition.ConditionResult;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
+/**
+ * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
+ * is obtained from the {@link org.dockbox.hartshorn.util.reflect.AnnotatedElementContext} provided through the
+ * {@link ConditionContext} for the condition.
+ *
+ * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the active
+ * {@link ValidateExpressionRuntime}.
+ *
+ * <p>The runtime is always enhanced with the active {@link ApplicationContext}, under the global alias configured
+ * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}. If the {@link ConditionContext} contains a {@link ExpressionConditionContext}
+ * all configured customizers, imports, variables, and modules are made available to the runtime automatically. Other
+ * variables should not use the {@link #GLOBAL_APPLICATION_CONTEXT_NAME} alias, unless the instance is the same as the
+ * active {@link ApplicationContext}. If a conflict arises a warning is logged, but the runtime will proceed as usual.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class ExpressionCondition implements Condition {
 
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
