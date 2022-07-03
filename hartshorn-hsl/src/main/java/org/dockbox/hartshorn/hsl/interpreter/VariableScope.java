@@ -38,10 +38,6 @@ public class VariableScope {
         this.valuesMap.put(name, value);
     }
 
-    public boolean contains(final String name) {
-        return this.valuesMap.containsKey(name);
-    }
-
     public void assign(final Token name, final Object value) {
         if (this.valuesMap.containsKey(name.lexeme())) {
             this.valuesMap.put(name.lexeme(), value);
@@ -56,19 +52,28 @@ public class VariableScope {
     }
 
     void assignAt(final int distance, final Token name, final Object value) {
-        this.ancestor(distance).valuesMap.put(name.lexeme(), value);
+        this.ancestor(name, distance).valuesMap.put(name.lexeme(), value);
+    }
+    public boolean contains(final String name) {
+        return this.valuesMap.containsKey(name);
     }
 
-    public Object getAt(final int distance, final String name) {
-        return this.ancestor(distance).valuesMap.get(name);
+    public Object getAt(final Token at, final int distance, final String name) {
+        return this.ancestor(at, distance).valuesMap.get(name);
     }
 
-    VariableScope ancestor(final int distance) {
+    public Object getAt(final Token name, final int distance) {
+        return this.getAt(name, distance, name.lexeme());
+    }
+
+    VariableScope ancestor(final Token name, final int distance) {
         VariableScope variableScope = this;
         for (int i = 0; i < distance; i++) {
             variableScope = variableScope.enclosing;
+            if (variableScope == null) {
+                throw new RuntimeError(name, "No enclosing scope at distance %s for active scope.".formatted(distance));
+            }
         }
-
         return variableScope;
     }
 

@@ -54,10 +54,10 @@ public class VirtualFunction implements CallableNode {
             interpreter.execute(this.declaration.functionBody(), variableScope);
         }
         catch (final Return returnValue) {
-            if (this.isInitializer) return this.closure.getAt(0, TokenType.THIS.representation());
+            if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
             return returnValue.value();
         }
-        if (this.isInitializer) return this.closure.getAt(0, TokenType.THIS.representation());
+        if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
         return null;
     }
 }

@@ -489,8 +489,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final SuperExpression expr) {
         final int distance = this.locals.get(expr);
-        final VirtualClass superclass = (VirtualClass) this.variableScope().getAt(distance, TokenType.SUPER.representation());
-        final VirtualInstance object = (VirtualInstance) this.variableScope().getAt(distance - 1, TokenType.THIS.representation());
+        final VirtualClass superclass = (VirtualClass) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
+        final VirtualInstance object = (VirtualInstance) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
         final VirtualFunction method = superclass.findMethod(expr.method().lexeme());
 
         if (method == null) {
@@ -795,13 +795,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     private Object lookUpVariable(final Token name, final Expression expr) {
         if (name.type() == TokenType.THIS) {
-            return this.visitingScope.getAt(1, name.lexeme());
+            return this.visitingScope.getAt(name, 1);
         }
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
             // Find variable value in locales score
-            return this.visitingScope.getAt(distance, name.lexeme());
+            return this.visitingScope.getAt(name, distance);
         }
         else if (this.global.contains(name.lexeme())) {
             // Can't find distance in locales, so it must be global variable
