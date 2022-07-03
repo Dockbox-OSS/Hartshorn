@@ -137,6 +137,22 @@ public class Lexer {
                     this.addToken(TokenType.SLASH);
                 }
                 break;
+            case TokenConstants.AMPERSAND:
+                this.addToken(this.match(TokenConstants.AMPERSAND)
+                        ? TokenType.AND
+                        : TokenType.BITWISE_AND);
+                break;
+            case TokenConstants.PIPE:
+                this.addToken(this.match(TokenConstants.PIPE)
+                        ? TokenType.OR
+                        : TokenType.BITWISE_OR);
+                break;
+            case TokenConstants.CARET:
+                this.addToken(TokenType.XOR);
+                break;
+            case TokenConstants.TILDE:
+                this.addToken(TokenType.COMPLEMENT);
+                break;
             case TokenConstants.HASH:
                 this.scanComment();
                 break;

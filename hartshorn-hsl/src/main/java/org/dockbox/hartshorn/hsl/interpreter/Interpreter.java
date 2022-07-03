@@ -291,6 +291,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 yield (double) right - 1;
             }
             case BANG -> !this.isTruthy(right);
+            case COMPLEMENT -> {
+                this.checkNumberOperand(expr.operator(), right);
+                yield ~((Double) right).intValue();
+            }
             default -> null;
         };
     }
@@ -317,10 +321,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
             case XOR -> {
                 final Object right = this.evaluate(expr.rightExpression());
-                return this.isTruthy(left) ^ this.isTruthy(right);
+                return this.xor(left, right);
             }
+            default -> throw new RuntimeError(expr.operator(), "Unsupported logical operator.");
         }
-        return false;
     }
 
     @Override
@@ -336,10 +340,22 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 case SHIFT_RIGHT -> iLeft >> iRight;
                 case SHIFT_LEFT -> iLeft << iRight;
                 case LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
+                case BITWISE_AND -> iLeft & iRight;
+                case BITWISE_OR -> iLeft | iRight;
+                case XOR -> this.xor(iLeft, iRight);
                 default -> throw new RuntimeError(expr.operator(), "Unsupported bitwise operator.");
             };
         }
         throw new RuntimeError(expr.operator(), "Bitwise left and right must be a Numbers");
+    }
+
+    private Object xor(final Object left, final Object right) {
+        if (left instanceof Number && right instanceof Number) {
+            final int iLeft = (int) (double) left;
+            final int iRight = (int) (double) right;
+            return iLeft ^ iRight;
+        }
+        return this.isTruthy(left) ^ this.isTruthy(right);
     }
 
     @Override

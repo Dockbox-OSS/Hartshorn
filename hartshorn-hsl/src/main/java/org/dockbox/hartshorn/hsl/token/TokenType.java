@@ -28,6 +28,10 @@ public enum TokenType {
     LESS(TokenConstants.LESS),
     QUESTION_MARK(TokenConstants.QUESTION_MARK),
     COLON(TokenConstants.COLON),
+    XOR(TokenConstants.CARET),
+    BITWISE_AND(TokenConstants.AMPERSAND),
+    BITWISE_OR(TokenConstants.PIPE),
+    COMPLEMENT(TokenConstants.TILDE),
 
     // Two character tokens combining single character tokens
     ELVIS(builder -> builder.combines(QUESTION_MARK, COLON).ok()),
@@ -40,8 +44,10 @@ public enum TokenType {
     SHIFT_RIGHT(builder -> builder.repeats(GREATER).ok()),
     SHIFT_LEFT(builder -> builder.repeats(LESS).ok()),
     LOGICAL_SHIFT_RIGHT(builder -> builder.combines(GREATER, GREATER, GREATER).ok()),
+    AND(builder -> builder.repeats(BITWISE_AND).ok()),
+    OR(builder -> builder.repeats(BITWISE_OR).ok()),
 
-    // Keywords
+    // Keywords,
     PREFIX(builder -> builder.keyword(true).ok()),
     INFIX(builder -> builder.keyword(true).ok()),
     CLASS(builder -> builder.keyword(true).ok()),
@@ -51,9 +57,6 @@ public enum TokenType {
     TRUE(builder -> builder.keyword(true).ok()),
     FALSE(builder -> builder.keyword(true).ok()),
     FOR(builder -> builder.keyword(true).ok()),
-    OR(builder -> builder.keyword(true).ok()),
-    AND(builder -> builder.keyword(true).ok()),
-    XOR(builder -> builder.keyword(true).ok()),
     SUPER(builder -> builder.keyword(true).ok()),
     THIS(builder -> builder.keyword(true).ok()),
     VAR(builder -> builder.keyword(true).ok()),

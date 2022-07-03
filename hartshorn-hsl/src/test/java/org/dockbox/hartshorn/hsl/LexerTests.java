@@ -30,7 +30,6 @@ public class LexerTests {
             TokenType.TRUE, TokenType.FALSE,
             TokenType.FOR, TokenType.DO, TokenType.WHILE, TokenType.REPEAT,
             TokenType.BREAK, TokenType.CONTINUE,
-            TokenType.OR, TokenType.AND, TokenType.XOR,
             TokenType.SUPER, TokenType.THIS,
             TokenType.NULL, TokenType.ARRAY,
             TokenType.VAR, TokenType.MODULE,

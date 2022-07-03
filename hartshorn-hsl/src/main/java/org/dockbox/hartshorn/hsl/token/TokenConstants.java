@@ -24,4 +24,8 @@ public class TokenConstants {
     public static final char QUOTE = '"';
     public static final char SPACE = ' ';
     public static final char SINGLE_QUOTE = '\'';
+    public static final char AMPERSAND = '&';
+    public static final char PIPE = '|';
+    public static final char CARET = '^';
+    public static final char TILDE = '~';
 }

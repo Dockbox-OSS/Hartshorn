@@ -9,6 +9,7 @@ import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
+import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
@@ -50,6 +51,17 @@ public class ScriptRuntimeTests {
         return Arrays.stream(Phase.values()).map(Arguments::of);
     }
 
+    public static Stream<Arguments> bitwise() {
+        return Stream.of(
+                Arguments.of(TokenType.BITWISE_OR, 5, 7, 5 | 7),
+                Arguments.of(TokenType.BITWISE_AND, 5, 7, 5 & 7),
+                Arguments.of(TokenType.XOR, 5, 7, 5 ^ 7),
+                Arguments.of(TokenType.SHIFT_LEFT, 5, 7, 5 << 7),
+                Arguments.of(TokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
+                Arguments.of(TokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("scripts")
     void testPredefinedScript(final String content) {
@@ -85,7 +97,7 @@ public class ScriptRuntimeTests {
     @Test
     void testComplexExpression() {
         final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
-        final String expression = "1 + 3 == 4 and 2 + 2 == 4 and 2 - 2 == 0";
+        final String expression = "1 + 3 == 4 && 2 + 2 == 4 && 2 - 2 == 0";
         final ScriptContext context = runtime.run(expression);
 
         Assertions.assertTrue(context.errors().isEmpty());
@@ -109,7 +121,7 @@ public class ScriptRuntimeTests {
     void testExpressionWithGlobalFunctionAccess() {
         final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
         runtime.global("context", this.applicationContext);
-        final String expression = "context != null and context.log() != null";
+        final String expression = "context != null && context.log() != null";
         final ScriptContext context = runtime.run(expression);
 
         Assertions.assertTrue(context.errors().isEmpty());
@@ -208,5 +220,43 @@ public class ScriptRuntimeTests {
 
         runtime.run(expression);
         Assertions.assertTrue(called.get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("bitwise")
+    void testBitwiseOperator(final TokenType token, final int left, final int right, final int expected) {
+        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
+        final String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
+        final ScriptContext context = runtime.run(expression);
+
+        Assertions.assertTrue(context.errors().isEmpty());
+        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+
+        final Object result = context.interpreter().global().get("result");
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testNegativeNumbers() {
+        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
+        final String expression = "-1 == -1";
+        final ScriptContext context = runtime.run(expression);
+
+        Assertions.assertTrue(context.errors().isEmpty());
+        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+    }
+
+    @Test
+    void testComplement() {
+        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
+        final int expected = ~35; // -36
+        final String expression = "~35 == %s".formatted(expected);
+        final ScriptContext context = runtime.run(expression);
+
+        Assertions.assertTrue(context.errors().isEmpty());
+        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
     }
 }

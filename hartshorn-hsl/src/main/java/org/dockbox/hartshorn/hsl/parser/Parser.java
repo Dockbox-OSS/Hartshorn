@@ -45,12 +45,14 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.util.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public class Parser {
 
@@ -424,61 +426,34 @@ public class Parser {
         return expr;
     }
 
-    private Expression bitwise() {
-        Expression expr = this.or();
-
-        while (this.match(TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT, TokenType.LOGICAL_SHIFT_RIGHT)) {
+    private Expression logicalOrBitwise(final Supplier<Expression> next, final TriFunction<Expression, Token, Expression, Expression> step, final TokenType... whileMatching) {
+        Expression expression = next.get();
+        while(this.match(whileMatching)) {
             final Token operator = this.previous();
-            final Expression right = this.xor();
-            expr = new BitwiseExpression(expr, operator, right);
+            final Expression right = next.get();
+            expression = step.accept(expression, operator, right);
         }
+        return expression;
+    }
 
-        return expr;
+    private Expression bitwise() {
+        return this.logicalOrBitwise(this::or, BitwiseExpression::new, TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT, TokenType.LOGICAL_SHIFT_RIGHT, TokenType.BITWISE_OR, TokenType.BITWISE_AND);
     }
 
     private Expression or() {
-        Expression expr = this.xor();
-
-        while (this.match(TokenType.OR)) {
-            final Token operator = this.previous();
-            final Expression right = this.xor();
-            expr = new LogicalExpression(expr, operator, right);
-        }
-
-        return expr;
+        return this.logicalOrBitwise(this::xor, LogicalExpression::new, TokenType.OR);
     }
 
     private Expression xor() {
-        Expression expr = this.and();
-
-        while (this.match(TokenType.XOR)) {
-            final Token operator = this.previous();
-            final Expression right = this.and();
-            expr = new LogicalExpression(expr, operator, right);
-        }
-        return expr;
+        return this.logicalOrBitwise(this::and, LogicalExpression::new, TokenType.XOR);
     }
 
     private Expression and() {
-        Expression expr = this.equality();
-
-        while (this.match(TokenType.AND)) {
-            final Token operator = this.previous();
-            final Expression right = this.equality();
-            expr = new LogicalExpression(expr, operator, right);
-        }
-        return expr;
+        return this.logicalOrBitwise(this::equality, LogicalExpression::new, TokenType.AND);
     }
 
     private Expression equality() {
-        Expression expr = this.parsePrefixFunctionCall();
-
-        while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
-            final Token operator = this.previous();
-            final Expression right = this.parsePrefixFunctionCall();
-            expr = new BinaryExpression(expr, operator, right);
-        }
-        return expr;
+        return this.logicalOrBitwise(this::parsePrefixFunctionCall, BinaryExpression::new, TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL);
     }
 
     private boolean match(final TokenType... types) {
@@ -569,7 +544,7 @@ public class Parser {
     }
 
     private Expression unary() {
-        if (this.match(TokenType.BANG, TokenType.MINUS, TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
+        if (this.match(TokenType.BANG, TokenType.MINUS, TokenType.PLUS_PLUS, TokenType.MINUS_MINUS, TokenType.COMPLEMENT)) {
             final Token operator = this.previous();
             final Expression right = this.unary();
             return new UnaryExpression(operator, right);
