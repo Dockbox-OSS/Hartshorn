@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.util.Result;
  * @author Guus Lieben
  * @since 21.4
  */
-@FunctionalInterface
 public interface Provider<T> {
 
     /**
@@ -39,5 +38,6 @@ public interface Provider<T> {
      * @param context The {@link ApplicationContext} to use.
      * @return The instance, if it can be created.
      */
-    Result<T> provide(ApplicationContext context);
+    Result<ObjectContainer<T>> provide(ApplicationContext context);
+
 }

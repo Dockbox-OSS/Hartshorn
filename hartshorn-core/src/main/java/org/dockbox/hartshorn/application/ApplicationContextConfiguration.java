@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -28,7 +29,6 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -54,10 +54,10 @@ public class ApplicationContextConfiguration {
     protected Initializer<PrefixContext> prefixContext;
     protected Initializer<ActivatorHolder> activatorHolder;
     protected Initializer<ConditionMatcher> conditionMatcher;
+    protected Initializer<ApplicationManager> manager;
 
     protected TypeContext<?> activator;
 
-    protected final Set<InjectConfiguration> injectConfigurations = ConcurrentHashMap.newKeySet();
     protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
     protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
     protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
@@ -124,12 +124,12 @@ public class ApplicationContextConfiguration {
         return this.activatorHolder.initialize(context);
     }
 
-    public TypeContext<?> activator() {
-        return this.activator;
+    public ApplicationManager manager(final InitializingContext context) {
+        return this.manager.initialize(context);
     }
 
-    public Set<InjectConfiguration> injectConfigurations() {
-        return this.injectConfigurations;
+    public TypeContext<?> activator() {
+        return this.activator;
     }
 
     public Set<Annotation> serviceActivators() {

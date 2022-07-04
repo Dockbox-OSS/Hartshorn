@@ -32,11 +32,7 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
 
     @Override
     public <T> T get(final Key<T> key) {
-        final Object object = this.cache.get(key);
-        if (object == null) {
-            return null;
-        }
-        return (T) object;
+        return (T) this.cache.get(key);
     }
 
     @Override

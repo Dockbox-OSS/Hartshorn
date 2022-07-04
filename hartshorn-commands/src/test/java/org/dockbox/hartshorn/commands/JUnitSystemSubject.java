@@ -16,15 +16,23 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 
-@ComponentBinding(value = SystemSubject.class, priority = 0)
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class JUnitSystemSubject extends SystemSubject {
+
+    private final List<Message> received = new ArrayList<>();
 
     @Override
     public void send(final Message text) {
-        // TODO: Test implementation, mocking client?
-        throw new UnsupportedOperationException("Not implemented yet");
+        this.received.add(text);
+    }
+
+    public List<Message> received() {
+        return this.received;
     }
 }

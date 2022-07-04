@@ -210,7 +210,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public static <T> TypeContext<T> of(final Type type) {
         if (type instanceof Class<?>) return of((Class<T>) type);
-        if (type instanceof ParameterizedType parameterizedType) return of((ParameterizedType) type);
+        if (type instanceof ParameterizedType parameterizedType) return of(parameterizedType);
         throw new RuntimeException("Unexpected type " + type);
     }
 
@@ -364,7 +364,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return Arrays.stream(arguments)
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
-                    if (type instanceof Class clazz) return TypeContext.of(clazz);
+                    if (type instanceof Class<?> clazz) return TypeContext.of(clazz);
                     else if (type instanceof WildcardType wildcard) {
                         if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
                             return TypeContext.of(wildcard.getUpperBounds()[0]);
@@ -525,7 +525,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 .filter(constructor -> {
                     final List<? extends Class<?>> parameters = constructor.parameterTypes().stream()
                             .map(TypeContext::type)
-                            .collect(Collectors.toList());
+                            .toList();
                     return parameters.equals(parameterTypes);
                 })
                 .findFirst());
@@ -534,7 +534,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public List<ConstructorContext<T>> constructors(final Class<? extends Annotation> annotation) {
         return this.constructors().stream()
                 .filter(constructor -> constructor.annotation(annotation).present())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<ConstructorContext<T>> boundConstructors() {
@@ -579,7 +579,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public static <T> T toPrimitive(TypeContext<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
-            return (T) Enum.valueOf((Class<? extends Enum>) type.type(), String.valueOf(value).toUpperCase());
+            final String name = String.valueOf(value).toUpperCase();
+            return (T) Enum.valueOf((Class<? extends Enum>) type.type(), name);
         }
         else {
             if (!type.isPrimitive()) {

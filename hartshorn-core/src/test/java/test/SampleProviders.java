@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.binding;
+package test;
 
-import org.dockbox.hartshorn.application.Activator;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Provider;
 
-/**
- * Used by {@link Activator} to add default
- * {@link InjectConfiguration}s to the application instance.
- *
- * @author Guus Lieben
- * @since 21.2
- */
-public @interface InjectConfig {
+import test.types.SampleInterface;
+import test.types.SampleMetaAnnotatedImplementation;
 
-    /**
-     * The {@link InjectConfiguration} to add to the application instance.
-     * @return The {@link InjectConfiguration} to add to the application instance.
-     */
-    Class<? extends InjectConfiguration> value();
+@Service
+public class SampleProviders {
+
+    @Provider("meta")
+    public SampleInterface sampleInterface = new SampleMetaAnnotatedImplementation();
+
 }

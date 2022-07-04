@@ -14,16 +14,34 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.binding;
+package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.inject.Key;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
-public interface DelegatedBinder extends Binder {
+public class LongCycles {
 
-    Binder binder();
+    @Singleton
+    public static class LongCycleA {
+        @Inject
+        public LongCycleA(final LongCycleB b) {}
+    }
 
-    @Override
-    default <C> BindingFunction<C> bind(final Key<C> key) {
-        return this.binder().bind(key);
+    @Singleton
+    public static class LongCycleB {
+        @Inject
+        public LongCycleB(final LongCycleC c) {}
+    }
+
+    @Singleton
+    public static class LongCycleC {
+        @Inject
+        public LongCycleC(final LongCycleD d) {}
+    }
+
+    @Singleton
+    public static class LongCycleD {
+        @Inject
+        public LongCycleD(final LongCycleA a) {}
     }
 }

@@ -18,19 +18,37 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.config.StandardPropertyHolder;
+import org.dockbox.hartshorn.data.config.StandardURIConfigProcessor;
+import org.dockbox.hartshorn.data.config.URIConfigProcessor;
+import org.dockbox.hartshorn.data.service.ConfigurationObjectPostProcessor;
 
 @Service
 @RequiresActivator(UseConfigurations.class)
 @Configuration({"application", "classpath:application"})
 public class ConfigurationProviders {
 
-    @Provider
+    /**
+     * Registers the default implementation of the property holder before any other (standard)
+     * provider except the {@link org.dockbox.hartshorn.data.mapping.ObjectMapper}, to allow
+     * it to be used directly in the {@link ConfigurationObjectPostProcessor} for other provided
+     * components. The {@link org.dockbox.hartshorn.data.mapping.ObjectMapper} should be bound
+     * first, as this is typically used internally be the property holder.
+     *
+     * @return {@link StandardPropertyHolder}
+     */
+    @Provider(phase = ProcessingOrder.EARLY)
     public Class<? extends PropertyHolder> propertyHolder() {
         return StandardPropertyHolder.class;
+    }
+
+    @Provider(phase = ProcessingOrder.EARLY)
+    public URIConfigProcessor uriConfigProcessor() {
+        return new StandardURIConfigProcessor();
     }
 }

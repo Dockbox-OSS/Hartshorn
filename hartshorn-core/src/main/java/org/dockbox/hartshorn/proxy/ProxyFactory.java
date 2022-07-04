@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeMap;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -186,19 +186,10 @@ import java.util.Set;
  * @author Guus Lieben
  * @since 22.2
  */
-public interface ProxyFactory<T, F extends ProxyFactory<T, F>> {
+public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends ModifiableProxyManager<T, F> {
 
     /**
-     * Delegates all methods defined by the active {@link #type()} to the given delegate instance.
-     * This targets an original instance, not the backing implementation.
-     *
-     * @param delegate The delegate instance
-     * @return This factory
-     */
-    F delegate(T delegate);
-
-    /**
-     * Delegates all abstract methods defined by the active {@link #type()} to the given delegate
+     * Delegates all abstract methods defined by the active type to the given delegate
      * instance. This targets a backing implementation, not the original instance. Unlike {@link #delegate(Object)}
      * this will only delegate methods that do not already have a concrete implementation.
      *

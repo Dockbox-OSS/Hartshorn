@@ -27,6 +27,10 @@ import org.dockbox.hartshorn.core.types.CircularDependencyA;
 import org.dockbox.hartshorn.core.types.CircularDependencyB;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
+import org.dockbox.hartshorn.core.types.LongCycles.LongCycleA;
+import org.dockbox.hartshorn.core.types.LongCycles.LongCycleB;
+import org.dockbox.hartshorn.core.types.LongCycles.LongCycleC;
+import org.dockbox.hartshorn.core.types.LongCycles.LongCycleD;
 import org.dockbox.hartshorn.core.types.NonComponentType;
 import org.dockbox.hartshorn.core.types.NonProcessableType;
 import org.dockbox.hartshorn.core.types.NonProcessableTypeProcessor;
@@ -39,6 +43,7 @@ import org.dockbox.hartshorn.core.types.SetterInjectedComponentWithNonRequiredAb
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
+import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
@@ -55,14 +60,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
-
+import test.SampleProviders;
 import test.types.FieldProviderService;
 import test.types.PopulatedType;
 import test.types.ProvidedInterface;
-import test.types.SampleAnnotatedImplementation;
 import test.types.SampleField;
 import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
@@ -182,19 +187,7 @@ public class ApplicationContextTests {
     }
 
     @Test
-    @TestComponents(SampleAnnotatedImplementation.class)
-    public void testScannedBindingCanBeProvided() {
-        final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleAnnotatedImplementation.class, providedClass);
-
-        Assertions.assertEquals("AnnotatedHartshorn", provided.name());
-    }
-
-    @Test
-    @TestComponents(SampleMetaAnnotatedImplementation.class)
+    @TestComponents(SampleProviders.class)
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
@@ -216,18 +209,6 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(instance);
         Assertions.assertNotNull(instance.singletonEnableable());
         Assertions.assertEquals(1, instance.singletonEnableable().enabled());
-    }
-
-    @Test
-    public void testConfigBindingCanBeProvided() {
-        this.applicationContext.bind(new SampleConfiguration());
-        final SampleInterface provided = this.applicationContext.get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
-
-        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -373,10 +354,32 @@ public class ApplicationContextTests {
         Assertions.assertSame(b, a.b());
     }
 
-    @Test
-    void testCircularDependenciesYieldExceptionOnConstructorInject() {
-        Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext.get(CircularConstructorA.class));
-        Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext.get(CircularConstructorB.class));
+    public static Stream<Arguments> circular() {
+        return Stream.of(
+                Arguments.of(CircularConstructorA.class, new Class<?>[] {CircularConstructorA.class, CircularConstructorB.class, CircularConstructorA.class}),
+                Arguments.of(CircularConstructorB.class, new Class<?>[] {CircularConstructorB.class, CircularConstructorA.class, CircularConstructorB.class}),
+                Arguments.of(LongCycleA.class, new Class<?>[] {LongCycleA.class, LongCycleB.class, LongCycleC.class, LongCycleD.class, LongCycleA.class}),
+                Arguments.of(LongCycleB.class, new Class<?>[] {LongCycleB.class, LongCycleC.class, LongCycleD.class, LongCycleA.class, LongCycleB.class}),
+                Arguments.of(LongCycleC.class, new Class<?>[] {LongCycleC.class, LongCycleD.class, LongCycleA.class, LongCycleB.class, LongCycleC.class}),
+                Arguments.of(LongCycleD.class, new Class<?>[] {LongCycleD.class, LongCycleA.class, LongCycleB.class, LongCycleC.class, LongCycleD.class})
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("circular")
+    void testCircularDependencyPathCanBeDetermined(final Class<?> type, final Class<?>... expected) {
+        final List<TypeContext<?>> path = CyclingConstructorAnalyzer.findCyclicPath(TypeContext.of(type));
+        Assertions.assertNotNull(path);
+        Assertions.assertEquals(expected.length, path.size());
+        for (int i = 0; i < expected.length; i++) {
+            Assertions.assertSame(expected[i], path.get(i).type());
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("circular")
+    void testExceptionIsThrownOnCyclicProvision(final Class<?> type, final Class<?>... path) {
+        Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext.get(type));
     }
 
     @Test
@@ -432,14 +435,12 @@ public class ApplicationContextTests {
     @Test
     void testPrioritySingletonBinding() {
         this.applicationContext.bind(String.class).singleton("Hello world!");
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            this.applicationContext.bind(String.class).priority(0).singleton("Hello modified world!");
-        });
+        this.applicationContext.bind(String.class).priority(0).singleton("Hello modified world!");
 
         final String binding = this.applicationContext.get(String.class);
-        Assertions.assertEquals("Hello world!", binding);
+        Assertions.assertEquals("Hello modified world!", binding);
 
-        this.applicationContext.bind(String.class).singleton("Hello modified world!");
+        this.applicationContext.bind(String.class).priority(-2).singleton("Hello low priority world!");
         final String binding2 = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello modified world!", binding2);
     }

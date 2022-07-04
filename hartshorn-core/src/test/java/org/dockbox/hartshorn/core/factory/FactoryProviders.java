@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.binding;
+package org.dockbox.hartshorn.core.factory;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Provider;
 
-@Deprecated(since = "22.3", forRemoval = true)
-public abstract class InjectConfiguration implements DelegatedBinder {
+@Service
+public class FactoryProviders {
 
-    private Binder binder;
+    @Provider(priority = 1)
+    public Class<? extends FactoryProvided> highPriority = HighPriorityFactoryBound.class;
 
-    public abstract void collect(ApplicationContext context);
+    @Provider
+    public Class<? extends FactoryProvided> lowPriority = LowPriorityFactoryBound.class;
 
-    public final Binder binder() {
-        if (this.binder == null) throw new IllegalStateException("No binder provided!");
-        return this.binder;
-    }
 
-    public InjectConfiguration binder(final Binder binder) {
-        this.binder = binder;
-        return this;
-    }
 }

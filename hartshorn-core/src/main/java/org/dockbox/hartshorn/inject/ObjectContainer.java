@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
+public class ObjectContainer<T> {
 
-import test.types.SampleImplementation;
-import test.types.SampleInterface;
+    private final T instance;
+    private boolean processed;
 
-public class SampleConfiguration extends InjectConfiguration {
-    @Override
-    public void collect(final ApplicationContext context) {
-        this.bind(SampleInterface.class).to(SampleImplementation.class);
+    public ObjectContainer(final T instance, final boolean processed) {
+        this.instance = instance;
+        this.processed = processed;
+    }
+
+    public T instance() {
+        return this.instance;
+    }
+
+    public boolean processed() {
+        return this.processed;
+    }
+
+    public void processed(final boolean processed) {
+        this.processed = processed;
     }
 }

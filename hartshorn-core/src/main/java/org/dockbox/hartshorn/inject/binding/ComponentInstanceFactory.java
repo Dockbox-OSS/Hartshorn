@@ -17,9 +17,10 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.Result;
 
 @FunctionalInterface
 public interface ComponentInstanceFactory {
-    <T> Result<T> instantiate(Key<T> key);
+    <T> Result<ObjectContainer<T>> instantiate(Key<T> key);
 }

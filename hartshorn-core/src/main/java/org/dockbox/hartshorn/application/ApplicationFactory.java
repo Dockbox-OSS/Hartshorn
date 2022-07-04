@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -283,17 +282,6 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self prefixes(Set<String> prefixes);
 
     /**
-     * Registers a custom {@link InjectConfiguration} which should be known to the application. The configuration is bound
-     * using the configured {@link ApplicationConfigurator} during application creation.
-     *
-     * @param injectConfiguration The configuration to register.
-     * @return The {@link ApplicationFactory} instance.
-     * @see ApplicationConfigurator#apply(ApplicationManager, Set)
-     */
-    @Deprecated(since = "22.3", forRemoval = true)
-    Self configuration(InjectConfiguration injectConfiguration);
-
-    /**
      * Registers a custom {@link ActivatorHolder} which should be known to the application.
      *
      * @param activatorHolder The activator holder to register.
@@ -310,6 +298,15 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @return The {@link ApplicationFactory} instance.
      */
     Self conditionMatcher(Initializer<ConditionMatcher> conditionMatcher);
+
+    /**
+     * Registers a custom {@link ApplicationManager} which is used to manage the lifecycle of
+     * the application.
+     *
+     * @param manager The application manager to register.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self manager(Initializer<ApplicationManager> manager);
 
     /**
      * Returns itself, for chaining without losing the fluent API.
