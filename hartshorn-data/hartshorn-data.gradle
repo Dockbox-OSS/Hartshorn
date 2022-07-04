@@ -18,13 +18,17 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation "org.hibernate:hibernate-core:$hibernateVersion"
-    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    implementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+
+    // Hibernate
+    api "org.hibernate:hibernate-core:$hibernateVersion"
+    api "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
+
+    // Jackson
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
 
     // Test Containers
     testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
