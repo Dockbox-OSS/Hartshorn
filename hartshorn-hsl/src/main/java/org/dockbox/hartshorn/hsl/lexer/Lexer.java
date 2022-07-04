@@ -27,6 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The lexer takes in HSL sources and transforms it into tokens. This implementation
+ * uses the constants defined in {@link TokenConstants} to identify individual tokens,
+ * and matches them to logical {@link TokenType}s.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class Lexer {
 
     private static final Map<String, TokenType> keywords = TokenType.keywords();
@@ -46,6 +54,14 @@ public class Lexer {
         this.errorReporter = errorReporter;
     }
 
+    /**
+     * Transforms the configured source into valid {@link Token}s. If an invalid token is
+     * encountered, an error is reported. When an error is reported, the lexer will attempt
+     * to proceed to the next token, skipping the invalid token(s). The collection of
+     * tokens will always end with a single {@link TokenType#EOF EndOfFile token}.
+     *
+     * @return The scanned tokens.
+     */
     public List<Token> scanTokens() {
         while (!this.isAtEnd()) {
             this.start = this.current;
@@ -55,6 +71,10 @@ public class Lexer {
         return this.tokens;
     }
 
+    /**
+     * Gets all comments, if any.
+     * @return All comments, or an empty {@link List}.
+     */
     public List<Comment> comments() {
         return this.comments;
     }

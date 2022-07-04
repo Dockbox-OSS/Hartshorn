@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.lexer;
 
+/**
+ * Represents a single comment in a script. A comment is a piece of non-code
+ * which can be located anywhere in a script.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class Comment {
 
     private final int line;
@@ -26,10 +33,19 @@ public class Comment {
         this.text = text;
     }
 
+    /**
+     * The first line the comment was found on. If a comment spans multiple lines,
+     * this number represents the first of these lines.
+     * @return The first line number.
+     */
     public int line() {
         return this.line;
     }
 
+    /**
+     * The untrimmed text content of the comment, excluding any comment tokens.
+     * @return The comment content.
+     */
     public String text() {
         return this.text;
     }

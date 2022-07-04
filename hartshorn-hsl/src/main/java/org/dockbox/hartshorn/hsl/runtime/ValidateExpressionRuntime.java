@@ -24,6 +24,14 @@ import org.dockbox.hartshorn.util.Result;
 
 import jakarta.inject.Inject;
 
+/**
+ * A customized runtime specifically targeted at evaluating single expressions.
+ * This makes use of the {@link StandardRuntime} to evaluate the script, and
+ * customizes the input using the {@link ExpressionCustomizer}.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class ValidateExpressionRuntime extends StandardRuntime {
 
     @Inject
@@ -32,8 +40,15 @@ public class ValidateExpressionRuntime extends StandardRuntime {
         this.customizer(new ExpressionCustomizer());
     }
 
-    public static boolean valid(final ResultCollector context) {
-        final Result<Boolean> result = context.result(ExpressionCustomizer.VALIDATION_ID);
+    /**
+     * Looks up the validation result in the given {@link ResultCollector}. If there
+     * is no validation result present, {@code false} is returned.
+     *
+     * @param collector The result collector in which the validation result may be stored.
+     * @return The validation result, or {@code false} if it does not exist.
+     */
+    public static boolean valid(final ResultCollector collector) {
+        final Result<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
         return result.or(false);
     }
 }

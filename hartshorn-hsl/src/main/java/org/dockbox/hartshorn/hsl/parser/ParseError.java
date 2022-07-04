@@ -16,5 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+/**
+ * A simple exception which may be thrown by a {@link Parser} when an unspecified
+ * error occurred.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class ParseError extends RuntimeException {
 }

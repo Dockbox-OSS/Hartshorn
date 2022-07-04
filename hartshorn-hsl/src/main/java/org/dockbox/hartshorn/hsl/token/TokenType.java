@@ -20,6 +20,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+/**
+ * Definitions for all standard token types. Token types always carry a single
+ * {@link TokenMetaData} instance, providing additional information about the
+ * token type.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public enum TokenType {
     // Literals
     IDENTIFIER, STRING, NUMBER, CHAR, EOF,
@@ -125,18 +133,31 @@ public enum TokenType {
         this.metaData = builder.apply(TokenMetaData.builder(this));
     }
 
+    /**
+     * @see TokenMetaData#representation()
+     */
     public String representation() {
         return this.metaData.representation();
     }
 
+    /**
+     * @see TokenMetaData#keyword()
+     */
     public boolean keyword() {
         return this.metaData.keyword();
     }
 
+    /**
+     * @see TokenMetaData#standaloneStatement()
+     */
     public boolean standaloneStatement() {
         return this.metaData.standaloneStatement();
     }
 
+    /**
+     * Gets all token types which represent keywords, identified by their representation.
+     * @return All token types which represent keywords.
+     */
     public static Map<String, TokenType> keywords() {
         final Map<String, TokenType> keywords = new ConcurrentHashMap<>();
         for (final TokenType tokenType : TokenType.values()) {

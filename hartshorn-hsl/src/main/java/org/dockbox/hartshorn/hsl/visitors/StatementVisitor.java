@@ -34,6 +34,13 @@ import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 
+/**
+ * Visitor interface for all supported {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s.
+ * @param <R> The return type for the visitor.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public interface StatementVisitor<R> {
     R visit(ExpressionStatement statement);
 

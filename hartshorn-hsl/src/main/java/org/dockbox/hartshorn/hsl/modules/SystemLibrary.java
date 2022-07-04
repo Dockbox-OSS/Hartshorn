@@ -16,8 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+/**
+ * Standard library granting access to environment variables.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class SystemLibrary {
 
+    /**
+     * @see System#getenv(String)
+     */
     public String env(final String program) {
         return System.getenv(program);
     }

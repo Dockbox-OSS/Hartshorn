@@ -32,6 +32,18 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 
+/**
+ * The default runtime implementation, which follows the evaluation phases and order as
+ * defined in {@link Phase}. Each phase can be customized using appropriate
+ * {@link CodeCustomizer}s, to modify the in- or output of the current or previous phase.
+ *
+ * <p>The executor for each phase is obtained from the given {@link ApplicationContext},
+ * to allow each executor to be customized through standard DI principles.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ * @see ExpressionConditionContext
+ */
 public class StandardRuntime extends ExpressionConditionContext {
 
     private final ApplicationContext applicationContext;

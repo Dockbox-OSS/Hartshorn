@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+/**
+ * Represents a specific return value, which immediately exits the current
+ * scope, even if there are more statements to evaluate.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class Return extends RuntimeException {
 
     private final Object value;
@@ -25,6 +32,10 @@ public class Return extends RuntimeException {
         this.value = value;
     }
 
+    /**
+     * Gets the value of the return statement.
+     * @return The value of the statement.
+     */
     public Object value() {
         return this.value;
     }

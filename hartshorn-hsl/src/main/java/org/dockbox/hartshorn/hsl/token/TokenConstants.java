@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+/**
+ * A collection of standard token characters which can be used by the {@link org.dockbox.hartshorn.hsl.lexer.Lexer}
+ * to tokenize a given HSL script. This is also used by the standard {@link TokenType}s to specify their
+ * representation.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class TokenConstants {
     public static final char LEFT_PAREN = '(';
     public static final char RIGHT_PAREN = ')';

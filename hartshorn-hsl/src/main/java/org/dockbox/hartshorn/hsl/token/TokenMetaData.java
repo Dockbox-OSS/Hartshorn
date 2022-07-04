@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+/**
+ * A set of metadata providing extra information about a single {@link TokenType}. Token
+ * metadata is immutable, as it is part of the lexical definition of a token.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class TokenMetaData {
 
     private final TokenType type;
@@ -30,22 +37,45 @@ public class TokenMetaData {
         this.standaloneStatement = builder.standaloneStatement;
     }
 
+    /**
+     * Get the associated {@link TokenType} which is represented by this {@link TokenMetaData}.
+     * @return The associated {@link TokenType}.
+     */
     public TokenType type() {
         return this.type;
     }
 
+    /**
+     * Gets the standard representation of the {@link TokenType}.
+     * @return The representation of the token.
+     */
     public String representation() {
         return this.representation;
     }
 
+    /**
+     * Gets whether the {@link TokenType} represents a keyword.
+     * @return {@code true} if the token represents a keyword, or {@code false}.
+     */
     public boolean keyword() {
         return this.keyword;
     }
 
+    /**
+     * Gets whether the {@link TokenType} can be used as a standalone statement. This
+     * is typically used to indicate a token is not part of an expression statement,
+     * but can optionally accept expressions when parsed.
+     * @return {@code true} if the token can be used as a standalone statement.
+     */
     public boolean standaloneStatement() {
         return this.standaloneStatement;
     }
 
+    /**
+     * Creates a new builder for the given {@link TokenType}.
+     * @param type The {@link TokenType} to attach to.
+     * @return A new {@link TokenMetaDataBuilder}.
+     */
     public static TokenMetaDataBuilder builder(final TokenType type) {
         return new TokenMetaDataBuilder(type);
     }

@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * Represents any unspecified error which may occur during the execution of
+ * a script.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public class RuntimeError extends RuntimeException {
 
     private final Token token;
@@ -27,6 +34,10 @@ public class RuntimeError extends RuntimeException {
         this.token = token;
     }
 
+    /**
+     * The token at which the error occurred.
+     * @return The token at which the error occurred.
+     */
     public Token token() {
         return this.token;
     }

@@ -434,7 +434,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
         return Result.of(() -> value.call(expr.prefixOperatorName(), this, args))
-                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.prefixOperatorName().line(), e.getMessage()))
+                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.prefixOperatorName(), e.getMessage()))
                 .orNull();
     }
 
@@ -446,7 +446,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         args.add(this.evaluate(expr.rightExpression()));
 
         return Result.of(() -> value.call(expr.infixOperatorName(), this, args))
-                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.infixOperatorName().line(), e.getMessage()))
+                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.infixOperatorName(), e.getMessage()))
                 .orNull();
     }
 
@@ -467,7 +467,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         }
 
         return Result.of(() -> function.call(expr.closingParenthesis(), this, arguments))
-                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.closingParenthesis().line(), e.getMessage()))
+                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.closingParenthesis(), e.getMessage()))
                 .orNull();
     }
 

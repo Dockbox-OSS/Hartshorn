@@ -16,9 +16,41 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+/**
+ * Represents each of the primary runtime phases which are performed when evaluating
+ * a single HSL source.
+ *
+ * @author Guus Lieben
+ * @since 22.4
+ */
 public enum Phase {
+    /**
+     * Performed by the {@link org.dockbox.hartshorn.hsl.lexer.Lexer}, to convert the
+     * source content into {@link org.dockbox.hartshorn.hsl.token.Token}s. This is the
+     * first step of the script evaluation process.
+     */
     TOKENIZING,
+    /**
+     * Performed by the {@link org.dockbox.hartshorn.hsl.parser.Parser}, to convert
+     * the token output of the {@link org.dockbox.hartshorn.hsl.lexer.Lexer} into
+     * {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s. This is the second
+     * step of the script evaluation process.
+     */
     PARSING,
+    /**
+     * Performed by the {@link org.dockbox.hartshorn.hsl.semantic.Resolver}, to look
+     * up required identifiers before proceeding to runtime interpretation. During
+     * this phase any duplicate variable declarations, invalid accessors, and unknown
+     * identifiers are located and reported. This is the third step of the script
+     * evaluation process.
+     */
     RESOLVING,
+    /**
+     * Performed by the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter},
+     * to execute the {@link org.dockbox.hartshorn.hsl.ast.statement.Statement} output
+     * of the {@link org.dockbox.hartshorn.hsl.parser.Parser}. This is the phase in
+     * which the script gets executed, and results are generated. This is the fourth
+     * and last step of the script evaluation process.
+     */
     INTERPRETING,
 }
