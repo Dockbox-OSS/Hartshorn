@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'war'
-}
-
 apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
-    api "jakarta.servlet:jakarta.servlet-api:$jakartaServletVersion"
-
-    implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-events'
-    implementation 'org.dockbox.hartshorn:hartshorn-data'
-
-    api "org.eclipse.jetty:jetty-servlet:$jettyVersion"
-    api "org.eclipse.jetty:jetty-server:$jettyVersion"
-    api "org.freemarker:freemarker:$freeMarkerVersion"
-
-    testImplementation "org.apache.httpcomponents:httpclient:$httpClientVersion"
+    implementation 'org.dockbox.hartshorn:hartshorn-web'
+    implementation "org.freemarker:freemarker:$freeMarkerVersion"
 }
