@@ -309,7 +309,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             case BANG -> !this.isTruthy(right);
             case COMPLEMENT -> {
                 this.checkNumberOperand(expr.operator(), right);
-                yield ~((Double) right).intValue();
+                // Cast to int is redundant, but required to suppress false-positive inspections.
+                yield (int) ~((Double) right).intValue();
             }
             default -> null;
         };
