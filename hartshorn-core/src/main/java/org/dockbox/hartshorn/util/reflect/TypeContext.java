@@ -382,8 +382,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         this.collectFields();
         if (this.fields.containsKey(field))
             return Result.of(this.fields.get(field));
-        else
+        else if (!this.parent().isVoid())
             return this.parent().field(field);
+        return Result.empty();
     }
 
     public List<FieldContext<?>> fields() {
