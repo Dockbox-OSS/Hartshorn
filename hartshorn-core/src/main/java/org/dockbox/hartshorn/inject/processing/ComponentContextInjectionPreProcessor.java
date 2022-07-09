@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.InvalidComponentException;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
@@ -57,10 +56,10 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreValidator
 
     private void validate(final TypedElementContext<?> context, final Key<?> parent) {
         if (!context.type().childOf(org.dockbox.hartshorn.context.Context.class))
-            ExceptionHandler.unchecked(new ApplicationException("%s is annotated with %s but does not extend %s".formatted(
+            throw new InvalidComponentException("%s is annotated with %s but does not extend %s".formatted(
                     context.qualifiedName(),
                     Context.class.getSimpleName(),
                     org.dockbox.hartshorn.context.Context.class.getSimpleName())
-            ));
+            );
     }
 }
