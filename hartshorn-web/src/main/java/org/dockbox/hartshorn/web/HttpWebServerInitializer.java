@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
@@ -99,7 +98,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
             this.webServer.start(this.port);
         }
         catch (final ApplicationException e) {
-            ExceptionHandler.unchecked(e);
+            applicationContext.handle(e);
         }
     }
 
