@@ -18,21 +18,20 @@ package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.inject.TypedOwner;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.data.context.SerializationContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.inject.TypedOwner;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -44,7 +43,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final Result<C> serializationContext = methodContext.first(this.contextType());
-        if (serializationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
+        if (serializationContext.absent()) throw new MissingContextException(this.contextType(), methodContext);
 
         final C ctx = serializationContext.get();
         context.log().debug("Processing persistence path of " + methodContext.method().name() + " with serialization target " + ctx.target());
@@ -52,7 +51,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
             case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
             case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);
             case STRING -> this.processString(context, methodContext, ctx);
-            default -> throw new IllegalArgumentException("Unsupported serialization target: " + ctx.target());
+            default -> throw new UnsupportedSerializationTargetException(ctx.target());
         };
     }
 
@@ -96,7 +95,7 @@ public abstract class AbstractPersistenceServicePostProcessor<M extends Annotati
             }
         }
 
-        if (!root.toFile().isDirectory()) ExceptionHandler.unchecked(new ApplicationException("Expected " + root + " to be a directory, but found a file instead"));
+        if (!root.toFile().isDirectory()) throw new IllegalArgumentException("Expected " + root + " to be a directory, but found a file instead");
 
         return annotationContext.filetype().asPath(root, annotationContext.file().value());
     }
