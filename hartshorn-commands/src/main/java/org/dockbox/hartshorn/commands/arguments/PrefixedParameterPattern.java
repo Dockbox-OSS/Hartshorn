@@ -43,7 +43,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
                 },
                 () -> true,
                 () -> false,
-                () -> new IllegalArgumentException(this.wrongFormat().string())
+                () -> new ArgumentMatchingFailedException(this.wrongFormat())
         );
     }
 
@@ -74,7 +74,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     public Result<String> parseIdentifier(final String argument) {
         return Result.of(() -> argument.startsWith(this.prefix() + ""),
                 () -> argument.substring(1, argument.indexOf(this.opening())),
-                () -> new IllegalArgumentException(this.wrongFormat().string())
+                () -> new ArgumentMatchingFailedException(this.wrongFormat())
         );
     }
 
