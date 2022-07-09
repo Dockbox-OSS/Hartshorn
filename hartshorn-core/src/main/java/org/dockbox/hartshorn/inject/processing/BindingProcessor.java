@@ -160,7 +160,7 @@ public class BindingProcessor {
                 final Proxy<R> proxy = (Proxy<R>) context.environment().manager().factory(targetType)
                         .proxy()
                         .rethrowUnchecked()
-                        .orThrow(() -> new IllegalStateException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above."));
+                        .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above."));
                 this.proxiesToInitialize.add(new LateSingletonContext<>(targetType, element, proxy));
             }
         }
@@ -186,7 +186,7 @@ public class BindingProcessor {
                 final Proxy<R> proxy = (Proxy<R>) context.environment().manager().factory(targetType)
                         .proxy()
                         .rethrowUnchecked()
-                        .orThrow(() -> new IllegalStateException("Could create temporary empty proxy for " + targetType.name() + ", any errors may be displayed above."));
+                        .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.name() + ", any errors may be displayed above."));
                 this.proxiesToInitialize.add(new LateSingletonContext<>(targetType.type(), element, proxy));
             }
         }
@@ -207,7 +207,7 @@ public class BindingProcessor {
                 modifiableProxyManager.delegate(instance);
             }
             else {
-                throw new IllegalStateException("Cannot lazily initialize singletons for non-modifiable proxy " + proxyContext.proxy);
+                throw new ComponentInitializationException("Cannot lazily initialize singletons for non-modifiable proxy " + proxyContext.proxy);
             }
         }
     }

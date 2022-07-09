@@ -233,7 +233,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                 }
             }
             catch (final ApplicationException e) {
-                ExceptionHandler.unchecked(e);
+                throw new ComponentFinalizationException(e);
             }
         }
         return instance;
@@ -251,7 +251,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                         final T modified = postProcessor.process(this.applicationContext(), key, result, processingContext);
 
                         if (processingContext.phase() != phase) {
-                            throw new IllegalStateException("Post-processor " + postProcessor + " changed the processing phase from " + processingContext.phase() + " to " + phase);
+                            throw new IllegalPhaseModificationException(postProcessor, phase, processingContext.phase());
                         }
 
                         checkForIllegalModification:
@@ -263,8 +263,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                                 if (delegateMatches)
                                     break checkForIllegalModification;
                             }
-                            throw new IllegalStateException(("Component %s was modified during phase with priority %s by %s. " +
-                                    "Component processors are only able to discard existing instances in phases with priority < 0").formatted(key.type().name(), priority, TypeContext.of(postProcessor).name()));
+                            throw new IllegalComponentModificationException(key.type().name(), priority, postProcessor);
                         }
 
                         result = modified;

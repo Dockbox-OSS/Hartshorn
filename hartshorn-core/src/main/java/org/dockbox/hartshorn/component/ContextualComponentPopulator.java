@@ -17,15 +17,13 @@
 package org.dockbox.hartshorn.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
@@ -82,7 +80,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             final Object fieldInstance = this.applicationContext().get(fieldKey, enable);
 
             final boolean required = field.annotation(Required.class).map(Required::value).or(false);
-            if (required && fieldInstance == null) return ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
+            if (required && fieldInstance == null) throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required");
 
             field.set(instance, fieldInstance);
         }
@@ -105,7 +103,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         }
 
         final boolean required = field.annotation(Required.class).map(Required::value).or(false);
-        if (required && context.absent()) ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
+        if (required && context.absent()) throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required");
 
         field.set(instance, context.orNull());
     }
