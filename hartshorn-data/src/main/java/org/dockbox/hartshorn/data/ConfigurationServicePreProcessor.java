@@ -79,7 +79,7 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
         }
 
         if (configuration.failOnMissing()) {
-            throw new IllegalStateException("None of the configured sources in " + key.type().name() + " were found");
+            throw new MissingSourceException("None of the configured sources in " + key.type().name() + " were found");
         } else {
             context.log().warn("None of the configured sources in {} were found, proceeding without configuration", key.type().name());
         }

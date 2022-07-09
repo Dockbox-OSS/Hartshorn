@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.exceptions;
+package org.dockbox.hartshorn.data.service;
 
-public class UnknownIdentifierException extends RuntimeException {
-    public UnknownIdentifierException(final String message) {
-        super(message);
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
+
+public class UndeterminedEntityTypeException extends ApplicationRuntimeException {
+    public UndeterminedEntityTypeException(final MethodContext<?, ?> method) {
+        super("Could not determine entity type of %s. Alternatively, set the entityType in the @Query annotation on this method or change the query to JPQL."
+                .formatted(method.qualifiedName()));
     }
 }

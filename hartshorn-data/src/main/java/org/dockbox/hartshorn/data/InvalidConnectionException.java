@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.exceptions;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-public class IdentifierMismatchException extends ApplicationException {
-    public IdentifierMismatchException(final String message) {
+public class InvalidConnectionException extends ApplicationRuntimeException {
+    public InvalidConnectionException(final String message) {
         super(message);
     }
 }

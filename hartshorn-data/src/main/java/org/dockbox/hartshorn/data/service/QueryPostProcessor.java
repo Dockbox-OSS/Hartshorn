@@ -87,7 +87,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
             final List<TypeContext<?>> typeParameters = returnType.typeParameters();
             if (typeParameters.isEmpty()) {
                 if (query.type() == QueryType.NATIVE)
-                    throw new IllegalStateException("Could not determine entity type of " + context.qualifiedName() + ". Alternatively, set the entityType in the @Query annotation on this method or change the query to JPQL.");
+                    throw new UndeterminedEntityTypeException(context);
                 else return TypeContext.VOID;
             }
             return typeParameters.get(0);
