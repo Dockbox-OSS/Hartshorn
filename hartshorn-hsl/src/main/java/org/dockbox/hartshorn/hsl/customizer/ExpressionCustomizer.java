@@ -58,7 +58,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
         // Get last statement in the statements list
         final Statement lastStatement = statements.get(statements.size() - 1);
         if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
-            throw new IllegalArgumentException("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName());
+            throw new PhaseCustomizerException("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName());
         }
     }
 

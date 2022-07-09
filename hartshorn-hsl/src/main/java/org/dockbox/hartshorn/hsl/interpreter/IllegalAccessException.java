@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.parser;
+package org.dockbox.hartshorn.hsl.interpreter;
 
-/**
- * A simple exception which may be thrown by a {@link Parser} when an unspecified
- * error occurred.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class ParseError extends RuntimeException {
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-    public ParseError() {
-    }
-
-    public ParseError(final String message) {
+public class IllegalAccessException extends ApplicationRuntimeException {
+    public IllegalAccessException(final String message) {
         super(message);
     }
 }

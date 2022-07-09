@@ -167,7 +167,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public void interpret(final List<Statement> statements) {
         if (this.isRunning) {
-            throw new IllegalStateException("Cannot reuse the same interpreter instance for multiple executions");
+            throw new IllegalAccessException("Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {
