@@ -63,7 +63,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
             modifiable.addActivator(annotation);
             return;
         }
-        throw new IllegalStateException("Activator holder is not modifiable");
+        throw new IllegalModificationException("Activator holder is not modifiable");
     }
 
     @Override

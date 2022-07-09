@@ -102,7 +102,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
         this.bind(ComponentProvider.class).singleton(this);
         this.bind(ExceptionHandler.class).singleton(this);
-        
+
         if (this.componentProvider instanceof StandardComponentProvider provider) {
             this.bind(StandardComponentProvider.class).singleton(provider);
         }
@@ -131,7 +131,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     protected void checkRunning() {
         if (this.isRunning) {
-            throw new IllegalStateException("Application context cannot be modified after it has been started");
+            throw new IllegalModificationException("Application context cannot be modified after it has been started");
         }
     }
 
