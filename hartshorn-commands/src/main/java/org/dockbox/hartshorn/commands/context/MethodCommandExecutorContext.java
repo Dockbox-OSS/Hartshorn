@@ -225,7 +225,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     private CommandDefinitionContext definition() {
         final Result<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
-        if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
+        if (definition.absent()) throw new DefinitionContextLostException();
         return definition.get();
     }
 

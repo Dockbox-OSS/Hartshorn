@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 import java.io.IOException;
