@@ -56,8 +56,7 @@ public final class AnnotationHelper {
         if (annotations == null) return null;
 
         if (annotations.size() > 1) {
-            throw new IllegalArgumentException("Found more than one annotation on " + target + ":\n"
-                    + annotations.stream().map(Annotation::toString).collect(Collectors.joining("\n")));
+            throw new DuplicateAnnotationCompositeException(target, annotations);
         }
 
         return annotations.isEmpty() ? null : annotations.get(0);
@@ -117,7 +116,7 @@ public final class AnnotationHelper {
         final LinkedHashSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
         while (currentClass != null) {
             if (!hierarchy.add(currentClass)) {
-                throw new IllegalArgumentException("Annotation hierarchy circular inheritance detected: " + currentClass);
+                throw new CircularHierarchyException(currentClass);
             }
             currentClass = superAnnotationOrNull(currentClass);
         }

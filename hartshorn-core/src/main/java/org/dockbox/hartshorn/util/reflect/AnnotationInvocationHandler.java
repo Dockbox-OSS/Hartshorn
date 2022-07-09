@@ -63,12 +63,12 @@ public class AnnotationInvocationHandler implements InvocationHandler {
         try {
             final Object ret = this.klass.getMethod(method.getName()).getDefaultValue();
             if (ret == null) {
-                throw new IllegalStateException("Can't invoke " + this.klass.getName() + "." + method.getName() + "() on composite annotation " + this.annotation);
+                throw new CompositeAnnotationInvocationException(this.type, method, this.annotation);
             }
             return ret;
         }
         catch (final NoSuchMethodError e) {
-            throw new IllegalStateException("Can't invoke " + this.klass.getName() + "." + method.getName() + "() on composite annotation " + this.annotation, e);
+            throw new CompositeAnnotationInvocationException(this.type, method, this.annotation, e);
         }
     }
 
