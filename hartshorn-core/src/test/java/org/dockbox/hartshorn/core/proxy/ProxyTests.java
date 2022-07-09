@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.MethodWrapper;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyInvocationException;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.proxy.UseProxying;
@@ -193,7 +194,7 @@ public class ProxyTests {
         Assertions.assertTrue(proxy.present());
 
         final AgedProxy proxyInstance = proxy.get();
-        final IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, proxyInstance::age);
+        final ProxyInvocationException exception = Assertions.assertThrows(ProxyInvocationException.class, proxyInstance::age);
         Assertions.assertTrue(StringUtilities.notEmpty(exception.getMessage()));
     }
 

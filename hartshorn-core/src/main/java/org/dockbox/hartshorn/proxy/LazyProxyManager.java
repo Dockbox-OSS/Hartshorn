@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.CustomMultiMap;
 import org.dockbox.hartshorn.util.MultiMap;
@@ -96,7 +97,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
 
     public void proxy(final T proxy) {
         if (this.proxy != null) {
-            throw new IllegalStateException("Proxy already set");
+            throw new IllegalModificationException("Proxy instance already set.");
         }
         if (!this.applicationContext().environment().manager().isProxy(proxy)) {
             throw new IllegalArgumentException("Provided object is not a proxy");

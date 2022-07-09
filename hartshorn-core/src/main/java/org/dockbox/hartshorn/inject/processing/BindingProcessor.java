@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
@@ -89,44 +90,6 @@ public class BindingProcessor {
         }
     }
 
-    private void checkRequiredTypeBindings(final ApplicationContext applicationContext, final ObtainableElement<?> element, final ProviderContextList providerContext, final TypeContext<?> target) throws ApplicationException {
-//        final Result<? extends ConstructorContext<?>> optimalConstructor = CyclingConstructorAnalyzer.findConstructor(target).rethrowUnchecked();
-//        if (optimalConstructor.present()) {
-//            final ConstructorContext<?> constructor = optimalConstructor.get();
-//            for (final TypeContext<?> parameterType : constructor.parameterTypes()) {
-//                final Key<?> key = Key.of(parameterType);
-//                if (providerContext.containsKey(key)) {
-//                    for (final AnnotatedElementContext<?> context : providerContext.get(key)) {
-//                        this.process(key, (AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>) context, applicationContext);
-//                    }
-//                }
-//            }
-//        }
-    }
-
-    private void checkRequiredInjectionPoints(final ApplicationContext applicationContext, final TypeContext<?> target, final ObtainableElement<?> element, final ProviderContextList providerContext) throws ApplicationException {
-//        for (final FieldContext<?> field : target.fields(Inject.class)) {
-//            final TypeContext<?> fieldType = field.type();
-//            final Key<?> key = Key.of(fieldType);
-//            this.processIfExists(key, providerContext, applicationContext);
-//        }
-//
-//        for (final MethodContext<?, ?> method : target.methods(Inject.class)) {
-//            for (final ParameterContext<?> parameter : method.parameters()) {
-//                final Key<?> key = Key.of(parameter.type()).name(parameter.annotation(Named.class).orNull());
-//                this.processIfExists(key, providerContext, applicationContext);
-//            }
-//        }
-    }
-
-    private void processIfExists(final Key<?> key, final ProviderContextList context, final ApplicationContext applicationContext) throws ApplicationException {
-//        if (context.containsKey(key)) {
-//            for (final AnnotatedElementContext<?> element : context.get(key)) {
-//                this.process(key, (AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>) element, applicationContext);
-//            }
-//        }
-    }
-
     private <R> void processInstanceBinding(
             final ApplicationContext context, final ObtainableElement<R> element, final Key<R> key, final boolean singleton, final Provider annotation
     ) {
@@ -147,8 +110,6 @@ public class BindingProcessor {
         final C targetType = element.obtain(context).rethrowUnchecked().orNull();
         final MetaProvider metaProvider = context.get(MetaProvider.class);
         final TypeContext<R> typeContext = TypeContext.of(targetType);
-
-        this.checkRequiredTypeBindings(context, element, providerContextList, typeContext);
 
         singleton = singleton || typeContext.annotation(Singleton.class).present() || metaProvider.singleton(typeContext);
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
@@ -174,8 +135,6 @@ public class BindingProcessor {
         final C targetType = element.obtain(context).rethrowUnchecked().orNull();
         final MetaProvider metaProvider = context.get(MetaProvider.class);
 
-        this.checkRequiredTypeBindings(context, element, providerContextList, targetType);
-
         singleton = singleton || targetType.annotation(Singleton.class).present() || metaProvider.singleton(targetType);
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
 
@@ -200,7 +159,6 @@ public class BindingProcessor {
 
         for (final LateSingletonContext proxyContext : new ArrayList<>(this.proxiesToInitialize)) {
             this.proxiesToInitialize.remove(proxyContext);
-            this.checkRequiredInjectionPoints(applicationContext, TypeContext.of(proxyContext.targetType), proxyContext.element, context);
 
             final Object instance = applicationContext.get(proxyContext.targetType);
             if (proxyContext.proxy.manager() instanceof ModifiableProxyManager modifiableProxyManager) {

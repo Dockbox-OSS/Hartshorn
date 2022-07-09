@@ -25,11 +25,11 @@ import java.util.Map;
 public class AnnotationInvocationHandler implements InvocationHandler {
 
     final Map<String, Object> cache;
-    private final Class<?> klass;
+    private final Class<?> type;
     private final Annotation annotation;
 
-    public AnnotationInvocationHandler(final Class<?> klass, final Annotation annotation) {
-        this.klass = klass;
+    public AnnotationInvocationHandler(final Class<?> type, final Annotation annotation) {
+        this.type = type;
         this.annotation = annotation;
         this.cache = new HashMap<>();
     }
@@ -41,10 +41,10 @@ public class AnnotationInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if ("annotationType".equals(method.getName())) {
-            return this.klass;
+            return this.type;
         }
         if ("toString".equals(method.getName())) {
-            return "@" + this.klass;
+            return "@" + this.type;
         }
         Object result = this.cache.get(method.getName());
         if (result != null) {
@@ -61,7 +61,7 @@ public class AnnotationInvocationHandler implements InvocationHandler {
         }
 
         try {
-            final Object ret = this.klass.getMethod(method.getName()).getDefaultValue();
+            final Object ret = this.type.getMethod(method.getName()).getDefaultValue();
             if (ret == null) {
                 throw new CompositeAnnotationInvocationException(this.type, method, this.annotation);
             }
@@ -73,11 +73,11 @@ public class AnnotationInvocationHandler implements InvocationHandler {
     }
 
     private boolean directAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-        return aliasFor.target() == this.klass && aliasFor.value().equals(methodBeingInvoked.getName());
+        return aliasFor.target() == this.type && aliasFor.value().equals(methodBeingInvoked.getName());
     }
 
     private boolean indirectAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-        if (aliasFor.target() != this.klass) {
+        if (aliasFor.target() != this.type) {
             return false;
         }
         final AliasFor redirect = methodBeingInvoked.getAnnotation(AliasFor.class);

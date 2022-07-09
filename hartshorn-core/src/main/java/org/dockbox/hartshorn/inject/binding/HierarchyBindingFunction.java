@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
@@ -77,7 +78,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public Binder to(final TypeContext<? extends T> type) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalStateException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+            throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
         this.hierarchy().add(this.priority, new ContextDrivenProvider<>(type));
         return this.binder();
@@ -86,7 +87,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public Binder to(final Supplier<T> supplier) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalStateException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+            throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
         this.hierarchy().add(this.priority, new SupplierProvider<>(supplier));
         return this.binder();
