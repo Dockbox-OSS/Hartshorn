@@ -89,7 +89,7 @@ public class QueryContext {
                 if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createNativeQuery(query.value());
                 else yield entityManager.createNativeQuery(query.value(), this.entityType.type());
             }
-            default -> throw new IllegalStateException("Unexpected value: " + query.type());
+            default -> throw new UnsupportedQueryTypeException(query.type());
         };
     }
 
