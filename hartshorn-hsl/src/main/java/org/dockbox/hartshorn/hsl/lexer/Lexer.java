@@ -124,6 +124,9 @@ public class Lexer {
             case TokenConstants.STAR:
                 this.addToken(TokenType.STAR);
                 break;
+            case TokenConstants.MODULO:
+                this.addToken(TokenType.MODULO);
+                break;
             case TokenConstants.QUESTION_MARK:
                 this.addToken(this.match(TokenConstants.COLON)
                         ? TokenType.ELVIS

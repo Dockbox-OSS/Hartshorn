@@ -38,6 +38,7 @@ public class TokenConstants {
     public static final char SEMICOLON = ';';
     public static final char SLASH = '/';
     public static final char STAR = '*';
+    public static final char MODULO = '%';
     public static final char EQUAL = '=';
     public static final char BANG = '!';
     public static final char GREATER = '>';

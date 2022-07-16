@@ -65,8 +65,8 @@ public class LexerTests {
             TokenType.ARRAY_OPEN, TokenType.ARRAY_CLOSE,
             TokenType.COMMA, TokenType.DOT,
             TokenType.MINUS, TokenType.PLUS,
-            TokenType.SEMICOLON, TokenType.SLASH,
-            TokenType.STAR, TokenType.EQUAL, TokenType.BANG,
+            TokenType.SEMICOLON, TokenType.EQUAL, TokenType.BANG,
+            TokenType.MODULO, TokenType.STAR, TokenType.SLASH,
             TokenType.GREATER, TokenType.LESS,
             TokenType.QUESTION_MARK, TokenType.COLON,
     };

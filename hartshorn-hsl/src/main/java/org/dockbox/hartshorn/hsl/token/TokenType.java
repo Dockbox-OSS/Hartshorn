@@ -46,6 +46,7 @@ public enum TokenType {
     SEMICOLON(TokenConstants.SEMICOLON),
     SLASH(TokenConstants.SLASH),
     STAR(TokenConstants.STAR),
+    MODULO(TokenConstants.MODULO),
     EQUAL(TokenConstants.EQUAL),
     BANG(TokenConstants.BANG),
     GREATER(TokenConstants.GREATER),

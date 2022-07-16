@@ -195,6 +195,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.checkNumberOperands(expr.operator(), left, right);
                 return (double) left * (double) right;
             }
+            case MODULO -> {
+                this.checkNumberOperands(expr.operator(), left, right);
+                return (double) left % (double) right;
+            }
             case SLASH -> {
                 this.checkNumberOperands(expr.operator(), left, right);
                 if ((double) right == 0) {

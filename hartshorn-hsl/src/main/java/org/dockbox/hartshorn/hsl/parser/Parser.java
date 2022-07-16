@@ -551,7 +551,7 @@ public class Parser {
     private Expression multiplication() {
         Expression expr = this.parseInfixExpressions();
 
-        while (this.match(TokenType.SLASH, TokenType.STAR)) {
+        while (this.match(TokenType.SLASH, TokenType.STAR, TokenType.MODULO)) {
             final Token operator = this.previous();
             final Expression right = this.parseInfixExpressions();
             expr = new BinaryExpression(expr, operator, right);
