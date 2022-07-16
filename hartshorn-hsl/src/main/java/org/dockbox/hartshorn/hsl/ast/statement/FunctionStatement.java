@@ -25,15 +25,15 @@ public class FunctionStatement extends Function {
 
     private final Token name;
     private final List<Token> params;
-    private final List<Statement> funcBody;
+    private final BlockStatement body;
 
     public FunctionStatement(final Token name,
                              final List<Token> params,
-                             final List<Statement> funcBody) {
+                             final BlockStatement body) {
         super(name);
         this.name = name;
         this.params = params;
-        this.funcBody = funcBody;
+        this.body = body;
     }
 
     public Token name() {
@@ -44,8 +44,12 @@ public class FunctionStatement extends Function {
         return this.params;
     }
 
-    public List<Statement> functionBody() {
-        return this.funcBody;
+    public List<Statement> statements() {
+        return this.body.statements();
+    }
+
+    public BlockStatement body() {
+        return body;
     }
 
     @Override

@@ -510,7 +510,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
             this.declare(param);
             this.define(param);
         }
-        this.resolve(func.functionBody());
+        this.resolve(func.statements());
         this.endScope();
 
         this.currentFunction = enclosingFunction;

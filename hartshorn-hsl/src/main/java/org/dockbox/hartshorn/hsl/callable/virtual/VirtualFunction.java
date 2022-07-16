@@ -67,7 +67,7 @@ public class VirtualFunction implements CallableNode {
             variableScope.define(this.declaration.parameters().get(i).lexeme(), arguments.get(i));
         }
         try {
-            interpreter.execute(this.declaration.functionBody(), variableScope);
+            interpreter.execute(this.declaration.statements(), variableScope);
         }
         catch (final Return returnValue) {
             if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());

@@ -197,8 +197,9 @@ public class Parser {
 
     private FunctionStatement methodDeclaration() {
         return this.function(TokenType.FUN, TokenType.LEFT_BRACE, (name, parameters) -> {
-            // TODO: See line 238
-            final List<Statement> body = this.consumeStatements();
+            final Token start = this.peek();
+            final List<Statement> statements = this.consumeStatements();
+            final BlockStatement body = new BlockStatement(start, statements);
             return new FunctionStatement(name, parameters, body);
         });
     }
@@ -235,9 +236,8 @@ public class Parser {
             while (this.match(TokenType.COMMA));
         }
 
-        // TODO: Extension function isn't closed correctly
         this.expectAfter(TokenType.RIGHT_PAREN, "parameters");
-        final List<Statement> body = this.consumeStatements();
+        final BlockStatement body = this.block();
 
         if (extensionName != null) {
             final FunctionStatement function = new FunctionStatement(extensionName, parameters, body);
@@ -414,15 +414,6 @@ public class Parser {
         return new ExpressionStatement(expr);
     }
 
-    private BlockStatement block(final boolean consumeLeftBrace) {
-        final Token start = this.peek();
-        if (consumeLeftBrace)
-            this.expectBefore(TokenType.LEFT_BRACE, "block");
-
-        final List<Statement> statements = this.consumeStatements();
-        return new BlockStatement(start, statements);
-    }
-
     private List<Statement> consumeStatements() {
         final List<Statement> statements = new ArrayList<>();
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
@@ -433,7 +424,11 @@ public class Parser {
     }
 
     private BlockStatement block() {
-        return this.block(true);
+        final Token start = this.peek();
+        this.expectBefore(TokenType.LEFT_BRACE, "block");
+
+        final List<Statement> statements = this.consumeStatements();
+        return new BlockStatement(start, statements);
     }
 
     private Expression expression() {
