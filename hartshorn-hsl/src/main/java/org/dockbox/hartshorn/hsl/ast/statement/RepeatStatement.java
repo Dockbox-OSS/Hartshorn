@@ -19,23 +19,17 @@ package org.dockbox.hartshorn.hsl.ast.statement;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class RepeatStatement extends Statement {
+public class RepeatStatement extends BodyStatement {
 
     private final Expression value;
-    private final Statement loopBody;
 
-    public RepeatStatement(final Expression value, final Statement loopBody) {
-        super(value.line());
+    public RepeatStatement(final Expression value, final BlockStatement loopBody) {
+        super(value.line(), loopBody);
         this.value = value;
-        this.loopBody = loopBody;
     }
 
     public Expression value() {
         return this.value;
-    }
-
-    public Statement loopBody() {
-        return this.loopBody;
     }
 
     @Override

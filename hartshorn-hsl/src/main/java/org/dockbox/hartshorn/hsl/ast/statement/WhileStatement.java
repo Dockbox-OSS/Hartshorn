@@ -19,23 +19,17 @@ package org.dockbox.hartshorn.hsl.ast.statement;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class WhileStatement extends Statement {
+public class WhileStatement extends BodyStatement {
 
     private final Expression condition;
-    private final Statement loopBody;
 
-    public WhileStatement(final Expression condition, final Statement loopBody) {
-        super(condition.line());
+    public WhileStatement(final Expression condition, final BlockStatement loopBody) {
+        super(condition.line(), loopBody);
         this.condition = condition;
-        this.loopBody = loopBody;
     }
 
     public Expression condition() {
         return this.condition;
-    }
-
-    public Statement loopBody() {
-        return this.loopBody;
     }
 
     @Override

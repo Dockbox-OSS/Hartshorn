@@ -19,15 +19,13 @@ package org.dockbox.hartshorn.hsl.ast.statement;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-import java.util.List;
-
 public class IfStatement extends Statement {
 
     private final Expression condition;
-    private final List<Statement> thenBranch;
-    private final List<Statement> elseBranch;
+    private final BlockStatement thenBranch;
+    private final BlockStatement elseBranch;
 
-    public IfStatement(final Expression condition, final List<Statement> thenBranch, final List<Statement> elseBranch) {
+    public IfStatement(final Expression condition, final BlockStatement thenBranch, final BlockStatement elseBranch) {
         super(condition.line());
         this.condition = condition;
         this.thenBranch = thenBranch;
@@ -38,11 +36,11 @@ public class IfStatement extends Statement {
         return this.condition;
     }
 
-    public List<Statement> thenBranch() {
+    public BlockStatement thenBranch() {
         return this.thenBranch;
     }
 
-    public List<Statement> elseBranch() {
+    public BlockStatement elseBranch() {
         return this.elseBranch;
     }
 

@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
@@ -45,6 +50,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
@@ -66,11 +72,6 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.inject.binding.Bound;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 /**
  * Standard resolver to perform semantic analysis and type checking before a collection
@@ -214,7 +215,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final BlockStatement statement) {
         this.beginScope();
-        this.resolve(statement.statementList());
+        this.resolve(statement.statements());
         this.endScope();
         return null;
     }
@@ -232,7 +233,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
         this.resolve(statement.condition());
-        this.resolve(statement.loopBody());
+        this.resolve(statement.body());
         this.currentScopeType = enclosingType;
         return null;
     }
@@ -241,8 +242,24 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final DoWhileStatement statement) {
         final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
+        this.beginScope();
         this.resolve(statement.condition());
-        this.resolve(statement.loopBody());
+        this.resolve(statement.body());
+        this.endScope();
+        this.currentScopeType = enclosingType;
+        return null;
+    }
+
+    @Override
+    public Void visit(final ForStatement statement) {
+        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+        this.currentScopeType = MoveKeyword.ScopeType.LOOP;
+        this.beginScope();
+        this.resolve(statement.initializer());
+        this.resolve(statement.condition());
+        this.resolve(statement.increment());
+        this.resolve(statement.body());
+        this.endScope();
         this.currentScopeType = enclosingType;
         return null;
     }
@@ -251,8 +268,10 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final RepeatStatement statement) {
         final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
+        this.beginScope();
         this.resolve(statement.value());
-        this.resolve(statement.loopBody());
+        this.resolve(statement.body());
+        this.endScope();
         this.currentScopeType = enclosingType;
         return null;
     }
@@ -260,8 +279,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
-        if (this.currentScopeType == MoveKeyword.ScopeType.NONE) {
-            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Continue can only used be inside loops.");
+        if (this.currentScopeType != MoveKeyword.ScopeType.LOOP) {
+            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops.");
         }
         return null;
     }
@@ -269,7 +288,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
-        if (this.currentScopeType == MoveKeyword.ScopeType.NONE) {
+        if (this.currentScopeType != MoveKeyword.ScopeType.LOOP) {
             this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops.");
         }
         return null;

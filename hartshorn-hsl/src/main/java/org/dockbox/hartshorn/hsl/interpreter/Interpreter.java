@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
@@ -45,6 +53,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
@@ -56,9 +65,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
-import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.callable.module.HslLibrary;
@@ -76,14 +85,6 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 import org.slf4j.Logger;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -309,8 +310,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             case BANG -> !this.isTruthy(right);
             case COMPLEMENT -> {
                 this.checkNumberOperand(expr.operator(), right);
+                final int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
-                yield (int) ~((Double) right).intValue();
+                yield (int) ~value;
             }
             default -> null;
         };
@@ -531,19 +533,26 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final BlockStatement statement) {
-        this.execute(statement.statementList(), new VariableScope(this.variableScope()));
+        this.execute(statement.statements(), new VariableScope(this.variableScope()));
         return null;
     }
 
     @Override
     public Void visit(final IfStatement statement) {
         final Object conditionResult = this.evaluate(statement.condition());
+        final VariableScope previous = this.variableScope();
+
         if (this.isTruthy(conditionResult)) {
-            this.execute(statement.thenBranch(), this.variableScope());
+            final VariableScope thenVariableScope = new VariableScope(previous);
+            this.visitingScope = thenVariableScope;
+            this.execute(statement.thenBranch(), thenVariableScope);
         }
         else if (statement.elseBranch() != null) {
-            this.execute(statement.elseBranch(), this.variableScope());
+            final VariableScope elseVariableScope = new VariableScope(previous);
+            this.visitingScope = elseVariableScope;
+            this.execute(statement.elseBranch(), elseVariableScope);
         }
+        this.visitingScope = previous;
         return null;
     }
 
@@ -551,7 +560,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Void visit(final WhileStatement statement) {
         while (this.isTruthy(this.evaluate(statement.condition()))) {
             try {
-                this.execute(statement.loopBody());
+                this.execute(statement.body());
             }
             catch (final MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
@@ -570,13 +579,34 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         do {
             try {
-                this.execute(statement.loopBody());
+                this.execute(statement.body());
             }
             catch (final MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
             }
         }
         while (this.isTruthy(this.evaluate(statement.condition())));
+
+        this.visitingScope = previous;
+        return null;
+    }
+
+    @Override
+    public Void visit(final ForStatement statement) {
+        final VariableScope forVariableScope = new VariableScope(this.variableScope());
+        final VariableScope previous = this.variableScope();
+        this.visitingScope = forVariableScope;
+
+        this.execute(statement.initializer());
+        while (this.isTruthy(this.evaluate(statement.condition()))) {
+            try {
+                this.execute(statement.body());
+            }
+            catch (final MoveKeyword moveKeyword) {
+                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+            }
+            this.execute(statement.increment());
+        }
 
         this.visitingScope = previous;
         return null;
@@ -599,7 +629,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final int counter = (int) Double.parseDouble(value.toString());
         for (int i = 0; i < counter; i++) {
             try {
-                this.execute(statement.loopBody());
+                this.execute(statement.body());
             }
             catch (final MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
@@ -787,6 +817,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         stmt.accept(this);
     }
 
+    public void execute(final BlockStatement blockStatement, final VariableScope localVariableScope) {
+        this.execute(blockStatement.statements(), localVariableScope);
+    }
+
     public void execute(final List<Statement> statementList, final VariableScope localVariableScope) {
         final VariableScope previous = this.variableScope();
         try {
@@ -812,15 +846,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     private Object lookUpVariable(final Token name, final Expression expr) {
         if (name.type() == TokenType.THIS) {
-            return this.visitingScope.getAt(name, 1);
+            return this.variableScope().getAt(name, 1);
         }
 
         final Integer distance = this.locals.get(expr);
         if (distance != null) {
             // Find variable value in locales score
-            return this.visitingScope.getAt(name, distance);
+            return this.variableScope().getAt(name, distance);
         }
-        else if (this.global.contains(name.lexeme())) {
+        else if (this.global.contains(name)) {
             // Can't find distance in locales, so it must be global variable
             return this.global.get(name);
         }

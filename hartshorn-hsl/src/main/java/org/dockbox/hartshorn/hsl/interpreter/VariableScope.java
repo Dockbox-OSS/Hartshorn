@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-import org.dockbox.hartshorn.hsl.token.Token;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
  * A variable scope represents all declared variables inside a specific scope, with access to a
@@ -107,6 +107,10 @@ public class VariableScope {
 
     void assignAt(final int distance, final Token name, final Object value) {
         this.ancestor(name, distance).valuesMap.put(name.lexeme(), value);
+    }
+
+    public boolean contains(final Token token) {
+        return this.contains(token.lexeme());
     }
 
     /**

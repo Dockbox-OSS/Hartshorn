@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.visitors;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -53,6 +54,8 @@ public interface StatementVisitor<R> {
     R visit(WhileStatement statement);
 
     R visit(DoWhileStatement statement);
+
+    R visit(ForStatement statement);
 
     R visit(RepeatStatement statement);
 

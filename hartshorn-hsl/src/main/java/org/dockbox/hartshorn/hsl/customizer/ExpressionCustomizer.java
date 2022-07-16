@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
@@ -25,10 +30,6 @@ import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
@@ -74,7 +75,8 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
         final ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
 
         final Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1);
-        final TestStatement testStatement = new TestStatement(testToken, statements, returnStatement);
+        final BlockStatement blockStatement = new BlockStatement(returnToken, statements);
+        final TestStatement testStatement = new TestStatement(testToken, blockStatement, returnStatement);
 
         final List<Statement> validationStatements = new ArrayList<>();
         validationStatements.add(testStatement);

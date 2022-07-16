@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.List;
 
 public class BlockStatement extends Statement {
 
@@ -30,7 +30,7 @@ public class BlockStatement extends Statement {
         this.statementList = statementList;
     }
 
-    public List<Statement> statementList() {
+    public List<Statement> statements() {
         return this.statementList;
     }
 

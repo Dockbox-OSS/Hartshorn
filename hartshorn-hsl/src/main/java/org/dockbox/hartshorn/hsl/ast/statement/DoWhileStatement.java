@@ -21,10 +21,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 public class DoWhileStatement extends WhileStatement {
 
-    private Expression condition;
-    private Statement loopBody;
-
-    public DoWhileStatement(final Expression condition, final Statement loopBody) {
+    public DoWhileStatement(final Expression condition, final BlockStatement loopBody) {
         super(condition, loopBody);
     }
 
