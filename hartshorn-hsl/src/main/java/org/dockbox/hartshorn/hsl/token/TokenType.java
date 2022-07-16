@@ -101,6 +101,9 @@ public enum TokenType {
     PRINT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     MODULE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+
+    // Reserved words/characters
+    OPERATOR(builder -> builder.keyword(true).ok()),
     ;
 
     private final TokenMetaData metaData;

@@ -16,8 +16,49 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
-import org.dockbox.hartshorn.hsl.ast.expression.*;
-import org.dockbox.hartshorn.hsl.ast.statement.*;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Function;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -647,7 +688,23 @@ public class Parser {
             final Token method = this.expect(TokenType.IDENTIFIER, "superclass method name");
             return new SuperExpression(keyword, method);
         }
+        if (this.match(TokenType.ARRAY_OPEN)) {
+            return this.arrayLiteral();
+        }
         throw this.error(this.peek(), "Expected expression, but found " + this.tokens.get(this.current));
+    }
+
+    private Expression arrayLiteral() {
+        final Token open = this.previous();
+        final List<Expression> elements = new ArrayList<>();
+        if (!this.check(TokenType.ARRAY_CLOSE)) {
+            do {
+                elements.add(this.expression());
+            }
+            while (this.match(TokenType.COMMA));
+        }
+        final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
+        return new ArrayLiteralExpression(open, close, elements);
     }
 
     private ParseError error(final Token token, final String message) {

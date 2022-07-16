@@ -36,6 +36,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 
 /**
  * Visitor interface for all supported {@link org.dockbox.hartshorn.hsl.ast.expression.Expression}s.
@@ -80,6 +81,8 @@ public interface ExpressionVisitor<R> {
     R visit(ArrayGetExpression expr);
 
     R visit(ArrayVariable expr);
+
+    R visit(ArrayLiteralExpression expr);
 
     R visit(PrefixExpression expr);
 

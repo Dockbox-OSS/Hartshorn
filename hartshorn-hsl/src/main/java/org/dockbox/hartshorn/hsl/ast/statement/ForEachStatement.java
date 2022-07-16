@@ -31,15 +31,15 @@ public class ForEachStatement extends BodyStatement {
     }
 
     public VariableStatement selector() {
-        return selector;
+        return this.selector;
     }
 
     public Expression collection() {
-        return collection;
+        return this.collection;
     }
 
     @Override
-    public <R> R accept(StatementVisitor<R> visitor) {
+    public <R> R accept(final StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

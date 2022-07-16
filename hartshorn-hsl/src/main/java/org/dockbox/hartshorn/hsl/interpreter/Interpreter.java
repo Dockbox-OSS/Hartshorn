@@ -16,9 +16,57 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
-import org.dockbox.hartshorn.hsl.ast.expression.*;
-import org.dockbox.hartshorn.hsl.ast.statement.*;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
@@ -39,14 +87,6 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 import org.slf4j.Logger;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -278,7 +318,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.checkNumberOperand(expr.operator(), right);
                 final int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
-                yield (int) ~value;
+                yield ~value;
             }
             default -> null;
         };
@@ -383,6 +423,16 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final ArrayVariable expr) {
         return this.accessArray(expr.name(), expr.index(), Array::value);
+    }
+
+    @Override
+    public Object visit(final ArrayLiteralExpression expr) {
+        final List<Object> values = new ArrayList<>();
+        for(final Expression expression : expr.elements()) {
+            final Object evaluate = this.evaluate(expression);
+            values.add(evaluate);
+        }
+        return new Array(values.toArray());
     }
 
     private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
@@ -579,13 +629,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(ForEachStatement statement) {
+    public Void visit(final ForEachStatement statement) {
         final VariableScope forVariableScope = new VariableScope(this.variableScope());
         final VariableScope previous = this.variableScope();
         this.visitingScope = forVariableScope;
 
         Object collection = this.evaluate(statement.collection());
-        collection = unwrap(collection);
+        collection = this.unwrap(collection);
 
         if (collection instanceof Iterable<?> iterable) {
             this.variableScope().define(statement.selector().name().lexeme(), null);
@@ -756,7 +806,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     private boolean isTruthy(Object object) {
-        object = unwrap(object);
+        object = this.unwrap(object);
         if (object == null) return false;
         if (object instanceof Boolean) return (boolean) object;
         return true;
