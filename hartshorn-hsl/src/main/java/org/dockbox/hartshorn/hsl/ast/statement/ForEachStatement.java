@@ -19,33 +19,27 @@ package org.dockbox.hartshorn.hsl.ast.statement;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class ForStatement extends BodyStatement {
+public class ForEachStatement extends BodyStatement {
 
-    private final VariableStatement initializer;
-    private final Expression condition;
-    private final Statement increment;
+    private final VariableStatement selector;
+    private final Expression collection;
 
-    public ForStatement(final VariableStatement initializer, final Expression condition, final Statement increment, final BlockStatement loopBody) {
-        super(initializer.line(), loopBody);
-        this.initializer = initializer;
-        this.condition = condition;
-        this.increment = increment;
+    public ForEachStatement(final VariableStatement selector, final Expression collection, final BlockStatement body) {
+        super(selector.line(), body);
+        this.selector = selector;
+        this.collection = collection;
     }
 
-    public VariableStatement initializer() {
-        return this.initializer;
+    public VariableStatement selector() {
+        return selector;
     }
 
-    public Expression condition() {
-        return this.condition;
-    }
-
-    public Statement increment() {
-        return this.increment;
+    public Expression collection() {
+        return collection;
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

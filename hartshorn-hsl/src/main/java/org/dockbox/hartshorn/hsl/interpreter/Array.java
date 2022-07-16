@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Simple wrapper around an array of objects, without a specific type requirement. This is used
@@ -25,7 +26,7 @@ import java.util.Arrays;
  * @author Guus Lieben
  * @since 22.4
  */
-public class Array {
+public class Array implements Iterable<Object> {
 
     private final Object[] values;
 
@@ -76,5 +77,10 @@ public class Array {
     @Override
     public String toString() {
         return Arrays.toString(this.values);
+    }
+
+    @Override
+    public Iterator<Object> iterator() {
+        return Arrays.asList(values).iterator();
     }
 }

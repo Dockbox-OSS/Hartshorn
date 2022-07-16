@@ -15,8 +15,8 @@ var arr = array[length];
 arr[0] = "One";
 arr[1] = "Two";
 
-infix fun in(obj, arr) {
+infix fun contains(arr, obj) {
     return arrayContains(arr, obj);
 }
 
-print("One" in arr);
+print(arr contains "One");

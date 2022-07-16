@@ -81,6 +81,7 @@ public enum TokenType {
     TRUE(builder -> builder.keyword(true).ok()),
     FALSE(builder -> builder.keyword(true).ok()),
     FOR(builder -> builder.keyword(true).ok()),
+    IN(builder -> builder.keyword(true).ok()),
     SUPER(builder -> builder.keyword(true).ok()),
     THIS(builder -> builder.keyword(true).ok()),
     VAR(builder -> builder.keyword(true).ok()),

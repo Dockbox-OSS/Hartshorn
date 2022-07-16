@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import jakarta.inject.Inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.callable.module.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
@@ -43,8 +44,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
-
-import jakarta.inject.Inject;
 
 @HartshornTest
 @UseExpressionValidation
