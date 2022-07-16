@@ -448,6 +448,18 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.withNextScope(() -> {
                     for (final Object element : iterable) {
                         this.variableScope().assign(expr.selector(), element);
+
+                        if (expr.condition() != null) {
+                            final Object condition = this.evaluate(expr.condition());
+                            if (!this.isTruthy(condition)) {
+                                if (expr.elseExpression() != null) {
+                                    final Object elseValue = this.evaluate(expr.elseExpression());
+                                    values.add(elseValue);
+                                }
+                                continue;
+                            }
+                        }
+
                         final Object result = this.evaluate(expr.expression());
                         values.add(result);
                     }
@@ -457,7 +469,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         else {
             throw new RuntimeError(expr.open(), "Collection must be iterable");
         }
-        return values;
+        return new Array(values.toArray());
     }
 
     private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
@@ -937,9 +949,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     private void withNextScope(final Runnable runnable) {
-        final VariableScope forVariableScope = new VariableScope(this.variableScope());
+        final VariableScope nextScope = new VariableScope(this.variableScope());
         final VariableScope previous = this.variableScope();
-        this.visitingScope = forVariableScope;
+        this.visitingScope = nextScope;
         runnable.run();
         this.visitingScope = previous;
     }

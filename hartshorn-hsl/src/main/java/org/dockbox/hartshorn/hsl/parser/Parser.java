@@ -714,12 +714,27 @@ public class Parser {
         else {
             final Token forToken = this.expectAfter(TokenType.FOR, "expression");
             final Token name = this.expect(TokenType.IDENTIFIER, "variable name");
-            final Token inToken = this.expectAfter(TokenType.IN, "expression");
 
+            final Token inToken = this.expectAfter(TokenType.IN, "variable name");
             final Expression iterable = this.expression();
+
+            Token ifToken = null;
+            Expression condition = null;
+            if (this.match(TokenType.IF)) {
+                ifToken = this.previous();
+                condition = this.expression();
+            }
+
+            Token elseToken = null;
+            Expression elseExpr = null;
+            if (this.match(TokenType.ELSE)) {
+                elseToken = this.previous();
+                elseExpr = this.expression();
+            }
+
             final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
 
-            return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close);
+            return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
         }
     }
 

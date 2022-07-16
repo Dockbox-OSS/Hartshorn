@@ -31,12 +31,19 @@ public class ArrayComprehensionExpression extends Expression {
     private final Token open;
     private final Token close;
 
+    private final Token ifToken;
+    private final Expression condition;
+
+    private final Token elseToken;
+    private final Expression elseExpression;
+
     public ArrayComprehensionExpression(final Expression collection,
                                         final Expression expression,
                                         final Token selector,
                                         final Token forToken, final Token inToken,
-                                        final Token open, final Token close
-    ) {
+                                        final Token open, final Token close,
+                                        final Token ifToken, final Expression condition,
+                                        final Token elseToken, final Expression elseExpression) {
         super(open);
         this.collection = collection;
         this.expression = expression;
@@ -45,6 +52,10 @@ public class ArrayComprehensionExpression extends Expression {
         this.inToken = inToken;
         this.open = open;
         this.close = close;
+        this.ifToken = ifToken;
+        this.condition = condition;
+        this.elseToken = elseToken;
+        this.elseExpression = elseExpression;
     }
 
     public Expression collection() {
@@ -73,6 +84,22 @@ public class ArrayComprehensionExpression extends Expression {
 
     public Token close() {
         return this.close;
+    }
+
+    public Token ifToken() {
+        return ifToken;
+    }
+
+    public Expression condition() {
+        return condition;
+    }
+
+    public Token elseToken() {
+        return elseToken;
+    }
+
+    public Expression elseExpression() {
+        return elseExpression;
     }
 
     @Override

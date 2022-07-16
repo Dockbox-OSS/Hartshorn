@@ -1,7 +1,28 @@
 var list = [1, 2, 3];
 
-var copy = [x + 1 for x in list];
+var copy1 = [x + 1 for x in list];
+var copy2 = [x + 1 for x in list if x > 1];
+var copy3 = [x + 1 for x in list if x > 1 else -1];
 
-for (var i in copy) {
+print("Copy 1")
+for (var i in copy1) {
+    print(i);
+}
+
+print("Copy 2")
+for (var i in copy2) {
+    print(i);
+}
+
+print("Copy 3")
+for (var i in copy3) {
+    print(i);
+}
+
+var listWithNull = ["Hello", null, 2, true];
+var listWithoutNull = [x for x in listWithNull if x];
+
+print("List without null")
+for (var i in listWithoutNull) {
     print(i);
 }

@@ -478,6 +478,12 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         {
             this.beginScope();
             this.resolve(expr.expression());
+            if (expr.condition() != null) {
+                this.resolve(expr.condition());
+            }
+            if (expr.elseExpression() != null) {
+                this.resolve(expr.elseExpression());
+            }
             this.endScope();
         }
         this.endScope();
