@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
@@ -37,7 +39,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -689,22 +690,37 @@ public class Parser {
             return new SuperExpression(keyword, method);
         }
         if (this.match(TokenType.ARRAY_OPEN)) {
-            return this.arrayLiteral();
+            return this.complexArray();
         }
         throw this.error(this.peek(), "Expected expression, but found " + this.tokens.get(this.current));
     }
 
-    private Expression arrayLiteral() {
+    private Expression complexArray() {
         final Token open = this.previous();
-        final List<Expression> elements = new ArrayList<>();
-        if (!this.check(TokenType.ARRAY_CLOSE)) {
-            do {
-                elements.add(this.expression());
+        final Expression expr = this.expression();
+
+        if (this.match(TokenType.COMMA, TokenType.ARRAY_CLOSE)) {
+            final List<Expression> elements = new ArrayList<>();
+            elements.add(expr);
+            if (!this.check(TokenType.ARRAY_CLOSE)) {
+                do {
+                    elements.add(this.expression());
+                }
+                while (this.match(TokenType.COMMA));
             }
-            while (this.match(TokenType.COMMA));
+            final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
+            return new ArrayLiteralExpression(open, close, elements);
         }
-        final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
-        return new ArrayLiteralExpression(open, close, elements);
+        else {
+            final Token forToken = this.expectAfter(TokenType.FOR, "expression");
+            final Token name = this.expect(TokenType.IDENTIFIER, "variable name");
+            final Token inToken = this.expectAfter(TokenType.IN, "expression");
+
+            final Expression iterable = this.expression();
+            final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
+
+            return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close);
+        }
     }
 
     private ParseError error(final Token token, final String message) {

@@ -16,16 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
@@ -46,7 +40,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -87,6 +80,14 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 import org.slf4j.Logger;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -318,7 +319,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.checkNumberOperand(expr.operator(), right);
                 final int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
-                yield ~value;
+                yield (int) ~value;
             }
             default -> null;
         };
@@ -433,6 +434,30 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             values.add(evaluate);
         }
         return new Array(values.toArray());
+    }
+
+    @Override
+    public Object visit(final ArrayComprehensionExpression expr) {
+        final List<Object> values = new ArrayList<>();
+        final Object collection = this.evaluate(expr.collection());
+        if (collection instanceof Iterable<?> iterable) {
+
+            this.withNextScope(() -> {
+                this.variableScope().define(expr.selector().lexeme(), null);
+
+                this.withNextScope(() -> {
+                    for (final Object element : iterable) {
+                        this.variableScope().assign(expr.selector(), element);
+                        final Object result = this.evaluate(expr.expression());
+                        values.add(result);
+                    }
+                });
+            });
+        }
+        else {
+            throw new RuntimeError(expr.open(), "Collection must be iterable");
+        }
+        return values;
     }
 
     private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
@@ -589,93 +614,78 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final DoWhileStatement statement) {
-        final VariableScope whileVariableScope = new VariableScope(this.variableScope());
-        final VariableScope previous = this.variableScope();
-        this.visitingScope = whileVariableScope;
-
-        do {
-            try {
-                this.execute(statement.body());
+        this.withNextScope(() -> {
+            do {
+                try {
+                    this.execute(statement.body());
+                }
+                catch (final MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                }
             }
-            catch (final MoveKeyword moveKeyword) {
-                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
-            }
-        }
-        while (this.isTruthy(this.evaluate(statement.condition())));
-
-        this.visitingScope = previous;
+            while (this.isTruthy(this.evaluate(statement.condition())));
+        });
         return null;
     }
 
     @Override
     public Void visit(final ForStatement statement) {
-        final VariableScope forVariableScope = new VariableScope(this.variableScope());
-        final VariableScope previous = this.variableScope();
-        this.visitingScope = forVariableScope;
-
-        this.execute(statement.initializer());
-        while (this.isTruthy(this.evaluate(statement.condition()))) {
-            try {
-                this.execute(statement.body());
+        this.withNextScope(() -> {
+            this.execute(statement.initializer());
+            while (this.isTruthy(this.evaluate(statement.condition()))) {
+                try {
+                    this.execute(statement.body());
+                }
+                catch (final MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                }
+                this.execute(statement.increment());
             }
-            catch (final MoveKeyword moveKeyword) {
-                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
-            }
-            this.execute(statement.increment());
-        }
-
-        this.visitingScope = previous;
+        });
         return null;
     }
 
     @Override
     public Void visit(final ForEachStatement statement) {
-        final VariableScope forVariableScope = new VariableScope(this.variableScope());
-        final VariableScope previous = this.variableScope();
-        this.visitingScope = forVariableScope;
+        this.withNextScope(() -> {
+            Object collection = this.evaluate(statement.collection());
+            collection = this.unwrap(collection);
 
-        Object collection = this.evaluate(statement.collection());
-        collection = this.unwrap(collection);
-
-        if (collection instanceof Iterable<?> iterable) {
-            this.variableScope().define(statement.selector().name().lexeme(), null);
-            for (final Object item : iterable) {
-                this.variableScope().assign(statement.selector().name(), item);
-                this.execute(statement.body());
+            if (collection instanceof Iterable<?> iterable) {
+                this.variableScope().define(statement.selector().name().lexeme(), null);
+                for (final Object item : iterable) {
+                    this.variableScope().assign(statement.selector().name(), item);
+                    this.execute(statement.body());
+                }
             }
-        }
-        else {
-            throw new RuntimeException("Only iterables are supported for for-each.");
-        }
-
-        this.visitingScope = previous;
+            else {
+                throw new RuntimeException("Only iterables are supported for for-each.");
+            }
+        });
         return null;
     }
 
     @Override
     public Void visit(final RepeatStatement statement) {
-        final VariableScope repeatVariableScope = new VariableScope(this.variableScope());
-        final VariableScope previous = this.variableScope();
-        this.visitingScope = repeatVariableScope;
+        this.withNextScope(() -> {
+            final Object value = this.evaluate(statement.value());
 
-        final Object value = this.evaluate(statement.value());
+            final boolean isNotNumber = !(value instanceof Number);
 
-        final boolean isNotNumber = !(value instanceof Number);
-
-        if (isNotNumber) {
-            throw new RuntimeException("Repeat Counter must be number");
-        }
-
-        final int counter = (int) Double.parseDouble(value.toString());
-        for (int i = 0; i < counter; i++) {
-            try {
-                this.execute(statement.body());
+            if (isNotNumber) {
+                throw new RuntimeException("Repeat Counter must be number");
             }
-            catch (final MoveKeyword moveKeyword) {
-                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+
+            final int counter = (int) Double.parseDouble(value.toString());
+            for (int i = 0; i < counter; i++) {
+                try {
+                    this.execute(statement.body());
+                }
+                catch (final MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                }
             }
-        }
-        this.visitingScope = previous;
+        });
         return null;
     }
 
@@ -924,5 +934,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public void imports(final Map<String, Class<?>> imports) {
         imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
+    }
+
+    private void withNextScope(final Runnable runnable) {
+        final VariableScope forVariableScope = new VariableScope(this.variableScope());
+        final VariableScope previous = this.variableScope();
+        this.visitingScope = forVariableScope;
+        runnable.run();
+        this.visitingScope = previous;
     }
 }

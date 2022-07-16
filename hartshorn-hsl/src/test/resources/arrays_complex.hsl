@@ -1,0 +1,7 @@
+var list = [1, 2, 3];
+
+var copy = [x + 1 for x in list];
+
+for (var i in copy) {
+    print(i);
+}

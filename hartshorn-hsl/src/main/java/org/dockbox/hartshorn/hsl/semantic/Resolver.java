@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.semantic;
 
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
@@ -463,6 +464,25 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         for (final Expression element : expr.elements()) {
             this.resolve(element);
         }
+        return null;
+    }
+
+    @Override
+    public Void visit(final ArrayComprehensionExpression expr) {
+        this.resolve(expr.collection());
+        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+        this.currentScopeType = MoveKeyword.ScopeType.LOOP;
+
+        this.beginScope();
+        this.declare(expr.selector());
+        {
+            this.beginScope();
+            this.resolve(expr.expression());
+            this.endScope();
+        }
+        this.endScope();
+
+        this.currentScopeType = enclosingType;
         return null;
     }
 
