@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
@@ -340,7 +341,7 @@ public class Parser {
         final VariableStatement initializer = this.varDeclaration();
 
         if (this.match(TokenType.IN)) {
-            Expression collection = this.expression();
+            final Expression collection = this.expression();
             this.expectAfter(TokenType.RIGHT_PAREN, "for collection");
 
             final BlockStatement loopBody = this.block();
@@ -642,6 +643,10 @@ public class Parser {
                 final Token name = this.consume(TokenType.IDENTIFIER, "Expected property name after '.'.");
                 expr = new GetExpression(name, expr);
             }
+            else if (this.match(TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
+                final Token operator = this.previous();
+                expr = new PostfixExpression(operator, expr);
+            }
             else {
                 break;
             }
@@ -769,7 +774,7 @@ public class Parser {
                     this.report(caseToken, "Case expression must be a literal.");
                 }
 
-                LiteralExpression literal = (LiteralExpression) caseExpr;
+                final LiteralExpression literal = (LiteralExpression) caseExpr;
                 if (matchedLiterals.contains(literal.value())) {
                     this.report(caseToken, "Duplicate case expression '" + literal.value() + "'.");
                 }
@@ -779,7 +784,7 @@ public class Parser {
                 cases.add(new SwitchCase(caseToken, body, literal, false));
             }
             else {
-                Statement body = this.caseBody();
+                final Statement body = this.caseBody();
                 defaultBody = new SwitchCase(caseToken, body, null, true);
             }
         }

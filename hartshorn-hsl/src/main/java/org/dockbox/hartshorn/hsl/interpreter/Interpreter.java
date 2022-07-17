@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
@@ -303,7 +304,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final UnaryExpression expr) {
         final Object right = this.evaluate(expr.rightExpression());
-        return switch (expr.operator().type()) {
+        final Object newValue = switch (expr.operator().type()) {
             case MINUS -> {
                 this.checkNumberOperand(expr.operator(), right);
                 yield -(double) right;
@@ -325,6 +326,28 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
             default -> null;
         };
+        assignIfVariable(expr.rightExpression(), newValue);
+        return newValue;
+    }
+
+    @Override
+    public Object visit(final PostfixExpression expr) {
+        final Object left = this.evaluate(expr.leftExpression());
+        this.checkNumberOperand(expr.operator(), left);
+
+        Double newValue = switch (expr.operator().type()) {
+            case PLUS_PLUS -> (Double) left + 1;
+            case MINUS_MINUS -> (Double) left -1;
+            default -> throw new RuntimeError(expr.operator(), "Invalid postfix operator " + expr.operator().type());
+        };
+        assignIfVariable(expr.leftExpression(), newValue);
+        return left;
+    }
+
+    private void assignIfVariable(final Expression expression, final Object value) {
+        if (expression instanceof VariableExpression variable) {
+            this.variableScope().assign(variable.name(), value);
+        }
     }
 
     @Override

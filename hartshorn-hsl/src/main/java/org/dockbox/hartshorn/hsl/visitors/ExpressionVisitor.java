@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
@@ -56,6 +57,8 @@ public interface ExpressionVisitor<R> {
     R visit(AssignExpression expr);
 
     R visit(UnaryExpression expr);
+
+    R visit(PostfixExpression expr);
 
     R visit(LogicalExpression expr);
 
