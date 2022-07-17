@@ -57,6 +57,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
@@ -147,6 +149,7 @@ public class Parser {
         if (this.match(TokenType.CONTINUE)) return this.continueStatement();
         if (this.match(TokenType.TEST)) return this.testStatement();
         if (this.match(TokenType.MODULE)) return this.moduleStatement();
+        if (this.match(TokenType.SWITCH)) return this.switchStatement();
 
         final TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
@@ -541,6 +544,13 @@ public class Parser {
         return this.peek().type() == type;
     }
 
+    private boolean check(final TokenType... type) {
+        for (final TokenType t : type) {
+            if (this.check(t)) return true;
+        }
+        return false;
+    }
+
     private Token advance() {
         if (!this.isAtEnd()) this.current++;
         return this.previous();
@@ -736,6 +746,62 @@ public class Parser {
 
             return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
         }
+    }
+
+    private Statement switchStatement() {
+        final Token switchToken = this.previous();
+        this.expectAfter(TokenType.LEFT_PAREN, "switch");
+        final Expression expr = this.expression();
+        this.expectAfter(TokenType.RIGHT_PAREN, "expression");
+
+        this.expectAfter(TokenType.LEFT_BRACE, "switch");
+
+        SwitchCase defaultBody = null;
+        final List<SwitchCase> cases = new ArrayList<>();
+        final Set<Object> matchedLiterals = new HashSet<>();
+
+        while (this.match(TokenType.CASE, TokenType.DEFAULT)) {
+            final Token caseToken = this.previous();
+
+            if (caseToken.type() == TokenType.CASE) {
+                final Expression caseExpr = this.primary();
+                if (!(caseExpr instanceof LiteralExpression)) {
+                    this.report(caseToken, "Case expression must be a literal.");
+                }
+
+                LiteralExpression literal = (LiteralExpression) caseExpr;
+                if (matchedLiterals.contains(literal.value())) {
+                    this.report(caseToken, "Duplicate case expression '" + literal.value() + "'.");
+                }
+                matchedLiterals.add(literal.value());
+
+                final Statement body = this.caseBody();
+                cases.add(new SwitchCase(caseToken, body, literal, false));
+            }
+            else {
+                Statement body = this.caseBody();
+                defaultBody = new SwitchCase(caseToken, body, null, true);
+            }
+        }
+
+        this.expectAfter(TokenType.RIGHT_BRACE, "switch");
+
+        return new SwitchStatement(switchToken, expr, cases, defaultBody);
+    }
+
+    private Statement caseBody() {
+        if (this.match(TokenType.COLON)) {
+            final Token colon = this.previous();
+            final List<Statement> statements = new ArrayList<>();
+            while (!this.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
+                statements.add(this.declaration());
+            }
+            return new BlockStatement(colon, statements);
+        }
+        else if (this.match(TokenType.ARROW)) {
+            return this.statement();
+        }
+        else throw this.error(this.peek(), "Expected ':' or '->'");
     }
 
     private ParseError error(final Token token, final String message) {

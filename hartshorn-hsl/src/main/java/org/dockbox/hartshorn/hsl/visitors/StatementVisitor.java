@@ -63,4 +63,8 @@ public interface StatementVisitor<R> {
     R visit(TestStatement statement);
 
     R visit(ModuleStatement statement);
+
+    R visit(SwitchStatement statement);
+
+    R visit(SwitchCase statement);
 }

@@ -20,12 +20,14 @@ package org.dockbox.hartshorn.hsl.ast;
 public class MoveKeyword extends RuntimeException {
 
     public enum ScopeType {
-        NONE, LOOP
+        NONE,
+        LOOP,
+        SWITCH,
     }
 
     public enum MoveType {
         BREAK,
-        CONTINUE
+        CONTINUE,
     }
 
     private final MoveType moveType;

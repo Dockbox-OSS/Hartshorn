@@ -71,6 +71,7 @@ public enum TokenType {
     LOGICAL_SHIFT_RIGHT(builder -> builder.combines(GREATER, GREATER, GREATER).ok()),
     AND(builder -> builder.repeats(BITWISE_AND).ok()),
     OR(builder -> builder.repeats(BITWISE_OR).ok()),
+    ARROW(builder -> builder.combines(MINUS, GREATER).ok()),
 
     // Keywords,
     PREFIX(builder -> builder.keyword(true).ok()),
@@ -81,7 +82,6 @@ public enum TokenType {
     ELSE(builder -> builder.keyword(true).ok()),
     TRUE(builder -> builder.keyword(true).ok()),
     FALSE(builder -> builder.keyword(true).ok()),
-    FOR(builder -> builder.keyword(true).ok()),
     IN(builder -> builder.keyword(true).ok()),
     SUPER(builder -> builder.keyword(true).ok()),
     THIS(builder -> builder.keyword(true).ok()),
@@ -89,18 +89,22 @@ public enum TokenType {
     NULL(builder -> builder.keyword(true).ok()),
     ARRAY(builder -> builder.keyword(true).ok()),
     NATIVE(builder -> builder.keyword(true).ok()),
+    CASE(builder -> builder.keyword(true).ok()),
+    DEFAULT(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     REPEAT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     DO(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     WHILE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    FOR(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     BREAK(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     CONTINUE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     RETURN(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     PRINT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     MODULE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
     // Reserved words/characters
     OPERATOR(builder -> builder.keyword(true).ok()),

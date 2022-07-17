@@ -57,6 +57,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
@@ -823,6 +825,36 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return null;
     }
 
+    @Override
+    public Void visit(SwitchStatement statement) {
+        Object value = this.evaluate(statement.expression());
+        value = unwrap(value);
+        for (SwitchCase switchCase : statement.cases()) {
+            if (isEqual(value, switchCase.expression().value())) {
+                this.execute(switchCase);
+                return null;
+            }
+        }
+        if (statement.defaultCase() != null) {
+            this.withNextScope(() -> this.execute(statement.defaultCase()));
+        }
+        return null;
+    }
+
+    @Override
+    public Void visit(SwitchCase statement) {
+        this.withNextScope(() -> {
+            try {
+                this.execute(statement.body());
+            } catch (final MoveKeyword moveKeyword) {
+                if (moveKeyword.moveType() != MoveKeyword.MoveType.BREAK) {
+                    throw new RuntimeException("Unexpected move keyword " + moveKeyword.moveType());
+                }
+            }
+        });
+        return null;
+    }
+
     private Object evaluate(final Expression expr) {
         return expr.accept(this);
     }
@@ -898,6 +930,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     if (type.moveType() == MoveKeyword.MoveType.CONTINUE) {
                         break;
                     }
+                    // Handle in higher visitor call
+                    throw type;
                 }
             }
         }

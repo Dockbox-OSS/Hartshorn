@@ -57,6 +57,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
@@ -294,8 +296,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
-        if (this.currentScopeType != MoveKeyword.ScopeType.LOOP) {
-            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops.");
+        if (this.currentScopeType != MoveKeyword.ScopeType.LOOP && this.currentScopeType != MoveKeyword.ScopeType.SWITCH) {
+            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops and switch cases.");
         }
         return null;
     }
@@ -304,7 +306,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType != MoveKeyword.ScopeType.LOOP) {
-            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops.");
+            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Continue can only used be inside loops.");
         }
         return null;
     }
@@ -514,6 +516,34 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
             this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'super' in a class with no superclass.");
         }
         this.resolveLocal(expr, expr.keyword());
+        return null;
+    }
+
+    @Override
+    public Void visit(SwitchStatement statement) {
+        this.resolve(statement.expression());
+        for (final SwitchCase switchCase : statement.cases()) {
+            this.resolve(switchCase);
+        }
+        this.beginScope();
+        this.resolve(statement.defaultCase());
+        this.endScope();
+        return null;
+    }
+
+    @Override
+    public Void visit(SwitchCase statement) {
+        if (!statement.isDefault()) {
+            this.resolve(statement.expression());
+        }
+
+        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+        this.currentScopeType = MoveKeyword.ScopeType.SWITCH;
+        this.beginScope();
+        this.resolve(statement.body());
+        this.endScope();
+        this.currentScopeType = enclosingType;
+
         return null;
     }
 

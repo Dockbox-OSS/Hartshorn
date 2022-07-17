@@ -107,10 +107,13 @@ public class Lexer {
                 this.addToken(TokenType.DOT);
                 break;
             case TokenConstants.MINUS:
-                this.addToken(this.match(TokenConstants.MINUS)
-                        ? TokenType.MINUS_MINUS
-                        : TokenType.MINUS
-                );
+                if (this.match(TokenConstants.MINUS)) {
+                    this.addToken(TokenType.MINUS_MINUS);
+                } else if (this.match(TokenConstants.GREATER)) {
+                    this.addToken(TokenType.ARROW);
+                } else {
+                    this.addToken(TokenType.MINUS);
+                }
                 break;
             case TokenConstants.PLUS:
                 this.addToken(this.match(TokenConstants.PLUS)
