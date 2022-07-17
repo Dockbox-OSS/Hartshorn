@@ -1,0 +1,11 @@
+var name = "Foo";
+
+switch (name) {
+    case "Foo":
+        print("Hello Foo!");
+    case "Bar":
+        print("Hello Bar!");
+        break;
+        print("Goodbye Bar!");
+    default -> print("Hello other people!");
+}

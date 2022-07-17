@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import jakarta.inject.Inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.callable.module.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
@@ -40,9 +39,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+
+import jakarta.inject.Inject;
 
 @HartshornTest
 @UseExpressionValidation
@@ -272,25 +277,5 @@ public class ScriptRuntimeTests {
         Assertions.assertTrue(context.errors().isEmpty());
         Assertions.assertTrue(context.runtimeErrors().isEmpty());
         Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
-    }
-
-    @Test
-    void name() {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
-        final String expression = """
-                switch (2) {
-                    case 1:
-                        print("One");
-                    case 2:
-                        print("Two");
-                        break;
-                        print("Two again");
-                    default -> print("Default");
-                }
-                """;
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
     }
 }
