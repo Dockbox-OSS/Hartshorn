@@ -1,9 +1,0 @@
-fun hello () {
-   print("Hello World");
-}
-
-class ClassTestValue {
-  fun serveOn() {
-    return "Scones";
-  }
-}
