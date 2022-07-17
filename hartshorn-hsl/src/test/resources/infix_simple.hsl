@@ -1,6 +1,0 @@
-infix fun sum(x, y) {
-   return x + y;
-}
-
-print(10 sum 20);
-print(sum(10, 20));

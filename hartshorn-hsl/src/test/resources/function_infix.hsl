@@ -1,9 +1,0 @@
-infix fun orDefault(value, default) {
-    if (value == null) {
-        return default;
-    }
-    return value;
-}
-
-var result = null orDefault "Default Value";
-print(result);

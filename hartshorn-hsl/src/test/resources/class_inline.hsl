@@ -1,7 +1,0 @@
-class ClassTestValue {
-  fun serveOn() {
-    return "Scones";
-  }
-}
-
-print(ClassTestValue);

@@ -1,7 +1,0 @@
-class Bacon {
-  fun eat() {
-    print("Crunch crunch crunch!");
-  }
-}
-var bacon = Bacon();
-bacon.eat();
