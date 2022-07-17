@@ -35,13 +35,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -52,11 +51,11 @@ public class ScriptRuntimeTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    public static Stream<Arguments> scripts() {
+    public static Stream<Arguments> scripts() throws IOException {
         final Path resources = Paths.get("src", "test", "resources");
-        return Arrays.stream(resources.toFile().listFiles())
-                .filter(file -> file.getName().endsWith(".hsl"))
-                .map(file -> Result.of(() -> Files.readAllLines(file.toPath())).orNull())
+        List<File> files = new ArrayList<>();
+        return Files.find(resources, 5, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".hsl"))
+                .map(file -> Result.of(() -> Files.readAllLines(file)).orNull())
                 .filter(Objects::nonNull)
                 .map(lines -> String.join("\n", lines))
                 .map(Arguments::of);
@@ -273,5 +272,25 @@ public class ScriptRuntimeTests {
         Assertions.assertTrue(context.errors().isEmpty());
         Assertions.assertTrue(context.runtimeErrors().isEmpty());
         Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+    }
+
+    @Test
+    void name() {
+        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
+        final String expression = """
+                switch (2) {
+                    case 1:
+                        print("One");
+                    case 2:
+                        print("Two");
+                        break;
+                        print("Two again");
+                    default -> print("Default");
+                }
+                """;
+        final ScriptContext context = runtime.run(expression);
+
+        Assertions.assertTrue(context.errors().isEmpty());
+        Assertions.assertTrue(context.runtimeErrors().isEmpty());
     }
 }
