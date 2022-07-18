@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
+import org.dockbox.hartshorn.hsl.token.Token;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -26,7 +29,7 @@ import java.util.Iterator;
  * @author Guus Lieben
  * @since 22.4
  */
-public class Array implements Iterable<Object> {
+public class Array implements Iterable<Object>, PropertyContainer {
 
     private final Object[] values;
 
@@ -82,5 +85,19 @@ public class Array implements Iterable<Object> {
     @Override
     public Iterator<Object> iterator() {
         return Arrays.asList(values).iterator();
+    }
+
+    @Override
+    public void set(final Token name, final Object value) {
+        throw new UnsupportedOperationException("Cannot set properties on arrays.");
+    }
+
+    @Override
+    public Object get(final Token name) {
+        if (name.lexeme().equals("length")) {
+            return this.values.length;
+        } else {
+            throw new UnsupportedOperationException("Cannot get properties on arrays, only 'length'.");
+        }
     }
 }

@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
@@ -146,7 +146,7 @@ public class Parser {
         if (this.match(TokenType.BREAK)) return this.breakStatement();
         if (this.match(TokenType.CONTINUE)) return this.continueStatement();
         if (this.match(TokenType.TEST)) return this.testStatement();
-        if (this.match(TokenType.MODULE)) return this.moduleStatement();
+        if (this.match(TokenType.USING)) return this.moduleStatement();
         if (this.match(TokenType.SWITCH)) return this.switchStatement();
 
         final TokenType type = this.peek().type();
@@ -159,7 +159,7 @@ public class Parser {
 
     private Statement moduleStatement() {
         final Token name = this.expect(TokenType.IDENTIFIER, "module name");
-        this.expectAfter(TokenType.SEMICOLON, TokenType.MODULE);
+        this.expectAfter(TokenType.SEMICOLON, TokenType.USING);
         return new ModuleStatement(name);
     }
 
@@ -398,21 +398,13 @@ public class Parser {
         this.expectAfter(TokenType.RIGHT_PAREN, "test statement name value");
         this.expectBefore(TokenType.LEFT_BRACE, "test body");
         final List<Statement> statements = new ArrayList<>();
-        Statement returnStatement = null;
         final Token bodyStart = this.peek();
-        while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+        while (!this.match(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
             final Statement statement = this.declaration();
-            if (statement instanceof ReturnStatement) {
-                returnStatement = statement;
-                this.expectAfter(TokenType.RIGHT_BRACE, "block");
-                break;
-            }
-            else {
-                statements.add(statement);
-            }
+            statements.add(statement);
         }
         final BlockStatement body = new BlockStatement(bodyStart, statements);
-        return new TestStatement(name, body, returnStatement);
+        return new TestStatement(name, body);
     }
 
     private ExpressionStatement expressionStatement() {
@@ -453,9 +445,9 @@ public class Parser {
                 final Token name = ((VariableExpression) expr).name();
                 return new AssignExpression(name, value);
             }
-            else if (expr instanceof final ArrayVariable arrayVariable) {
-                final Token name = arrayVariable.name();
-                return new ArraySetExpression(name, arrayVariable.index(), value);
+            else if (expr instanceof final ArrayGetExpression arrayGetExpression) {
+                final Token name = arrayGetExpression.name();
+                return new ArraySetExpression(name, arrayGetExpression.index(), value);
             }
             else if (expr instanceof final GetExpression get) {
                 return new SetExpression(get.object(), get.name(), value);
@@ -667,81 +659,87 @@ public class Parser {
         if (this.match(TokenType.NULL)) return new LiteralExpression(this.peek(), null);
         if (this.match(TokenType.THIS)) return new ThisExpression(this.previous());
         if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExpression(this.peek(), this.previous().literal());
-        if (this.match(TokenType.IDENTIFIER)) {
-            final Token next = this.peek();
-            if (next.type() == TokenType.ARRAY_OPEN) {
-                final Token name = this.previous();
-                this.expect(TokenType.ARRAY_OPEN);
-                final Expression index = this.expression();
-                this.expect(TokenType.ARRAY_CLOSE);
-                return new ArrayVariable(name, index);
-            }
-            return new VariableExpression(this.previous());
-        }
-        if (this.match(TokenType.LEFT_PAREN)) {
-            final Expression expr = this.expression();
-            this.expectAfter(TokenType.RIGHT_PAREN, "expression");
-            return new GroupingExpression(expr);
-        }
-        if (this.match(TokenType.ARRAY)) {
+        if (this.match(TokenType.IDENTIFIER)) return identifierExpression();
+        if (this.match(TokenType.LEFT_PAREN)) return groupingExpression();
+        if (this.match(TokenType.SUPER)) return superExpression();
+        if (this.match(TokenType.ARRAY_OPEN)) return this.complexArray();
+
+        throw new ScriptEvaluationError("Expected expression, but found " + this.tokens.get(this.current), Phase.PARSING, this.peek());
+    }
+
+    private SuperExpression superExpression() {
+        final Token keyword = this.previous();
+        this.expectAfter(TokenType.DOT, TokenType.SUPER);
+        final Token method = this.expect(TokenType.IDENTIFIER, "superclass method name");
+        return new SuperExpression(keyword, method);
+    }
+
+    private GroupingExpression groupingExpression() {
+        final Expression expr = this.expression();
+        this.expectAfter(TokenType.RIGHT_PAREN, "expression");
+        return new GroupingExpression(expr);
+    }
+
+    private Expression identifierExpression() {
+        final Token next = this.peek();
+        if (next.type() == TokenType.ARRAY_OPEN) {
+            final Token name = this.previous();
             this.expect(TokenType.ARRAY_OPEN);
-            final Expression sizeOrIndex = this.expression();
+            final Expression index = this.expression();
             this.expect(TokenType.ARRAY_CLOSE);
-            return new ArrayGetExpression(sizeOrIndex);
+            return new ArrayGetExpression(name, index);
         }
-        if (this.match(TokenType.SUPER)) {
-            final Token keyword = this.previous();
-            this.expectAfter(TokenType.DOT, TokenType.SUPER);
-            final Token method = this.expect(TokenType.IDENTIFIER, "superclass method name");
-            return new SuperExpression(keyword, method);
-        }
-        if (this.match(TokenType.ARRAY_OPEN)) {
-            return this.complexArray();
-        }
-        throw this.error(this.peek(), "Expected expression, but found " + this.tokens.get(this.current));
+        return new VariableExpression(this.previous());
     }
 
     private Expression complexArray() {
         final Token open = this.previous();
         final Expression expr = this.expression();
 
-        if (this.match(TokenType.COMMA, TokenType.ARRAY_CLOSE)) {
+        if (this.match(TokenType.ARRAY_CLOSE)) {
             final List<Expression> elements = new ArrayList<>();
             elements.add(expr);
-            if (!this.check(TokenType.ARRAY_CLOSE)) {
-                do {
-                    elements.add(this.expression());
-                }
-                while (this.match(TokenType.COMMA));
-            }
-            final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
-            return new ArrayLiteralExpression(open, close, elements);
+            return new ArrayLiteralExpression(open, this.previous(), elements);
         }
-        else {
-            final Token forToken = this.expectAfter(TokenType.FOR, "expression");
-            final Token name = this.expect(TokenType.IDENTIFIER, "variable name");
+        else if (this.match(TokenType.COMMA)) return arrayLiteralExpression(open, expr);
+        else return arrayComprehensionExpression(open, expr);
+    }
 
-            final Token inToken = this.expectAfter(TokenType.IN, "variable name");
-            final Expression iterable = this.expression();
-
-            Token ifToken = null;
-            Expression condition = null;
-            if (this.match(TokenType.IF)) {
-                ifToken = this.previous();
-                condition = this.expression();
-            }
-
-            Token elseToken = null;
-            Expression elseExpr = null;
-            if (this.match(TokenType.ELSE)) {
-                elseToken = this.previous();
-                elseExpr = this.expression();
-            }
-
-            final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
-
-            return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
+    private ArrayLiteralExpression arrayLiteralExpression(final Token open, final Expression expr) {
+        final List<Expression> elements = new ArrayList<>();
+        elements.add(expr);
+        do {
+            elements.add(this.expression());
         }
+        while (this.match(TokenType.COMMA));
+        final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
+        return new ArrayLiteralExpression(open, close, elements);
+    }
+
+    private ArrayComprehensionExpression arrayComprehensionExpression(final Token open, final Expression expr) {
+        final Token forToken = this.expectAfter(TokenType.FOR, "expression");
+        final Token name = this.expect(TokenType.IDENTIFIER, "variable name");
+
+        final Token inToken = this.expectAfter(TokenType.IN, "variable name");
+        final Expression iterable = this.expression();
+
+        Token ifToken = null;
+        Expression condition = null;
+        if (this.match(TokenType.IF)) {
+            ifToken = this.previous();
+            condition = this.expression();
+        }
+
+        Token elseToken = null;
+        Expression elseExpr = null;
+        if (this.match(TokenType.ELSE)) {
+            elseToken = this.previous();
+            elseExpr = this.expression();
+        }
+
+        final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
+
+        return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
     }
 
     private Statement switchStatement() {

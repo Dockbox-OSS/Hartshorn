@@ -14,7 +14,7 @@ fun Car:extensionShowInfo(){
 }
 
 var length = 3;
-var carArray = array[length];
+var carArray = [null] * length;
 var index = 0;
 while(index < length){
    carArray[index] = Car("BMW " + index);

@@ -16,19 +16,26 @@
 
 package org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 public class ArrayGetExpression extends Expression {
 
-    private final Expression size;
+    private final Token name;
+    private final Expression index;
 
-    public ArrayGetExpression(final Expression size) {
-        super(size.line());
-        this.size = size;
+    public ArrayGetExpression(final Token name, final Expression index) {
+        super(name);
+        this.name = name;
+        this.index = index;
     }
 
-    public Expression size() {
-        return this.size;
+    public Token name() {
+        return this.name;
+    }
+
+    public Expression index() {
+        return this.index;
     }
 
     @Override

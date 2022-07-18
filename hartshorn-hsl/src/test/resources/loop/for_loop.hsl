@@ -1,11 +1,12 @@
-for (var i=0; i<10; i=i+1) {
+for (var i=0; i<10; i++) {
     print(i);
 }
 
-var list = array[3]
-list[0] = 1
-list[1] = 2
-list[2] = 3
+for (var i=10; i>0; i--) {
+    print(i);
+}
+
+var list = [1,2,3];
 for (var i in list) {
     print(i)
 }

@@ -1,14 +1,13 @@
 var counter = 0;
-var length = 5;
-var arr = array[length];
+var arr = [null] * 5;
 
-while(counter < length){
+while(counter < arr.length){
    arr[counter] = counter;
    counter = counter + 1;
 }
 
 counter = 0;
-while(counter < length){
+while(counter < arr.length){
    print(arr[counter] + " ");
    counter = counter + 1;
 }

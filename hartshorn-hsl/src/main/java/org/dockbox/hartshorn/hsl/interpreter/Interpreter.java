@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
@@ -99,8 +99,7 @@ import java.util.function.BiFunction;
  * functions.
  *
  * <p>During the execution of a script, the interpreter will track its global variables in a
- * {@link VariableScope}, and report any errors or results to the configured {@link ErrorReporter} and
- * {@link ResultCollector} respectively.
+ * {@link VariableScope}, and report any results to the configured {@link ResultCollector}.
  *
  * <p><code>print</code> statements are handled by the configured {@link Logger}, and are not persisted
  * in a local state.
@@ -229,6 +228,16 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     final String strValue = left.toString();
                     result.append(strValue.repeat(Math.max(0, times)));
                     return result.toString();
+                }
+                else if (left instanceof Array array && right instanceof Double) {
+                    final int times = (int) ((double) right);
+                    final int finalLen = array.length() * times;
+                    final Array result = new Array(finalLen);
+                    for (int i = 0; i < times; i++) {
+                        int originalIndex = times % array.length();
+                        result.value(array.value(originalIndex), i);
+                    }
+                    return result;
                 }
                 this.checkNumberOperands(expr.operator(), left, right);
                 return (double) left * (double) right;
@@ -432,16 +441,6 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Object visit(final ArrayGetExpression expr) {
-        final Double value = (Double) this.evaluate(expr.size());
-        final int length = value.intValue();
-        if (length < 0) {
-            throw new ArrayIndexOutOfBoundsException("Size can't be negative");
-        }
-        return new Array(length);
-    }
-
-    @Override
-    public Object visit(final ArrayVariable expr) {
         return this.accessArray(expr.name(), expr.index(), Array::value);
     }
 

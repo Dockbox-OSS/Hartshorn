@@ -11,10 +11,7 @@ fun arrayContains(arr, obj) {
    return false;
 }
 
-var arr = array[length];
-arr[0] = "One";
-arr[1] = "Two";
-
+var arr = ["One", "Two"];
 infix fun contains(arr, obj) {
     return arrayContains(arr, obj);
 }

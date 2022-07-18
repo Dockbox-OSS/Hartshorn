@@ -73,7 +73,7 @@ public enum TokenType {
     OR(builder -> builder.repeats(BITWISE_OR).ok()),
     ARROW(builder -> builder.combines(MINUS, GREATER).ok()),
 
-    // Keywords,
+    // Keywords
     PREFIX(builder -> builder.keyword(true).ok()),
     INFIX(builder -> builder.keyword(true).ok()),
     CLASS(builder -> builder.keyword(true).ok()),
@@ -87,7 +87,6 @@ public enum TokenType {
     THIS(builder -> builder.keyword(true).ok()),
     VAR(builder -> builder.keyword(true).ok()),
     NULL(builder -> builder.keyword(true).ok()),
-    ARRAY(builder -> builder.keyword(true).ok()),
     NATIVE(builder -> builder.keyword(true).ok()),
     CASE(builder -> builder.keyword(true).ok()),
     DEFAULT(builder -> builder.keyword(true).ok()),
@@ -103,7 +102,7 @@ public enum TokenType {
     RETURN(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     PRINT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
-    MODULE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    USING(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
     // Reserved words/characters
