@@ -29,12 +29,14 @@ public class TokenMetaData {
     private final String representation;
     private final boolean keyword;
     private final boolean standaloneStatement;
+    private final TokenType assignsWith;
 
     TokenMetaData(final TokenMetaDataBuilder builder) {
         this.type = builder.type;
         this.representation = builder.representation;
         this.keyword = builder.keyword;
         this.standaloneStatement = builder.standaloneStatement;
+        this.assignsWith = builder.assignsWith;
     }
 
     /**
@@ -69,6 +71,15 @@ public class TokenMetaData {
      */
     public boolean standaloneStatement() {
         return this.standaloneStatement;
+    }
+
+    /**
+     * Gets the {@link TokenType} which this {@link TokenType} assigns with. This is
+     * typically used to indicate a token that can be used as an assignment operator.
+     * @return The {@link TokenType} which this {@link TokenType} assigns with.
+     */
+    public TokenType assignsWith() {
+        return this.assignsWith;
     }
 
     /**

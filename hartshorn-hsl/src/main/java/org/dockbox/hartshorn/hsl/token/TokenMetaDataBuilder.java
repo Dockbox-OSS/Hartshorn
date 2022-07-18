@@ -30,6 +30,7 @@ public class TokenMetaDataBuilder {
     String representation;
     boolean keyword;
     boolean standaloneStatement;
+    TokenType assignsWith;
 
     TokenMetaDataBuilder(final TokenType type) {
         this.type = type;
@@ -61,6 +62,11 @@ public class TokenMetaDataBuilder {
 
     public TokenMetaDataBuilder standaloneStatement(final boolean standaloneStatement) {
         this.standaloneStatement = standaloneStatement;
+        return this;
+    }
+
+    public TokenMetaDataBuilder assignsWith(final TokenType assignsWith) {
+        this.assignsWith = assignsWith;
         return this;
     }
 

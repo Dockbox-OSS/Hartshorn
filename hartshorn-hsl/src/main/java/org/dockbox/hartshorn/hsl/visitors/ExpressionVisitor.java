@@ -17,11 +17,12 @@
 package org.dockbox.hartshorn.hsl.visitors;
 
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
@@ -54,6 +55,8 @@ public interface ExpressionVisitor<R> {
     R visit(LiteralExpression expr);
 
     R visit(AssignExpression expr);
+
+    R visit(LogicalAssignExpression expr);
 
     R visit(UnaryExpression expr);
 

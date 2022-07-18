@@ -60,10 +60,6 @@ public enum TokenType {
 
     // Two character tokens combining single character tokens
     ELVIS(builder -> builder.combines(QUESTION_MARK, COLON).ok()),
-    EQUAL_EQUAL(builder -> builder.repeats(EQUAL).ok()),
-    BANG_EQUAL(builder -> builder.combines(BANG, EQUAL).ok()),
-    GREATER_EQUAL(builder -> builder.combines(GREATER, EQUAL).ok()),
-    LESS_EQUAL(builder -> builder.combines(LESS, EQUAL).ok()),
     PLUS_PLUS(builder -> builder.repeats(PLUS).ok()),
     MINUS_MINUS(builder -> builder.repeats(MINUS).ok()),
     SHIFT_RIGHT(builder -> builder.repeats(GREATER).ok()),
@@ -72,6 +68,20 @@ public enum TokenType {
     AND(builder -> builder.repeats(BITWISE_AND).ok()),
     OR(builder -> builder.repeats(BITWISE_OR).ok()),
     ARROW(builder -> builder.combines(MINUS, GREATER).ok()),
+
+    // Special equal operators
+    EQUAL_EQUAL(builder -> builder.repeats(EQUAL).ok()),
+    BANG_EQUAL(builder -> builder.combines(BANG, EQUAL).ok()),
+    GREATER_EQUAL(builder -> builder.combines(GREATER, EQUAL).ok()),
+    LESS_EQUAL(builder -> builder.combines(LESS, EQUAL).ok()),
+
+    // Assignment operators
+    XOR_EQUAL(builder -> builder.combines(XOR, EQUAL).assignsWith(XOR).ok()),
+    BITWISE_AND_EQUAL(builder -> builder.combines(BITWISE_AND, EQUAL).assignsWith(BITWISE_AND).ok()),
+    BITWISE_OR_EQUAL(builder -> builder.combines(BITWISE_OR, EQUAL).assignsWith(BITWISE_OR).ok()),
+    COMPLEMENT_EQUAL(builder -> builder.combines(COMPLEMENT, EQUAL).assignsWith(COMPLEMENT).ok()),
+    SHIFT_LEFT_EQUAL(builder -> builder.combines(SHIFT_LEFT, EQUAL).assignsWith(SHIFT_LEFT).ok()),
+    SHIFT_RIGHT_EQUAL(builder -> builder.combines(SHIFT_RIGHT, EQUAL).assignsWith(SHIFT_RIGHT).ok()),
 
     // Keywords
     PREFIX(builder -> builder.keyword(true).ok()),
@@ -159,6 +169,13 @@ public enum TokenType {
      */
     public boolean standaloneStatement() {
         return this.metaData.standaloneStatement();
+    }
+
+    /**
+     * @see TokenMetaData#assignsWith()
+     */
+    public TokenType assignsWith() {
+        return this.metaData.assignsWith();
     }
 
     /**

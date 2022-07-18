@@ -151,21 +151,39 @@ public class Lexer {
                 );
                 break;
             case TokenConstants.LESS:
-                this.addToken(this.match(TokenConstants.EQUAL)
-                        ? TokenType.LESS_EQUAL
-                        : this.match(TokenConstants.LESS)
-                            ? TokenType.SHIFT_LEFT
-                            : TokenType.LESS
-                );
+                if (this.match(TokenConstants.EQUAL)) {
+                    this.addToken(TokenType.LESS_EQUAL);
+                }
+                else {
+                    if (this.match(TokenConstants.LESS)) {
+                        if (this.match(TokenConstants.EQUAL)) {
+                            this.addToken(TokenType.SHIFT_LEFT_EQUAL);
+                        }
+                        else {
+                            this.addToken(TokenType.SHIFT_LEFT);
+                        }
+                    }
+                    else this.addToken(TokenType.LESS);
+                }
                 break;
             case TokenConstants.GREATER:
-                this.addToken(this.match(TokenConstants.EQUAL)
-                        ? TokenType.GREATER_EQUAL
-                        : this.match(TokenConstants.GREATER)
-                            ? this.match(TokenConstants.GREATER)
-                                ? TokenType.LOGICAL_SHIFT_RIGHT
-                                : TokenType.SHIFT_RIGHT
-                            : TokenType.GREATER);
+                if (this.match(TokenConstants.EQUAL)) {
+                    this.addToken(TokenType.GREATER_EQUAL);
+                }
+                else {
+                    if (this.match(TokenConstants.GREATER)) {
+                        if (this.match(TokenConstants.GREATER)) {
+                            this.addToken(TokenType.LOGICAL_SHIFT_RIGHT);
+                        }
+                        else if (this.match(TokenConstants.EQUAL)) {
+                            this.addToken(TokenType.SHIFT_RIGHT_EQUAL);
+                        }
+                        else {
+                            this.addToken(TokenType.SHIFT_RIGHT);
+                        }
+                    }
+                    else this.addToken(TokenType.GREATER);
+                }
                 break;
             case TokenConstants.SLASH:
                 if (this.match(TokenConstants.SLASH)) {
@@ -179,20 +197,24 @@ public class Lexer {
                 }
                 break;
             case TokenConstants.AMPERSAND:
-                this.addToken(this.match(TokenConstants.AMPERSAND)
-                        ? TokenType.AND
-                        : TokenType.BITWISE_AND);
+                if (this.match(TokenConstants.AMPERSAND)) this.addToken(TokenType.AND);
+                else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.BITWISE_AND_EQUAL);
+                else this.addToken(TokenType.BITWISE_AND);
                 break;
             case TokenConstants.PIPE:
-                this.addToken(this.match(TokenConstants.PIPE)
-                        ? TokenType.OR
-                        : TokenType.BITWISE_OR);
+                if (this.match(TokenConstants.PIPE)) this.addToken(TokenType.OR);
+                else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.BITWISE_OR_EQUAL);
+                else this.addToken(TokenType.BITWISE_OR);
                 break;
             case TokenConstants.CARET:
-                this.addToken(TokenType.XOR);
+                this.addToken(this.match(TokenConstants.EQUAL)
+                        ? TokenType.XOR_EQUAL
+                        : TokenType.XOR);
                 break;
             case TokenConstants.TILDE:
-                this.addToken(TokenType.COMPLEMENT);
+                this.addToken(this.match(TokenConstants.EQUAL)
+                        ? TokenType.COMPLEMENT_EQUAL
+                        : TokenType.COMPLEMENT);
                 break;
             case TokenConstants.HASH:
                 this.scanComment();

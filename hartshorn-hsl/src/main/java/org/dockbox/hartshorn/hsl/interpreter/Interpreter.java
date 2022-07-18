@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -198,7 +199,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 }
                 // String Addition
                 if (left instanceof String || right instanceof String) {
-                    return left.toString() + right.toString();
+                    // String.valueOf to handle nulls
+                    return String.valueOf(left) + right;
                 }
 
                 // Special cases
@@ -233,7 +235,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     final int finalLen = array.length() * times;
                     final Array result = new Array(finalLen);
                     for (int i = 0; i < times; i++) {
-                        int originalIndex = times % array.length();
+                        final int originalIndex = times % array.length();
                         result.value(array.value(originalIndex), i);
                     }
                     return result;
@@ -304,6 +306,30 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
+    public Object visit(final LogicalAssignExpression expr) {
+        final Token name = expr.name();
+        final Object left = this.lookUpVariable(name, expr);
+
+        final Object right = this.evaluate(expr.value());
+
+        final Token op = expr.assignmentOperator();
+        final TokenType bitwiseOperator = expr.logicalOperator();
+
+        // Virtual token to indicate the position of the operator
+        final Token token = new Token(bitwiseOperator, op.lexeme(), op.line(), op.column());
+        final Object result = this.getBitwiseResult(token, left, right);
+
+        final Integer distance = this.locals.get(expr);
+        if (distance != null) {
+            this.variableScope().assignAt(distance, name, result);
+        }
+        else {
+            this.global.assign(name, result);
+        }
+        return result;
+    }
+
+    @Override
     public Object visit(final UnaryExpression expr) {
         final Object right = this.evaluate(expr.rightExpression());
         final Object newValue = switch (expr.operator().type()) {
@@ -324,11 +350,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.checkNumberOperand(expr.operator(), right);
                 final int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
-                yield (int) ~value;
+                yield ~value;
             }
             default -> null;
         };
-        assignIfVariable(expr.rightExpression(), newValue);
+        this.assignIfVariable(expr.rightExpression(), newValue);
         return newValue;
     }
 
@@ -337,12 +363,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object left = this.evaluate(expr.leftExpression());
         this.checkNumberOperand(expr.operator(), left);
 
-        Double newValue = switch (expr.operator().type()) {
-            case PLUS_PLUS -> (Double) left + 1;
-            case MINUS_MINUS -> (Double) left -1;
+        final double newValue = switch (expr.operator().type()) {
+            case PLUS_PLUS -> (double) left + 1;
+            case MINUS_MINUS -> (double) left -1;
             default -> throw new RuntimeError(expr.operator(), "Invalid postfix operator " + expr.operator().type());
         };
-        assignIfVariable(expr.leftExpression(), newValue);
+        this.assignIfVariable(expr.leftExpression(), newValue);
         return left;
     }
 
@@ -384,22 +410,27 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Object visit(final BitwiseExpression expr) {
         final Object left = this.evaluate(expr.leftExpression());
         final Object right = this.evaluate(expr.rightExpression());
+        return this.getBitwiseResult(expr.operator(), left, right);
+    }
 
-        if (left instanceof Double && right instanceof Double) {
-            final int iLeft = (int) (double) left;
-            final int iRight = (int) (double) right;
+    private Object getBitwiseResult(final Token operator, final Object left, final Object right) {
+        if (left instanceof Number && right instanceof Number) {
+            final int iLeft = ((Number) left).intValue();
+            final int iRight = ((Number) right).intValue();
 
-            return switch (expr.operator().type()) {
+            return switch (operator.type()) {
                 case SHIFT_RIGHT -> iLeft >> iRight;
                 case SHIFT_LEFT -> iLeft << iRight;
                 case LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
                 case BITWISE_AND -> iLeft & iRight;
                 case BITWISE_OR -> iLeft | iRight;
                 case XOR -> this.xor(iLeft, iRight);
-                default -> throw new RuntimeError(expr.operator(), "Unsupported bitwise operator.");
+                default -> throw new RuntimeError(operator, "Unsupported bitwise operator.");
             };
         }
-        throw new RuntimeError(expr.operator(), "Bitwise left and right must be a Numbers");
+        final String leftType = left != null ? left.getClass().getSimpleName() : null;
+        final String rightType = right != null ? right.getClass().getSimpleName() : null;
+        throw new RuntimeError(operator, "Bitwise left and right must be a numbers, but got %s (%s) and %s (%s)".formatted(left, leftType, right, rightType));
     }
 
     private Object xor(final Object left, final Object right) {
@@ -848,11 +879,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(SwitchStatement statement) {
+    public Void visit(final SwitchStatement statement) {
         Object value = this.evaluate(statement.expression());
-        value = unwrap(value);
-        for (SwitchCase switchCase : statement.cases()) {
-            if (isEqual(value, switchCase.expression().value())) {
+        value = this.unwrap(value);
+        for (final SwitchCase switchCase : statement.cases()) {
+            if (this.isEqual(value, switchCase.expression().value())) {
                 this.execute(switchCase);
                 return null;
             }
@@ -864,7 +895,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(SwitchCase statement) {
+    public Void visit(final SwitchCase statement) {
         this.withNextScope(() -> {
             try {
                 this.execute(statement.body());

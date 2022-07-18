@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -70,10 +71,12 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.function.TriFunction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -90,6 +93,7 @@ public class Parser {
     private List<Token> tokens;
 
     private static final int MAX_NUM_OF_ARGUMENTS = 8;
+    private static final TokenType[] ASSIGNMENT_TOKENS = allTokensMatching(t -> t.assignsWith() != null);
 
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();
@@ -97,6 +101,12 @@ public class Parser {
     @Bound
     public Parser(final List<Token> tokens) {
         this.tokens = tokens;
+    }
+
+    private static TokenType[] allTokensMatching(final Predicate<TokenType> predicate) {
+        return Arrays.stream(TokenType.values())
+                .filter(predicate)
+                .toArray(TokenType[]::new);
     }
 
     /**
@@ -458,10 +468,10 @@ public class Parser {
 
         if (this.match(TokenType.QUESTION_MARK)) {
             final Token question = this.previous();
-            final Expression firstExp = this.or();
+            final Expression firstExp = this.logical();
             final Token colon = this.peek();
             if (this.match(TokenType.COLON)) {
-                final Expression secondExp = this.or();
+                final Expression secondExp = this.logical();
                 return new TernaryExpression(expr, question, firstExp, colon, secondExp);
             }
             throw new ScriptEvaluationError("Expected expression after " + TokenType.COLON.representation(), Phase.PARSING, colon);
@@ -480,23 +490,39 @@ public class Parser {
     }
 
     private Expression bitwise() {
-        return this.logicalOrBitwise(this::or, BitwiseExpression::new, TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT, TokenType.LOGICAL_SHIFT_RIGHT, TokenType.BITWISE_OR, TokenType.BITWISE_AND);
+        return this.logicalOrBitwise(this::logical, BitwiseExpression::new,
+                TokenType.SHIFT_LEFT,
+                TokenType.SHIFT_RIGHT,
+                TokenType.LOGICAL_SHIFT_RIGHT,
+                TokenType.BITWISE_OR,
+                TokenType.BITWISE_AND
+        );
     }
 
-    private Expression or() {
-        return this.logicalOrBitwise(this::xor, LogicalExpression::new, TokenType.OR);
-    }
-
-    private Expression xor() {
-        return this.logicalOrBitwise(this::and, LogicalExpression::new, TokenType.XOR);
-    }
-
-    private Expression and() {
-        return this.logicalOrBitwise(this::equality, LogicalExpression::new, TokenType.AND);
+    private Expression logical() {
+        return this.logicalOrBitwise(this::equality, LogicalExpression::new,
+                TokenType.OR,
+                TokenType.XOR,
+                TokenType.AND
+        );
     }
 
     private Expression equality() {
-        return this.logicalOrBitwise(this::parsePrefixFunctionCall, BinaryExpression::new, TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL);
+        return this.logicalOrBitwise(this::logicalAssign, BinaryExpression::new,
+                TokenType.BANG_EQUAL,
+                TokenType.EQUAL_EQUAL
+        );
+    }
+
+    private Expression logicalAssign() {
+        return this.logicalOrBitwise(this::parsePrefixFunctionCall, (left, token, right) -> {
+                    if (left instanceof VariableExpression variable) {
+                        return new LogicalAssignExpression(variable.name(), token, right);
+                    }
+                    else {
+                        throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, token);
+                    }
+                }, ASSIGNMENT_TOKENS);
     }
 
     private boolean match(final TokenType... types) {

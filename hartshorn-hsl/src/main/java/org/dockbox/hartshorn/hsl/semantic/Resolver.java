@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -134,6 +135,13 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final AssignExpression expr) {
+        this.resolve(expr.value());
+        this.resolveLocal(expr, expr.name());
+        return null;
+    }
+
+    @Override
+    public Void visit(final LogicalAssignExpression expr) {
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
         return null;
