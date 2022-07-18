@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Standard library granting access to environment variables.
  *
@@ -24,11 +28,34 @@ package org.dockbox.hartshorn.hsl.modules;
  */
 public class SystemLibrary {
 
+    private final Logger logger = LoggerFactory.getLogger("HSL Script::" + this.hashCode());
+
     /**
      * @see System#getenv(String)
      */
     public String env(final String program) {
         return System.getenv(program);
+    }
+
+    public void print(final Object object) {
+        final String text = stringify(object);
+        this.logger.info(text);
+    }
+
+    public String stringify(final Object object) {
+        if (object == null) return TokenType.NULL.representation();
+        // Hack. Work around Java adding ".0" to integer-valued doubles.
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
+
+        return object.toString()
+                .replaceAll("\\\\n", "\n")
+                .replaceAll("\\\\t", "\t");
     }
 }
 

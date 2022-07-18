@@ -54,7 +54,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -140,7 +139,6 @@ public class Parser {
         if (this.match(TokenType.WHILE)) return this.whileStatement();
         if (this.match(TokenType.FOR)) return this.forStatement();
         if (this.match(TokenType.REPEAT)) return this.repeatStatement();
-        if (this.match(TokenType.PRINT)) return this.printStatement();
         if (this.match(TokenType.RETURN)) return this.returnStatement();
         if (this.check(TokenType.LEFT_BRACE)) return this.block();
         if (this.match(TokenType.BREAK)) return this.breakStatement();
@@ -368,18 +366,6 @@ public class Parser {
         this.expectAfter(TokenType.RIGHT_PAREN, "repeat value");
         final BlockStatement loopBody = this.block();
         return new RepeatStatement(value, loopBody);
-    }
-
-    private Statement printStatement() {
-        final Expression value;
-        if (this.check(TokenType.LEFT_PAREN)) {
-            this.advance();
-            value = this.expression();
-            this.expectAfter(TokenType.RIGHT_PAREN, "print expression");
-        }
-        else value = this.expression();
-        this.expectAfter(TokenType.SEMICOLON, "value");
-        return new PrintStatement(value);
     }
 
     private Statement returnStatement() {
@@ -804,27 +790,6 @@ public class Parser {
             return this.advance();
         if (type != TokenType.SEMICOLON) throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
         return null;
-    }
-
-    private void synchronize() {
-        this.advance();
-
-        while (!this.isAtEnd()) {
-            if (this.previous().type() == TokenType.SEMICOLON) return;
-
-            switch (this.peek().type()) {
-                case CLASS:
-                case FUN:
-                case VAR:
-                case FOR:
-                case IF:
-                case WHILE:
-                case PRINT:
-                case RETURN:
-                    return;
-            }
-            this.advance();
-        }
     }
 
     private Token expect(final TokenType type) {

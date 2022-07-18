@@ -64,7 +64,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.CallableNode;
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
@@ -81,7 +80,7 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.slf4j.Logger;
 
 import java.math.BigDecimal;
@@ -606,8 +605,6 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final PrintStatement statement) {
-        final Object value = this.evaluate(statement.expression());
-        this.logger.info(this.stringify(value));
         return null;
     }
 
@@ -906,21 +903,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return object;
     }
 
-    private String stringify(final Object object) {
-        if (object == null) return TokenType.NULL.representation();
-        // Hack. Work around Java adding ".0" to integer-valued doubles.
-        if (object instanceof Double) {
-            String text = object.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-            return text;
-        }
 
-        return object.toString()
-                .replaceAll("\\\\n", "\n")
-                .replaceAll("\\\\t", "\t");
-    }
 
     private void checkNumberOperand(final Token operator, final Object operand) {
         if (operand instanceof Double) return;
