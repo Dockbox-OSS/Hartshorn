@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenConstants;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -47,9 +45,8 @@ public class LexerTests {
             TokenType.FOR, TokenType.DO, TokenType.WHILE, TokenType.REPEAT,
             TokenType.BREAK, TokenType.CONTINUE,
             TokenType.SUPER, TokenType.THIS,
-            TokenType.NULL, TokenType.ARRAY,
-            TokenType.VAR, TokenType.MODULE,
-            TokenType.PRINT, TokenType.TEST,
+            TokenType.NULL, TokenType.TEST,
+            TokenType.VAR, TokenType.USING,
     };
 
     private static final List<TokenType> literals = List.of(
@@ -118,7 +115,7 @@ public class LexerTests {
     @ParameterizedTest
     @MethodSource("tokens")
     void testCorrectToken(final String text, final TokenType expected) {
-        final Lexer lexer = new Lexer(text, this.errorReporter());
+        final Lexer lexer = new Lexer(text);
         final List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -134,7 +131,7 @@ public class LexerTests {
 
     @Test
     void testSingleLineComment() {
-        final Lexer lexer = new Lexer("# Comment", this.errorReporter());
+        final Lexer lexer = new Lexer("# Comment");
         final List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -151,24 +148,4 @@ public class LexerTests {
         // Comments are not trimmed, include whitespace
         Assertions.assertEquals(" Comment", comment.text());
     }
-
-    ErrorReporter errorReporter() {
-        return new ErrorReporter() {
-            @Override
-            public void error(final Phase phase, final int line, final String message) {
-                Assertions.fail("Error reported: " + message);
-            }
-
-            @Override
-            public void error(final Phase phase, final Token token, final String message) {
-                Assertions.fail("Error reported: " + message);
-            }
-
-            @Override
-            public void clear() {
-                // Do nothing
-            }
-        };
-    }
-
 }

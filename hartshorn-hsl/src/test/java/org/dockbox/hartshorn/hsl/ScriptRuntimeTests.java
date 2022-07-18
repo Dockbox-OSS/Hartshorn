@@ -23,27 +23,21 @@ import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
-import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -58,12 +52,9 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> scripts() throws IOException {
         final Path resources = Paths.get("src", "test", "resources");
-        List<File> files = new ArrayList<>();
-        return Files.find(resources, 5, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".hsl"))
-                .map(file -> Result.of(() -> Files.readAllLines(file)).orNull())
-                .filter(Objects::nonNull)
-                .map(lines -> String.join("\n", lines))
-                .map(Arguments::of);
+        return Files.find(resources, 5, (p, bfa) -> {
+            return bfa.isRegularFile() && p.getFileName().toString().endsWith(".hsl");
+        }).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {
@@ -83,97 +74,60 @@ public class ScriptRuntimeTests {
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testPredefinedScript(final String content) {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
-        final ScriptContext context = Assertions.assertDoesNotThrow(() -> runtime.run(content));
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+    void testPredefinedScript(final Path path) throws IOException {
+        assertNoErrorsReported(HslScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testPredefinedScriptWithOptionalSemicolons(final String content) {
-        final String source = content.replaceAll(";", "");
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
-        final ScriptContext context = Assertions.assertDoesNotThrow(() -> runtime.run(source));
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+    void testPredefinedScriptWithOptionalSemicolons(final Path path) throws IOException {
+        final String source = HslScript.sourceFromPath(path).replaceAll(";", "");
+        assertNoErrorsReported(source);
     }
 
     @Test
     void testExpression() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
-        final String expression = "1 == 1";
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+        assertValid("1 == 1");
     }
 
     @Test
     void testComplexExpression() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
         final String expression = "1 + 3 == 4 && 2 + 2 == 4 && 2 - 2 == 0";
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+        assertValid(expression);
     }
 
     @Test
     void testExpressionWithGlobal() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
-        runtime.global("a", 12);
-        final String expression = "a == 12";
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+        final HslExpression expression = new HslExpression(this.applicationContext, "a == 12");
+        expression.runtime().global("a", 12);
+        assertValid(expression);
     }
 
     @Test
     void testExpressionWithGlobalFunctionAccess() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
-        runtime.global("context", this.applicationContext);
         final String expression = "context != null && context.log() != null";
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+        final HslExpression hslExpression = new HslExpression(this.applicationContext, expression);
+        hslExpression.runtime().global("context", this.applicationContext);
+        assertValid(hslExpression);
     }
 
     @Test
     void testScriptWithGlobalFunctionAccess() {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
-        runtime.global("context", this.applicationContext);
         final String expression = "context.log().info(\"Hello world!\")";
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+        final HslScript script = HslScript.of(this.applicationContext, expression);
+        script.runtime().global("context", this.applicationContext);
+        assertNoErrorsReported(script);
     }
 
     @Test
     void testExpressionWithNativeAccess() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
-        final String expression = "log() != null";
-        runtime.module("application", new InstanceNativeModule(this.applicationContext));
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+        final HslExpression expression = new HslExpression(this.applicationContext, "log() != null");
+        expression.runtime().module("application", new InstanceNativeModule(this.applicationContext));
+        assertValid(expression);
     }
 
     @Test
     void testMultilineWithComments() {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
         final String expression = """
                 print("Hello world!");
                 
@@ -188,10 +142,7 @@ public class ScriptRuntimeTests {
                 */
                 print("Hello world 5!");
                 """;
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+        final ScriptContext context = assertNoErrorsReported(expression);
 
         final List<Comment> comments = context.comments();
         Assertions.assertEquals(3, comments.size());
@@ -204,16 +155,12 @@ public class ScriptRuntimeTests {
 
     @Test
     void testGlobalResultTracking() {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
         final String expression = """
                 var a = 12;
                 var b = 13;
                 var c = a + b;
                 """;
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
+        final ScriptContext context = assertNoErrorsReported(expression);
 
         final Map<String, Object> results = context.interpreter().global();
         Assertions.assertFalse(results.isEmpty());
@@ -225,8 +172,7 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("phases")
     void testPhaseCustomizers(final Phase phase) {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
-        final String expression = "1 == 1";
+        final HslScript script = HslScript.of(this.applicationContext, "1 == 1");
 
         final AtomicBoolean called = new AtomicBoolean(false);
         final CodeCustomizer customizer = new AbstractCodeCustomizer(phase) {
@@ -235,22 +181,16 @@ public class ScriptRuntimeTests {
                 called.set(true);
             }
         };
-        runtime.customizer(customizer);
-
-        runtime.run(expression);
+        script.runtime().customizer(customizer);
+        script.evaluate();
         Assertions.assertTrue(called.get());
     }
 
     @ParameterizedTest
     @MethodSource("bitwise")
     void testBitwiseOperator(final TokenType token, final int left, final int right, final int expected) {
-        final StandardRuntime runtime = this.applicationContext.get(StandardRuntime.class);
         final String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-
+        final ScriptContext context = assertNoErrorsReported(expression);
         final Object result = context.interpreter().global().get("result");
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expected, result);
@@ -258,24 +198,42 @@ public class ScriptRuntimeTests {
 
     @Test
     void testNegativeNumbers() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
-        final String expression = "-1 == -1";
-        final ScriptContext context = runtime.run(expression);
-
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+        assertValid("-1 == -1");
     }
 
     @Test
     void testComplement() {
-        final ValidateExpressionRuntime runtime = this.applicationContext.get(ValidateExpressionRuntime.class);
         final int expected = ~35; // -36
         final String expression = "~35 == %s".formatted(expected);
-        final ScriptContext context = runtime.run(expression);
+        assertValid(expression);
+    }
 
-        Assertions.assertTrue(context.errors().isEmpty());
-        Assertions.assertTrue(context.runtimeErrors().isEmpty());
-        Assertions.assertTrue(ValidateExpressionRuntime.valid(context));
+    ScriptContext assertValid(final String expression) {
+        final HslExpression hslExpression = new HslExpression(this.applicationContext, expression);
+        return assertValid(hslExpression);
+    }
+
+    ScriptContext assertValid(HslExpression expression) {
+        final ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
+        Assertions.assertTrue(expression.valid());
+        return context;
+    }
+
+    ScriptContext assertNoErrorsReported(final String expression) {
+        final HslScript script = HslScript.of(this.applicationContext, expression);
+        return assertNoErrorsReported(script);
+    }
+
+    ScriptContext assertNoErrorsReported(final HslScript script) {
+        return Assertions.assertDoesNotThrow(script::evaluate);
+    }
+
+    @Test
+    void name() {
+        assertNoErrorsReported("""
+                var a = [1,2,3];
+                var b = a[1];
+                print(b);
+                """);
     }
 }
