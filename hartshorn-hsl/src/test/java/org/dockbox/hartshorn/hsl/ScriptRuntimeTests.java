@@ -75,32 +75,32 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("scripts")
     void testPredefinedScript(final Path path) throws IOException {
-        assertNoErrorsReported(HslScript.of(this.applicationContext, path));
+        this.assertNoErrorsReported(HslScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
     @MethodSource("scripts")
     void testPredefinedScriptWithOptionalSemicolons(final Path path) throws IOException {
         final String source = HslScript.sourceFromPath(path).replaceAll(";", "");
-        assertNoErrorsReported(source);
+        this.assertNoErrorsReported(source);
     }
 
     @Test
     void testExpression() {
-        assertValid("1 == 1");
+        this.assertValid("1 == 1");
     }
 
     @Test
     void testComplexExpression() {
         final String expression = "1 + 3 == 4 && 2 + 2 == 4 && 2 - 2 == 0";
-        assertValid(expression);
+        this.assertValid(expression);
     }
 
     @Test
     void testExpressionWithGlobal() {
         final HslExpression expression = new HslExpression(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
-        assertValid(expression);
+        this.assertValid(expression);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ScriptRuntimeTests {
         final String expression = "context != null && context.log() != null";
         final HslExpression hslExpression = new HslExpression(this.applicationContext, expression);
         hslExpression.runtime().global("context", this.applicationContext);
-        assertValid(hslExpression);
+        this.assertValid(hslExpression);
     }
 
     @Test
@@ -116,14 +116,14 @@ public class ScriptRuntimeTests {
         final String expression = "context.log().info(\"Hello world!\")";
         final HslScript script = HslScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
-        assertNoErrorsReported(script);
+        this.assertNoErrorsReported(script);
     }
 
     @Test
     void testExpressionWithNativeAccess() {
         final HslExpression expression = new HslExpression(this.applicationContext, "log() != null");
         expression.runtime().module("application", new InstanceNativeModule(this.applicationContext));
-        assertValid(expression);
+        this.assertValid(expression);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ScriptRuntimeTests {
                 */
                 print("Hello world 5!");
                 """;
-        final ScriptContext context = assertNoErrorsReported(expression);
+        final ScriptContext context = this.assertNoErrorsReported(expression);
 
         final List<Comment> comments = context.comments();
         Assertions.assertEquals(3, comments.size());
@@ -160,7 +160,7 @@ public class ScriptRuntimeTests {
                 var b = 13;
                 var c = a + b;
                 """;
-        final ScriptContext context = assertNoErrorsReported(expression);
+        final ScriptContext context = this.assertNoErrorsReported(expression);
 
         final Map<String, Object> results = context.interpreter().global();
         Assertions.assertFalse(results.isEmpty());
@@ -190,7 +190,7 @@ public class ScriptRuntimeTests {
     @MethodSource("bitwise")
     void testBitwiseOperator(final TokenType token, final int left, final int right, final int expected) {
         final String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
-        final ScriptContext context = assertNoErrorsReported(expression);
+        final ScriptContext context = this.assertNoErrorsReported(expression);
         final Object result = context.interpreter().global().get("result");
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expected, result);
@@ -198,22 +198,22 @@ public class ScriptRuntimeTests {
 
     @Test
     void testNegativeNumbers() {
-        assertValid("-1 == -1");
+        this.assertValid("-1 == -1");
     }
 
     @Test
     void testComplement() {
         final int expected = ~35; // -36
         final String expression = "~35 == %s".formatted(expected);
-        assertValid(expression);
+        this.assertValid(expression);
     }
 
     ScriptContext assertValid(final String expression) {
         final HslExpression hslExpression = new HslExpression(this.applicationContext, expression);
-        return assertValid(hslExpression);
+        return this.assertValid(hslExpression);
     }
 
-    ScriptContext assertValid(HslExpression expression) {
+    ScriptContext assertValid(final HslExpression expression) {
         final ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
         Assertions.assertTrue(expression.valid());
         return context;
@@ -221,7 +221,7 @@ public class ScriptRuntimeTests {
 
     ScriptContext assertNoErrorsReported(final String expression) {
         final HslScript script = HslScript.of(this.applicationContext, expression);
-        return assertNoErrorsReported(script);
+        return this.assertNoErrorsReported(script);
     }
 
     ScriptContext assertNoErrorsReported(final HslScript script) {
@@ -230,10 +230,20 @@ public class ScriptRuntimeTests {
 
     @Test
     void name() {
-        assertNoErrorsReported("""
-                var a = [1,2,3];
-                var b = a[1];
-                print(b);
+        this.assertNoErrorsReported("""
+                class Car {
+                    fun move() {
+                        println("Move");
+                    }
+                                
+                    fun move(speed) {
+                        println("Move " + speed);
+                    }
+                }
+                                
+                var car = Car();
+                car.move();
+                car.move(2);
                 """);
     }
 }

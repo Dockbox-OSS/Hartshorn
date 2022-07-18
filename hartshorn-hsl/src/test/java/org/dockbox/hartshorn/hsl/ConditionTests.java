@@ -60,22 +60,22 @@ public class ConditionTests {
     @ParameterizedTest
     @MethodSource("scripts")
     void testBulkValidations(final String expression, final boolean matches) {
-        final ConditionResult result = match(expression);
+        final ConditionResult result = this.match(expression);
         Assertions.assertEquals(matches, result.matches());
     }
 
     @Test
     void testApplicationContextIsOptInAvailable() {
         final ExpressionConditionContext context = new ExpressionConditionContext().includeApplicationContext(true);
-        final String expression = "applicationContext.getClass().getName() == \"%s\"".formatted(applicationContext.getClass().getName());
-        final ConditionResult result = match(expression, context);
+        final String expression = "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass().getName());
+        final ConditionResult result = this.match(expression, context);
         Assertions.assertTrue(result.matches());
     }
 
     @Test
     void testApplicationContextIsNotAvailableDefault() {
-        final String expression = "applicationContext != null";
-        final ConditionResult result = match(expression);
+        final String expression = "null != applicationContext";
+        final ConditionResult result = this.match(expression);
         Assertions.assertFalse(result.matches());
 
         final String message = result.message();
@@ -86,7 +86,7 @@ public class ConditionTests {
 
     ConditionResult match(final String expression, final Context... contexts) {
         final ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
-        final AnnotatedElementContext<?> element = enhanceWithVirtualCondition(expression);
+        final AnnotatedElementContext<?> element = this.enhanceWithVirtualCondition(expression);
         final ConditionContext context = new ConditionContext(this.applicationContext, element, null);
         for (final Context child : contexts) context.add(child);
         return condition.matches(context);
