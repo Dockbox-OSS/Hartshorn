@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Guus Lieben
  * @since 22.4
  */
-public class ExpressionConditionContext extends DefaultContext {
+public class ExpressionConditionContext extends DefaultContext implements ConditionContext {
 
     private final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
     private final Map<String, Class<?>> imports = new ConcurrentHashMap<>();
@@ -42,10 +42,12 @@ public class ExpressionConditionContext extends DefaultContext {
 
     private boolean includeApplicationContext;
 
+    @Override
     public boolean includeApplicationContext() {
         return this.includeApplicationContext;
     }
 
+    @Override
     public ExpressionConditionContext includeApplicationContext(final boolean includeApplicationContext) {
         this.includeApplicationContext = includeApplicationContext;
         return this;
@@ -55,6 +57,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * Add all given customizers to the context. This will not override any existing customizers.
      * @param customizers The customizers to add.
      */
+    @Override
     public void customizers(final Collection<CodeCustomizer> customizers) {
         this.customizers.addAll(customizers);
     }
@@ -63,6 +66,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * Adds the given customizer to the context.
      * @param customizer The customizer to add.
      */
+    @Override
     public void customizer(final CodeCustomizer customizer) {
         this.customizers.add(customizer);
     }
@@ -73,6 +77,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * @param name The alias to use for the module.
      * @param module The module to add.
      */
+    @Override
     public void module(final String name, final NativeModule module) {
         this.externalModules.put(name, module);
     }
@@ -82,6 +87,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * existing modules if the alias already exists in the context.
      * @param modules The modules to add, identified by their alias.
      */
+    @Override
     public void modules(final Map<String, NativeModule> modules) {
         this.externalModules.putAll(modules);
     }
@@ -92,6 +98,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * @param name The alias to use for the variable.
      * @param value The variable value to add.
      */
+    @Override
     public void global(final String name, final Object value) {
         this.globalVariables.put(name, value);
     }
@@ -101,6 +108,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * existing variables if the alias already exists in the context.
      * @param values The variables to add, identified by their alias.
      */
+    @Override
     public void global(final Map<String, Object> values) {
         this.globalVariables.putAll(values);
     }
@@ -112,6 +120,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * @param name The alias to use for the import.
      * @param type The class to import.
      */
+    @Override
     public void imports(final String name, final Class<?> type) {
         this.imports.put(name, type);
     }
@@ -122,6 +131,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * will override existing imports if there is another import with the same name or alias.
      * @param type
      */
+    @Override
     public void imports(final Class<?> type) {
         this.imports(type.getSimpleName(), type);
     }
@@ -131,6 +141,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * imports if there is another import with the same name or alias.
      * @param imports The classes to import, identified by their alias.
      */
+    @Override
     public void imports(final Map<String, Class<?>> imports) {
         this.imports.putAll(imports);
     }
@@ -139,6 +150,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * Gets all global variables stored in this context, identified by their alias.
      * @return The global variables.
      */
+    @Override
     public Map<String, Object> globalVariables() {
         return this.globalVariables;
     }
@@ -147,6 +159,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * Gets all imports stored in this context, identified by their alias.
      * @return The imports.
      */
+    @Override
     public Map<String, Class<?>> imports() {
         return this.imports;
     }
@@ -155,6 +168,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * Gets all customizers stored in this context.
      * @return The customizers.
      */
+    @Override
     public Set<CodeCustomizer> customizers() {
         return this.customizers;
     }
@@ -163,6 +177,7 @@ public class ExpressionConditionContext extends DefaultContext {
      * Gets all modules stored in this context, identified by their alias.
      * @return The modules.
      */
+    @Override
     public Map<String, NativeModule> externalModules() {
         return this.externalModules;
     }

@@ -24,7 +24,7 @@ public class RepeatStatement extends BodyStatement {
     private final Expression value;
 
     public RepeatStatement(final Expression value, final BlockStatement loopBody) {
-        super(value.line(), loopBody);
+        super(value, loopBody);
         this.value = value;
     }
 

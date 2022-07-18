@@ -63,7 +63,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -90,7 +89,6 @@ public class Parser {
 
     private int current = 0;
     private List<Token> tokens;
-    private final ErrorReporter errorReporter;
 
     private static final int MAX_NUM_OF_ARGUMENTS = 8;
 
@@ -98,9 +96,8 @@ public class Parser {
     private final Set<String> infixFunctions = new HashSet<>();
 
     @Bound
-    public Parser(final List<Token> tokens, final ErrorReporter errorReporter) {
+    public Parser(final List<Token> tokens) {
         this.tokens = tokens;
-        this.errorReporter = errorReporter;
     }
 
     /**
@@ -167,18 +164,12 @@ public class Parser {
     }
 
     private Statement declaration() {
-        try {
             if (this.match(TokenType.PREFIX, TokenType.INFIX) && this.match(TokenType.FUN)) return this.funcDeclaration(this.tokens.get(this.current - 2));
-            if (this.match(TokenType.FUN)) return this.funcDeclaration(this.previous());
-            if (this.match(TokenType.VAR)) return this.varDeclaration();
-            if (this.match(TokenType.CLASS)) return this.classDeclaration();
-            if (this.match(TokenType.NATIVE)) return this.nativeFuncDeclaration();
-            return this.statement();
-        }
-        catch (final ParseError error) {
-            this.synchronize();
-            return null;
-        }
+        if (this.match(TokenType.FUN)) return this.funcDeclaration(this.previous());
+        if (this.match(TokenType.VAR)) return this.varDeclaration();
+        if (this.match(TokenType.CLASS)) return this.classDeclaration();
+        if (this.match(TokenType.NATIVE)) return this.nativeFuncDeclaration();
+        return this.statement();
     }
 
     private Statement classDeclaration() {
@@ -236,7 +227,7 @@ public class Parser {
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
-                    this.report(this.peek(), "Cannot have more than " + expectedNumberOrArguments + " parameters for " + token.type() + " functions");
+                    throw new ScriptEvaluationError("Cannot have more than " + expectedNumberOrArguments + " parameters for " + token.type() + " functions", Phase.PARSING, this.peek());
                 }
                 parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
             }
@@ -260,15 +251,15 @@ public class Parser {
         final Token moduleName = this.expect(TokenType.IDENTIFIER, "module name");
 
         while (this.match(TokenType.COLON)) {
-            final Token token = new Token(TokenType.DOT, ".", moduleName.line());
+            final Token token = new Token(TokenType.DOT, ".", moduleName.line(), moduleName.column());
             moduleName.concat(token);
             final Token moduleName2 = this.expect(TokenType.IDENTIFIER, "module name");
             moduleName.concat(moduleName2);
         }
 
-        return this.function(TokenType.DOT, TokenType.SEMICOLON, (name, parameters) -> {
-            return new NativeFunctionStatement(name, moduleName, null, parameters);
-        });
+        return this.function(TokenType.DOT, TokenType.SEMICOLON, (name, parameters) ->
+                new NativeFunctionStatement(name, moduleName, null, parameters)
+        );
     }
 
     private <T extends Statement> T function(final TokenType keyword, final TokenType end, final BiFunction<Token, List<Token>, T> converter) {
@@ -279,7 +270,7 @@ public class Parser {
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    this.report(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " parameters.");
+                    throw new ScriptEvaluationError("Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " parameters.", Phase.PARSING, this.peek());
                 }
                 parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
             }
@@ -469,7 +460,7 @@ public class Parser {
             else if (expr instanceof final GetExpression get) {
                 return new SetExpression(get.object(), get.name(), value);
             }
-            this.report(equals, "Invalid assignment target.");
+            throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, equals);
         }
         return expr;
     }
@@ -495,7 +486,7 @@ public class Parser {
                 final Expression secondExp = this.or();
                 return new TernaryExpression(expr, question, firstExp, colon, secondExp);
             }
-            this.errorReporter.error(Phase.PARSING, colon, "Expected Expression after " + TokenType.COLON.representation());
+            throw new ScriptEvaluationError("Expected expression after " + TokenType.COLON.representation(), Phase.PARSING, colon);
         }
         return expr;
     }
@@ -660,7 +651,7 @@ public class Parser {
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (arguments.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    this.report(this.peek(), "Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.");
+                    throw new ScriptEvaluationError("Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.", Phase.PARSING, this.peek());
                 }
                 arguments.add(this.expression());
             }
@@ -770,13 +761,12 @@ public class Parser {
 
             if (caseToken.type() == TokenType.CASE) {
                 final Expression caseExpr = this.primary();
-                if (!(caseExpr instanceof LiteralExpression)) {
-                    this.report(caseToken, "Case expression must be a literal.");
+                if (!(caseExpr instanceof final LiteralExpression literal)) {
+                    throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
                 }
 
-                final LiteralExpression literal = (LiteralExpression) caseExpr;
                 if (matchedLiterals.contains(literal.value())) {
-                    this.report(caseToken, "Duplicate case expression '" + literal.value() + "'.");
+                    throw new ScriptEvaluationError("Duplicate case expression '" + literal.value() + "'.", Phase.PARSING, caseToken);
                 }
                 matchedLiterals.add(literal.value());
 
@@ -804,24 +794,17 @@ public class Parser {
             return new BlockStatement(colon, statements);
         }
         else if (this.match(TokenType.ARROW)) {
-            return this.statement();
+            return this.expressionStatement();
         }
-        else throw this.error(this.peek(), "Expected ':' or '->'");
-    }
-
-    private ParseError error(final Token token, final String message) {
-        this.errorReporter.error(Phase.PARSING, token, message);
-        return new ParseError();
-    }
-
-    private void report(final Token token, final String message) {
-        this.errorReporter.error(Phase.PARSING, token, message);
+        else {
+            throw new ScriptEvaluationError("Expected ':' or '->'", Phase.PARSING, this.peek());
+        }
     }
 
     private Token consume(final TokenType type, final String message) {
         if (this.check(type))
             return this.advance();
-        if (type != TokenType.SEMICOLON) throw this.error(this.peek(), message);
+        if (type != TokenType.SEMICOLON) throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
         return null;
     }
 

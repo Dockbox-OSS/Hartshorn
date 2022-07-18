@@ -23,7 +23,7 @@ public class GroupingExpression extends Expression {
     private final Expression expression;
 
     public GroupingExpression(final Expression expression) {
-        super(expression.line());
+        super(expression);
         this.expression = expression;
     }
 

@@ -22,20 +22,14 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 public class TestStatement extends BodyStatement {
 
     private final Token name;
-    private final Statement returnValue;
 
-    public TestStatement(final Token name, final BlockStatement body, final Statement returnValue) {
+    public TestStatement(final Token name, final BlockStatement body) {
         super(name, body);
         this.name = name;
-        this.returnValue = returnValue;
     }
 
     public Token name() {
         return this.name;
-    }
-
-    public Statement returnValue() {
-        return this.returnValue;
     }
 
     @Override

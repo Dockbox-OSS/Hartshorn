@@ -24,7 +24,7 @@ public class WhileStatement extends BodyStatement {
     private final Expression condition;
 
     public WhileStatement(final Expression condition, final BlockStatement loopBody) {
-        super(condition.line(), loopBody);
+        super(condition, loopBody);
         this.condition = condition;
     }
 

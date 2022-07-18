@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.token;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
 
 /**
  * Represents a single token which exists within an HSL script. A token is always of
@@ -25,25 +26,21 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Guus Lieben
  * @since 22.4
  */
-public class Token {
+public class Token extends ASTNode {
 
     private final TokenType type;
     private final Object literal;
-    private final int line;
     private String lexeme;
 
-    public Token(final TokenType type, final String lexeme, final int line) {
-        this.type = type;
-        this.lexeme = lexeme;
-        this.literal = null;
-        this.line = line;
+    public Token(final TokenType type, final String lexeme, final int line, final int column) {
+        this(type, lexeme, null, line, column);
     }
 
-    public Token(final TokenType type, final String lexeme, final Object literal, final int line) {
+    public Token(final TokenType type, final String lexeme, final Object literal, final int line, final int column) {
+        super(line, column);
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
-        this.line = line;
     }
 
     /**
@@ -85,15 +82,7 @@ public class Token {
         return this.type;
     }
 
-    /**
-     * Gets the line at which the token is located.
-     * @return The line of this token.
-     */
-    public int line() {
-        return this.line;
-    }
-
     public String toString() {
-        return "Token[%s @ line %d = %s / %s]".formatted(this.type, this.line, this.lexeme, this.literal);
+        return "Token[%s @ %d:%d = %s / %s]".formatted(this.type, this.line(), this.column(), this.lexeme, this.literal);
     }
 }

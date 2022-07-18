@@ -25,7 +25,7 @@ public class ForEachStatement extends BodyStatement {
     private final Expression collection;
 
     public ForEachStatement(final VariableStatement selector, final Expression collection, final BlockStatement body) {
-        super(selector.line(), body);
+        super(selector, body);
         this.selector = selector;
         this.collection = collection;
     }

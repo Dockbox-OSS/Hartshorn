@@ -26,7 +26,7 @@ public class IfStatement extends Statement {
     private final BlockStatement elseBranch;
 
     public IfStatement(final Expression condition, final BlockStatement thenBranch, final BlockStatement elseBranch) {
-        super(condition.line());
+        super(condition);
         this.condition = condition;
         this.thenBranch = thenBranch;
         this.elseBranch = elseBranch;

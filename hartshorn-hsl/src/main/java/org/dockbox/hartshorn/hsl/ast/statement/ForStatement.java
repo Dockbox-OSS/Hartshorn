@@ -26,7 +26,7 @@ public class ForStatement extends BodyStatement {
     private final Statement increment;
 
     public ForStatement(final VariableStatement initializer, final Expression condition, final Statement increment, final BlockStatement loopBody) {
-        super(initializer.line(), loopBody);
+        super(initializer, loopBody);
         this.initializer = initializer;
         this.condition = condition;
         this.increment = increment;

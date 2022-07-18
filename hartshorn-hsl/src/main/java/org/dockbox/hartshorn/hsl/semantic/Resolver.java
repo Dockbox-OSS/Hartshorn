@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayVariable;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
@@ -40,7 +41,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ThisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -63,7 +63,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.callable.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -89,13 +88,11 @@ import java.util.Stack;
  */
 public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void> {
 
-    private final ErrorReporter errorReporter;
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
 
     @Bound
-    public Resolver(final ErrorReporter errorReporter, final Interpreter interpreter) {
-        this.errorReporter = errorReporter;
+    public Resolver(final Interpreter interpreter) {
         this.interpreter = interpreter;
     }
 
@@ -195,8 +192,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final ThisExpression expr) {
         if (this.currentClass == ClassType.NONE) {
-            this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'this' outside of a class.");
-            return null;
+            throw new ScriptEvaluationError("Cannot use 'this' outside of a class.", Phase.RESOLVING, expr.keyword());
         }
         this.resolveLocal(expr, expr.keyword());
         return null;
@@ -206,7 +202,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final VariableExpression expr) {
         if (!this.scopes.isEmpty() &&
                 this.scopes.peek().get(expr.name().lexeme()) == Boolean.FALSE) {
-            this.errorReporter.error(Phase.RESOLVING, expr.name(), "Cannot read local variable in its own initializer.");
+            throw new ScriptEvaluationError("Cannot read local variable in its own initializer.", Phase.RESOLVING, expr.name());
         }
         this.resolveLocal(expr, expr.name());
         return null;
@@ -304,7 +300,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType != MoveKeyword.ScopeType.LOOP && this.currentScopeType != MoveKeyword.ScopeType.SWITCH) {
-            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Break can only used be inside loops and switch cases.");
+            throw new ScriptEvaluationError("Break can only used be inside loops and switch cases.", Phase.RESOLVING, statement.keyword());
         }
         return null;
     }
@@ -313,7 +309,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType != MoveKeyword.ScopeType.LOOP) {
-            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Continue can only used be inside loops.");
+            throw new ScriptEvaluationError("Continue can only used be inside loops and switch cases.", Phase.RESOLVING, statement.keyword());
         }
         return null;
     }
@@ -351,11 +347,11 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     public Void visit(final ReturnStatement statement) {
         // Make sure return is inside function
         if (this.currentFunction == FunctionType.NONE) {
-            this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Cannot return from top-level code.");
+            throw new ScriptEvaluationError("Cannot return from top-level code.", Phase.RESOLVING, statement.keyword());
         }
         if (statement.value() != null) {
             if (this.currentFunction == FunctionType.INITIALIZER) {
-                this.errorReporter.error(Phase.RESOLVING, statement.keyword(), "Cannot return a value from an initializer.");
+                throw new ScriptEvaluationError("Cannot return a value from an initializer.", Phase.RESOLVING, statement.keyword());
             }
             this.resolve(statement.value());
         }
@@ -372,7 +368,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         // Class must not extend itself
         if (statement.superClass() != null &&
                 statement.name().lexeme().equals(statement.superClass().name().lexeme())) {
-            this.errorReporter.error(Phase.RESOLVING, statement.superClass().name(), "A class cannot inherit from itself.");
+            throw new ScriptEvaluationError("A class cannot inherit from itself.", Phase.RESOLVING, statement.superClass().name());
         }
 
         // For inheritance
@@ -417,7 +413,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.currentFunction = FunctionType.TEST;
         this.declare(statement.name());
         this.resolve(statement.body());
-        this.resolve(statement.returnValue());
         this.currentFunction = enclosingClass;
         return null;
     }
@@ -427,7 +422,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         final Map<String, NativeModule> modules = this.interpreter.externalModules();
         final String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
-            this.errorReporter.error(Phase.RESOLVING, statement.name(), "Cannot find module named '" + module + "'");
+            throw new ScriptEvaluationError("Cannot find module named '" + module + "'", Phase.RESOLVING, statement.name());
         }
         return null;
     }
@@ -457,12 +452,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final ArrayGetExpression expr) {
-        this.resolve(expr.size());
-        return null;
-    }
-
-    @Override
-    public Void visit(final ArrayVariable expr) {
         this.define(expr.name());
         this.resolve(expr.index());
         return null;
@@ -517,10 +506,10 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final SuperExpression expr) {
         if (this.currentClass == ClassType.NONE) {
-            this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'super' outside of a class.");
+            throw new ScriptEvaluationError("Cannot use 'super' outside of a class.", Phase.RESOLVING, expr.keyword());
         }
         else if (this.currentClass != ClassType.SUBCLASS) {
-            this.errorReporter.error(Phase.RESOLVING, expr.keyword(), "Cannot use 'super' in a class with no superclass.");
+            throw new ScriptEvaluationError("Cannot use 'super' in a class with no superclass.", Phase.RESOLVING, expr.keyword());
         }
         this.resolveLocal(expr, expr.keyword());
         return null;
@@ -608,7 +597,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
         // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
-            this.errorReporter.error(Phase.RESOLVING, name, "Variable with name '%s' already declared in this scope.".formatted(name.lexeme()));
+            throw new ScriptEvaluationError("Variable with name '%s' already declared in this scope.".formatted(name.lexeme()), Phase.RESOLVING, name);
         }
         scope.put(name.lexeme(), false);
     }

@@ -16,27 +16,21 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.Parser;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The standard context which tracks the state of the execution of a script. It is used by the
@@ -47,15 +41,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Guus Lieben
  * @since 22.4
  */
-public class ScriptContext extends DefaultContext implements ErrorReporter, ResultCollector {
+public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 
     private static final String GLOBAL_RESULT = "$__result__$";
-
-    protected final List<String> errors = new CopyOnWriteArrayList<>();
-    protected final List<String> runtimeErrors = new CopyOnWriteArrayList<>();
     protected final Map<String, Object> results = new ConcurrentHashMap<>();
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getCanonicalName() + "/script" + this.hashCode());
     private final String source;
 
     private List<Token> tokens;
@@ -67,7 +57,8 @@ public class ScriptContext extends DefaultContext implements ErrorReporter, Resu
     private Resolver resolver;
     private Interpreter interpreter;
 
-    public ScriptContext(final String source) {
+    public ScriptContext(final ApplicationContext context, final String source) {
+        super(context);
         this.source = source;
     }
 
@@ -138,38 +129,6 @@ public class ScriptContext extends DefaultContext implements ErrorReporter, Resu
         return this;
     }
 
-    public List<String> errors() {
-        return this.errors;
-    }
-
-    public List<String> runtimeErrors() {
-        return this.runtimeErrors;
-    }
-
-    public Logger logger() {
-        return this.logger;
-    }
-
-    @Override
-    public void error(final Phase phase, final int line, final String message) {
-        this.report(phase, line, "", message);
-    }
-
-    @Override
-    public void error(final Phase phase, final Token token, final String message) {
-        if (token.type() == TokenType.EOF) {
-            this.report(phase, token.line(), " at end", message);
-        }
-        else {
-            this.report(phase, token.line(), " at '" + token.lexeme() + "'", message);
-        }
-    }
-
-    private void report(final Phase phase, final int line, final String where, final String message) {
-        this.logger.warn("Error reported at line " + line + where + " while " + phase.name().toLowerCase(Locale.ROOT) + " script: " + message);
-        this.errors.add(message);
-    }
-
     @Override
     public void addResult(final Object value) {
         this.addResult(GLOBAL_RESULT, value);
@@ -191,10 +150,7 @@ public class ScriptContext extends DefaultContext implements ErrorReporter, Resu
                 .map(result -> (T) result);
     }
 
-    @Override
     public void clear() {
         this.results.clear();
-        this.errors.clear();
-        this.runtimeErrors.clear();
     }
 }

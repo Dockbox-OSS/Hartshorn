@@ -16,13 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
@@ -30,6 +25,9 @@ import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
@@ -53,43 +51,33 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
         final List<Statement> statements = context.statements();
         this.verifyIsExpression(statements);
         final List<Statement> testStatements = this.enhanceTestStatement(statements);
-        final List<Statement> enhancedStatements = this.enhanceModuleStatements(testStatements, context.interpreter().externalModules());
-        context.statements(enhancedStatements);
+        context.statements(testStatements);
     }
 
     private void verifyIsExpression(final List<Statement> statements) {
-        if (statements.size() != 1) {
-            throw new IllegalArgumentException("Expected only one statement, but found " + statements.size());
-        }
-
-        final Statement statement = statements.get(0);
-        if (!(statement instanceof ExpressionStatement)) {
-            throw new IllegalArgumentException("Expected statement to be a valid expression, but found " + statement);
+        // Get last statement in the statements list
+        final Statement lastStatement = statements.get(statements.size() - 1);
+        if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
+            throw new IllegalArgumentException("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName());
         }
     }
 
     private List<Statement> enhanceTestStatement(final List<Statement> statements) {
-        final ExpressionStatement statement = (ExpressionStatement) statements.get(0);
+        final Statement lastStatement = statements.get(statements.size() - 1);
+        if (!(lastStatement instanceof ReturnStatement)) {
+            final ExpressionStatement statement = (ExpressionStatement) lastStatement;
+            final Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
+            final ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
+            statements.set(statements.size() - 1, returnStatement);
+        }
 
-        final Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1);
-        final ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
-
-        final Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1);
-        final BlockStatement blockStatement = new BlockStatement(returnToken, statements);
-        final TestStatement testStatement = new TestStatement(testToken, blockStatement, returnStatement);
+        final Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
+        final BlockStatement blockStatement = new BlockStatement(testToken, statements);
+        final TestStatement testStatement = new TestStatement(testToken, blockStatement);
 
         final List<Statement> validationStatements = new ArrayList<>();
         validationStatements.add(testStatement);
 
         return validationStatements;
-    }
-
-    private List<Statement> enhanceModuleStatements(final List<Statement> statements, final Map<String, NativeModule> modules) {
-        for (final String module : modules.keySet()) {
-            final Token moduleToken = new Token(TokenType.IDENTIFIER, module, -1);
-            final ModuleStatement moduleStatement = new ModuleStatement(moduleToken);
-            statements.add(0, moduleStatement);
-        }
-        return statements;
     }
 }

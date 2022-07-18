@@ -122,20 +122,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
 
     private final Map<String, NativeModule> externalModules;
-
-    private final ErrorReporter errorReporter;
     private final ResultCollector resultCollector;
-    private final Logger logger;
 
     private VariableScope global = new VariableScope();
     private VariableScope visitingScope = this.global;
     private boolean isRunning = false;
 
     @Bound
-    public Interpreter(final ErrorReporter errorReporter, final ResultCollector resultCollector, final Logger logger, final Map<String, NativeModule> externalModules) {
-        this.errorReporter = errorReporter;
+    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
         this.resultCollector = resultCollector;
-        this.logger = logger;
         this.externalModules = new ConcurrentHashMap<>(externalModules);
     }
 
@@ -152,7 +147,6 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         this.global = new VariableScope();
         this.visitingScope = this.global;
         this.locals.clear();
-        this.errorReporter.clear();
         this.resultCollector.clear();
     }
 
@@ -183,7 +177,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
         }
         catch (final RuntimeError error) {
-            this.errorReporter.error(Phase.INTERPRETING, error.token(), error.getMessage());
+            throw new ScriptEvaluationError(error, Phase.INTERPRETING, error.token());
         }
         finally {
             this.isRunning = false;
@@ -514,9 +508,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final CallableNode value = (CallableNode) this.variableScope().get(expr.prefixOperatorName());
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
-        return Result.of(() -> value.call(expr.prefixOperatorName(), this, args))
-                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.prefixOperatorName(), e.getMessage()))
-                .orNull();
+        try {
+            return value.call(expr.prefixOperatorName(), this, args);
+        }
+        catch (final ApplicationException e) {
+            throw new RuntimeError(expr.prefixOperatorName(), e.getMessage());
+        }
     }
 
     @Override
@@ -526,9 +523,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         args.add(this.evaluate(expr.leftExpression()));
         args.add(this.evaluate(expr.rightExpression()));
 
-        return Result.of(() -> value.call(expr.infixOperatorName(), this, args))
-                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.infixOperatorName(), e.getMessage()))
-                .orNull();
+        try {
+            return value.call(expr.infixOperatorName(), this, args);
+        }
+        catch (final ApplicationException e) {
+            throw new RuntimeError(expr.infixOperatorName(), e.getMessage());
+        }
     }
 
     @Override
@@ -547,9 +547,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             throw new RuntimeError(expr.closingParenthesis(), "Can only call functions and classes, but received " + callee + ".");
         }
 
-        return Result.of(() -> function.call(expr.closingParenthesis(), this, arguments))
-                .caught(e -> this.errorReporter.error(Phase.INTERPRETING, expr.closingParenthesis(), e.getMessage()))
-                .orNull();
+        try {
+            return function.call(expr.closingParenthesis(), this, arguments);
+        }
+        catch (final ApplicationException e) {
+            throw new RuntimeError(expr.closingParenthesis(), e.getMessage());
+        }
     }
 
     @Override
@@ -793,9 +796,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Void visit(final TestStatement statement) {
         final String name = statement.name().literal().toString();
         final VariableScope variableScope = new VariableScope(this.global);
-        this.execute(statement.body(), variableScope);
         try {
-            this.execute(statement.returnValue());
+            this.execute(statement.body(), variableScope);
         }
         catch (final Return r) {
             final Object value = r.value();
@@ -985,8 +987,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             return this.imports.get(name.lexeme());
         }
 
-        this.errorReporter.error(Phase.INTERPRETING, name, "Could not resolve variable " + name.lexeme() + ".");
-        return null;
+        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
     }
 
     public void resolve(final Expression expr, final int depth) {

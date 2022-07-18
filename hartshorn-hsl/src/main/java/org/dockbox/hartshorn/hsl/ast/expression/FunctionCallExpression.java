@@ -28,7 +28,7 @@ public class FunctionCallExpression extends Expression {
     private final List<Expression> arguments;
 
     public FunctionCallExpression(final Expression callee, final Token paren, final List<Expression> arguments) {
-        super(callee.line());
+        super(callee);
         this.callee = callee;
         this.closingParenthesis = paren;
         this.arguments = arguments;

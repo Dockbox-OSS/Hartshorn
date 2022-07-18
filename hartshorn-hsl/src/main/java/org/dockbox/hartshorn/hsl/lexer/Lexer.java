@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.lexer;
 
-import org.dockbox.hartshorn.hsl.callable.ErrorReporter;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenConstants;
@@ -41,17 +41,16 @@ public class Lexer {
 
     private final List<Token> tokens = new ArrayList<>();
     private final List<Comment> comments = new ArrayList<>();
-    private final ErrorReporter errorReporter;
     private final String source;
 
     private int start = 0;
     private int current = 0;
     private int line = 1;
+    private int column = 0;
 
     @Bound
-    public Lexer(final String source, final ErrorReporter errorReporter) {
+    public Lexer(final String source) {
         this.source = source;
-        this.errorReporter = errorReporter;
     }
 
     /**
@@ -67,7 +66,7 @@ public class Lexer {
             this.start = this.current;
             this.scanToken();
         }
-        this.tokens.add(new Token(TokenType.EOF, "", null, this.line));
+        this.tokens.add(new Token(TokenType.EOF, "", this.line, this.start));
         return this.tokens;
     }
 
@@ -220,7 +219,7 @@ public class Lexer {
                     this.scanIdentifier();
                 }
                 else {
-                    this.errorReporter.error(Phase.TOKENIZING, this.line, "Unexpected character.");
+                    throw new ScriptEvaluationError("Unexpected character '" + c + "'", Phase.TOKENIZING, this.line, this.start);
                 }
         }
     }
@@ -242,7 +241,9 @@ public class Lexer {
                 this.current += 2;
                 break;
             }
-            if (this.currentChar() == '\n') this.line++;
+            if (this.currentChar() == '\n') {
+                this.line++;
+            }
             text.append(this.pointToNextChar());
         }
         this.comments.add(new Comment(line, text.toString()));
@@ -267,14 +268,15 @@ public class Lexer {
 
     private void scanString() {
         while (this.currentChar() != TokenConstants.QUOTE && !this.isAtEnd()) {
-            if (this.currentChar() == '\n') this.line++;
+            if (this.currentChar() == '\n') {
+                this.line++;
+            }
             this.pointToNextChar();
         }
 
         // Unterminated scanString.
         if (this.isAtEnd()) {
-            this.errorReporter.error(Phase.TOKENIZING, this.line, "Unterminated scanString.");
-            return;
+            throw new ScriptEvaluationError("Unterminated string", Phase.TOKENIZING, this.line, this.start);
         }
 
         // The closing ".
@@ -289,8 +291,7 @@ public class Lexer {
         final String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
         if (this.currentChar() != TokenConstants.SINGLE_QUOTE) {
-            this.errorReporter.error(Phase.TOKENIZING, this.line, "Unterminated char variable.");
-            return;
+            throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line, this.start);
         }
         this.pointToNextChar();
         this.addToken(TokenType.CHAR, value.charAt(0));
@@ -319,7 +320,7 @@ public class Lexer {
 
     private void addToken(final TokenType type, final Object literal) {
         final String text = this.source.substring(this.start, this.current);
-        this.tokens.add(new Token(type, text, literal, this.line));
+        this.tokens.add(new Token(type, text, literal, this.line, this.start));
     }
 
     private boolean isAtEnd() {
@@ -355,5 +356,11 @@ public class Lexer {
 
     private boolean isAlphaNumeric(final char c) {
         return this.isAlpha(c) || this.isDigit(c);
+    }
+
+    private int column() {
+        // Get current line from complete source index
+        final int lineStart = this.source.lastIndexOf('\n', this.current) + 1;
+        return this.current - lineStart - 1;
     }
 }

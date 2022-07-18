@@ -16,21 +16,25 @@
 
 package org.dockbox.hartshorn.hsl.ast;
 
-import org.dockbox.hartshorn.hsl.token.Token;
-
 public abstract class ASTNode {
 
     private final int line;
+    private final int column;
 
-    protected ASTNode(final int line) {
-        this.line = line;
+    protected ASTNode(final ASTNode at) {
+        this(at.line, at.column);
     }
 
-    protected ASTNode(final Token at) {
-        this.line = at.line();
+    protected ASTNode(final int line, final int column) {
+        this.line = line;
+        this.column = column;
     }
 
     public int line() {
         return this.line;
+    }
+
+    public int column() {
+        return column;
     }
 }
