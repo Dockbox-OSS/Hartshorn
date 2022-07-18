@@ -65,14 +65,27 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
             }
 
             if (message == null) message = "";
-            log.error("Exception: " + throwable.getClass().getCanonicalName() + " ("+ location +"): " + message);
+            final String[] lines = message.split("\n");
+            log.error("Exception: " + throwable.getClass().getCanonicalName() + " ("+ location +"): " + lines[0]);
+            if (lines.length > 1) {
+                for (int i = 1; i < lines.length; i++) {
+                    log.error("  " + lines[i]);
+                }
+            }
 
             if (this.stacktraces()) {
                 Throwable nextException = throwable;
 
                 while (null != nextException) {
                     final StackTraceElement[] trace = nextException.getStackTrace();
-                    log.error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
+                    final String nextMessage = String.valueOf(nextException.getMessage());
+                    final String[] nextLines = nextMessage.split("\n");
+                    log.error(nextException.getClass().getCanonicalName() + ": " + nextLines[0]);
+                    if (nextLines.length > 1) {
+                        for (int i = 1; i < nextLines.length; i++) {
+                            log.error("  " + nextLines[i]);
+                        }
+                    }
 
                     for (final StackTraceElement element : trace) {
                         final String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
