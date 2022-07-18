@@ -25,17 +25,23 @@ public class FunctionCallExpression extends Expression {
 
     private final Expression callee;
     private final Token closingParenthesis;
+    private final Token openParenthesis;
     private final List<Expression> arguments;
 
-    public FunctionCallExpression(final Expression callee, final Token paren, final List<Expression> arguments) {
+    public FunctionCallExpression(final Expression callee, final Token open, final Token close, final List<Expression> arguments) {
         super(callee);
         this.callee = callee;
-        this.closingParenthesis = paren;
+        this.openParenthesis = open;
+        this.closingParenthesis = close;
         this.arguments = arguments;
     }
 
     public Expression callee() {
         return this.callee;
+    }
+
+    public Token openParenthesis() {
+        return this.openParenthesis;
     }
 
     public Token closingParenthesis() {

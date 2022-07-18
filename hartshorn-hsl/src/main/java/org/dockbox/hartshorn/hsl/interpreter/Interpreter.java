@@ -542,14 +542,14 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         // Can't call non-callable nodes..
         if (!(callee instanceof final CallableNode function)) {
-            throw new RuntimeError(expr.closingParenthesis(), "Can only call functions and classes, but received " + callee + ".");
+            throw new RuntimeError(expr.openParenthesis(), "Can only call functions and classes, but received " + callee + ".");
         }
 
         try {
-            return function.call(expr.closingParenthesis(), this, arguments);
+            return function.call(expr.openParenthesis(), this, arguments);
         }
         catch (final ApplicationException e) {
-            throw new RuntimeError(expr.closingParenthesis(), e.getMessage());
+            throw new RuntimeError(expr.openParenthesis(), e.getMessage());
         }
     }
 
@@ -809,6 +809,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final NativeModule module = this.externalModules().get(moduleName);
         for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
             final HslLibrary library = new HslLibrary(supportedFunction, this.externalModules);
+            // TODO: Support overloading of functions in same module (or throw error if duplicate from other module)
             this.global.define(supportedFunction.name().lexeme(), library);
         }
         return null;

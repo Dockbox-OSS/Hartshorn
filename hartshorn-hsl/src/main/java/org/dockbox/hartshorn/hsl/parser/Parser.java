@@ -625,6 +625,7 @@ public class Parser {
 
     private Expression finishCall(final Expression callee) {
         final List<Expression> arguments = new ArrayList<>();
+        final Token parenOpen = this.previous();
         // For zero arguments
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
@@ -635,8 +636,8 @@ public class Parser {
             }
             while (this.match(TokenType.COMMA));
         }
-        final Token paren = this.expectAfter(TokenType.RIGHT_PAREN, "arguments");
-        return new FunctionCallExpression(callee, paren, arguments);
+        final Token parenClose = this.expectAfter(TokenType.RIGHT_PAREN, "arguments");
+        return new FunctionCallExpression(callee, parenOpen, parenClose, arguments);
     }
 
     private Expression primary() {

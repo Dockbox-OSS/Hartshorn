@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.callable.module;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.callable.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.callable.external.ExecutableLookup;
+import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -82,9 +83,12 @@ public abstract class AbstractNativeModule implements NativeModule {
             else {
                 method = (MethodContext<?, Object>) function.method();
             }
-            if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method)))
-                return method.invoke(this.instance(), arguments.toArray(new Object[0]));
-            else throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
+            if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method))) {
+                final Object result = method.invoke(this.instance(), arguments.toArray(new Object[0]))
+                        .rethrowUnchecked()
+                        .orNull();
+                return new ExternalInstance(result);
+            } else throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
         }
         catch (final InvocationTargetException e) {
             throw new NativeExecutionException("Invalid Module Loader", e);
@@ -105,7 +109,7 @@ public abstract class AbstractNativeModule implements NativeModule {
         if (this.supportedFunctions == null) {
             final List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
-            for (final MethodContext<?, ?> method : TypeContext.of(this.moduleClass()).methods()) {
+            for (final MethodContext<?, ?> method : TypeContext.of(this.moduleClass()).declaredMethods()) {
                 if (!method.isPublic()) continue;
                 final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
 
