@@ -46,7 +46,7 @@ public class Lexer {
     private int start = 0;
     private int current = 0;
     private int line = 1;
-    private int column = 0;
+    private int column = -1;
 
     @Bound
     public Lexer(final String source) {
@@ -203,7 +203,7 @@ public class Lexer {
                 // Ignore whitespace.
                 break;
             case '\n':
-                this.line++;
+                this.nextLine();
                 break;
             case TokenConstants.QUOTE:
                 this.scanString();
@@ -219,7 +219,7 @@ public class Lexer {
                     this.scanIdentifier();
                 }
                 else {
-                    throw new ScriptEvaluationError("Unexpected character '" + c + "'", Phase.TOKENIZING, this.line, this.start);
+                    throw new ScriptEvaluationError("Unexpected character '" + c + "'", Phase.TOKENIZING, this.line, this.column);
                 }
         }
     }
@@ -242,7 +242,7 @@ public class Lexer {
                 break;
             }
             if (this.currentChar() == '\n') {
-                this.line++;
+                this.nextLine();
             }
             text.append(this.pointToNextChar());
         }
@@ -269,14 +269,14 @@ public class Lexer {
     private void scanString() {
         while (this.currentChar() != TokenConstants.QUOTE && !this.isAtEnd()) {
             if (this.currentChar() == '\n') {
-                this.line++;
+                this.nextLine();
             }
             this.pointToNextChar();
         }
 
         // Unterminated scanString.
         if (this.isAtEnd()) {
-            throw new ScriptEvaluationError("Unterminated string", Phase.TOKENIZING, this.line, this.start);
+            throw new ScriptEvaluationError("Unterminated string", Phase.TOKENIZING, this.line, this.column);
         }
 
         // The closing ".
@@ -291,7 +291,7 @@ public class Lexer {
         final String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
         if (this.currentChar() != TokenConstants.SINGLE_QUOTE) {
-            throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line, this.start);
+            throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line, this.column);
         }
         this.pointToNextChar();
         this.addToken(TokenType.CHAR, value.charAt(0));
@@ -311,6 +311,7 @@ public class Lexer {
 
     private char pointToNextChar() {
         this.current++;
+        this.column++;
         return this.source.charAt(this.current - 1);
     }
 
@@ -320,7 +321,7 @@ public class Lexer {
 
     private void addToken(final TokenType type, final Object literal) {
         final String text = this.source.substring(this.start, this.current);
-        this.tokens.add(new Token(type, text, literal, this.line, this.start));
+        this.tokens.add(new Token(type, text, literal, this.line, Math.min(this.start, this.column)));
     }
 
     private boolean isAtEnd() {
@@ -335,6 +336,7 @@ public class Lexer {
         if (this.isAtEnd()) return false;
         if (this.source.charAt(this.current) != expected) return false;
         this.current++;
+        this.column++;
         return true;
     }
 
@@ -356,6 +358,11 @@ public class Lexer {
 
     private boolean isAlphaNumeric(final char c) {
         return this.isAlpha(c) || this.isDigit(c);
+    }
+
+    private void nextLine() {
+        this.line++;
+        this.column = -1;
     }
 
     private int column() {
