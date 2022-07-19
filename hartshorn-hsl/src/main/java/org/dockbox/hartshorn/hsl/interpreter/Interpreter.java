@@ -434,9 +434,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     private Object xor(final Object left, final Object right) {
-        if (left instanceof Number && right instanceof Number) {
-            final int iLeft = (int) (double) left;
-            final int iRight = (int) (double) right;
+        if (left instanceof Number nleft && right instanceof Number nright) {
+            final int iLeft = nleft.intValue();
+            final int iRight = nright.intValue();
             return iLeft ^ iRight;
         }
         return this.isTruthy(left) ^ this.isTruthy(right);
@@ -840,7 +840,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final NativeModule module = this.externalModules().get(moduleName);
         for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
             final HslLibrary library = new HslLibrary(supportedFunction, this.externalModules);
-            // TODO: Support overloading of functions in same module (or throw error if duplicate from other module)
+            // TODO #780: Support overloading of functions in same module (or throw error if duplicate from other module)
             this.global.define(supportedFunction.name().lexeme(), library);
         }
         return null;

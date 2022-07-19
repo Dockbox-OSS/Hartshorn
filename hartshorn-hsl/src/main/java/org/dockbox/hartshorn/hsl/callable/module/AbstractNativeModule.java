@@ -109,7 +109,7 @@ public abstract class AbstractNativeModule implements NativeModule {
         if (this.supportedFunctions == null) {
             final List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
-            for (final MethodContext<?, ?> method : TypeContext.of(this.moduleClass()).declaredMethods()) {
+            for (final MethodContext<?, ?> method : TypeContext.of(this.moduleClass()).methods()) {
                 if (!method.isPublic()) continue;
                 final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
 

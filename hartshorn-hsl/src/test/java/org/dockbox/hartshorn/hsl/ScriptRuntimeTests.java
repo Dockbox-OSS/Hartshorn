@@ -227,23 +227,4 @@ public class ScriptRuntimeTests {
     ScriptContext assertNoErrorsReported(final HslScript script) {
         return Assertions.assertDoesNotThrow(script::evaluate);
     }
-
-    @Test
-    void name() {
-        this.assertNoErrorsReported("""
-                class Car {
-                    fun move() {
-                        println("Move");
-                    }
-                                
-                    fun move(speed) {
-                        println("Move " + speed);
-                    }
-                }
-                                
-                var car = Car();
-                car.move();
-                car.move(2);
-                """);
-    }
 }
