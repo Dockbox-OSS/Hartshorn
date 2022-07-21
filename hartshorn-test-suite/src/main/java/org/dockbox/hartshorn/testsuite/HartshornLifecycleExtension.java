@@ -170,7 +170,6 @@ public class HartshornLifecycleExtension implements
     private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
         ApplicationFactory<?, ?> applicationFactory = new StandardApplicationFactory()
                 .loadDefaults()
-//                .argument("--debug=true")
                 .applicationFSProvider(ctx -> new JUnitFSProvider())
                 .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources));
 

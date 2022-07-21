@@ -1,0 +1,7 @@
+print(true && true);
+print(true || true);
+print(true ^ true);
+
+print(true && false);
+print(true || false);
+print(true ^ false);

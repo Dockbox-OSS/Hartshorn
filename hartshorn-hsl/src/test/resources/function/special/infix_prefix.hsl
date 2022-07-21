@@ -1,0 +1,13 @@
+prefix fun say(message) {
+   print(message + "\n");
+}
+
+infix fun to(left, right) {
+   return left + " " + right;
+}
+
+// Option 1
+say "Hello" to "Amr";
+
+// Option 2
+say(to("Hello", "Amr"));

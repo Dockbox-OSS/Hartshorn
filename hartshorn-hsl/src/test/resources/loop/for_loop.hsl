@@ -1,0 +1,12 @@
+for (var i=0; i<10; i++) {
+    print(i);
+}
+
+for (var i=10; i>0; i--) {
+    print(i);
+}
+
+var list = [1,2,3];
+for (var i in list) {
+    print(i)
+}

@@ -1,0 +1,30 @@
+class Car{
+
+   fun init(name){
+      this.name = name;
+   }
+
+   fun methodShowInfo(){
+      print("Car name from Method : " + this.name + "\n");
+   }
+}
+
+fun Car:extensionShowInfo(){
+   print("Car name from Extension : " + this.name + "\n");
+}
+
+var length = 3;
+var carArray = [null] * length;
+var index = 0;
+while(index < length){
+   carArray[index] = Car("BMW " + index);
+   index = index + 1;
+}
+
+index = 0;
+while(index < length){
+   carArray[index].extensionShowInfo();
+   carArray[index].methodShowInfo();
+   print("\n");
+   index = index + 1;
+}

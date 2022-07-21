@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component.condition;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -24,27 +25,28 @@ import java.util.Set;
 
 public class ConditionMatcher {
 
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     public ConditionMatcher(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public boolean match(final AnnotatedElementContext annotatedElementContext) {
+    public boolean match(final AnnotatedElementContext<?> annotatedElementContext, final Context... contexts) {
         final Set<RequiresCondition> conditions = annotatedElementContext.annotations(RequiresCondition.class);
         for (final RequiresCondition condition : conditions) {
             final Class<? extends Condition> conditionClass = condition.condition();
 
             final Condition conditionInstance = this.applicationContext.get(conditionClass);
-            if (!this.match(annotatedElementContext, conditionInstance, condition)) {
+            if (!this.match(annotatedElementContext, conditionInstance, condition, contexts)) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean match(final AnnotatedElementContext<?> element, final Condition condition, final RequiresCondition requiresCondition) {
+    public boolean match(final AnnotatedElementContext<?> element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
         final ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
+        for (final Context child : contexts) context.add(child);
         final ConditionResult result = condition.matches(context);
         if (!result.matches() && requiresCondition.failOnNoMatch()) {
             throw new IllegalStateException("Condition failed (" + TypeContext.of(condition).name() + "): " + result.message());

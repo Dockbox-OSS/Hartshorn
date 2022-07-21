@@ -1,0 +1,9 @@
+infix fun orDefault(value, defaultValue) {
+    if (value == null) {
+        return defaultValue;
+    }
+    return value;
+}
+
+var result = null orDefault "Default Value";
+print(result);
