@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.callable.virtual;
 
-import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -36,14 +36,13 @@ import java.util.List;
  * @since 22.4
  */
 public class VirtualFunction implements CallableNode {
-
-    public static final String CLASS_INIT = "init";
-    private final FunctionStatement declaration;
+    
+    private final ParametricExecutableStatement declaration;
     private final VariableScope closure;
 
     private final boolean isInitializer;
 
-    public VirtualFunction(final FunctionStatement declaration, final VariableScope closure, final boolean isInitializer) {
+    public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final boolean isInitializer) {
         this.closure = closure;
         this.declaration = declaration;
         this.isInitializer = isInitializer;

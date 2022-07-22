@@ -100,6 +100,7 @@ public enum TokenType {
     NATIVE(builder -> builder.keyword(true).ok()),
     CASE(builder -> builder.keyword(true).ok()),
     DEFAULT(builder -> builder.keyword(true).ok()),
+    CONSTRUCTOR(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),
@@ -116,6 +117,18 @@ public enum TokenType {
 
     // Reserved words/characters
     OPERATOR(builder -> builder.keyword(true).ok()),
+
+    STATIC(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).ok()),
+
+    ABSTRACT(builder -> builder.keyword(true).ok()),
+    OVERRIDE(builder -> builder.keyword(true).ok()),
+    INTERFACE(builder -> builder.keyword(true).ok()),
+    IMPLEMENTS(builder -> builder.keyword(true).ok()),
+
+    PUBLIC(builder -> builder.keyword(true).ok()),
+    PRIVATE(builder -> builder.keyword(true).ok()),
+
     ;
 
     private final TokenMetaData metaData;

@@ -33,32 +33,29 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 22.4
  */
-public class VirtualClass implements CallableNode {
-
-    private final String name;
-    private final VirtualClass superClass;
-    private final VariableScope variableScope;
-    private final Map<String, VirtualFunction> methods;
-
-    public VirtualClass(final String name, final VirtualClass superClass, final VariableScope variableScope, final Map<String, VirtualFunction> methods) {
-        this.name = name;
-        this.superClass = superClass;
-        this.methods = methods;
-        this.variableScope = variableScope;
-    }
+public record VirtualClass(String name,
+                           VirtualClass superClass,
+                           VirtualFunction constructor,
+                           VariableScope variableScope,
+                           Map<String, VirtualFunction> methods
+) implements CallableNode {
 
     /**
      * Gets the name of the class.
+     *
      * @return The name of the class.
      */
+    @Override
     public String name() {
         return this.name;
     }
 
     /**
      * Gets the superclass of the class.
+     *
      * @return The superclass of the class.
      */
+    @Override
     @Nullable
     public VirtualClass superClass() {
         return this.superClass;
@@ -66,16 +63,21 @@ public class VirtualClass implements CallableNode {
 
     /**
      * Gets all methods of the class.
+     *
      * @return All methods of the class.
      */
+    @Override
     public Map<String, VirtualFunction> methods() {
         return this.methods;
     }
 
     /**
      * Adds a method to the class.
-     * @param name The name of the method.
-     * @param function The function to add.
+     *
+     * @param name
+     *         The name of the method.
+     * @param function
+     *         The function to add.
      */
     public void addMethod(final String name, final VirtualFunction function) {
         this.methods.put(name, function);
@@ -83,7 +85,10 @@ public class VirtualClass implements CallableNode {
 
     /**
      * Looks up a method by name. If no method is found, {@code null} is returned.
-     * @param name The name of the method.
+     *
+     * @param name
+     *         The name of the method.
+     *
      * @return The method, or {@code null} if no method is found.
      */
     public VirtualFunction findMethod(final String name) {
@@ -99,8 +104,10 @@ public class VirtualClass implements CallableNode {
 
     /**
      * Gets the variable scope of the class.
+     *
      * @return The variable scope of the class.
      */
+    @Override
     public VariableScope variableScope() {
         return this.variableScope;
     }
@@ -114,7 +121,7 @@ public class VirtualClass implements CallableNode {
     public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) {
         final VirtualInstance instance = new VirtualInstance(this);
         // Acts as a virtual constructor
-        final VirtualFunction initializer = this.findMethod(VirtualFunction.CLASS_INIT);
+        final VirtualFunction initializer = this.constructor();
         if (initializer != null) {
             initializer.bind(instance).call(at, interpreter, arguments);
         }

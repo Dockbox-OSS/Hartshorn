@@ -1,6 +1,6 @@
 class Car{
 
-   fun init(name){
+   constructor(name){
       this.name = name;
    }
 

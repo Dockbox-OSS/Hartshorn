@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -33,6 +32,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
@@ -45,6 +45,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -55,6 +56,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
@@ -65,7 +67,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
-import org.dockbox.hartshorn.hsl.callable.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -325,8 +326,14 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final FunctionStatement statement) {
         this.define(statement.name());
-
         this.resolveFunction(statement, FunctionType.FUNCTION);
+        return null;
+    }
+
+    @Override
+    public Void visit(final ConstructorStatement statement) {
+        this.define(statement.initializerIdentifier());
+        this.resolveFunction(statement, FunctionType.INITIALIZER);
         return null;
     }
 
@@ -394,11 +401,10 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.beginScope();
         this.scopes.peek().put(TokenType.THIS.representation(), true);
         for (final FunctionStatement method : statement.methods()) {
-            FunctionType declaration = FunctionType.METHOD;
-            if (VirtualFunction.CLASS_INIT.equals(method.name().lexeme())) {
-                declaration = FunctionType.INITIALIZER;
-            }
-            this.resolveFunction(method, declaration);
+            this.resolveFunction(method, FunctionType.METHOD);
+        }
+        if (statement.constructor() != null) {
+            this.resolveFunction(statement.constructor(), FunctionType.INITIALIZER);
         }
         this.define(statement.name());
         this.endScope();
@@ -583,16 +589,16 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         // Not found. Assume it is global.
     }
 
-    private void resolveFunction(final FunctionStatement func, final FunctionType type) {
+    private void resolveFunction(final ParametricExecutableStatement executable, final FunctionType type) {
         final FunctionType enclosingFunction = this.currentFunction;
         this.currentFunction = type;
 
         this.beginScope();
-        for (final Token param : func.parameters()) {
+        for (final Token param : executable.parameters()) {
             this.declare(param);
             this.define(param);
         }
-        this.resolve(func.statements());
+        this.resolve(executable.statements());
         this.endScope();
 
         this.currentFunction = enclosingFunction;
