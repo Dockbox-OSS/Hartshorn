@@ -47,7 +47,7 @@ public final class CyclingConstructorAnalyzer<T> {
             final Result<? extends ConstructorContext<C>> defaultConstructor = type.defaultConstructor();
             if (defaultConstructor.absent()) {
                 if (type.boundConstructors().isEmpty()) {
-                    return Result.of(new IllegalStateException("No injectable constructors found for " + type.type()));
+                    return Result.of(new MissingInjectConstructorException(type));
                 }
                 else {
                     return Result.empty(); // No injectable constructors found, but there are bound constructors

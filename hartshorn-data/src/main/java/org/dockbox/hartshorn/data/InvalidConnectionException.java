@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.exceptions;
+package org.dockbox.hartshorn.data;
 
-public class UnknownIdentifierException extends RuntimeException {
-    public UnknownIdentifierException(final String message) {
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+
+public class InvalidConnectionException extends ApplicationRuntimeException {
+    public InvalidConnectionException(final String message) {
         super(message);
     }
 }

@@ -54,7 +54,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
         return (methodContext, target, args) -> {
             final Result<EntityManager> entityManager = lookup.lookup(target);
             if (entityManager.absent()) {
-                throw new IllegalStateException("No entity manager found in execution cache for method " + methodContext.qualifiedName() + " in type " + methodContext.parent().name() + ". Expected target to be a JpaRepository.");
+                throw new MissingEntityManagerException(methodContext);
             }
 
             final TransactionManager manager = transactionFactory.manager(entityManager.get());

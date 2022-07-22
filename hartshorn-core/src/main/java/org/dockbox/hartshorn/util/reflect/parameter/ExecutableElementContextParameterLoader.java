@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.util.reflect.parameter;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.inject.Required;
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
 
 import jakarta.inject.Named;
 
@@ -41,7 +40,7 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         final T out = context.provider().get(key, enable);
 
         final boolean required = parameter.annotation(Required.class).map(Required::value).or(false);
-        if (required && out == null) return ExceptionHandler.unchecked(new ApplicationException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required"));
+        if (required && out == null) throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
 
         return out;
     }

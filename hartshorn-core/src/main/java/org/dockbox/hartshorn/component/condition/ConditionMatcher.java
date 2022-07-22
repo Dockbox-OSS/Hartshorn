@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.component.condition;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Set;
 
@@ -49,7 +48,7 @@ public class ConditionMatcher {
         for (final Context child : contexts) context.add(child);
         final ConditionResult result = condition.matches(context);
         if (!result.matches() && requiresCondition.failOnNoMatch()) {
-            throw new IllegalStateException("Condition failed (" + TypeContext.of(condition).name() + "): " + result.message());
+            throw new ConditionFailedException(condition, result);
         }
         return result.matches();
     }

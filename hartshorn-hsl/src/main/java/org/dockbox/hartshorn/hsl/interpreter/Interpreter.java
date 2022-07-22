@@ -167,7 +167,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public void interpret(final List<Statement> statements) {
         if (this.isRunning) {
-            throw new IllegalStateException("Cannot reuse the same interpreter instance for multiple executions");
+            throw new IllegalAccessException("Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {
@@ -350,7 +350,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.checkNumberOperand(expr.operator(), right);
                 final int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
-                yield ~value;
+                //noinspection RedundantCast
+                yield (int) ~value;
             }
             default -> null;
         };

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.exceptions;
+package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.data.annotations.Query.QueryType;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-public class IdentifierMismatchException extends ApplicationException {
-    public IdentifierMismatchException(final String message) {
-        super(message);
+public class UnsupportedQueryTypeException extends ApplicationRuntimeException {
+    public UnsupportedQueryTypeException(final QueryType type) {
+        super("Unsupported query type: " + type);
     }
 }

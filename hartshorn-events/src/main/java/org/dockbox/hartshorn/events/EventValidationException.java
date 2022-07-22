@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands.exceptions;
+package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-/**
- * The exception thrown when a command could not be parsed. This can occur either during
- * the creation of a command definition or {@link org.dockbox.hartshorn.commands.context.CommandContext}.
- */
-public class ParsingException extends ApplicationException {
-
-    public ParsingException(final Message resource) {
-        super(resource.string());
-    }
-
-    public ParsingException(final Message resource, final Throwable cause) {
-        super(resource.string(), cause);
+public class EventValidationException extends ApplicationRuntimeException {
+    public EventValidationException(final String message) {
+        super(message);
     }
 }

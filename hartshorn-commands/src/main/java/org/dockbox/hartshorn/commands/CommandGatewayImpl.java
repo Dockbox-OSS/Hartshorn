@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
@@ -150,7 +149,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     @Override
     public void register(final CommandExecutorContext context) {
         final Result<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
-        if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
+        if (container.absent()) throw new InvalidExecutorException("Executor contexts should contain at least one container context");
 
         final List<String> aliases;
         final TypeContext<?> typeContext = context.parent();
@@ -162,7 +161,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
             aliases = container.get().aliases();
         }
         else {
-            throw new IllegalArgumentException("Executor should either be declared in command type or container should provide aliases");
+            throw new InvalidExecutorException("Executor should either be declared in command type or container should provide aliases");
         }
 
         for (final String alias : aliases) {

@@ -73,7 +73,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
                 cache = manager.getOrCreate(finalName, expiration);
             else {
                 cache = manager.get(finalName)
-                        .orThrow(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
+                        .orThrow(() -> new UnavailableCacheException(finalName));
             }
             return cache;
         };

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
+import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
 import org.dockbox.hartshorn.core.boot.activators.AbstractActivator;
 import org.dockbox.hartshorn.core.boot.activators.InterfaceActivator;
 import org.dockbox.hartshorn.core.boot.activators.NonDecoratedActivator;
@@ -28,17 +29,17 @@ public class HartshornApplicationTests {
 
     @Test
     void testCreationFailsWithAbsentDecorator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(NonDecoratedActivator.class));
+        Assertions.assertThrows(InvalidActivationSourceException.class, () -> HartshornApplication.create(NonDecoratedActivator.class));
     }
 
     @Test
     void testCreationFailsWithAbstractActivator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(AbstractActivator.class));
+        Assertions.assertThrows(InvalidActivationSourceException.class, () -> HartshornApplication.create(AbstractActivator.class));
     }
 
     @Test
     void testCreationFailsWithInterfaceActivator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(InterfaceActivator.class));
+        Assertions.assertThrows(InvalidActivationSourceException.class, () -> HartshornApplication.create(InterfaceActivator.class));
     }
 
     @Test

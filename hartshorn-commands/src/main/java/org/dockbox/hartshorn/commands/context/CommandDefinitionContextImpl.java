@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.arguments.ArgumentMatchingFailedException;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
@@ -160,7 +161,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         for (int i = 0; i < elements.size(); i++) {
             final CommandElement<?> element = elements.get(i);
             if (element.size() == -1 && i != elements.size() - 1) {
-                throw new IllegalStateException("Cannot request arguments after joining remaining elements");
+                throw new IllegalArgumentRequestException("Cannot request arguments after joining remaining elements");
             }
         }
 
@@ -197,7 +198,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
             if (1 == elementValue.groupCount()) type = g1;
             name = g1;
         }
-        else throw new IllegalArgumentException("Missing key argument in specification '" + definition + "'");
+        else throw new ArgumentMatchingFailedException("Missing key argument in specification '" + definition + "'");
 
         /*
         Group two matches the type if two or more groups are present. This overwrites the default value if applicable.

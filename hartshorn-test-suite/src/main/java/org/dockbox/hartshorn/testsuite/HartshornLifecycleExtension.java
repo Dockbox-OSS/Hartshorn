@@ -223,13 +223,12 @@ public class HartshornLifecycleExtension implements
                     applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
                 }
                 else {
-                    throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
+                    throw new InvalidFactoryModifierException("parameters", parameters.get(0));
                 }
-
                 jlrMethod.setAccessible(false);
             }
             else {
-                throw new IllegalStateException("Invalid return type for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + factoryModifier.returnType().name());
+                throw new InvalidFactoryModifierException("return type", factoryModifier.returnType());
             }
         }
 

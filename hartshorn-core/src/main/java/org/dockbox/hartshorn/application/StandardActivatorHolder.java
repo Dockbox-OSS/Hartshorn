@@ -45,7 +45,7 @@ public class StandardActivatorHolder implements ModifiableActivatorHolder {
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         final Result<ServiceActivator> annotation = TypeContext.of(activator).annotation(ServiceActivator.class);
         if (annotation.absent())
-            throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+            throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators.containsKey(activator);
     }

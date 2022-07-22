@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
@@ -50,10 +51,10 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     public Self activator(final TypeContext<?> activator) {
         final Result<Activator> annotation = activator.annotation(Activator.class);
         if (annotation.absent())
-            throw new IllegalArgumentException("Application type should be decorated with @Activator");
+            throw new InvalidActivationSourceException("Application type should be decorated with @Activator");
 
         if (activator.isAbstract())
-            throw new IllegalArgumentException("Bootstrap type cannot be abstract, got " + activator.name());
+            throw new InvalidActivationSourceException("Bootstrap type cannot be abstract, got " + activator.name());
 
         this.configuration.activator = activator;
         return this.self();

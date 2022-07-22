@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.exceptions;
+package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-public class EmptyEntryException extends ApplicationException {
-    public EmptyEntryException(final String message) {
+public class InvalidActivatorException extends ApplicationRuntimeException {
+    public InvalidActivatorException(final String message) {
         super(message);
     }
 }

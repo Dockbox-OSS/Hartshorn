@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.application.environment;
 import org.dockbox.hartshorn.application.ApplicationContextConfiguration;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.Hartshorn;
@@ -192,7 +193,7 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
 
     public DelegatingApplicationManager applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
-        else throw new IllegalArgumentException("Application context has already been configured");
+        else throw new IllegalModificationException("Application context has already been configured");
         return this;
     }
 

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data.hibernate;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.data.InvalidConnectionException;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.context.EntityContext;
 import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
@@ -192,7 +193,7 @@ public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T,
         }
 
         final DataSourceConfiguration connection = this.connection();
-        if (connection == null) throw new IllegalStateException("Connection has not been configured!");
+        if (connection == null) throw new InvalidConnectionException("Connection has not been configured!");
 
         this.applicationContext().log().debug("Opening remote session to %s".formatted(connection.url()));
         this.session = this.factory().openSession();

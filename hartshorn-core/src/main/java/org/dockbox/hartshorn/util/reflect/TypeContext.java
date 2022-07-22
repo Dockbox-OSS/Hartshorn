@@ -463,7 +463,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
         if (!primitive.isPrimitive()) {
-            throw new IllegalArgumentException("Second argument has to be primitive type");
+            throw new IllegalArgumentException("Expected second argument to be primitive type");
         }
         return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
     }
@@ -501,7 +501,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             this.verifyMetadataAvailable();
             this.elementType = this.isArray()
                     ? Result.of(of(this.type().getComponentType()))
-                    : Result.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
+                    : Result.of(new IllegalArgumentException("The reflected type must be an array to look up its element type"));
         }
         return this.elementType;
     }

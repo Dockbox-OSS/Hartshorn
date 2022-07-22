@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.Enableable;
@@ -54,11 +53,13 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             if (constructorCandidate.present()) {
                 final ConstructorContext<?> constructor = constructorCandidate.get();
                 return interceptorContext -> this.processInstance(context, (R) constructor.createInstance(interceptorContext.args()).orNull(), enable);
-            } else {
+            }
+            else {
                 final Factory factory = method.annotation(Factory.class).get();
                 if (factory.required()) {
-                    throw new IllegalStateException("No factory found for " + method.qualifiedName());
-                } else {
+                    throw new MissingFactoryConstructorException(processingContext.key(), method);
+                }
+                else {
                     return interceptorContext -> null;
                 }
             }
@@ -68,15 +69,11 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
         }
     }
 
-    private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) {
-        try {
-            context.get(ComponentPopulator.class).populate(instance);
+    private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) throws ApplicationException {
+        context.get(ComponentPopulator.class).populate(instance);
 
-            if (enable) Enableable.enable(instance);
-            return instance;
-        } catch (final ApplicationException e) {
-            return ExceptionHandler.unchecked(e);
-        }
+        if (enable) Enableable.enable(instance);
+        return instance;
     }
 
     @Override

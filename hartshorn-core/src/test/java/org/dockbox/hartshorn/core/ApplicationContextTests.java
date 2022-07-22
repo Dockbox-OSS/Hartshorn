@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.proxy.AbstractProxy;
 import org.dockbox.hartshorn.core.proxy.DemoProxyDelegationPostProcessor;
@@ -50,7 +51,6 @@ import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.Assertions;
@@ -391,7 +391,7 @@ public class ApplicationContextTests {
 
     @Test
     void testSetterInjectionWithAbsentRequiredComponent() {
-        Assertions.assertThrows(ApplicationException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
+        Assertions.assertThrows(ComponentRequiredException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test

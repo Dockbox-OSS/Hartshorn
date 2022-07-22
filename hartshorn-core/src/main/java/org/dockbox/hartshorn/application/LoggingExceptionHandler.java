@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.slf4j.Logger;
@@ -125,6 +126,6 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     @Override
     public void applicationManager(final ApplicationManager applicationManager) {
         if (this.applicationManager == null) this.applicationManager = applicationManager;
-        else throw new IllegalArgumentException("Application manager has already been configured");
+        else throw new IllegalModificationException("Application manager has already been configured");
     }
 }

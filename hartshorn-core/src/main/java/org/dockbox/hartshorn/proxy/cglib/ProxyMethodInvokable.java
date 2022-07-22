@@ -47,6 +47,9 @@ public class ProxyMethodInvokable implements Invokable {
         catch (final AbstractMethodError e) {
             return TypeContext.of(this.getReturnType()).defaultOrNull();
         }
+        catch (final Exception e) {
+            throw e;
+        }
         catch (final Throwable t) {
             throw new Exception(t);
         }

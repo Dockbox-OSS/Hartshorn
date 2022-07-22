@@ -24,4 +24,11 @@ package org.dockbox.hartshorn.hsl.parser;
  * @since 22.4
  */
 public class ParseError extends RuntimeException {
+
+    public ParseError() {
+    }
+
+    public ParseError(final String message) {
+        super(message);
+    }
 }

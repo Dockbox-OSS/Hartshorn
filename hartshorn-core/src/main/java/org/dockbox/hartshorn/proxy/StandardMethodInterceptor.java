@@ -193,13 +193,15 @@ public class StandardMethodInterceptor<T> {
         }
     }
 
-    protected IllegalStateException invokeFailed(final Object self, final Invokable source, final Invokable target, final Object[] args, final TypeContext<T> targetType) {
+    protected ProxyInvocationException invokeFailed(final Object self, final Invokable source, final Invokable target, final Object[] args, final TypeContext<T> targetType) {
         final TypeContext<Object> selfContext = TypeContext.of(self);
-        return new IllegalStateException("Could not invoke local method " + source.getQualifiedName()
-                + " (targeting " + target.getQualifiedName() + ") on proxy "
-                + targetType.qualifiedName() + " of qualified type " + selfContext.qualifiedName() + "(isProxy=" + this.applicationContext().environment().manager().isProxy(self) + ")"
-                + " with arguments " + Arrays.toString(args) + ". " +
-                "This typically indicates that there is no appropriate proxy property (delegate or interceptor for the method.");
+        return new ProxyInvocationException("""
+                Could not invoke local method %s (targeting %s) on proxy %s of qualified type %s(isProxy=%s) with arguments %s.
+                This typically indicates that there is no appropriate proxy property (delegate or interceptor for the method.
+                """.formatted(
+                source.getQualifiedName(), target.getQualifiedName(), targetType.qualifiedName(), selfContext.qualifiedName(),
+                this.applicationContext().environment().manager().isProxy(self), Arrays.toString(args))
+        );
     }
 
     protected Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
