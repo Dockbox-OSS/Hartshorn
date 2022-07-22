@@ -17,27 +17,29 @@
 package org.dockbox.hartshorn.hsl.ast.statement;
 
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
-public class FunctionStatement extends ParametricExecutableStatement {
+public abstract class ParametricExecutableStatement extends Function {
 
-    private final Token name;
+    private final List<Token> params;
+    private final BlockStatement body;
 
-    public FunctionStatement(final Token name,
-                             final List<Token> params,
-                             final BlockStatement body) {
-        super(name, params, body);
-        this.name = name;
+    protected ParametricExecutableStatement(final Token token, final List<Token> params, final BlockStatement body) {
+        super(token);
+        this.params = params;
+        this.body = body;
     }
 
-    public Token name() {
-        return this.name;
+    public List<Token> parameters() {
+        return this.params;
     }
 
-    @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
-        return visitor.visit(this);
+    public List<Statement> statements() {
+        return this.body.statements();
+    }
+
+    public BlockStatement body() {
+        return body;
     }
 }

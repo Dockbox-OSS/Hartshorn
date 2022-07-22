@@ -865,6 +865,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
+    public Void visit(final ConstructorStatement statement) {
+        return null;
+    }
+
+    @Override
     public Void visit(final ExtensionStatement statement) {
         final VirtualClass extensionClass = (VirtualClass) this.variableScope().get(statement.className());
         if (extensionClass == null) {

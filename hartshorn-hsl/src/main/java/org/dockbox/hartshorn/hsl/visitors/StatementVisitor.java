@@ -50,6 +50,8 @@ public interface StatementVisitor<R> {
 
     R visit(FunctionStatement statement);
 
+    R visit(ConstructorStatement statement);
+
     R visit(ExtensionStatement statement);
 
     R visit(VariableStatement statement);

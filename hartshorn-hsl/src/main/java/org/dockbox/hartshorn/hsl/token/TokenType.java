@@ -100,6 +100,7 @@ public enum TokenType {
     NATIVE(builder -> builder.keyword(true).ok()),
     CASE(builder -> builder.keyword(true).ok()),
     DEFAULT(builder -> builder.keyword(true).ok()),
+    CONSTRUCTOR(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),

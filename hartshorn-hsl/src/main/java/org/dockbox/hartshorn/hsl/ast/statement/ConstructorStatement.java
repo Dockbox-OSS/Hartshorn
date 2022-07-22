@@ -16,41 +16,36 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
-public class ClassStatement extends Statement {
+public class ConstructorStatement extends ParametricExecutableStatement {
 
-    private final Token name;
-    private final VariableExpression superClass;
-    private final ConstructorStatement constructor;
-    private final List<FunctionStatement> methods;
+    private final Token keyword;
+    private final Token className;
 
-    public ClassStatement(final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods) {
-        super(name);
-        this.name = name;
-        this.superClass = superClass;
-        this.constructor = constructor;
-        this.methods = methods;
+    public ConstructorStatement(final Token keyword,
+                                final Token className,
+                                final List<Token> params,
+                                final BlockStatement body) {
+        super(keyword, params, body);
+        this.keyword = keyword;
+        this.className = className;
     }
 
-    public Token name() {
-        return this.name;
+    public Token keyword() {
+        return this.keyword;
     }
 
-    public VariableExpression superClass() {
-        return this.superClass;
+    public Token className() {
+        return className;
     }
 
-    public ConstructorStatement constructor() {
-        return constructor;
-    }
-
-    public List<FunctionStatement> methods() {
-        return this.methods;
+    public Token initializerIdentifier() {
+        return new Token(TokenType.CONSTRUCTOR, "<<init::%s>>".formatted(this.className().lexeme()), this.keyword().line(), this.keyword().column());
     }
 
     @Override

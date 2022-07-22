@@ -331,6 +331,11 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
+    public Void visit(final ConstructorStatement statement) {
+        return null;
+    }
+
+    @Override
     public Void visit(final ExtensionStatement statement) {
         final ClassType enclosingClass = this.currentClass;
         this.currentClass = ClassType.CLASS;
