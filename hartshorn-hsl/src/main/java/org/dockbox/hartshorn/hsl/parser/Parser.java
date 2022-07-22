@@ -44,6 +44,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -55,6 +56,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -192,16 +194,25 @@ public class Parser {
         this.expectBefore(TokenType.LEFT_BRACE, "class body");
 
         final List<FunctionStatement> methods = new ArrayList<>();
+        ConstructorStatement constructor = null;
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
-            methods.add(this.methodDeclaration());
+            final ParametricExecutableStatement declaration = this.methodDeclaration(name);
+            if (declaration instanceof ConstructorStatement constructorStatement) {
+                constructor = constructorStatement;
+            } else {
+                methods.add((FunctionStatement) declaration);
+            }
         }
 
         this.expectAfter(TokenType.RIGHT_BRACE, "class body");
 
-        return new ClassStatement(name, superclass, methods);
+        return new ClassStatement(name, superclass, constructor, methods);
     }
 
-    private FunctionStatement methodDeclaration() {
+    private ParametricExecutableStatement methodDeclaration(final Token className) {
+        if (this.match(TokenType.CONSTRUCTOR)) {
+            return this.constructorDeclaration(className);
+        }
         return this.function(TokenType.FUN, TokenType.LEFT_BRACE, (name, parameters) -> {
             final Token start = this.peek();
             final List<Statement> statements = this.consumeStatements();
@@ -210,10 +221,17 @@ public class Parser {
         });
     }
 
+    private ConstructorStatement constructorDeclaration(final Token className) {
+        final Token keyword = this.peek();
+        final List<Token> parameters = this.functionParameters("constructor", MAX_NUM_OF_ARGUMENTS, keyword);
+        final BlockStatement body = this.block();
+        return new ConstructorStatement(keyword, className, parameters, body);
+    }
+
     private Function funcDeclaration(final Token token) {
         final Token name = this.expect(TokenType.IDENTIFIER, "function name");
 
-        int expectedNumberOrArguments = 8;
+        int expectedNumberOrArguments = MAX_NUM_OF_ARGUMENTS;
         if (token.type() == TokenType.PREFIX) {
             this.prefixFunctions.add(name.lexeme());
             expectedNumberOrArguments = 1;
@@ -230,19 +248,7 @@ public class Parser {
             extensionName = this.expect(TokenType.IDENTIFIER, "extension name");
         }
 
-        this.expectAfter(TokenType.LEFT_PAREN, "function name");
-        final List<Token> parameters = new ArrayList<>();
-        if (!this.check(TokenType.RIGHT_PAREN)) {
-            do {
-                if (parameters.size() >= expectedNumberOrArguments) {
-                    throw new ScriptEvaluationError("Cannot have more than " + expectedNumberOrArguments + " parameters for " + token.type() + " functions", Phase.PARSING, this.peek());
-                }
-                parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
-            }
-            while (this.match(TokenType.COMMA));
-        }
-
-        this.expectAfter(TokenType.RIGHT_PAREN, "parameters");
+        final List<Token> parameters = functionParameters("function name", expectedNumberOrArguments, token);
         final BlockStatement body = this.block();
 
         if (extensionName != null) {
@@ -252,6 +258,24 @@ public class Parser {
         else {
             return new FunctionStatement(name, parameters, body);
         }
+    }
+
+    private List<Token> functionParameters(final String function_name, final int expectedNumberOrArguments, final Token token) {
+        this.expectAfter(TokenType.LEFT_PAREN, function_name);
+        final List<Token> parameters = new ArrayList<>();
+        if (!this.check(TokenType.RIGHT_PAREN)) {
+            do {
+                if (parameters.size() >= expectedNumberOrArguments) {
+                    final String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
+                    throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+                }
+                parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
+            }
+            while (this.match(TokenType.COMMA));
+        }
+
+        this.expectAfter(TokenType.RIGHT_PAREN, "parameters");
+        return parameters;
     }
 
     private Statement nativeFuncDeclaration() {
@@ -273,18 +297,7 @@ public class Parser {
     private <T extends Statement> T function(final TokenType keyword, final TokenType end, final BiFunction<Token, List<Token>, T> converter) {
         this.expectBefore(keyword, "method body");
         final Token funcName = this.expect(TokenType.IDENTIFIER, "function name");
-        this.expectAfter(TokenType.LEFT_PAREN, "method name");
-        final List<Token> parameters = new ArrayList<>();
-        if (!this.check(TokenType.RIGHT_PAREN)) {
-            do {
-                if (parameters.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    throw new ScriptEvaluationError("Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " parameters.", Phase.PARSING, this.peek());
-                }
-                parameters.add(this.expect(TokenType.IDENTIFIER, "parameter name"));
-            }
-            while (this.match(TokenType.COMMA));
-        }
-        this.expectAfter(TokenType.RIGHT_PAREN, "parameters");
+        final List<Token> parameters = functionParameters("method name", MAX_NUM_OF_ARGUMENTS, null);
         this.expectAfter(end, "value");
         return converter.apply(funcName, parameters);
     }

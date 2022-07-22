@@ -45,6 +45,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -798,12 +799,16 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         // Bind all method into the class
         for (final FunctionStatement method : statement.methods()) {
-            final VirtualFunction function = new VirtualFunction(method, this.variableScope(),
-                    VirtualFunction.CLASS_INIT.equals(method.name().lexeme()));
+            final VirtualFunction function = new VirtualFunction(method, this.variableScope(), false);
             methods.put(method.name().lexeme(), function);
         }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, this.variableScope(), methods);
+        VirtualFunction constructor = null;
+        if (statement.constructor() != null) {
+            constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
+        }
+
+        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, constructor, this.variableScope(), methods);
 
         if (superclass != null) {
             this.visitingScope = this.variableScope().enclosing();
@@ -866,6 +871,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final ConstructorStatement statement) {
+        final VirtualFunction function = new VirtualFunction(statement, this.variableScope(), true);
+        this.variableScope().define(statement.initializerIdentifier().lexeme(), function);
         return null;
     }
 

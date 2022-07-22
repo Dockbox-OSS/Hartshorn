@@ -117,6 +117,18 @@ public enum TokenType {
 
     // Reserved words/characters
     OPERATOR(builder -> builder.keyword(true).ok()),
+
+    STATIC(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).ok()),
+
+    ABSTRACT(builder -> builder.keyword(true).ok()),
+    OVERRIDE(builder -> builder.keyword(true).ok()),
+    INTERFACE(builder -> builder.keyword(true).ok()),
+    IMPLEMENTS(builder -> builder.keyword(true).ok()),
+
+    PUBLIC(builder -> builder.keyword(true).ok()),
+    PRIVATE(builder -> builder.keyword(true).ok()),
+
     ;
 
     private final TokenMetaData metaData;
