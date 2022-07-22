@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
@@ -58,7 +59,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
         // Get last statement in the statements list
         final Statement lastStatement = statements.get(statements.size() - 1);
         if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
-            throw new PhaseCustomizerException("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName());
+            throw new ScriptEvaluationError("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
         }
     }
 

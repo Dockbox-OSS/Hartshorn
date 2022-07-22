@@ -350,7 +350,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 this.checkNumberOperand(expr.operator(), right);
                 final int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
-                yield ~value;
+                //noinspection RedundantCast
+                yield (int) ~value;
             }
             default -> null;
         };

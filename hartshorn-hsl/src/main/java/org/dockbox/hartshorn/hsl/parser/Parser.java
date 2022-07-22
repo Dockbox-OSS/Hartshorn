@@ -159,7 +159,7 @@ public class Parser {
 
         final TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
-            throw this.error(this.peek(), "Unsupported standalone statement type: " + type);
+            throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
         }
 
         return this.expressionStatement();
