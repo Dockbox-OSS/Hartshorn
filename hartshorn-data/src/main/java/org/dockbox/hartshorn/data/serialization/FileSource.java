@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.service;
+package org.dockbox.hartshorn.data.serialization;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.data.PersistentElement;
-import org.dockbox.hartshorn.data.serialization.Deserialize;
-import org.dockbox.hartshorn.data.serialization.FileSource;
-import org.dockbox.hartshorn.data.serialization.Serialize;
+import org.dockbox.hartshorn.util.reflect.Extends;
 
-@Service
-public interface AnnotationPathPersistenceService {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Serialize
-    @FileSource("test")
-    boolean writeToPath(PersistentElement element);
-
-    @Deserialize
-    @FileSource("test")
-    PersistentElement readFromPath();
-
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Extends(SerializationSource.class)
+@SerializationSource(converter = PathSerializationSourceConverter.class)
+public @interface FileSource {
+    String value();
+    boolean relativeToApplicationPath() default true;
 }

@@ -48,6 +48,7 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -94,6 +95,12 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
+    public <T> Result<T> read(final InputStream stream, final Class<T> type) {
+        this.context.log().debug("Reading content from input stream to type " + type.getName());
+        return Result.of(() -> this.configureMapper().readValue(stream, type));
+    }
+
+    @Override
     public <T> Result<T> read(final String content, final GenericType<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.type().getTypeName());
         return Result.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)));
@@ -112,6 +119,12 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
+    public <T> Result<T> read(final InputStream stream, final GenericType<T> type) {
+        this.context.log().debug("Reading content from input stream to type " + type.type().getTypeName());
+        return Result.of(() -> this.configureMapper().readValue(stream, new GenericTypeReference<>(type)));
+    }
+
+    @Override
     public <T> Result<T> update(final T object, final String content, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from string value to type " + type.getName());
         return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(content, type));
@@ -127,6 +140,12 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public <T> Result<T> update(final T object, final URL url, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from url " + url + " to type " + type.getName());
         return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(url, type));
+    }
+
+    @Override
+    public <T> Result<T> update(final T object, final InputStream stream, final Class<T> type) {
+        this.context.log().debug("Updating object " + object + " with content from input stream to type " + type.getName());
+        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(stream, type));
     }
 
     @Override
@@ -173,6 +192,12 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public Map<String, Object> flat(final URL url) {
         this.context.log().debug("Reading content from url " + url + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(url));
+    }
+
+    @Override
+    public Map<String, Object> flat(final InputStream stream) {
+        this.context.log().debug("Reading content from input stream to flat tree model");
+        return this.flatInternal(() -> this.configureMapper().readTree(stream));
     }
 
     private Map<String, Object> flatInternal(final FlatNodeSupplier node) {
