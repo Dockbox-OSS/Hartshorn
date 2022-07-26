@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.data.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.service.DeserializationServicePostProcessor;
-import org.dockbox.hartshorn.data.service.SerializationServicePostProcessor;
+import org.dockbox.hartshorn.data.serialization.DeserializerMethodPostProcessor;
+import org.dockbox.hartshorn.data.serialization.SerializerMethodPostProcessor;
 import org.dockbox.hartshorn.proxy.UseProxying;
 
 import java.lang.annotation.Retention;
@@ -27,8 +27,8 @@ import java.lang.annotation.RetentionPolicy;
 @UseProxying
 @Retention(RetentionPolicy.RUNTIME)
 @ServiceActivator(processors = {
-        DeserializationServicePostProcessor.class,
-        SerializationServicePostProcessor.class,
+        SerializerMethodPostProcessor.class,
+        DeserializerMethodPostProcessor.class,
 })
 public @interface UseSerialization {
 }

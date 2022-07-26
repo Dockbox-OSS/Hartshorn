@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.data.serialization;
 
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Serialize {
-    FileFormats filetype() default FileFormats.JSON;
+public interface SerializationSourceConverter {
+    InputStream inputStream(AnnotatedElementContext<?> context, Object... args) throws ApplicationException;
 
-    File path();
+    OutputStream outputStream(AnnotatedElementContext<?> context, Object... args) throws ApplicationException;
 }

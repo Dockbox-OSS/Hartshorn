@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.data.annotations;
 
+import org.dockbox.hartshorn.data.serialization.Deserialize;
+import org.dockbox.hartshorn.data.serialization.Serialize;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

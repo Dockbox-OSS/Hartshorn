@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.data.serialization;
 
 import org.dockbox.hartshorn.data.FileFormats;
 
@@ -25,8 +25,9 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that the annotated method is able to deserialize from a given source.
- * If {@link #path()} is specified, the given path will be used to deserialize.
- * Otherwise, the first parameter of the method will be used to determine the source.
+ * If a {@link SerializationSource} is specified, the given source will be used to
+ * deserialize. Otherwise, the first parameter of the method will be used to determine
+ * the source.
  *
  * <p>If the parameter is a {@link String}, the string will be used as the source. If
  * the parameter is a {@link java.nio.file.Path} or {@link java.io.File}, the provided
@@ -65,22 +66,4 @@ public @interface Deserialize {
      * The file format to use when deserializing.
      */
     FileFormats filetype() default FileFormats.JSON;
-
-    /**
-     * The path to the source to deserialize from.
-     * TODO GLieben: Remove this as required. This should either be a parameter and not an annotation,
-     *   or an optional attribute of the annotation.
-     * Sample of target:
-     * <pre>{@code
-     * @Deserialize
-     * @FileSource("filename.txt") // <-- requires a top-level annotation (@SerializationSource?) so it can be extended. Needs to indicate a converter to get the source object.
-     * public PersistentElement readFromPath();
-     *
-     * @Deserialize
-     * public Optional<PersistentElement> readFromPath(Path source);
-     *
-     * @Deserialize
-     * public Result<PersistentElement> readFromPath(String source);
-     */
-    File path();
 }
