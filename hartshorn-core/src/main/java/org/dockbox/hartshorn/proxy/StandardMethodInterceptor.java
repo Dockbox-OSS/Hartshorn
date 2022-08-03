@@ -64,7 +64,26 @@ public class StandardMethodInterceptor<T> {
 
         final Set<MethodWrapper<T>> wrappers = this.manager.wrappers(source.toMethod());
 
-        return this.interceptAndNotify(self, source, proxy, callbackTarget, methodContext, customInvocation, arguments, wrappers);
+        final Object result = this.interceptAndNotify(self, source, proxy, callbackTarget, methodContext, customInvocation, arguments, wrappers);
+        return this.validate(source, result);
+    }
+
+    private Object validate(final MethodInvokable source, final Object result) {
+        final TypeContext<?> returnType = source.toMethodContext().returnType();
+        if (returnType.isPrimitive()) {
+            if (result == null) return returnType.defaultOrNull();
+            else {
+                final TypeContext<Object> resultType = TypeContext.of(result);
+                if (resultType.isPrimitive() || resultType.childOf(returnType)) return result;
+                else throw new IllegalArgumentException("Invalid return type: " + resultType + " for " + source);
+            }
+        }
+        else if (result == null) return null;
+        else {
+            final TypeContext<Object> resultType = TypeContext.of(result);
+            if (resultType.childOf(returnType)) return result;
+            else throw new IllegalArgumentException("Invalid return type: " + resultType + " for " + source);
+        }
     }
 
     private Object interceptAndNotify(final Object self, final MethodInvokable source, final Invokable proxy, final T callbackTarget,
@@ -133,8 +152,8 @@ public class StandardMethodInterceptor<T> {
         };
     }
 
-    protected Object invokeInterceptor(final MethodInterceptor<T> interceptor, final Object self, final Method source, final CustomInvocation customInvocation, final Object[] args) throws Throwable {
-        final MethodInterceptorContext<T> context = new MethodInterceptorContext(source, args, self, customInvocation);
+    protected Object invokeInterceptor(final MethodInterceptor<T> interceptor, final T self, final Method source, final CustomInvocation customInvocation, final Object[] args) throws Throwable {
+        final MethodInterceptorContext<T> context = new MethodInterceptorContext<>(source, args, self, customInvocation);
         return interceptor.intercept(context);
     }
 
@@ -159,7 +178,7 @@ public class StandardMethodInterceptor<T> {
     }
 
     protected boolean isEqualsMethod(final Invokable invokable) {
-        return invokable.getName().equals("equals")
+        return "equals".equals(invokable.getName())
                 && invokable.getDeclaringClass().equals(Object.class)
                 && this.manager.delegate().absent();
     }
