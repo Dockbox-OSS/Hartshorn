@@ -101,7 +101,7 @@ public interface ObjectMapper {
 
     <T> Result<Boolean> write(Path path, T content);
 
-    <T> Result<Boolean> write(OutputStream path, T content);
+    <T> Result<Boolean> write(OutputStream outputStream, T content);
 
     <T> Result<String> write(T content);
 

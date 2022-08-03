@@ -53,7 +53,7 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * <p>By default the file format is expected to be JSON. Different file formats can be
- * used through {@link #filetype()}.
+ * used through {@link #fileType()}.
  *
  * @author Guus Lieben
  * @since 21.1
@@ -65,5 +65,5 @@ public @interface Deserialize {
     /**
      * The file format to use when deserializing.
      */
-    FileFormats filetype() default FileFormats.JSON;
+    FileFormats fileType() default FileFormats.JSON;
 }

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data.serialization;
 
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
@@ -32,18 +33,19 @@ import java.nio.file.Paths;
 
 import jakarta.inject.Inject;
 
+@Component(singleton = true)
 public class PathSerializationSourceConverter implements SerializationSourceConverter {
 
     @Inject
     private ApplicationFSProvider fileSystem;
 
     @Override
-    public InputStream inputStream(AnnotatedElementContext<?> context, Object... args) {
-        return resolvePath(context).map(path -> {
+    public InputStream inputStream(final AnnotatedElementContext<?> context, final Object... args) {
+        return this.resolvePath(context).map(path -> {
                     try {
                         return Files.newInputStream(path);
                     }
-                    catch (IOException e) {
+                    catch (final IOException e) {
                         throw new ApplicationException(e);
                     }
                 }).map(BufferedInputStream::new)
@@ -52,18 +54,18 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
 
     @Override
     public OutputStream outputStream(final AnnotatedElementContext<?> context, final Object... args) {
-        return resolvePath(context).map(path -> {
+        return this.resolvePath(context).map(path -> {
                     try {
                         return Files.newOutputStream(path);
                     }
-                    catch (IOException e) {
+                    catch (final IOException e) {
                         throw new ApplicationException(e);
                     }
                 }).map(BufferedOutputStream::new)
                 .orNull();
     }
 
-    private Result<Path> resolvePath(AnnotatedElementContext<?> context) {
+    private Result<Path> resolvePath(final AnnotatedElementContext<?> context) {
         return context.annotation(FileSource.class)
                 .map(fileSource -> {
                     if (fileSource.relativeToApplicationPath()) {
