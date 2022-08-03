@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MethodContext<T, P> extends ExecutableElementContext<Method, P> implements ObtainableElement<T>, TypedElementContext<T> {
+public class MethodContext<ReturnType, ParentType> extends ExecutableElementContext<Method, ParentType> implements ObtainableElement<ReturnType>, TypedElementContext<ReturnType> {
 
     private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
@@ -36,17 +36,17 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> imp
 
     private final Method method;
 
-    private TypeContext<T> returnType;
-    private TypeContext<T> genericReturnType;
+    private TypeContext<ReturnType> returnType;
+    private TypeContext<ReturnType> genericReturnType;
     private String qualifiedName;
 
-    private MethodInvoker<T, P> invoker;
+    private MethodInvoker<ReturnType, ParentType> invoker;
 
     public MethodContext(final Method method) {
         this.method = method;
     }
 
-    MethodContext invoker(final MethodInvoker<T, P> invoker) {
+    MethodContext<ReturnType, ParentType> invoker(final MethodInvoker<ReturnType, ParentType> invoker) {
         this.invoker = invoker;
         return this;
     }
@@ -68,54 +68,54 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> imp
         return context;
     }
 
-    public Result<T> invoke(final P instance, final Object... arguments) {
+    public Result<ReturnType> invoke(final ParentType instance, final Object... arguments) {
         if (this.invoker == null) {
-            this.invoker = (MethodInvoker<T, P>) defaultInvoker;
+            this.invoker = (MethodInvoker<ReturnType, ParentType>) defaultInvoker;
         }
         return this.invoker.invoke(this, instance, arguments);
     }
 
-    public Result<T> invoke(final ApplicationContext context, final P instance) {
+    public Result<ReturnType> invoke(final ApplicationContext context, final ParentType instance) {
         final Object[] args = this.arguments(context);
         return this.invoke(instance, args);
     }
 
-    public Result<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
+    public Result<ReturnType> invoke(final ApplicationContext context, final Collection<Object> arguments) {
         return this.invoke(context.get(this.parent()), arguments);
     }
 
-    public Result<T> invoke(final P instance, final Collection<Object> arguments) {
+    public Result<ReturnType> invoke(final ParentType instance, final Collection<Object> arguments) {
         return this.invoke(instance, arguments.toArray());
     }
 
-    public Result<T> invoke(final ApplicationContext context) {
+    public Result<ReturnType> invoke(final ApplicationContext context) {
         final Object[] args = this.arguments(context);
-        final P instance = context.get(this.parent());
+        final ParentType instance = context.get(this.parent());
         return this.invoke(instance, args);
     }
 
-    public Result<T> invokeStatic(final Object... arguments) {
+    public Result<ReturnType> invokeStatic(final Object... arguments) {
         if (this.has(AccessModifier.STATIC)) return this.invoke(null, arguments);
         else return Result.of(new IllegalAccessException("Method is not static"));
     }
 
-    public Result<T> invokeStatic(final Collection<Object> arguments) {
+    public Result<ReturnType> invokeStatic(final Collection<Object> arguments) {
         return this.invokeStatic(arguments.toArray());
     }
 
-    public Result<T> invokeStatic(final ApplicationContext context) {
+    public Result<ReturnType> invokeStatic(final ApplicationContext context) {
         final Object[] args = this.arguments(context);
         return this.invokeStatic(args);
     }
 
-    public TypeContext<T> returnType() {
+    public TypeContext<ReturnType> returnType() {
         if (this.returnType == null) {
-            this.returnType = (TypeContext<T>) TypeContext.of(this.method().getReturnType());
+            this.returnType = (TypeContext<ReturnType>) TypeContext.of(this.method().getReturnType());
         }
         return this.returnType;
     }
 
-    public TypeContext<T> genericReturnType() {
+    public TypeContext<ReturnType> genericReturnType() {
         if (this.genericReturnType == null) {
             final Type genericReturnType = this.method().getGenericReturnType();
             if (genericReturnType instanceof Class clazz) this.genericReturnType = TypeContext.of(clazz);
@@ -150,17 +150,17 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> imp
     }
 
     @Override
-    public Result<T> obtain(final ApplicationContext applicationContext) {
+    public Result<ReturnType> obtain(final ApplicationContext applicationContext) {
         return this.invoke(applicationContext);
     }
 
     @Override
-    public TypeContext<T> type() {
+    public TypeContext<ReturnType> type() {
         return this.returnType();
     }
 
     @Override
-    public TypeContext<T> genericType() {
+    public TypeContext<ReturnType> genericType() {
         return this.genericReturnType();
     }
 }
