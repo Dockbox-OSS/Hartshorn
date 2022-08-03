@@ -70,19 +70,20 @@ public class StandardMethodInterceptor<T> {
 
     private Object validate(final MethodInvokable source, final Object result) {
         final TypeContext<?> returnType = source.toMethodContext().returnType();
-        if (returnType.isPrimitive()) {
+        if (returnType.isVoid()) return null;
+        else if (returnType.isPrimitive()) {
             if (result == null) return returnType.defaultOrNull();
             else {
                 final TypeContext<Object> resultType = TypeContext.of(result);
                 if (resultType.isPrimitive() || resultType.childOf(returnType)) return result;
-                else throw new IllegalArgumentException("Invalid return type: " + resultType + " for " + source);
+                else throw new IllegalArgumentException("Invalid return type: " + resultType + " for " + source.getQualifiedName());
             }
         }
         else if (result == null) return null;
         else {
             final TypeContext<Object> resultType = TypeContext.of(result);
             if (resultType.childOf(returnType)) return result;
-            else throw new IllegalArgumentException("Invalid return type: " + resultType + " for " + source);
+            else throw new IllegalArgumentException("Invalid return type: " + resultType + " for " + source.getQualifiedName());
         }
     }
 
