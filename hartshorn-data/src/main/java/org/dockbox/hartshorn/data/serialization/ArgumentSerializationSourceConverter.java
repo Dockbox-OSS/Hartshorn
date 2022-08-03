@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data.serialization;
 
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 
@@ -31,10 +32,11 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Component(singleton = true)
 public class ArgumentSerializationSourceConverter implements SerializationSourceConverter {
 
     @Override
-    public InputStream inputStream(final AnnotatedElementContext<?> context, Object... args) throws ApplicationException {
+    public InputStream inputStream(final AnnotatedElementContext<?> context, final Object... args) throws ApplicationException {
         if (args.length != 1) {
             return null;
         }
@@ -61,7 +63,7 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
                 throw new IllegalArgumentException("Expected a valid serialization source, but found " + (arg != null ? arg.getClass() : null));
             }
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new ApplicationException(e);
         }
 
@@ -90,7 +92,7 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
                 return null;
             }
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new ApplicationException(e);
         }
 

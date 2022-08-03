@@ -23,8 +23,10 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.OutputStream;
+import java.util.List;
 
 public class SerializerMethodPostProcessor extends AbstractSerializerPostProcessor<Serialize> {
 
@@ -35,19 +37,29 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final SerializationSourceConverter converter = findConverter(context, methodContext, processingContext);
+        final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         final MethodContext<?, T> method = methodContext.method();
         final Serialize serialize = method.annotation(Serialize.class).get();
         final ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
-
-        // TODO: Support write->String conversion
+        final boolean returnsStringOrWrapper = this.returnsStringOrWrapper(method);
 
         return interceptorContext -> {
             final Object[] arguments = interceptorContext.args();
-            try (OutputStream outputStream = converter.outputStream(method, arguments)) {
-                final Result<Boolean> result = mapper.write(outputStream, arguments[0]);
-                return wrapSerializationResult(method, result);
+
+            try (final OutputStream outputStream = converter.outputStream(method, arguments)) {
+                final Result<?> result;
+
+                if (outputStream == null && returnsStringOrWrapper) result = mapper.write(arguments[0]);
+                else result = mapper.write(outputStream, arguments[0]);
+
+                return this.wrapSerializationResult(method, result);
             }
         };
+    }
+
+    private boolean returnsStringOrWrapper(final MethodContext<?, ?> method) {
+        if (method.returnType().is(String.class)) return true;
+        final List<TypeContext<?>> typeParameters = method.genericReturnType().typeParameters();
+        return typeParameters.size() == 1 && typeParameters.get(0).is(String.class);
     }
 }

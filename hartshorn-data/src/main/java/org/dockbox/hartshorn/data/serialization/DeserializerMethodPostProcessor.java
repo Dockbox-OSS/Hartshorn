@@ -35,16 +35,16 @@ public class DeserializerMethodPostProcessor extends AbstractSerializerPostProce
 
     @Override
     public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final SerializationSourceConverter converter = findConverter(context, methodContext, processingContext);
+        final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         final MethodContext<?, T> method = methodContext.method();
-        final Serialize serialize = method.annotation(Serialize.class).get();
+        final Deserialize serialize = method.annotation(Deserialize.class).get();
         final ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
         final TypeContext<?> returnType = method.genericReturnType();
 
         return interceptorContext -> {
-            try (InputStream inputStream = converter.inputStream(method, interceptorContext.args())) {
+            try (final InputStream inputStream = converter.inputStream(method, interceptorContext.args())) {
                 final Result<?> result = mapper.read(inputStream, returnType);
-                return wrapSerializationResult(method, result);
+                return this.wrapSerializationResult(method, result);
             }
         };
     }

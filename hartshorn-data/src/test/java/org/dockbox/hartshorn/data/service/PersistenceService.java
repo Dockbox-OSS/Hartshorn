@@ -19,18 +19,15 @@ package org.dockbox.hartshorn.data.service;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.PersistentElement;
 import org.dockbox.hartshorn.data.serialization.Deserialize;
-import org.dockbox.hartshorn.data.serialization.FileSource;
 import org.dockbox.hartshorn.data.serialization.Serialize;
 
 @Service
 public interface PersistenceService {
 
     @Serialize
-    @FileSource("test")
     String writeToString(PersistentElement element);
 
     @Deserialize
-    @FileSource("test")
     PersistentElement readFromString(String raw);
 
 }

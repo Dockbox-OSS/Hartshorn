@@ -49,6 +49,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -159,6 +161,16 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
+    public <T> Result<Boolean> write(final OutputStream outputStream, final T content) {
+        this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to output stream");
+        if (content instanceof String string) return this.writePlain(outputStream, string);
+        return Result.of(() -> {
+            this.writer(content).writeValue(outputStream, content);
+            return true;
+        }).orElse(() -> false);
+    }
+
+    @Override
     public <T> Result<String> write(final T content) {
         this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to string value");
         return Result.of(() -> this.writer(content).writeValueAsString(content))
@@ -167,6 +179,17 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     protected Result<Boolean> writePlain(final Path path, final String content) {
         try (final FileWriter writer = new FileWriter(path.toFile())) {
+            writer.write(content);
+            writer.flush();
+            return Result.of(true);
+        }
+        catch (final IOException e) {
+            return Result.of(false, e);
+        }
+    }
+
+    protected Result<Boolean> writePlain(final OutputStream outputStream, final String content) {
+        try (final OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
             writer.write(content);
             writer.flush();
             return Result.of(true);
