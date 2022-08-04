@@ -36,10 +36,7 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
 
     @Override
     public <C extends Context> Result<C> first(final Class<C> context) {
-        return Result.of(this.contexts.stream()
-                        .filter(c -> TypeContext.unproxy(this.applicationContext(), c).childOf(context))
-                        .findFirst())
-                .orElse(() -> {
+        return super.first(context).orElse(() -> {
                     final TypeContext<C> typeContext = TypeContext.of(context);
                     if (typeContext.annotation(AutoCreating.class).present()) {
                         this.applicationContext().log().debug("Context with key " + Key.of(context) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
@@ -48,16 +45,12 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
                         return created;
                     }
                     else return null;
-                })
-                .map(c -> (C) c);
+                });
     }
 
     @Override
     public <C extends Context> Result<C> first(final Class<C> context, final String name) {
-        return Result.of(this.namedContexts.get(name).stream()
-                        .filter(c -> TypeContext.of(c).childOf(context))
-                        .findFirst())
-                .orElse(() -> {
+        return super.first(context, name).orElse(() -> {
                     final TypeContext<C> typeContext = TypeContext.of(context);
                     if (typeContext.annotation(AutoCreating.class).present()) {
                         this.applicationContext().log().debug("Context with key " + Key.of(context, name) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
@@ -66,8 +59,7 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
                         return created;
                     }
                     else return null;
-                })
-                .map(c -> (C) c);
+                });
     }
 
     @Override

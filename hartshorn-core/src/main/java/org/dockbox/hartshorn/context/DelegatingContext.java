@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.util.Result;
 
 import java.util.List;
 
-@FunctionalInterface
 public interface DelegatingContext<D extends Context> extends Context {
 
     @Override
