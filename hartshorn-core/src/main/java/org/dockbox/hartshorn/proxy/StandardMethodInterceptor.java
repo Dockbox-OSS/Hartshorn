@@ -91,8 +91,10 @@ public class StandardMethodInterceptor<T> {
                                       final MethodContext<?, T> methodContext, final CustomInvocation customInvocation,
                                       final Object[] arguments, final Set<MethodWrapper<T>> wrappers
     ) throws Throwable {
+        final ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(callbackTarget, (T) self, methodContext, arguments);
+
         for (final MethodWrapper<T> wrapper : wrappers) {
-            wrapper.acceptBefore(methodContext, callbackTarget, arguments);
+            wrapper.acceptBefore(callbackContext);
         }
 
         try {
@@ -110,13 +112,15 @@ public class StandardMethodInterceptor<T> {
             }
 
             for (final MethodWrapper<T> wrapper : wrappers) {
-                wrapper.acceptAfter(methodContext, callbackTarget, arguments);
+                wrapper.acceptAfter(callbackContext);
             }
             return result;
         }
         catch (final Throwable e) {
+            final ProxyCallbackContext<T> errorContext = callbackContext.acceptError(e);
+
             for (final MethodWrapper<T> wrapper : wrappers) {
-                wrapper.acceptError(methodContext, callbackTarget, arguments, e);
+                wrapper.acceptError(errorContext);
             }
             throw e;
         }

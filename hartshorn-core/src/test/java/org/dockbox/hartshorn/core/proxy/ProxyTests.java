@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.MethodWrapper;
 import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.proxy.ProxyCallbackContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyInvocationException;
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -38,7 +39,6 @@ import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -206,17 +206,17 @@ public class ProxyTests {
         factory.intercept(proxyType.getMethod("name"), context -> "done");
         factory.intercept(proxyType.getMethod("name"), new MethodWrapper<>() {
             @Override
-            public void acceptBefore(final MethodContext<?, InterfaceProxy> method, final InterfaceProxy instance, final Object[] args) {
+            public void acceptBefore(final ProxyCallbackContext<InterfaceProxy> context) {
                 Assertions.assertEquals(0, count.getAndIncrement());
             }
 
             @Override
-            public void acceptAfter(final MethodContext<?, InterfaceProxy> method, final InterfaceProxy instance, final Object[] args) {
+            public void acceptAfter(final ProxyCallbackContext<InterfaceProxy> context) {
                 Assertions.assertEquals(1, count.getAndIncrement());
             }
 
             @Override
-            public void acceptError(final MethodContext<?, InterfaceProxy> method, final InterfaceProxy instance, final Object[] args, final Throwable error) {
+            public void acceptError(final ProxyCallbackContext<InterfaceProxy> context) {
                 // Not thrown
                 Assertions.fail();
             }
@@ -239,17 +239,18 @@ public class ProxyTests {
         });
         factory.intercept(proxyType.getMethod("name"), new MethodWrapper<>() {
             @Override
-            public void acceptBefore(final MethodContext<?, InterfaceProxy> method, final InterfaceProxy instance, final Object[] args) {
+            public void acceptBefore(final ProxyCallbackContext<InterfaceProxy> context) {
                 Assertions.assertEquals(0, count.getAndIncrement());
             }
 
             @Override
-            public void acceptAfter(final MethodContext<?, InterfaceProxy> method, final InterfaceProxy instance, final Object[] args) {
+            public void acceptAfter(final ProxyCallbackContext<InterfaceProxy> context) {
                 Assertions.fail();
             }
 
             @Override
-            public void acceptError(final MethodContext<?, InterfaceProxy> method, final InterfaceProxy instance, final Object[] args, final Throwable error) {
+            public void acceptError(final ProxyCallbackContext<InterfaceProxy> context) {
+                final Throwable error = context.error();
                 Assertions.assertNotNull(error);
                 Assertions.assertTrue(error instanceof IllegalStateException);
                 Assertions.assertEquals("not done", error.getMessage());
