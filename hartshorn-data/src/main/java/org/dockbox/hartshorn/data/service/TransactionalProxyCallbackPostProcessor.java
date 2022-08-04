@@ -22,15 +22,26 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
+import org.dockbox.hartshorn.data.annotations.DataSource;
 import org.dockbox.hartshorn.data.annotations.Transactional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
+import org.dockbox.hartshorn.data.jpa.EntityManagerContext;
+import org.dockbox.hartshorn.data.jpa.EntityManagerFactory;
 import org.dockbox.hartshorn.data.jpa.EntityManagerLookup;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
+import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
+
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import jakarta.persistence.EntityManager;
 
@@ -39,6 +50,29 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     @Override
     public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return !key.type().methods(Transactional.class).isEmpty();
+    }
+
+    @Override
+    protected <T> T processProxy(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext, final ProxyFactory<T, ?> proxyFactory) {
+        // JpaRepository and EntityManagerCarrier expose their own EntityManager, so we don't need to do anything here.
+        if (!(instance instanceof JpaRepository || instance instanceof EntityManagerCarrier)) {
+            TypeContext<T> type = instance == null ? key.type() : TypeContext.of(instance);
+            final DataSourceList dataSourceList = context.get(DataSourceList.class);
+            final DataSourceConfiguration sourceConfiguration = type.annotation(DataSource.class)
+                    .map(DataSource::value)
+                    .map(dataSourceList::get)
+                    .orElse(dataSourceList::defaultConnection)
+                    .orNull();
+
+            // Do not fail if no data source is configured, as this may be configured in a different way.
+            if (sourceConfiguration != null) {
+                final EntityManagerFactory factory = context.get(EntityManagerFactory.class);
+                final EntityManagerCarrier carrier = factory.entityManagerCarrier(sourceConfiguration);
+                final EntityManagerContext entityManagerContext = new EntityManagerContext(carrier::manager);
+                proxyFactory.contextContainer().add(entityManagerContext);
+            }
+        }
+        return instance;
     }
 
     @Override
@@ -51,30 +85,47 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
         final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
 
-        return (methodContext, target, args) -> {
-            final Result<EntityManager> entityManager = lookup.lookup(target);
-            if (entityManager.absent()) {
-                throw new MissingEntityManagerException(methodContext);
-            }
-
-            final TransactionManager manager = transactionFactory.manager(entityManager.get());
+        return callbackContext -> {
+            final TransactionManager manager = transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy());
             manager.beginTransaction();
         };
     }
 
+    private <T> TransactionManager transactionManager(final TransactionFactory transactionFactory, final EntityManagerLookup lookup, final MethodContext<?, T> methodContext, final T target) {
+        final Result<EntityManager> entityManager = lookup.lookup(target);
+        if (entityManager.absent()) {
+            throw new MissingEntityManagerException(methodContext);
+        }
+        return transactionFactory.manager(entityManager.get());
+    }
+
     @Override
     public <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
-        return this.flushTarget();
+        return flushTargetAndPerform(context, method, Transactional::commitOnSuccess, TransactionManager::commitTransaction);
     }
 
     @Override
     public <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
-        return this.flushTarget();
+        return flushTargetAndPerform(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
+    }
+
+    private <T> ProxyCallback<T> flushTargetAndPerform(final ApplicationContext context, final MethodContext<?, T> method, Predicate<Transactional> rule, Consumer<TransactionManager> consumer) {
+        final Transactional annotation = method.annotation(Transactional.class).get();
+        final boolean ruleResult = rule.test(annotation);
+
+        final ProxyCallback<T> callback = this.flushTarget();
+        if (ruleResult) {
+
+            final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
+            final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
+            return callback.then(callbackContext -> consumer.accept(transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy())));
+        }
+        return callback;
     }
 
     protected <T> ProxyCallback<T> flushTarget() {
-        return (methodContext, target, args) -> {
-            if (target instanceof JpaRepository jpaRepository) {
+        return callbackContext -> {
+            if (callbackContext.proxy() instanceof JpaRepository jpaRepository) {
                 jpaRepository.flush();
             }
         };

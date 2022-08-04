@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.Result;
 
@@ -25,15 +26,27 @@ public class ProxyAttachedEntityManagerLookup implements EntityManagerLookup {
 
     @Override
     public Result<EntityManager> lookup(final Object target) {
-        if (target instanceof EntityManagerJpaRepository jpaRepository) {
-            return Result.of(jpaRepository.manager());
+        if (target instanceof EntityManagerCarrier carrier) {
+            return Result.of(carrier.manager());
         }
-        else if (target instanceof Proxy<?> proxy) {
-            final Result<JpaRepository> repository = proxy.manager().delegate(JpaRepository.class);
-            if (repository.present() && repository.get() instanceof EntityManagerJpaRepository jpaRepository) {
-                return Result.of(jpaRepository.manager());
-            }
+        else if (target instanceof Context context) {
+            final Result<EntityManager> managerResult = fromContext(context);
+            if (managerResult.present()) return managerResult;
+        }
+
+        if (target instanceof Proxy<?> proxy) {
+            return fromContext(proxy.manager()).orElse(() -> {
+                final Result<JpaRepository> repository = proxy.manager().delegate(JpaRepository.class);
+                if (repository.present() && repository.get() instanceof EntityManagerJpaRepository jpaRepository) {
+                    return jpaRepository.manager();
+                }
+                return null;
+            });
         }
         return Result.empty();
+    }
+
+    private Result<EntityManager> fromContext(Context context) {
+        return context.first(EntityManagerContext.class).map(EntityManagerContext::entityManager);
     }
 }

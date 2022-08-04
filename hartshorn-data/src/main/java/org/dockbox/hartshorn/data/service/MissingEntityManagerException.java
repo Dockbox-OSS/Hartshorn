@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 public class MissingEntityManagerException extends ApplicationRuntimeException {
     public MissingEntityManagerException(final MethodContext<?,?> methodContext) {
-        super("No entity manager found in execution cache for method %s in type %s. Expected target to be a JpaRepository."
+        super("No entity manager found in execution cache for method %s in type %s."
                 .formatted(methodContext.qualifiedName(), methodContext.parent().name()));
     }
 }
