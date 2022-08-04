@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 
 public abstract class MultiMap<K, V> {
 
@@ -107,5 +108,9 @@ public abstract class MultiMap<K, V> {
             }
         }
         return false;
+    }
+
+    public void forEach(BiConsumer<K, V> consumer) {
+        this.map().forEach((k, v) -> v.forEach(v1 -> consumer.accept(k, v1)));
     }
 }
