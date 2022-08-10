@@ -94,7 +94,6 @@ public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository
         final Transaction transaction = this.transaction(manager);
         action.accept(manager);
         transaction.commit();
-        this.close();
     }
 
     private <R> R transformTransactional(final Function<EntityManager, R> action) {
@@ -102,7 +101,6 @@ public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository
         final Transaction transaction = this.transaction(manager);
         final R out = action.apply(manager);
         transaction.commit();
-        this.close();
         return out;
     }
 

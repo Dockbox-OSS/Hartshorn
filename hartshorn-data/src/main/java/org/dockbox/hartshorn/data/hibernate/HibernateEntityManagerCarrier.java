@@ -85,7 +85,6 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enab
 
     public void flush() {
         if (this.session != null && this.session.isOpen()) {
-            this.session.flush();
             final Transaction transaction = this.manager().getTransaction();
             if (transaction.isActive()) transaction.commit();
             this.close();

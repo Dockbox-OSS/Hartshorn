@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.data.objects.JpaUser;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.Result;
 import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -107,5 +108,9 @@ public class QueryRepositoryTests {
 
         repository.refresh(user);
         Assertions.assertEquals(22, user.age());
+
+        final Result<JpaUser> userLookup = repository.findById(user.id());
+        Assertions.assertTrue(userLookup.present());
+        Assertions.assertEquals(22, userLookup.get().age());
     }
 }

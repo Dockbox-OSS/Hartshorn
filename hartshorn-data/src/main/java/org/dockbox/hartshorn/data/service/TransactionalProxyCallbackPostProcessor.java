@@ -101,26 +101,28 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
 
     @Override
     public <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
-        return flushTargetAndPerform(context, method, Transactional::commitOnSuccess, TransactionManager::commitTransaction);
+        return performAndFlush(context, method, Transactional::commitOnSuccess, TransactionManager::commitTransaction);
     }
 
     @Override
     public <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
-        return flushTargetAndPerform(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
+        return performAndFlush(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
     }
 
-    private <T> ProxyCallback<T> flushTargetAndPerform(final ApplicationContext context, final MethodContext<?, T> method, Predicate<Transactional> rule, Consumer<TransactionManager> consumer) {
+    private <T> ProxyCallback<T> performAndFlush(final ApplicationContext context, final MethodContext<?, T> method, Predicate<Transactional> rule, Consumer<TransactionManager> consumer) {
         final Transactional annotation = method.annotation(Transactional.class).get();
         final boolean ruleResult = rule.test(annotation);
 
-        final ProxyCallback<T> callback = this.flushTarget();
+        final ProxyCallback<T> flush = this.flushTarget();
         if (ruleResult) {
 
             final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
             final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
-            return callback.then(callbackContext -> consumer.accept(transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy())));
+
+            final ProxyCallback<T> callback = callbackContext -> consumer.accept(transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy()));
+            return callback.then(flush);
         }
-        return callback;
+        return flush;
     }
 
     protected <T> ProxyCallback<T> flushTarget() {

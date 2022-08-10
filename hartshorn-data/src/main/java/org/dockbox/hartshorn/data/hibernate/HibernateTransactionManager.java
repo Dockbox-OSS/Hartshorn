@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data.hibernate;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import jakarta.persistence.EntityManager;
 
@@ -39,11 +40,17 @@ public class HibernateTransactionManager implements TransactionManager {
 
     @Override
     public void commitTransaction() {
-        this.session.getTransaction().commit();
+        final Transaction transaction = this.session.getTransaction();
+        if (transaction.isActive()) {
+            transaction.commit();
+        }
     }
 
     @Override
     public void rollbackTransaction() {
-        this.session.getTransaction().rollback();
+        final Transaction transaction = this.session.getTransaction();
+        if (transaction.isActive()) {
+            transaction.rollback();
+        }
     }
 }
