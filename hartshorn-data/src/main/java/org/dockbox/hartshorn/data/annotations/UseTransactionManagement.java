@@ -17,17 +17,14 @@
 package org.dockbox.hartshorn.data.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.service.JpaRepositoryDelegationPostProcessor;
+import org.dockbox.hartshorn.data.service.TransactionalProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.proxy.UseProxying;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @UseProxying
-@UseSerialization
-@UseTransactionManagement
-@UseQuerying
 @Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(processors = JpaRepositoryDelegationPostProcessor.class)
-public @interface UsePersistence {
+@ServiceActivator(processors = TransactionalProxyCallbackPostProcessor.class)
+public @interface UseTransactionManagement {
 }

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
 import org.dockbox.hartshorn.data.jpa.EntityQueryFunction;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
@@ -40,6 +41,11 @@ public class HibernateProviders {
     @Provider
     public Class<? extends JpaRepository> jpaRepository() {
         return HibernateJpaRepository.class;
+    }
+
+    @Provider
+    public Class<? extends EntityManagerCarrier> entityManagerCarrier() {
+        return HibernateEntityManagerCarrier.class;
     }
 
     @Provider

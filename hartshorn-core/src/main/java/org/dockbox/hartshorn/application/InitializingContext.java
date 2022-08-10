@@ -33,12 +33,7 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 
 import java.util.Objects;
 
-public class InitializingContext {
-
-    private final ApplicationEnvironment environment;
-    private final ApplicationContext applicationContext;
-    private final ApplicationManager manager;
-    private final ApplicationContextConfiguration configuration;
+public record InitializingContext(ApplicationEnvironment environment, ApplicationContext applicationContext, ApplicationManager manager, ApplicationContextConfiguration configuration) {
 
     public InitializingContext(final ApplicationEnvironment environment, final ApplicationContext applicationContext, final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
         this.environment = environment;
@@ -47,20 +42,19 @@ public class InitializingContext {
         this.configuration = Objects.requireNonNull(configuration);
     }
 
+    @Override
     public ApplicationEnvironment environment() {
         return Objects.requireNonNull(this.environment, "Application environment has not been initialized yet");
     }
 
+    @Override
     public ApplicationContext applicationContext() {
         return Objects.requireNonNull(this.applicationContext, "Application context has not been initialized yet");
     }
 
+    @Override
     public ApplicationManager manager() {
         return Objects.requireNonNull(this.manager, "Application manager has not been initialized yet");
-    }
-
-    public ApplicationContextConfiguration configuration() {
-        return this.configuration;
     }
 
     public ConditionMatcher conditionMatcher() {

@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-
 /**
  * A wrapper for a method. This is used to intercept method calls, without modifying the original method, though
  * it is possible to use this on intercepted or delegated methods as well.
@@ -43,7 +41,7 @@ public interface MethodWrapper<T> {
      * @param instance The instance that is being visited
      * @param args The arguments that are being passed to the method
      */
-    void acceptBefore(MethodContext<?, T> method, T instance, Object[] args);
+    void acceptBefore(ProxyCallbackContext<T> context);
 
     /**
      * The action to perform after a visited method exits without errors.
@@ -52,7 +50,7 @@ public interface MethodWrapper<T> {
      * @param instance The instance that is being visited
      * @param args The arguments that are being passed to the method
      */
-    void acceptAfter(MethodContext<?, T> method, T instance, Object[] args);
+    void acceptAfter(ProxyCallbackContext<T> context);
 
     /**
      * The action to perform after a visited method exits with errors.
@@ -62,7 +60,7 @@ public interface MethodWrapper<T> {
      * @param args The arguments that are being passed to the method
      * @param error The error that was thrown
      */
-    void acceptError(MethodContext<?, T> method, T instance, Object[] args, Throwable error);
+    void acceptError(ProxyCallbackContext<T> context);
 
     /**
      * A utility method to construct a simple method wrapper that calls different {@link ProxyCallback}s for each
@@ -79,18 +77,18 @@ public interface MethodWrapper<T> {
     static <T> MethodWrapper<T> of(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
         return new MethodWrapper<>() {
             @Override
-            public void acceptBefore(final MethodContext<?, T> method, final T instance, final Object[] args) {
-                if (before != null) before.accept(method, instance, args);
+            public void acceptBefore(final ProxyCallbackContext<T> context) {
+                if (before != null) before.accept(context);
             }
 
             @Override
-            public void acceptAfter(final MethodContext<?, T> method, final T instance, final Object[] args) {
-                if (after != null) after.accept(method, instance, args);
+            public void acceptAfter(final ProxyCallbackContext<T> context) {
+                if (after != null) after.accept(context);
             }
 
             @Override
-            public void acceptError(final MethodContext<?, T> method, final T instance, final Object[] args, final Throwable error) {
-                if (afterThrowing != null) afterThrowing.accept(method, instance, args);
+            public void acceptError(final ProxyCallbackContext<T> context) {
+                if (afterThrowing != null) afterThrowing.accept(context);
             }
         };
     }

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.context;
 
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.CustomMultiMap;
 import org.dockbox.hartshorn.util.HashSetMultiMap;
 import org.dockbox.hartshorn.util.MultiMap;
@@ -86,5 +87,28 @@ public abstract class DefaultContext implements Context {
                 .filter(c -> TypeContext.of(c).childOf(context))
                 .map(c -> (N) c)
                 .toList();
+    }
+
+
+    @Override
+    public <C extends Context> Result<C> first(final Class<C> context) {
+        return Result.of(this.contexts.stream()
+                        .filter(c -> TypeContext.of(c).childOf(context))
+                        .map(c -> (C) c)
+                        .findFirst());
+    }
+
+    @Override
+    public <C extends Context> Result<C> first(final Class<C> context, final String name) {
+        return Result.of(this.namedContexts.get(name).stream()
+                        .filter(c -> TypeContext.of(c).childOf(context))
+                        .map(c -> (C) c)
+                        .findFirst());
+    }
+
+    @Override
+    public <C extends Context> Result<C> first(final Key<C> key) {
+        if (key.name() == null) return this.first(key.type().type());
+        else return this.first(key.type().type(), key.name().value());
     }
 }

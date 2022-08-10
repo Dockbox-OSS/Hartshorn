@@ -79,6 +79,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private T typeDelegate;
 
     // Proxy data
+    private final ProxyContextContainer contextContainer = new ProxyContextContainer();
     private final Class<T> type;
     private final ApplicationContext applicationContext;
 
@@ -281,5 +282,10 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
      */
     public boolean trackState() {
         return this.trackState;
+    }
+
+    @Override
+    public ProxyContextContainer contextContainer() {
+        return this.contextContainer;
     }
 }

@@ -35,6 +35,10 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     @Override
     public Result<T> proxy() throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
+
+        this.contextContainer().contexts().forEach(manager::add);
+        this.contextContainer().namedContexts().forEach(manager::add);
+
         final StandardMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationContext());
 
         final Result<T> proxy = this.type().isInterface()

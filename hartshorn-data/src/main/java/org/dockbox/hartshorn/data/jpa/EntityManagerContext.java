@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.service.JpaRepositoryDelegationPostProcessor;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.context.DefaultContext;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.function.Supplier;
 
-@UseProxying
-@UseSerialization
-@UseTransactionManagement
-@UseQuerying
-@Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(processors = JpaRepositoryDelegationPostProcessor.class)
-public @interface UsePersistence {
+import jakarta.persistence.EntityManager;
+
+public class EntityManagerContext extends DefaultContext {
+
+    private final Supplier<EntityManager> supplier;
+
+    public EntityManagerContext(final Supplier<EntityManager> supplier) {
+        this.supplier = supplier;
+    }
+
+    public EntityManager entityManager() {
+        return supplier.get();
+    }
 }

@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.data.jpa;
 import org.dockbox.hartshorn.util.Result;
 import org.hibernate.Transaction;
 
-import java.io.Closeable;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -29,7 +28,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 
-public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository<T, ID>, Closeable {
+public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository<T, ID>, EntityManagerCarrier {
 
     private final Class<T> type;
 
@@ -95,7 +94,6 @@ public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository
         final Transaction transaction = this.transaction(manager);
         action.accept(manager);
         transaction.commit();
-        this.close();
     }
 
     private <R> R transformTransactional(final Function<EntityManager, R> action) {
@@ -103,7 +101,6 @@ public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository
         final Transaction transaction = this.transaction(manager);
         final R out = action.apply(manager);
         transaction.commit();
-        this.close();
         return out;
     }
 
@@ -111,10 +108,8 @@ public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository
         return this.type;
     }
 
+    @Override
     public abstract void close();
 
-    public abstract EntityManager manager();
-
     protected abstract Transaction transaction(EntityManager manager);
-
 }

@@ -364,4 +364,11 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @return All known interfaces, or an empty set
      */
     Set<Class<?>> interfaces();
+
+    /**
+     * Gets a temporary context for the current proxy factory. When a new proxy is created, this
+     * context will be assigned to its {@link ProxyManager}.
+     * @return The temporary context
+     */
+    ProxyContextContainer contextContainer();
 }

@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.annotations;
+package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.service.JpaRepositoryDelegationPostProcessor;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.MultiMap;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.Set;
 
-@UseProxying
-@UseSerialization
-@UseTransactionManagement
-@UseQuerying
-@Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(processors = JpaRepositoryDelegationPostProcessor.class)
-public @interface UsePersistence {
+public class ProxyContextContainer extends DefaultContext {
+
+    public Set<Context> contexts() {
+        return super.contexts;
+    }
+
+    public MultiMap<String, Context> namedContexts() {
+        return super.namedContexts;
+    }
 }

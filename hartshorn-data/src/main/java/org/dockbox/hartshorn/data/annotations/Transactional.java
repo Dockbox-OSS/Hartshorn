@@ -24,4 +24,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Transactional {
+    boolean rollbackOnError() default false;
+    boolean commitOnSuccess() default true;
 }

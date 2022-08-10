@@ -32,6 +32,7 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @param <C> The type of the context.
      * @return The first context of the given type.
      */
+    @Override
     default <C extends Context> Result<C> first(final TypeContext<C> context) {
         return this.first(context.type());
     }
@@ -45,6 +46,7 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @param <C> The type of the context.
      * @return The first context of the given type.
      */
+    @Override
     <C extends Context> Result<C> first(Class<C> context);
 
     /**
@@ -57,6 +59,7 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
+    @Override
     <C extends Context> Result<C> first(Class<C> context, String name);
 
     /**
@@ -69,6 +72,7 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
+    @Override
     default <C extends Context> Result<C> first(TypeContext<C> context, String name) {
         return this.first(context.type(), name);
     }
@@ -82,5 +86,6 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
+    @Override
     <C extends Context> Result<C> first(Key<C> context);
 }
