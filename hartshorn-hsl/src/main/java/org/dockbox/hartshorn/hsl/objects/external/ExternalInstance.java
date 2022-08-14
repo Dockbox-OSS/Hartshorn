@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.external;
+package org.dockbox.hartshorn.hsl.objects.external;
 
-import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -34,7 +36,7 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 22.4
  */
-public class ExternalInstance implements PropertyContainer {
+public class ExternalInstance implements InstanceReference, ExternalObjectReference {
 
     private final Object instance;
     private final TypeContext<Object> type;
@@ -63,7 +65,7 @@ public class ExternalInstance implements PropertyContainer {
     public Object get(final Token name) {
         final boolean isMethod = this.type.methods().stream()
                 .anyMatch(method -> method.name().equals(name.lexeme()));
-        if (isMethod) return new ExternalFunction(this.instance, name.lexeme());
+        if (isMethod) return new ExternalFunction(this.type.type(), name.lexeme());
 
         return this.type.field(name.lexeme())
                 .flatMap(field -> field.get(this.instance()))
@@ -77,5 +79,15 @@ public class ExternalInstance implements PropertyContainer {
     @Override
     public String toString() {
         return String.valueOf(this.instance);
+    }
+
+    @Override
+    public ClassReference type() {
+        return new ExternalClass<>(this.type.type());
+    }
+
+    @Override
+    public Object externalObject() {
+        return this.instance();
     }
 }

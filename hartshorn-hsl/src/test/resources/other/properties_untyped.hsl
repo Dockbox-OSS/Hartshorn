@@ -15,6 +15,7 @@ fun sumVector(){
    return result;
 }
 
+// Re-declare v2 for following statements
 var v2 = sumVector();
 
 print("V2 x : " + v2.x);

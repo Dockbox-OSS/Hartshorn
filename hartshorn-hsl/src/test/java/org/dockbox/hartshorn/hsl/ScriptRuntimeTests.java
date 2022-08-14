@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.callable.module.InstanceNativeModule;
+import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;

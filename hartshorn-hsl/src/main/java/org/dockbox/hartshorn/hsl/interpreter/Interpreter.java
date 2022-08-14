@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -33,6 +32,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
@@ -65,15 +65,20 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
-import org.dockbox.hartshorn.hsl.callable.CallableNode;
-import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
-import org.dockbox.hartshorn.hsl.callable.external.ExternalClass;
-import org.dockbox.hartshorn.hsl.callable.external.ExternalInstance;
-import org.dockbox.hartshorn.hsl.callable.module.HslLibrary;
-import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
-import org.dockbox.hartshorn.hsl.callable.virtual.VirtualClass;
-import org.dockbox.hartshorn.hsl.callable.virtual.VirtualFunction;
-import org.dockbox.hartshorn.hsl.callable.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.objects.BindableNode;
+import org.dockbox.hartshorn.hsl.objects.CallableNode;
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
+import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
+import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.modules.HslLibrary;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
@@ -540,7 +545,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
         try {
-            return value.call(expr.prefixOperatorName(), this, args);
+            return value.call(expr.prefixOperatorName(), this, null, args);
         }
         catch (final ApplicationException e) {
             throw new RuntimeError(expr.prefixOperatorName(), e.getMessage());
@@ -555,7 +560,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         args.add(this.evaluate(expr.rightExpression()));
 
         try {
-            return value.call(expr.infixOperatorName(), this, args);
+            return value.call(expr.infixOperatorName(), this, null, args);
         }
         catch (final ApplicationException e) {
             throw new RuntimeError(expr.infixOperatorName(), e.getMessage());
@@ -569,7 +574,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final List<Object> arguments = new ArrayList<>();
         for (final Expression argument : expr.arguments()) {
             Object evaluated = this.evaluate(argument);
-            if (evaluated instanceof ExternalInstance external) evaluated = external.instance();
+            if (evaluated instanceof ExternalObjectReference external) evaluated = external.externalObject();
             arguments.add(evaluated);
         }
 
@@ -579,7 +584,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         }
 
         try {
-            return function.call(expr.openParenthesis(), this, arguments);
+            if (callee instanceof InstanceReference instance) {
+                return function.call(expr.openParenthesis(), this, instance, arguments);
+            }
+            else if (callee instanceof BindableNode<?> bindable){
+                return function.call(expr.openParenthesis(), this, bindable.bound(), arguments);
+            }
+            else {
+                return function.call(expr.openParenthesis(), this, null, arguments);
+            }
         }
         catch (final ApplicationException e) {
             throw new RuntimeError(expr.openParenthesis(), e.getMessage());
@@ -589,8 +602,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final GetExpression expr) {
         final Object object = this.evaluate(expr.object());
-        if (object instanceof PropertyContainer instance) {
-            return instance.get(expr.name());
+        if (object instanceof PropertyContainer container) {
+            Object result = container.get(expr.name());
+            if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
+            if (result instanceof BindableNode<?> bindableNode && object instanceof InstanceReference instance) {
+                return bindableNode.bind(instance);
+            }
+            return result;
         }
         throw new RuntimeError(expr.name(), "Only instances have properties.");
     }
@@ -620,9 +638,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final SuperExpression expr) {
         final int distance = this.locals.get(expr);
-        final VirtualClass superclass = (VirtualClass) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
+        final ClassReference superclass = (VirtualClass) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
         final VirtualInstance object = (VirtualInstance) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
-        final VirtualFunction method = superclass.findMethod(expr.method().lexeme());
+        final MethodReference method = superclass.findMethod(expr.method().lexeme());
 
         if (method == null) {
             throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
@@ -783,8 +801,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         // Because superclass is a variable expression assert it's a class
         if (statement.superClass() != null) {
             superclass = this.evaluate(statement.superClass());
-            if (!(superclass instanceof VirtualClass)) {
+            if (!(superclass instanceof ClassReference virtualClass)) {
                 throw new RuntimeError(statement.superClass().name(), "Superclass must be a class.");
+            }
+            if (virtualClass.isFinal()) {
+                throw new ScriptEvaluationError("Cannot extend final class '" + virtualClass.name() + "'.", Phase.INTERPRETING, statement.superClass().name());
             }
         }
 
@@ -808,7 +829,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
         }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (VirtualClass) superclass, constructor, this.variableScope(), methods);
+        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (ClassReference) superclass, constructor, this.variableScope(), methods, statement.isFinal());
 
         if (superclass != null) {
             this.visitingScope = this.variableScope().enclosing();

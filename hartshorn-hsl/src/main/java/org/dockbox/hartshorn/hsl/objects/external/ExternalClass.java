@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.external;
+package org.dockbox.hartshorn.hsl.objects.external;
 
-import org.dockbox.hartshorn.hsl.callable.CallableNode;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -42,7 +47,7 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 22.4
  */
-public class ExternalClass<T> implements CallableNode {
+public class ExternalClass<T> implements ClassReference {
 
     private final TypeContext<T> type;
 
@@ -59,14 +64,50 @@ public class ExternalClass<T> implements CallableNode {
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) throws ApplicationException {
+    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
+        if (instance != null) {
+            throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
+        }
         final ConstructorContext<T> executable = ExecutableLookup.executable(this.type.constructors(), arguments);
-        final T instance = executable.createInstance(arguments.toArray()).rethrowUnchecked().orNull();
-        return new ExternalInstance(instance);
+        final T objectInstance = executable.createInstance(arguments.toArray()).rethrowUnchecked().orNull();
+        return new ExternalInstance(objectInstance);
     }
 
     @Override
     public String toString() {
         return this.type.qualifiedName();
+    }
+
+    @Override
+    public VirtualFunction constructor() {
+        return null;
+    }
+
+    @Override
+    public MethodReference findMethod(final String name) {
+        return new ExternalFunction(this.type().type(), name);
+    }
+
+    @Override
+    public ClassReference superClass() {
+        final TypeContext<?> parent = this.type().parent();
+        if (parent.isVoid()) return null;
+        final Class<?> parentType = parent.type();
+        return new ExternalClass<>(parentType);
+    }
+
+    @Override
+    public String name() {
+        return this.type().name();
+    }
+
+    @Override
+    public boolean isFinal() {
+        return this.type().isFinal();
+    }
+
+    @Override
+    public void makeFinal() {
+        throw new UnsupportedOperationException("Cannot change modifiers of external class");
     }
 }

@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.external;
+package org.dockbox.hartshorn.hsl.objects.external;
 
-import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -36,24 +40,21 @@ import java.util.List;
  * @author Guus Lieben
  * @since 22.4
  */
-public class ExternalFunction implements CallableNode {
+public class ExternalFunction extends AbstractFinalizable implements MethodReference {
 
-    private final Object instance;
     private final String methodName;
     private final TypeContext<Object> type;
+    private final InstanceReference instance;
 
-    public ExternalFunction(final Object instance, final String methodName) {
-        this.instance = instance;
-        this.methodName = methodName;
-        this.type = TypeContext.of(instance);
+    public ExternalFunction(final Class<?> type, final String methodName) {
+        this(type, methodName, null);
     }
 
-    /**
-     * Returns the instance which is used to call the methods.
-     * @return The instance which is used to call the methods.
-     */
-    public Object instance() {
-        return this.instance;
+    public ExternalFunction(final Class<?> type, final String methodName, final InstanceReference instance) {
+        super(false);
+        this.methodName = methodName;
+        this.type = (TypeContext<Object>) TypeContext.of(type);
+        this.instance = instance;
     }
 
     /**
@@ -68,7 +69,7 @@ public class ExternalFunction implements CallableNode {
      * Returns the {@link TypeContext} which declares the method represented by this class.
      * @return The {@link TypeContext} which declares the method represented by this class.
      */
-    public TypeContext<Object> type() {
+    public TypeContext<?> type() {
         return this.type;
     }
 
@@ -92,9 +93,15 @@ public class ExternalFunction implements CallableNode {
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) throws ApplicationException {
+    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
+        if (this.instance != null && instance != this.instance) {
+            throw new RuntimeError(at, "Function reference was bound to " + this.instance + ", but was invoked with a different object " + instance);
+        }
+        if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
+            throw new RuntimeError(at, "Cannot call method '" + this.methodName + "' on non-external instance");
+        }
         final MethodContext<?, Object> method = this.method(at, arguments);
-        final Result<?> result = method.invoke(this.instance, arguments);
+        final Result<?> result = method.invoke(externalObjectReference.externalObject(), arguments);
         if (result.caught()) {
             if (result.error() instanceof ApplicationException ae) throw ae;
             throw new ApplicationException(result.error());
@@ -105,5 +112,31 @@ public class ExternalFunction implements CallableNode {
     @Override
     public String toString() {
         return this.type.qualifiedName() + "#" + this.methodName;
+    }
+
+    @Override
+    public MethodReference bind(final InstanceReference instance) {
+        final ClassReference virtualClass = instance.type();
+        ClassReference classReference = virtualClass.superClass();
+        ExternalClass<?> externalClass = null;
+
+        while (externalClass == null && classReference != null) {
+            if (classReference instanceof ExternalClass<?> external) {
+                externalClass = external;
+                break;
+            }
+            classReference = classReference.superClass();
+        }
+
+        if (externalClass == null) {
+            throw new RuntimeError(null, "Cannot bind external function to virtual instance of type " + virtualClass.name());
+        }
+
+        return new ExternalFunction(externalClass.type().type(), this.methodName, instance);
+    }
+
+    @Override
+    public InstanceReference bound() {
+        return this.instance;
     }
 }

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
@@ -30,7 +31,11 @@ public class ClassStatement extends Statement {
     private final List<FunctionStatement> methods;
 
     public ClassStatement(final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods) {
-        super(name);
+        this(name, false, name, superClass, constructor, methods);
+    }
+
+    public ClassStatement(final ASTNode at, final boolean finalized, final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods) {
+        super(at, finalized);
         this.name = name;
         this.superClass = superClass;
         this.constructor = constructor;
@@ -46,7 +51,7 @@ public class ClassStatement extends Statement {
     }
 
     public ConstructorStatement constructor() {
-        return constructor;
+        return this.constructor;
     }
 
     public List<FunctionStatement> methods() {

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.module;
+package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.callable.CallableNode;
-import org.dockbox.hartshorn.hsl.callable.NativeExecutionException;
+import org.dockbox.hartshorn.hsl.objects.CallableNode;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class HslLibrary implements CallableNode {
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) throws NativeExecutionException {
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         final String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {

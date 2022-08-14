@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.objects;
 
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
  *
  * @author Guus Lieben
  * @since 22.4
- * @see org.dockbox.hartshorn.hsl.callable.virtual.VirtualInstance
- * @see org.dockbox.hartshorn.hsl.callable.external.ExternalInstance
+ * @see org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance
+ * @see org.dockbox.hartshorn.hsl.objects.external.ExternalInstance
  */
 public interface PropertyContainer {
 

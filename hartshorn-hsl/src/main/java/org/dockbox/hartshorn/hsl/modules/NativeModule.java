@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.module;
+package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.callable.NativeExecutionException;
+import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
