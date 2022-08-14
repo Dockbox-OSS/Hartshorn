@@ -187,10 +187,10 @@ public class Parser {
     private ClassStatement classDeclaration() {
         final Token name = this.expect(TokenType.IDENTIFIER, "class name");
 
-        VariableExpression superclass = null;
+        VariableExpression superClass = null;
         if (this.match(TokenType.EXTENDS)) {
-            this.expect(TokenType.IDENTIFIER, "superclass name");
-            superclass = new VariableExpression(this.previous());
+            this.expect(TokenType.IDENTIFIER, "super class name");
+            superClass = new VariableExpression(this.previous());
         }
 
         this.expectBefore(TokenType.LEFT_BRACE, "class body");
@@ -208,7 +208,7 @@ public class Parser {
 
         this.expectAfter(TokenType.RIGHT_BRACE, "class body");
 
-        return new ClassStatement(name, superclass, constructor, methods);
+        return new ClassStatement(name, superClass, constructor, methods);
     }
 
     private ParametricExecutableStatement methodDeclaration(final Token className) {
@@ -712,7 +712,7 @@ public class Parser {
     private SuperExpression superExpression() {
         final Token keyword = this.previous();
         this.expectAfter(TokenType.DOT, TokenType.SUPER);
-        final Token method = this.expect(TokenType.IDENTIFIER, "superclass method name");
+        final Token method = this.expect(TokenType.IDENTIFIER, "super class method name");
         return new SuperExpression(keyword, method);
     }
 

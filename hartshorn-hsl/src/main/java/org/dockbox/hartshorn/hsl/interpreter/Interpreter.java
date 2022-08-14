@@ -65,6 +65,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.modules.HslLibrary;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.BindableNode;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -74,11 +76,8 @@ import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
-import org.dockbox.hartshorn.hsl.modules.HslLibrary;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
-import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
@@ -638,9 +637,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final SuperExpression expr) {
         final int distance = this.locals.get(expr);
-        final ClassReference superclass = (VirtualClass) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
-        final VirtualInstance object = (VirtualInstance) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
-        final MethodReference method = superclass.findMethod(expr.method().lexeme());
+        final ClassReference superClass = (ClassReference) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
+        final InstanceReference object = (InstanceReference) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
+        final MethodReference method = superClass.findMethod(expr.method().lexeme());
 
         if (method == null) {
             throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
@@ -797,11 +796,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final ClassStatement statement) {
-        Object superclass = null;
-        // Because superclass is a variable expression assert it's a class
+        Object superClass = null;
+        // Because super class is a variable expression assert it's a class
         if (statement.superClass() != null) {
-            superclass = this.evaluate(statement.superClass());
-            if (!(superclass instanceof ClassReference virtualClass)) {
+            superClass = this.evaluate(statement.superClass());
+            if (!(superClass instanceof ClassReference virtualClass)) {
                 throw new RuntimeError(statement.superClass().name(), "Superclass must be a class.");
             }
             if (virtualClass.isFinal()) {
@@ -813,7 +812,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         if (statement.superClass() != null) {
             this.visitingScope = new VariableScope(this.variableScope());
-            this.variableScope().define(TokenType.SUPER.representation(), superclass);
+            this.variableScope().define(TokenType.SUPER.representation(), superClass);
         }
 
         final Map<String, VirtualFunction> methods = new HashMap<>();
@@ -829,9 +828,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
         }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (ClassReference) superclass, constructor, this.variableScope(), methods, statement.isFinal());
+        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (ClassReference) superClass, constructor, this.variableScope(), methods, statement.isFinal());
 
-        if (superclass != null) {
+        if (superClass != null) {
             this.visitingScope = this.variableScope().enclosing();
         }
 

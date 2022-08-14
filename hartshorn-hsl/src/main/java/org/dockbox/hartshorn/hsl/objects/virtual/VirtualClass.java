@@ -36,8 +36,8 @@ import java.util.Objects;
 
 /**
  * Represents a class definition inside a script. The class is identified by its name, and
- * can carry a variety of additional information such as the superclass, methods, and an
- * optional superclass.
+ * can carry a variety of additional information such as the super class, methods, and an
+ * optional super class.
  *
  * @author Guus Lieben
  * @since 22.4
@@ -76,9 +76,9 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     }
 
     /**
-     * Gets the superclass of the class.
+     * Gets the super class of the class.
      *
-     * @return The superclass of the class.
+     * @return The super class of the class.
      */
     @Nullable
     @Override
