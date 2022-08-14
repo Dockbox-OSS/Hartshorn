@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
-public class SetExpression extends Expression {
+public class SetExpression extends Expression implements NamedNode {
 
     private final Expression object;
     private final Token name;
@@ -36,6 +37,7 @@ public class SetExpression extends Expression {
         return this.object;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

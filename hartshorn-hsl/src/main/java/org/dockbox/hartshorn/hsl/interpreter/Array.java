@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
+import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.Arrays;

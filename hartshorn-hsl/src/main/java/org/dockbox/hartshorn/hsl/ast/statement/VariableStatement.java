@@ -16,21 +16,28 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class VariableStatement extends Statement {
+public class VariableStatement extends FinalizableStatement implements NamedNode {
 
     private final Token name;
     private final Expression initializer;
 
     public VariableStatement(final Token name, final Expression initializer) {
-        super(name);
+        this(name, false, name, initializer);
+    }
+
+    public VariableStatement(final ASTNode at, final boolean finalized, final Token name, final Expression initializer) {
+        super(at, finalized);
         this.name = name;
         this.initializer = initializer;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

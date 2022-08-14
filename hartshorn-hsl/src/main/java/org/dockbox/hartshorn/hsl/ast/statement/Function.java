@@ -16,11 +16,16 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-public abstract class Function extends Statement {
+public abstract class Function extends FinalizableStatement {
 
     protected Function(final Token at) {
-        super(at);
+        this(at, false);
+    }
+
+    protected Function(final ASTNode at, final boolean finalized) {
+        super(at, finalized);
     }
 }

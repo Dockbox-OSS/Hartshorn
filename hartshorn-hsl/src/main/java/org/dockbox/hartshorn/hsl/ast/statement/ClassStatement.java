@@ -17,13 +17,14 @@
 package org.dockbox.hartshorn.hsl.ast.statement;
 
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
-public class ClassStatement extends Statement {
+public class ClassStatement extends FinalizableStatement implements NamedNode {
 
     private final Token name;
     private final VariableExpression superClass;
@@ -42,6 +43,7 @@ public class ClassStatement extends Statement {
         this.methods = methods;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

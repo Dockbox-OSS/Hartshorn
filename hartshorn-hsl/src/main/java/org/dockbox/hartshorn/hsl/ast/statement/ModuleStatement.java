@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class ModuleStatement extends Statement {
+public class ModuleStatement extends Statement implements NamedNode {
 
     private final Token name;
 
@@ -28,6 +29,7 @@ public class ModuleStatement extends Statement {
         this.name = name;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

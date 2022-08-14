@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.ast.expression;
+package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.ast.NamedNode;
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.objects.Finalizable;
 
-public class VariableExpression extends Expression implements NamedNode {
+public abstract class FinalizableStatement extends Statement implements Finalizable {
 
-    private final Token name;
+    private boolean finalized;
 
-    public VariableExpression(final Token name) {
-        super(name);
-        this.name = name;
+    protected FinalizableStatement(final ASTNode at, final boolean finalized) {
+        super(at);
+        this.finalized = finalized;
     }
 
     @Override
-    public Token name() {
-        return this.name;
+    public boolean isFinal() {
+        return this.finalized;
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
-        return visitor.visit(this);
+    public void makeFinal() {
+        this.finalized = true;
     }
 }

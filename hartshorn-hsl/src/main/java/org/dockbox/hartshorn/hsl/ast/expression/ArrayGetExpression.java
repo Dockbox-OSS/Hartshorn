@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
-public class ArrayGetExpression extends Expression {
+public class ArrayGetExpression extends Expression implements NamedNode {
 
     private final Token name;
     private final Expression index;
@@ -30,6 +31,7 @@ public class ArrayGetExpression extends Expression {
         this.index = index;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

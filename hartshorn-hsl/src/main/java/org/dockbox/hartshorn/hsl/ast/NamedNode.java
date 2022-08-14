@@ -14,28 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.ast.expression;
+package org.dockbox.hartshorn.hsl.ast;
 
-import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
-public class VariableExpression extends Expression implements NamedNode {
-
-    private final Token name;
-
-    public VariableExpression(final Token name) {
-        super(name);
-        this.name = name;
-    }
-
-    @Override
-    public Token name() {
-        return this.name;
-    }
-
-    @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
-        return visitor.visit(this);
-    }
+public interface NamedNode {
+    Token name();
 }

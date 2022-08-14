@@ -1,0 +1,5 @@
+var nonFinalName = "Foo"
+nonFinalName = "Bar"
+
+final var finalName = "Bar"
+// Cannot reassign finalName, because it is a final variable.
