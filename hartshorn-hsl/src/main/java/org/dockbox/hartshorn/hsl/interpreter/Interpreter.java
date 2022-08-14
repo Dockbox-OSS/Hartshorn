@@ -75,6 +75,7 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
+import org.dockbox.hartshorn.hsl.objects.external.ExternalFunction;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
@@ -604,7 +605,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         if (object instanceof PropertyContainer container) {
             Object result = container.get(expr.name());
             if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
-            if (result instanceof BindableNode<?> bindableNode && object instanceof InstanceReference instance) {
+            if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
             }
             return result;

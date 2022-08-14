@@ -18,12 +18,12 @@ package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.external.CompositeInstance;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -156,7 +156,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
             // Acts as a virtual constructor
             final VirtualFunction initializer = this.constructor();
             if (initializer != null) {
-                initializer.call(at, interpreter, virtualInstance, arguments);
+                initializer.bind(virtualInstance).call(at, interpreter, virtualInstance, arguments);
             }
             return virtualInstance;
         }
