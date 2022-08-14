@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -73,10 +71,6 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
 
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) {
-        if (this.isInitializer && instance != null) {
-            throw new ScriptEvaluationError("Cannot call a constructor with an instance reference", Phase.INTERPRETING, at);
-        }
-
         final VariableScope variableScope = new VariableScope(this.closure);
         final List<Token> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {

@@ -117,7 +117,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
     @Override
     public MethodReference bind(final InstanceReference instance) {
         final ClassReference virtualClass = instance.type();
-        ClassReference classReference = virtualClass.superClass();
+        ClassReference classReference = virtualClass;
         ExternalClass<?> externalClass = null;
 
         while (externalClass == null && classReference != null) {

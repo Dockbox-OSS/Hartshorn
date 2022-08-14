@@ -140,7 +140,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final AssignExpression expr) {
         this.checkFinal(expr.name());
-        this.checkAssign(expr.name());
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
         return null;
@@ -149,7 +148,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     @Override
     public Void visit(final LogicalAssignExpression expr) {
         this.checkFinal(expr.name());
-        this.checkAssign(expr.name());
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
         return null;
@@ -536,7 +534,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
             throw new ScriptEvaluationError("Cannot use 'super' outside of a class.", Phase.RESOLVING, expr.keyword());
         }
         else if (this.currentClass != ClassType.SUBCLASS) {
-            throw new ScriptEvaluationError("Cannot use 'super' in a class with no superclass.", Phase.RESOLVING, expr.keyword());
+            throw new ScriptEvaluationError("Cannot use 'super' in a class with no super class.", Phase.RESOLVING, expr.keyword());
         }
         this.resolveLocal(expr, expr.keyword());
         return null;
@@ -636,14 +634,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         if (this.scopes.isEmpty()) return;
         this.checkFinal(name);
         this.scopes.peek().put(name.lexeme(), true);
-    }
-
-    private void checkAssign(final Token name) {
-        if (this.scopes.isEmpty()) return;
-        final Map<String, Boolean> scope = this.scopes.peek();
-        if (!scope.containsKey(name.lexeme())) {
-            throw new ScriptEvaluationError("Cannot assign to undeclared variable '%s'.".formatted(name.lexeme()), Phase.RESOLVING, name);
-        }
     }
 
     private void checkFinal(final Token name) {
