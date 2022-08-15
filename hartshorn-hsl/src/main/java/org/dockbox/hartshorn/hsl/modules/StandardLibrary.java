@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.module;
+package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.modules.MathLibrary;
-import org.dockbox.hartshorn.hsl.modules.SystemLibrary;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 
 import java.util.Map;

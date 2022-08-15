@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 import java.util.List;
 
-public class NativeFunctionStatement extends Function {
+public class NativeFunctionStatement extends Function implements NamedNode {
 
     private final Token name;
     private final Token moduleName;
@@ -37,6 +38,7 @@ public class NativeFunctionStatement extends Function {
         this.params = params;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

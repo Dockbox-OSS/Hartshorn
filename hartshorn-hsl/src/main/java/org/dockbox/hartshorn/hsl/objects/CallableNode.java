@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.objects;
 
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -41,5 +41,5 @@ public interface CallableNode {
      * @return The result of the node.
      * @throws ApplicationException If an error occurs while executing the node.
      */
-    Object call(Token at, Interpreter interpreter, List<Object> arguments) throws ApplicationException;
+    Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException;
 }

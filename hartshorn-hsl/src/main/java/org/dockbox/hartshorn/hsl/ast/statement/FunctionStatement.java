@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
-public class FunctionStatement extends ParametricExecutableStatement {
+public class FunctionStatement extends ParametricExecutableStatement implements NamedNode {
 
     private final Token name;
 
@@ -32,6 +33,7 @@ public class FunctionStatement extends ParametricExecutableStatement {
         this.name = name;
     }
 
+    @Override
     public Token name() {
         return this.name;
     }

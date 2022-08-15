@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.virtual;
+package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
-import org.dockbox.hartshorn.hsl.callable.CallableNode;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -35,16 +37,22 @@ import java.util.List;
  * @author Guus Lieben
  * @since 22.4
  */
-public class VirtualFunction implements CallableNode {
+public class VirtualFunction extends AbstractFinalizable implements MethodReference {
     
     private final ParametricExecutableStatement declaration;
     private final VariableScope closure;
-
+    private final InstanceReference instance;
     private final boolean isInitializer;
 
     public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final boolean isInitializer) {
-        this.closure = closure;
+        this(declaration, closure, null, isInitializer);
+    }
+
+    public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final InstanceReference instance, final boolean isInitializer) {
+        super(declaration.isFinal());
         this.declaration = declaration;
+        this.closure = closure;
+        this.instance = instance;
         this.isInitializer = isInitializer;
     }
 
@@ -54,14 +62,15 @@ public class VirtualFunction implements CallableNode {
      * @param instance The instance to bind to.
      * @return A new {@link VirtualFunction} bound to the given instance.
      */
-    public VirtualFunction bind(final VirtualInstance instance) {
+    @Override
+    public VirtualFunction bind(final InstanceReference instance) {
         final VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(TokenType.THIS.representation(), instance);
         return new VirtualFunction(this.declaration, variableScope, this.isInitializer);
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final List<Object> arguments) {
+    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) {
         final VariableScope variableScope = new VariableScope(this.closure);
         final List<Token> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
@@ -82,5 +91,10 @@ public class VirtualFunction implements CallableNode {
         }
         if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
         return null;
+    }
+
+    @Override
+    public InstanceReference bound() {
+        return this.instance;
     }
 }

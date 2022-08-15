@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.virtual;
+package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import org.dockbox.hartshorn.hsl.callable.PropertyContainer;
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -31,21 +33,13 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 22.4
  */
-public class VirtualInstance implements PropertyContainer {
+public class VirtualInstance implements InstanceReference {
 
     private final VirtualClass virtualClass;
     private final Map<String, Object> fields = new HashMap<>();
 
     public VirtualInstance(final VirtualClass virtualClass) {
         this.virtualClass = virtualClass;
-    }
-
-    /**
-     * Gets the {@link VirtualClass} type of the instance.
-     * @return The {@link VirtualClass} type of the instance.
-     */
-    public VirtualClass virtualClass() {
-        return this.virtualClass;
     }
 
     @Override
@@ -58,7 +52,7 @@ public class VirtualInstance implements PropertyContainer {
         if (this.fields.containsKey(name.lexeme())) {
             return this.fields.get(name.lexeme());
         }
-        final VirtualFunction method = this.virtualClass.findMethod(name.lexeme());
+        final MethodReference method = this.virtualClass.findMethod(name.lexeme());
         if (method != null) return method.bind(this);
         throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
     }
@@ -66,5 +60,10 @@ public class VirtualInstance implements PropertyContainer {
     @Override
     public String toString() {
         return this.virtualClass.name() + " instance";
+    }
+
+    @Override
+    public ClassReference type() {
+        return this.virtualClass;
     }
 }

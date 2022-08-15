@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
-import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
-import org.dockbox.hartshorn.hsl.callable.module.StandardLibrary;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;

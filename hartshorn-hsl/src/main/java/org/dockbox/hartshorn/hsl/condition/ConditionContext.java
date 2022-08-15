@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 
 import java.util.Collection;

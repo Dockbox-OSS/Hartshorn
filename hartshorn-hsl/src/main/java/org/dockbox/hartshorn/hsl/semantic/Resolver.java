@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.semantic;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
@@ -66,8 +67,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
-import org.dockbox.hartshorn.hsl.callable.module.NativeModule;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.objects.Finalizable;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -92,6 +94,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+    private final Stack<Map<String, String>> finals = new Stack<>();
 
     @Bound
     public Resolver(final Interpreter interpreter) {
@@ -136,6 +139,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final AssignExpression expr) {
+        this.checkFinal(expr.name());
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
         return null;
@@ -143,6 +147,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final LogicalAssignExpression expr) {
+        this.checkFinal(expr.name());
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
         return null;
@@ -325,6 +330,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final FunctionStatement statement) {
+        this.makeFinal(statement, "function");
         this.define(statement.name());
         this.resolveFunction(statement, FunctionType.FUNCTION);
         return null;
@@ -352,6 +358,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         // Resolving a variable declaration adds a new entry to the current innermost scope’s map
         this.declare(statement.name());
         if (statement.initializer() != null) {
+            this.makeFinal(statement, "variable");
             this.resolve(statement.initializer());
         }
         this.define(statement.name());
@@ -379,6 +386,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.currentClass = ClassType.CLASS;
 
         this.declare(statement.name());
+        this.makeFinal(statement, "class");
 
         // Class must not extend itself
         if (statement.superClass() != null &&
@@ -396,10 +404,12 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         if (statement.superClass() != null) {
             this.beginScope();
             this.scopes.peek().put(TokenType.SUPER.representation(), true);
+            this.finals.peek().put(TokenType.SUPER.representation(), "instance variable");
         }
 
         this.beginScope();
         this.scopes.peek().put(TokenType.THIS.representation(), true);
+        this.finals.peek().put(TokenType.THIS.representation(), "instance variable");
         for (final FunctionStatement method : statement.methods()) {
             this.resolveFunction(method, FunctionType.METHOD);
         }
@@ -415,6 +425,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final NativeFunctionStatement statement) {
+        this.makeFinal(statement, "native function");
         this.declare(statement.name());
         this.define(statement.name());
 
@@ -523,14 +534,14 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
             throw new ScriptEvaluationError("Cannot use 'super' outside of a class.", Phase.RESOLVING, expr.keyword());
         }
         else if (this.currentClass != ClassType.SUBCLASS) {
-            throw new ScriptEvaluationError("Cannot use 'super' in a class with no superclass.", Phase.RESOLVING, expr.keyword());
+            throw new ScriptEvaluationError("Cannot use 'super' in a class with no super class.", Phase.RESOLVING, expr.keyword());
         }
         this.resolveLocal(expr, expr.keyword());
         return null;
     }
 
     @Override
-    public Void visit(SwitchStatement statement) {
+    public Void visit(final SwitchStatement statement) {
         this.resolve(statement.expression());
         for (final SwitchCase switchCase : statement.cases()) {
             this.resolve(switchCase);
@@ -542,7 +553,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(SwitchCase statement) {
+    public Void visit(final SwitchCase statement) {
         if (!statement.isDefault()) {
             this.resolve(statement.expression());
         }
@@ -559,10 +570,12 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     private void beginScope() {
         this.scopes.push(new HashMap<>());
+        this.finals.push(new HashMap<>());
     }
 
     private void endScope() {
         this.scopes.pop();
+        this.finals.pop();
     }
 
     public void resolve(final List<Statement> stmtList) {
@@ -619,6 +632,23 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     private void define(final Token name) {
         // set the variable’s value in the scope map to true to mark it as fully initialized and available for use
         if (this.scopes.isEmpty()) return;
+        this.checkFinal(name);
         this.scopes.peek().put(name.lexeme(), true);
+    }
+
+    private void checkFinal(final Token name) {
+        if (this.finals.peek().containsKey(name.lexeme())) {
+            final String existingWhat = this.finals.peek().get(name.lexeme());
+            throw new ScriptEvaluationError("Cannot reassign final %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
+        }
+    }
+
+    private <R extends Finalizable & NamedNode> void makeFinal(final R node, final String what) {
+        // Unlike scopes, finals need to be tracked even in the global scope.
+        if (this.finals.isEmpty()) this.finals.push(new HashMap<>());
+        this.checkFinal(node.name());
+        if (node.isFinal()) {
+            this.finals.peek().put(node.name().lexeme(), what);
+        }
     }
 }

@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable.module;
+package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import java.util.Objects;
 
 /**
  * Implementation of {@link AbstractNativeModule} which provides the instance of the module
- * using the {@link ApplicationContext}. The instance is lazy loaded, and only created when
- * it is accessed for the first time.
+ * based on a predefined instance.
  *
  * @author Guus Lieben
  * @since 22.4
  */
-public class ApplicationBoundNativeModule extends AbstractNativeModule {
+public class InstanceNativeModule extends AbstractNativeModule {
 
     private final Class<?> moduleClass;
-    private final ApplicationContext applicationContext;
+    private final Object instance;
 
-    private Object instance;
-
-    public ApplicationBoundNativeModule(final Class<?> moduleClass, final ApplicationContext applicationContext) {
-        this.moduleClass = moduleClass;
-        this.applicationContext = applicationContext;
+    public InstanceNativeModule(final Object instance) {
+        this.instance = Objects.requireNonNull(instance);
+        this.moduleClass = instance.getClass();
     }
 
     @Override
@@ -45,9 +42,6 @@ public class ApplicationBoundNativeModule extends AbstractNativeModule {
 
     @Override
     protected Object instance() {
-        if (this.instance == null) {
-            this.instance = this.applicationContext.get(this.moduleClass);
-        }
         return this.instance;
     }
 }

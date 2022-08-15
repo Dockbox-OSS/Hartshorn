@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.callable;
+package org.dockbox.hartshorn.hsl.objects;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+public abstract class AbstractFinalizable implements Finalizable {
 
-/**
- * The exception thrown by module loaders accessing native functions. This exception is thrown
- * when a native function is called that is not supported by the module, or is not accessible
- * to the active runtime.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class NativeExecutionException extends ApplicationException {
-    public NativeExecutionException(final String message, final Throwable e) {
-        super(message, e);
+    private boolean finalized;
+
+    protected AbstractFinalizable(final boolean finalized) {
+        this.finalized = finalized;
     }
 
-    public NativeExecutionException(final String message) {
-        super(message);
+    @Override
+    public boolean isFinal() {
+        return this.finalized;
+    }
+
+    @Override
+    public void makeFinal() {
+        this.finalized = true;
     }
 }

@@ -49,6 +49,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
@@ -174,21 +175,22 @@ public class Parser {
     }
 
     private Statement declaration() {
-            if (this.match(TokenType.PREFIX, TokenType.INFIX) && this.match(TokenType.FUN)) return this.funcDeclaration(this.tokens.get(this.current - 2));
+        if (this.match(TokenType.PREFIX, TokenType.INFIX) && this.match(TokenType.FUN)) return this.funcDeclaration(this.tokens.get(this.current - 2));
         if (this.match(TokenType.FUN)) return this.funcDeclaration(this.previous());
         if (this.match(TokenType.VAR)) return this.varDeclaration();
         if (this.match(TokenType.CLASS)) return this.classDeclaration();
         if (this.match(TokenType.NATIVE)) return this.nativeFuncDeclaration();
+        if (this.match(TokenType.FINAL)) return this.finalDeclaration();
         return this.statement();
     }
 
-    private Statement classDeclaration() {
+    private ClassStatement classDeclaration() {
         final Token name = this.expect(TokenType.IDENTIFIER, "class name");
 
-        VariableExpression superclass = null;
+        VariableExpression superClass = null;
         if (this.match(TokenType.EXTENDS)) {
-            this.expect(TokenType.IDENTIFIER, "superclass name");
-            superclass = new VariableExpression(this.previous());
+            this.expect(TokenType.IDENTIFIER, "super class name");
+            superClass = new VariableExpression(this.previous());
         }
 
         this.expectBefore(TokenType.LEFT_BRACE, "class body");
@@ -206,7 +208,7 @@ public class Parser {
 
         this.expectAfter(TokenType.RIGHT_BRACE, "class body");
 
-        return new ClassStatement(name, superclass, constructor, methods);
+        return new ClassStatement(name, superClass, constructor, methods);
     }
 
     private ParametricExecutableStatement methodDeclaration(final Token className) {
@@ -278,7 +280,7 @@ public class Parser {
         return parameters;
     }
 
-    private Statement nativeFuncDeclaration() {
+    private NativeFunctionStatement nativeFuncDeclaration() {
         this.expect(TokenType.FUN);
         final Token moduleName = this.expect(TokenType.IDENTIFIER, "module name");
 
@@ -312,6 +314,20 @@ public class Parser {
 
         this.expectAfter(TokenType.SEMICOLON, "variable declaration");
         return new VariableStatement(name, initializer);
+    }
+
+    private Statement finalDeclaration() {
+        final FinalizableStatement finalizable;
+
+        if (this.match(TokenType.PREFIX, TokenType.INFIX) && this.match(TokenType.FUN)) finalizable = this.funcDeclaration(this.tokens.get(this.current - 2));
+        else if (this.match(TokenType.FUN)) finalizable = this.funcDeclaration(this.previous());
+        else if (this.match(TokenType.VAR)) finalizable = this.varDeclaration();
+        else if (this.match(TokenType.CLASS)) finalizable = this.classDeclaration();
+        else if (this.match(TokenType.NATIVE)) finalizable = this.nativeFuncDeclaration();
+        else throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(TokenType.FINAL.representation(), this.peek().type()), Phase.PARSING, this.peek());
+
+        finalizable.makeFinal();
+        return finalizable;
     }
 
     private Statement breakStatement() {
@@ -696,7 +712,7 @@ public class Parser {
     private SuperExpression superExpression() {
         final Token keyword = this.previous();
         this.expectAfter(TokenType.DOT, TokenType.SUPER);
-        final Token method = this.expect(TokenType.IDENTIFIER, "superclass method name");
+        final Token method = this.expect(TokenType.IDENTIFIER, "super class method name");
         return new SuperExpression(keyword, method);
     }
 

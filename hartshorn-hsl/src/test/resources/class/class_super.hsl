@@ -1,10 +1,10 @@
-class Human{
+class Human {
    fun printType(){
       print("I am a Human");
    }
 }
 
-class Engineer extends Human{
+class Engineer extends Human {
    fun printType(){
       super.printType();
       print("I am an Engineer");
