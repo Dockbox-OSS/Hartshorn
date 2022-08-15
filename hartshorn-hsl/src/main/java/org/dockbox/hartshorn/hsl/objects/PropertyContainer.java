@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -38,7 +39,7 @@ public interface PropertyContainer {
      * @param value The value of the property.
      * @throws RuntimeError If the property is not supported or not accessible.
      */
-    void set(Token name, Object value);
+    void set(Token name, Object value, VariableScope fromScope);
 
     /**
      * Gets a property from the instance. This may either return a {@link CallableNode}
@@ -50,5 +51,5 @@ public interface PropertyContainer {
      * @return The value of the property.
      * @throws RuntimeError If the property is not supported or accessible.
      */
-    Object get(Token name);
+    Object get(Token name, VariableScope fromScope);
 }

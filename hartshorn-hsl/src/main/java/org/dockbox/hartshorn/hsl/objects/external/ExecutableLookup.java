@@ -48,7 +48,7 @@ public class ExecutableLookup {
      * @return The found executable.
      * @param <T> The type of the declaring type.
      */
-    public static <T> MethodContext<?, T> method(final Token at, final TypeContext<T> declaring, final String function, List<Object> arguments) {
+    public static <T> MethodContext<?, T> method(final Token at, final TypeContext<T> declaring, final String function, final List<Object> arguments) {
         final Result<MethodContext<?, T>> zeroParameterMethod = declaring.method(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();

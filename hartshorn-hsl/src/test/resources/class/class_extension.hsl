@@ -1,4 +1,5 @@
 class Car{
+   public name;
 
    constructor(name){
       this.name = name;

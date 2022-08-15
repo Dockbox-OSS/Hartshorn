@@ -51,6 +51,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
@@ -333,6 +334,14 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.makeFinal(statement, "function");
         this.define(statement.name());
         this.resolveFunction(statement, FunctionType.FUNCTION);
+        return null;
+    }
+
+    @Override
+    public Void visit(final FieldStatement statement) {
+        this.makeFinal(statement, "field");
+        this.define(statement.name());
+        this.resolve(statement);
         return null;
     }
 

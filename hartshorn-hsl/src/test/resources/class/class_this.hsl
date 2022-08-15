@@ -1,4 +1,6 @@
 class Person {
+  public name;
+
   fun sayName() {
     print(this.name);
   }

@@ -22,7 +22,7 @@ public interface ClassReference extends CallableNode, Finalizable {
 
     VirtualFunction constructor();
 
-    MethodReference findMethod(String name);
+    MethodReference method(String name);
 
     ClassReference superClass();
 

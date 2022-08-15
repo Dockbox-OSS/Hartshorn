@@ -16,9 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.objects.access.PropertyAccessVerifier;
+import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -43,18 +46,41 @@ public class VirtualInstance implements InstanceReference {
     }
 
     @Override
-    public void set(final Token name, final Object value) {
+    public void set(final Token name, final Object value, final VariableScope fromScope) {
+        final FieldStatement field = this.virtualClass.field(name.lexeme());
+        if (field == null) {
+            throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
+        }
+        if (field.isFinal() && this.fields.containsKey(name.lexeme())) {
+            throw new RuntimeError(name, "Cannot reassign final property '" + name.lexeme() + "'.");
+        }
+        this.checkScopeCanAccess(name, field, fromScope);
         this.fields.put(name.lexeme(), value);
     }
 
     @Override
-    public Object get(final Token name) {
-        if (this.fields.containsKey(name.lexeme())) {
-            return this.fields.get(name.lexeme());
+    public Object get(final Token name, final VariableScope fromScope) {
+        final FieldStatement field = this.virtualClass.field(name.lexeme());
+        if (field != null) {
+            if (this.fields.containsKey(name.lexeme())) {
+                this.checkScopeCanAccess(name, field, fromScope);
+                return this.fields.get(name.lexeme());
+            }
         }
-        final MethodReference method = this.virtualClass.findMethod(name.lexeme());
+        final MethodReference method = this.virtualClass.method(name.lexeme());
         if (method != null) return method.bind(this);
         throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
+    }
+
+    private void checkScopeCanAccess(final Token at, final FieldStatement field, final VariableScope fromScope) {
+        final PropertyAccessVerifier verifier = this.accessVerifier();
+        if (!verifier.verify(at, field, this, fromScope)) {
+            throw new RuntimeError(at, "Cannot access property '" + field.name().lexeme() + "' outside of its class scope.");
+        }
+    }
+
+    protected PropertyAccessVerifier accessVerifier() {
+        return new StandardPropertyAccessVerifier();
     }
 
     @Override
@@ -63,7 +89,7 @@ public class VirtualInstance implements InstanceReference {
     }
 
     @Override
-    public ClassReference type() {
+    public VirtualClass type() {
         return this.virtualClass;
     }
 }

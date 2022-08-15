@@ -37,28 +37,21 @@ public interface MethodWrapper<T> {
     /**
      * The action to perform before a method is visited.
      *
-     * @param method The method that is being visited
-     * @param instance The instance that is being visited
-     * @param args The arguments that are being passed to the method
+     * @param context The context of the method call
      */
     void acceptBefore(ProxyCallbackContext<T> context);
 
     /**
      * The action to perform after a visited method exits without errors.
      *
-     * @param method The method that is being visited
-     * @param instance The instance that is being visited
-     * @param args The arguments that are being passed to the method
+     * @param context The context of the method call
      */
     void acceptAfter(ProxyCallbackContext<T> context);
 
     /**
      * The action to perform after a visited method exits with errors.
      *
-     * @param method The method that is being visited
-     * @param instance The instance that is being visited
-     * @param args The arguments that are being passed to the method
-     * @param error The error that was thrown
+     * @param context The context of the method call
      */
     void acceptError(ProxyCallbackContext<T> context);
 

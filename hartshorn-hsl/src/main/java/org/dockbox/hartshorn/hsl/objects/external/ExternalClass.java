@@ -84,7 +84,7 @@ public class ExternalClass<T> implements ClassReference {
     }
 
     @Override
-    public MethodReference findMethod(final String name) {
+    public MethodReference method(final String name) {
         return new ExternalFunction(this.type().type(), name);
     }
 

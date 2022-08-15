@@ -30,17 +30,19 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     private final VariableExpression superClass;
     private final ConstructorStatement constructor;
     private final List<FunctionStatement> methods;
+    private final List<FieldStatement> fields;
 
-    public ClassStatement(final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods) {
-        this(name, false, name, superClass, constructor, methods);
+    public ClassStatement(final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods, List<FieldStatement> fields) {
+        this(name, false, name, superClass, constructor, methods, fields);
     }
 
-    public ClassStatement(final ASTNode at, final boolean finalized, final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods) {
+    public ClassStatement(final ASTNode at, final boolean finalized, final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods, List<FieldStatement> fields) {
         super(at, finalized);
         this.name = name;
         this.superClass = superClass;
         this.constructor = constructor;
         this.methods = methods;
+        this.fields = fields;
     }
 
     @Override
@@ -58,6 +60,10 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
 
     public List<FunctionStatement> methods() {
         return this.methods;
+    }
+
+    public List<FieldStatement> fields() {
+        return fields;
     }
 
     @Override

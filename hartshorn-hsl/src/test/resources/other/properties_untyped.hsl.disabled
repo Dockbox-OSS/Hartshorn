@@ -1,3 +1,4 @@
+// TODO GLieben: Implement untyped objects (dynamic class Vector?)
 class Vector {}
 
 var v1 = Vector();

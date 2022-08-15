@@ -88,12 +88,12 @@ public class Array implements Iterable<Object>, PropertyContainer {
     }
 
     @Override
-    public void set(final Token name, final Object value) {
+    public void set(final Token name, final Object value, VariableScope fromScope) {
         throw new UnsupportedOperationException("Cannot set properties on arrays.");
     }
 
     @Override
-    public Object get(final Token name) {
+    public Object get(final Token name, VariableScope fromScope) {
         if (name.lexeme().equals("length")) {
             return this.values.length;
         } else {
