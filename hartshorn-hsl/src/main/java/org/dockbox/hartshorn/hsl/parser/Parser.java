@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
@@ -557,10 +558,14 @@ public class Parser {
     }
 
     private Expression equality() {
-        return this.logicalOrBitwise(this::logicalAssign, BinaryExpression::new,
+        return this.logicalOrBitwise(this::range, BinaryExpression::new,
                 TokenType.BANG_EQUAL,
                 TokenType.EQUAL_EQUAL
         );
+    }
+
+    private Expression range() {
+        return this.logicalOrBitwise(this::logicalAssign, RangeExpression::new, TokenType.RANGE);
     }
 
     private Expression logicalAssign() {

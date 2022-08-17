@@ -36,6 +36,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
@@ -286,6 +287,24 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
         }
         return null;
+    }
+
+    @Override
+    public Object visit(final RangeExpression expr) {
+        final Object start = unwrap(this.evaluate(expr.leftExpression()));
+        final Object end = unwrap(this.evaluate(expr.rightExpression()));
+
+        checkNumberOperands(expr.operator(), start, end);
+
+        final int min = ((Number) start).intValue();
+        final int max = ((Number) end).intValue();
+
+        final int length = max - min + 1;
+        final Object[] result = new Object[length];
+        for (int i = 0; i < length; i++) {
+            result[i] = (double) min + i;
+        }
+        return new Array(result);
     }
 
     @Override

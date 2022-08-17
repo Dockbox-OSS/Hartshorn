@@ -103,7 +103,10 @@ public class Lexer {
                 this.addToken(TokenType.COMMA);
                 break;
             case TokenConstants.DOT:
-                this.addToken(TokenType.DOT);
+                this.addToken(this.match(TokenConstants.DOT)
+                        ? TokenType.RANGE
+                        : TokenType.DOT
+                );
                 break;
             case TokenConstants.MINUS:
                 if (this.match(TokenConstants.MINUS)) {
