@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
@@ -72,7 +73,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) {
         final VariableScope variableScope = new VariableScope(this.closure);
-        final List<Token> parameters = this.declaration.parameters();
+        final List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
             throw new RuntimeError(at, "Expected %d %s, but got %d".formatted(
                     parameters.size(),
@@ -80,7 +81,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
                     arguments.size()));
         }
         for (int i = 0; i < parameters.size(); i++) {
-            variableScope.define(parameters.get(i).lexeme(), arguments.get(i));
+            variableScope.define(parameters.get(i).name().lexeme(), arguments.get(i));
         }
         try {
             interpreter.execute(this.declaration.statements(), variableScope);

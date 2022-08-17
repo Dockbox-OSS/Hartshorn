@@ -945,7 +945,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final FunctionStatement functionStatement = statement.functionStatement();
         final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.variableScope(), false);
         if (extensionClass.method(functionStatement.name().lexeme()) != null) {
-            throw new RuntimeException(extensionClass.name() + " class already have method with same name = " + functionStatement.name().lexeme());
+            throw new ScriptEvaluationError("Duplicate method " + extensionClass.name() + "." + functionStatement.name().lexeme(), Phase.INTERPRETING, statement.functionStatement().name());
         }
         extensionClass.addMethod(functionStatement.name().lexeme(), extension);
         return null;

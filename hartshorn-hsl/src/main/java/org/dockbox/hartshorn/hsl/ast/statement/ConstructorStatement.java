@@ -29,7 +29,7 @@ public class ConstructorStatement extends ParametricExecutableStatement {
 
     public ConstructorStatement(final Token keyword,
                                 final Token className,
-                                final List<Token> params,
+                                final List<Parameter> params,
                                 final BlockStatement body) {
         super(keyword, params, body);
         this.keyword = keyword;
