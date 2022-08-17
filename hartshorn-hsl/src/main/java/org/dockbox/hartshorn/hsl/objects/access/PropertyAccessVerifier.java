@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.objects;
+package org.dockbox.hartshorn.hsl.objects.access;
 
-import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.token.Token;
 
-public interface ClassReference extends CallableNode, Finalizable {
-
-    VirtualFunction constructor();
-
-    MethodReference method(String name);
-
-    ClassReference superClass();
-
-    String name();
-
+public interface PropertyAccessVerifier {
+    boolean verify(Token at, FieldStatement field, InstanceReference instance, VariableScope fromScope);
 }

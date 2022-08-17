@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
@@ -64,24 +66,38 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
     }
 
     @Override
-    public void set(final Token name, final Object value) {
+    public void set(final Token name, final Object value, final VariableScope fromScope) {
         this.checkInstance();
-        final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
-        if (field.present()) {
-            field.get().set(this.instance, value);
-        } else {
-            super.set(name, value);
+        final FieldStatement virtualField = super.type().field(name.lexeme());
+        if (virtualField != null) {
+            super.set(name, value, fromScope);
+        }
+        else {
+            final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
+            if (field.present()) {
+                field.get().set(this.instance, value);
+            }
+            else {
+                throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());
+            }
         }
     }
 
     @Override
-    public Object get(final Token name) {
+    public Object get(final Token name, final VariableScope fromScope) {
         this.checkInstance();
-        final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
-        if (field.present()) {
-            return field.get().get(this.instance);
-        } else {
-            return super.get(name);
+        final FieldStatement virtualField = super.type().field(name.lexeme());
+        if (virtualField != null) {
+            return super.get(name, fromScope);
+        }
+        else {
+            final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
+            if (field.present()) {
+                return field.get().get(this.instance);
+            }
+            else {
+                throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());
+            }
         }
     }
 

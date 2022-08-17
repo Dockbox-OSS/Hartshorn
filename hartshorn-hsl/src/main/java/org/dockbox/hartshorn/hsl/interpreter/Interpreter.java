@@ -50,6 +50,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
@@ -97,6 +98,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -603,7 +605,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Object visit(final GetExpression expr) {
         final Object object = this.evaluate(expr.object());
         if (object instanceof PropertyContainer container) {
-            Object result = container.get(expr.name());
+            Object result = container.get(expr.name(), this.variableScope());
             if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
             if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
@@ -619,7 +621,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         if (object instanceof PropertyContainer instance) {
             final Object value = this.evaluate(expr.value());
-            instance.set(expr.name(), value);
+            instance.set(expr.name(), value, this.variableScope());
             return value;
         }
         throw new RuntimeError(expr.name(), "Only instances have properties.");
@@ -640,7 +642,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final int distance = this.locals.get(expr);
         final ClassReference superClass = (ClassReference) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
         final InstanceReference object = (InstanceReference) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
-        final MethodReference method = superClass.findMethod(expr.method().lexeme());
+        final MethodReference method = superClass.method(expr.method().lexeme());
 
         if (method == null) {
             throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
@@ -811,31 +813,40 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         this.variableScope().define(statement.name().lexeme(), null);
 
-        if (statement.superClass() != null) {
-            this.visitingScope = new VariableScope(this.variableScope());
-            this.variableScope().define(TokenType.SUPER.representation(), superClass);
-        }
+        final ClassReference superClassReference = (ClassReference) superClass;
+        this.withNextScope(() -> {
+            if (statement.superClass() != null) {
+                this.visitingScope = new VariableScope(this.variableScope());
+                this.variableScope().define(TokenType.SUPER.representation(), superClassReference);
+            }
 
-        final Map<String, VirtualFunction> methods = new HashMap<>();
+            final Map<String, VirtualFunction> methods = new HashMap<>();
 
-        // Bind all method into the class
-        for (final FunctionStatement method : statement.methods()) {
-            final VirtualFunction function = new VirtualFunction(method, this.variableScope(), false);
-            methods.put(method.name().lexeme(), function);
-        }
+            // Bind all method into the class
+            for (final FunctionStatement method : statement.methods()) {
+                final VirtualFunction function = new VirtualFunction(method, this.variableScope(), false);
+                methods.put(method.name().lexeme(), function);
+            }
 
-        VirtualFunction constructor = null;
-        if (statement.constructor() != null) {
-            constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
-        }
+            VirtualFunction constructor = null;
+            if (statement.constructor() != null) {
+                constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
+            }
 
-        final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), (ClassReference) superClass, constructor, this.variableScope(), methods, statement.isFinal());
+            final Map<String, FieldStatement> fields = statement.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
 
-        if (superClass != null) {
-            this.visitingScope = this.variableScope().enclosing();
-        }
+            final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(),
+                    superClassReference, constructor, this.variableScope(),
+                    methods, fields,
+                    statement.isFinal(), statement.isDynamic());
 
-        this.variableScope().assign(statement.name(), virtualClass);
+            if (superClassReference != null) {
+                this.visitingScope = this.variableScope().enclosing();
+            }
+
+            this.variableScope().enclosing().assign(statement.name(), virtualClass);
+        });
+
         return null;
     }
 
@@ -891,6 +902,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
+    public Void visit(final FieldStatement statement) {
+        final Object value = this.evaluate(statement.initializer());
+        final int distance = this.locals.get(statement.initializer());
+        final PropertyContainer object = (PropertyContainer) this.variableScope().getAt(statement.name(), distance - 1, TokenType.THIS.representation());
+        object.set(statement.name(), value, this.variableScope());
+        return null;
+    }
+
+    @Override
     public Void visit(final ConstructorStatement statement) {
         final VirtualFunction function = new VirtualFunction(statement, this.variableScope(), true);
         this.variableScope().define(statement.initializerIdentifier().lexeme(), function);
@@ -905,7 +925,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         }
         final FunctionStatement functionStatement = statement.functionStatement();
         final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.variableScope(), false);
-        if (extensionClass.findMethod(functionStatement.name().lexeme()) != null) {
+        if (extensionClass.method(functionStatement.name().lexeme()) != null) {
             throw new RuntimeException(extensionClass.name() + " class already have method with same name = " + functionStatement.name().lexeme());
         }
         extensionClass.addMethod(functionStatement.name().lexeme(), extension);

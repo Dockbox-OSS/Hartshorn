@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
@@ -49,13 +50,17 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     private final VirtualFunction constructor;
     private final VariableScope variableScope;
     private final Map<String, VirtualFunction> methods;
+    private final Map<String, FieldStatement> fields;
+    private final boolean isDynamic;
 
     public VirtualClass(final String name,
                         final ClassReference superClass,
                         final VirtualFunction constructor,
                         final VariableScope variableScope,
                         final Map<String, VirtualFunction> methods,
-                        final boolean finalized
+                        final Map<String, FieldStatement> fields,
+                        final boolean finalized,
+                        final boolean isDynamic
     ) {
         super(finalized);
         this.name = name;
@@ -63,6 +68,8 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
         this.constructor = constructor;
         this.variableScope = variableScope;
         this.methods = methods;
+        this.fields = fields;
+        this.isDynamic = isDynamic;
     }
 
     /**
@@ -96,6 +103,19 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     }
 
     /**
+     * Gets all fields of the class.
+     *
+     * @return All fields of the class.
+     */
+    public Map<String, FieldStatement> fields() {
+        return this.fields;
+    }
+
+    public FieldStatement field(final String name) {
+        return this.fields.get(name);
+    }
+
+    /**
      * Adds a method to the class.
      *
      * @param name
@@ -116,13 +136,13 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      * @return The method, or {@code null} if no method is found.
      */
     @Override
-    public MethodReference findMethod(final String name) {
+    public MethodReference method(final String name) {
         if (this.methods.containsKey(name)) {
             return this.methods.get(name);
         }
         // If we can't find this method in class check if this method is from super class
         if (this.superClass != null) {
-            return this.superClass.findMethod(name);
+            return this.superClass.method(name);
         }
         return null;
     }
@@ -134,6 +154,10 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      */
     public VariableScope variableScope() {
         return this.variableScope;
+    }
+
+    public boolean isDynamic() {
+        return this.isDynamic;
     }
 
     @Override

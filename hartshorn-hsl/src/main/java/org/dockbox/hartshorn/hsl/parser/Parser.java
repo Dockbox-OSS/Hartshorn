@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
@@ -49,6 +49,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -57,7 +58,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -187,6 +187,8 @@ public class Parser {
     private ClassStatement classDeclaration() {
         final Token name = this.expect(TokenType.IDENTIFIER, "class name");
 
+        final boolean isDynamic = this.match(TokenType.QUESTION_MARK);
+
         VariableExpression superClass = null;
         if (this.match(TokenType.EXTENDS)) {
             this.expect(TokenType.IDENTIFIER, "super class name");
@@ -196,31 +198,42 @@ public class Parser {
         this.expectBefore(TokenType.LEFT_BRACE, "class body");
 
         final List<FunctionStatement> methods = new ArrayList<>();
+        final List<FieldStatement> fields = new ArrayList<>();
         ConstructorStatement constructor = null;
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
-            final ParametricExecutableStatement declaration = this.methodDeclaration(name);
+            final Statement declaration = this.classBodyStatement(name);
             if (declaration instanceof ConstructorStatement constructorStatement) {
                 constructor = constructorStatement;
-            } else {
-                methods.add((FunctionStatement) declaration);
+            } else if (declaration instanceof FunctionStatement function){
+                methods.add(function);
+            } else if (declaration instanceof FieldStatement field) {
+                fields.add(field);
+            }
+            else {
+                throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass().getSimpleName(), Phase.PARSING, this.peek());
             }
         }
 
         this.expectAfter(TokenType.RIGHT_BRACE, "class body");
 
-        return new ClassStatement(name, superClass, constructor, methods);
+        return new ClassStatement(name, superClass, constructor, methods, fields, isDynamic);
     }
 
-    private ParametricExecutableStatement methodDeclaration(final Token className) {
+    private Statement classBodyStatement(final Token className) {
         if (this.match(TokenType.CONSTRUCTOR)) {
             return this.constructorDeclaration(className);
         }
-        return this.function(TokenType.FUN, TokenType.LEFT_BRACE, (name, parameters) -> {
-            final Token start = this.peek();
-            final List<Statement> statements = this.consumeStatements();
-            final BlockStatement body = new BlockStatement(start, statements);
-            return new FunctionStatement(name, parameters, body);
-        });
+
+        if (this.check(TokenType.FUN)) {
+            return this.function(TokenType.FUN, TokenType.LEFT_BRACE, (name, parameters) -> {
+                final Token start = this.peek();
+                final List<Statement> statements = this.consumeStatements();
+                final BlockStatement body = new BlockStatement(start, statements);
+                return new FunctionStatement(name, parameters, body);
+            });
+        } else {
+            return this.fieldDeclaration();
+        }
     }
 
     private ConstructorStatement constructorDeclaration(final Token className) {
@@ -250,7 +263,7 @@ public class Parser {
             extensionName = this.expect(TokenType.IDENTIFIER, "extension name");
         }
 
-        final List<Token> parameters = functionParameters("function name", expectedNumberOrArguments, token);
+        final List<Token> parameters = this.functionParameters("function name", expectedNumberOrArguments, token);
         final BlockStatement body = this.block();
 
         if (extensionName != null) {
@@ -299,9 +312,16 @@ public class Parser {
     private <T extends Statement> T function(final TokenType keyword, final TokenType end, final BiFunction<Token, List<Token>, T> converter) {
         this.expectBefore(keyword, "method body");
         final Token funcName = this.expect(TokenType.IDENTIFIER, "function name");
-        final List<Token> parameters = functionParameters("method name", MAX_NUM_OF_ARGUMENTS, null);
+        final List<Token> parameters = this.functionParameters("method name", MAX_NUM_OF_ARGUMENTS, null);
         this.expectAfter(end, "value");
         return converter.apply(funcName, parameters);
+    }
+
+    private FieldStatement fieldDeclaration() {
+        final Token modifier = this.find(TokenType.PRIVATE, TokenType.PUBLIC);
+        final boolean isFinal = this.match(TokenType.FINAL);
+        final VariableStatement variable = this.varDeclaration();
+        return new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal);
     }
 
     private VariableStatement varDeclaration() {
@@ -555,13 +575,18 @@ public class Parser {
     }
 
     private boolean match(final TokenType... types) {
+        return this.find(types) != null;
+    }
+
+    private Token find(final TokenType... types) {
         for (final TokenType type : types) {
             if (this.check(type)) {
+                final Token token = this.peek();
                 this.advance();
-                return true;
+                return token;
             }
         }
-        return false;
+        return null;
     }
 
     private boolean check(final TokenType type) {
@@ -701,9 +726,9 @@ public class Parser {
         if (this.match(TokenType.NULL)) return new LiteralExpression(this.peek(), null);
         if (this.match(TokenType.THIS)) return new ThisExpression(this.previous());
         if (this.match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) return new LiteralExpression(this.peek(), this.previous().literal());
-        if (this.match(TokenType.IDENTIFIER)) return identifierExpression();
-        if (this.match(TokenType.LEFT_PAREN)) return groupingExpression();
-        if (this.match(TokenType.SUPER)) return superExpression();
+        if (this.match(TokenType.IDENTIFIER)) return this.identifierExpression();
+        if (this.match(TokenType.LEFT_PAREN)) return this.groupingExpression();
+        if (this.match(TokenType.SUPER)) return this.superExpression();
         if (this.match(TokenType.ARRAY_OPEN)) return this.complexArray();
 
         throw new ScriptEvaluationError("Expected expression, but found " + this.tokens.get(this.current), Phase.PARSING, this.peek());
@@ -743,8 +768,8 @@ public class Parser {
             elements.add(expr);
             return new ArrayLiteralExpression(open, this.previous(), elements);
         }
-        else if (this.match(TokenType.COMMA)) return arrayLiteralExpression(open, expr);
-        else return arrayComprehensionExpression(open, expr);
+        else if (this.match(TokenType.COMMA)) return this.arrayLiteralExpression(open, expr);
+        else return this.arrayComprehensionExpression(open, expr);
     }
 
     private ArrayLiteralExpression arrayLiteralExpression(final Token open, final Expression expr) {

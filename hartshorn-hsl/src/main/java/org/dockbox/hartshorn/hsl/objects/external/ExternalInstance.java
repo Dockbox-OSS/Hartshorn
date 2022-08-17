@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
@@ -55,14 +56,14 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public void set(final Token name, final Object value) {
+    public void set(final Token name, final Object value, VariableScope fromScope) {
         this.type.field(name.lexeme()).present(field -> {
             field.set(this.instance(), value);
         }).orThrow(() -> this.propertyDoesNotExist(name));
     }
 
     @Override
-    public Object get(final Token name) {
+    public Object get(final Token name, VariableScope fromScope) {
         final boolean isMethod = this.type.methods().stream()
                 .anyMatch(method -> method.name().equals(name.lexeme()));
         if (isMethod) return new ExternalFunction(this.type.type(), name.lexeme());
