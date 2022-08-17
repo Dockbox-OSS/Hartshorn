@@ -1,11 +1,11 @@
 class Human {
-   fun printType(){
+   fun printType() {
       print("I am a Human");
    }
 }
 
 class Engineer extends Human {
-   fun printType(){
+   fun printType() {
       super.printType();
       print("I am an Engineer");
    }

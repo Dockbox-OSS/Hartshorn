@@ -1,9 +1,9 @@
 fun makePoint(x, y) {
   fun closure(method) {
-    if (method == "x"){
+    if (method == "x") {
        return x;
     }
-    if (method == "y"){
+    if (method == "y") {
        return y;
     }
     print("unknown method " + method);

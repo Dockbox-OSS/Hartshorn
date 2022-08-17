@@ -1,12 +1,10 @@
 var length = 2;
 
 fun arrayContains(arr, obj) {
-   var index = 0;
-   while (index < length) {
-      if (arr[index] == obj) {
-          return true;
+   for (var o in arr) {
+      if (o == obj) {
+         return true;
       }
-      index = index + 1;
    }
    return false;
 }
