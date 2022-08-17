@@ -27,7 +27,7 @@ public class FunctionStatement extends ParametricExecutableStatement implements 
     private final Token name;
 
     public FunctionStatement(final Token name,
-                             final List<Token> params,
+                             final List<Parameter> params,
                              final BlockStatement body) {
         super(name, params, body);
         this.name = name;

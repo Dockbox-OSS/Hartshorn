@@ -17,10 +17,11 @@
 package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -113,9 +114,10 @@ public abstract class AbstractNativeModule implements NativeModule {
                 if (!method.isPublic()) continue;
                 final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
 
-                final List<Token> parameters = new ArrayList<>();
+                final List<Parameter> parameters = new ArrayList<>();
                 for (final ParameterContext<?> parameter : method.parameters()) {
-                    parameters.add(new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1));
+                    final Token parameterName = new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1);
+                    parameters.add(new Parameter(parameterName));
                 }
                 final NativeFunctionStatement functionStatement = new NativeFunctionStatement(token, moduleName, method, parameters);
                 functionStatements.add(functionStatement);

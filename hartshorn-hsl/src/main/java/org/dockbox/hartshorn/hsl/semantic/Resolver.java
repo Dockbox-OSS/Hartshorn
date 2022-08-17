@@ -60,6 +60,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
@@ -624,9 +625,9 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.currentFunction = type;
 
         this.beginScope();
-        for (final Token param : executable.parameters()) {
-            this.declare(param);
-            this.define(param);
+        for (final Parameter param : executable.parameters()) {
+            this.declare(param.name());
+            this.define(param.name());
         }
         this.resolve(executable.statements());
         this.endScope();
