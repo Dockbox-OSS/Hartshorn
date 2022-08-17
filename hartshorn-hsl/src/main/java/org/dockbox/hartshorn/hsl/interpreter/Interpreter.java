@@ -835,7 +835,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
             final Map<String, FieldStatement> fields = statement.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
 
-            final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(), superClassReference, constructor, this.variableScope(), methods, fields, statement.isFinal());
+            final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(),
+                    superClassReference, constructor, this.variableScope(),
+                    methods, fields,
+                    statement.isFinal(), statement.isDynamic());
 
             if (superClassReference != null) {
                 this.visitingScope = this.variableScope().enclosing();

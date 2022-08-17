@@ -48,24 +48,22 @@ public class VirtualInstance implements InstanceReference {
     @Override
     public void set(final Token name, final Object value, final VariableScope fromScope) {
         final FieldStatement field = this.virtualClass.field(name.lexeme());
-        if (field == null) {
+        if (field == null && !this.virtualClass.isDynamic()) {
             throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
         }
-        if (field.isFinal() && this.fields.containsKey(name.lexeme())) {
+        if (field != null && field.isFinal() && this.fields.containsKey(name.lexeme())) {
             throw new RuntimeError(name, "Cannot reassign final property '" + name.lexeme() + "'.");
         }
-        this.checkScopeCanAccess(name, field, fromScope);
+        if (field != null) this.checkScopeCanAccess(name, field, fromScope);
         this.fields.put(name.lexeme(), value);
     }
 
     @Override
     public Object get(final Token name, final VariableScope fromScope) {
         final FieldStatement field = this.virtualClass.field(name.lexeme());
-        if (field != null) {
-            if (this.fields.containsKey(name.lexeme())) {
-                this.checkScopeCanAccess(name, field, fromScope);
-                return this.fields.get(name.lexeme());
-            }
+        if (this.virtualClass.isDynamic() || (field != null && this.fields.containsKey(name.lexeme()))) {
+            if (field != null) this.checkScopeCanAccess(name, field, fromScope);
+            return this.fields.get(name.lexeme());
         }
         final MethodReference method = this.virtualClass.method(name.lexeme());
         if (method != null) return method.bind(this);

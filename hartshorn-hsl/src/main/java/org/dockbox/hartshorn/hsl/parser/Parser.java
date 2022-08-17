@@ -187,6 +187,8 @@ public class Parser {
     private ClassStatement classDeclaration() {
         final Token name = this.expect(TokenType.IDENTIFIER, "class name");
 
+        final boolean isDynamic = this.match(TokenType.QUESTION_MARK);
+
         VariableExpression superClass = null;
         if (this.match(TokenType.EXTENDS)) {
             this.expect(TokenType.IDENTIFIER, "super class name");
@@ -214,7 +216,7 @@ public class Parser {
 
         this.expectAfter(TokenType.RIGHT_BRACE, "class body");
 
-        return new ClassStatement(name, superClass, constructor, methods, fields);
+        return new ClassStatement(name, superClass, constructor, methods, fields, isDynamic);
     }
 
     private Statement classBodyStatement(final Token className) {

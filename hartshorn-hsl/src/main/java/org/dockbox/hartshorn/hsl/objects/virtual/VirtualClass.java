@@ -51,6 +51,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     private final VariableScope variableScope;
     private final Map<String, VirtualFunction> methods;
     private final Map<String, FieldStatement> fields;
+    private final boolean isDynamic;
 
     public VirtualClass(final String name,
                         final ClassReference superClass,
@@ -58,7 +59,8 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
                         final VariableScope variableScope,
                         final Map<String, VirtualFunction> methods,
                         final Map<String, FieldStatement> fields,
-                        final boolean finalized
+                        final boolean finalized,
+                        final boolean isDynamic
     ) {
         super(finalized);
         this.name = name;
@@ -67,6 +69,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
         this.variableScope = variableScope;
         this.methods = methods;
         this.fields = fields;
+        this.isDynamic = isDynamic;
     }
 
     /**
@@ -151,6 +154,10 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      */
     public VariableScope variableScope() {
         return this.variableScope;
+    }
+
+    public boolean isDynamic() {
+        return this.isDynamic;
     }
 
     @Override

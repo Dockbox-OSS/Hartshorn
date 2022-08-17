@@ -31,18 +31,26 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     private final ConstructorStatement constructor;
     private final List<FunctionStatement> methods;
     private final List<FieldStatement> fields;
+    private final boolean isDynamic;
 
-    public ClassStatement(final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods, List<FieldStatement> fields) {
-        this(name, false, name, superClass, constructor, methods, fields);
+    public ClassStatement(final Token name,
+                          final VariableExpression superClass, final ConstructorStatement constructor,
+                          final List<FunctionStatement> methods, final List<FieldStatement> fields,
+                          final boolean isDynamic) {
+        this(name, false, name, superClass, constructor, methods, fields, isDynamic);
     }
 
-    public ClassStatement(final ASTNode at, final boolean finalized, final Token name, final VariableExpression superClass, final ConstructorStatement constructor, final List<FunctionStatement> methods, List<FieldStatement> fields) {
+    public ClassStatement(final ASTNode at, final boolean finalized, final Token name,
+                          final VariableExpression superClass, final ConstructorStatement constructor,
+                          final List<FunctionStatement> methods, final List<FieldStatement> fields,
+                          final boolean isDynamic) {
         super(at, finalized);
         this.name = name;
         this.superClass = superClass;
         this.constructor = constructor;
         this.methods = methods;
         this.fields = fields;
+        this.isDynamic = isDynamic;
     }
 
     @Override
@@ -64,6 +72,10 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
 
     public List<FieldStatement> fields() {
         return fields;
+    }
+
+    public boolean isDynamic() {
+        return this.isDynamic;
     }
 
     @Override

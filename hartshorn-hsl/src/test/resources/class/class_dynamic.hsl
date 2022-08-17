@@ -1,5 +1,4 @@
-// TODO GLieben: Implement untyped objects (dynamic class Vector?)
-class Vector {}
+class Vector? { }
 
 var v1 = Vector();
 v1.x = 10;
@@ -9,7 +8,7 @@ var v2 = Vector();
 v2.x = 20;
 v2.y = 10;
 
-fun sumVector(){
+fun sumVector() {
    var result = Vector();
    result.x = v1.x + v2.x;
    result.y = v1.y + v2.y;
@@ -20,4 +19,4 @@ fun sumVector(){
 var v2 = sumVector();
 
 print("V2 x : " + v2.x);
-print("V3 x : " + v2.y);
+print("V2 y : " + v2.y);
