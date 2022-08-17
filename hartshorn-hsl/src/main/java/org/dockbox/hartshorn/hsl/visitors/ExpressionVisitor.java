@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
@@ -49,6 +50,8 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  */
 public interface ExpressionVisitor<R> {
     R visit(BinaryExpression expr);
+
+    R visit(RangeExpression expr);
 
     R visit(GroupingExpression expr);
 

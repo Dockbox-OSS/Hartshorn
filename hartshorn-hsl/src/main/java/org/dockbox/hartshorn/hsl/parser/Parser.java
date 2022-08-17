@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
-import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ElvisExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -32,9 +31,11 @@ import org.dockbox.hartshorn.hsl.ast.expression.GetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.GroupingExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
@@ -537,10 +538,14 @@ public class Parser {
     }
 
     private Expression equality() {
-        return this.logicalOrBitwise(this::logicalAssign, BinaryExpression::new,
+        return this.logicalOrBitwise(this::range, BinaryExpression::new,
                 TokenType.BANG_EQUAL,
                 TokenType.EQUAL_EQUAL
         );
+    }
+
+    private Expression range() {
+        return this.logicalOrBitwise(this::logicalAssign, RangeExpression::new, TokenType.RANGE);
     }
 
     private Expression logicalAssign() {

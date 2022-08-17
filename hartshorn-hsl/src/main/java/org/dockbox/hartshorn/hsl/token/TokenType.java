@@ -64,6 +64,7 @@ public enum TokenType {
     MINUS_MINUS(builder -> builder.repeats(MINUS).ok()),
     SHIFT_RIGHT(builder -> builder.repeats(GREATER).ok()),
     SHIFT_LEFT(builder -> builder.repeats(LESS).ok()),
+    RANGE(builder -> builder.repeats(DOT).ok()),
     LOGICAL_SHIFT_RIGHT(builder -> builder.combines(GREATER, GREATER, GREATER).ok()),
     AND(builder -> builder.repeats(BITWISE_AND).ok()),
     OR(builder -> builder.repeats(BITWISE_OR).ok()),

@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.TernaryExpression;
@@ -121,6 +122,13 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final BinaryExpression expr) {
+        this.resolve(expr.leftExpression());
+        this.resolve(expr.rightExpression());
+        return null;
+    }
+
+    @Override
+    public Void visit(final RangeExpression expr) {
         this.resolve(expr.leftExpression());
         this.resolve(expr.rightExpression());
         return null;
