@@ -225,4 +225,25 @@ public class ScriptRuntimeTests {
     ScriptContext assertNoErrorsReported(final HslScript script) {
         return Assertions.assertDoesNotThrow(script::evaluate);
     }
+
+    @Test
+    void name() {
+        assertNoErrorsReported("""
+                class Vector {
+                    private x {
+                        public get
+                    }
+                    public y {
+                        public set(value) {
+                            this.x = value * 2
+                            yield value
+                        }
+                    }
+                }
+                
+                var vector = Vector()
+                vector.y = 1
+                print(vector.x)
+                """);
+    }
 }

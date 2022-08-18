@@ -57,6 +57,22 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         this.isInitializer = isInitializer;
     }
 
+    public ParametricExecutableStatement declaration() {
+        return this.declaration;
+    }
+
+    public VariableScope closure() {
+        return this.closure;
+    }
+
+    public InstanceReference instance() {
+        return this.instance;
+    }
+
+    public boolean isInitializer() {
+        return this.isInitializer;
+    }
+
     /**
      * Creates a new {@link VirtualFunction} bound to the given instance. This will cause
      * the function to use the given instance when invoking.

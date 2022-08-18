@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement.ReturnType;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
@@ -65,11 +66,14 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     private List<Statement> enhanceTestStatement(final List<Statement> statements) {
         final Statement lastStatement = statements.get(statements.size() - 1);
-        if (!(lastStatement instanceof ReturnStatement)) {
+        if (!(lastStatement instanceof ReturnStatement returnStatement)) {
             final ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            final Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
-            final ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
+            final Token returnToken = new Token(TokenType.YIELD, VALIDATION_ID, -1, -1);
+            final ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression(), ReturnType.YIELD);
             statements.set(statements.size() - 1, returnStatement);
+        }
+        else if (returnStatement.returnType() != ReturnType.YIELD) {
+            throw new ScriptEvaluationError("Expected last statement to be a yield a value, but got explicit return call.", Phase.RESOLVING, lastStatement);
         }
 
         final Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);

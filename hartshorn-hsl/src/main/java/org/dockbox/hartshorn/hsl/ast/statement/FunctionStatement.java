@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
-public class FunctionStatement extends ParametricExecutableStatement implements NamedNode {
+public class FunctionStatement extends ParametricExecutableBodyStatement implements NamedNode {
 
     private final Token name;
 

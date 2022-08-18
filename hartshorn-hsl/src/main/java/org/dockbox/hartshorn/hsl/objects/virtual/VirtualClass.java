@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
@@ -43,14 +42,14 @@ import java.util.Objects;
  * @author Guus Lieben
  * @since 22.4
  */
-public final class VirtualClass extends AbstractFinalizable implements ClassReference {
+public class VirtualClass extends AbstractFinalizable implements ClassReference {
 
     private final String name;
     private final ClassReference superClass;
     private final VirtualFunction constructor;
     private final VariableScope variableScope;
     private final Map<String, VirtualFunction> methods;
-    private final Map<String, FieldStatement> fields;
+    private final Map<String, VirtualProperty> fields;
     private final boolean isDynamic;
 
     public VirtualClass(final String name,
@@ -58,7 +57,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
                         final VirtualFunction constructor,
                         final VariableScope variableScope,
                         final Map<String, VirtualFunction> methods,
-                        final Map<String, FieldStatement> fields,
+                        final Map<String, VirtualProperty> fields,
                         final boolean finalized,
                         final boolean isDynamic
     ) {
@@ -107,11 +106,11 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      *
      * @return All fields of the class.
      */
-    public Map<String, FieldStatement> fields() {
+    public Map<String, VirtualProperty> fields() {
         return this.fields;
     }
 
-    public FieldStatement field(final String name) {
+    public VirtualProperty property(final String name) {
         return this.fields.get(name);
     }
 
@@ -123,7 +122,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      * @param function
      *         The function to add.
      */
-    public void addMethod(final String name, final VirtualFunction function) {
+    public void extensionMethod(final String name, final VirtualFunction function) {
         this.methods.put(name, function);
     }
 

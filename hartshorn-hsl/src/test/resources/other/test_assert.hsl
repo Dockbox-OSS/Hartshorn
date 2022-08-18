@@ -3,5 +3,5 @@ fun sum(x, y) {
 }
 
 test ("test sum function") {
-   return sum(1, 1) == 2;
+   yield sum(1, 1) == 2;
 }

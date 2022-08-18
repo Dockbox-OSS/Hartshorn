@@ -35,13 +35,15 @@ public class VirtualClassTests {
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> propertyAccessors() {
+        final String readMessage = "Cannot read property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
+        final String writeMessage = "Cannot reassign property name of User because it is final.";
         return Stream.of(
                 Arguments.of("public", "getName()", false, null),
                 Arguments.of("private", "getName()", false, null),
                 Arguments.of("", "getName()", false, null),
 
                 Arguments.of("public", "name", false, null),
-                Arguments.of("private", "name", true, "Cannot access property 'name' outside of its class scope"),
+                Arguments.of("private", "name", true, readMessage),
                 Arguments.of("", "name", false, null),
 
                 Arguments.of("public", "setName(\"Foo\")", false, null),
@@ -49,7 +51,7 @@ public class VirtualClassTests {
                 Arguments.of("", "setName(\"Foo\")", false, null),
 
                 Arguments.of("public", "name = \"Foo\"", false, null),
-                Arguments.of("private", "name = \"Foo\"", true, "Cannot access property 'name' outside of its class scope"),
+                Arguments.of("private", "name = \"Foo\"", true, readMessage),
                 Arguments.of("", "name = \"Foo\"", false, null),
 
                 Arguments.of("public final", "getName()", false, null),
@@ -57,16 +59,16 @@ public class VirtualClassTests {
                 Arguments.of("final", "getName()", false, null),
 
                 Arguments.of("public final", "name", false, null),
-                Arguments.of("private final", "name", true, "Cannot access property 'name' outside of its class scope"),
+                Arguments.of("private final", "name", true, readMessage),
                 Arguments.of("final", "name", false, null),
 
-                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
+                Arguments.of("public final", "setName(\"Foo\")", true, writeMessage),
+                Arguments.of("private final", "setName(\"Foo\")", true, writeMessage),
+                Arguments.of("final", "setName(\"Foo\")", true, writeMessage),
 
-                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
-                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
-                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign final property 'name'")
+                Arguments.of("public final", "name = \"Foo\"", true, writeMessage),
+                Arguments.of("private final", "name = \"Foo\"", true, readMessage),
+                Arguments.of("final", "name = \"Foo\"", true, writeMessage)
         );
     }
 
@@ -93,7 +95,7 @@ public class VirtualClassTests {
         if (shouldFail) {
             final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
             String errorMessage = error.getMessage();
-            errorMessage = errorMessage.substring(0, errorMessage.indexOf("."));
+            errorMessage = errorMessage.substring(0, errorMessage.indexOf(" While "));
             Assertions.assertEquals(message, errorMessage);
         } else {
             Assertions.assertDoesNotThrow(script::evaluate);

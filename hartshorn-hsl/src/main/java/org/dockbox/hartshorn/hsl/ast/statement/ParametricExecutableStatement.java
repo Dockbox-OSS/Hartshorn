@@ -23,25 +23,17 @@ import java.util.List;
 public abstract class ParametricExecutableStatement extends Function {
 
     private final List<Parameter> params;
-    private final BlockStatement body;
 
-    protected ParametricExecutableStatement(final Token token, final List<Parameter> params, final BlockStatement body) {
+    protected ParametricExecutableStatement(final Token token, final List<Parameter> params) {
         super(token);
         this.params = params;
-        this.body = body;
     }
 
     public List<Parameter> parameters() {
         return this.params;
     }
 
-    public List<Statement> statements() {
-        return this.body.statements();
-    }
-
-    public BlockStatement body() {
-        return this.body;
-    }
+    public abstract List<Statement> statements();
 
     public static class Parameter {
 

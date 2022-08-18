@@ -52,6 +52,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -109,7 +111,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         FUNCTION,
         METHOD,
         INITIALIZER,
-        TEST
+        FIELD_MEMBER,
+        TEST,
     }
 
     private enum ClassType {
@@ -340,17 +343,32 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
 
     @Override
     public Void visit(final FunctionStatement statement) {
-        this.makeFinal(statement, "function");
         this.define(statement.name());
+        this.makeFinal(statement, "function");
         this.resolveFunction(statement, FunctionType.FUNCTION);
         return null;
     }
 
     @Override
     public Void visit(final FieldStatement statement) {
-        this.makeFinal(statement, "field");
         this.define(statement.name());
-        this.resolve(statement);
+        this.makeFinal(statement, "field");
+
+        this.resolve(statement.getter());
+        this.resolve(statement.setter());
+
+        return null;
+    }
+
+    @Override
+    public Void visit(final FieldGetStatement statement) {
+        if (statement.hasBody()) this.resolveFunction(statement, FunctionType.FIELD_MEMBER);
+        return null;
+    }
+
+    @Override
+    public Void visit(final FieldSetStatement statement) {
+        if (statement.hasBody()) this.resolveFunction(statement, FunctionType.FIELD_MEMBER);
         return null;
     }
 
@@ -428,6 +446,9 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.beginScope();
         this.scopes.peek().put(TokenType.THIS.representation(), true);
         this.finals.peek().put(TokenType.THIS.representation(), "instance variable");
+        for (final FieldStatement field : statement.fields()) {
+            this.resolve(field);
+        }
         for (final FunctionStatement method : statement.methods()) {
             this.resolveFunction(method, FunctionType.METHOD);
         }
@@ -603,11 +624,11 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     private void resolve(final Statement stmt) {
-        stmt.accept(this);
+        if (stmt != null) stmt.accept(this);
     }
 
     private void resolve(final Expression expr) {
-        expr.accept(this);
+        if (expr != null) expr.accept(this);
     }
 
     private void resolveLocal(final Expression expr, final Token name) {

@@ -16,29 +16,27 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
-
 /**
- * Represents any unspecified error which may occur during the execution of
- * a script.
+ * Represents a specific return value, which immediately exits the current
+ * scope, even if there are more statements to evaluate.
  *
  * @author Guus Lieben
  * @since 22.4
  */
-public class RuntimeError extends RuntimeException {
+public class Yield extends RuntimeException {
 
-    private final ASTNode at;
+    private final Object value;
 
-    public RuntimeError(final ASTNode at, final String message) {
-        super(message);
-        this.at = at;
+    public Yield(final Object value) {
+        super(null, null, false, false);
+        this.value = value;
     }
 
     /**
-     * The token at which the error occurred.
-     * @return The token at which the error occurred.
+     * Gets the value of the return statement.
+     * @return The value of the statement.
      */
-    public ASTNode at() {
-        return this.at;
+    public Object value() {
+        return this.value;
     }
 }

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -24,6 +23,7 @@ import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
@@ -66,11 +66,11 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(final Interpreter interpreter, final Token name, final Object value, final VariableScope fromScope) {
         this.checkInstance();
-        final FieldStatement virtualField = super.type().field(name.lexeme());
-        if (virtualField != null) {
-            super.set(name, value, fromScope);
+        final VirtualProperty property = super.type().property(name.lexeme());
+        if (property != null) {
+            super.set(interpreter, name, value, fromScope);
         }
         else {
             final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
@@ -84,11 +84,11 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
+    public Object get(final Interpreter interpreter, final Token name, final VariableScope fromScope) {
         this.checkInstance();
-        final FieldStatement virtualField = super.type().field(name.lexeme());
-        if (virtualField != null) {
-            return super.get(name, fromScope);
+        final VirtualProperty property = super.type().property(name.lexeme());
+        if (property != null) {
+            return super.get(interpreter, name, fromScope);
         }
         else {
             final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());

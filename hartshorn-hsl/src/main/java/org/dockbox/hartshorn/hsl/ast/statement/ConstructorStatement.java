@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
-public class ConstructorStatement extends ParametricExecutableStatement {
+public class ConstructorStatement extends ParametricExecutableBodyStatement {
 
     private final Token keyword;
     private final Token className;

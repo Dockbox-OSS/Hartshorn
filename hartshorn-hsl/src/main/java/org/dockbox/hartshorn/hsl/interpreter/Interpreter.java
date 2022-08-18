@@ -51,6 +51,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldMemberStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -80,10 +83,13 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalFunction;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualMemberFunction;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Yield;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
@@ -94,12 +100,11 @@ import org.slf4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -185,7 +190,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
         }
         catch (final RuntimeError error) {
-            throw new ScriptEvaluationError(error, Phase.INTERPRETING, error.token());
+            throw new ScriptEvaluationError(error, Phase.INTERPRETING, error.at());
         }
         finally {
             this.isRunning = false;
@@ -624,7 +629,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Object visit(final GetExpression expr) {
         final Object object = this.evaluate(expr.object());
         if (object instanceof PropertyContainer container) {
-            Object result = container.get(expr.name(), this.variableScope());
+            Object result = container.get(this, expr.name(), this.variableScope());
             if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
             if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
@@ -640,7 +645,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         if (object instanceof PropertyContainer instance) {
             final Object value = this.evaluate(expr.value());
-            instance.set(expr.name(), value, this.variableScope());
+            instance.set(this, expr.name(), value, this.variableScope());
             return value;
         }
         throw new RuntimeError(expr.name(), "Only instances have properties.");
@@ -813,7 +818,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         if (statement.value() != null) {
             value = this.evaluate(statement.value());
         }
-        throw new Return(value);
+        throw switch (statement.returnType()) {
+            case RETURN -> new Return(value);
+            case YIELD -> new Yield(value);
+            default -> new RuntimeError(statement.keyword(), "Unknown return type.");
+        };
     }
 
     @Override
@@ -832,32 +841,38 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         this.variableScope().define(statement.name().lexeme(), null);
 
+        final VirtualClassBuilder builder = new VirtualClassBuilder(statement.name());
+
         final ClassReference superClassReference = (ClassReference) superClass;
-        this.withNextScope(() -> {
+        builder.superClass(superClassReference);
+        builder.isFinal(statement.isFinal());
+        builder.dynamic(statement.isDynamic());
+
+        this.withNextScope(builder, () -> {
+            builder.variableScope(this.variableScope());
+
             if (statement.superClass() != null) {
                 this.visitingScope = new VariableScope(this.variableScope());
                 this.variableScope().define(TokenType.SUPER.representation(), superClassReference);
             }
 
-            final Map<String, VirtualFunction> methods = new HashMap<>();
-
             // Bind all method into the class
             for (final FunctionStatement method : statement.methods()) {
                 final VirtualFunction function = new VirtualFunction(method, this.variableScope(), false);
-                methods.put(method.name().lexeme(), function);
+                builder.methods().put(method.name().lexeme(), function);
             }
 
-            VirtualFunction constructor = null;
             if (statement.constructor() != null) {
-                constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
+                builder.constructor(new VirtualFunction(statement.constructor(), this.variableScope(), true));
             }
 
-            final Map<String, FieldStatement> fields = statement.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
+            statement.fields().forEach(field -> {
+                builder.field(field);
+                this.execute(field.getter());
+                this.execute(field.setter());
+            });
 
-            final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(),
-                    superClassReference, constructor, this.variableScope(),
-                    methods, fields,
-                    statement.isFinal(), statement.isDynamic());
+            final VirtualClass virtualClass = builder.build();
 
             if (superClassReference != null) {
                 this.visitingScope = this.variableScope().enclosing();
@@ -883,8 +898,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         try {
             this.execute(statement.body(), variableScope);
         }
-        catch (final Return r) {
-            final Object value = r.value();
+        catch (final Yield yield) {
+            final Object value = yield.value();
             final boolean val = this.isTruthy(value);
             this.resultCollector.addResult(name, val);
         }
@@ -925,8 +940,35 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object value = this.evaluate(statement.initializer());
         final int distance = this.locals.get(statement.initializer());
         final PropertyContainer object = (PropertyContainer) this.variableScope().getAt(statement.name(), distance - 1, TokenType.THIS.representation());
-        object.set(statement.name(), value, this.variableScope());
+        object.set(this, statement.name(), value, this.variableScope());
+
+        this.execute(statement.getter());
+        this.execute(statement.setter());
+
         return null;
+    }
+
+    @Override
+    public Void visit(final FieldGetStatement statement) {
+        this.visitFieldMember(statement, VirtualClassBuilder::getter);
+        return null;
+    }
+
+    @Override
+    public Void visit(final FieldSetStatement statement) {
+        this.visitFieldMember(statement, VirtualClassBuilder::setter);
+        return null;
+    }
+
+    private void visitFieldMember(final FieldMemberStatement statement, final BiConsumer<VirtualClassBuilder, VirtualMemberFunction> applyMember) {
+        final VariableScope variableScope = this.variableScope();
+        if (variableScope.owner() instanceof VirtualClassBuilder builder) {
+            final VirtualMemberFunction function = new VirtualMemberFunction(statement, this.variableScope(), false, statement.field().name(), statement.modifier());
+            applyMember.accept(builder, function);
+        }
+        else {
+            throw new RuntimeError(statement.name(), "Cannot access field '" + statement.field().name() + "' from non-class.");
+        }
     }
 
     @Override
@@ -947,7 +989,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         if (extensionClass.method(functionStatement.name().lexeme()) != null) {
             throw new ScriptEvaluationError("Duplicate method " + extensionClass.name() + "." + functionStatement.name().lexeme(), Phase.INTERPRETING, statement.functionStatement().name());
         }
-        extensionClass.addMethod(functionStatement.name().lexeme(), extension);
+        extensionClass.extensionMethod(functionStatement.name().lexeme(), extension);
         return null;
     }
 
@@ -1008,8 +1050,6 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return object;
     }
 
-
-
     private void checkNumberOperand(final Token operator, final Object operand) {
         if (operand instanceof Double) return;
         throw new RuntimeError(operator, "Operand must be a number.");
@@ -1021,7 +1061,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     private void execute(final Statement stmt) {
-        stmt.accept(this);
+        if (stmt != null) stmt.accept(this);
     }
 
     public void execute(final BlockStatement blockStatement, final VariableScope localVariableScope) {
@@ -1093,11 +1133,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
     }
 
-    private void withNextScope(final Runnable runnable) {
-        final VariableScope nextScope = new VariableScope(this.variableScope());
+    private void withNextScope(final ScopeOwner owner, final Runnable runnable) {
+        final VariableScope nextScope = new VariableScope(this.variableScope(), owner);
         final VariableScope previous = this.variableScope();
         this.visitingScope = nextScope;
         runnable.run();
         this.visitingScope = previous;
+    }
+
+    private void withNextScope(final Runnable runnable) {
+        this.withNextScope(null, runnable);
     }
 }

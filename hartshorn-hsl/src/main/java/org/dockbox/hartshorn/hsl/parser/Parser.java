@@ -50,6 +50,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldMemberStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
@@ -62,6 +65,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement.ReturnType;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
@@ -154,7 +158,7 @@ public class Parser {
         if (this.match(TokenType.WHILE)) return this.whileStatement();
         if (this.match(TokenType.FOR)) return this.forStatement();
         if (this.match(TokenType.REPEAT)) return this.repeatStatement();
-        if (this.match(TokenType.RETURN)) return this.returnStatement();
+        if (this.match(TokenType.RETURN, TokenType.YIELD)) return this.returnStatement();
         if (this.check(TokenType.LEFT_BRACE)) return this.block();
         if (this.match(TokenType.BREAK)) return this.breakStatement();
         if (this.match(TokenType.CONTINUE)) return this.continueStatement();
@@ -324,7 +328,80 @@ public class Parser {
         final Token modifier = this.find(TokenType.PRIVATE, TokenType.PUBLIC);
         final boolean isFinal = this.match(TokenType.FINAL);
         final VariableStatement variable = this.varDeclaration();
-        return new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal);
+
+        final FieldStatement fieldStatement = new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal);
+
+        if (this.match(TokenType.LEFT_BRACE)) {
+            this.fieldMemberStatement(fieldStatement); // Get or set
+            this.fieldMemberStatement(fieldStatement); // Get or set
+            this.expectAfter(TokenType.RIGHT_BRACE, "field members");
+        }
+
+        return fieldStatement;
+    }
+
+    private FieldMemberStatement fieldMemberStatement(final FieldStatement fieldStatement) {
+        final Token modifier = this.find(TokenType.PRIVATE, TokenType.PUBLIC);
+        final Token member = this.find(TokenType.GET, TokenType.SET);
+        if (member == null) {
+            if (modifier != null) this.current -= 1;
+            return null;
+        }
+        return switch (member.type()) {
+            case GET -> {
+                final FieldGetStatement statement = this.fieldGetStatement(modifier, member, fieldStatement);
+                fieldStatement.withGetter(statement);
+                yield statement;
+            }
+            case SET -> {
+                final FieldSetStatement statement = this.fieldSetStatement(modifier, member, fieldStatement);
+                fieldStatement.withSetter(statement);
+                yield statement;
+            }
+            default -> throw new ScriptEvaluationError("Unsupported field member type: " + member.type(), Phase.PARSING, member);
+        };
+    }
+
+    private FieldGetStatement fieldGetStatement(final Token modifier, final Token get, final FieldStatement field) {
+        final List<Statement> body;
+        if (this.match(TokenType.LEFT_PAREN)) {
+            this.expectAfter(TokenType.RIGHT_PAREN, "field get declaration");
+            body = this.fieldMemberBody();
+        }
+        else {
+            this.expectAfter(TokenType.SEMICOLON, "field get declaration");
+            body = null;
+        }
+        return new FieldGetStatement(modifier, get, field, body);
+    }
+
+    private FieldSetStatement fieldSetStatement(final Token modifier, final Token set, final FieldStatement field) {
+        if (this.match(TokenType.LEFT_PAREN)) {
+            final Token parameterName = this.expect(TokenType.IDENTIFIER, "parameter name");
+            final Parameter parameter = new Parameter(parameterName);
+            this.expectAfter(TokenType.RIGHT_PAREN, "field set declaration");
+
+            final List<Statement> body = this.fieldMemberBody();
+            return new FieldSetStatement(modifier, set, field, body, parameter);
+        }
+        else{
+            this.expectAfter(TokenType.SEMICOLON, "field set declaration");
+            return new FieldSetStatement(modifier, set, field, null, null);
+        }
+    }
+
+    private List<Statement> fieldMemberBody() {
+        final Statement statement = this.blockOrExpression(TokenType.LEFT_BRACE, TokenType.RIGHT_BRACE);
+        if (statement instanceof BlockStatement block) {
+            this.match(TokenType.RIGHT_BRACE); // blockOrExpression doesn't consume closing tokens
+            return block.statements();
+        }
+        else if (statement instanceof ExpressionStatement expressionStatement) {
+            return List.of(new ReturnStatement(new Token(TokenType.YIELD, TokenType.YIELD.representation(), -1, -1), expressionStatement.expression(), ReturnType.YIELD));
+        }
+        else {
+            throw new ScriptEvaluationError("Unsupported field member body type: " + statement.getClass().getSimpleName(), Phase.PARSING, statement);
+        }
     }
 
     private VariableStatement varDeclaration() {
@@ -437,7 +514,12 @@ public class Parser {
             value = this.expression();
         }
         this.expectAfter(TokenType.SEMICOLON, "return value");
-        return new ReturnStatement(keyword, value);
+        final ReturnType returnType = switch (keyword.type()) {
+            case RETURN -> ReturnType.RETURN;
+            case YIELD -> ReturnType.YIELD;
+            default -> throw new ScriptEvaluationError("Unsupported return type: " + keyword.type(), Phase.PARSING, keyword);
+        };
+        return new ReturnStatement(keyword, value, returnType);
     }
 
     private Statement testStatement() {
@@ -816,7 +898,7 @@ public class Parser {
         return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
     }
 
-    private Statement switchStatement() {
+    private SwitchStatement switchStatement() {
         final Token switchToken = this.previous();
         this.expectAfter(TokenType.LEFT_PAREN, "switch");
         final Expression expr = this.expression();
@@ -857,10 +939,14 @@ public class Parser {
     }
 
     private Statement caseBody() {
-        if (this.match(TokenType.COLON)) {
+        return this.blockOrExpression(TokenType.COLON, TokenType.CASE, TokenType.DEFAULT);
+    }
+
+    private Statement blockOrExpression(final TokenType blockOpen, final TokenType... blockClose) {
+        if (this.match(blockOpen)) {
             final Token colon = this.previous();
             final List<Statement> statements = new ArrayList<>();
-            while (!this.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
+            while (!this.check(blockClose)) {
                 statements.add(this.declaration());
             }
             return new BlockStatement(colon, statements);

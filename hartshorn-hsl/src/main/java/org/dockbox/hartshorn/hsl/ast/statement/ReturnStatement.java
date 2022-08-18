@@ -22,13 +22,20 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 public class ReturnStatement extends Statement {
 
+    public enum ReturnType {
+        RETURN,
+        YIELD,
+    }
+
     private final Token keyword;
     private final Expression value;
+    private final ReturnType returnType;
 
-    public ReturnStatement(final Token keyword, final Expression value) {
+    public ReturnStatement(final Token keyword, final Expression value, final ReturnType returnType) {
         super(keyword);
         this.keyword = keyword;
         this.value = value;
+        this.returnType = returnType;
     }
 
     public Token keyword() {
@@ -37,6 +44,10 @@ public class ReturnStatement extends Statement {
 
     public Expression value() {
         return this.value;
+    }
+
+    public ReturnType returnType() {
+        return this.returnType;
     }
 
     @Override

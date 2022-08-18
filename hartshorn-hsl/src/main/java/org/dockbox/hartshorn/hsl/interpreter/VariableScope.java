@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A variable scope represents all declared variables inside a specific scope, with access to a
@@ -32,15 +32,29 @@ import org.dockbox.hartshorn.hsl.token.Token;
  */
 public class VariableScope {
 
+    private final ScopeOwner owner;
     private final VariableScope enclosing;
     private final Map<String, Object> valuesMap = new HashMap<>();
 
     public VariableScope() {
-        this.enclosing = null;
+        this(null, null);
+    }
+
+    public VariableScope(final ScopeOwner owner) {
+        this(null, owner);
     }
 
     public VariableScope(final VariableScope enclosing) {
+        this(enclosing, enclosing.owner());
+    }
+
+    public VariableScope(final VariableScope enclosing, final ScopeOwner owner) {
         this.enclosing = enclosing;
+        this.owner = owner == null && enclosing != null ? enclosing.owner() : owner;
+    }
+
+    public ScopeOwner owner() {
+        return this.owner;
     }
 
     /**

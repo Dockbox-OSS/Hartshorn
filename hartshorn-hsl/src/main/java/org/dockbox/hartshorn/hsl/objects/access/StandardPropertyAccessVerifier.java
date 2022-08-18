@@ -16,28 +16,73 @@
 
 package org.dockbox.hartshorn.hsl.objects.access;
 
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualMemberFunction;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenType;
 
 public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
 
     @Override
-    public boolean verify(final Token at, final FieldStatement field, final InstanceReference instance, final VariableScope fromScope) {
-        if (field.isPublic()) return true;
+    public String read(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
+        if (property.readModifier() == null || property.readModifier().type() == TokenType.PUBLIC) return null;
+        return this.permittedScope("read", property, instance, fromScope);
+    }
 
+    @Override
+    public String write(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
+        if (property.writeModifier() == null || property.writeModifier().type() == TokenType.PUBLIC) return null;
+        return this.permittedScope("assign to", property, instance, fromScope);
+    }
+
+    private String permittedScope(final String action, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
         if (instance instanceof VirtualInstance virtualInstance) {
             final VariableScope classScope = virtualInstance.type().variableScope();
             VariableScope currentScope = fromScope;
             while (currentScope != null) {
                 if (currentScope == classScope) {
-                    return true;
+                    return null;
                 }
                 currentScope = currentScope.enclosing();
             }
         }
-        return false;
+
+        final StringBuffer message = new StringBuffer();
+        message.append("Cannot ");
+        message.append(action);
+        message.append(" property ");
+        message.append(property.fieldStatement().name().lexeme());
+        message.append(" of ");
+        message.append(instance.type().name());
+        message.append(" because it is not accessible from the current scope. ");
+        message.append("The property is declared ");
+        final Token modifier = property.fieldStatement().modifier();
+        message.append(modifier == null ? "public" : modifier.lexeme());
+        message.append(" and has ");
+        final VirtualMemberFunction setter = property.setter();
+        final VirtualMemberFunction getter = property.getter();
+        if (setter == null && getter == null) {
+            message.append("no members.");
+        } else {
+            if (setter != null) {
+                message.append("a ");
+                message.append(setter.modifier() == null ? "public" : setter.modifier().lexeme());
+                message.append(" setter");
+            }
+            if (getter != null) {
+                if (setter != null) {
+                    message.append(" and a ");
+                } else {
+                    message.append("a ");
+                }
+                message.append(getter.modifier() == null ? "public" : getter.modifier().lexeme());
+                message.append(" getter");
+            }
+            message.append(".");
+        }
+        return message.toString();
     }
 }

@@ -112,6 +112,7 @@ public enum TokenType {
     BREAK(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     CONTINUE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     RETURN(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    YIELD(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     USING(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
@@ -130,6 +131,8 @@ public enum TokenType {
     PUBLIC(builder -> builder.keyword(true).ok()),
     PRIVATE(builder -> builder.keyword(true).ok()),
 
+    GET(builder -> builder.keyword(true).ok()),
+    SET(builder -> builder.keyword(true).ok()),
     ;
 
     private final TokenMetaData metaData;

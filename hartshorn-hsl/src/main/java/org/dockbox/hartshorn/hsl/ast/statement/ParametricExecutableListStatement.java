@@ -14,31 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.runtime;
+package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.token.Token;
 
-/**
- * Represents any unspecified error which may occur during the execution of
- * a script.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class RuntimeError extends RuntimeException {
+import java.util.List;
 
-    private final ASTNode at;
+public abstract class ParametricExecutableListStatement extends ParametricExecutableStatement {
 
-    public RuntimeError(final ASTNode at, final String message) {
-        super(message);
-        this.at = at;
+    private final List<Statement> statements;
+
+    protected ParametricExecutableListStatement(final Token token, final List<Parameter> params, final List<Statement> statements) {
+        super(token, params);
+        this.statements = statements;
     }
 
-    /**
-     * The token at which the error occurred.
-     * @return The token at which the error occurred.
-     */
-    public ASTNode at() {
-        return this.at;
+    @Override
+    public List<Statement> statements() {
+        return this.statements;
     }
 }

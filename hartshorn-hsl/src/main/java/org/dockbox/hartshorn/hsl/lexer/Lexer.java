@@ -346,7 +346,7 @@ public class Lexer {
 
     private void addToken(final TokenType type, final Object literal) {
         final String text = this.source.substring(this.start, this.current);
-        this.tokens.add(new Token(type, text, literal, this.line, Math.min(this.start, this.column)));
+        this.tokens.add(new Token(type, text, literal, this.line, this.column - text.length() + 1));
     }
 
     private boolean isAtEnd() {

@@ -52,6 +52,10 @@ public interface StatementVisitor<R> {
 
     R visit(FieldStatement statement);
 
+    R visit(FieldGetStatement statement);
+
+    R visit(FieldSetStatement statement);
+
     R visit(ConstructorStatement statement);
 
     R visit(ExtensionStatement statement);
