@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author Guus Lieben
  */
-public class FunctionStatement extends ParametricExecutableStatement implements NamedNode {
+public class FunctionStatement extends ParametricExecutableBodyStatement implements NamedNode {
 
     private final Token functionType;
     private final Token name;

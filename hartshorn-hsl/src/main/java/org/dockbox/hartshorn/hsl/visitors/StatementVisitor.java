@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -155,6 +157,10 @@ public interface StatementVisitor<R> {
      * @return The result of the visit
      */
     R visit(FieldStatement statement);
+
+    R visit(FieldGetStatement statement);
+
+    R visit(FieldSetStatement statement);
 
     /**
      * Visits the given {@link ConstructorStatement constructor statement}.

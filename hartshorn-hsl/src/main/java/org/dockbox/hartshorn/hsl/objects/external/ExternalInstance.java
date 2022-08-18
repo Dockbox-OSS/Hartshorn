@@ -21,6 +21,7 @@ import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
@@ -66,7 +67,7 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     @Override
-    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
+    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
         Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
         if (field.present()) {
             try {
@@ -85,12 +86,12 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     @Override
-    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
+    public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
         Object[] methods = this.type.methods().all().stream()
                 .filter(method -> method.name().equals(name.lexeme()))
                 .toArray();
 
-        if (methods.length > 1 && !options.permitAmbiguousExternalFunctions()) {
+        if (methods.length > 1 && !interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
             throw new ScriptEvaluationError(
                     "Ambiguous method call for method %s".formatted(name.lexeme()),
                     Phase.INTERPRETING, name

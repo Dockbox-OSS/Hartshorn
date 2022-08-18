@@ -16,10 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
+import org.dockbox.hartshorn.hsl.runtime.Yield;
 
 /**
  * TODO: #1061 Add documentation
@@ -36,6 +39,10 @@ public class ReturnStatementInterpreter implements ASTNodeInterpreter<Void, Retu
         if (node.expression() != null) {
             value = interpreter.evaluate(node.expression());
         }
-        throw new Return(value);
+        switch (node.returnType()) {
+            case RETURN -> throw new Return(value);
+            case YIELD -> throw new Yield(value);
+        }
+        throw new ScriptEvaluationError("Unknown return type: " + node.returnType(), Phase.INTERPRETING, node.keyword());
     }
 }

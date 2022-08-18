@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.objects.access;
 
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
@@ -30,19 +30,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
  *
  * @author Guus Lieben
  */
-@FunctionalInterface
 public interface PropertyAccessVerifier {
 
-    /**
-     * Verifies if the given property can be accessed from the given scope. If the property
-     * is not accessible, {@code false} is returned. If the property is accessible, {@code true}
-     * is returned.
-     *
-     * @param at The name of the property.
-     * @param field The field statement that defines the property.
-     * @param instance The instance that the property is accessed on.
-     * @param fromScope The scope from which the property is accessed.
-     * @return {@code true} if the property can be accessed, {@code false} otherwise.
-     */
-    boolean verify(Token at, FieldStatement field, InstanceReference instance, VariableScope fromScope);
+    String read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
+    String write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 }

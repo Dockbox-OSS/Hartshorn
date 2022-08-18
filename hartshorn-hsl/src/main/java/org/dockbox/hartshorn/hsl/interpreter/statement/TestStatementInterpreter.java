@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.runtime.Return;
+import org.dockbox.hartshorn.hsl.runtime.Yield;
 
 /**
  * TODO: #1061 Add documentation
@@ -45,8 +45,8 @@ public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestSt
         try {
             interpreter.execute(node.body(), variableScope);
         }
-        catch (Return r) {
-            Object value = r.value();
+        catch (Yield yield) {
+            Object value = yield.value();
             boolean truthy = InterpreterUtilities.isTruthy(value);
             interpreter.resultCollector().addResult(name, truthy);
             if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {

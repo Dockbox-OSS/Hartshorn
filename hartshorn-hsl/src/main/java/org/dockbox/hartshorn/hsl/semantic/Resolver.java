@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword.ScopeType;
@@ -39,6 +34,11 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.Finalizable;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Standard resolver to perform semantic analysis and type checking before a collection of statements
@@ -92,6 +92,12 @@ public class Resolver {
          * TestStatement test statements}.
          */
         TEST,
+        /**
+         * A field member, which is a function-like expression used to assign get/set statements
+         * to field in a class. Usually linked to {@link ClassStatement class statements} that have
+         * field members.
+         */
+        FIELD_MEMBER,
     }
 
     /**

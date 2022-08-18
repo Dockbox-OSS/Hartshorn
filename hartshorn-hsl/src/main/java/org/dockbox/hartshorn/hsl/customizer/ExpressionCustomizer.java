@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -31,6 +28,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
@@ -61,8 +61,8 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     private void verifyIsExpression(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
-        if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
-            throw new ScriptEvaluationError("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
+        if (!(lastStatement instanceof ExpressionStatement || (lastStatement instanceof ReturnStatement returnStatement && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
+            throw new ScriptEvaluationError("Expected last statement to be a valid expression or yield statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
         }
     }
 
@@ -71,12 +71,12 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
         if (!(lastStatement instanceof ReturnStatement)) {
             ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            Token returnToken = Token.of(ControlTokenType.RETURN)
+            Token returnToken = Token.of(ControlTokenType.YIELD)
                     .lexeme(VALIDATION_ID)
                     .virtual()
                     .build();
 
-            ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
+            ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression(), ReturnStatement.ReturnType.YIELD);
             statements.set(statements.size() - 1, returnStatement);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 the original author or authors.
+ * Copyright 2019-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,24 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 
-/**
- * A statement representing a member of a class, for example a property field.
- *
- * @since 0.4.12
- *
- * @author Guus Lieben
- */
-public interface MemberStatement extends NamedNode {
-    Token name();
+import java.util.List;
 
-    Token modifier();
+public abstract class ParametricExecutableBodyStatement extends ParametricExecutableStatement {
 
-    default boolean isPublic() {
-        return this.modifier() == null || this.modifier().type() == MemberModifierTokenType.PUBLIC;
+    private final BlockStatement body;
+
+    protected ParametricExecutableBodyStatement(final Token token, final List<Parameter> params, final BlockStatement body) {
+        super(token, params);
+        this.body = body;
     }
 
-    default boolean isPrivate() {
-        return this.modifier() != null && this.modifier().type() == MemberModifierTokenType.PRIVATE;
+    public BlockStatement body() {
+        return this.body;
+    }
+
+    public List<Statement> statements() {
+        return this.body.statements();
     }
 }

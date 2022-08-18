@@ -22,8 +22,6 @@ import java.util.Objects;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -33,7 +31,6 @@ import org.dockbox.hartshorn.hsl.objects.external.CompositeInstance;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
@@ -52,17 +49,17 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     private final VirtualFunction constructor;
     private final VariableScope variableScope;
     private final Map<String, VirtualFunction> methods;
-    private final Map<String, FieldStatement> fields;
+    private final Map<String, VirtualProperty> fields;
     private final boolean isDynamic;
 
-    public VirtualClass(String name,
-                        ClassReference superClass,
-                        VirtualFunction constructor,
-                        VariableScope variableScope,
-                        Map<String, VirtualFunction> methods,
-                        Map<String, FieldStatement> fields,
-                        boolean finalized,
-                        boolean isDynamic
+    public VirtualClass(final String name,
+                        final ClassReference superClass,
+                        final VirtualFunction constructor,
+                        final VariableScope variableScope,
+                        final Map<String, VirtualFunction> methods,
+                        final Map<String, VirtualProperty> fields,
+                        final boolean finalized,
+                        final boolean isDynamic
     ) {
         super(finalized);
         this.name = name;
@@ -109,7 +106,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
      *
      * @return All fields of the class.
      */
-    public Map<String, FieldStatement> fields() {
+    public Map<String, VirtualProperty> fields() {
         return this.fields;
     }
 
@@ -119,7 +116,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
      * @param name The name of the field.
      * @return The field, or {@code null} if no field is found.
      */
-    public FieldStatement field(String name) {
+    public VirtualProperty property(String name) {
         return this.fields.get(name);
     }
 

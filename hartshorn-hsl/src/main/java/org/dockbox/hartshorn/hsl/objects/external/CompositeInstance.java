@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.objects.external;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -27,8 +26,8 @@ import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -94,11 +93,11 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
+    public void set(final Interpreter interpreter, final Token name, final Object value, final VariableScope fromScope) {
         this.checkInstance();
-        FieldStatement virtualField = super.type().field(name.lexeme());
-        if (virtualField != null) {
-            super.set(name, value, fromScope, options);
+        final VirtualProperty property = super.type().property(name.lexeme());
+        if (property != null) {
+            super.set(interpreter, name, value, fromScope);
         }
         else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
@@ -120,11 +119,11 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
+    public Object get(final Interpreter interpreter, final Token name, final VariableScope fromScope) {
         this.checkInstance();
-        FieldStatement virtualField = super.type().field(name.lexeme());
-        if (virtualField != null) {
-            return super.get(name, fromScope, options);
+        final VirtualProperty property = super.type().property(name.lexeme());
+        if (property != null) {
+            return super.get(interpreter, name, fromScope);
         }
         else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());

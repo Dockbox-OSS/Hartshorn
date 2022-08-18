@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
@@ -27,6 +25,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * TODO: #1061 Add documentation
@@ -47,7 +47,12 @@ public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
                 value = parser.expression();
             }
             validator.expectAfter(statementEnd, "return value");
-            return Option.of(new ReturnStatement(keyword, value));
+            ReturnStatement.ReturnType returnType = switch (keyword.type()) {
+                case ControlTokenType.RETURN -> ReturnStatement.ReturnType.RETURN;
+                case ControlTokenType.YIELD -> ReturnStatement.ReturnType.YIELD;
+                default -> throw new IllegalStateException("Unexpected return token type: " + keyword.type());
+            };
+            return Option.of(new ReturnStatement(keyword, value, returnType));
         }
         return Option.empty();
     }

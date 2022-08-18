@@ -50,6 +50,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -328,7 +330,31 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(FieldStatement statement) {
         this.resolver.makeFinal(statement, "field");
         this.resolver.define(statement.name());
+
+        if (statement.getter() != null) {
+            this.resolve(statement.getter());
+        }
+        if (statement.setter() != null) {
+            this.resolve(statement.setter());
+        }
+
         this.resolve(statement);
+        return null;
+    }
+
+    @Override
+    public Void visit(final FieldGetStatement statement) {
+        if (statement.hasBody()) {
+            this.resolver.resolveFunction(statement, FunctionType.FIELD_MEMBER);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visit(final FieldSetStatement statement) {
+        if (statement.hasBody()) {
+            this.resolver.resolveFunction(statement, FunctionType.FIELD_MEMBER);
+        }
         return null;
     }
 
@@ -396,6 +422,9 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         this.resolver.beginScope();
         this.resolver.peekScope().put(ObjectTokenType.THIS.representation(), true);
         this.resolver.peekFinal().put(ObjectTokenType.THIS.representation(), "instance variable");
+        for (FieldStatement field : statement.fields()) {
+            this.resolve(field);
+        }
         for (FunctionStatement method : statement.methods()) {
             this.resolver.resolveFunction(method, FunctionType.METHOD);
         }

@@ -16,21 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.access.PropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.runtime.Yield;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an instance of a {@link VirtualClass} inside a script. The instance is
@@ -51,41 +53,79 @@ public class VirtualInstance implements InstanceReference {
     }
 
     @Override
-    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
-        FieldStatement field = this.virtualClass.field(name.lexeme());
+    public void set(Interpreter interpreter, Token name, Object value, VariableScope fromScope) {
+        VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
             throw new ScriptEvaluationError("Undefined property '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
         }
-        if (field != null && field.isFinal() && this.fields.containsKey(name.lexeme())) {
-            throw new ScriptEvaluationError("Cannot reassign final property '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
-        }
         if (field != null) {
-            this.checkScopeCanAccess(name, field, fromScope);
+            final String accessError = this.accessVerifier().read(name, field, this, fromScope);
+            if (accessError != null) {
+                throw new ScriptEvaluationError(accessError, Phase.INTERPRETING, name);
+            }
+            if (field.setter() != null) {
+                if (field.setter().hasBody()) {
+                    try {
+                        final Object call = field.setter().bind(this).call(name, interpreter, this, List.of(value));
+                        if (call != null) {
+                            throw new ScriptEvaluationError(
+                                    "Setter for property '%s' returned a value. Did you mean to use '%s'?".formatted(
+                                            name.lexeme(), ControlTokenType.YIELD.representation()
+                                    ),
+                                    Phase.INTERPRETING,
+                                    field.setter().modifier()
+                            );
+                        }
+                        throw new ScriptEvaluationError(
+                                "Setter for property '" + name.lexeme() + "' did not yield a value to set.",
+                                Phase.INTERPRETING,
+                                field.setter().modifier()
+                        );
+                    }
+                    catch (final Yield yield) {
+                        final Object result = yield.value();
+                        this.fields.put(name.lexeme(), result);
+                    }
+                    return;
+                }
+            }
+            if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
+                throw new ScriptEvaluationError(
+                        "Cannot reassign property %s of %s because it is final.".formatted(
+                                name.lexeme(), this.type().name()
+                        ),
+                        Phase.INTERPRETING,
+                        name
+                );
+            }
         }
         this.fields.put(name.lexeme(), value);
     }
 
     @Override
-    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
-        FieldStatement field = this.virtualClass.field(name.lexeme());
-        if (this.virtualClass.isDynamic() || (field != null && this.fields.containsKey(name.lexeme()))) {
-            if (field != null) {
-                this.checkScopeCanAccess(name, field, fromScope);
+    public Object get(Interpreter interpreter, Token name, VariableScope fromScope) {
+        final VirtualProperty field = this.virtualClass.property(name.lexeme());
+        if (field != null) {
+            final String accessError = this.accessVerifier().read(name, field, this, fromScope);
+            if (accessError != null) {
+                throw new ScriptEvaluationError(accessError, Phase.INTERPRETING, name);
+            }
+            if (field.getter() != null) {
+                if (field.getter().hasBody()) {
+                    return field.getter().bind(this).call(name, interpreter, this, List.of());
+                }
             }
             return this.fields.get(name.lexeme());
         }
-        MethodReference method = this.virtualClass.method(name.lexeme());
-        if (method != null) {
-            return method.bind(this);
+        else {
+            final MethodReference method = this.virtualClass.method(name.lexeme());
+            if (method != null) return method.bind(this);
+        }
+
+        if (this.type().isDynamic()) {
+            return this.fields.get(name.lexeme());
         }
         throw new ScriptEvaluationError("Undefined property '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
-    }
-
-    private void checkScopeCanAccess(Token at, FieldStatement field, VariableScope fromScope) {
-        PropertyAccessVerifier verifier = this.accessVerifier();
-        if (!verifier.verify(at, field, this, fromScope)) {
-            throw new ScriptEvaluationError("Cannot access property '" + field.name().lexeme() + "' outside of its class scope.", Phase.INTERPRETING, at);
-        }
     }
 
     protected PropertyAccessVerifier accessVerifier() {

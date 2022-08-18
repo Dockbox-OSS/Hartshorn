@@ -41,9 +41,9 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend final class 'User'. While interpreting at line 2, column 23.
+                Cannot extend final class 'User'. While interpreting at line 2, column 20.
                 class Admin extends User { }
-                                       ^""", error.getMessage());
+                                    ^""", error.getMessage());
     }
 
     @Test
@@ -102,9 +102,9 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final class 'User'. While resolving at line 2, column 9.
+                Cannot reassign final class 'User'. While resolving at line 2, column 6.
                 class User { }
-                         ^""", error.getMessage());
+                      ^""", error.getMessage());
     }
 
     @Test
