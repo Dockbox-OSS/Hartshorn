@@ -16,13 +16,22 @@
 
 package org.dockbox.hartshorn.data.jackson;
 
-import org.dockbox.hartshorn.util.reflect.Property;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class SampleElement {
+import java.io.Closeable;
 
-    @Property(name = "firstName")
-    private String name;
+public class JacksonIntrospectionException extends JsonMappingException {
 
-    private String other;
+    public JacksonIntrospectionException(final Closeable processor, final String msg) {
+        super(processor, msg);
+    }
 
+    public JacksonIntrospectionException(final Closeable processor, final String msg, final Throwable problem) {
+        super(processor, msg, problem);
+    }
+
+    public JacksonIntrospectionException(final Closeable processor, final String msg, final JsonLocation loc) {
+        super(processor, msg, loc);
+    }
 }

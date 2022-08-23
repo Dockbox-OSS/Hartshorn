@@ -30,7 +30,7 @@ public class ReflectTestType extends ParentTestType {
     private static String privateStaticField = "privateStaticField";
     public final String finalPublicField = "finalPublicField";
     private final String finalPrivateField = "finalPrivateField";
-    @Property("propertyField")
+    @Property(name = "propertyField")
     public String publicField = "publicField";
     @Demo
     private String privateField = "privateField";

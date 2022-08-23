@@ -26,11 +26,12 @@ import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
+import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
 import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
-import org.dockbox.hartshorn.data.remote.HibernateDataSourceConfiguration;
+import org.dockbox.hartshorn.data.hibernate.HibernateDataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.RefreshableDataSourceList;
 import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -264,14 +265,14 @@ class SqlServiceTest {
         }
 
         final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
-        final JpaRepository delegate = this.applicationContext.environment()
+        final JpaRepository<?, ?> delegate = this.applicationContext.environment()
                 .manager()
                 .manager(repository).get()
                 .delegate(JpaRepository.class).get();
 
         Assertions.assertTrue(delegate instanceof EntityManagerJpaRepository);
 
-        final EntityManagerJpaRepository<?,?> entityJpaRepository = (EntityManagerJpaRepository<?, ?>) delegate;
+        final EntityManagerCarrier entityJpaRepository = (EntityManagerJpaRepository<?, ?>) delegate;
         final EntityManager em = entityJpaRepository.manager();
         Assertions.assertNotNull(em);
     }

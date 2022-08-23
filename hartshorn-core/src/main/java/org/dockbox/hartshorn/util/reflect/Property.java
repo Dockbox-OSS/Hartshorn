@@ -42,7 +42,7 @@ public @interface Property {
      *
      * @return the alternative identifier for the field
      */
-    String value() default "";
+    String name() default "";
 
     /**
      * The alternative setter for the field. When defined dynamic instance creators are able to
@@ -80,4 +80,10 @@ public @interface Property {
      * Whether the field should be ignored when creating an object.
      */
     boolean ignore() default false;
+
+    Class<?> key() default Void.class;
+
+    Class<?> content() default Void.class;
+
+    Class<?> type() default Void.class;
 }

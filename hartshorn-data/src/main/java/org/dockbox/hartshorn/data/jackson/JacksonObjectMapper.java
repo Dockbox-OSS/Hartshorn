@@ -16,19 +16,10 @@
 
 package org.dockbox.hartshorn.data.jackson;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -63,11 +54,11 @@ import jakarta.inject.Inject;
 @Component
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
-    private Include include = Include.ALWAYS;
     protected ObjectMapper objectMapper;
 
     @Inject
     private ApplicationContext context;
+    private JsonInclusionRule inclusionRule;
 
     public JacksonObjectMapper() {
         super(FileFormats.JSON);
@@ -260,13 +251,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public JacksonObjectMapper skipBehavior(final JsonInclusionRule modifier) {
-        this.include = switch (modifier) {
-            case SKIP_EMPTY -> Include.NON_EMPTY;
-            case SKIP_NULL -> Include.NON_NULL;
-            case SKIP_DEFAULT -> Include.NON_DEFAULT;
-            case SKIP_NONE -> Include.ALWAYS;
-            default -> throw new IllegalArgumentException("Unknown modifier: " + modifier);
-        };
+        this.inclusionRule = modifier;
         this.objectMapper = null;
         return this;
     }
@@ -274,20 +259,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public ObjectMapper configureMapper() {
         if (null == this.objectMapper) {
             this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
-            final MapperBuilder<?, ?> builder = this.mapper(this.fileType());
-            builder.annotationIntrospector(new PropertyAliasIntrospector());
-            builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
-            builder.enable(Feature.ALLOW_COMMENTS);
-            builder.enable(Feature.ALLOW_YAML_COMMENTS);
-            builder.enable(SerializationFeature.INDENT_OUTPUT);
-            builder.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-            builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-            builder.defaultSetterInfo(JsonSetter.Value.forContentNulls(Nulls.AS_EMPTY));
-            // Hartshorn convention uses fluent style getters/setters, these are not picked up by Jackson
-            // which would otherwise cause it to fail due to it recognizing the object as an empty bean,
-            // even if it is not empty.
-            builder.visibility(PropertyAccessor.FIELD, Visibility.ANY);
-            builder.serializationInclusion(this.include);
+            final MapperBuilder<?, ?> builder = this.context.get(JacksonObjectMapperConfigurator.class)
+                    .configure(this.mapper(this.fileType()), this.fileType(), this.inclusionRule);
             this.objectMapper = builder.build();
         }
         return this.objectMapper;

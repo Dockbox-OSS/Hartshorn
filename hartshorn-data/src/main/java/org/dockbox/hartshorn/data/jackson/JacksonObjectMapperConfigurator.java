@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.data.jackson;
 
-import org.dockbox.hartshorn.util.reflect.Property;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 
-public class SampleElement {
+import org.dockbox.hartshorn.data.FileFormat;
+import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 
-    @Property(name = "firstName")
-    private String name;
+public interface JacksonObjectMapperConfigurator {
 
-    private String other;
+    MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format, JsonInclusionRule inclusionRule);
 
 }
