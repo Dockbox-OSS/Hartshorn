@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.reflect.Property;
 
 public class SampleElement {
 
-    @Property("firstName")
+    @Property(name = "firstName")
     private String name;
 
     private String other;

@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
+import org.dockbox.hartshorn.util.reflect.Property;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ConfigurationObject(prefix = "hartshorn.data", singleton = false)
 public class HibernateDataSourceConfigurationObject {
 
-    @JsonDeserialize(contentAs = org.dockbox.hartshorn.data.remote.HibernateDataSourceConfiguration.class, as = ConcurrentHashMap.class)
+    @Property(type = ConcurrentHashMap.class, content = HibernateDataSourceConfiguration.class)
     private Map<String, DataSourceConfiguration> sources = new ConcurrentHashMap<>();
 
     public Map<String, DataSourceConfiguration> sources() {

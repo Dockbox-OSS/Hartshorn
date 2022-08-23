@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.remote;
+package org.dockbox.hartshorn.data.hibernate;
 
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.hibernate.dialect.Dialect;
 
 import java.sql.Driver;
