@@ -56,10 +56,10 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public void set(final Token name, final Object value, VariableScope fromScope) {
-        this.type.field(name.lexeme()).present(field -> {
-            field.set(this.instance(), value);
-        }).orThrow(() -> this.propertyDoesNotExist(name));
+    public void set(final Token name, final Object value, final VariableScope fromScope) {
+        this.type.field(name.lexeme())
+                .present(field -> field.set(this.instance(), value))
+                .orThrow(() -> this.propertyDoesNotExist(name));
     }
 
     @Override

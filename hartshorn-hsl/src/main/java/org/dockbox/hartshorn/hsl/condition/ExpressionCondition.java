@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.condition.ConditionContext;
 import org.dockbox.hartshorn.component.condition.ConditionResult;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
 /**
@@ -83,7 +84,7 @@ public class ExpressionCondition implements Condition {
         return runtime;
     }
 
-    private void enhanceWithApplicationContext(final ValidateExpressionRuntime runtime, final ApplicationContext applicationContext) {
+    private void enhanceWithApplicationContext(final ScriptRuntime runtime, final ApplicationContext applicationContext) {
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
             if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) applicationContext.log().warn("Runtime contains mismatched application context reference");
             // Ignore if the global applicationContext is equal to our active context

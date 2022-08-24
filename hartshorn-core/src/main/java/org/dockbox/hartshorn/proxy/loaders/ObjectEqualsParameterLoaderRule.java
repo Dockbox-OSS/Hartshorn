@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
     @Override
     public boolean accepts(final ParameterContext<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-        return parameter.declaredBy().parent().is(Object.class) && parameter.declaredBy().name().equals("equals");
+        return parameter.declaredBy().parent().is(Object.class) && "equals".equals(parameter.declaredBy().name());
     }
 
     @Override

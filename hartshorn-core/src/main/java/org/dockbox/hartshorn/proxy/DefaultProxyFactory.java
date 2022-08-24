@@ -112,19 +112,23 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (delegate != null) {
             this.updateState();
             for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                try {
-                    final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-                    if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
-                        continue;
-                    }
-                } catch (final NoSuchMethodException e) {
-                    // Ignore error, delegate is not concrete
-                }
-                this.delegates.put(declaredMethod, delegate);
+                this.delegateAbstractOverrideCandidate(delegate, declaredMethod);
             }
             this.typeDelegate = delegate;
         }
         return this;
+    }
+
+    private <S> void delegateAbstractOverrideCandidate(final S delegate, final Method declaredMethod) {
+        try {
+            final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
+                return;
+            }
+        } catch (final NoSuchMethodException e) {
+            // Ignore error, delegate is not concrete
+        }
+        this.delegates.put(declaredMethod, delegate);
     }
 
     @Override
@@ -147,15 +151,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (type.isAssignableFrom(this.type)) {
             this.updateState();
             for (final Method declaredMethod : type.getDeclaredMethods()) {
-                try {
-                    final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-                    if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
-                        continue;
-                    }
-                } catch (final NoSuchMethodException e) {
-                    // Ignore error, delegate is not concrete
-                }
-                this.delegates.put(declaredMethod, delegate);
+                this.delegateAbstractOverrideCandidate(delegate, declaredMethod);
             }
         }
         else {

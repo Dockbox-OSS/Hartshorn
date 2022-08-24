@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.RequestError;
 import org.dockbox.hartshorn.web.RequestErrorImpl;
 import org.dockbox.hartshorn.web.servlet.ErrorServlet;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.http.MimeTypes.Type;
 import org.eclipse.jetty.io.ByteBufferOutputStream;
 import org.eclipse.jetty.server.Request;
@@ -43,6 +42,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -90,7 +90,7 @@ public class JettyErrorHandler extends ErrorHandler {
         baseRequest.getHttpChannel().sendResponseAndComplete();
     }
 
-    protected void writeDefaults(final HttpServletRequest request, final HttpServletResponse response, final PrintWriter writer, final int code, final String message) {
+    protected void writeDefaults(final HttpServletRequest request, final ServletResponse response, final PrintWriter writer, final int code, final String message) {
         response.setContentType(Type.TEXT_PLAIN.asString());
         writer.write("HTTP ERROR ");
         writer.write(Integer.toString(code));
@@ -123,7 +123,6 @@ public class JettyErrorHandler extends ErrorHandler {
                 return StandardCharsets.UTF_8;
         }
 
-        final MimeTypes.Type type;
         switch (contentType) {
             case "text/html", "text/*", "*/*", "text/plain" -> {
                 if (charset == null)

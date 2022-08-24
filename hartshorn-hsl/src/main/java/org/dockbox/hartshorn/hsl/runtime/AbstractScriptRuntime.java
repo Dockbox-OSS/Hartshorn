@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -90,8 +91,8 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return this.run(source, Phase.INTERPRETING);
     }
 
-    protected Interpreter createInterpreter(final ScriptContext context) {
-        final Interpreter interpreter = this.factory.interpreter(context, this.standardLibraries());
+    protected Interpreter createInterpreter(final ResultCollector resultCollector) {
+        final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries());
         interpreter.externalModules(this.externalModules());
         return interpreter;
     }
@@ -166,7 +167,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             final String[] lines = source.split("\n");
             final String lineText = lines[line - 1];
 
-            StringBuilder builder = new StringBuilder(" ".repeat(column+1));
+            final StringBuilder builder = new StringBuilder(" ".repeat(column+1));
             builder.setCharAt(column, '^');
             final String marker = builder.toString();
 

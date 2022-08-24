@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.reflect.QualifiedElement;
 
 public class UndeterminedEntityTypeException extends ApplicationRuntimeException {
-    public UndeterminedEntityTypeException(final MethodContext<?, ?> method) {
+    public UndeterminedEntityTypeException(final QualifiedElement method) {
         super("Could not determine entity type of %s. Alternatively, set the entityType in the @Query annotation on this method or change the query to JPQL."
                 .formatted(method.qualifiedName()));
     }

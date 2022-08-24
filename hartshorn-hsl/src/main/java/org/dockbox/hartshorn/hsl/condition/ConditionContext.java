@@ -28,7 +28,7 @@ public interface ConditionContext extends Context {
 
     boolean includeApplicationContext();
 
-    ExpressionConditionContext includeApplicationContext(final boolean includeApplicationContext);
+    ConditionContext includeApplicationContext(final boolean includeApplicationContext);
 
     /**
      * Add all given customizers to the context. This will not override any existing customizers.

@@ -193,12 +193,10 @@ public class HartshornLifecycleExtension implements
             }
             return null;
         }).filter(Objects::nonNull).forEach(context -> {
-            context.annotation(HartshornTest.class).present(annotation -> {
-                serviceActivator.addProcessors(annotation.processors());
-            });
-            context.annotation(TestProperties.class).present(annotation -> {
-                arguments.addAll(Arrays.asList(annotation.value()));
-            });
+            context.annotation(HartshornTest.class)
+                    .present(annotation -> serviceActivator.addProcessors(annotation.processors()));
+            context.annotation(TestProperties.class)
+                    .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         });
 
         applicationFactory

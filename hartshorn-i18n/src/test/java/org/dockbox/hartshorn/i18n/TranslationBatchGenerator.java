@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * Generator type which directly creates and outputs a translation batch based on
@@ -169,7 +170,7 @@ public final class TranslationBatchGenerator {
     private static List<File> existingFiles() {
         final File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
-            return List.of(batch.listFiles()).stream()
+            return Stream.of(batch.listFiles())
                     .filter(f -> !f.isDirectory())
                     .toList();
         }

@@ -68,21 +68,33 @@ public interface MethodWrapper<T> {
      * @return A method wrapper that calls the given callbacks
      */
     static <T> MethodWrapper<T> of(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
-        return new MethodWrapper<>() {
-            @Override
-            public void acceptBefore(final ProxyCallbackContext<T> context) {
-                if (before != null) before.accept(context);
-            }
+        return new CallbackMethodWrapper<>(before, after, afterThrowing);
+    }
 
-            @Override
-            public void acceptAfter(final ProxyCallbackContext<T> context) {
-                if (after != null) after.accept(context);
-            }
+    class CallbackMethodWrapper<T> implements MethodWrapper<T> {
+        private final ProxyCallback<T> before;
+        private final ProxyCallback<T> after;
+        private final ProxyCallback<T> afterThrowing;
 
-            @Override
-            public void acceptError(final ProxyCallbackContext<T> context) {
-                if (afterThrowing != null) afterThrowing.accept(context);
-            }
-        };
+        public CallbackMethodWrapper(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
+            this.before = before;
+            this.after = after;
+            this.afterThrowing = afterThrowing;
+        }
+
+        @Override
+        public void acceptBefore(final ProxyCallbackContext<T> context) {
+            if (this.before != null) this.before.accept(context);
+        }
+
+        @Override
+        public void acceptAfter(final ProxyCallbackContext<T> context) {
+            if (this.after != null) this.after.accept(context);
+        }
+
+        @Override
+        public void acceptError(final ProxyCallbackContext<T> context) {
+            if (this.afterThrowing != null) this.afterThrowing.accept(context);
+        }
     }
 }

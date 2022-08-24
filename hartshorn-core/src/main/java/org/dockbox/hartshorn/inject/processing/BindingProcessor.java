@@ -122,7 +122,7 @@ public class BindingProcessor {
                         .proxy()
                         .rethrowUnchecked()
                         .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above."));
-                this.proxiesToInitialize.add(new LateSingletonContext<>(targetType, element, proxy));
+                this.proxiesToInitialize.add(new LateSingletonContext<>(targetType, proxy));
             }
         }
         else function.to(targetType);
@@ -146,7 +146,7 @@ public class BindingProcessor {
                         .proxy()
                         .rethrowUnchecked()
                         .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.name() + ", any errors may be displayed above."));
-                this.proxiesToInitialize.add(new LateSingletonContext<>(targetType.type(), element, proxy));
+                this.proxiesToInitialize.add(new LateSingletonContext<>(targetType.type(), proxy));
             }
         }
         else function.to(targetType);
@@ -170,12 +170,10 @@ public class BindingProcessor {
 
     private static class LateSingletonContext<T> {
         private final Class<T> targetType;
-        private final ObtainableElement<?> element;
         private final Proxy<T> proxy;
 
-        public LateSingletonContext(final Class<T> targetType, final ObtainableElement<?> element, final Proxy<T> proxy) {
+        public LateSingletonContext(final Class<T> targetType, final Proxy<T> proxy) {
             this.targetType = targetType;
-            this.element = element;
             this.proxy = proxy;
         }
     }
