@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.javassist.JavassistProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Result;
@@ -74,7 +73,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return CollectionUtilities.merge(standardInterfaces, this.interfaces().toArray(new Class[0]));
     }
 
-    protected Result<T> interfaceProxy(final StandardMethodInterceptor interceptor) {
+    protected Result<T> interfaceProxy(final StandardMethodInterceptor<T> interceptor) {
         final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 this.proxyInterfaces(true),
@@ -94,7 +93,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
 
     protected ClassLoader defaultClassLoader() {
         return Result.of(Thread.currentThread()::getContextClassLoader)
-                .orElse(JavassistProxyFactory.class::getClassLoader)
+                .orElse(JDKInterfaceProxyFactory.class::getClassLoader)
                 .orElse(ClassLoader::getSystemClassLoader)
                 .orElse(this.type()::getClassLoader)
                 .orNull();

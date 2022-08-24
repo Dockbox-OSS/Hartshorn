@@ -45,7 +45,7 @@ import jakarta.inject.Singleton;
 
 public class BindingProcessor {
 
-    private final Set<LateSingletonContext> proxiesToInitialize = ConcurrentHashMap.newKeySet();
+    private final Set<LateSingletonContext<?>> proxiesToInitialize = ConcurrentHashMap.newKeySet();
 
     public void process(final ProviderContextList context, final ApplicationContext applicationContext) throws ApplicationException {
         final MultiMap<Integer, ProviderContext> elements = context.elements();
@@ -155,9 +155,7 @@ public class BindingProcessor {
     public void finalizeProxies(final ApplicationContext applicationContext) throws ApplicationException {
         if (this.proxiesToInitialize.isEmpty()) return;
 
-        final ProviderContextList context = applicationContext.first(ProviderContextList.class).orNull();
-
-        for (final LateSingletonContext proxyContext : new ArrayList<>(this.proxiesToInitialize)) {
+        for (final LateSingletonContext<?> proxyContext : new ArrayList<>(this.proxiesToInitialize)) {
             this.proxiesToInitialize.remove(proxyContext);
 
             final Object instance = applicationContext.get(proxyContext.targetType);

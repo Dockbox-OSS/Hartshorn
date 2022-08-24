@@ -31,7 +31,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
 
     private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
 
-    public RuleBasedParameterLoader add(final ParameterLoaderRule<? super C> rule) {
+    public RuleBasedParameterLoader<?> add(final ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);
         return this;
     }

@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.proxy.processing;
 
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
-public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
+public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier> {
 
     @Override
     protected Class<ContextCarrier> parentTarget() {

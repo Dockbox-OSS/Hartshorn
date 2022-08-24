@@ -279,14 +279,14 @@ public class ProxyTests {
         final Result<NamedAgedProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
-        final Proxy proxyInstance = (Proxy) proxy.get();
-        final ProxyManager manager = proxyInstance.manager();
+        final Proxy<?> proxyInstance = (Proxy<?>) proxy.get();
+        final ProxyManager<?> manager = proxyInstance.manager();
 
-        final Result agedDelegate = manager.delegate(AgedProxy.class);
+        final Result<?> agedDelegate = manager.delegate(AgedProxy.class);
         Assertions.assertTrue(agedDelegate.present());
         Assertions.assertSame(agedDelegate.get(), aged);
 
-        final Result namedInterceptor = manager.interceptor(NamedProxy.class.getMethod("name"));
+        final Result<?> namedInterceptor = manager.interceptor(NamedProxy.class.getMethod("name"));
         Assertions.assertTrue(namedInterceptor.present());
         Assertions.assertSame(namedInterceptor.get(), named);
     }
@@ -321,7 +321,7 @@ public class ProxyTests {
         final Result<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
-        final Proxy proxyInstance = (Proxy) proxy.get();
+        final Proxy<?> proxyInstance = (Proxy<?>) proxy.get();
         Assertions.assertNotNull(proxyInstance.manager());
     }
 

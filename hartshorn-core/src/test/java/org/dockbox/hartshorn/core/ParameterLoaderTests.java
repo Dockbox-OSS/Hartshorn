@@ -45,14 +45,14 @@ public class ParameterLoaderTests {
     void testRuleBasedParameterLoaderReturnsCorrectObjectsOrDefault() {
         final RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
         parameterLoader.add(new StringParameterRule());
-        final MethodContext methodContext = Mockito.mock(MethodContext.class);
-        final ParameterContext stringParameter = Mockito.mock(ParameterContext.class);
+        final MethodContext<?, ?> methodContext = Mockito.mock(MethodContext.class);
+        final ParameterContext<String> stringParameter = Mockito.mock(ParameterContext.class);
         Mockito.when(stringParameter.type()).thenReturn(TypeContext.of(String.class));
 
-        final ParameterContext intParameter = Mockito.mock(ParameterContext.class);
+        final ParameterContext<Integer> intParameter = Mockito.mock(ParameterContext.class);
         Mockito.when(intParameter.type()).thenReturn(TypeContext.of(int.class));
 
-        final LinkedList parameters = new LinkedList();
+        final LinkedList<ParameterContext<?>> parameters = new LinkedList<>();
         parameters.add(stringParameter);
         parameters.add(intParameter);
 

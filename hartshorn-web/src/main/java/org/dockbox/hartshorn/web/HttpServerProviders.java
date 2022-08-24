@@ -51,7 +51,7 @@ public abstract class HttpServerProviders {
     }
 
     @Provider("http_webserver")
-    public ParameterLoader parameterLoader() {
+    public ParameterLoader<?> parameterLoader() {
         return new HttpServletParameterLoader();
     }
 }

@@ -105,7 +105,7 @@ public class HartshornLifecycleExtension implements
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        final ApplicationFactory applicationFactory = this.prepareFactory(testClass, testComponentSources);
+        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(testClass, testComponentSources);
         final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationFactory, testClass).orNull();
         if (applicationContext == null) {
             if (applicationContext == null) throw new IllegalStateException("Could not create application context");

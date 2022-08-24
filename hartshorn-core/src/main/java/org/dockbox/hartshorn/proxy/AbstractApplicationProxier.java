@@ -63,7 +63,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     @Override
     public <D, T extends D> Result<D> delegate(final TypeContext<D> type, final T instance) {
         if (instance instanceof Proxy proxy) {
-            final ProxyManager manager = proxy.manager();
+            final ProxyManager<?> manager = proxy.manager();
             return manager.delegate(type.type());
         }
         return Result.empty();
