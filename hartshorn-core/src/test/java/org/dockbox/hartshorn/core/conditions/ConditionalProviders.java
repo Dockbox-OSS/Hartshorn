@@ -58,7 +58,6 @@ public class ConditionalProviders {
      * Passes as long as {@code property.d} is present as a property, and its
      * value is equal to {@code d}. This is handled by {@link ConditionTests},
      * so the property is <b>present</b>.
-     * @return
      */
     @Provider("d")
     @RequiresProperty(name = "property.d", withValue = "d")
@@ -70,7 +69,6 @@ public class ConditionalProviders {
      * Passes as long as {@code property.e} is present as a property, and its
      * value is equal to {@code e}. This is handled by {@link ConditionTests},
      * so the property is <b>absent</b>.
-     * @return
      */
     @Provider("e")
     @RequiresProperty(name = "property.e", withValue = "e")

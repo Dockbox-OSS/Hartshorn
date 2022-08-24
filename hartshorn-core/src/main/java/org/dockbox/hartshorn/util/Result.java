@@ -515,7 +515,7 @@ public final class Result<T> {
 
     /**
      * Return the contained value, if present, otherwise throw the provided exception. The provided
-     * exception is rethrown as unchecked, so it need not be declared in a throws clause.
+     * exception is rethrown as unchecked, so it need not be declared in a {@code throws} clause.
      *
      * @param exceptionSupplier The supplier which will return the exception to be thrown.
      * @return The present value

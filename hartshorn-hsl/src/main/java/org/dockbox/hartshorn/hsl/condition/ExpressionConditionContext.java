@@ -129,7 +129,8 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * Adds the given class as an import to the context. The class will be made available using
      * its simple name (e.g. {@code org.example.User} will be accessible using {@code User}). This
      * will override existing imports if there is another import with the same name or alias.
-     * @param type
+     *
+     * @param type The class to import.
      */
     @Override
     public void imports(final Class<?> type) {

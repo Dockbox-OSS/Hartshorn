@@ -29,17 +29,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The {@link ExecutableElementContext} represents an executable element. Executable elements are methods and constructors.
- * The primary function of an executable element is to accept parameters, and optionally yield a result. The executable
- * cannot be invoked directly through the {@link ExecutableElementContext}, but through the appropriate implementations.
+ * The {@link ExecutableElementContext} represents an executable element. Executable elements are methods and constructors. The primary function of an executable element is to accept parameters, and optionally yield a result. The executable cannot be
+ * invoked directly through the {@link ExecutableElementContext}, but through the appropriate implementations.
  *
  * @param <A> The type of the executable element.
  * @param <P> The type of the parent of the executable element.
+ *
+ * @author Guus Lieben
  * @see java.lang.reflect.Constructor
  * @see ConstructorContext
  * @see java.lang.reflect.Method
  * @see MethodContext
- * @author Guus Lieben
  * @since 21.5
  */
 public abstract class ExecutableElementContext<A extends Executable, P> extends AnnotatedMemberContext<A> implements Named {
@@ -48,7 +48,6 @@ public abstract class ExecutableElementContext<A extends Executable, P> extends 
     private LinkedList<ParameterContext<?>> parameters;
     protected final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
 
-    // TODO #584: Continue documentation here
     public List<ParameterContext<?>> parameters(final Class<? extends Annotation> annotation) {
         return this.parameters().stream()
                 .filter(parameter -> parameter.annotation(annotation).present())

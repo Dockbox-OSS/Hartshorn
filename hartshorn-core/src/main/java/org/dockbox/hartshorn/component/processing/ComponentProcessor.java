@@ -97,15 +97,11 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
      * are met, assuming the {@link #preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)} are not modified
      * by the implementing class.
      *
-     * @param <T>
-     *         The type of the component.
-     * @param context
-     *         The application context.
-     * @param key
-     *         The key of the component.
-     * @param instance
-     *         The instance of the component.
-     * @param processingContext
+     * @param <T> The type of the component.
+     * @param context The application context.
+     * @param key The key of the component.
+     * @param instance The instance of the component.
+     * @param processingContext The processing context.
      *
      * @return <code>true</code> if the component processor modifies the component, <code>false</code>
      *         otherwise.

@@ -42,7 +42,8 @@ public interface CacheManager {
      * ID, if it exists.
      *
      * @param cache The cache ID
-     * @param <T> The type of objects stored by the cache
+     * @param <K> The type of the key of the cache
+     * @param <V> The type of the value of the cache
      *
      * @return The cache, or {@link Result#empty()}
      */
@@ -56,7 +57,8 @@ public interface CacheManager {
      *
      * @param name The cache ID
      * @param expiration The expiration of the cache
-     * @param <T> The type of object stored in the cache
+     * @param <K> The type of the key of the cache
+     * @param <V> The type of the value of the cache
      *
      * @return The existing or created {@link Cache}
      */

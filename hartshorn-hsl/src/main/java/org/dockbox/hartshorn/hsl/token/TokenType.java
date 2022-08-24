@@ -149,7 +149,7 @@ public enum TokenType {
     /**
      * Creates a new {@link TokenType} with the given static representation. The created {@link TokenType}
      * will not be a keyword or standalone statement.
-     * @param representation
+     * @param representation The static representation of the token type.
      */
     TokenType(final String representation) {
         this(b -> b.representation(representation).ok());
@@ -158,7 +158,7 @@ public enum TokenType {
     /**
      * Creates a new {@link TokenType} and allows the instantiating source to customize the metadata of
      * the new {@link TokenType}.
-     * @param builder
+     * @param builder The builder to use to create the {@link TokenMetaData} of the new {@link TokenType}.
      */
     TokenType(final Function<TokenMetaDataBuilder, TokenMetaData> builder) {
         this.metaData = builder.apply(TokenMetaData.builder(this));
