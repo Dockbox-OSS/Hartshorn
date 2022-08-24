@@ -26,7 +26,7 @@ public class CompositeAnnotationInvocationException extends ApplicationRuntimeEx
         super("Can't invoke " + type.getName() + "." + method.getName() + "() on composite annotation " + annotation);
     }
 
-    public CompositeAnnotationInvocationException(final Class<?> type, final Method method, final Annotation annotation, Throwable e) {
+    public CompositeAnnotationInvocationException(final Class<?> type, final Method method, final Annotation annotation, final Throwable e) {
         super("Can't invoke " + type.getName() + "." + method.getName() + "() on composite annotation " + annotation, e);
     }
 }

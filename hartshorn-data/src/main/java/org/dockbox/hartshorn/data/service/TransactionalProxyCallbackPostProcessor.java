@@ -56,7 +56,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     protected <T> T processProxy(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext, final ProxyFactory<T, ?> proxyFactory) {
         // JpaRepository and EntityManagerCarrier expose their own EntityManager, so we don't need to do anything here.
         if (!(instance instanceof JpaRepository || instance instanceof EntityManagerCarrier)) {
-            TypeContext<T> type = instance == null ? key.type() : TypeContext.of(instance);
+            final TypeContext<T> type = instance == null ? key.type() : TypeContext.of(instance);
             final DataSourceList dataSourceList = context.get(DataSourceList.class);
             final DataSourceConfiguration sourceConfiguration = type.annotation(DataSource.class)
                     .map(DataSource::value)
@@ -86,7 +86,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
         final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
 
         return callbackContext -> {
-            final TransactionManager manager = transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy());
+            final TransactionManager manager = this.transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy());
             manager.beginTransaction();
         };
     }
@@ -101,15 +101,15 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
 
     @Override
     public <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
-        return performAndFlush(context, method, Transactional::commitOnSuccess, TransactionManager::commitTransaction);
+        return this.performAndFlush(context, method, Transactional::commitOnSuccess, TransactionManager::commitTransaction);
     }
 
     @Override
     public <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
-        return performAndFlush(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
+        return this.performAndFlush(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
     }
 
-    private <T> ProxyCallback<T> performAndFlush(final ApplicationContext context, final MethodContext<?, T> method, Predicate<Transactional> rule, Consumer<TransactionManager> consumer) {
+    private <T> ProxyCallback<T> performAndFlush(final ApplicationContext context, final MethodContext<?, T> method, final Predicate<Transactional> rule, final Consumer<TransactionManager> consumer) {
         final Transactional annotation = method.annotation(Transactional.class).get();
         final boolean ruleResult = rule.test(annotation);
 
@@ -119,7 +119,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
             final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
             final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
 
-            final ProxyCallback<T> callback = callbackContext -> consumer.accept(transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy()));
+            final ProxyCallback<T> callback = callbackContext -> consumer.accept(this.transactionManager(transactionFactory, lookup, callbackContext.method(), callbackContext.proxy()));
             return callback.then(flush);
         }
         return flush;

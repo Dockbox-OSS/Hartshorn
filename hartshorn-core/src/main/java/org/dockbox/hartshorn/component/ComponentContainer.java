@@ -18,9 +18,6 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 public interface ComponentContainer {
 
     String id();

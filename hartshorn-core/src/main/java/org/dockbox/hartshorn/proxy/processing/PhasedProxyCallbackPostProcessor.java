@@ -44,7 +44,7 @@ public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> ext
         final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
 
-        instance = processProxy(context, key, instance, processingContext, factory);
+        instance = this.processProxy(context, key, instance, processingContext, factory);
 
         for (final MethodContext<?, T> method : methods) {
             final ProxyCallback<T> before = this.doBefore(context, method, key, instance);
@@ -60,7 +60,7 @@ public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> ext
         return instance;
     }
 
-    protected <T> T processProxy(final ApplicationContext context,  final Key<T> key,  @Nullable final T instance, final ComponentProcessingContext processingContext, ProxyFactory<T, ?> proxyFactory) {
+    protected <T> T processProxy(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext, final ProxyFactory<T, ?> proxyFactory) {
         // Left for subclasses to override if necessary
         return instance;
     }

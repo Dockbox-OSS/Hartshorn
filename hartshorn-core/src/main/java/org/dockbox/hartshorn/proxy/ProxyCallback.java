@@ -29,9 +29,9 @@ package org.dockbox.hartshorn.proxy;
 public interface ProxyCallback<T> {
     void accept(ProxyCallbackContext<T> context);
 
-    default ProxyCallback<T> then(ProxyCallback<T> next) {
+    default ProxyCallback<T> then(final ProxyCallback<T> next) {
         return context -> {
-            accept(context);
+            this.accept(context);
             next.accept(context);
         };
     }

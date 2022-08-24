@@ -56,7 +56,7 @@ public class ExpressionCondition implements Condition {
                 final boolean result = ValidateExpressionRuntime.valid(scriptContext);
                 return ConditionResult.of(result);
             }
-            catch (ScriptEvaluationError e) {
+            catch (final ScriptEvaluationError e) {
                 context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
                 return ConditionResult.notMatched(e.getMessage());
             }

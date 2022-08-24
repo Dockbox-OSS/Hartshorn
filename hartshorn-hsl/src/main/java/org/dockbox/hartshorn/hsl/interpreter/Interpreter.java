@@ -291,10 +291,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Object visit(final RangeExpression expr) {
-        final Object start = unwrap(this.evaluate(expr.leftExpression()));
-        final Object end = unwrap(this.evaluate(expr.rightExpression()));
+        final Object start = this.unwrap(this.evaluate(expr.leftExpression()));
+        final Object end = this.unwrap(this.evaluate(expr.rightExpression()));
 
-        checkNumberOperands(expr.operator(), start, end);
+        this.checkNumberOperands(expr.operator(), start, end);
 
         final int min = ((Number) start).intValue();
         final int max = ((Number) end).intValue();

@@ -87,19 +87,19 @@ public class ArrayComprehensionExpression extends Expression {
     }
 
     public Token ifToken() {
-        return ifToken;
+        return this.ifToken;
     }
 
     public Expression condition() {
-        return condition;
+        return this.condition;
     }
 
     public Token elseToken() {
-        return elseToken;
+        return this.elseToken;
     }
 
     public Expression elseExpression() {
-        return elseExpression;
+        return this.elseExpression;
     }
 
     @Override

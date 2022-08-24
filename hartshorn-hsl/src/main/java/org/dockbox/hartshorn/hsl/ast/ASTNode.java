@@ -35,6 +35,6 @@ public abstract class ASTNode {
     }
 
     public int column() {
-        return column;
+        return this.column;
     }
 }

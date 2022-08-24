@@ -34,7 +34,7 @@ public class HslScriptTests {
     @Test
     void testHslScriptCanEvaluate() {
         final String expression = "var a = 1";
-        final HslScript script = HslScript.of(context, expression);
+        final HslScript script = HslScript.of(this.context, expression);
         final ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::evaluate);
         final Object result = scriptContext.interpreter().global().get("a");
         Assertions.assertNotNull(result);
@@ -43,7 +43,7 @@ public class HslScriptTests {
     @Test
     void testHslScriptCanResolveWithoutEvaluate() {
         final String expression = "var a = 1";
-        final HslScript script = HslScript.of(context, expression);
+        final HslScript script = HslScript.of(this.context, expression);
         final ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::resolve);
         final Object result = scriptContext.interpreter().global().get("a");
         Assertions.assertNull(result);

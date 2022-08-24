@@ -142,7 +142,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
-    default <C extends Context> Result<C> first(TypeContext<C> context, String name) {
+    default <C extends Context> Result<C> first(final TypeContext<C> context, final String name) {
         return this.first(context.type(), name);
     }
 

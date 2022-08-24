@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.DataSource;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
@@ -28,7 +27,8 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
 
-public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository, UsePersistence> {
+@SuppressWarnings("rawtypes")
+public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository> {
 
     @Override
     protected Class<JpaRepository> parentTarget() {

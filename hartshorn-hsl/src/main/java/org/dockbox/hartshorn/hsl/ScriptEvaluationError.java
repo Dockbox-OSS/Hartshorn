@@ -47,18 +47,18 @@ public class ScriptEvaluationError extends RuntimeException {
     }
 
     public ASTNode at() {
-        return at;
+        return this.at;
     }
 
     public int line() {
-        return line;
+        return this.line;
     }
 
     public int column() {
-        return column;
+        return this.column;
     }
 
     public Phase phase() {
-        return phase;
+        return this.phase;
     }
 }

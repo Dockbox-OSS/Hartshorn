@@ -79,7 +79,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
                 case INTERPRETING -> this.interpret(context);
                 default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
             }
-        } catch (ScriptEvaluationError e) {
+        } catch (final ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
         }
         return context;

@@ -84,17 +84,17 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     @Override
     public Iterator<Object> iterator() {
-        return Arrays.asList(values).iterator();
+        return Arrays.asList(this.values).iterator();
     }
 
     @Override
-    public void set(final Token name, final Object value, VariableScope fromScope) {
+    public void set(final Token name, final Object value, final VariableScope fromScope) {
         throw new UnsupportedOperationException("Cannot set properties on arrays.");
     }
 
     @Override
-    public Object get(final Token name, VariableScope fromScope) {
-        if (name.lexeme().equals("length")) {
+    public Object get(final Token name, final VariableScope fromScope) {
+        if ("length".equals(name.lexeme())) {
             return this.values.length;
         } else {
             throw new UnsupportedOperationException("Cannot get properties on arrays, only 'length'.");

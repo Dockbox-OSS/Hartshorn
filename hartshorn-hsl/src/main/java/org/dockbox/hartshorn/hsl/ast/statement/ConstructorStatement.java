@@ -41,7 +41,7 @@ public class ConstructorStatement extends ParametricExecutableStatement {
     }
 
     public Token className() {
-        return className;
+        return this.className;
     }
 
     public Token initializerIdentifier() {

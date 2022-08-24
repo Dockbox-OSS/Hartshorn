@@ -47,7 +47,7 @@ public class HslLibrary implements CallableNode {
     }
 
     @Override
-    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
+    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
         final String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {

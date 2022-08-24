@@ -31,6 +31,6 @@ public class EntityManagerContext extends DefaultContext {
     }
 
     public EntityManager entityManager() {
-        return supplier.get();
+        return this.supplier.get();
     }
 }

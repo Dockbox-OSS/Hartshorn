@@ -66,7 +66,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enab
     }
 
     public DataSourceConfiguration configuration() {
-        return configuration;
+        return this.configuration;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enab
     }
 
     public SessionFactory factory() {
-        return factory;
+        return this.factory;
     }
 
     public void flush() {
@@ -134,11 +134,11 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enab
 
     @Override
     public void enable() throws ApplicationException {
-        if (!this.hasValidConnection()) {
+        if (this.isInvalidConnection()) {
             this.applicationContext().log().debug("No (valid) connection was set for JPA repository instance, using default component instead.");
             this.configuration = this.applicationContext().get(DataSourceList.class).defaultConnection();
 
-            if (!this.hasValidConnection()) {
+            if (this.isInvalidConnection()) {
                 throw new ApplicationException("No (valid) default connection was configured");
             }
         }
@@ -163,15 +163,15 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enab
                 .orThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 
-    protected boolean hasValidConnection() {
+    protected boolean isInvalidConnection() {
         if (this.configuration != null) {
             if (this.configuration instanceof HibernateDataSourceConfiguration hibernateConfiguration && hibernateConfiguration.dialect() == null) {
-                return false;
+                return true;
             }
             // Username/password can be null, only check required properties
-            return this.configuration.url() != null && this.configuration.driver() != null;
+            return this.configuration.url() == null || this.configuration.driver() == null;
         }
-        return false;
+        return true;
     }
 
     protected void prepareProperties() throws ApplicationException {

@@ -33,7 +33,7 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final SerializationSourceConverter converter = findConverter(context, methodContext, processingContext);
+        final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         return converter != null;
     }
 

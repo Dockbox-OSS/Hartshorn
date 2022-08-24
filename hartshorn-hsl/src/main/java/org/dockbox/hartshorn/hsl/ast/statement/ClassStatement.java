@@ -71,7 +71,7 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     }
 
     public List<FieldStatement> fields() {
-        return fields;
+        return this.fields;
     }
 
     public boolean isDynamic() {

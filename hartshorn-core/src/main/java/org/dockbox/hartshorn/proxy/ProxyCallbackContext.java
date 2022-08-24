@@ -42,24 +42,24 @@ public class ProxyCallbackContext<T> extends DefaultContext {
 
     @Nullable
     public T delegate() {
-        return delegate;
+        return this.delegate;
     }
 
     public T proxy() {
-        return proxy;
+        return this.proxy;
     }
 
     public MethodContext<?, T> method() {
-        return method;
+        return this.method;
     }
 
     public Object[] args() {
-        return args;
+        return this.args;
     }
 
     @Nullable
     public Throwable error() {
-        return error;
+        return this.error;
     }
 
     public ProxyCallbackContext<T> acceptError(final Throwable error) {

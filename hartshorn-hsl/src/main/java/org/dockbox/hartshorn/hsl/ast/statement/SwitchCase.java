@@ -26,7 +26,7 @@ public class SwitchCase extends Statement {
     private final LiteralExpression expression;
     private final boolean isDefault;
 
-    public SwitchCase(final Token caseToken, Statement body, LiteralExpression expression, boolean isDefault) {
+    public SwitchCase(final Token caseToken, final Statement body, final LiteralExpression expression, final boolean isDefault) {
         super(caseToken);
         this.body = body;
         this.expression = expression;
@@ -34,19 +34,19 @@ public class SwitchCase extends Statement {
     }
 
     public Statement body() {
-        return body;
+        return this.body;
     }
 
     public LiteralExpression expression() {
-        return expression;
+        return this.expression;
     }
 
     public boolean isDefault() {
-        return isDefault;
+        return this.isDefault;
     }
 
     @Override
-    public <R> R accept(StatementVisitor<R> visitor) {
+    public <R> R accept(final StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

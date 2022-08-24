@@ -38,7 +38,7 @@ public class SystemLibrary {
     }
 
     public void print(final Object object) {
-        final String text = stringify(object);
+        final String text = this.stringify(object);
         this.logger.info(text);
     }
 

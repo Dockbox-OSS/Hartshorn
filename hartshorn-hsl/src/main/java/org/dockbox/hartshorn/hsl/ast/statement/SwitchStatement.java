@@ -28,7 +28,7 @@ public class SwitchStatement extends Statement {
     private final List<SwitchCase> cases;
     private final SwitchCase defaultCase;
 
-    public SwitchStatement(Token switchToken, Expression expression, List<SwitchCase> cases, SwitchCase defaultCase) {
+    public SwitchStatement(final Token switchToken, final Expression expression, final List<SwitchCase> cases, final SwitchCase defaultCase) {
         super(switchToken);
         this.expression = expression;
         this.cases = cases;
@@ -36,19 +36,19 @@ public class SwitchStatement extends Statement {
     }
 
     public Expression expression() {
-        return expression;
+        return this.expression;
     }
 
     public List<SwitchCase> cases() {
-        return cases;
+        return this.cases;
     }
 
     public SwitchCase defaultCase() {
-        return defaultCase;
+        return this.defaultCase;
     }
 
     @Override
-    public <R> R accept(StatementVisitor<R> visitor) {
+    public <R> R accept(final StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

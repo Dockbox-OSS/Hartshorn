@@ -85,14 +85,14 @@ public class HslScript extends DefaultApplicationAwareContext {
     }
 
     public String source() {
-        return source;
+        return this.source;
     }
 
     public ScriptContext scriptContext() {
-        return context;
+        return this.context;
     }
 
     public ScriptRuntime runtime() {
-        return getOrCreateRuntime();
+        return this.getOrCreateRuntime();
     }
 }

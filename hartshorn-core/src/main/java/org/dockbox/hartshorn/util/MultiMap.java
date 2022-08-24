@@ -110,7 +110,7 @@ public abstract class MultiMap<K, V> {
         return false;
     }
 
-    public void forEach(BiConsumer<K, V> consumer) {
+    public void forEach(final BiConsumer<K, V> consumer) {
         this.map().forEach((k, v) -> v.forEach(v1 -> consumer.accept(k, v1)));
     }
 }

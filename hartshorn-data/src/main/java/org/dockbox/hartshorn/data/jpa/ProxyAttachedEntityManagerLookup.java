@@ -30,12 +30,12 @@ public class ProxyAttachedEntityManagerLookup implements EntityManagerLookup {
             return Result.of(carrier.manager());
         }
         else if (target instanceof Context context) {
-            final Result<EntityManager> managerResult = fromContext(context);
+            final Result<EntityManager> managerResult = this.fromContext(context);
             if (managerResult.present()) return managerResult;
         }
 
         if (target instanceof Proxy<?> proxy) {
-            return fromContext(proxy.manager()).orElse(() -> {
+            return this.fromContext(proxy.manager()).orElse(() -> {
                 final Result<JpaRepository> repository = proxy.manager().delegate(JpaRepository.class);
                 if (repository.present() && repository.get() instanceof EntityManagerJpaRepository jpaRepository) {
                     return jpaRepository.manager();
@@ -46,7 +46,7 @@ public class ProxyAttachedEntityManagerLookup implements EntityManagerLookup {
         return Result.empty();
     }
 
-    private Result<EntityManager> fromContext(Context context) {
+    private Result<EntityManager> fromContext(final Context context) {
         return context.first(EntityManagerContext.class).map(EntityManagerContext::entityManager);
     }
 }

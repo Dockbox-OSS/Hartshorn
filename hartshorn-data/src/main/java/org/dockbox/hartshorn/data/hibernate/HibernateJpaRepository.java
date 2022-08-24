@@ -87,7 +87,7 @@ public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T,
     @Override
     public boolean canEnable() {
         if (this.connection != null && this.entityManager.configuration() == null) {
-            this.entityManager.configuration(connection);
+            this.entityManager.configuration(this.connection);
         }
         return this.entityManager.canEnable();
     }

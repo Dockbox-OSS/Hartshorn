@@ -63,7 +63,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public Object get(final Token name, VariableScope fromScope) {
+    public Object get(final Token name, final VariableScope fromScope) {
         final boolean isMethod = this.type.methods().stream()
                 .anyMatch(method -> method.name().equals(name.lexeme()));
         if (isMethod) return new ExternalFunction(this.type.type(), name.lexeme());
