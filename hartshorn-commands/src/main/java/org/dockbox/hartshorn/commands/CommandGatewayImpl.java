@@ -16,22 +16,23 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
+import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.ArrayListMultiMap;
 import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,9 +73,10 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Override
     public void enable() {
-        for (final TypeContext<? extends CommandExecutorExtension> extension : this.context.environment().children(CommandExecutorExtension.class)) {
-            this.context.log().debug("Adding extension " + extension.name() + " to command gateway");
-            this.add(this.context.get(extension));
+        final CommandExtensionContext extensionContext = this.context.first(CommandExtensionContext.class).get();
+        for (final CommandExecutorExtension extension : extensionContext.extensions()) {
+            this.context.log().debug("Adding extension " + TypeContext.of(extension).name() + " to command gateway");
+            this.add(extension);
         }
     }
 
