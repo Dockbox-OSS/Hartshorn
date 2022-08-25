@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.util.collections;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class ArrayListMultiMap<K, V> extends MultiMap<K, V> {
-    @Override
-    protected Collection<V> baseCollection() {
-        return new ArrayList<>();
+public class ConcurrentClassMap<T> extends ConcurrentHashMap<Class<T>, T> {
+
+    public ConcurrentClassMap() {
+    }
+
+    public ConcurrentClassMap(final ConcurrentClassMap<T> map) {
+        super(map);
     }
 }

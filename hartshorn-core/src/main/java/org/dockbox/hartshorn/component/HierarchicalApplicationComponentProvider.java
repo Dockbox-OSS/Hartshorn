@@ -43,9 +43,9 @@ import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -63,7 +63,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     private final transient SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final transient Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
-    private final transient MultiMap<Integer, ComponentPostProcessor> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+    private final transient MultiMap<Integer, ComponentPostProcessor> postProcessors = new ConcurrentSetTreeMultiMap<>();
     private final transient ComponentInstanceFactory factory;
     private final transient ComponentPostConstructor postConstructor;
 
