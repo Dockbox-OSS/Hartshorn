@@ -3,6 +3,7 @@ package org.dockbox.hartshorn.beans;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
@@ -41,11 +42,14 @@ public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComp
             & ModifierCarrier
             & TypedElementContext<?>>
     void process(final ApplicationContext applicationContext, final BeanContext context, final List<E> elements) throws ApplicationException {
+        final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         for (final E element : elements) {
             if (!element.has(AccessModifier.STATIC)) {
                 throw new ApplicationException("Bean service pre-processor can only process static fields and methods");
             }
-            this.process(element, applicationContext, context);
+            if (conditionMatcher.match(element)) {
+                this.process(element, applicationContext, context);
+            }
         }
     }
 
