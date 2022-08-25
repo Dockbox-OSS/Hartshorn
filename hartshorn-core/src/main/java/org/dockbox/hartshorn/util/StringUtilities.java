@@ -94,7 +94,6 @@ public final class StringUtilities {
         while ((st < len) && (val[len - 1] <= c)) {
             len--;
         }
-        // skipcq: JAVA-W0243
         return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
     }
 }

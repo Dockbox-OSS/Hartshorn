@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * @author Guus Lieben
  * @since 21.9
  */
-public interface LifecycleObserver {
+public interface LifecycleObserver extends Observer {
     /**
      * Called when the application is started. This is called directly after the {@link ApplicationContext}
      * has been created and configured.

@@ -21,5 +21,6 @@ import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import java.util.Set;
 
 public interface ObservableApplicationManager extends ApplicationManager {
-    Set<LifecycleObserver> observers();
+
+    <T extends Observer> Set<T> observers(Class<T> type);
 }
