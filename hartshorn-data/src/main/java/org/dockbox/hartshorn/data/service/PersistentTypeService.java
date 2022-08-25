@@ -37,9 +37,4 @@ public class PersistentTypeService implements LifecycleObserver {
         final Collection<TypeContext<?>> entities = applicationContext.environment().types(Entity.class);
         applicationContext.add(new EntityContext(entities));
     }
-
-    @Override
-    public void onExit(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
 }

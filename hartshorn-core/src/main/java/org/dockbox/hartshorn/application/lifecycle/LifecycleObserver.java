@@ -32,7 +32,7 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
-    void onStarted(ApplicationContext applicationContext);
+    default void onStarted(final ApplicationContext applicationContext) {}
 
     /**
      * Called when the application is stopped. This is called directly when the {@link Runtime#getRuntime() runtime}
@@ -40,5 +40,5 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
-    void onExit(ApplicationContext applicationContext);
+    default void onExit(final ApplicationContext applicationContext) {}
 }

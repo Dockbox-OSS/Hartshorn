@@ -39,9 +39,4 @@ public class CommandParameterValidator implements LifecycleObserver {
             applicationContext.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
         }
     }
-
-    @Override
-    public void onExit(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
 }
