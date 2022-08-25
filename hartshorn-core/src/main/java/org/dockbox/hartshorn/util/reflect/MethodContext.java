@@ -90,8 +90,13 @@ public class MethodContext<ReturnType, ParentType> extends ExecutableElementCont
 
     public Result<ReturnType> invoke(final ApplicationContext context) {
         final Object[] args = this.arguments(context);
-        final ParentType instance = context.get(this.parent());
-        return this.invoke(instance, args);
+        if (this.isStatic()) {
+            return this.invoke(null, args);
+        }
+        else {
+            final ParentType instance = context.get(this.parent());
+            return this.invoke(instance, args);
+        }
     }
 
     public Result<ReturnType> invokeStatic(final Object... arguments) {
@@ -147,6 +152,10 @@ public class MethodContext<ReturnType, ParentType> extends ExecutableElementCont
 
     public boolean isProtected() {
         return this.has(AccessModifier.PROTECTED);
+    }
+
+    public boolean isStatic() {
+        return this.has(AccessModifier.STATIC);
     }
 
     @Override
