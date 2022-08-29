@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-rootProject.name = 'Hartshorn'
-gradle.startParameter.continueOnFailure = true
-
-includeAll(rootDir, '')
-
-def includeAll(final File dir, final String prefix) {
-    dir.listFiles().each {
-        if (it.directory && new File(it, "${it.name}.gradle").exists()) {
-            include("${prefix}:${it.name}")
-            // Include all nested projects
-            includeAll(it, it.name)
-        }
-    }
+apply { 
+    from("${project.rootDir}/gradle/publications.gradle.kts")
 }
 
-rootProject.children.each { final project ->
-    project.buildFileName = "${project.name}.gradle"
+dependencies {
+    implementation libs.javassist
 }

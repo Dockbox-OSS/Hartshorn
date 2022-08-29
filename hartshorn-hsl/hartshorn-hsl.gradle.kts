@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply {
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation "cglib:cglib:$cglibVersion"
+    implementation("org.dockbox.hartshorn:hartshorn-core")
 }

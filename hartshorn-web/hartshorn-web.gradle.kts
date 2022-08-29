@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+plugins {
+    id("war")
+}
+
+apply {
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-i18n'
-    implementation 'org.dockbox.hartshorn:hartshorn-events'
+    api(libs.bundles.servlet)
+    api(libs.bundles.jetty)
+    api(libs.freemarker)
+
+    implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-events")
+    implementation("org.dockbox.hartshorn:hartshorn-data")
+
+    testImplementation(libs.httpclient)
 }

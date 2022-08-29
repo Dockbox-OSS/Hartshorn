@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply { 
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    api 'org.dockbox.hartshorn:hartshorn-core'
+    api("org.dockbox.hartshorn:hartshorn-core")
 }

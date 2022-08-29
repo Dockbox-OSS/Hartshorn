@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply {
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation "org.javassist:javassist:$javassistVersion"
+    api(libs.bundles.jakarta)
+    api(libs.javassist)
+    api(libs.cglib)
+
+    implementation(libs.reflections)
+    implementation(libs.logback)
 }

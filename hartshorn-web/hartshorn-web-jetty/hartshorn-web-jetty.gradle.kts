@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply { 
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-data'
-    implementation "org.hibernate:hibernate-core:$hibernateVersion"
-    implementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
+    implementation 'org.dockbox.hartshorn:hartshorn-web'
+    implementation libs.bundles.jetty
 }

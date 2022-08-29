@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply { 
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-data'
-    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    implementation("org.dockbox.hartshorn:hartshorn-data")
+    implementation("org.dockbox.hartshorn:hartshorn-core")
 }
