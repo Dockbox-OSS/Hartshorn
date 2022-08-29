@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
 import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
@@ -29,11 +28,12 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 @Component
-public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T, ID> implements Enableable {
+public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T, ID> {
 
     private final DataSourceConfiguration connection;
 
@@ -84,16 +84,11 @@ public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T,
         return this.manager().beginTransaction();
     }
 
-    @Override
-    public boolean canEnable() {
+    @PostConstruct
+    public void enable() throws ApplicationException {
         if (this.connection != null && this.entityManager.configuration() == null) {
             this.entityManager.configuration(this.connection);
         }
-        return this.entityManager.canEnable();
-    }
-
-    @Override
-    public void enable() throws ApplicationException {
         this.entityManager.enable();
     }
 }

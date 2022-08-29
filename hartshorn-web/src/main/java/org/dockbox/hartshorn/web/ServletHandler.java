@@ -16,27 +16,27 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.component.Enableable;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.io.IOException;
 import java.util.List;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ServletHandler implements Enableable {
+public class ServletHandler {
 
     private final HttpWebServer starter;
     private final HttpMethod httpMethod;
@@ -65,7 +65,7 @@ public class ServletHandler implements Enableable {
         return this.mapper;
     }
 
-    @Override
+    @PostConstruct
     public void enable() throws ApplicationException {
         final MediaType mediaType = this.httpRequest.produces();
         if (!mediaType.isSerializable()) throw new ApplicationException("Provided media type '" + mediaType.value() + "' is not serializable");

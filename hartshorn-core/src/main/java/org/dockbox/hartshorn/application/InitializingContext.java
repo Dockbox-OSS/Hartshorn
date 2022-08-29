@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.MetaProvider;
@@ -103,6 +104,10 @@ public record InitializingContext(ApplicationEnvironment environment, Applicatio
 
     public ComponentProvider componentProvider() {
         return this.configuration.componentProvider(this);
+    }
+
+    public ComponentPostConstructor componentPostConstructor() {
+        return this.configuration.componentPostConstructor(this);
     }
 
     public ComponentPopulator componentPopulator() {

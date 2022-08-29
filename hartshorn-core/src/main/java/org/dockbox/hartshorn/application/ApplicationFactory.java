@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ActivatorFiltered;
@@ -161,6 +162,17 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @see ComponentLocator
      */
     Self componentLocator(Initializer<ComponentLocator> componentLocator);
+
+    /**
+     * Sets the {@link ComponentPostProcessor} to use. The post constructor is responsible for invoking actions on a
+     * component after it has been constructed. The provider used a {@link Function} as the post constructor should
+     * typically be bound to a given {@link ApplicationContext}. The {@link ComponentPostProcessor} is created by the
+     * {@link ComponentProvider}.
+     *
+     * @param componentPostConstructor The component post constructor to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self componentPostConstructor(Initializer<ComponentPostConstructor> componentPostConstructor);
 
     /**
      * Sets the {@link MetaProvider} to use. The meta provider is responsible for providing meta information about types.

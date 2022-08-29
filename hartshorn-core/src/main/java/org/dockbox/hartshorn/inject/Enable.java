@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 import java.lang.annotation.ElementType;
@@ -24,16 +25,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the value of a field or method should be enabled through
- * {@link org.dockbox.hartshorn.component.Enableable#enable(Object)}.
+ * Indicates that the value of a field or method should be processed by the specific
+ * {@link ComponentPostConstructor}.
  *
  * <p>If the annotated element is a field, the value of the field will be enabled,
  * if it is not {@code null}.
  *
  * <p>If the annotated element is a method, the behavior is different depending on the
- * responsible {@link ComponentPostProcessor} which
- * handles the method. Typically, this will indicate that the result of the method will
- * be enabled.
+ * responsible {@link ComponentPostProcessor} which handles the method. Typically,
+ * this will indicate that the result of the method will be enabled.
  *
  * <p>If the value of {@link #value()} is {@code true}, the annotated element will be
  * enabled. If the value is {@code false}, the annotated element will be not be enabled

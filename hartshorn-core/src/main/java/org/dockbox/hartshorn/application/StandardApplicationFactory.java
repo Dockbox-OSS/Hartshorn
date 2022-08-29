@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.application.environment.StandardApplicationArgument
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.beans.UseBeanScanning;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
+import org.dockbox.hartshorn.component.ComponentPostConstructorImpl;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
@@ -94,6 +95,7 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         this.require(this.configuration().applicationProxier, "Application proxier");
         this.require(this.configuration().exceptionHandler, "Exception handler");
         this.require(this.configuration().componentLocator, "Component locator");
+        this.require(this.configuration().componentPostConstructor, "Component post-constructor");
         this.require(this.configuration().resourceLocator, "Resource locator");
         this.require(this.configuration().metaProvider, "Meta provider");
         this.require(this.configuration().applicationFSProvider, "Filesystem provider");
@@ -126,9 +128,10 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
                 .exceptionHandler(ctx -> new LoggingExceptionHandler())
                 .prefixContext(ctx -> new ReflectionsPrefixContext(ctx.manager()))
                 .componentLocator(ComponentLocatorImpl::new)
+                .componentPostConstructor(ComponentPostConstructorImpl::new)
                 .resourceLocator(ctx -> new ClassLoaderClasspathResourceLocator(ctx.applicationContext()))
                 .metaProvider(ctx -> new InjectorMetaProvider(ctx.applicationContext()))
-                .componentProvider(ctx -> new HierarchicalApplicationComponentProvider(ctx.applicationContext(), ctx.componentLocator(), ctx.metaProvider()))
+                .componentProvider(HierarchicalApplicationComponentProvider::new)
                 .componentPopulator(ctx -> new ContextualComponentPopulator(ctx.applicationContext()))
                 .argumentParser(ctx -> new StandardApplicationArgumentParser())
                 .activatorHolder(ctx -> new StandardActivatorHolder(ctx.applicationContext()))

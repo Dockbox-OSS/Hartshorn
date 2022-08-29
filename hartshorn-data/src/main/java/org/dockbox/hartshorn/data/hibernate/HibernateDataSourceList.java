@@ -18,17 +18,17 @@ package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.RefreshableDataSourceList;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
 @Component(singleton = true)
-public class HibernateDataSourceList implements RefreshableDataSourceList, Enableable {
+public class HibernateDataSourceList implements RefreshableDataSourceList {
 
     @Inject
     private HibernateDataSourceConfigurationObject sources;
@@ -56,7 +56,7 @@ public class HibernateDataSourceList implements RefreshableDataSourceList, Enabl
         return this.get("default");
     }
 
-    @Override
+    @PostConstruct
     public void enable() {
         this.configurations.clear();
         this.configurations.putAll(this.sources.sources());

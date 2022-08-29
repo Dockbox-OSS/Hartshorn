@@ -18,18 +18,6 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.util.ApplicationException;
 
-@FunctionalInterface
-public interface Enableable {
-
-    default boolean canEnable() {
-        return true;
-    }
-
-    void enable() throws ApplicationException;
-
-    static void enable(final Object object) throws ApplicationException {
-        if (object instanceof Enableable enableable && enableable.canEnable()) {
-            enableable.enable();
-        }
-    }
+public interface ComponentPostConstructor {
+    <T> T doPostConstruct(T type) throws ApplicationException;
 }

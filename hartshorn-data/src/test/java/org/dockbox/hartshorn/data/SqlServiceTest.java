@@ -21,17 +21,17 @@ import com.mysql.cj.jdbc.Driver;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
+import org.dockbox.hartshorn.data.hibernate.HibernateDataSourceConfiguration;
 import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
 import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
 import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
-import org.dockbox.hartshorn.data.hibernate.HibernateDataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.RefreshableDataSourceList;
 import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -216,7 +216,6 @@ class SqlServiceTest {
 
         final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
 
-
         // Data API specific
         propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
         propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
@@ -233,12 +232,14 @@ class SqlServiceTest {
             refreshable.refresh();
         }
 
-        ((Enableable) repository).enable();
+        final ComponentPostConstructor componentPostConstructor = applicationContext.get(ComponentPostConstructor.class);
+        componentPostConstructor.doPostConstruct(repository);
 
-        final Session session = ((HibernateJpaRepository<User, ?>) repository).manager();
+        final HibernateJpaRepository<User, ?> jpaRepository = (HibernateJpaRepository<User, ?>) repository;
+        final Session session = jpaRepository.manager();
         Assertions.assertNotNull(session);
 
-        ((HibernateJpaRepository<User, ?>) repository).close();
+        jpaRepository.close();
     }
 
     @Test
