@@ -299,7 +299,12 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             message = "%s\n%s\n%s".formatted(message, lineText, marker);
         }
 
-        ScriptEvaluationError evaluationError = new ScriptEvaluationError(error, message, phase, error.at(), line, column);
+        ScriptEvaluationError evaluationError = ScriptEvaluationError.builder(phase)
+                .at(error.at())
+                .position(line, column)
+                .cause(error)
+                .message(message)
+                .build();
         // We only want to customize the error message, not the stack trace, so we
         // keep the original stack trace.
         evaluationError.setStackTrace(evaluationError.getStackTrace());

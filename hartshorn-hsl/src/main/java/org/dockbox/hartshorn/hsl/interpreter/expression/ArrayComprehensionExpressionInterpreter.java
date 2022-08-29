@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO: #1061 Add documentation
@@ -48,7 +49,10 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
             });
         }
         else {
-            throw new ScriptEvaluationError("Collection must be iterable", Phase.INTERPRETING, node.open());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
+                    .at(node)
+                    .build();
         }
         return new Array(values.toArray());
     }

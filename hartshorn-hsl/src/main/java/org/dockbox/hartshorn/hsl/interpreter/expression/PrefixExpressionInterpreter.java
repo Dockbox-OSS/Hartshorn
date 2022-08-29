@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -26,6 +23,9 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO: #1061 Add documentation
@@ -45,7 +45,11 @@ public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, P
             return value.call(node.prefixOperatorName(), interpreter, null, args);
         }
         catch (ApplicationException e) {
-            throw new ScriptEvaluationError(e, Phase.INTERPRETING, node.prefixOperatorName());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message("Error while evaluating prefix operator '%s': %s".formatted(node.prefixOperatorName().lexeme(), e.getMessage()))
+                    .cause(e)
+                    .at(node)
+                    .build();
         }
     }
 }

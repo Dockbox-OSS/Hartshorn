@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
@@ -43,7 +44,10 @@ public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, Su
         MethodReference method = superClass.method(node.method().lexeme());
 
         if (method == null) {
-            throw new ScriptEvaluationError("Undefined property '" + node.method().lexeme() + "'.", Phase.INTERPRETING, node.method());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.UNDEFINED_PROPERTY, node.method().lexeme())
+                    .at(node)
+                    .build();
         }
         return method.bind(object);
     }

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
@@ -62,21 +63,23 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
     private void verifyIsExpression(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
         if (!(lastStatement instanceof ExpressionStatement || (lastStatement instanceof ReturnStatement returnStatement && returnStatement.returnType() == ReturnStatement.ReturnType.YIELD))) {
-            throw new ScriptEvaluationError("Expected last statement to be a valid expression or yield statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
+            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+                    .at(lastStatement)
+                    .message(DiagnosticMessage.INVALID_EXPRESSION, lastStatement.getClass().getSimpleName())
+                    .build();
         }
     }
 
     private List<Statement> enhanceTestStatement(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
 
-        if (!(lastStatement instanceof ReturnStatement)) {
-            ExpressionStatement statement = (ExpressionStatement) lastStatement;
+        if (lastStatement instanceof ExpressionStatement expressionStatement) {
             Token returnToken = Token.of(ControlTokenType.YIELD)
                     .lexeme(VALIDATION_ID)
                     .virtual()
                     .build();
 
-            ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression(), ReturnStatement.ReturnType.YIELD);
+            ReturnStatement returnStatement = new ReturnStatement(returnToken, expressionStatement.expression(), ReturnStatement.ReturnType.YIELD);
             statements.set(statements.size() - 1, returnStatement);
         }
 

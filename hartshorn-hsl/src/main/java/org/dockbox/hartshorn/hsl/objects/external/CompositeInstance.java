@@ -94,7 +94,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
 
     @Override
     public void set(final Interpreter interpreter, final Token name, final Object value, final VariableScope fromScope) {
-        this.checkInstance();
+        this.checkInstance(name);
         final VirtualProperty property = super.type().property(name.lexeme());
         if (property != null) {
             super.set(interpreter, name, value, fromScope);
@@ -106,21 +106,25 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                     field.get().set(this.instance, value);
                 }
                 catch (Throwable throwable) {
-                    throw new ScriptEvaluationError(
-                            throwable, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()),
-                            Phase.INTERPRETING, name
-                    );
+                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                            .at(name)
+                            .message("Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()))
+                            .cause(throwable)
+                            .build();
                 }
             }
             else {
-                throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Field %s not found in %s".formatted(name.lexeme(), this.firstExternalClass.name()))
+                        .build();
             }
         }
     }
 
     @Override
     public Object get(final Interpreter interpreter, final Token name, final VariableScope fromScope) {
-        this.checkInstance();
+        this.checkInstance(name);
         final VirtualProperty property = super.type().property(name.lexeme());
         if (property != null) {
             return super.get(interpreter, name, fromScope);
@@ -132,27 +136,33 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                     return field.get().get(this.instance);
                 }
                 catch (Throwable throwable) {
-                    throw new ScriptEvaluationError(
-                            throwable, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()),
-                            Phase.INTERPRETING, name
-                    );
+                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                            .at(name)
+                            .message("Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()))
+                            .cause(throwable)
+                            .build();
                 }
             }
             else {
-                throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Field %s not found in %s".formatted(name.lexeme(), this.firstExternalClass.name()))
+                        .build();
             }
         }
     }
 
     @Override
     public @Nullable Object externalObject() {
-        this.checkInstance();
         return this.instance;
     }
 
-    private void checkInstance() {
+    private void checkInstance(Token position) {
         if (this.instance == null) {
-            throw new IllegalStateException("Instance not created");
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(position)
+                    .message("Composite instance of type %s not yet created".formatted(this.firstExternalClass.name()))
+                    .build();
         }
     }
 }

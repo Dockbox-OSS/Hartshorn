@@ -39,7 +39,7 @@ public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetE
     public Object interpret(GetExpression node, Interpreter interpreter) {
         Object object = interpreter.evaluate(node.object());
         if (object instanceof PropertyContainer container) {
-            Object result = container.get(node.name(), interpreter.visitingScope(), interpreter.executionOptions());
+            Object result = container.get(interpreter, node.name(), interpreter.visitingScope());
             if (result instanceof ExternalObjectReference objectReference) {
                 result = objectReference.externalObject();
             }

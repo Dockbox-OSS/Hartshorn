@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -158,10 +159,10 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         while(classReference != null);
 
         if (externalClass == null) {
-            throw new ScriptEvaluationError(
-                    "Cannot bind external function to virtual instance of type " + virtualClass.name(),
-                    Phase.INTERPRETING, -1, -1
-                    );
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.ILLEGAL_EXTERNAL_FUNCTION_BINDING, virtualClass.name())
+                    .position(-1, -1)
+                    .build();
         }
 
         return new ExternalFunction(externalClass.type(), this.methodName, instance);

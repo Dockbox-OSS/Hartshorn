@@ -104,14 +104,18 @@ public abstract class AbstractNativeModule implements NativeModule {
                 return new ExternalInstance(result, TypeUtils.unchecked(method.returnType(), TypeView.class));
             }
             catch(Throwable e) {
-                throw new ScriptEvaluationError(e, Phase.INTERPRETING, at);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(at)
+                        .message("Error while invoking function '%s': %s".formatted(function.name().lexeme(), e.getMessage()))
+                        .cause(e)
+                        .build();
             }
         }
         else {
-            throw new ScriptEvaluationError(
-                    "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'",
-                    Phase.INTERPRETING, at
-            );
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(at)
+                    .message("Function '%s' is not supported by module '%s'".formatted(function.name().lexeme(), this.moduleClass().getSimpleName()))
+                    .build();
         }
     }
 

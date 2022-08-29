@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
@@ -58,6 +59,9 @@ public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, Log
             Object right = interpreter.evaluate(node.rightExpression());
             return this.xor(left, right);
         }
-        throw new ScriptEvaluationError("Unsupported logical operator.", Phase.INTERPRETING, node.operator());
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, node.operator().lexeme())
+                .at(node.operator())
+                .build();
     }
 }

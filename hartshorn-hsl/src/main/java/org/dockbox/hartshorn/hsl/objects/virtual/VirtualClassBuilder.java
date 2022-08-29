@@ -4,6 +4,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ScopeOwner;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -86,29 +87,29 @@ public class VirtualClassBuilder implements ScopeOwner {
 
     public void field(final FieldStatement field) {
         if (this.fields.containsKey(field.name().lexeme())) {
-            throw new RuntimeError(field.name(), "Duplicate field '" + this.name.lexeme() + "." + field.name().lexeme() + "'.");
+            throw new RuntimeError(field.name(), DiagnosticMessage.DUPLICATE_FIELD, this.name.lexeme(), field.name().lexeme());
         }
         this.fields.put(field.name().lexeme(), new VirtualProperty(field));
     }
 
     public void getter(final VirtualMemberFunction getter) {
         if (!getter.declaration().parameters().isEmpty()) {
-            throw new RuntimeError(getter.name(), "Getter cannot have parameters.");
+            throw new RuntimeError(getter.name(), DiagnosticMessage.ILLEGAL_GETTER_WITH_PARAMETERS, getter.name().lexeme());
         }
         if (this.fields.containsKey(getter.name().lexeme())) {
             this.fields.get(getter.name().lexeme()).getter(getter);
         }
-        else throw new RuntimeError(getter.name(), "Could not register getter for unknown property '" + getter.name().lexeme() + "'.");
+        else throw new RuntimeError(getter.name(), DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "getter", getter.name().lexeme());
     }
 
     public void setter(final VirtualMemberFunction setter) {
         if (setter.hasBody() && setter.declaration().parameters().size() != 1) {
-            throw new RuntimeError(setter.name(), "Setter must have exactly one parameter.");
+            throw new RuntimeError(setter.name(), DiagnosticMessage.ILLEGAL_SETTER_PARAMETER_MISMATCH, setter.name().lexeme(), setter.declaration().parameters().size());
         }
         if (this.fields.containsKey(setter.name().lexeme())) {
             this.fields.get(setter.name().lexeme()).setter(setter);
         }
-        else throw new RuntimeError(setter.name(), "Could not register setter for unknown property '" + setter.name().lexeme() + "'.");
+        else throw new RuntimeError(setter.name(), DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "setter", setter.name().lexeme());
     }
 
     public VirtualClass build() {

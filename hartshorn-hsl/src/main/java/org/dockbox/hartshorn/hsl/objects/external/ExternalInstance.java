@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.Map;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -25,7 +23,6 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -33,6 +30,8 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Map;
 
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
@@ -74,10 +73,11 @@ public class ExternalInstance implements ExternalObjectReference {
                 field.get().set(this.instance(), value);
             }
             catch(Throwable throwable) {
-                throw new ScriptEvaluationError(
-                        throwable, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()),
-                        Phase.INTERPRETING, name
-                );
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()))
+                        .cause(throwable)
+                        .build();
             }
         }
         else {
@@ -92,10 +92,10 @@ public class ExternalInstance implements ExternalObjectReference {
                 .toArray();
 
         if (methods.length > 1 && !interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
-            throw new ScriptEvaluationError(
-                    "Ambiguous method call for method %s".formatted(name.lexeme()),
-                    Phase.INTERPRETING, name
-            );
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(name)
+                    .message("Ambiguous method call for method %s".formatted(name.lexeme()))
+                    .build();
         }
 
         if (methods.length > 0) {
@@ -108,12 +108,11 @@ public class ExternalInstance implements ExternalObjectReference {
                 return field.get().get(this.instance());
             }
             catch(Throwable throwable) {
-                throw new ScriptEvaluationError(
-                        throwable,
-                        "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()),
-                        Phase.INTERPRETING,
-                        name
-                );
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()))
+                        .cause(throwable)
+                        .build();
             }
         }
         else {
@@ -122,10 +121,10 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     private ScriptEvaluationError propertyDoesNotExist(Token name) {
-        return new ScriptEvaluationError(
-                "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()),
-                Phase.INTERPRETING, name
-        );
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .at(name)
+                .message("Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()))
+                .build();
     }
 
     @Override

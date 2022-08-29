@@ -16,14 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -31,8 +26,15 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * TODO: #1061 Add documentation
@@ -51,10 +53,16 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
         if (superClassExpression != null) {
             superClass = interpreter.evaluate(superClassExpression);
             if (!(superClass instanceof ClassReference virtualClass)) {
-                throw new ScriptEvaluationError("Superclass must be a class.", Phase.INTERPRETING, superClassExpression.name());
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
+                        .at(superClassExpression)
+                        .build();
             }
             if (virtualClass.isFinal()) {
-                throw new ScriptEvaluationError("Cannot extend final class '" + virtualClass.name() + "'.", Phase.INTERPRETING, superClassExpression.name());
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, virtualClass.name())
+                        .at(superClassExpression)
+                        .build();
             }
         }
 
@@ -85,7 +93,11 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
             constructor = new VirtualFunction(node.constructor(), interpreter.visitingScope(), true);
         }
 
-        Map<String, FieldStatement> fields = node.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
+        Map<String, VirtualProperty> fields = node.fields().stream()
+                .map(VirtualProperty::new)
+                .collect(Collectors.toUnmodifiableMap(
+                        property -> property.fieldStatement().name().lexeme(),
+                        Function.identity()));
 
         VirtualClass virtualClass = new VirtualClass(node.name().lexeme(),
                 superClassReference, constructor, interpreter.visitingScope(),

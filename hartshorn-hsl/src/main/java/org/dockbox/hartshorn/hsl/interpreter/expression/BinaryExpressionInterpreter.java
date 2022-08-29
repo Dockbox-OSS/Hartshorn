@@ -16,18 +16,19 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.function.BiPredicate;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
+
+import java.util.function.BiPredicate;
 
 /**
  * TODO: #1061 Add documentation
@@ -71,7 +72,10 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     int value = rightCharacter;
                     yield leftDouble + value;
                 }
-                throw new ScriptEvaluationError("Unsupported child for PLUS.\n", Phase.INTERPRETING, operator);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.UNSUPPORTED_CHILD, ArithmeticTokenType.PLUS.representation())
+                        .at(operator)
+                        .build();
             }
             case ArithmeticTokenType.MINUS -> {
                 InterpreterUtilities.checkNumberOperands(operator, left, right);
@@ -106,7 +110,10 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
             case ArithmeticTokenType.SLASH -> {
                 InterpreterUtilities.checkNumberOperands(operator, left, right);
                 if ((double) right == 0) {
-                    throw new ScriptEvaluationError("Can't use slash with zero double.", Phase.INTERPRETING, operator);
+                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                            .message(DiagnosticMessage.ILLEGAL_ZERO_DIVISION)
+                            .at(operator)
+                            .build();
                 }
                 yield (double) left / (double) right;
             }

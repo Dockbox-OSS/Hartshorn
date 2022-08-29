@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.access.PropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -56,31 +57,35 @@ public class VirtualInstance implements InstanceReference {
     public void set(Interpreter interpreter, Token name, Object value, VariableScope fromScope) {
         VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
-            throw new ScriptEvaluationError("Undefined property '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(name)
+                    .message("Undefined property '%s' on %s.".formatted(name.lexeme(), this.type().name()))
+                    .build();
         }
         if (field != null) {
-            final String accessError = this.accessVerifier().read(name, field, this, fromScope);
+            final FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
             if (accessError != null) {
-                throw new ScriptEvaluationError(accessError, Phase.INTERPRETING, name);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message(accessError)
+                        .build();
             }
             if (field.setter() != null) {
                 if (field.setter().hasBody()) {
                     try {
                         final Object call = field.setter().bind(this).call(name, interpreter, this, List.of(value));
                         if (call != null) {
-                            throw new ScriptEvaluationError(
-                                    "Setter for property '%s' returned a value. Did you mean to use '%s'?".formatted(
+                            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                                    .at(field.setter().modifier())
+                                    .message("Setter for property '%s' returned a value. Did you mean to use '%s'?".formatted(
                                             name.lexeme(), ControlTokenType.YIELD.representation()
-                                    ),
-                                    Phase.INTERPRETING,
-                                    field.setter().modifier()
-                            );
+                                    ))
+                                    .build();
                         }
-                        throw new ScriptEvaluationError(
-                                "Setter for property '" + name.lexeme() + "' did not yield a value to set.",
-                                Phase.INTERPRETING,
-                                field.setter().modifier()
-                        );
+                        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                                .at(field.setter().modifier())
+                                .message("Setter for property '%s' did not yield a value to set.".formatted(name.lexeme()))
+                                .build();
                     }
                     catch (final Yield yield) {
                         final Object result = yield.value();
@@ -90,13 +95,12 @@ public class VirtualInstance implements InstanceReference {
                 }
             }
             if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
-                throw new ScriptEvaluationError(
-                        "Cannot reassign property %s of %s because it is final.".formatted(
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Cannot reassign property '%s' of %s because it is final.".formatted(
                                 name.lexeme(), this.type().name()
-                        ),
-                        Phase.INTERPRETING,
-                        name
-                );
+                        ))
+                        .build();
             }
         }
         this.fields.put(name.lexeme(), value);
@@ -106,9 +110,12 @@ public class VirtualInstance implements InstanceReference {
     public Object get(Interpreter interpreter, Token name, VariableScope fromScope) {
         final VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field != null) {
-            final String accessError = this.accessVerifier().read(name, field, this, fromScope);
+            final FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
             if (accessError != null) {
-                throw new ScriptEvaluationError(accessError, Phase.INTERPRETING, name);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message(accessError)
+                        .build();
             }
             if (field.getter() != null) {
                 if (field.getter().hasBody()) {
@@ -125,7 +132,10 @@ public class VirtualInstance implements InstanceReference {
         if (this.type().isDynamic()) {
             return this.fields.get(name.lexeme());
         }
-        throw new ScriptEvaluationError("Undefined property '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .at(name)
+                .message("Undefined property '%s'.".formatted(name.lexeme()))
+                .build();
     }
 
     protected PropertyAccessVerifier accessVerifier() {

@@ -16,18 +16,19 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * TODO: #1061 Add documentation
@@ -137,7 +138,9 @@ public class InterpreterState {
         else if (this.imports.containsKey(name.lexeme())) {
             return this.imports.get(name.lexeme());
         }
-
-        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 }

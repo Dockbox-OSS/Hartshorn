@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -41,13 +40,13 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend final class 'User'. While interpreting at line 2, column 20.
+                HSL3013: Cannot extend final class 'User'. While interpreting at line 2, column 20.
                 class Admin extends User { }
                                     ^""", error.getMessage());
     }
 
     @Test
-    void canExtendExternalNonFinalClass() {
+    void canExtendNonFinalExternalClass() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
@@ -63,7 +62,7 @@ public class FinalizedTests {
         script.runtime().imports("User", FinalUser.class);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
+                HSL3013: Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
                 class Admin extends User { }
                                     ^""", error.getMessage());
     }
@@ -76,7 +75,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final variable 'x'. While resolving at line 2, column 0.
+                HSL3015: Cannot reassign variable x because it is final. While resolving at line 2, column 0.
                 x = 2;
                 ^""", error.getMessage());
     }
@@ -84,14 +83,14 @@ public class FinalizedTests {
     @Test
     void testCannotReassignFinalFunctions() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
-                final function x() { }
-                function x() { }
+                final fun x() { }
+                fun x() { }
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final function 'x'. While resolving at line 2, column 9.
-                function x() { }
-                         ^""", error.getMessage());
+                HSL3015: Cannot reassign function x because it is final. While resolving at line 2, column 4.
+                fun x() { }
+                    ^""", error.getMessage());
     }
 
     @Test
@@ -102,7 +101,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final class 'User'. While resolving at line 2, column 6.
+                HSL3015: Cannot reassign class User because it is final. While resolving at line 2, column 6.
                 class User { }
                       ^""", error.getMessage());
     }
@@ -110,15 +109,15 @@ public class FinalizedTests {
     @Test
     void testCannotReassignFinalNativeFunctions() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
-                final native function a:x();
-                function x() { }
+                final native fun a.x();
+                fun x() { }
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
         Assertions.assertEquals("""
-                Cannot reassign final native function 'x'. While resolving at line 2, column 9.
-                function x() { }
-                         ^""", error.getMessage());
+                HSL3015: Cannot reassign native function x because it is final. While resolving at line 2, column 4.
+                fun x() { }
+                    ^""", error.getMessage());
     }
 
     public static class User { }
