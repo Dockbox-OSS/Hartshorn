@@ -82,6 +82,7 @@ public class Token extends ASTNode {
         return this.type;
     }
 
+    @Override
     public String toString() {
         return "Token[%s @ %d:%d = %s / %s]".formatted(this.type, this.line(), this.column(), this.lexeme, this.literal);
     }

@@ -61,7 +61,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -86,6 +85,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualMemberFunction;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
@@ -190,7 +190,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
         }
         catch (final RuntimeError error) {
-            throw new ScriptEvaluationError(error, Phase.INTERPRETING, error.at());
+            throw new ScriptEvaluationError(Phase.INTERPRETING, error.at(), error);
         }
         finally {
             this.isRunning = false;
@@ -208,8 +208,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         switch (expr.operator().type()) {
             case PLUS -> {
                 // Math plus
-                if (left instanceof Double && right instanceof Double) {
-                    return (double) left + (double) right;
+                if (left instanceof Number nl && right instanceof Number nr) {
+                    return nl.doubleValue() + nr.doubleValue();
                 }
                 // String Addition
                 if (left instanceof String || right instanceof String) {
@@ -221,31 +221,32 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 if ((left instanceof Character && right instanceof Character)) {
                     return String.valueOf(left) + right;
                 }
-                if ((left instanceof Character) && (right instanceof Double)) {
+                if ((left instanceof Character) && (right instanceof Number num)) {
                     final int value = (Character) left;
-                    return (double) right + value;
+                    return num.doubleValue() + value;
                 }
-                if ((left instanceof Double) && (right instanceof Character)) {
+                if ((left instanceof Number num) && (right instanceof Character)) {
                     final int value = (Character) right;
-                    return (double) left + value;
+                    return num.doubleValue() + value;
                 }
-                throw new RuntimeError(expr.operator(), "Unsupported child for PLUS.\n");
+                throw new RuntimeError(expr.operator(), DiagnosticMessage.UNSUPPORTED_CHILD, TokenType.PLUS.representation(), "%s %s %s"
+                        .formatted(left.getClass().getSimpleName(), TokenType.PLUS.representation(), right.getClass().getSimpleName()));
             }
             case MINUS -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                return (double) left - (double) right;
+                return ((Number) left).doubleValue() - ((Number) right).doubleValue();
             }
             case STAR -> {
-                if ((left instanceof String || left instanceof Character) && right instanceof Double) {
-                    final int times = (int) ((double) right);
+                if ((left instanceof String || left instanceof Character) && right instanceof Number num) {
+                    final int times = num.intValue();
                     final int finalLen = left.toString().length() * times;
                     final StringBuilder result = new StringBuilder(finalLen);
                     final String strValue = left.toString();
                     result.append(strValue.repeat(Math.max(0, times)));
                     return result.toString();
                 }
-                else if (left instanceof Array array && right instanceof Double) {
-                    final int times = (int) ((double) right);
+                else if (left instanceof Array array && right instanceof Number num) {
+                    final int times = num.intValue();
                     final int finalLen = array.length() * times;
                     final Array result = new Array(finalLen);
                     for (int i = 0; i < times; i++) {
@@ -255,34 +256,34 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     return result;
                 }
                 this.checkNumberOperands(expr.operator(), left, right);
-                return (double) left * (double) right;
+                return number(left) * number(right);
             }
             case MODULO -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                return (double) left % (double) right;
+                return number(left) % number(right);
             }
             case SLASH -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                if ((double) right == 0) {
-                    throw new RuntimeError(expr.operator(), "Can't use slash with zero double.");
+                if (number(right) == 0) {
+                    throw new RuntimeError(expr.operator(), DiagnosticMessage.ILLEGAL_ZERO_DIVISION);
                 }
-                return (double) left / (double) right;
+                return number(left) / number(right);
             }
             case GREATER -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                return Double.parseDouble(left.toString()) > Double.parseDouble(right.toString());
+                return number(left) > number(right);
             }
             case GREATER_EQUAL -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                return Double.parseDouble(left.toString()) >= Double.parseDouble(right.toString());
+                return number(left) >= number(right);
             }
             case LESS -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                return Double.parseDouble(left.toString()) < Double.parseDouble(right.toString());
+                return number(left) < number(right);
             }
             case LESS_EQUAL -> {
                 this.checkNumberOperands(expr.operator(), left, right);
-                return Double.parseDouble(left.toString()) <= Double.parseDouble(right.toString());
+                return number(left) <= number(right);
             }
             case BANG_EQUAL -> {
                 return !this.isEqual(left, right);
@@ -367,20 +368,20 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object newValue = switch (expr.operator().type()) {
             case MINUS -> {
                 this.checkNumberOperand(expr.operator(), right);
-                yield -(double) right;
+                yield -number(right);
             }
             case PLUS_PLUS -> {
                 this.checkNumberOperand(expr.operator(), right);
-                yield (double) right + 1;
+                yield number(right) + 1;
             }
             case MINUS_MINUS -> {
                 this.checkNumberOperand(expr.operator(), right);
-                yield (double) right - 1;
+                yield number(right) - 1;
             }
-            case BANG -> !this.isTruthy(right);
+            case BANG -> !this.truthy(right);
             case COMPLEMENT -> {
                 this.checkNumberOperand(expr.operator(), right);
-                final int value = ((Double) right).intValue();
+                final int value = (int) number(right);
                 // Cast to int is redundant, but required to suppress false-positive inspections.
                 //noinspection RedundantCast
                 yield (int) ~value;
@@ -396,10 +397,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object left = this.evaluate(expr.leftExpression());
         this.checkNumberOperand(expr.operator(), left);
 
+        final float ln = number(left);
         final double newValue = switch (expr.operator().type()) {
-            case PLUS_PLUS -> (double) left + 1;
-            case MINUS_MINUS -> (double) left -1;
-            default -> throw new RuntimeError(expr.operator(), "Invalid postfix operator " + expr.operator().type());
+            case PLUS_PLUS -> ln + 1;
+            case MINUS_MINUS -> ln -1;
+            default -> throw new RuntimeError(expr.operator(), DiagnosticMessage.ILLEGAL_POSTFIX, expr.operator().type());
         };
         this.assignIfVariable(expr.leftExpression(), newValue);
         return left;
@@ -416,26 +418,26 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object left = this.evaluate(expr.leftExpression());
         switch (expr.operator().type()) {
             case AND -> {
-                if (!this.isTruthy(left)) {
+                if (!this.truthy(left)) {
                     return false;
                 }
                 // Don't evaluate right if left is not truthy
                 final Object right = this.evaluate(expr.rightExpression());
-                return this.isTruthy(right);
+                return this.truthy(right);
             }
             case OR -> {
-                if (this.isTruthy(left)) {
+                if (this.truthy(left)) {
                     return true;
                 }
                 // No need to evaluate right if left is already truthy
                 final Object right = this.evaluate(expr.rightExpression());
-                return this.isTruthy(right);
+                return this.truthy(right);
             }
             case XOR -> {
                 final Object right = this.evaluate(expr.rightExpression());
                 return this.xor(left, right);
             }
-            default -> throw new RuntimeError(expr.operator(), "Unsupported logical operator.");
+            default -> throw new RuntimeError(expr.operator(), DiagnosticMessage.UNSUPPORTED_LOGICAL, expr.operator().type().representation());
         }
     }
 
@@ -458,12 +460,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 case BITWISE_AND -> iLeft & iRight;
                 case BITWISE_OR -> iLeft | iRight;
                 case XOR -> this.xor(iLeft, iRight);
-                default -> throw new RuntimeError(operator, "Unsupported bitwise operator.");
+                default -> throw new RuntimeError(operator, DiagnosticMessage.UNSUPPORTED_BITWISE, operator.type().representation());
             };
         }
         final String leftType = left != null ? left.getClass().getSimpleName() : null;
         final String rightType = right != null ? right.getClass().getSimpleName() : null;
-        throw new RuntimeError(operator, "Bitwise left and right must be a numbers, but got %s (%s) and %s (%s)".formatted(left, leftType, right, rightType));
+        throw new RuntimeError(operator, DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType);
     }
 
     private Object xor(final Object left, final Object right) {
@@ -472,13 +474,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             final int iRight = nright.intValue();
             return iLeft ^ iRight;
         }
-        return this.isTruthy(left) ^ this.isTruthy(right);
+        return this.truthy(left) ^ this.truthy(right);
     }
 
     @Override
     public Object visit(final ElvisExpression expr) {
         final Object condition = this.evaluate(expr.condition());
-        if (this.isTruthy(condition)) {
+        if (this.truthy(condition)) {
             return condition;
         }
         return this.evaluate(expr.rightExpression());
@@ -487,7 +489,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Object visit(final TernaryExpression expr) {
         final Object condition = this.evaluate(expr.condition());
-        if (this.isTruthy(condition)) {
+        if (this.truthy(condition)) {
             return this.evaluate(expr.firstExpression());
         }
         return this.evaluate(expr.secondExpression());
@@ -532,7 +534,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
                         if (expr.condition() != null) {
                             final Object condition = this.evaluate(expr.condition());
-                            if (!this.isTruthy(condition)) {
+                            if (!this.truthy(condition)) {
                                 if (expr.elseExpression() != null) {
                                     final Object elseValue = this.evaluate(expr.elseExpression());
                                     values.add(elseValue);
@@ -548,14 +550,14 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             });
         }
         else {
-            throw new RuntimeError(expr.open(), "Collection must be iterable");
+            throw new RuntimeError(expr.open(), DiagnosticMessage.NON_ITERABLE_COLLECTION, collection);
         }
         return new Array(values.toArray());
     }
 
     private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
         final Array array = (Array) this.variableScope().get(name);
-        final Double indexValue = (Double) this.evaluate(indexExp);
+        final Number indexValue = (Number) this.evaluate(indexExp);
         final int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
@@ -574,7 +576,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             return value.call(expr.prefixOperatorName(), this, null, args);
         }
         catch (final ApplicationException e) {
-            throw new RuntimeError(expr.prefixOperatorName(), e.getMessage());
+            throw new RuntimeError(expr.prefixOperatorName(), e);
         }
     }
 
@@ -589,7 +591,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             return value.call(expr.infixOperatorName(), this, null, args);
         }
         catch (final ApplicationException e) {
-            throw new RuntimeError(expr.infixOperatorName(), e.getMessage());
+            throw new RuntimeError(expr.infixOperatorName(), e);
         }
     }
 
@@ -606,7 +608,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         // Can't call non-callable nodes..
         if (!(callee instanceof final CallableNode function)) {
-            throw new RuntimeError(expr.openParenthesis(), "Can only call functions and classes, but received " + callee + ".");
+            throw new RuntimeError(expr.openParenthesis(), DiagnosticMessage.NON_CALLABLE_FUNCTION, callee);
         }
 
         try {
@@ -621,7 +623,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
         }
         catch (final ApplicationException e) {
-            throw new RuntimeError(expr.openParenthesis(), e.getMessage());
+            throw new RuntimeError(expr.openParenthesis(), e);
         }
     }
 
@@ -636,7 +638,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
             return result;
         }
-        throw new RuntimeError(expr.name(), "Only instances have properties.");
+        throw new RuntimeError(expr.name(), DiagnosticMessage.NON_PROPERTY_CONTAINER, object);
     }
 
     @Override
@@ -648,7 +650,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             instance.set(this, expr.name(), value, this.variableScope());
             return value;
         }
-        throw new RuntimeError(expr.name(), "Only instances have properties.");
+        throw new RuntimeError(expr.name(), DiagnosticMessage.NON_PROPERTY_CONTAINER, object);
     }
 
     @Override
@@ -669,7 +671,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final MethodReference method = superClass.method(expr.method().lexeme());
 
         if (method == null) {
-            throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
+            throw new RuntimeError(expr.method(), DiagnosticMessage.UNDEFINED_PROPERTY, expr.method().lexeme(), superClass.name());
         }
         return method.bind(object);
     }
@@ -677,11 +679,6 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Override
     public Void visit(final ExpressionStatement statement) {
         this.evaluate(statement.expression());
-        return null;
-    }
-
-    @Override
-    public Void visit(final PrintStatement statement) {
         return null;
     }
 
@@ -696,7 +693,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object conditionResult = this.evaluate(statement.condition());
         final VariableScope previous = this.variableScope();
 
-        if (this.isTruthy(conditionResult)) {
+        if (this.truthy(conditionResult)) {
             final VariableScope thenVariableScope = new VariableScope(previous);
             this.visitingScope = thenVariableScope;
             this.execute(statement.thenBranch(), thenVariableScope);
@@ -712,7 +709,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final WhileStatement statement) {
-        while (this.isTruthy(this.evaluate(statement.condition()))) {
+        while (this.truthy(this.evaluate(statement.condition()))) {
             try {
                 this.execute(statement.body());
             }
@@ -736,7 +733,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
                 }
             }
-            while (this.isTruthy(this.evaluate(statement.condition())));
+            while (this.truthy(this.evaluate(statement.condition())));
         });
         return null;
     }
@@ -745,7 +742,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Void visit(final ForStatement statement) {
         this.withNextScope(() -> {
             this.execute(statement.initializer());
-            while (this.isTruthy(this.evaluate(statement.condition()))) {
+            while (this.truthy(this.evaluate(statement.condition()))) {
                 try {
                     this.execute(statement.body());
                 }
@@ -789,7 +786,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 throw new RuntimeException("Repeat Counter must be number");
             }
 
-            final int counter = (int) Double.parseDouble(value.toString());
+            final int counter = (int) number(value);
             for (int i = 0; i < counter; i++) {
                 try {
                     this.execute(statement.body());
@@ -821,7 +818,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         throw switch (statement.returnType()) {
             case RETURN -> new Return(value);
             case YIELD -> new Yield(value);
-            default -> new RuntimeError(statement.keyword(), "Unknown return type.");
+            default -> new RuntimeError(statement.keyword(), DiagnosticMessage.ILLEGAL_RETURN, statement.keyword().type().representation());
         };
     }
 
@@ -832,10 +829,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         if (statement.superClass() != null) {
             superClass = this.evaluate(statement.superClass());
             if (!(superClass instanceof ClassReference virtualClass)) {
-                throw new RuntimeError(statement.superClass().name(), "Superclass must be a class.");
+                throw new RuntimeError(statement.superClass(), DiagnosticMessage.INVALID_SUPER_TYPE, superClass);
             }
             if (virtualClass.isFinal()) {
-                throw new ScriptEvaluationError("Cannot extend final class '" + virtualClass.name() + "'.", Phase.INTERPRETING, statement.superClass().name());
+                throw new ScriptEvaluationError(Phase.INTERPRETING, statement.superClass().name(), DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, virtualClass.name());
             }
         }
 
@@ -900,7 +897,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         }
         catch (final Yield yield) {
             final Object value = yield.value();
-            final boolean val = this.isTruthy(value);
+            final boolean val = this.truthy(value);
             this.resultCollector.addResult(name, val);
         }
         return null;
@@ -967,7 +964,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             applyMember.accept(builder, function);
         }
         else {
-            throw new RuntimeError(statement.name(), "Cannot access field '" + statement.field().name() + "' from non-class.");
+            throw new RuntimeError(statement.name(), DiagnosticMessage.ILLEGAL_FIELD_DEFINITION, statement.field().name());
         }
     }
 
@@ -982,12 +979,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Void visit(final ExtensionStatement statement) {
         final VirtualClass extensionClass = (VirtualClass) this.variableScope().get(statement.className());
         if (extensionClass == null) {
-            throw new RuntimeException("Can't find extension class " + statement.className());
+            throw new RuntimeError(statement.functionStatement().name(), DiagnosticMessage.MISSING_EXTENSION_CLASS, statement.className());
         }
         final FunctionStatement functionStatement = statement.functionStatement();
         final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.variableScope(), false);
         if (extensionClass.method(functionStatement.name().lexeme()) != null) {
-            throw new ScriptEvaluationError("Duplicate method " + extensionClass.name() + "." + functionStatement.name().lexeme(), Phase.INTERPRETING, statement.functionStatement().name());
+            throw new ScriptEvaluationError(Phase.INTERPRETING, statement.functionStatement().name(), DiagnosticMessage.DUPLICATE_METHOD, extensionClass.name(), functionStatement.name().lexeme());
         }
         extensionClass.extensionMethod(functionStatement.name().lexeme(), extension);
         return null;
@@ -1027,7 +1024,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return expr.accept(this);
     }
 
-    private boolean isTruthy(Object object) {
+    private boolean truthy(Object object) {
         object = this.unwrap(object);
         if (object == null) return false;
         if (object instanceof Boolean) return (boolean) object;
@@ -1046,18 +1043,26 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     private Object unwrap(final Object object) {
-        if (object instanceof ExternalInstance external) return external.instance();
+        if (object instanceof ExternalInstance external) return external.externalObject();
         return object;
     }
 
     private void checkNumberOperand(final Token operator, final Object operand) {
-        if (operand instanceof Double) return;
-        throw new RuntimeError(operator, "Operand must be a number.");
+        if (operand instanceof Number) return;
+        throw new RuntimeError(operator, DiagnosticMessage.NON_NUMBER_OPERAND, operand);
     }
 
     private void checkNumberOperands(final Token operator, final Object left, final Object right) {
         if (left instanceof Number && right instanceof Number) return;
-        throw new RuntimeError(operator, "Operands must the same type -> number.");
+        throw new RuntimeError(operator, DiagnosticMessage.OPERAND_MISMATCH, "number",
+                left == null ? "null" : left.getClass().getSimpleName(),
+                right == null ? "null" : right.getClass().getSimpleName()
+        );
+    }
+
+    private float number(final Object left) {
+        if (left instanceof Number) return ((Number) left).floatValue();
+        return (float) left;
     }
 
     private void execute(final Statement stmt) {
@@ -1114,7 +1119,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             return this.imports.get(name.lexeme());
         }
 
-        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw new ScriptEvaluationError(Phase.INTERPRETING, name, DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme());
     }
 
     public void resolve(final Expression expr, final int depth) {

@@ -81,7 +81,7 @@ public class ConditionTests {
         final String message = result.message();
         final String withoutMarker = message.substring(0, message.indexOf('.'));
         // Ensure the failure is due to the absence of the application context, not due to it being null
-        Assertions.assertEquals("Undefined variable 'applicationContext'", withoutMarker);
+        Assertions.assertEquals("HSL9007: Variable applicationContext is not defined", withoutMarker);
     }
 
     ConditionResult match(final String expression, final Context... contexts) {

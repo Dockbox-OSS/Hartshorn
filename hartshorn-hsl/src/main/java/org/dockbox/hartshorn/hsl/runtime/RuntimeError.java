@@ -29,8 +29,13 @@ public class RuntimeError extends RuntimeException {
 
     private final ASTNode at;
 
-    public RuntimeError(final ASTNode at, final String message) {
-        super(message);
+    public RuntimeError(final ASTNode at, final DiagnosticMessage index, final Object... args) {
+        super(index.format(args));
+        this.at = at;
+    }
+
+    public RuntimeError(final ASTNode at, final Throwable cause) {
+        super(cause.getMessage(), cause);
         this.at = at;
     }
 

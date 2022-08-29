@@ -27,105 +27,105 @@ public class MathLibrary {
     /**
      * @see Math#log(double)
      */
-    public double log(final Double num) {
-        return Math.log(num);
+    public double log(final Number num) {
+        return Math.log(num.floatValue());
     }
 
     /**
      * @see Math#log10(double)
      */
-    public double log10(final Double num) {
-        return Math.log10(num);
+    public double log10(final Number num) {
+        return Math.log10(num.floatValue());
     }
 
     /**
      * @see Math#max(double, double)
      */
-    public double max(final Double x, final Double y) {
-        return Math.max(x, y);
+    public double max(final Number x, final Number y) {
+        return Math.max(x.floatValue(), y.floatValue());
     }
 
     /**
      * @see Math#min(double, double)
      */
-    public double min(final Double x, final Double y) {
-        return Math.min(x, y);
+    public double min(final Number x, final Number y) {
+        return Math.min(x.floatValue(), y.floatValue());
     }
 
     /**
      * @see Math#pow(double, double)
      */
-    public double pow(final Double x, final Double y) {
-        return Math.pow(x, y);
+    public double pow(final Number x, final Number y) {
+        return Math.pow(x.floatValue(), y.floatValue());
     }
 
     /**
      * @see Math#sqrt(double)
      */
-    public double sqrt(final Double num) {
-        return Math.sqrt(num);
+    public double sqrt(final Number num) {
+        return Math.sqrt(num.floatValue());
     }
 
     /**
      * @see Math#sin(double)
      */
-    public double sin(final Double num) {
-        return Math.sin(num);
+    public double sin(final Number num) {
+        return Math.sin(num.floatValue());
     }
 
     /**
      * @see Math#cos(double)
      */
-    public double cos(final Double num) {
-        return Math.cos(num);
+    public double cos(final Number num) {
+        return Math.cos(num.floatValue());
     }
 
     /**
      * @see Math#tan(double)
      */
-    public double tan(final Double num) {
-        return Math.tan(num);
+    public double tan(final Number num) {
+        return Math.tan(num.floatValue());
     }
 
     /**
      * @see Math#asin(double)
      */
-    public double asin(final Double num) {
-        return Math.asin(num);
+    public double asin(final Number num) {
+        return Math.asin(num.floatValue());
     }
 
     /**
      * @see Math#acos(double)
      */
-    public double acos(final Double num) {
-        return Math.acos(num);
+    public double acos(final Number num) {
+        return Math.acos(num.floatValue());
     }
 
     /**
      * @see Math#atan(double)
      */
-    public double atan(final Double num) {
-        return Math.atan(num);
+    public double atan(final Number num) {
+        return Math.atan(num.floatValue());
     }
 
     /**
      * @see Math#sinh(double)
      */
-    public double sinh(final Double num) {
-        return Math.sinh(num);
+    public double sinh(final Number num) {
+        return Math.sinh(num.floatValue());
     }
 
     /**
      * @see Math#cosh(double)
      */
-    public double cosh(final Double num) {
-        return Math.cosh(num);
+    public double cosh(final Number num) {
+        return Math.cosh(num.floatValue());
     }
 
     /**
      * @see Math#tanh(double)
      */
-    public double tanh(final Double num) {
-        return Math.tanh(num);
+    public double tanh(final Number num) {
+        return Math.tanh(num.floatValue());
     }
 }

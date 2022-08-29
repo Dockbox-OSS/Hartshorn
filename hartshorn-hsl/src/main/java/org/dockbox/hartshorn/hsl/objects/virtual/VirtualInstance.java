@@ -22,10 +22,11 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.access.PropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,21 +53,21 @@ public class VirtualInstance implements InstanceReference {
     public void set(final Interpreter interpreter, final Token name, final Object value, final VariableScope fromScope) {
         final VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
-            throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
+            throw new RuntimeError(name, DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.virtualClass.name());
         }
         if (field != null) {
-            final String accessError = this.accessVerifier().read(name, field, this, fromScope);
+            final FormattedDiagnostic accessError = this.accessVerifier().write(name, field, this, fromScope);
             if (accessError != null) {
-                throw new RuntimeError(name, accessError);
+                throw new RuntimeError(name, accessError.errorIndex(), accessError.arguments());
             }
             if (field.setter() != null) {
                 if (field.setter().hasBody()) {
                     try {
                         final Object call = field.setter().bind(this).call(name, interpreter, this, List.of(value));
                         if (call != null) {
-                            throw new RuntimeError(field.setter().modifier(), "Setter for property '" + name.lexeme() + "' returned a value. Did you mean to use '" + TokenType.YIELD.representation() + "'?");
+                            throw new RuntimeError(field.setter().modifier(), DiagnosticMessage.ILLEGAL_SETTER_RETURN, name.lexeme());
                         }
-                        throw new RuntimeError(field.setter().modifier(), "Setter for property '" + name.lexeme() + "' did not yield a value to set.");
+                        throw new RuntimeError(field.setter().modifier(), DiagnosticMessage.ILLEGAL_SETTER_NO_YIELD, name.lexeme());
                     }
                     catch (final Yield yield) {
                         final Object result = yield.value();
@@ -76,7 +77,7 @@ public class VirtualInstance implements InstanceReference {
                 }
             }
             if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
-                throw new RuntimeError(name, "Cannot reassign property %s of %s because it is final.".formatted(name.lexeme(), this.type().name()));
+                throw new RuntimeError(name, DiagnosticMessage.ILLEGAL_FINAL_PROPERTY_REASSIGNMENT, name.lexeme(), this.type().name());
             }
         }
         this.fields.put(name.lexeme(), value);
@@ -86,9 +87,9 @@ public class VirtualInstance implements InstanceReference {
     public Object get(final Interpreter interpreter, final Token name, final VariableScope fromScope) {
         final VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field != null) {
-            final String accessError = this.accessVerifier().read(name, field, this, fromScope);
+            final FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
             if (accessError != null) {
-                throw new RuntimeError(name, accessError);
+                throw new RuntimeError(name, accessError.errorIndex(), accessError.arguments());
             }
             if (field.getter() != null) {
                 if (field.getter().hasBody()) {
@@ -106,7 +107,7 @@ public class VirtualInstance implements InstanceReference {
             return this.fields.get(name.lexeme());
         }
 
-        throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
+        throw new RuntimeError(name, DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.virtualClass.name());
     }
 
     protected PropertyAccessVerifier accessVerifier() {

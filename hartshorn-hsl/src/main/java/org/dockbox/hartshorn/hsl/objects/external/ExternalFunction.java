@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -83,22 +84,22 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                 .filter(m -> m.parameterCount() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
-            throw new RuntimeError(at, "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name());
+            throw new RuntimeError(at, DiagnosticMessage.MISSING_METHOD_WITH_COUNT, this.methodName, arguments.size(), this.type.name());
         }
 
         final MethodContext<?, Object> executable = ExecutableLookup.executable(methods, arguments);
         if (executable != null) return executable;
 
-        throw new RuntimeError(at, "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name());
+        throw new RuntimeError(at, DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, this.methodName, arguments, this.type.name());
     }
 
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
         if (this.instance != null && instance != this.instance) {
-            throw new RuntimeError(at, "Function reference was bound to " + this.instance + ", but was invoked with a different object " + instance);
+            throw new RuntimeError(at, DiagnosticMessage.ILLEGAL_METHOD_BINDING_CALL, this.instance, instance);
         }
         if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
-            throw new RuntimeError(at, "Cannot call method '" + this.methodName + "' on non-external instance");
+            throw new RuntimeError(at, DiagnosticMessage.NON_EXTERNAL_OBJECT_CALL, this.methodName);
         }
         final MethodContext<?, Object> method = this.method(at, arguments);
         final Result<?> result = method.invoke(externalObjectReference.externalObject(), arguments);
@@ -129,7 +130,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         }
 
         if (externalClass == null) {
-            throw new RuntimeError(null, "Cannot bind external function to virtual instance of type " + virtualClass.name());
+            throw new RuntimeError(null, DiagnosticMessage.ILLEGAL_EXTERNAL_FUNCTION_BINDING, virtualClass.name());
         }
 
         return new ExternalFunction(externalClass.type().type(), this.methodName, instance);

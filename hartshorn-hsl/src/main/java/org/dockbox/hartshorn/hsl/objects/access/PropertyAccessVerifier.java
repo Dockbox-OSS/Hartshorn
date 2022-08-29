@@ -19,9 +19,10 @@ package org.dockbox.hartshorn.hsl.objects.access;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 public interface PropertyAccessVerifier {
-    String read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
-    String write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
+    FormattedDiagnostic read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
+    FormattedDiagnostic write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 }

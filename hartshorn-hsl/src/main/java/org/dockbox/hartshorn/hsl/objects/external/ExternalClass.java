@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -66,7 +67,7 @@ public class ExternalClass<T> implements ClassReference {
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
         if (instance != null) {
-            throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
+            throw new ScriptEvaluationError(Phase.INTERPRETING, at, DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE);
         }
         final ConstructorContext<T> executable = ExecutableLookup.executable(this.type.constructors(), arguments);
         final T objectInstance = executable.createInstance(arguments.toArray()).rethrowUnchecked().orNull();

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -91,10 +92,10 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         final VariableScope variableScope = new VariableScope(this.closure);
         final List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
-            throw new RuntimeError(at, "Expected %d %s, but got %d".formatted(
+            throw new RuntimeError(at, DiagnosticMessage.EXPECTED_N_X_BUT_GOT_Y,
                     parameters.size(),
                     (parameters.size() == 1 ? "argument" : "arguments"),
-                    arguments.size()));
+                    arguments.size());
         }
         for (int i = 0; i < parameters.size(); i++) {
             variableScope.define(parameters.get(i).name().lexeme(), arguments.get(i));

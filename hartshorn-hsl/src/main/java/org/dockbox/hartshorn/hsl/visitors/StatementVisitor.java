@@ -28,8 +28,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.*;
 public interface StatementVisitor<R> {
     R visit(ExpressionStatement statement);
 
-    R visit(PrintStatement statement);
-
     R visit(BlockStatement statement);
 
     R visit(IfStatement statement);

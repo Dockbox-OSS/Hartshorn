@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.external.CompositeInstance;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -167,7 +168,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
         if (instance != null) {
-            throw new ScriptEvaluationError("Cannot call a class as an instance", Phase.INTERPRETING, at);
+            throw new ScriptEvaluationError(Phase.INTERPRETING, at, DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE);
         }
         if (this.superClass instanceof ExternalClass) {
             final CompositeInstance compositeInstance = new CompositeInstance(this);

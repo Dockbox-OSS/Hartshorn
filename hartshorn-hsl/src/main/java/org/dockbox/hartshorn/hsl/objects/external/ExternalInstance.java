@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -48,18 +49,10 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
         this.type = TypeContext.of(instance);
     }
 
-    /**
-     * Returns the {@link Object} instance represented by this instance.
-     * @return The {@link Object} instance represented by this instance.
-     */
-    public Object instance() {
-        return this.instance;
-    }
-
     @Override
     public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
         this.type.field(name.lexeme())
-                .present(field -> field.set(this.instance(), value))
+                .present(field -> field.set(this.externalObject(), value))
                 .orThrow(() -> this.propertyDoesNotExist(name));
     }
 
@@ -70,12 +63,12 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
         if (isMethod) return new ExternalFunction(this.type.type(), name.lexeme());
 
         return this.type.field(name.lexeme())
-                .flatMap(field -> field.get(this.instance()))
+                .flatMap(field -> field.get(this.externalObject()))
                 .orThrow(() -> this.propertyDoesNotExist(name));
     }
 
     private RuntimeError propertyDoesNotExist(final Token name) {
-        return new RuntimeError(name, "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()));
+        return new RuntimeError(name, DiagnosticMessage.UNDEFINED_EXTERNAL_PROPERTY, name.lexeme(), this.type.name());
     }
 
     @Override
@@ -90,6 +83,6 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
 
     @Override
     public Object externalObject() {
-        return this.instance();
+        return this.instance;
     }
 }

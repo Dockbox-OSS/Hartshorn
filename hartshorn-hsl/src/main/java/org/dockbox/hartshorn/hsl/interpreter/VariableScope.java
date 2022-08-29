@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -83,7 +84,7 @@ public class VariableScope {
         // If the variable isn’t found in this scope, we simply try the enclosing one
         if (this.enclosing != null) return this.enclosing.get(name);
 
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
+        throw new RuntimeError(name, DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme());
     }
 
     /**
@@ -116,7 +117,8 @@ public class VariableScope {
             this.enclosing.assign(name, value);
             return;
         }
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
+
+        throw new RuntimeError(name, DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme());
     }
 
     void assignAt(final int distance, final Token name, final Object value) {
@@ -174,7 +176,7 @@ public class VariableScope {
         for (int i = 0; i < distance; i++) {
             variableScope = variableScope.enclosing;
             if (variableScope == null) {
-                throw new RuntimeError(name, "No enclosing scope at distance %s for active scope.".formatted(distance));
+                throw new RuntimeError(name, DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance);
             }
         }
         return variableScope;

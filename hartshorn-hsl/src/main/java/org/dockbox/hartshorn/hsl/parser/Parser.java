@@ -73,6 +73,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -153,22 +154,23 @@ public class Parser {
     }
 
     private Statement statement() {
+        if (this.check(TokenType.LEFT_BRACE)) return this.block();
+
         if (this.match(TokenType.IF)) return this.ifStatement();
         if (this.match(TokenType.DO)) return this.doWhileStatement();
-        if (this.match(TokenType.WHILE)) return this.whileStatement();
         if (this.match(TokenType.FOR)) return this.forStatement();
-        if (this.match(TokenType.REPEAT)) return this.repeatStatement();
-        if (this.match(TokenType.RETURN, TokenType.YIELD)) return this.returnStatement();
-        if (this.check(TokenType.LEFT_BRACE)) return this.block();
-        if (this.match(TokenType.BREAK)) return this.breakStatement();
-        if (this.match(TokenType.CONTINUE)) return this.continueStatement();
         if (this.match(TokenType.TEST)) return this.testStatement();
+        if (this.match(TokenType.WHILE)) return this.whileStatement();
+        if (this.match(TokenType.BREAK)) return this.breakStatement();
         if (this.match(TokenType.USING)) return this.moduleStatement();
+        if (this.match(TokenType.REPEAT)) return this.repeatStatement();
         if (this.match(TokenType.SWITCH)) return this.switchStatement();
+        if (this.match(TokenType.CONTINUE)) return this.continueStatement();
+        if (this.match(TokenType.RETURN, TokenType.YIELD)) return this.returnStatement();
 
         final TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
-            throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
+            throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.UNSUPPORTED_STANDALONE_STATEMENT, type);
         }
 
         return this.expressionStatement();
@@ -216,7 +218,7 @@ public class Parser {
                 fields.add(field);
             }
             else {
-                throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass().getSimpleName(), Phase.PARSING, this.peek());
+                throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT, declaration.getClass().getSimpleName());
             }
         }
 
@@ -287,8 +289,8 @@ public class Parser {
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
-                    final String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
-                    throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+                    if (token == null) throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.TOO_MANY_PARAMETERS, expectedNumberOrArguments);
+                    else throw new ScriptEvaluationError(Phase.PARSING, token, DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X, expectedNumberOrArguments, token.type());
                 }
                 final Token parameterName = this.expect(TokenType.IDENTIFIER, "parameter name");
                 parameters.add(new Parameter(parameterName));
@@ -358,7 +360,7 @@ public class Parser {
                 fieldStatement.withSetter(statement);
                 yield statement;
             }
-            default -> throw new ScriptEvaluationError("Unsupported field member type: " + member.type(), Phase.PARSING, member);
+            default -> throw new ScriptEvaluationError(Phase.PARSING, member, DiagnosticMessage.UNSUPPORTED_FIELD_MEMBER, member.type());
         };
     }
 
@@ -400,7 +402,7 @@ public class Parser {
             return List.of(new ReturnStatement(new Token(TokenType.YIELD, TokenType.YIELD.representation(), -1, -1), expressionStatement.expression(), ReturnType.YIELD));
         }
         else {
-            throw new ScriptEvaluationError("Unsupported field member body type: " + statement.getClass().getSimpleName(), Phase.PARSING, statement);
+            throw new ScriptEvaluationError(Phase.PARSING, statement, DiagnosticMessage.UNSUPPORTED_FIELD_MEMBER_BODY, statement.getClass().getSimpleName());
         }
     }
 
@@ -424,7 +426,7 @@ public class Parser {
         else if (this.match(TokenType.VAR)) finalizable = this.varDeclaration();
         else if (this.match(TokenType.CLASS)) finalizable = this.classDeclaration();
         else if (this.match(TokenType.NATIVE)) finalizable = this.nativeFuncDeclaration();
-        else throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(TokenType.FINAL.representation(), this.peek().type()), Phase.PARSING, this.peek());
+        else throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.ILLEGAL_USE_OF_X, TokenType.FINAL.representation(), this.peek().type());
 
         finalizable.makeFinal();
         return finalizable;
@@ -517,7 +519,7 @@ public class Parser {
         final ReturnType returnType = switch (keyword.type()) {
             case RETURN -> ReturnType.RETURN;
             case YIELD -> ReturnType.YIELD;
-            default -> throw new ScriptEvaluationError("Unsupported return type: " + keyword.type(), Phase.PARSING, keyword);
+            default -> throw new ScriptEvaluationError(Phase.PARSING, keyword, DiagnosticMessage.UNSUPPORTED_RETURN_TYPE, keyword.type());
         };
         return new ReturnStatement(keyword, value, returnType);
     }
@@ -582,7 +584,7 @@ public class Parser {
             else if (expr instanceof final GetExpression get) {
                 return new SetExpression(get.object(), get.name(), value);
             }
-            throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, equals);
+            throw new ScriptEvaluationError(Phase.PARSING, equals, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, expr.getClass().getSimpleName());
         }
         return expr;
     }
@@ -608,7 +610,7 @@ public class Parser {
                 final Expression secondExp = this.logical();
                 return new TernaryExpression(expr, question, firstExp, colon, secondExp);
             }
-            throw new ScriptEvaluationError("Expected expression after " + TokenType.COLON.representation(), Phase.PARSING, colon);
+            throw new ScriptEvaluationError(Phase.PARSING, colon, DiagnosticMessage.EXPECTED_EXPRESSION_AFTER_X, TokenType.COLON.representation());
         }
         return expr;
     }
@@ -658,7 +660,7 @@ public class Parser {
                         return new LogicalAssignExpression(variable.name(), token, right);
                     }
                     else {
-                        throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, token);
+                        throw new ScriptEvaluationError(Phase.PARSING, token, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, left.getClass().getSimpleName());
                     }
                 }, ASSIGNMENT_TOKENS);
     }
@@ -708,7 +710,7 @@ public class Parser {
     }
 
     private Expression parsePrefixFunctionCall() {
-        if (this.check(TokenType.IDENTIFIER) && this.prefixFunctions.contains(this.tokens.get(this.current).lexeme())) {
+        if (this.check(TokenType.IDENTIFIER) && this.prefixFunctions.contains(this.peek().lexeme())) {
             this.current++;
             final Token prefixFunctionName = this.previous();
             final Expression right = this.comparison();
@@ -753,7 +755,7 @@ public class Parser {
     private Expression parseInfixExpressions() {
         Expression expr = this.unary();
 
-        while (this.check(TokenType.IDENTIFIER) && this.infixFunctions.contains(this.tokens.get(this.current).lexeme())) {
+        while (this.check(TokenType.IDENTIFIER) && this.infixFunctions.contains(this.peek().lexeme())) {
             this.current++;
             final Token operator = this.previous();
             final Expression right = this.unary();
@@ -778,7 +780,7 @@ public class Parser {
                 expr = this.finishCall(expr);
             }
             else if (this.match(TokenType.DOT)) {
-                final Token name = this.consume(TokenType.IDENTIFIER, "Expected property name after '.'.");
+                final Token name = this.expectAround(TokenType.IDENTIFIER, "property name", "after", "'%s'".formatted(TokenType.DOT.representation()));
                 expr = new GetExpression(name, expr);
             }
             else if (this.match(TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
@@ -799,7 +801,7 @@ public class Parser {
         if (!this.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (arguments.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    throw new ScriptEvaluationError("Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.", Phase.PARSING, this.peek());
+                    throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.TOO_MANY_PARAMETERS, MAX_NUM_OF_ARGUMENTS);
                 }
                 arguments.add(this.expression());
             }
@@ -820,7 +822,7 @@ public class Parser {
         if (this.match(TokenType.SUPER)) return this.superExpression();
         if (this.match(TokenType.ARRAY_OPEN)) return this.complexArray();
 
-        throw new ScriptEvaluationError("Expected expression, but found " + this.tokens.get(this.current), Phase.PARSING, this.peek());
+        throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.EXPECTED_EXPRESSION, this.peek());
     }
 
     private SuperExpression superExpression() {
@@ -916,11 +918,11 @@ public class Parser {
             if (caseToken.type() == TokenType.CASE) {
                 final Expression caseExpr = this.primary();
                 if (!(caseExpr instanceof final LiteralExpression literal)) {
-                    throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
+                    throw new ScriptEvaluationError(Phase.PARSING, caseToken, DiagnosticMessage.NON_LITERAL_CASE_EXPRESSION, caseExpr);
                 }
 
                 if (matchedLiterals.contains(literal.value())) {
-                    throw new ScriptEvaluationError("Duplicate case expression '" + literal.value() + "'.", Phase.PARSING, caseToken);
+                    throw new ScriptEvaluationError(Phase.PARSING, caseToken, DiagnosticMessage.DUPLICATE_CASE_EXPRESSION, literal.value());
                 }
                 matchedLiterals.add(literal.value());
 
@@ -955,14 +957,19 @@ public class Parser {
             return this.expressionStatement();
         }
         else {
-            throw new ScriptEvaluationError("Expected ':' or '->'", Phase.PARSING, this.peek());
+            throw new ScriptEvaluationError(Phase.PARSING, this.peek(), DiagnosticMessage.EXPECTED_X_OR_Y, blockOpen.representation(), TokenType.ARROW.representation(), this.peek().type().representation());
         }
     }
 
-    private Token consume(final TokenType type, final String message) {
+    private Token consume(final TokenType type, final DiagnosticMessage message, Object... args) {
         if (this.check(type))
             return this.advance();
-        if (type != TokenType.SEMICOLON) throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+        if (type != TokenType.SEMICOLON) {
+            final Object[] arguments = new Object[args.length + 1];
+            System.arraycopy(args, 0, arguments, 1, args.length);
+            arguments[args.length] = this.peek().type().representation();
+            throw new ScriptEvaluationError(Phase.PARSING, this.peek(), message, arguments);
+        }
         return null;
     }
 
@@ -971,7 +978,7 @@ public class Parser {
     }
 
     private Token expect(final TokenType type, final String what) {
-        return this.consume(type, "Expected " + what + ".");
+        return this.consume(type, DiagnosticMessage.EXPECTED_X, what);
     }
 
     private Token expectBefore(final TokenType type, final String before) {
@@ -987,6 +994,10 @@ public class Parser {
     }
 
     private Token expectAround(final TokenType type, final String where, final String position) {
-        return this.consume(type, "Expected '%s' %s %s.".formatted(type.representation(), position, where));
+        return this.expectAround(type, type.representation(), where, position);
+    }
+
+    private Token expectAround(final TokenType type, final String what, final String where, final String position) {
+        return this.consume(type, DiagnosticMessage.EXPECTED_X_AT_Z, what, position, where);
     }
 }

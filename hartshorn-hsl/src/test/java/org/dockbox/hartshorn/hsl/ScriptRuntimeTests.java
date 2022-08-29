@@ -162,8 +162,8 @@ public class ScriptRuntimeTests {
 
         final Map<String, Object> results = context.interpreter().global();
         Assertions.assertFalse(results.isEmpty());
-        Assertions.assertEquals(12d, results.get("a"));
-        Assertions.assertEquals(13d, results.get("b"));
+        Assertions.assertEquals(12L, results.get("a"));
+        Assertions.assertEquals(13L, results.get("b"));
         Assertions.assertEquals(25d, results.get("c"));
     }
 
@@ -224,26 +224,5 @@ public class ScriptRuntimeTests {
 
     ScriptContext assertNoErrorsReported(final HslScript script) {
         return Assertions.assertDoesNotThrow(script::evaluate);
-    }
-
-    @Test
-    void name() {
-        assertNoErrorsReported("""
-                class Vector {
-                    private x {
-                        public get
-                    }
-                    public y {
-                        public set(value) {
-                            this.x = value * 2
-                            yield value
-                        }
-                    }
-                }
-                
-                var vector = Vector()
-                vector.y = 1
-                print(vector.x)
-                """);
     }
 }

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.lexer;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenConstants;
@@ -81,171 +82,89 @@ public class Lexer {
     private void scanToken() {
         final char c = this.pointToNextChar();
         switch (c) {
-            case TokenConstants.ARRAY_OPEN:
-                this.addToken(TokenType.ARRAY_OPEN);
-                break;
-            case TokenConstants.ARRAY_CLOSE:
-                this.addToken(TokenType.ARRAY_CLOSE);
-                break;
-            case TokenConstants.LEFT_PAREN:
-                this.addToken(TokenType.LEFT_PAREN);
-                break;
-            case TokenConstants.RIGHT_PAREN:
-                this.addToken(TokenType.RIGHT_PAREN);
-                break;
-            case TokenConstants.LEFT_BRACE:
-                this.addToken(TokenType.LEFT_BRACE);
-                break;
-            case TokenConstants.RIGHT_BRACE:
-                this.addToken(TokenType.RIGHT_BRACE);
-                break;
-            case TokenConstants.COMMA:
-                this.addToken(TokenType.COMMA);
-                break;
-            case TokenConstants.DOT:
-                this.addToken(this.match(TokenConstants.DOT)
-                        ? TokenType.RANGE
-                        : TokenType.DOT
-                );
-                break;
-            case TokenConstants.MINUS:
-                if (this.match(TokenConstants.MINUS)) {
-                    this.addToken(TokenType.MINUS_MINUS);
-                } else if (this.match(TokenConstants.GREATER)) {
-                    this.addToken(TokenType.ARROW);
-                } else {
-                    this.addToken(TokenType.MINUS);
-                }
-                break;
-            case TokenConstants.PLUS:
-                this.addToken(this.match(TokenConstants.PLUS)
-                        ? TokenType.PLUS_PLUS
-                        : TokenType.PLUS
-                );
-                break;
-            case TokenConstants.SEMICOLON:
-                this.addToken(TokenType.SEMICOLON);
-                break;
-            case TokenConstants.STAR:
-                this.addToken(TokenType.STAR);
-                break;
-            case TokenConstants.MODULO:
-                this.addToken(TokenType.MODULO);
-                break;
-            case TokenConstants.QUESTION_MARK:
-                this.addToken(this.match(TokenConstants.COLON)
-                        ? TokenType.ELVIS
-                        : TokenType.QUESTION_MARK
-                );
-                break;
-            case TokenConstants.COLON:
-                this.addToken(TokenType.COLON);
-                break;
-            case TokenConstants.BANG:
-                this.addToken(this.match(TokenConstants.EQUAL)
-                        ? TokenType.BANG_EQUAL
-                        : TokenType.BANG
-                );
-                break;
-            case TokenConstants.EQUAL:
-                this.addToken(this.match(TokenConstants.EQUAL)
-                        ? TokenType.EQUAL_EQUAL :
-                        TokenType.EQUAL
-                );
-                break;
-            case TokenConstants.LESS:
-                if (this.match(TokenConstants.EQUAL)) {
-                    this.addToken(TokenType.LESS_EQUAL);
-                }
-                else {
-                    if (this.match(TokenConstants.LESS)) {
-                        if (this.match(TokenConstants.EQUAL)) {
-                            this.addToken(TokenType.SHIFT_LEFT_EQUAL);
-                        }
-                        else {
-                            this.addToken(TokenType.SHIFT_LEFT);
-                        }
-                    }
-                    else this.addToken(TokenType.LESS);
-                }
-                break;
-            case TokenConstants.GREATER:
-                if (this.match(TokenConstants.EQUAL)) {
-                    this.addToken(TokenType.GREATER_EQUAL);
-                }
-                else {
-                    if (this.match(TokenConstants.GREATER)) {
-                        if (this.match(TokenConstants.GREATER)) {
-                            this.addToken(TokenType.LOGICAL_SHIFT_RIGHT);
-                        }
-                        else if (this.match(TokenConstants.EQUAL)) {
-                            this.addToken(TokenType.SHIFT_RIGHT_EQUAL);
-                        }
-                        else {
-                            this.addToken(TokenType.SHIFT_RIGHT);
-                        }
-                    }
-                    else this.addToken(TokenType.GREATER);
-                }
-                break;
-            case TokenConstants.SLASH:
-                if (this.match(TokenConstants.SLASH)) {
-                    this.scanComment();
-                }
-                else if (this.match(TokenConstants.STAR)) {
-                    this.scanMultilineComment();
-                }
-                else {
-                    this.addToken(TokenType.SLASH);
-                }
-                break;
-            case TokenConstants.AMPERSAND:
+            case TokenConstants.ARRAY_OPEN -> this.addToken(TokenType.ARRAY_OPEN);
+            case TokenConstants.ARRAY_CLOSE -> this.addToken(TokenType.ARRAY_CLOSE);
+            case TokenConstants.LEFT_PAREN -> this.addToken(TokenType.LEFT_PAREN);
+            case TokenConstants.RIGHT_PAREN -> this.addToken(TokenType.RIGHT_PAREN);
+            case TokenConstants.LEFT_BRACE -> this.addToken(TokenType.LEFT_BRACE);
+            case TokenConstants.RIGHT_BRACE -> this.addToken(TokenType.RIGHT_BRACE);
+            case TokenConstants.COMMA -> this.addToken(TokenType.COMMA);
+            case TokenConstants.SEMICOLON -> this.addToken(TokenType.SEMICOLON);
+            case TokenConstants.STAR -> this.addToken(TokenType.STAR);
+            case TokenConstants.MODULO -> this.addToken(TokenType.MODULO);
+            case TokenConstants.COLON -> this.addToken(TokenType.COLON);
+            case TokenConstants.HASH -> this.scanComment();
+            case TokenConstants.QUOTE -> this.scanString();
+            case TokenConstants.SINGLE_QUOTE -> this.scanChar();
+            case TokenConstants.SPACE, '\r', '\t' -> { /* Ignore whitespace */}
+            case '\n' -> this.nextLine();
+            case TokenConstants.DOT -> this.addToken(this.match(TokenConstants.DOT)
+                    ? TokenType.RANGE
+                    : TokenType.DOT);
+            case TokenConstants.PLUS -> this.addToken(this.match(TokenConstants.PLUS)
+                    ? TokenType.PLUS_PLUS
+                    : TokenType.PLUS);
+            case TokenConstants.QUESTION_MARK -> this.addToken(this.match(TokenConstants.COLON)
+                    ? TokenType.ELVIS
+                    : TokenType.QUESTION_MARK);
+            case TokenConstants.BANG -> this.addToken(this.match(TokenConstants.EQUAL)
+                    ? TokenType.BANG_EQUAL
+                    : TokenType.BANG);
+            case TokenConstants.EQUAL -> this.addToken(this.match(TokenConstants.EQUAL)
+                    ? TokenType.EQUAL_EQUAL
+                    : TokenType.EQUAL);
+            case TokenConstants.CARET -> this.addToken(this.match(TokenConstants.EQUAL)
+                    ? TokenType.XOR_EQUAL
+                    : TokenType.XOR);
+            case TokenConstants.TILDE -> this.addToken(this.match(TokenConstants.EQUAL)
+                    ? TokenType.COMPLEMENT_EQUAL
+                    : TokenType.COMPLEMENT);
+            case TokenConstants.SLASH -> {
+                if (this.match(TokenConstants.SLASH)) this.scanComment();
+                else if (this.match(TokenConstants.STAR)) this.scanMultilineComment();
+                else this.addToken(TokenType.SLASH);
+            }
+            case TokenConstants.AMPERSAND -> {
                 if (this.match(TokenConstants.AMPERSAND)) this.addToken(TokenType.AND);
                 else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.BITWISE_AND_EQUAL);
                 else this.addToken(TokenType.BITWISE_AND);
-                break;
-            case TokenConstants.PIPE:
+            }
+            case TokenConstants.PIPE -> {
                 if (this.match(TokenConstants.PIPE)) this.addToken(TokenType.OR);
                 else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.BITWISE_OR_EQUAL);
                 else this.addToken(TokenType.BITWISE_OR);
-                break;
-            case TokenConstants.CARET:
-                this.addToken(this.match(TokenConstants.EQUAL)
-                        ? TokenType.XOR_EQUAL
-                        : TokenType.XOR);
-                break;
-            case TokenConstants.TILDE:
-                this.addToken(this.match(TokenConstants.EQUAL)
-                        ? TokenType.COMPLEMENT_EQUAL
-                        : TokenType.COMPLEMENT);
-                break;
-            case TokenConstants.HASH:
-                this.scanComment();
-                break;
-            case TokenConstants.SPACE:
-            case '\r':
-            case '\t':
-                // Ignore whitespace.
-                break;
-            case '\n':
-                this.nextLine();
-                break;
-            case TokenConstants.QUOTE:
-                this.scanString();
-                break;
-            case TokenConstants.SINGLE_QUOTE:
-                this.scanChar();
-                break;
-            default:
-                if (this.isDigit(c)) {
-                    this.scanNumber();
-                }
-                else if (this.isAlpha(c)) {
-                    this.scanIdentifier();
-                }
+            }
+            case TokenConstants.MINUS -> {
+                if (this.match(TokenConstants.MINUS)) this.addToken(TokenType.MINUS_MINUS);
+                else if (this.match(TokenConstants.GREATER)) this.addToken(TokenType.ARROW);
+                else this.addToken(TokenType.MINUS);
+            }
+            case TokenConstants.LESS -> {
+                if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.LESS_EQUAL);
                 else {
-                    throw new ScriptEvaluationError("Unexpected character '" + c + "'", Phase.TOKENIZING, this.line, this.column);
+                    if (this.match(TokenConstants.LESS)) {
+                        if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.SHIFT_LEFT_EQUAL);
+                        else this.addToken(TokenType.SHIFT_LEFT);
+                    }
+                    else this.addToken(TokenType.LESS);
                 }
+            }
+            case TokenConstants.GREATER -> {
+                if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.GREATER_EQUAL);
+                else {
+                    if (this.match(TokenConstants.GREATER)) {
+                        if (this.match(TokenConstants.GREATER)) this.addToken(TokenType.LOGICAL_SHIFT_RIGHT);
+                        else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.SHIFT_RIGHT_EQUAL);
+                        else this.addToken(TokenType.SHIFT_RIGHT);
+                    }
+                    else this.addToken(TokenType.GREATER);
+                }
+            }
+            default -> {
+                if (this.isDigit(c)) this.scanNumber();
+                else if (this.isAlpha(c)) this.scanIdentifier();
+                else throw new ScriptEvaluationError(Phase.TOKENIZING, this.line, this.column, DiagnosticMessage.UNEXPECTED_CHAR, c);
+            }
         }
     }
 
@@ -279,16 +198,23 @@ public class Lexer {
             this.pointToNextChar();
         }
 
+        boolean isDouble = false;
         // Look for a fractional part.
         if (this.currentChar() == TokenConstants.DOT && this.isDigit(this.nextChar())) {
             // Consume the "."
             this.pointToNextChar();
+            isDouble = true;
             while (this.isDigit(this.currentChar())) this.pointToNextChar();
         }
 
         String number = this.source.substring(this.start, this.current);
         number = number.replaceAll("_", "");
-        this.addToken(TokenType.NUMBER, Double.parseDouble(number));
+
+        final Number value;
+        if (isDouble) value = Double.parseDouble(number);
+        else value = Long.parseLong(number);
+
+        this.addToken(TokenType.NUMBER, value);
     }
 
     private void scanString() {
@@ -301,7 +227,7 @@ public class Lexer {
 
         // Unterminated scanString.
         if (this.isAtEnd()) {
-            throw new ScriptEvaluationError("Unterminated string", Phase.TOKENIZING, this.line, this.column);
+            throw new ScriptEvaluationError(Phase.TOKENIZING, this.line, this.column, DiagnosticMessage.UNTERMINATED_STRING);
         }
 
         // The closing ".
@@ -316,7 +242,7 @@ public class Lexer {
         final String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
         if (this.currentChar() != TokenConstants.SINGLE_QUOTE) {
-            throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line, this.column);
+            throw new ScriptEvaluationError(Phase.TOKENIZING, this.line, this.column, DiagnosticMessage.UNTERMINATED_CHAR);
         }
         this.pointToNextChar();
         this.addToken(TokenType.CHAR, value.charAt(0));
@@ -388,11 +314,5 @@ public class Lexer {
     private void nextLine() {
         this.line++;
         this.column = -1;
-    }
-
-    private int column() {
-        // Get current line from complete source index
-        final int lineStart = this.source.lastIndexOf('\n', this.current) + 1;
-        return this.current - lineStart - 1;
     }
 }

@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 
 public class ScriptEvaluationError extends RuntimeException {
 
@@ -26,24 +28,37 @@ public class ScriptEvaluationError extends RuntimeException {
     private final int column;
     private final ASTNode at;
 
-    public ScriptEvaluationError(final String message, final Phase phase, final int line, final int column) {
-        this(null, message, phase, null, line, column);
+    public ScriptEvaluationError(final Phase phase, final ASTNode at, final RuntimeError cause) {
+        super(cause.getMessage(), cause);
+        this.phase = phase;
+        this.at = at;
+        this.line = at.line();
+        this.column = at.column();
     }
 
-    public ScriptEvaluationError(final String message, final Phase phase, final ASTNode at) {
-        this(null, message, phase, at, at.line(), at.column());
+    public ScriptEvaluationError(final Phase phase, final ASTNode at, final DiagnosticMessage index, final Object... args) {
+        super(index.format(args));
+        this.phase = phase;
+        this.at = at;
+        this.line = at.line();
+        this.column = at.column();
     }
 
-    public ScriptEvaluationError(final Throwable cause, final Phase phase, final ASTNode at) {
-        this(cause, cause.getMessage(), phase, at, at.line(), at.column());
+    public ScriptEvaluationError(final Phase phase, final int line, final int column, final DiagnosticMessage index, final Object... args) {
+        super(index.format(args));
+        this.phase = phase;
+        this.at = null;
+        this.line = line;
+        this.column = column;
     }
 
-    public ScriptEvaluationError(final Throwable cause, final String message, final Phase phase, final ASTNode at, final int line, final int column) {
+    public ScriptEvaluationError(final Phase phase, final ASTNode at, final int line, final int column, final Throwable cause, final String message) {
         super(message, cause);
         this.phase = phase;
         this.at = at;
         this.line = line;
         this.column = column;
+
     }
 
     public ASTNode at() {

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Result;
@@ -58,13 +59,13 @@ public class ExecutableLookup {
                 .filter(m -> m.parameterCount() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
-            throw new RuntimeError(at, "Method '" + function + "' with " + arguments.size() + " parameters does not exist on external instance of type " + declaring.name());
+            throw new RuntimeError(at, DiagnosticMessage.MISSING_METHOD_WITH_COUNT, function, arguments.size(), declaring.name());
         }
 
         final MethodContext<?, T> executable = executable(methods, arguments);
         if (executable != null) return executable;
 
-        throw new RuntimeError(at, "Method '" + function + "' with parameters accepting " + arguments + " does not exist on external instance of type " + declaring.name());
+        throw new RuntimeError(at, DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, function, arguments, declaring.name());
     }
 
     /**

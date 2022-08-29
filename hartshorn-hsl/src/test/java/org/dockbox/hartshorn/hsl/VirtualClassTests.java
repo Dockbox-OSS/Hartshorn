@@ -35,8 +35,9 @@ public class VirtualClassTests {
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> propertyAccessors() {
-        final String readMessage = "Cannot read property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
-        final String writeMessage = "Cannot reassign property name of User because it is final.";
+        final String readMessage = "HSL9010: Cannot read property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
+        final String writeMessage = "HSL9010: Cannot assign to property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
+        final String reassignMessage = "HSL3014: Cannot reassign property name of User because it is final.";
         return Stream.of(
                 Arguments.of("public", "getName()", false, null),
                 Arguments.of("private", "getName()", false, null),
@@ -51,7 +52,7 @@ public class VirtualClassTests {
                 Arguments.of("", "setName(\"Foo\")", false, null),
 
                 Arguments.of("public", "name = \"Foo\"", false, null),
-                Arguments.of("private", "name = \"Foo\"", true, readMessage),
+                Arguments.of("private", "name = \"Foo\"", true, writeMessage),
                 Arguments.of("", "name = \"Foo\"", false, null),
 
                 Arguments.of("public final", "getName()", false, null),
@@ -62,13 +63,13 @@ public class VirtualClassTests {
                 Arguments.of("private final", "name", true, readMessage),
                 Arguments.of("final", "name", false, null),
 
-                Arguments.of("public final", "setName(\"Foo\")", true, writeMessage),
-                Arguments.of("private final", "setName(\"Foo\")", true, writeMessage),
-                Arguments.of("final", "setName(\"Foo\")", true, writeMessage),
+                Arguments.of("public final", "setName(\"Foo\")", true, reassignMessage),
+                Arguments.of("private final", "setName(\"Foo\")", true, reassignMessage),
+                Arguments.of("final", "setName(\"Foo\")", true, reassignMessage),
 
-                Arguments.of("public final", "name = \"Foo\"", true, writeMessage),
-                Arguments.of("private final", "name = \"Foo\"", true, readMessage),
-                Arguments.of("final", "name = \"Foo\"", true, writeMessage)
+                Arguments.of("public final", "name = \"Foo\"", true, reassignMessage),
+                Arguments.of("private final", "name = \"Foo\"", true, writeMessage),
+                Arguments.of("final", "name = \"Foo\"", true, reassignMessage)
         );
     }
 

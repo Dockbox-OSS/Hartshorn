@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -89,7 +90,7 @@ public abstract class AbstractNativeModule implements NativeModule {
                         .rethrowUnchecked()
                         .orNull();
                 return new ExternalInstance(result);
-            } else throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
+            } else throw new RuntimeError(at, DiagnosticMessage.UNSUPPORTED_NATIVE_FUNCTION, function.name().lexeme(), this.moduleClass().getSimpleName());
         }
         catch (final InvocationTargetException e) {
             throw new NativeExecutionException("Invalid Module Loader", e);
@@ -101,7 +102,7 @@ public abstract class AbstractNativeModule implements NativeModule {
             throw new NativeExecutionException("Module Loader : Can't access function with name : " + function, e);
         }
         catch (final Throwable e) {
-            throw new RuntimeError(at, e.getMessage());
+            throw new RuntimeError(at, e);
         }
     }
 
