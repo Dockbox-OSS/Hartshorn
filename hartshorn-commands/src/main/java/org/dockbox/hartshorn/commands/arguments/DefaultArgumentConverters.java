@@ -19,22 +19,23 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.beans.Bean;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.Vector3N;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
+import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Vector3N;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service(permitProxying = false)
 @RequiresActivator(UseCommands.class)
@@ -132,6 +133,12 @@ public final class DefaultArgumentConverters {
                 .withConverter((src, in) -> {
                     final TranslationService rs = src.applicationContext().get(TranslationService.class);
                     return rs.get(in);
+                }).withSuggestionProvider((src, in) -> {
+                    final TranslationService rs = src.applicationContext().get(TranslationService.class);
+                    return rs.bundle().messages().stream()
+                            .map(Message::key)
+                            .filter(key -> key.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
+                            .collect(Collectors.toSet());
                 }).build();
     }
 
