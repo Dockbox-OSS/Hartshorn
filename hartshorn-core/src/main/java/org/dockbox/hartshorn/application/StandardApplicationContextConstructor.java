@@ -133,7 +133,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
     protected void finalize(final ApplicationContext applicationContext, final ApplicationManager manager) {
         if (manager instanceof ObservableApplicationManager observable) {
-            for (final LifecycleObserver observer : observable.observers())
+            for (final LifecycleObserver observer : observable.observers(LifecycleObserver.class))
                 observer.onStarted(applicationContext);
         }
 

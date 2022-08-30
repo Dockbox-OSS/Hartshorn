@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.lifecycle;
+package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.util.Set;
+public interface BeanCollector {
+    <T> BeanReference<T> register(T bean, TypeContext<T> type, String id);
 
-public interface ObservableApplicationManager extends ApplicationManager {
-
-    <T extends Observer> Set<T> observers(Class<T> type);
+    void unregister(BeanReference<?> beanReference);
 }

@@ -25,14 +25,14 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * @author Guus Lieben
  * @since 21.9
  */
-public interface LifecycleObserver {
+public interface LifecycleObserver extends Observer {
     /**
      * Called when the application is started. This is called directly after the {@link ApplicationContext}
      * has been created and configured.
      *
      * @param applicationContext The application context
      */
-    void onStarted(ApplicationContext applicationContext);
+    default void onStarted(final ApplicationContext applicationContext) {}
 
     /**
      * Called when the application is stopped. This is called directly when the {@link Runtime#getRuntime() runtime}
@@ -40,5 +40,5 @@ public interface LifecycleObserver {
      *
      * @param applicationContext The application context
      */
-    void onExit(ApplicationContext applicationContext);
+    default void onExit(final ApplicationContext applicationContext) {}
 }

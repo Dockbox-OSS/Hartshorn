@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.lifecycle;
+package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import java.util.List;
 
-import java.util.Set;
+public interface BeanProvider {
+    <T> T first(Class<T> type);
 
-public interface ObservableApplicationManager extends ApplicationManager {
+    <T> T first(Class<T> type, String id);
 
-    <T extends Observer> Set<T> observers(Class<T> type);
+    <T> List<T> all(Class<T> type);
+
+    <T> List<T> all(Class<T> type, String id);
 }

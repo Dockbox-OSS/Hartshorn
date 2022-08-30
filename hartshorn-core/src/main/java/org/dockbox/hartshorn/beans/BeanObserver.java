@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.lifecycle;
+package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.lifecycle.Observer;
 
-import java.util.Set;
+public interface BeanObserver extends Observer {
 
-public interface ObservableApplicationManager extends ApplicationManager {
+    /**
+     * Called when the application is done collecting static beans. This is called directly after the
+     * {@link BeanContext} has been created and configured.
+     *
+     * @param applicationContext The application context
+     * @param beanContext The bean context
+     */
+    void onBeansCollected(ApplicationContext applicationContext, BeanContext beanContext);
 
-    <T extends Observer> Set<T> observers(Class<T> type);
 }

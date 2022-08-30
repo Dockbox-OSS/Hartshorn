@@ -158,6 +158,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
 
     @Override
     public Result<T> obtain(final ApplicationContext applicationContext) {
-        return this.get(applicationContext.get(this.declaredBy()));
+        if (this.isStatic()) return this.get(null);
+        else return this.get(applicationContext.get(this.declaredBy()));
     }
 }

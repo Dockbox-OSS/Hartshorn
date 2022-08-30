@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.context.AutoCreating;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +36,12 @@ public final class ArgumentConverterContext extends DefaultContext {
 
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
+    private final ApplicationContext applicationContext;
+
     @Inject
-    private ApplicationContext applicationContext;
+    public ArgumentConverterContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * Indicates if any converter with the given <code>key</code> is registered.

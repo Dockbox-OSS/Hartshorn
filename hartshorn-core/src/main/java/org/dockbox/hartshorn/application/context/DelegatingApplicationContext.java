@@ -242,7 +242,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.log().info("Runtime shutting down, notifying observers");
         final ApplicationManager manager = this.environment().manager();
         if (manager instanceof ObservableApplicationManager observable) {
-            for (final LifecycleObserver observer : observable.observers()) {
+            for (final LifecycleObserver observer : observable.observers(LifecycleObserver.class)) {
                 this.log().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 try {
                     observer.onExit(this);

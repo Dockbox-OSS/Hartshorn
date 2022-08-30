@@ -38,9 +38,4 @@ public class HibernateProxyLookupInitializer implements LifecycleObserver {
             }
         }
     }
-
-    @Override
-    public void onExit(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
 }

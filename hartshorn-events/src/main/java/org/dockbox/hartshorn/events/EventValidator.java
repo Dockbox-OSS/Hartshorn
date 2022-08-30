@@ -71,9 +71,4 @@ public class EventValidator implements LifecycleObserver {
             applicationContext.log().warn(message.toString());
         }
     }
-
-    @Override
-    public void onExit(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
 }

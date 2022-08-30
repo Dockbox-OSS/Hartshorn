@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.lifecycle;
+package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Set;
-
-public interface ObservableApplicationManager extends ApplicationManager {
-
-    <T extends Observer> Set<T> observers(Class<T> type);
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Bean {
+    String id() default "";
 }

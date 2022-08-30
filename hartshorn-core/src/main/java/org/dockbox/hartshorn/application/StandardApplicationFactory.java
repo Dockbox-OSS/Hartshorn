@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.environment.ContextualApplicationEnviro
 import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser;
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
+import org.dockbox.hartshorn.beans.UseBeanScanning;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
@@ -146,6 +147,11 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
                     @Override
                     public Class<? extends Annotation> annotationType() {
                         return UseServiceProvision.class;
+                    }
+                }).serviceActivator(new UseBeanScanning() {
+                    @Override
+                    public Class<? extends Annotation> annotationType() {
+                        return UseBeanScanning.class;
                     }
                 });
     }

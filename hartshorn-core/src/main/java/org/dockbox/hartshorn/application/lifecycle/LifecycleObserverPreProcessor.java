@@ -24,11 +24,16 @@ public class LifecycleObserverPreProcessor implements ServicePreProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return key.type().childOf(LifecycleObserver.class);
+        return key.type().childOf(Observer.class);
     }
 
     @Override
     public <T> void process(final ApplicationContext context, final Key<T> key) {
-        context.environment().manager().register((LifecycleObserver) context.get(key));
+        context.environment().manager().register((Class<? extends Observer>) key.type().type());
+    }
+
+    @Override
+    public Integer order() {
+        return (Integer.MIN_VALUE / 2) - 1024;
     }
 }

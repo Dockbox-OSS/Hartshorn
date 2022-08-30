@@ -222,23 +222,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return processingContext;
     }
 
-    protected <T> T finalize(final Key<T> key, final T instance, final ComponentProcessingContext context) {
-        if (context.containsKey(Key.of(ProxyFactory.class))) {
-            final ProxyFactory<T, ?> factory = context.get(Key.of(ProxyFactory.class));
-            try {
-                if (((StateAwareProxyFactory<?, ?>) factory).modified() || (instance == null && key.type().isAbstract())) {
-                    return factory.proxy().or(instance);
-                } else {
-                    return instance;
-                }
-            }
-            catch (final ApplicationException e) {
-                throw new ComponentFinalizationException(e);
-            }
-        }
-        return instance;
-    }
-
     protected <T> T process(final Key<T> key, final T instance, final ProcessingPhase phase, final ComponentProcessingContext processingContext) {
         T result = instance;
         processingContext.phase(phase);

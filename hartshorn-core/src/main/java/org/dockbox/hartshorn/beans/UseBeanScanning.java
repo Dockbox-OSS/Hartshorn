@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.lifecycle;
+package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
-import java.util.Set;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface ObservableApplicationManager extends ApplicationManager {
-
-    <T extends Observer> Set<T> observers(Class<T> type);
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@ServiceActivator(processors = {
+        BeanServicePreProcessor.class,
+})
+public @interface UseBeanScanning {
 }
