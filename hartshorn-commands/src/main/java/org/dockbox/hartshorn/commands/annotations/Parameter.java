@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * Used to indicate that a type can be provided to command definitions. When a type is decorated with this annotation, it can be automatically
  * constructed using its available constructors.
  *
- * <p>Also see <a href="https://github.com/GuusLieben/Hartshorn/wiki/Command-Arguments>Hartshorn/Command Arguments</a>.
+ * <p>Also see <a href="https://github.com/GuusLieben/Hartshorn/wiki/Command-Arguments">Hartshorn/Command Arguments</a>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

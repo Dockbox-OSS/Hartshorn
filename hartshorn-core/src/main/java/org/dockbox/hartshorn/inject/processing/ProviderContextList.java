@@ -19,16 +19,15 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
 
 @AutoCreating
 public class ProviderContextList extends DefaultContext {
 
-    private final MultiMap<Integer, ProviderContext> elements = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+    private final MultiMap<Integer, ProviderContext> elements = new ConcurrentSetMultiMap<>();
 
     public void add(final ProviderContext context) {
         final int phase = context.provider().phase();

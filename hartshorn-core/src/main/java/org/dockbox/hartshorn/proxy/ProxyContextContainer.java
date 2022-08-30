@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Set;
 

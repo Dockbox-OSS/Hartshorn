@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ObservingApplicationContext;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.HashSetMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ import java.util.List;
 
 public class ComponentLocatorImpl implements ComponentLocator {
 
-    private final MultiMap<String, ComponentContainer> cache = new HashSetMultiMap<>();
+    private final MultiMap<String, ComponentContainer> cache = new SynchronizedHashSetMultiMap<>();
     private final ApplicationContext applicationContext;
     private final ConditionMatcher conditionMatcher;
 

@@ -21,14 +21,14 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -52,7 +52,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
-
 import javassist.util.proxy.ProxyFactory;
 
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
@@ -328,7 +327,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (!this.childOf(superInterface)) throw new IllegalArgumentException("Provided interface " + superInterface.name() + " is not a super type of " + this.name());
 
         if (this.interfaceTypeParameters == null) {
-            this.interfaceTypeParameters = new ArrayListMultiMap<>();
+            this.interfaceTypeParameters = new SynchronizedArrayListMultiMap<>();
         }
 
         if (!this.interfaceTypeParameters.containsKey(superInterface)) {
@@ -636,7 +635,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
             // so instead we only link it by name and perform the list comparison on request.
-            this.methods = new ArrayListMultiMap<>();
+            this.methods = new SynchronizedArrayListMultiMap<>();
             for (final MethodContext<?, T> method : this.methods()) {
                 this.methods.put(method.name(), method);
             }

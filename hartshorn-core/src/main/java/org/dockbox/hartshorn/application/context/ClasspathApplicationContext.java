@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
@@ -52,7 +51,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     @Override
     protected void prepareInitialization() {
-        this.preProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+        this.preProcessors = new ConcurrentSetTreeMultiMap<>();
         this.prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
     }
 

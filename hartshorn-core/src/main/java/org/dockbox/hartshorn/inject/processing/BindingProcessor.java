@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.proxy.ModifiableProxyManager;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;

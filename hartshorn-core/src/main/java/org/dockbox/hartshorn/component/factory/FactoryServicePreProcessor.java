@@ -49,8 +49,8 @@ public class FactoryServicePreProcessor implements ServicePreProcessor, ExitingC
             if (!"".equals(annotation.value())) returnKey = returnKey.name(annotation.value());
 
             for (final Provider<?> provider : context.hierarchy(returnKey).providers()) {
-                if (provider instanceof ContextDrivenProvider contextDrivenProvider) {
-                    final TypeContext<?> typeContext = ((ContextDrivenProvider<?>) provider).context();
+                if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
+                    final TypeContext<?> typeContext = contextDrivenProvider.context();
 
                     for (final ConstructorContext<?> constructor : typeContext.boundConstructors()) {
                         final LinkedList<TypeContext<?>> constructorParameters = constructor.parameterTypes();

@@ -221,7 +221,7 @@ public class StandardMethodInterceptor<T> {
         final TypeContext<Object> selfContext = TypeContext.of(self);
         return new ProxyInvocationException("""
                 Could not invoke local method %s (targeting %s) on proxy %s of qualified type %s(isProxy=%s) with arguments %s.
-                This typically indicates that there is no appropriate proxy property (delegate or interceptor for the method.
+                This typically indicates that there is no appropriate proxy property (delegate or interceptor) for the method.
                 """.formatted(
                 source.getQualifiedName(), target.getQualifiedName(), targetType.qualifiedName(), selfContext.qualifiedName(),
                 this.applicationContext().environment().manager().isProxy(self), Arrays.toString(args))

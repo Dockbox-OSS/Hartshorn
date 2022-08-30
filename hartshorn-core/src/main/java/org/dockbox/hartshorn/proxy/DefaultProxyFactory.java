@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.CustomMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.TypeMap;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -73,8 +73,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     // Delegates and interceptors
     private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
     private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
-    private final MultiMap<Method, MethodWrapper<T>> wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet);
-    private final TypeMap<Object> typeDelegates = new TypeMap<>();
+    private final MultiMap<Method, MethodWrapper<T>> wrappers = new ConcurrentSetMultiMap<>();
+    private final ConcurrentClassMap<Object> typeDelegates = new ConcurrentClassMap<>();
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
     private T typeDelegate;
 
@@ -258,7 +258,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public TypeMap<Object> typeDelegates() {
+    public ConcurrentClassMap<Object> typeDelegates() {
         return this.typeDelegates;
     }
 

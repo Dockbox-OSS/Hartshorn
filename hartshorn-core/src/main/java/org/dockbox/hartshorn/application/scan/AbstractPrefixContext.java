@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.application.scan;
 
-import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.AnnotationHelper;
-import org.dockbox.hartshorn.util.CustomMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public abstract class AbstractPrefixContext<S> extends DefaultContext implements PrefixContext {
@@ -36,7 +35,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     private final ApplicationManager manager;
 
     private final Map<String, S> prefixes = new ConcurrentHashMap<>();
-    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new CustomMultiMap<>(CopyOnWriteArrayList::new);
+    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new CopyOnWriteArrayListMultiMap<>();
 
     protected AbstractPrefixContext(final ApplicationManager manager) {
         this.manager = manager;

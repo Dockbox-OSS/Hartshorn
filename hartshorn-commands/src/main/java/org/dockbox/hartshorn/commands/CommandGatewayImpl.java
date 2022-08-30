@@ -27,9 +27,9 @@ import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.ArrayListMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -48,7 +48,7 @@ import jakarta.inject.Inject;
 @Component
 public class CommandGatewayImpl implements CommandGateway {
 
-    private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
+    private final transient MultiMap<String, CommandExecutorContext> contexts = new CopyOnWriteArrayListMultiMap<>();
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
 
     @Inject
