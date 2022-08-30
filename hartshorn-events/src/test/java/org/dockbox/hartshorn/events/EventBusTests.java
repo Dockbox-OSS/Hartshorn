@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
+import org.dockbox.hartshorn.events.listeners.ConditionalEventListener;
 import org.dockbox.hartshorn.events.listeners.GenericEventListener;
 import org.dockbox.hartshorn.events.listeners.PriorityEventListener;
 import org.dockbox.hartshorn.events.listeners.StaticEventListener;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -36,25 +37,22 @@ import jakarta.inject.Inject;
 
 @HartshornTest
 @UseEvents
+@UseExpressionValidation
 public class EventBusTests {
 
     @Inject
-    private ApplicationContext applicationContext;
-
+    private EventBusImpl eventBus;
+    
     @Test
     public void testTypesCanSubscribe() {
-        final EventBus bus = this.bus();
+        final EventBus bus = this.eventBus;
         bus.subscribe(Key.of(BasicEventListener.class));
         Assertions.assertTrue(bus.invokers().containsKey(Key.of(BasicEventListener.class)));
     }
 
-    private EventBus bus() {
-        return this.applicationContext.get(EventBusImpl.class);
-    }
-
     @Test
     public void testNonStaticMethodsCanListen() {
-        final EventBus bus = this.bus();
+        final EventBus bus = this.eventBus;
         bus.subscribe(Key.of(BasicEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertTrue(BasicEventListener.fired);
@@ -62,7 +60,7 @@ public class EventBusTests {
 
     @Test
     public void testStaticMethodsCanListen() {
-        final EventBus bus = this.bus();
+        final EventBus bus = this.eventBus;
         bus.subscribe(Key.of(StaticEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertTrue(StaticEventListener.fired);
@@ -70,7 +68,7 @@ public class EventBusTests {
 
     @Test
     public void testEventsArePostedInCorrectPriorityOrder() {
-        final EventBus bus = this.bus();
+        final EventBus bus = this.eventBus;
         bus.subscribe(Key.of(PriorityEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertEquals(Priority.LAST, PriorityEventListener.last());
@@ -78,7 +76,7 @@ public class EventBusTests {
 
     @Test
     void testGenericEventsAreFiltered() {
-        final EventBus bus = this.bus();
+        final EventBus bus = this.eventBus;
         bus.subscribe(Key.of(GenericEventListener.class));
         final Event event = new GenericEvent<>("String") {
         };
@@ -87,7 +85,7 @@ public class EventBusTests {
 
     @Test
     void testGenericWildcardsArePosted() {
-        final EventBus bus = this.bus();
+        final EventBus bus = this.eventBus;
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects.clear();
         bus.subscribe(Key.of(GenericEventListener.class));
@@ -103,10 +101,30 @@ public class EventBusTests {
         Assertions.assertEquals(1, objects.get(1));
     }
 
+    @Test
+    void testConditionEventIsNotFiredIfMismatch() {
+        final EventBus bus = this.eventBus;
+        bus.subscribe(Key.of(ConditionalEventListener.class));
+
+        final SampleNamedEvent nullNameEvent = new SampleNamedEvent(null);
+        bus.post(nullNameEvent);
+        Assertions.assertFalse(ConditionalEventListener.fired);
+    }
+
+    @Test
+    void testConditionEventIsFiredIfMatch() {
+        final EventBus bus = this.eventBus;
+        bus.subscribe(Key.of(ConditionalEventListener.class));
+
+        final SampleNamedEvent nameEvent = new SampleNamedEvent("name");
+        bus.post(nameEvent);
+        Assertions.assertTrue(ConditionalEventListener.fired);
+    }
+
     @AfterEach
     public void reset() {
         BasicEventListener.fired = false;
         StaticEventListener.fired = false;
+        ConditionalEventListener.fired = false;
     }
-
 }

@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.events;
 
-dependencies {
-    api("org.dockbox.hartshorn:hartshorn-core")
-    // For expression evaluation
-    testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
+import org.dockbox.hartshorn.util.Named;
+
+public class SampleNamedEvent extends ContextCarrierEvent implements Named {
+
+    private final String name;
+
+    public SampleNamedEvent(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
 }
