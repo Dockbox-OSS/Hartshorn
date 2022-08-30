@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply { 
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-web'
-    implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
-    implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+    implementation libs.cglib
 }

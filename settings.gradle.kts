@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+rootProject.name = "Hartshorn"
+gradle.startParameter.isContinueOnFailure = true
 
-dependencies {
-    api "jakarta.inject:jakarta.inject-api:$jakartaInjectVersion"
-    api "jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationVersion"
+includeAll(rootDir, "")
 
-    implementation "org.reflections:reflections:$reflectionsVersion"
-    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+fun includeAll(dir: File, prefix: String) {
+    dir.listFiles()?.forEach {
+        if (it.isDirectory && File(it, "${it.name}.gradle.kts").exists()) {
+            include("${prefix}:${it.name}")
+            // Include all nested projects
+            includeAll(it, it.name)
+        }
+    }
+}
 
-    api "org.javassist:javassist:$javassistVersion"
-    api "cglib:cglib:$cglibVersion"
+rootProject.children.forEach {
+    it.buildFileName = "${it.name}.gradle.kts"
 }

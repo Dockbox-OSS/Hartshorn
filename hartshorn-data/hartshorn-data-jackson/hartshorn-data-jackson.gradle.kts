@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-apply from: "$project.rootDir/gradle/publications.gradle"
+apply { 
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-core'
-    api "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"
+    implementation 'org.dockbox.hartshorn:hartshorn-data'
+    implementation libs.bundles.jackson
 }
