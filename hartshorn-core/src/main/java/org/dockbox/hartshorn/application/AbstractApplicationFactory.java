@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -153,6 +154,12 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     @Override
     public Self componentLocator(final Initializer<ComponentLocator> componentLocator) {
         this.configuration.componentLocator = componentLocator.cached();
+        return this.self();
+    }
+
+    @Override
+    public Self componentPostConstructor(final Initializer<ComponentPostConstructor> componentPostConstructor) {
+        this.configuration.componentPostConstructor = componentPostConstructor.cached();
         return this.self();
     }
 

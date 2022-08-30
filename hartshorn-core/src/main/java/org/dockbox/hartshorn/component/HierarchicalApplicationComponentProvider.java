@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
@@ -64,26 +65,14 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     private final transient MultiMap<Integer, ComponentPostProcessor> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
     private final transient ComponentInstanceFactory factory;
+    private final transient ComponentPostConstructor postConstructor;
 
-    public HierarchicalApplicationComponentProvider(
-            final ApplicationContext applicationContext,
-            final ComponentLocator locator,
-            final MetaProvider metaProvider) {
-        this.applicationContext = applicationContext;
-        this.locator = locator;
-        this.metaProvider = metaProvider;
+    public HierarchicalApplicationComponentProvider(InitializingContext context) {
+        this.applicationContext = context.applicationContext();
+        this.locator = context.componentLocator();
+        this.metaProvider = context.metaProvider();
+        this.postConstructor = context.componentPostConstructor();
         this.factory = this::raw;
-    }
-
-    public HierarchicalApplicationComponentProvider(
-            final ApplicationContext applicationContext,
-            final ComponentLocator locator,
-            final MetaProvider metaProvider,
-            final ComponentInstanceFactory factory) {
-        this.applicationContext = applicationContext;
-        this.locator = locator;
-        this.metaProvider = metaProvider;
-        this.factory = factory;
     }
 
     @Override
@@ -136,7 +125,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         // Inject properties if applicable
         if (enable) {
             try {
-                Enableable.enable(instance);
+                instance = postConstructor.doPostConstruct(instance);
             }
             catch (final ApplicationException e) {
                 ExceptionHandler.unchecked(e);

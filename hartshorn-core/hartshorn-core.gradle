@@ -18,6 +18,7 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     api "jakarta.inject:jakarta.inject-api:$jakartaInjectVersion"
+    api "jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationVersion"
 
     implementation "org.reflections:reflections:$reflectionsVersion"
     implementation "ch.qos.logback:logback-classic:$logbackVersion"

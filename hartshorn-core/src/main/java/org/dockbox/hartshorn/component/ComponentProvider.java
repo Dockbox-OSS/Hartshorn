@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
 
 /**
@@ -63,10 +64,11 @@ public interface ComponentProvider {
     <T> T get(Key<T> key);
 
     /**
-     * Returns the component for the given key. Unlike {@link #get(Key)}, this method will not run {@link Enableable#enable()}
-     * on the component if {@code enable} is false.
+     * Returns the component for the given key. Unlike {@link #get(Key)}, this method will not run methods
+     * annotated with {@link PostConstruct} if {@code enable} is {@code false}.
+     *
      * @param key The key of the component to return.
-     * @param enable Whether to enable the component if it is an implementation of {@link Enableable}.
+     * @param enable Whether to enable the component if it contains {@link PostConstruct} methods.
      * @param <T> The type of the component to return.
      * @return The component for the given key.
      */

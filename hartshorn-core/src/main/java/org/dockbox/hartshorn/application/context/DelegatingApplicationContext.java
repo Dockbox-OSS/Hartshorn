@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
@@ -100,6 +101,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     protected void registerDefaultBindings(final InitializingContext context) {
         this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
+        this.bind(ComponentPostConstructor.class).singleton(context.componentPostConstructor());
         this.bind(ComponentProvider.class).singleton(this);
         this.bind(ExceptionHandler.class).singleton(this);
 

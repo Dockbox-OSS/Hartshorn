@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.data.hibernate;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.data.InvalidConnectionException;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
@@ -40,11 +39,12 @@ import org.hibernate.cfg.Configuration;
 import java.sql.Driver;
 import java.util.Collection;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.persistence.Entity;
 
 @Component
-public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enableable, ContextCarrier {
+public class HibernateEntityManagerCarrier implements EntityManagerCarrier, ContextCarrier {
 
     private final Configuration hibernateConfiguration = new Configuration();
 
@@ -127,29 +127,26 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Enab
         }
     }
 
-    @Override
-    public boolean canEnable() {
-        return this.factory == null;
-    }
-
-    @Override
+    @PostConstruct
     public void enable() throws ApplicationException {
-        if (this.isInvalidConnection()) {
-            this.applicationContext().log().debug("No (valid) connection was set for JPA repository instance, using default component instead.");
-            this.configuration = this.applicationContext().get(DataSourceList.class).defaultConnection();
-
+        if (this.factory == null) {
             if (this.isInvalidConnection()) {
-                throw new ApplicationException("No (valid) default connection was configured");
-            }
-        }
+                this.applicationContext().log().debug("No (valid) connection was set for JPA repository instance, using default component instead.");
+                this.configuration = this.applicationContext().get(DataSourceList.class).defaultConnection();
 
-        this.prepareProperties();
-        try {
-            this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
-            this.factory = this.hibernateConfiguration.buildSessionFactory();
-        }
-        catch (final Throwable e) {
-            throw new ApplicationException(e);
+                if (this.isInvalidConnection()) {
+                    throw new ApplicationException("No (valid) default connection was configured");
+                }
+            }
+
+            this.prepareProperties();
+            try {
+                this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
+                this.factory = this.hibernateConfiguration.buildSessionFactory();
+            }
+            catch (final Throwable e) {
+                throw new ApplicationException(e);
+            }
         }
     }
 

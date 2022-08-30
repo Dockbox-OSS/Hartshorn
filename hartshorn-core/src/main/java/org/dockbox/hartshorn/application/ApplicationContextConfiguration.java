@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -47,6 +48,7 @@ public class ApplicationContextConfiguration {
     protected Initializer<ApplicationLogger> applicationLogger;
     protected Initializer<ApplicationEnvironment> applicationEnvironment;
     protected Initializer<ComponentLocator> componentLocator;
+    protected Initializer<ComponentPostConstructor> componentPostConstructor;
     protected Initializer<ClasspathResourceLocator> resourceLocator;
     protected Initializer<MetaProvider> metaProvider;
     protected Initializer<ComponentProvider> componentProvider;
@@ -98,6 +100,10 @@ public class ApplicationContextConfiguration {
 
     public ComponentLocator componentLocator(final InitializingContext context) {
         return this.componentLocator.initialize(context);
+    }
+
+    public ComponentPostConstructor componentPostConstructor(final InitializingContext context) {
+        return this.componentPostConstructor.initialize(context);
     }
 
     public ClasspathResourceLocator resourceLocator(final InitializingContext context) {

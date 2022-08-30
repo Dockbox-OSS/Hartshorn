@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.Enable;
@@ -70,10 +70,12 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) throws ApplicationException {
-        context.get(ComponentPopulator.class).populate(instance);
-
-        if (enable) Enableable.enable(instance);
-        return instance;
+        T out = instance;
+        out = context.get(ComponentPopulator.class).populate(out);
+        if (enable) {
+            out = context.get(ComponentPostConstructor.class).doPostConstruct(out);
+        }
+        return out;
     }
 
     @Override
