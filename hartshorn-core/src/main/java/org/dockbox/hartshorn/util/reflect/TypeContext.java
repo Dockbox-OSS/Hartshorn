@@ -702,4 +702,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public boolean isInstance(final Object object) {
         return this.type().isInstance(object);
     }
+
+    public T cast(final Object object) {
+        if (isInstance(object)) return this.type.cast(object);
+        else throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(object, this.type));
+    }
 }

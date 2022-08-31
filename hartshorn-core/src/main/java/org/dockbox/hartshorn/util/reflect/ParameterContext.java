@@ -54,7 +54,11 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
     @Override
     public String name() {
         if (this.name == null) {
-            this.name = this.element().getName();
+            if (this.annotation(org.dockbox.hartshorn.util.reflect.Parameter.class).present()) {
+                this.name = this.annotation(org.dockbox.hartshorn.util.reflect.Parameter.class).get().value();
+            } else {
+                this.name = this.parameter.getName();
+            }
         }
         return this.name;
     }
