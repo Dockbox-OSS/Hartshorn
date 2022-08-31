@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.events.annotations.Listener;
@@ -131,12 +130,6 @@ public class EventBusImpl implements EventBus {
     @Override
     public void post(final Event event) {
         this.post(event, null);
-    }
-
-    @NonNull
-    @Override
-    public Map<Key<?>, Set<EventWrapper>> invokers() {
-        return this.listenerToInvokers;
     }
 
     @Override

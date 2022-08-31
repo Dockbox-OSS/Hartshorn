@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events.handle;
+package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.events.EventWrapper;
-import org.dockbox.hartshorn.events.parents.Event;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.Key;
 
-public interface EventExecutionFilter {
-    boolean accept(Event event, EventWrapper wrapper, Key<?> target);
+import java.util.Map;
+import java.util.Set;
+
+public class TestEventBus extends EventBusImpl {
+
+    @Override
+    public @NonNull Map<Key<?>, Set<EventWrapper>> invokers() {
+        return this.listenerToInvokers;
+    }
 }

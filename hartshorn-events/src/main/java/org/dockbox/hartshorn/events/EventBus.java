@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 public interface EventBus {
@@ -34,8 +32,6 @@ public interface EventBus {
     void post(Event event, Key<?> target);
 
     void post(Event event);
-
-    Map<Key<?>, Set<EventWrapper>> invokers();
 
     void addValidationRule(Function<MethodContext<?, ?>, Result<Boolean>> validator);
 }
