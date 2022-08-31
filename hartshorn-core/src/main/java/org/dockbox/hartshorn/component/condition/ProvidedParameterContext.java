@@ -53,6 +53,6 @@ public class ProvidedParameterContext extends DefaultContext {
     }
 
     public Map<ParameterContext<?>, Object> arguments() {
-        return arguments;
+        return this.arguments;
     }
 }

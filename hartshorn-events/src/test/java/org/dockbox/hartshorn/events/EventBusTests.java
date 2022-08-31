@@ -41,60 +41,54 @@ import jakarta.inject.Inject;
 public class EventBusTests {
 
     @Inject
-    private EventBusImpl eventBus;
+    private TestEventBus bus;
     
     @Test
     public void testTypesCanSubscribe() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(BasicEventListener.class));
-        Assertions.assertTrue(bus.invokers().containsKey(Key.of(BasicEventListener.class)));
+        this.bus.subscribe(Key.of(BasicEventListener.class));
+        Assertions.assertTrue(this.bus.invokers().containsKey(Key.of(BasicEventListener.class)));
     }
 
     @Test
     public void testNonStaticMethodsCanListen() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(BasicEventListener.class));
-        bus.post(new SampleEvent());
+        this.bus.subscribe(Key.of(BasicEventListener.class));
+        this.bus.post(new SampleEvent());
         Assertions.assertTrue(BasicEventListener.fired);
     }
 
     @Test
     public void testStaticMethodsCanListen() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(StaticEventListener.class));
-        bus.post(new SampleEvent());
+        this.bus.subscribe(Key.of(StaticEventListener.class));
+        this.bus.post(new SampleEvent());
         Assertions.assertTrue(StaticEventListener.fired);
     }
 
     @Test
     public void testEventsArePostedInCorrectPriorityOrder() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(PriorityEventListener.class));
-        bus.post(new SampleEvent());
+        this.bus.subscribe(Key.of(PriorityEventListener.class));
+        this.bus.post(new SampleEvent());
         Assertions.assertEquals(Priority.LAST, PriorityEventListener.last());
     }
 
     @Test
     void testGenericEventsAreFiltered() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(GenericEventListener.class));
+        this.bus.subscribe(Key.of(GenericEventListener.class));
         final Event event = new GenericEvent<>("String") {
         };
-        Assertions.assertDoesNotThrow(() -> bus.post(event));
+        Assertions.assertDoesNotThrow(() -> this.bus.post(event));
     }
 
     @Test
     void testGenericWildcardsArePosted() {
-        final EventBus bus = this.eventBus;
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects.clear();
-        bus.subscribe(Key.of(GenericEventListener.class));
+        this.bus.subscribe(Key.of(GenericEventListener.class));
         final Event stringEvent = new GenericEvent<>("String") {
         };
         final Event integerEvent = new GenericEvent<>(1) {
         };
-        bus.post(stringEvent);
-        bus.post(integerEvent);
+        this.bus.post(stringEvent);
+        this.bus.post(integerEvent);
         final List<Object> objects = List.copyOf(GenericEventListener.objects);
         Assertions.assertEquals(2, objects.size());
         Assertions.assertEquals("String", objects.get(0));
@@ -103,21 +97,19 @@ public class EventBusTests {
 
     @Test
     void testConditionEventIsNotFiredIfMismatch() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(ConditionalEventListener.class));
+        this.bus.subscribe(Key.of(ConditionalEventListener.class));
 
-        final SampleNamedEvent nullNameEvent = new SampleNamedEvent(null);
-        bus.post(nullNameEvent);
+        final Event nullNameEvent = new SampleNamedEvent(null);
+        this.bus.post(nullNameEvent);
         Assertions.assertFalse(ConditionalEventListener.fired);
     }
 
     @Test
     void testConditionEventIsFiredIfMatch() {
-        final EventBus bus = this.eventBus;
-        bus.subscribe(Key.of(ConditionalEventListener.class));
+        this.bus.subscribe(Key.of(ConditionalEventListener.class));
 
-        final SampleNamedEvent nameEvent = new SampleNamedEvent("name");
-        bus.post(nameEvent);
+        final Event nameEvent = new SampleNamedEvent("name");
+        this.bus.post(nameEvent);
         Assertions.assertTrue(ConditionalEventListener.fired);
     }
 
