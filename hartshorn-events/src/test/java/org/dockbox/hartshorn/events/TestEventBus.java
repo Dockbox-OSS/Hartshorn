@@ -24,7 +24,6 @@ import java.util.Set;
 
 public class TestEventBus extends EventBusImpl {
 
-    @Override
     public @NonNull Map<Key<?>, Set<EventWrapper>> invokers() {
         return this.listenerToInvokers;
     }
