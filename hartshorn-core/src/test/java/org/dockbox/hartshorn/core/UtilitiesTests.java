@@ -50,17 +50,6 @@ public class UtilitiesTests {
         );
     }
 
-    private static Stream<Arguments> equalValues() {
-        return Stream.of(
-                Arguments.of("value", "value", true),
-                Arguments.of(null, null, false),
-                Arguments.of(null, "value", false),
-                Arguments.of("value", "VALUE", false),
-                Arguments.of("value", 1, false),
-                Arguments.of(1.2D, 1, false)
-        );
-    }
-
     private static Stream<Arguments> durations() {
         return Stream.of(
                 Arguments.of("1s", 1),
@@ -79,6 +68,27 @@ public class UtilitiesTests {
         return Stream.of(
                 Arguments.of(List.of("a", "b"), List.of("a"), List.of("b")),
                 Arguments.of(List.of("a"), List.of("a", "b"), List.of("b"))
+        );
+    }
+
+    public static Stream<Arguments> stringFormats() {
+        return Stream.of(
+                Arguments.of("Hello world!", "Hello world!", new Object[0]),
+                Arguments.of("Hello %s!", "Hello %s!", new Object[] {"world"}),
+                Arguments.of("Hello {0}!", "Hello world!", new Object[] {"world"}),
+                Arguments.of("{0} {1}!", "Hello world!", new Object[] {"Hello", "world"}),
+                Arguments.of("{0} {0}!", "Hello Hello!", new Object[] {"Hello", "world"})
+        );
+    }
+
+    public static Stream<Arguments> stringMapFormats() {
+        return Stream.of(
+                Arguments.of("Hello world!", "Hello world!", Map.of()),
+                Arguments.of("Hello %s!", "Hello %s!", Map.of("{0}", "world")),
+                Arguments.of("Hello {0}!", "Hello world!", Map.of("{0}", "world")),
+                Arguments.of("{0} {1}!", "Hello world!", Map.of("{0}", "Hello", "{1}", "world")),
+                Arguments.of("{0} {0}!", "Hello Hello!", Map.of("{0}", "Hello", "{1}", "world")),
+                Arguments.of("Hello world!", "Hello user!", Map.of("world", "user"))
         );
     }
 
@@ -149,5 +159,27 @@ public class UtilitiesTests {
         Assertions.assertEquals(difference.size(), expected.size());
         Assertions.assertTrue(difference.containsAll(expected));
         Assertions.assertTrue(expected.containsAll(difference));
+    }
+
+    @Test
+    void testSplitCapitals() {
+        final String input = "ThisIsAString";
+        final String[] expected = new String[] { "This", "Is", "A", "String" };
+        final String[] actual = StringUtilities.splitCapitals(input);
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringFormats")
+    void testFormat(final String format, final String expected, final Object... args) {
+        final String actual = StringUtilities.format(format, args);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringMapFormats")
+    void testMapFormat(final String format, final String expected, final Map<String, String> replacements) {
+        final String actual = StringUtilities.format(format, replacements);
+        Assertions.assertEquals(expected, actual);
     }
 }
