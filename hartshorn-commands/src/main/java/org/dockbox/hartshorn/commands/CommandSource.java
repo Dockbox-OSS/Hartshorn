@@ -21,8 +21,7 @@ import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.util.Subject;
 
 /**
- * Represents a single {@link Subject} capable
- * of executing commands.
+ * Represents a single {@link Subject} capable of executing commands.
  */
 public interface CommandSource extends MessageReceiver, ContextCarrier {
 
@@ -32,5 +31,8 @@ public interface CommandSource extends MessageReceiver, ContextCarrier {
      *
      * @param command The raw command
      */
-    void execute(String command);
+    default void execute(String command) throws ParsingException {
+        final CommandGateway gateway = this.applicationContext().get(CommandGateway.class);
+        gateway.accept(this, command);
+    }
 }
