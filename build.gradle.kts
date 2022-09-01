@@ -91,7 +91,6 @@ allprojects {
             resolutionStrategy.dependencySubstitution {
                 rootDir.listFiles()?.forEach {
                     if (it.isDirectory && File(it, "${it.name}.gradle.kts").exists()) {
-                        println("Substituting org.dockbox.hartshorn:${it.name} for ${it.name}")
                         substitute(module("org.dockbox.hartshorn:${it.name}"))
                             .using(project(":${it.name}"))
                     }

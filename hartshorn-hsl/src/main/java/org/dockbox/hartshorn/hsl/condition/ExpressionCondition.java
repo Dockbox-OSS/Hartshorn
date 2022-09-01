@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.Condition;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
 import org.dockbox.hartshorn.component.condition.ConditionResult;
+import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
@@ -70,6 +71,11 @@ public class ExpressionCondition implements Condition {
     }
 
     protected ValidateExpressionRuntime enhance(final ValidateExpressionRuntime runtime, final ConditionContext context) {
+        // Load parameters first, so they can be overwritten by the customizers and imports.
+        context.first(ProvidedParameterContext.class).present(parameterContext -> {
+            parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
+        });
+
         context.first(ExpressionConditionContext.class).present(expressionContext -> {
 
             runtime.customizers(expressionContext.customizers());

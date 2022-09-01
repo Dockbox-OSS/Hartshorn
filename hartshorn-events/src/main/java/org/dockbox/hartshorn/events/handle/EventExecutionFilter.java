@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events;
+package org.dockbox.hartshorn.events.handle;
 
+import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-import java.util.function.Function;
-
-public interface EventBus {
-
-    void subscribe(Key<?> object);
-
-    void unsubscribe(Key<?> object);
-
-    void post(Event event, Key<?> target);
-
-    void post(Event event);
-
-    void addValidationRule(Function<MethodContext<?, ?>, Result<Boolean>> validator);
+public interface EventExecutionFilter {
+    boolean accept(Event event, EventWrapper wrapper, Key<?> target);
 }

@@ -16,22 +16,17 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.events.parents.Event;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 
-import java.util.function.Function;
+import java.util.Map;
+import java.util.Set;
 
-public interface EventBus {
+@Component(singleton = true)
+public class TestEventBus extends EventBusImpl {
 
-    void subscribe(Key<?> object);
-
-    void unsubscribe(Key<?> object);
-
-    void post(Event event, Key<?> target);
-
-    void post(Event event);
-
-    void addValidationRule(Function<MethodContext<?, ?>, Result<Boolean>> validator);
+    public @NonNull Map<Key<?>, Set<EventWrapper>> invokers() {
+        return this.listenerToInvokers;
+    }
 }

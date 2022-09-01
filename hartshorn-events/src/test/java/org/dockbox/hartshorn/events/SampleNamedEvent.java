@@ -16,22 +16,19 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
+import org.dockbox.hartshorn.util.Named;
 
-import java.util.function.Function;
+public class SampleNamedEvent extends ContextCarrierEvent implements Named {
 
-public interface EventBus {
+    private final String name;
 
-    void subscribe(Key<?> object);
+    public SampleNamedEvent(final String name) {
+        this.name = name;
+    }
 
-    void unsubscribe(Key<?> object);
-
-    void post(Event event, Key<?> target);
-
-    void post(Event event);
-
-    void addValidationRule(Function<MethodContext<?, ?>, Result<Boolean>> validator);
+    @Override
+    public String name() {
+        return this.name;
+    }
 }

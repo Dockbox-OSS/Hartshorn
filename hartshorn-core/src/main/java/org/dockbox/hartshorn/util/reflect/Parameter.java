@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events;
+package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.function.Function;
-
-public interface EventBus {
-
-    void subscribe(Key<?> object);
-
-    void unsubscribe(Key<?> object);
-
-    void post(Event event, Key<?> target);
-
-    void post(Event event);
-
-    void addValidationRule(Function<MethodContext<?, ?>, Result<Boolean>> validator);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface Parameter {
+    String value();
 }

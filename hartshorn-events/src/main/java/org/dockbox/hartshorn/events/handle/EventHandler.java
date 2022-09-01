@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.events.handle;
 
+import org.dockbox.hartshorn.events.EventExecutionFilterContext;
+import org.dockbox.hartshorn.events.EventWrapper;
+import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.events.EventWrapper;
-import org.dockbox.hartshorn.events.parents.Event;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +35,7 @@ public class EventHandler {
 
     private final TypeContext<? extends Event> eventType;
     private final Set<EventHandler> superTypeHandlers = ConcurrentHashMap.newKeySet();
+    private final Set<EventExecutionFilter> executionFilters = ConcurrentHashMap.newKeySet();
     private final SortedSet<EventWrapperImpl<?>> invokers = new TreeSet<>(EventWrapperImpl.COMPARATOR);
     private transient EventWrapperImpl<?>[] computedInvokerCache;
 
@@ -69,10 +71,20 @@ public class EventHandler {
             }
         }
 
+        final EventExecutionFilterContext filterContext = event.applicationContext().first(EventExecutionFilterContext.class).get();
+
+        invokersCache:
         for (final EventWrapperImpl<?> invoker : cache) {
             // Target is null if no specific target should be checked
             // If the target is present we only want to invoke when the listener matches our target
-            if (null == target || invoker.listenerType().equals(target)) invoker.invoke(event);
+            if (null == target || invoker.listenerType().equals(target)) {
+                for (final EventExecutionFilter executionFilter : filterContext.filters()) {
+                    if (!executionFilter.accept(event, invoker, target)) {
+                        continue invokersCache;
+                    }
+                }
+                invoker.invoke(event);
+            }
         }
     }
 
@@ -106,6 +118,10 @@ public class EventHandler {
         if (handler == null) return false;
         if (handler == this) return false;
         return this.invalidateCache(this.superTypeHandlers.add(handler));
+    }
+
+    public boolean addFilter(final EventExecutionFilter eventExecutionFilter) {
+        return executionFilters.add(eventExecutionFilter);
     }
 
     @Override
