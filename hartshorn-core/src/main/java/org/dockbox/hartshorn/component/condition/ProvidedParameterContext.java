@@ -20,15 +20,14 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ProvidedParameterContext extends DefaultContext {
 
-    private final Map<ParameterContext<?>, Object> arguments = new ConcurrentHashMap<>();
+    private final Map<ParameterContext<?>, Object> arguments = new HashMap<>();
 
     private ProvidedParameterContext(final Map<ParameterContext<?>, Object> arguments) {
         this.arguments.putAll(arguments);
@@ -43,8 +42,7 @@ public class ProvidedParameterContext extends DefaultContext {
             throw new IllegalArgumentException("Parameters and arguments must be of the same size");
         }
         final Map<ParameterContext<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
-                .collect(Collectors.toMap(parameters::get, arguments::get, (a, b) -> b, ConcurrentHashMap::new));
-
+                .collect(HashMap::new, (m, v) -> m.put(parameters.get(v), arguments.get(v)), Map::putAll);
         return new ProvidedParameterContext(argumentMap);
     }
 

@@ -52,7 +52,7 @@ public interface CustomParameterPattern {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
             return Result.of(preconditionsMatch.error());
         }
-        else if (!preconditionsMatch.get()) {
+        else if (Boolean.FALSE.equals(preconditionsMatch.or(false))) {
             context.log().debug("Preconditions failed, rejecting raw argument " + raw);
             return Result.empty();
         }

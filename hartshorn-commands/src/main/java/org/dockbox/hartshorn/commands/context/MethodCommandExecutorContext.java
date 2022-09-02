@@ -26,6 +26,8 @@ import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
@@ -135,6 +137,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     @Override
     public CommandExecutor executor() {
+        final ConditionMatcher conditionMatcher = applicationContext().get(ConditionMatcher.class);
         return (ctx) -> {
             final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
             if (before.cancelled()) {
@@ -147,9 +150,17 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             final T instance = this.applicationContext().get(this.key());
             final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.key().type(), null, this.applicationContext(), ctx, this);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
-            this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-            this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
-            new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
+
+            if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {
+                this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
+                this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
+                new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
+            }
+            else {
+                this.applicationContext().log().debug("Conditions didn't match for " + this.method().qualifiedName());
+                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
+                ctx.source().send(cancelled);
+            }
         };
     }
 

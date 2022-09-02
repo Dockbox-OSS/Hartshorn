@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.util;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,5 +98,38 @@ public final class StringUtilities {
             len--;
         }
         return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
+    }
+
+    public static String format(final String format, final Object... args) {
+        if (0 == args.length) return format;
+        final Map<String, String> map = new HashMap<>();
+
+        for (int i = 0; i < args.length; i++) {
+            final String arg = "" + args[i];
+            map.put(String.format("{%d}", i), arg);
+        }
+        return StringUtilities.format(format, map);
+    }
+
+    public static String format(final String string, final Map<String, String> replacements) {
+        final StringBuilder sb = new StringBuilder(string);
+        int size = string.length();
+        for (final Entry<String, String> entry : replacements.entrySet()) {
+            if (0 == size) {
+                break;
+            }
+            final String key = entry.getKey();
+            final String value = entry.getValue();
+            int nextSearchStart;
+            int start = sb.indexOf(key, 0);
+            while (-1 < start) {
+                final int end = start + key.length();
+                nextSearchStart = start + value.length();
+                sb.replace(start, end, value);
+                size -= end - start;
+                start = sb.indexOf(key, nextSearchStart);
+            }
+        }
+        return sb.toString();
     }
 }

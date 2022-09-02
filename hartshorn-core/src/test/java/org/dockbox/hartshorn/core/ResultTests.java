@@ -146,24 +146,6 @@ public class ResultTests {
     }
 
     @Test
-    void testCanCreateConditionalTrue() {
-        final Result<String> result = Result.of(() -> true, () -> "value", Exception::new);
-
-        Assertions.assertTrue(result.present());
-        Assertions.assertFalse(result.absent());
-        Assertions.assertFalse(result.caught());
-    }
-
-    @Test
-    void testCanCreateConditionalFalse() {
-        final Result<String> result = Result.of(() -> false, () -> "value", Exception::new);
-
-        Assertions.assertFalse(result.present());
-        Assertions.assertTrue(result.absent());
-        Assertions.assertTrue(result.caught());
-    }
-
-    @Test
     void testNoneContainsNothing() {
         final Result<String> result = Result.empty();
 

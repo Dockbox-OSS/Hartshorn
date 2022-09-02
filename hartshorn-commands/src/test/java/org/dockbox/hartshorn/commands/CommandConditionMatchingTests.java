@@ -17,31 +17,35 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.commands.types.SampleCommand;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 
 @HartshornTest
 @UseCommands
-@UseMethodCancelling
-public class CommandExecutorTests {
+@UseExpressionValidation
+public class CommandConditionMatchingTests {
 
     @Inject
     private CommandGateway gateway;
     @Inject
     private JUnitSystemSubject subject;
+    @Inject
+    private SampleCommand sampleCommand;
 
-    @InjectTest
-    void testMethodCancelling() throws ParsingException {
-        Assertions.assertTrue(subject.received().isEmpty());
+    @Test
+    void testMethodConditionMatchingProceedsIfMatched() throws ParsingException {
+        gateway.accept(subject, "demo condition value");
+        Assertions.assertEquals("value", sampleCommand.valueAfterCondition());
+    }
 
-        gateway.accept(subject, "demo sub 1 --skip 1 2 3 4");
-        Assertions.assertFalse(subject.received().isEmpty());
-
-        final Message message = subject.received().get(0);
-        Assertions.assertEquals("command.cancelled", message.key());
+    @Test
+    void testMethodConditionMatchingFailsIfNotMatched() throws ParsingException {
+        gateway.accept(subject, "demo condition");
+        Assertions.assertNull(sampleCommand.valueAfterCondition());
     }
 }

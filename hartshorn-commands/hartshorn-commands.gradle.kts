@@ -22,4 +22,6 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-i18n")
     implementation("org.dockbox.hartshorn:hartshorn-events")
+
+    testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
 }

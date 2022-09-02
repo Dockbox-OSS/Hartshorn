@@ -19,9 +19,13 @@ package org.dockbox.hartshorn.commands.types;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 @Command("demo")
 public class SampleCommand {
+
+    private String valueAfterCondition;
 
     @Command(arguments = "<remaining{remainingString}>")
     public void parent(final CommandContext context) {
@@ -45,5 +49,18 @@ public class SampleCommand {
 
     @Command(value = "arguments", arguments = "<required{String}> [optional{String}] --flag String")
     public void arguments(final CommandSource source, final CommandContext context, final String required, final String optional, final String flag) {
+    }
+
+    @Command(value = "condition", arguments = "[optional{String}]")
+    @RequiresExpression("optional != null && optional != \"\"")
+    public void condition(final CommandContext context, final String optional) {
+        if (StringUtilities.empty(optional)) {
+            throw new IllegalArgumentException("optional is empty");
+        }
+        this.valueAfterCondition = optional;
+    }
+
+    public String valueAfterCondition() {
+        return valueAfterCondition;
     }
 }
