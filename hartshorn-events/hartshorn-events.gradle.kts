@@ -19,7 +19,7 @@ apply {
 }
 
 dependencies {
-    api("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-core")
     // For expression evaluation
     testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
 }
