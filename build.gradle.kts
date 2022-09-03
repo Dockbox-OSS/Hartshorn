@@ -76,8 +76,9 @@ allprojects {
         mavenCentral()
     }
 
-    group = project.group
-    version = project.version
+    group = rootProject.group
+    version = rootProject.version
+
     description = "${project.name} ${project.version} (${this.name})"
 
     base.archivesName.set(this.name)
