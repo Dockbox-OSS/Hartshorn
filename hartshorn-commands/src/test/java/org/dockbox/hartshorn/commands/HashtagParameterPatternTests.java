@@ -69,9 +69,8 @@ public class HashtagParameterPatternTests {
 
         final Result<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
-        Assertions.assertTrue(result.present());
+        Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.caught());
-        Assertions.assertFalse(result.discardError().get());
     }
 
     @Test
@@ -81,9 +80,8 @@ public class HashtagParameterPatternTests {
 
         final Result<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
-        Assertions.assertTrue(result.present());
+        Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.caught());
-        Assertions.assertFalse(result.discardError().get());
     }
 
     @Test

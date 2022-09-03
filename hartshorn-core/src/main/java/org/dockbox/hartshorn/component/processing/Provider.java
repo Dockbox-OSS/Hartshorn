@@ -43,9 +43,13 @@ import java.lang.annotation.Target;
  * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ ElementType.METHOD, ElementType.FIELD })
 public @interface Provider {
     String value() default "";
+
     int priority() default -1;
+
     boolean lazy() default false;
+
+    int phase() default 0;
 }

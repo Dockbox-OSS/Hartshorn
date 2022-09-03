@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.context.CarrierContext;
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public interface RequestError extends CarrierContext {
+public interface RequestError extends ApplicationAwareContext {
 
     PrintWriter writer();
     HttpServletRequest request();

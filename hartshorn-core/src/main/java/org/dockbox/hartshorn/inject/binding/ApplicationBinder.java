@@ -24,23 +24,16 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.ProviderContext;
 
 /**
- * A specialized {@link Binder} that is used to bind prefixes and {@link InjectConfiguration}s. These configurations
+ * A specialized {@link Binder} that is used to bind prefixes and {@link ProviderContext}s. These configurations
  * are typically used to configure an active {@link ApplicationContext}.
  */
 public interface ApplicationBinder extends Binder {
 
     /**
-     * Binds the given {@link InjectConfiguration}, which typically contains only static bindings.
-     *
-     * @param configuration The configuration to bind.
-     */
-    void bind(InjectConfiguration configuration);
-
-    /**
      * Binds the given prefix, which represents a package. The given prefix is scanned for  {@link ComponentPreProcessor}s
-     * and {@link ComponentPostProcessor}s, as well as automatically bound types through {@link ComponentBinding}. The prefix
-     * is also registered to the active {@link ApplicationEnvironment}. After all components are registered, the located
-     * {@link ComponentPreProcessor}s are activated.
+     * and {@link ComponentPostProcessor}s, as well as automatically bound types. The prefix is also registered to the
+     * active {@link ApplicationEnvironment}. After all components are registered, the located {@link ComponentPreProcessor}s
+     * are activated.
      *
      * @param prefix The prefix to bind.
      */

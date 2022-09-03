@@ -38,8 +38,6 @@ import java.lang.annotation.Target;
  *         {@link ComponentUtilities#id(ApplicationContext, TypeContext)}</li>
  *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
  *         specified, the name of the class is used.</li>
- *     <li>{@link #owner()} - The owner of the component. This is typically ignored internally, but can be used by services
- *         and {@link ComponentProcessor}s to define a synthetic hierarchy.</li>
  *     <li>{@link #singleton()} - Indicates whether a component should be treated as a singleton. When this is {@code true}
  *         there will only ever be one managed instance of the component known to the active {@link ApplicationContext}.</li>
  *     <li>{@link #type()} - The type of the component. This is used to indicate whether the component is a functional
@@ -87,15 +85,6 @@ public @interface Component {
     String name() default "";
 
     /**
-     * The owner of the component. This is typically ignored internally, but can be used by services
-     * and {@link ComponentProcessor}s to define a synthetic hierarchy.
-     *
-     * @return The owner of the component
-     * @see ComponentContainer#owner()
-     */
-    Class<?> owner() default Void.class;
-
-    /**
      * Indicates whether a component should be treated as a singleton. When this is {@code true}
      * there will only ever be one managed instance of the component known to the active {@link ApplicationContext}.
      *
@@ -141,17 +130,4 @@ public @interface Component {
      */
     boolean permitProcessing() default true;
 
-    /**
-     * Indicates one or more prefixed types which are required to be present on the classpath in order for the component
-     * to be loaded. This is used to prevent components from being loaded when they are not required. If one or more types
-     * are specified, the component will only be loaded if all the types are present on the classpath. If no types
-     * are specified, the component will always be loaded (assuming other conditions are met).
-     *
-     * <p>This requires the fully qualified class name to be specified. For example, if the class is named
-     * {@code com.example.MyComponent}, the type would be {@code com.example.MyComponent}. {@code MyComponent} or
-     * {@code com.example.MyComponent.class} are not valid.
-     *
-     * @return The required types.
-     */
-    String[] requires() default {};
 }

@@ -29,7 +29,7 @@ public class NonRegisteredComponentTests {
 
     @HartshornFactory
     public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
-        return factory.componentLocator(ctx -> new ThrowingComponentLocatorImpl(ctx.applicationContext()));
+        return factory.componentLocator(ThrowingComponentLocatorImpl::new);
     }
 
     @InjectTest

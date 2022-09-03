@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.CustomMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.TypeMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
+public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T>, ModifiableProxyManager<T, LazyProxyManager<T>> {
 
     private static final Method managerAccessor;
 
@@ -61,17 +62,19 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
     private T proxy;
 
     private final Map<Method, ?> delegates;
-    private final TypeMap<Object> typeDelegates;
+    private final ConcurrentClassMap<Object> typeDelegates;
     private final Map<Method, MethodInterceptor<T>> interceptors;
     private final MultiMap<Method, MethodWrapper<T>> wrappers;
-    private final T delegate;
+    private T delegate;
 
     public LazyProxyManager(final ApplicationContext applicationContext, final DefaultProxyFactory<T> proxyFactory) {
         this(applicationContext, null, proxyFactory.type(), proxyFactory.typeDelegate(), proxyFactory.delegates(), proxyFactory.typeDelegates(), proxyFactory.interceptors(), proxyFactory.wrappers());
     }
 
-    public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final TypeMap<Object> typeDelegates,
+    public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
                             final Map<Method, MethodInterceptor<T>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
+        super(applicationContext);
+
         if (applicationContext.environment().manager().isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
@@ -85,16 +88,16 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
         this.delegate = delegate;
 
         this.delegates = new ConcurrentHashMap<>(delegates);
-        this.typeDelegates = new TypeMap<>(typeDelegates);
+        this.typeDelegates = new ConcurrentClassMap<>(typeDelegates);
         this.interceptors = new HashMap<>(interceptors);
-        this.wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet, wrappers);
+        this.wrappers = new ConcurrentSetMultiMap<>(wrappers);
 
         this.interceptors.put(managerAccessor, context -> this);
     }
 
     public void proxy(final T proxy) {
         if (this.proxy != null) {
-            throw new IllegalStateException("Proxy already set");
+            throw new IllegalModificationException("Proxy instance already set.");
         }
         if (!this.applicationContext().environment().manager().isProxy(proxy)) {
             throw new IllegalArgumentException("Provided object is not a proxy");
@@ -151,5 +154,11 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
     @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
+    }
+
+    @Override
+    public LazyProxyManager<T> delegate(final T delegate) {
+        this.delegate = delegate;
+        return this;
     }
 }

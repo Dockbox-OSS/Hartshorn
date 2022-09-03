@@ -16,13 +16,17 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityManagerLookup;
 import org.dockbox.hartshorn.data.jpa.JpaParameterLoader;
+import org.dockbox.hartshorn.data.jpa.ProxyAttachedEntityManagerLookup;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
-@Service(activators = UsePersistence.class)
+@Service
+@RequiresActivator(UsePersistence.class)
 public class PersistenceProviders {
 
     @Provider("jpa_query")
@@ -30,4 +34,8 @@ public class PersistenceProviders {
         return new JpaParameterLoader();
     }
 
+    @Provider
+    public EntityManagerLookup entityManagerLookup() {
+        return new ProxyAttachedEntityManagerLookup();
+    }
 }

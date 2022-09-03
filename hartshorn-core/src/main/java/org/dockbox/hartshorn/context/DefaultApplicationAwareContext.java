@@ -23,45 +23,48 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public abstract class DefaultApplicationAwareContext extends DefaultContext implements ApplicationAwareContext {
 
+    private final ApplicationContext applicationContext;
+
+    public DefaultApplicationAwareContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
-    public <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Class<C> context) {
-        return Result.of(this.contexts.stream()
-                        .filter(c -> TypeContext.unproxy(applicationContext, c).childOf(context))
-                        .findFirst())
-                .orElse(() -> {
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    @Override
+    public <C extends Context> Result<C> first(final Class<C> context) {
+        return super.first(context).orElse(() -> {
                     final TypeContext<C> typeContext = TypeContext.of(context);
                     if (typeContext.annotation(AutoCreating.class).present()) {
-                        applicationContext.log().debug("Context with key " + Key.of(context) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
-                        final C created = applicationContext.get(context);
+                        this.applicationContext().log().debug("Context with key " + Key.of(context) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
+                        final C created = this.applicationContext().get(context);
                         this.add(created);
                         return created;
                     }
                     else return null;
-                })
-                .map(c -> (C) c);
+                });
     }
 
     @Override
-    public <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
-        return Result.of(this.namedContexts.get(name).stream()
-                        .filter(c -> TypeContext.of(c).childOf(context))
-                        .findFirst())
-                .orElse(() -> {
+    public <C extends Context> Result<C> first(final Class<C> context, final String name) {
+        return super.first(context, name).orElse(() -> {
                     final TypeContext<C> typeContext = TypeContext.of(context);
                     if (typeContext.annotation(AutoCreating.class).present()) {
-                        applicationContext.log().debug("Context with key " + Key.of(context, name) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
-                        final C created = applicationContext.get(context);
+                        this.applicationContext().log().debug("Context with key " + Key.of(context, name) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
+                        final C created = this.applicationContext().get(context);
                         this.add(name, created);
                         return created;
                     }
                     else return null;
-                })
-                .map(c -> (C) c);
+                });
     }
 
     @Override
-    public <C extends Context> Result<C> first(final ApplicationContext applicationContext, final Key<C> key) {
-        if (key.name() == null) return this.first(applicationContext, key.type().type());
-        else return this.first(applicationContext, key.type().type(), key.name().value());
+    public <C extends Context> Result<C> first(final Key<C> key) {
+        if (key.name() == null) return this.first(key.type().type());
+        else return this.first(key.type().type(), key.name().value());
     }
 }

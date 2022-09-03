@@ -16,20 +16,24 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.ClasspathApplicationContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProviderImpl;
 import org.dockbox.hartshorn.application.environment.ClassLoaderClasspathResourceLocator;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser;
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
+import org.dockbox.hartshorn.beans.UseBeanScanning;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
+import org.dockbox.hartshorn.component.ComponentPostConstructorImpl;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.InjectorMetaProvider;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
-import org.dockbox.hartshorn.proxy.HartshornApplicationProxier;
 import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.proxy.cglib.CglibApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,26 +41,24 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
-public class StandardApplicationFactory extends AbstractApplicationFactory<StandardApplicationFactory, ClasspathApplicationContext> {
+public class StandardApplicationFactory extends AbstractApplicationFactory<StandardApplicationFactory, ApplicationContext> {
 
     private enum FactoryState {
         WAITING, CREATING
     }
 
     private FactoryState state = FactoryState.WAITING;
-    protected Function<Logger, ApplicationContextConstructor<ClasspathApplicationContext>> constructor;
+    protected Function<Logger, ApplicationContextConstructor<ApplicationContext>> constructor;
 
-    public StandardApplicationFactory constructor(final Function<Logger, ApplicationContextConstructor<ClasspathApplicationContext>> constructor) {
+    public StandardApplicationFactory constructor(final Function<Logger, ApplicationContextConstructor<ApplicationContext>> constructor) {
         this.constructor = constructor;
         return this.self();
     }
 
     @Override
-    public ClasspathApplicationContext create() {
+    public ApplicationContext create() {
         if (this.state == FactoryState.CREATING) {
             throw new IllegalStateException("Application factory is already creating a new application context");
         }
@@ -69,7 +71,7 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         logger.info("Starting application " + this.configuration().activator().name() + " on " + this.host(runtimeMXBean) + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
 
         final long applicationStartTimestamp = System.currentTimeMillis();
-        final ClasspathApplicationContext applicationContext = this.constructor.apply(logger).createContext(this.configuration());
+        final ApplicationContext applicationContext = this.constructor.apply(logger).createContext(this.configuration());
         final long applicationStartedTimestamp = System.currentTimeMillis();
 
         final double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
@@ -93,6 +95,7 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         this.require(this.configuration().applicationProxier, "Application proxier");
         this.require(this.configuration().exceptionHandler, "Exception handler");
         this.require(this.configuration().componentLocator, "Component locator");
+        this.require(this.configuration().componentPostConstructor, "Component post-constructor");
         this.require(this.configuration().resourceLocator, "Resource locator");
         this.require(this.configuration().metaProvider, "Meta provider");
         this.require(this.configuration().applicationFSProvider, "Filesystem provider");
@@ -103,25 +106,11 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
         this.require(this.configuration().componentPopulator, "Component populator");
         this.require(this.configuration().prefixContext, "Prefix context");
         this.require(this.configuration().activatorHolder, "Activator holder");
-
-        this.initialize();
+        this.require(this.configuration().conditionMatcher, "Condition matcher");
     }
 
     protected void require(final Object instance, final String type) {
         if (instance == null) throw new IllegalArgumentException(type + " is not set");
-    }
-
-    protected <T> T requireOrDefault(final T instance, final Supplier<T> supplier, final Consumer<T> afterCreate) {
-        if (instance == null) {
-            final T object = supplier.get();
-            afterCreate.accept(object);
-            return object;
-        }
-        return instance;
-    }
-
-    protected void initialize() {
-
     }
 
     public StandardApplicationFactory deduceActivator() {
@@ -130,20 +119,23 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
 
     public StandardApplicationFactory loadDefaults() {
         return this.constructor(StandardApplicationContextConstructor::new)
+                .manager(ctx -> new DelegatingApplicationManager(ctx.configuration()))
                 .applicationLogger(ctx -> new LogbackApplicationLogger())
                 .applicationConfigurator(ctx -> new EnvironmentDrivenApplicationConfigurator())
-                .applicationProxier(ctx -> new HartshornApplicationProxier())
+                .applicationProxier(ctx -> new CglibApplicationProxier())
                 .applicationFSProvider(ctx -> new ApplicationFSProviderImpl())
                 .applicationEnvironment(ctx -> new ContextualApplicationEnvironment(ctx.configuration().prefixContext(ctx), ctx.manager()))
                 .exceptionHandler(ctx -> new LoggingExceptionHandler())
                 .prefixContext(ctx -> new ReflectionsPrefixContext(ctx.manager()))
-                .componentLocator(ctx -> new ComponentLocatorImpl(ctx.applicationContext()))
+                .componentLocator(ComponentLocatorImpl::new)
+                .componentPostConstructor(ComponentPostConstructorImpl::new)
                 .resourceLocator(ctx -> new ClassLoaderClasspathResourceLocator(ctx.applicationContext()))
                 .metaProvider(ctx -> new InjectorMetaProvider(ctx.applicationContext()))
-                .componentProvider(ctx -> new HierarchicalApplicationComponentProvider(ctx.applicationContext(), ctx.componentLocator(), ctx.metaProvider()))
+                .componentProvider(HierarchicalApplicationComponentProvider::new)
                 .componentPopulator(ctx -> new ContextualComponentPopulator(ctx.applicationContext()))
                 .argumentParser(ctx -> new StandardApplicationArgumentParser())
                 .activatorHolder(ctx -> new StandardActivatorHolder(ctx.applicationContext()))
+                .conditionMatcher(ctx -> new ConditionMatcher(ctx.applicationContext()))
                 .serviceActivator(new UseBootstrap() {
                     @Override
                     public Class<? extends Annotation> annotationType() {
@@ -158,6 +150,11 @@ public class StandardApplicationFactory extends AbstractApplicationFactory<Stand
                     @Override
                     public Class<? extends Annotation> annotationType() {
                         return UseServiceProvision.class;
+                    }
+                }).serviceActivator(new UseBeanScanning() {
+                    @Override
+                    public Class<? extends Annotation> annotationType() {
+                        return UseBeanScanning.class;
                     }
                 });
     }

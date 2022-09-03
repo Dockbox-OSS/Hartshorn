@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.data.annotations.DataSource;
 import org.dockbox.hartshorn.data.annotations.EntityModifier;
 import org.dockbox.hartshorn.data.annotations.Query;
 import org.dockbox.hartshorn.data.annotations.Transactional;
@@ -25,7 +26,8 @@ import org.dockbox.hartshorn.data.objects.JpaUser;
 
 import java.util.List;
 
-@Service
+@Service(lazy = true)
+@DataSource("users")
 public interface UserQueryRepository extends JpaRepository<JpaUser, Long> {
 
     @Query("select u from JpaUser u where u.age >= 18")

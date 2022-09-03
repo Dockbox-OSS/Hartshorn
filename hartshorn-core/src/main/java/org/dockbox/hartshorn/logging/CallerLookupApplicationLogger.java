@@ -48,7 +48,7 @@ public abstract class CallerLookupApplicationLogger implements ApplicationLogger
             }
         }
 
-        if (element == null) throw new IllegalStateException("Could not determine caller from stacktrace");
+        if (element == null) throw new StackVisitingException("Could not determine caller from stacktrace");
 
         final String className = element.getClassName().split("\\$")[0];
         if (this.loggers.containsKey(className)) return this.loggers.get(className);

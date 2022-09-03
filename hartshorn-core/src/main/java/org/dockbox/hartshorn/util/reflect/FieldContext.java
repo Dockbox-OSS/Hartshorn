@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.reflect;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.Result;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -79,7 +79,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
                         this.field.set(o, v);
                     }
                     catch (final IllegalAccessException ex) {
-                        ExceptionHandler.unchecked(new ApplicationException("Cannot access field " + this.name()));
+                        throw new ApplicationRuntimeException("Cannot access field " + this.name());
                     }
                 };
             }
@@ -158,6 +158,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
 
     @Override
     public Result<T> obtain(final ApplicationContext applicationContext) {
-        return this.get(applicationContext.get(this.declaredBy()));
+        if (this.isStatic()) return this.get(null);
+        else return this.get(applicationContext.get(this.declaredBy()));
     }
 }

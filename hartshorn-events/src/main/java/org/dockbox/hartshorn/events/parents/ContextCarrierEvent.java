@@ -21,15 +21,20 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.events.EventNotEnhancedException;
 
 public abstract class ContextCarrierEvent extends DefaultApplicationAwareContext implements Event {
 
     private ApplicationContext context;
 
+    public ContextCarrierEvent() {
+        super(null);
+    }
+
     @Override
     public ApplicationContext applicationContext() {
         if (this.context == null) {
-            throw new IllegalStateException("Event instance has not been enhanced with application context");
+            throw new EventNotEnhancedException(this);
         }
         return this.context;
     }

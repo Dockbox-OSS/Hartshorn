@@ -17,15 +17,18 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.annotations.DataSource;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
 
-public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository, UsePersistence> {
+@SuppressWarnings("rawtypes")
+public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository> {
 
     @Override
     protected Class<JpaRepository> parentTarget() {
@@ -34,8 +37,17 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
 
     @Override
     protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyFactory<JpaRepository, ?> handler, final TypeContext<? extends JpaRepository> parent) {
-        final List<TypeContext<?>> list = TypeContext.of(handler.type()).typeParameters(JpaRepository.class);
+        final TypeContext<JpaRepository> repositoryType = TypeContext.of(handler.type());
+        final List<TypeContext<?>> list = repositoryType.typeParameters(JpaRepository.class);
         final Class<?> type = list.get(0).type();
-        return context.get(JpaRepositoryFactory.class).repository(type);
+
+        final DataSourceList dataSourceList = context.get(DataSourceList.class);
+        final DataSourceConfiguration sourceConfiguration = repositoryType.annotation(DataSource.class)
+                .map(DataSource::value)
+                .map(dataSourceList::get)
+                .orElse(dataSourceList::defaultConnection)
+                .orNull();
+
+        return context.get(JpaRepositoryFactory.class).repository(type, sourceConfiguration);
     }
 }

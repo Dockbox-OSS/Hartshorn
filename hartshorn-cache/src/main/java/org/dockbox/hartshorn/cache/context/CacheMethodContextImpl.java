@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.cache.Expiration;
  * Default implementation of {@link CacheMethodContext}.
  *
  * @see CacheMethodContext
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheMethodContextImpl implements CacheMethodContext {
 

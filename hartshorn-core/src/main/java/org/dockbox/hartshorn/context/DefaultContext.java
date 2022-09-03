@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.CustomMultiMap;
-import org.dockbox.hartshorn.util.HashSetMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
@@ -28,16 +29,17 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The default implementation of {@link Context}. This implementation uses a {@link HashSetMultiMap} to store the
+ * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
  * contexts.
  */
 public abstract class DefaultContext implements Context {
 
     protected final transient Set<Context> contexts = ConcurrentHashMap.newKeySet();
-    protected final transient MultiMap<String, Context> namedContexts = new CustomMultiMap<>(ConcurrentHashMap::newKeySet);
+    protected final transient MultiMap<String, Context> namedContexts = new ConcurrentSetMultiMap<>();
 
     @Override
     public <C extends Context> void add(final C context) {
+        if (context instanceof NamedContext named) this.add(named);
         if (context != null) this.contexts.add(context);
     }
 
@@ -85,5 +87,28 @@ public abstract class DefaultContext implements Context {
                 .filter(c -> TypeContext.of(c).childOf(context))
                 .map(c -> (N) c)
                 .toList();
+    }
+
+
+    @Override
+    public <C extends Context> Result<C> first(final Class<C> context) {
+        return Result.of(this.contexts.stream()
+                        .filter(c -> TypeContext.of(c).childOf(context))
+                        .map(c -> (C) c)
+                        .findFirst());
+    }
+
+    @Override
+    public <C extends Context> Result<C> first(final Class<C> context, final String name) {
+        return Result.of(this.namedContexts.get(name).stream()
+                        .filter(c -> TypeContext.of(c).childOf(context))
+                        .map(c -> (C) c)
+                        .findFirst());
+    }
+
+    @Override
+    public <C extends Context> Result<C> first(final Key<C> key) {
+        if (key.name() == null) return this.first(key.type().type());
+        else return this.first(key.type().type(), key.name().value());
     }
 }

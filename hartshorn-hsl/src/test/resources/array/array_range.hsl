@@ -1,0 +1,4 @@
+var array = 1..10; // Inclusive range, [1, .., 10]
+for (var i in array) {
+    print(i);
+}

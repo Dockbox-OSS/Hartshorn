@@ -19,15 +19,17 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -46,16 +48,18 @@ public class ApplicationContextConfiguration {
     protected Initializer<ApplicationLogger> applicationLogger;
     protected Initializer<ApplicationEnvironment> applicationEnvironment;
     protected Initializer<ComponentLocator> componentLocator;
+    protected Initializer<ComponentPostConstructor> componentPostConstructor;
     protected Initializer<ClasspathResourceLocator> resourceLocator;
     protected Initializer<MetaProvider> metaProvider;
     protected Initializer<ComponentProvider> componentProvider;
     protected Initializer<ComponentPopulator> componentPopulator;
     protected Initializer<PrefixContext> prefixContext;
     protected Initializer<ActivatorHolder> activatorHolder;
+    protected Initializer<ConditionMatcher> conditionMatcher;
+    protected Initializer<ApplicationManager> manager;
 
     protected TypeContext<?> activator;
 
-    protected final Set<InjectConfiguration> injectConfigurations = ConcurrentHashMap.newKeySet();
     protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
     protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
     protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
@@ -68,6 +72,10 @@ public class ApplicationContextConfiguration {
 
     public ApplicationProxier applicationProxier(final InitializingContext context) {
         return this.applicationProxier.initialize(context);
+    }
+
+    public ConditionMatcher conditionMatcher(final InitializingContext context) {
+        return this.conditionMatcher.initialize(context);
     }
 
     public ApplicationFSProvider applicationFSProvider(final InitializingContext context) {
@@ -94,6 +102,10 @@ public class ApplicationContextConfiguration {
         return this.componentLocator.initialize(context);
     }
 
+    public ComponentPostConstructor componentPostConstructor(final InitializingContext context) {
+        return this.componentPostConstructor.initialize(context);
+    }
+
     public ClasspathResourceLocator resourceLocator(final InitializingContext context) {
         return this.resourceLocator.initialize(context);
     }
@@ -118,12 +130,12 @@ public class ApplicationContextConfiguration {
         return this.activatorHolder.initialize(context);
     }
 
-    public TypeContext<?> activator() {
-        return this.activator;
+    public ApplicationManager manager(final InitializingContext context) {
+        return this.manager.initialize(context);
     }
 
-    public Set<InjectConfiguration> injectConfigurations() {
-        return this.injectConfigurations;
+    public TypeContext<?> activator() {
+        return this.activator;
     }
 
     public Set<Annotation> serviceActivators() {

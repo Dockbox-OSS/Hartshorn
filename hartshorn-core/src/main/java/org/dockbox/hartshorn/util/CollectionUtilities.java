@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,10 +65,9 @@ public final class CollectionUtilities {
     }
 
     public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
-        final Set<T> merged = new HashSet<>();
-        merged.addAll(Set.of(arrayOne));
-        merged.addAll(Set.of(arrayTwo));
-        return merged.toArray(arrayOne);
+        final T[] merged = (T[]) Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length, arrayOne.getClass());
+        System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);
+        return merged;
     }
 
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.Result;
 
 import java.lang.reflect.Method;
@@ -34,7 +35,7 @@ import java.util.Set;
  * @author Guus Lieben
  * @since 22.2
  */
-public interface ProxyManager<T> {
+public interface ProxyManager<T> extends ApplicationAwareContext {
 
     /**
      * Returns the original type of the proxy. This is the type of the object that is proxied, but is not the proxied

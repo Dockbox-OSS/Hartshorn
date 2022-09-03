@@ -41,14 +41,14 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
         final TypeContext<T> type = key.type();
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
-        final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));
+        final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         for (final MethodContext<?, T> method : methods) {
-            final MethodProxyContext ctx = new MethodProxyContextImpl<>(context, type, method);
+            final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, type, method);
 
             if (this.preconditions(context, ctx, processingContext)) {
-                final MethodInterceptor<Object> function = this.process(context, ctx, processingContext);
+                final MethodInterceptor<T> function = this.process(context, ctx, processingContext);
                 if (function != null) factory.intercept(method, function);
             }
             else {

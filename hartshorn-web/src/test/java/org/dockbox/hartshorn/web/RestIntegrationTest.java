@@ -31,9 +31,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.dockbox.hartshorn.application.ApplicationFactory;
-import org.dockbox.hartshorn.testsuite.HartshornFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestProperties;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.junit.jupiter.api.AfterEach;
@@ -45,12 +44,8 @@ import jakarta.inject.Inject;
 
 @UseHttpServer
 @HartshornTest
+@TestProperties("--hartshorn.web.port=0")
 public abstract class RestIntegrationTest {
-
-    @HartshornFactory
-    protected static ApplicationFactory<?, ?> modifyEnvironment(final ApplicationFactory<?, ?> factory) {
-        return factory.argument("--hartshorn.web.port=0");
-    }
 
     @Inject
     private HttpWebServer server;

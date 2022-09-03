@@ -38,10 +38,9 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
 
     /**
      * Processes a given component. The given <code>instance</code> may be null, if the component could not
-     * be created through regular {@link Provider providers}. The given
-     * {@link Key} will always be valid, and will always contain a valid {@link TypeContext}. If the instance
-     * is present, the {@link TypeContext} will represent either the type of the component, or a parent of the
-     * type of the component.
+     * be created through regular {@link Provider providers}. The given {@link Key} will always be valid, and
+     * will always contain a valid {@link TypeContext}. If the instance is present, the {@link TypeContext}
+     * will represent either the type of the component, or a parent of the type of the component.
      *
      * <p>The provided {@link ApplicationContext} will always be valid. This is the context which is
      * responsible for the creation of the component.
@@ -55,6 +54,24 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
      */
     <T> T process(ApplicationContext context, Key<T> key, @Nullable T instance);
 
+    /**
+     * Processes a given component with additional context. The given <code>instance</code> may be null, if the
+     * component could not be created through regular {@link Provider providers}. The given {@link Key} will
+     * always be valid, and will always contain a valid {@link TypeContext}. If the instance is present, the
+     * {@link TypeContext} will represent either the type of the component, or a parent of the type of the
+     * component.
+     *
+     * <p>The provided {@link ApplicationContext} will always be valid. This is the context which is
+     * responsible for the creation of the component.
+     *
+     * @param context The application context.
+     * @param key The key of the component.
+     * @param instance The instance of the component.
+     * @param processingContext The processing context.
+     * @param <T> The type of the component.
+     *
+     * @return The processed component.
+     */
     default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         return this.process(context, key, instance);
     }
@@ -80,15 +97,11 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
      * are met, assuming the {@link #preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)} are not modified
      * by the implementing class.
      *
-     * @param <T>
-     *         The type of the component.
-     * @param context
-     *         The application context.
-     * @param key
-     *         The key of the component.
-     * @param instance
-     *         The instance of the component.
-     * @param processingContext
+     * @param <T> The type of the component.
+     * @param context The application context.
+     * @param key The key of the component.
+     * @param instance The instance of the component.
+     * @param processingContext The processing context.
      *
      * @return <code>true</code> if the component processor modifies the component, <code>false</code>
      *         otherwise.

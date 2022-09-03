@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.Enableable;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.Enable;
@@ -54,11 +53,13 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             if (constructorCandidate.present()) {
                 final ConstructorContext<?> constructor = constructorCandidate.get();
                 return interceptorContext -> this.processInstance(context, (R) constructor.createInstance(interceptorContext.args()).orNull(), enable);
-            } else {
+            }
+            else {
                 final Factory factory = method.annotation(Factory.class).get();
                 if (factory.required()) {
-                    throw new IllegalStateException("No factory found for " + method.qualifiedName());
-                } else {
+                    throw new MissingFactoryConstructorException(processingContext.key(), method);
+                }
+                else {
                     return interceptorContext -> null;
                 }
             }
@@ -68,15 +69,13 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
         }
     }
 
-    private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) {
-        try {
-            context.get(ComponentPopulator.class).populate(instance);
-
-            if (enable) Enableable.enable(instance);
-            return instance;
-        } catch (final ApplicationException e) {
-            return ExceptionHandler.unchecked(e);
+    private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) throws ApplicationException {
+        T out = instance;
+        out = context.get(ComponentPopulator.class).populate(out);
+        if (enable) {
+            out = context.get(ComponentPostConstructor.class).doPostConstruct(out);
         }
+        return out;
     }
 
     @Override

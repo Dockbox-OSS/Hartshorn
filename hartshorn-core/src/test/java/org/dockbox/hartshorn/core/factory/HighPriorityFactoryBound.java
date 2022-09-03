@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.core.factory;
 
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.binding.Bound;
 
-@ComponentBinding(value = FactoryProvided.class, priority = 1, permitProxying = false)
+@Component(permitProxying = false)
 public class HighPriorityFactoryBound implements FactoryProvided {
     @Bound
     public HighPriorityFactoryBound(final String name) {

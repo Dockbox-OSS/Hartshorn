@@ -17,24 +17,26 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.ApplicationContextConfiguration;
-import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
-import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.application.lifecycle.Observer;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,7 +62,8 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
                                              -- Hartshorn v%s --
             """.formatted(Hartshorn.VERSION);
 
-    private final Set<LifecycleObserver> observers = ConcurrentHashMap.newKeySet();
+    private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
+    private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
     private final ApplicationFSProvider applicationFSProvider;
     private final ApplicationLogger applicationLogger;
     private final ApplicationProxier applicationProxier;
@@ -89,8 +92,22 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     }
 
     @Override
-    public Set<LifecycleObserver> observers() {
-        return this.observers;
+    public <T extends Observer> Set<T> observers(final Class<T> type) {
+        if (type == null) throw new IllegalArgumentException("type cannot be null");
+
+        final Set<T> observers = new HashSet<>();
+        this.observers.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .forEach(observers::add);
+
+        this.lazyObservers.stream()
+                .filter(type::isAssignableFrom)
+                .map(lo -> this.applicationContext.get(lo))
+                .map(type::cast)
+                .forEach(observers::add);
+
+        return observers;
     }
 
     public ApplicationFSProvider applicationFSProvider() {
@@ -192,13 +209,18 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
 
     public DelegatingApplicationManager applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
-        else throw new IllegalArgumentException("Application context has already been configured");
+        else throw new IllegalModificationException("Application context has already been configured");
         return this;
     }
 
     @Override
-    public void register(final LifecycleObserver observer) {
+    public void register(final Observer observer) {
         this.observers.add(observer);
+    }
+
+    @Override
+    public void register(final Class<? extends Observer> observer) {
+        this.lazyObservers.add(observer);
     }
 
     @Override

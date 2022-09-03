@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.inject.Key;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,13 +27,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-public class ComponentProcessingContext extends DefaultCarrierContext {
+public class ComponentProcessingContext extends DefaultApplicationAwareContext {
 
+    private final Key<?> key;
     private ProcessingPhase phase;
     private final Map<Key<?>, Object> data = new ConcurrentHashMap<>();
 
-    public ComponentProcessingContext(final ApplicationContext applicationContext) {
+    public ComponentProcessingContext(final ApplicationContext applicationContext, final Key<?> key) {
         super(applicationContext);
+        this.key = key;
+    }
+
+    public Key<?> key() {
+        return this.key;
     }
 
     public ProcessingPhase phase() {

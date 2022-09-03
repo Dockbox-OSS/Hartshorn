@@ -1,0 +1,7 @@
+class Foo {
+  constructor() {
+    print(this);
+  }
+}
+
+var foo = Foo();

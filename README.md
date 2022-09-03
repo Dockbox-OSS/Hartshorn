@@ -1,4 +1,7 @@
-# <img alt="Hartshorn" src="./hartshorn-assembly/images/logo.png" height="100" /> Hartshorn <img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"> <img src="https://camo.githubusercontent.com/ddcb65d081d4ded9548c254cb8b3b0fa4449ef53f384430732f5961cc685acea/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4a444b2d31362d6f72616e6765">  
+<p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/logo_shadow.png" height="150" /></p>
+<h1 align="center">Hartshorn Framework</h1>
+<p align="center"><img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"> <img src="https://img.shields.io/badge/JDK-17-blue"></p>
+
 [Hartshorn](https://hartshorn.dockbox.org/) is a modern JVM-based full stack Java framework. It is capable of aiding developers while building modular, testable, and scalable applications with support for Java and other JVM languages.  
 
 Hartshorn is an umbrella term for the Hartshorn Framework and all official [modules](https://hartshorn.dockbox.org/modules/modules/). Hartshorn Framework itself is a service- and dependency management framework which complements [JSR 330](https://www.jcp.org/en/jsr/detail?id=330), but does not embrace the Java EE specification. You can read more about Hartshorn's core technologies and principles in the [core technologies](https://hartshorn.dockbox.org/core/cdi/) topic.  

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.Message;
 
-@Service(owner = CommandGateway.class)
+@Service
 public interface CommandResources {
 
     @InjectTranslation(value = "$1This command requires confirmation, click $2[here] $1to confirm", key = "command.confirm")

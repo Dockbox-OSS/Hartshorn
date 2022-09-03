@@ -30,47 +30,37 @@ import jakarta.inject.Inject;
  * Default implementation of {@link CacheManager}.
  *
  * @see CacheManager
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Component(singleton = true)
 public class CacheManagerImpl implements CacheManager {
 
-    protected final Map<String, Cache<?>> caches = new ConcurrentHashMap<>();
+    protected final Map<String, Cache<?, ?>> caches = new ConcurrentHashMap<>();
 
     @Inject
     private ApplicationContext context;
 
     @Override
-    public List<Cache<?>> caches() {
+    public List<Cache<?, ?>> caches() {
         return List.copyOf(this.caches.values());
     }
 
     @Override
-    public <T> Result<Cache<T>> get(final String cache) {
-        return Result.of(this.caches.get(cache)).map(c -> (Cache<T>) c);
+    public <K, V> Result<Cache<K, V>> get(final String cache) {
+        return Result.of(this.caches.get(cache)).map(c -> (Cache<K, V>) c);
     }
 
     @Override
-    public <T> void update(final String cache, final T object) {
-        final Cache<T> c = (Cache<T>) this.caches.get(cache);
-        if (null != c) c.update(object);
-    }
-
-    @Override
-    public void evict(final String cache) {
-        final Cache<?> c = this.caches.get(cache);
-        if (null != c) c.evict();
-    }
-
-    @Override
-    public <T> Cache<T> getOrCreate(final String name, final Expiration expiration) {
+    public <K, V> Cache<K, V> getOrCreate(final String name, final Expiration expiration) {
         return this.get(name)
                 .orElse(() -> {
                     this.context.log().debug("Cache '" + name + "' does not exist, creating new instance");
-                    final Cache<?> cache = this.context.get(CacheFactory.class).cache(expiration);
+                    final Cache<Object, Object> cache = this.context.get(CacheFactory.class).cache(expiration);
                     this.caches.put(name, cache);
-                    return (Cache<Object>) cache;
+                    return cache;
                 })
-                .map(c -> (Cache<T>) c)
+                .map(c -> (Cache<K, V>) c)
                 .get();
     }
 }

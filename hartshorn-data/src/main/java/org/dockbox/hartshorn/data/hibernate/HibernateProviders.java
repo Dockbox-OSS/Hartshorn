@@ -16,19 +16,36 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
+import org.dockbox.hartshorn.data.jpa.EntityQueryFunction;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.DataSourceList;
 
-@Service(activators = UsePersistence.class, requires = "org.hibernate.Hibernate")
+@Service
+@RequiresActivator(UsePersistence.class)
+@RequiresClass("org.hibernate.Hibernate")
 public class HibernateProviders {
+
+    @Provider(priority = 0)
+    public Class<? extends DataSourceList> dataSourceList() {
+        return HibernateDataSourceList.class;
+    }
 
     @Provider
     public Class<? extends JpaRepository> jpaRepository() {
         return HibernateJpaRepository.class;
+    }
+
+    @Provider
+    public Class<? extends EntityManagerCarrier> entityManagerCarrier() {
+        return HibernateEntityManagerCarrier.class;
     }
 
     @Provider
@@ -38,11 +55,6 @@ public class HibernateProviders {
 
     @Provider
     public QueryFunction queryFunction() {
-        return new HibernateQueryFunction();
-    }
-
-    @Provider
-    public Class<? extends HibernateRemote> remote() {
-        return HibernateRemoteImpl.class;
+        return new EntityQueryFunction();
     }
 }

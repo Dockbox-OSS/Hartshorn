@@ -23,45 +23,31 @@ import java.util.List;
 /**
  * Manager type responsible for storing and providing {@link Cache caches}. Caches can be
  * created, updated, and evicted through the manager.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public interface CacheManager {
 
     /**
-     * Gets a list of all currently known {@link Cache caches} managed
+     * Returns an unmodifiable list of all currently known {@link Cache caches} managed
      * by this manager.
      *
      * @return all caches, or an empty list.
      */
-    List<Cache<?>> caches();
+    List<Cache<?, ?>> caches();
 
     /**
      * Gets the {@link Cache} associated with the given <code>cache</code>
      * ID, if it exists.
      *
      * @param cache The cache ID
-     * @param <T> The type of objects stored by the cache
+     * @param <K> The type of the key of the cache
+     * @param <V> The type of the value of the cache
      *
      * @return The cache, or {@link Result#empty()}
      */
-    <T> Result<Cache<T>> get(String cache);
-
-    /**
-     * Updates the {@link Cache} associated with the given <code>cache</code>
-     * ID, if it exists.
-     *
-     * @param cache The cache ID
-     * @param object The object to update the cache with
-     * @param <T> The type of the object
-     */
-    <T> void update(String cache, T object);
-
-    /**
-     * Evicts the {@link Cache} associated with the given <code>cache</code>
-     * ID, if it exists.
-     *
-     * @param cache The cache ID
-     */
-    void evict(String cache);
+    <K, V> Result<Cache<K, V>> get(String cache);
 
     /**
      * Gets the {@link Cache} associated with the given <code>cache</code>
@@ -71,9 +57,10 @@ public interface CacheManager {
      *
      * @param name The cache ID
      * @param expiration The expiration of the cache
-     * @param <T> The type of object stored in the cache
+     * @param <K> The type of the key of the cache
+     * @param <V> The type of the value of the cache
      *
      * @return The existing or created {@link Cache}
      */
-    <T> Cache<T> getOrCreate(String name, Expiration expiration);
+    <K, V> Cache<K, V> getOrCreate(String name, Expiration expiration);
 }

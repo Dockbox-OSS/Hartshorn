@@ -23,13 +23,11 @@ import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-import org.dockbox.hartshorn.util.CustomMultiTreeMap;
-import org.dockbox.hartshorn.util.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
@@ -37,19 +35,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import jakarta.inject.Named;
-
-public class ClasspathApplicationContext extends DelegatingApplicationContext implements
-        ProcessableApplicationContext, ObservingApplicationContext {
+public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
     public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
 
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     protected transient Queue<String> prefixQueue;
-    protected transient Queue<BindingContext> bindingQueue;
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
@@ -59,9 +51,8 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     @Override
     protected void prepareInitialization() {
-        this.preProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
+        this.preProcessors = new ConcurrentSetTreeMultiMap<>();
         this.prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
-        this.bindingQueue = new ConcurrentLinkedQueue<>();
     }
 
     @Override
@@ -71,7 +62,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
             modifiable.addActivator(annotation);
             return;
         }
-        throw new IllegalStateException("Activator holder is not modifiable");
+        throw new IllegalModificationException("Activator holder is not modifiable");
     }
 
     @Override
@@ -82,11 +73,13 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         final String name = TypeContext.of(processor).name();
 
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof StandardComponentProvider provider) {
+            // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
             this.log().debug("Added " + name + " for component post-processing at phase " + order);
         }
         else if (processor instanceof ComponentPreProcessor preProcessor) {
             this.preProcessors.put(preProcessor.order(), preProcessor);
+            this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
             this.log().debug("Added " + name + " for component pre-processing at phase " + order);
         }
         else {
@@ -111,32 +104,10 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     public void process() {
         this.checkRunning();
         this.processPrefixQueue();
-        this.processBindings();
         final Collection<ComponentContainer> containers = this.locator().containers();
         this.log().debug("Located %d components from classpath".formatted(containers.size()));
         this.process(containers);
         this.isRunning = true;
-    }
-
-    protected void processBindings() {
-        this.checkRunning();
-        BindingContext next;
-        while ((next = this.bindingQueue.poll()) != null) {
-            this.processBinding(next);
-        }
-    }
-
-    protected <T> void processBinding(final BindingContext context) {
-        final TypeContext<T> target = TypeContext.of((Class<T>) context.binding().value());
-        final TypeContext<? extends T> implementer = (TypeContext<? extends T>) context.implementer();
-
-        if (implementer.boundConstructors().isEmpty()) {
-            this.handleScanned(implementer, target, context.binding());
-        }
-        else {
-            final BindingHierarchy<T> hierarchy = this.hierarchy(Key.of(target));
-            hierarchy.add(context.binding().priority(), new ContextDrivenProvider<>(implementer));
-        }
     }
 
     protected void process(final Collection<ComponentContainer> containers) {
@@ -149,6 +120,9 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
                     this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), TypeContext.of(serviceProcessor).name()));
                     serviceProcessor.process(this, key);
                 }
+            }
+            if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
+                exiting.exit(this);
             }
         }
     }
@@ -166,43 +140,5 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         }
         this.environment().prefix(prefix);
         this.prefixQueue.add(prefix);
-    }
-
-    protected <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final ComponentBinding bindAnnotation) {
-        final Named meta = bindAnnotation.named();
-        Key<C> key = Key.of(binds);
-        if (!"".equals(meta.value())) {
-            key = key.name(meta);
-        }
-        final BindingHierarchy<C> hierarchy = this.hierarchy(key);
-        hierarchy.add(bindAnnotation.priority(), new ContextDrivenProvider<>(binder));
-    }
-
-    @Override
-    public void componentAdded(final ComponentContainer container) {
-        final TypeContext<?> type = container.type();
-        type.annotation(ComponentBinding.class).present(binding -> this.componentBinding(type, binding));
-    }
-
-    protected  <T> void componentBinding(final TypeContext<T> implementer, final ComponentBinding annotation) {
-        this.bindingQueue.add(new BindingContext(implementer, annotation));
-    }
-
-    private static final class BindingContext {
-        private final TypeContext<?> implementer;
-        private final ComponentBinding binding;
-
-        public BindingContext(final TypeContext<?> implementer, final ComponentBinding binding) {
-            this.implementer = implementer;
-            this.binding = binding;
-        }
-
-        public TypeContext<?> implementer() {
-            return this.implementer;
-        }
-
-        public ComponentBinding binding() {
-            return this.binding;
-        }
     }
 }

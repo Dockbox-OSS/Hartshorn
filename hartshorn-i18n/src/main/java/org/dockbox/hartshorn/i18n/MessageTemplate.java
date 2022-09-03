@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.util.StringUtilities;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class MessageTemplate implements Message {
 
@@ -67,7 +68,7 @@ public class MessageTemplate implements Message {
             template.formattingArgs.putAll(messageTemplate.formattingArgs);
         }
 
-        return ((Message) template).translate(language);
+        return template.translate(language);
     }
 
     @Override
@@ -108,37 +109,6 @@ public class MessageTemplate implements Message {
     public String string() {
         final String temp = this.safeValue();
         final Object[] args = this.formattingArgs.getOrDefault(this.language(), new Object[0]);
-        if (0 == args.length) return temp;
-        final Map<String, String> map = new HashMap<>();
-
-        for (int i = 0; i < args.length; i++) {
-            final String arg = "" + args[i];
-            if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
-            else map.put(String.format("{%d}", i), arg);
-            if (0 == i) map.put("%s", arg);
-        }
-        return this.replaceFromMap(temp, map);
-    }
-
-    private String replaceFromMap(final String string, final Map<String, String> replacements) {
-        final StringBuilder sb = new StringBuilder(string);
-        int size = string.length();
-        for (final Entry<String, String> entry : replacements.entrySet()) {
-            if (0 == size) {
-                break;
-            }
-            final String key = entry.getKey();
-            final String value = entry.getValue();
-            int nextSearchStart;
-            int start = sb.indexOf(key, 0);
-            while (-1 < start) {
-                final int end = start + key.length();
-                nextSearchStart = start + value.length();
-                sb.replace(start, end, value);
-                size -= end - start;
-                start = sb.indexOf(key, nextSearchStart);
-            }
-        }
-        return sb.toString();
+        return StringUtilities.format(temp, args);
     }
 }

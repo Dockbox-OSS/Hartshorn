@@ -25,13 +25,14 @@ import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ActivatorFiltered;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
@@ -163,6 +164,17 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self componentLocator(Initializer<ComponentLocator> componentLocator);
 
     /**
+     * Sets the {@link ComponentPostProcessor} to use. The post constructor is responsible for invoking actions on a
+     * component after it has been constructed. The provider used a {@link Function} as the post constructor should
+     * typically be bound to a given {@link ApplicationContext}. The {@link ComponentPostProcessor} is created by the
+     * {@link ComponentProvider}.
+     *
+     * @param componentPostConstructor The component post constructor to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self componentPostConstructor(Initializer<ComponentPostConstructor> componentPostConstructor);
+
+    /**
      * Sets the {@link MetaProvider} to use. The meta provider is responsible for providing meta information about types.
      *
      * @param metaProvider The meta provider to use.
@@ -282,22 +294,31 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self prefixes(Set<String> prefixes);
 
     /**
-     * Registers a custom {@link InjectConfiguration} which should be known to the application. The configuration is bound
-     * using the configured {@link ApplicationConfigurator} during application creation.
-     *
-     * @param injectConfiguration The configuration to register.
-     * @return The {@link ApplicationFactory} instance.
-     * @see ApplicationConfigurator#apply(ApplicationManager, Set)
-     */
-    Self configuration(InjectConfiguration injectConfiguration);
-
-    /**
      * Registers a custom {@link ActivatorHolder} which should be known to the application.
      *
      * @param activatorHolder The activator holder to register.
      * @return The {@link ApplicationFactory} instance.
      */
     Self activatorHolder(Initializer<ActivatorHolder> activatorHolder);
+
+    /**
+     * Registers a custom {@link ConditionMatcher} which should be known to the application.
+     * The condition matcher is used to determine if a component should be activated or not,
+     * but can also be applied to any other annotated element.
+     *
+     * @param conditionMatcher The condition matcher to register.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self conditionMatcher(Initializer<ConditionMatcher> conditionMatcher);
+
+    /**
+     * Registers a custom {@link ApplicationManager} which is used to manage the lifecycle of
+     * the application.
+     *
+     * @param manager The application manager to register.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self manager(Initializer<ApplicationManager> manager);
 
     /**
      * Returns itself, for chaining without losing the fluent API.

@@ -45,7 +45,7 @@ public class SupplierProvider<C> implements Provider<C> {
     }
 
     @Override
-    public Result<C> provide(final ApplicationContext context) {
-        return Result.of(this.supplier::get);
+    public Result<ObjectContainer<C>> provide(final ApplicationContext context) {
+        return Result.of(() -> new ObjectContainer<>(this.supplier.get(), false));
     }
 }

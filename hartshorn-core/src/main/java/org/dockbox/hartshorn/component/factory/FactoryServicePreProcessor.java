@@ -17,18 +17,21 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.processing.BindingProcessor;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.LinkedList;
 
-public class FactoryServicePreProcessor implements ServicePreProcessor {
+public class FactoryServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {
@@ -46,8 +49,8 @@ public class FactoryServicePreProcessor implements ServicePreProcessor {
             if (!"".equals(annotation.value())) returnKey = returnKey.name(annotation.value());
 
             for (final Provider<?> provider : context.hierarchy(returnKey).providers()) {
-                if (provider instanceof ContextDrivenProvider contextDrivenProvider) {
-                    final TypeContext<?> typeContext = ((ContextDrivenProvider<?>) provider).context();
+                if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
+                    final TypeContext<?> typeContext = contextDrivenProvider.context();
 
                     for (final ConstructorContext<?> constructor : typeContext.boundConstructors()) {
                         final LinkedList<TypeContext<?>> constructorParameters = constructor.parameterTypes();
@@ -61,13 +64,21 @@ public class FactoryServicePreProcessor implements ServicePreProcessor {
                 }
             }
 
-            if (annotation.required())
-                throw new IllegalStateException("No matching bound constructor found for " + returnKey + " with parameters: " + method.parameterTypes());
+            if (annotation.required()) throw new MissingFactoryConstructorException(returnKey, method);
         }
     }
 
     @Override
     public Integer order() {
         return ProcessingOrder.FIRST;
+    }
+
+    @Override
+    public void exit(final ApplicationContext context) {
+        try {
+            context.get(BindingProcessor.class).finalizeProxies(context);
+        } catch (final ApplicationException e) {
+            context.handle(e);
+        }
     }
 }

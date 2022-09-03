@@ -1,0 +1,9 @@
+var a = 1;
+a ^= 2; // XOR
+a &= 2; // AND
+a |= 2; // OR
+a <<= 2; // Shift left
+a >>= 2; // Shift right
+
+// Nested assignments
+a ^= (a &= 2);

@@ -30,9 +30,11 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.MetaProvider;
@@ -40,12 +42,10 @@ import org.dockbox.hartshorn.inject.ProviderContext;
 import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyLookup;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -69,12 +69,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     protected boolean isRunning = false;
 
     public DelegatingApplicationContext(InitializingContext context) {
+        super(null);
         context = new InitializingContext(context.environment(), this, context.manager(), context.configuration());
         this.prepareInitialization();
 
         final Result<Activator> activator = context.configuration().activator().annotation(Activator.class);
         if (activator.absent()) {
-            throw new IllegalStateException("Activation source is not marked with @Activator");
+            throw new InvalidActivationSourceException("Activation source is not marked with @Activator");
         }
         this.activator = activator.get();
         this.activatorHolder = context.activatorHolder();
@@ -93,16 +94,17 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.resourceLocator = context.resourceLocator();
         this.metaProvider = context.metaProvider();
 
-        this.registerDefaultBindings();
+        this.registerDefaultBindings(context);
     }
 
     protected abstract void prepareInitialization();
 
-    protected void registerDefaultBindings() {
+    protected void registerDefaultBindings(final InitializingContext context) {
         this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
+        this.bind(ComponentPostConstructor.class).singleton(context.componentPostConstructor());
         this.bind(ComponentProvider.class).singleton(this);
         this.bind(ExceptionHandler.class).singleton(this);
-        
+
         if (this.componentProvider instanceof StandardComponentProvider provider) {
             this.bind(StandardComponentProvider.class).singleton(provider);
         }
@@ -113,6 +115,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator);
         this.bind(ComponentProvider.class).singleton(this.componentProvider);
         this.bind(ActivatorHolder.class).singleton(this.activatorHolder);
+        this.bind(ConditionMatcher.class).singleton(context.conditionMatcher());
 
         this.bind(ApplicationContext.class).singleton(this);
         this.bind(ApplicationPropertyHolder.class).singleton(this);
@@ -130,7 +133,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     protected void checkRunning() {
         if (this.isRunning) {
-            throw new IllegalStateException("Application context cannot be modified after it has been started");
+            throw new IllegalModificationException("Application context cannot be modified after it has been started");
         }
     }
 
@@ -157,12 +160,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         return this.activatorHolder.hasActivator(activator);
-    }
-
-    @Override
-    public void bind(final InjectConfiguration configuration) {
-        this.log().debug("Activating configuration binder " + TypeContext.of(configuration).name());
-        configuration.binder(this).collect(this);
     }
 
     @Override
@@ -242,12 +239,12 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     @Override
     public void close() {
         if (this.isClosed()) {
-            throw new IllegalStateException("Context is already closed");
+            throw new ContextClosedException(ApplicationContext.class);
         }
         this.log().info("Runtime shutting down, notifying observers");
         final ApplicationManager manager = this.environment().manager();
         if (manager instanceof ObservableApplicationManager observable) {
-            for (final LifecycleObserver observer : observable.observers()) {
+            for (final LifecycleObserver observer : observable.observers(LifecycleObserver.class)) {
                 this.log().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 try {
                     observer.onExit(this);
@@ -257,6 +254,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
                 }
             }
             this.isClosed = true;
+            this.isRunning = false;
         }
     }
 
@@ -275,5 +273,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     public ActivatorHolder activatorHolder() {
         return this.activatorHolder;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this;
     }
 }

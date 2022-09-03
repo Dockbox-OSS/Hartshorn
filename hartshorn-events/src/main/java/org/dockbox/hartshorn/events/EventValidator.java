@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.lifecycle.ApplicationState.Started;
@@ -31,7 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-@Service(activators = UseEvents.class)
+@Service
+@RequiresActivator(UseEvents.class)
 public class EventValidator implements LifecycleObserver {
 
     @Override
@@ -68,10 +70,5 @@ public class EventValidator implements LifecycleObserver {
             }
             applicationContext.log().warn(message.toString());
         }
-    }
-
-    @Override
-    public void onExit(final ApplicationContext applicationContext) {
-        // Nothing happens
     }
 }

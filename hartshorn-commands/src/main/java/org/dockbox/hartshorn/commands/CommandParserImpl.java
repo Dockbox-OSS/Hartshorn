@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;

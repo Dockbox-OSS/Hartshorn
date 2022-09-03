@@ -16,12 +16,6 @@
 
 package test.types;
 
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
-import test.types.SampleInterface;
-
-import jakarta.inject.Named;
-
-@ComponentBinding(value = SampleInterface.class, named = @Named("meta"))
 public class SampleMetaAnnotatedImplementation implements SampleInterface {
     @Override
     public String name() {

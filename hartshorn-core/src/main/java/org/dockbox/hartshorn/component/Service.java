@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.reflect.Extends;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.util.reflect.Extends;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,10 +30,6 @@ import java.lang.annotation.Target;
  * Annotation to indicate a component is a functional component, better known as a service. A service is a component
  * of which the methods, and thus functionality, can be directly modified through {@link ProxyManager}s to allow for
  * dynamic behavior of service definitions. This transforms the service into a {@link Proxy} instance.
- *
- *
- * <p>Services carries an additional {@link #activators()} attribute, which is used to indicate when a service should
- * become active by default.
  *
  * <p>By default all services are {@link #singleton() singletons}.
  *
@@ -61,12 +56,6 @@ public @interface Service {
     String name() default "";
 
     /**
-     * @see Component#owner()
-     * @return The owner of the service.
-     */
-    Class<?> owner() default Void.class;
-
-    /**
      * @see Component#singleton()
      * @return Whether the service is a singleton.
      */
@@ -79,24 +68,8 @@ public @interface Service {
     boolean lazy() default false;
 
     /**
-     * The activators required for this service to become active by default. If one or more activators are not present,
-     * the service will not be loaded.
-     *
-     * @return The activators required for this service to become active by default.
-     * @see ServiceActivator
-     * @see ComponentLocator
-     */
-    Class<? extends Annotation>[] activators() default Service.class;
-
-    /**
      * @see Component#permitProxying()
      * @return Whether the service is permitted to be proxied.
      */
     boolean permitProxying() default true;
-
-    /**
-     * @see Component#requires()
-     * @return The prefixes required by this service.
-     */
-    String[] requires() default {};
 }

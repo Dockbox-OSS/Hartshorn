@@ -17,35 +17,24 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ComponentContainerImpl implements ComponentContainer {
 
     private final Component annotation;
     private final TypeContext<?> component;
-    private final List<Class<? extends Annotation>> activators = new CopyOnWriteArrayList<>();
     private final ApplicationContext context;
 
     public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
         final Result<Component> annotated = component.annotation(Component.class);
-        if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
+        if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
 
         this.component = component;
         this.annotation = annotated.get();
         this.context = context;
-
-        final Result<Service> service = component.annotation(Service.class);
-        if (service.present()) {
-            this.activators.addAll(List.of(service.get().activators()));
-        }
     }
 
     public Component annotation() {
@@ -81,12 +70,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public TypeContext<?> owner() {
-        return TypeContext.of(this.annotation().owner());
-    }
-
-    @Override
-    public List<Class<? extends Annotation>> activators() {
-        return Collections.unmodifiableList(this.activators);
+        return TypeContext.VOID;
     }
 
     @Override
@@ -112,11 +96,6 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public boolean permitsProcessing() {
         return this.annotation().permitProcessing();
-    }
-
-    @Override
-    public Set<String> requiredTypes() {
-        return Set.of(this.annotation().requires());
     }
 
     @Override

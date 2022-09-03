@@ -17,11 +17,9 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-
-import java.util.List;
 
 /**
  * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorContext} to
@@ -53,48 +51,23 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     @Override
-    public final Result<C> provide(final ApplicationContext context) {
-        this.optimalConstructor = this.findOptimalConstructor().orNull();
-        return this.create(context);
+    public final Result<ObjectContainer<C>> provide(final ApplicationContext context) {
+        return this.optimalConstructor()
+                .flatMap(constructor -> constructor.createInstance(context))
+                .map(this.context().type()::cast)
+                .map(instance -> new ObjectContainer<>(instance, false));
     }
 
-    protected Result<? extends ConstructorContext<? extends C>> findOptimalConstructor() {
-        if (this.context().isAbstract()) return Result.empty();
+    protected Result<? extends ConstructorContext<? extends C>> optimalConstructor() {
         if (this.optimalConstructor == null) {
-            final List<? extends ConstructorContext<? extends C>> constructors = this.context().injectConstructors();
-            if (constructors.isEmpty()) {
-                final Result<? extends ConstructorContext<? extends C>> defaultConstructor = this.context().defaultConstructor();
-                if (defaultConstructor.absent()) {
-                    throw new IllegalStateException("No injectable constructors found for " + this.context().type());
-                }
-                else this.optimalConstructor = defaultConstructor.get();
-            }
-            else {
-                /*
-                 An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
-                 can be satiated at once.
-                 */
-                this.optimalConstructor = constructors.get(0);
-                for (final ConstructorContext<? extends C> constructor : constructors) {
-                    if (this.optimalConstructor.parameterCount() < constructor.parameterCount()) {
-                        this.optimalConstructor = constructor;
-                    }
-                }
-            }
+            this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(this.context())
+                    .rethrowUnchecked()
+                    .orNull();
         }
         return Result.of(this.optimalConstructor);
     }
 
-    protected Result<C> create(final ApplicationContext context) {
-        if (this.optimalConstructor() == null) return Result.empty();
-        return this.optimalConstructor().createInstance(context).rethrowUnchecked().map(instance -> (C) instance);
-    }
-
     public TypeContext<? extends C> context() {
         return this.context;
-    }
-
-    public ConstructorContext<? extends C> optimalConstructor() {
-        return this.optimalConstructor;
     }
 }

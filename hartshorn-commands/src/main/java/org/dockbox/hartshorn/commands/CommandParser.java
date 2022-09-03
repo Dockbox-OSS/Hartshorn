@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 
 /**
  * Parser type capable of parsing a given command into a new {@link CommandContext} based on the

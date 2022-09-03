@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.CustomMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.TypeMap;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -44,9 +44,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 22.2
  */
 public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>>, ContextCarrier {
-
-    private static final String MANAGER_FIELD = "$__manager";
-    private static final String DELEGATE_FIELD = "$__delegate";
 
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
@@ -76,12 +73,13 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     // Delegates and interceptors
     private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
     private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
-    private final MultiMap<Method, MethodWrapper<T>> wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet);
-    private final TypeMap<Object> typeDelegates = new TypeMap<>();
+    private final MultiMap<Method, MethodWrapper<T>> wrappers = new ConcurrentSetMultiMap<>();
+    private final ConcurrentClassMap<Object> typeDelegates = new ConcurrentClassMap<>();
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
     private T typeDelegate;
 
     // Proxy data
+    private final ProxyContextContainer contextContainer = new ProxyContextContainer();
     private final Class<T> type;
     private final ApplicationContext applicationContext;
 
@@ -114,19 +112,23 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (delegate != null) {
             this.updateState();
             for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                try {
-                    final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-                    if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
-                        continue;
-                    }
-                } catch (final NoSuchMethodException e) {
-                    // Ignore error, delegate is not concrete
-                }
-                this.delegates.put(declaredMethod, delegate);
+                this.delegateAbstractOverrideCandidate(delegate, declaredMethod);
             }
             this.typeDelegate = delegate;
         }
         return this;
+    }
+
+    private <S> void delegateAbstractOverrideCandidate(final S delegate, final Method declaredMethod) {
+        try {
+            final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
+                return;
+            }
+        } catch (final NoSuchMethodException e) {
+            // Ignore error, delegate is not concrete
+        }
+        this.delegates.put(declaredMethod, delegate);
     }
 
     @Override
@@ -149,15 +151,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (type.isAssignableFrom(this.type)) {
             this.updateState();
             for (final Method declaredMethod : type.getDeclaredMethods()) {
-                try {
-                    final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-                    if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
-                        continue;
-                    }
-                } catch (final NoSuchMethodException e) {
-                    // Ignore error, delegate is not concrete
-                }
-                this.delegates.put(declaredMethod, delegate);
+                this.delegateAbstractOverrideCandidate(delegate, declaredMethod);
             }
         }
         else {
@@ -264,7 +258,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public TypeMap<Object> typeDelegates() {
+    public ConcurrentClassMap<Object> typeDelegates() {
         return this.typeDelegates;
     }
 
@@ -284,5 +278,10 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
      */
     public boolean trackState() {
         return this.trackState;
+    }
+
+    @Override
+    public ProxyContextContainer contextContainer() {
+        return this.contextContainer;
     }
 }

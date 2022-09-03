@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.util.concurrent.Callable;
+
 /**
  * A simple functional interface for custom invocation. This is used to provide custom arguments to the
  * invocation. When used in conjunction with {@link MethodInterceptorContext}, this allows for fine-grained
@@ -34,4 +36,16 @@ public interface CustomInvocation {
      * @throws Exception if the invocation fails
      */
     Object call(Object... args) throws Exception;
+
+    /**
+     * Converts this invocation to a {@link Callable}. This is useful for the {@link MethodInterceptorContext}
+     * to allow for the invocation to be executed both using the default arguments, and
+     * custom arguments.
+     *
+     * @param args the default arguments to use
+     * @return the invocation as a {@link Callable}
+     */
+    default Callable<Object> toCallable(final Object... args) {
+        return () -> this.call(args);
+    }
 }

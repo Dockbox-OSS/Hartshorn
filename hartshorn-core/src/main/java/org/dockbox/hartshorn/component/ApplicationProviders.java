@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.slf4j.Logger;
@@ -29,7 +30,8 @@ import org.slf4j.Logger;
  * @author Guus Lieben
  * @since 21.7
  */
-@Service(activators = UseBootstrap.class)
+@Service
+@RequiresActivator(UseBootstrap.class)
 @LogExclude
 public class ApplicationProviders {
 

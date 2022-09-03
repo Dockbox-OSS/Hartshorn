@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.util.reflect.parameter;
 
-import org.dockbox.hartshorn.inject.Context;
-import org.dockbox.hartshorn.inject.Required;
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class ContextParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
 
@@ -42,10 +41,10 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
 
         final Result<org.dockbox.hartshorn.context.Context> out = name == null
                 ? applicationContext.first(type)
-                : applicationContext.first(applicationContext, type.type(), name);
+                : applicationContext.first(type.type(), name);
 
         final boolean required = parameter.annotation(Required.class).map(Required::value).or(false);
-        if (required && out.absent()) return ExceptionHandler.unchecked(new ApplicationException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required"));
+        if (required && out.absent()) throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
 
         return out.map(c -> (T) c);
     }

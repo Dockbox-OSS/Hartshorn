@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.Result;
 
 import java.io.PrintWriter;
@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class RequestErrorImpl extends DefaultCarrierContext implements RequestError {
+public class RequestErrorImpl extends DefaultApplicationAwareContext implements RequestError {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;

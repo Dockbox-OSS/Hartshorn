@@ -1,0 +1,17 @@
+class User {
+    public name;
+    private age;
+
+    constructor(name, age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    fun getAge() {
+        return this.age;
+    }
+
+    fun setAge(age) {
+        this.age = age;
+    }
+}

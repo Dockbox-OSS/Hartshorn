@@ -1,0 +1,7 @@
+class Bagel {
+   fun sum(x,y) {
+      return x + y;
+   }
+}
+var bagel = Bagel();
+print(bagel); // Prints "Bagel instance".

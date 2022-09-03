@@ -16,19 +16,18 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.component.Enableable;
-
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class SingletonEnableable implements Enableable {
+public class SingletonEnableable {
     private int enabled;
 
     public int enabled() {
         return this.enabled;
     }
 
-    @Override
+    @PostConstruct
     public void enable() {
         this.enabled++;
     }

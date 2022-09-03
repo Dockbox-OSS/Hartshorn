@@ -62,24 +62,14 @@ public class StandardPropertyHolder implements PropertyHolder {
 
     @Override
     public <T> Result<T> update(final T object, final String key, final Class<T> type) {
-        return this.restore(key, type, serialized -> this.objectMapper.update(object, serialized, type));
+        return this.restore(key, serialized -> this.objectMapper.update(object, serialized, type));
     }
 
-    private <T> Result<T> restore(final String key, final Class<T> type, final CheckedFunction<String, Result<T>> mapper) {
+    private <T> Result<T> restore(final String key, final CheckedFunction<String, Result<T>> mapper) {
         final Object value = this.find(key);
-
-        if (type != null) {
-            if (type.isInstance(value)) {
-                return Result.of(type.cast(value));
-            }
-
-            return Result.of(value)
-                    .flatMap(object -> this.objectMapper.write(object))
-                    .flatMap(mapper);
-        }
-        else {
-            return Result.of(value).map(o -> (T) o).map(this::copyOf);
-        }
+        return Result.of(value)
+                .flatMap(object -> this.objectMapper.write(object))
+                .flatMap(mapper);
     }
 
     @Override
@@ -91,7 +81,7 @@ public class StandardPropertyHolder implements PropertyHolder {
 
     @Override
     public <T> Result<T> get(final String key, final Class<T> type) {
-        return this.restore(key, type, serialized -> this.objectMapper.read(serialized, type));
+        return this.restore(key, serialized -> this.objectMapper.read(serialized, type));
     }
 
     private <T> T copyOf(final T value) {
@@ -155,7 +145,7 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     protected void patchConfigurationMap(final Map<String, Object> origin, final Map<String, Object> patch) {
-        for(final String key : patch.keySet()) {
+        for (final String key : patch.keySet()) {
             final Object patchValue = patch.get(key);
             if (origin.containsKey(key)) {
                 final Object originValue = origin.get(key);
@@ -164,7 +154,8 @@ public class StandardPropertyHolder implements PropertyHolder {
                 else if (originValue instanceof Collection<?> && patchValue instanceof Collection<?>)
                     origin.put(key, this.merge((List<Object>) originValue, (List<Object>) patchValue));
                 else origin.put(key, patchValue);
-            } else origin.put(key, patchValue);
+            }
+            else origin.put(key, patchValue);
         }
     }
 
@@ -208,7 +199,8 @@ public class StandardPropertyHolder implements PropertyHolder {
                 .present(reader -> {
                     try {
                         properties.load(reader);
-                    } catch (final IOException e) {
+                    }
+                    catch (final IOException e) {
                         throw new RuntimeException(e);
                     }
                 });

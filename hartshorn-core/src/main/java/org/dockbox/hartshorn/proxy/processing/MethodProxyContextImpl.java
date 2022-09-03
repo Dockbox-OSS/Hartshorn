@@ -25,12 +25,11 @@ import java.lang.annotation.Annotation;
 
 public class MethodProxyContextImpl<T> extends DefaultApplicationAwareContext implements MethodProxyContext<T> {
 
-    private final ApplicationContext context;
     private final TypeContext<T> type;
     private final MethodContext<?, T> method;
 
     public MethodProxyContextImpl(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method) {
-        this.context = context;
+        super(context);
         this.type = type;
         this.method = method;
     }
@@ -38,11 +37,6 @@ public class MethodProxyContextImpl<T> extends DefaultApplicationAwareContext im
     @Override
     public <A extends Annotation> A annotation(final Class<A> annotation) {
         return this.method.annotation(annotation).orNull();
-    }
-
-    @Override
-    public ApplicationContext context() {
-        return this.context;
     }
 
     @Override

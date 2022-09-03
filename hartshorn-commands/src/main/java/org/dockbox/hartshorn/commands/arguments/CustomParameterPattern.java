@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -52,7 +52,7 @@ public interface CustomParameterPattern {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
             return Result.of(preconditionsMatch.error());
         }
-        else if (!preconditionsMatch.get()) {
+        else if (Boolean.FALSE.equals(preconditionsMatch.or(false))) {
             context.log().debug("Preconditions failed, rejecting raw argument " + raw);
             return Result.empty();
         }
@@ -79,10 +79,7 @@ public interface CustomParameterPattern {
 
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
-                return Result.of(new IllegalArgumentException(context
-                        .get(CommandParameterResources.class)
-                        .missingConverter(type.qualifiedName())
-                        .string())
+                return Result.of(new MissingConverterException(context, type)
                 );
             }
 
@@ -133,6 +130,6 @@ public interface CustomParameterPattern {
                 return Result.of(constructor);
             }
         }
-        return Result.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().string()));
+        return Result.of(new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs()));
     }
 }

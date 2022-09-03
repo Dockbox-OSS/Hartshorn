@@ -25,11 +25,20 @@ import org.dockbox.hartshorn.cache.annotations.UpdateCache;
  * The method-specific cache context containing all required information to
  * manipulate cache methods. Values are typically derived from {@link Cached},
  * {@link EvictCache}, or {@link UpdateCache}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public interface CacheMethodContext {
 
+    /**
+     * The cache name to use, if any.
+     */
     String name();
 
+    /**
+     * The cache expiration to use.
+     */
     Expiration expiration();
 
 }

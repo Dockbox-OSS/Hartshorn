@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-
 /**
  * A callback interface for a proxy method. This interface is used to provide a callback mechanism
  * for proxy methods, while remaining unaware of which phase of the proxy method invocation is
@@ -29,5 +27,12 @@ import org.dockbox.hartshorn.util.reflect.MethodContext;
  * @since 22.2
  */
 public interface ProxyCallback<T> {
-    void accept(MethodContext<?, T> method, T instance, Object[] args);
+    void accept(ProxyCallbackContext<T> context);
+
+    default ProxyCallback<T> then(final ProxyCallback<T> next) {
+        return context -> {
+            this.accept(context);
+            next.accept(context);
+        };
+    }
 }

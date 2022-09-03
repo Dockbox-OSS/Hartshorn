@@ -1,0 +1,7 @@
+var listWithNull = ["Hello", null, 2, true];
+var listWithoutNull = [x for x in listWithNull if x];
+
+print("List without null")
+for (var i in listWithoutNull) {
+    print(i);
+}

@@ -33,18 +33,16 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
 
     @Override
     public <T> Result<Boolean> preconditionsMatch(final TypeContext<T> type, final CommandSource source, final String raw) {
-        return Result.of(() -> {
-                    String prefix = this.prefix() + "";
-                    if (this.requiresTypeName()) {
-                        final String parameterName = type.annotation(Parameter.class).get().value();
-                        prefix = this.prefix() + parameterName;
-                    }
-                    return raw.startsWith(prefix);
-                },
-                () -> true,
-                () -> false,
-                () -> new IllegalArgumentException(this.wrongFormat().string())
-        );
+        String prefix = this.prefix() + "";
+        if (this.requiresTypeName()) {
+            final String parameterName = type.annotation(Parameter.class).get().value();
+            prefix = this.prefix() + parameterName;
+        }
+        if (raw.startsWith(prefix)) {
+            return Result.of(true);
+        } else {
+            return Result.of(new ArgumentMatchingFailedException(this.wrongFormat()));
+        }
     }
 
     @Override
@@ -72,10 +70,12 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
 
     @Override
     public Result<String> parseIdentifier(final String argument) {
-        return Result.of(() -> argument.startsWith(this.prefix() + ""),
-                () -> argument.substring(1, argument.indexOf(this.opening())),
-                () -> new IllegalArgumentException(this.wrongFormat().string())
-        );
+        if (argument.startsWith(this.prefix() + "")) {
+            return Result.of(argument.substring(1, argument.indexOf(this.opening())));
+        }
+        else {
+            return Result.of(new ArgumentMatchingFailedException(this.wrongFormat()));
+        }
     }
 
     /**

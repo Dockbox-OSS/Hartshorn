@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.cache.modifiers;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -30,6 +31,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link EvictCache}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to evict specific {@link org.dockbox.hartshorn.cache.Cache caches}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheEvictionMethodPostProcessor extends CacheServicePostProcessor<EvictCache> {
 
@@ -43,7 +47,7 @@ public class CacheEvictionMethodPostProcessor extends CacheServicePostProcessor<
     protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
         return interceptorContext -> {
             try {
-                cacheContext.manager().evict(cacheContext.name());
+                cacheContext.manager().get(cacheContext.cacheName()).present(Cache::invalidate);
                 return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);

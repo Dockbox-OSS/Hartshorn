@@ -16,15 +16,20 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.beans.Bean;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.events.handle.ConditionMatcherEventExecutionFilter;
+import org.dockbox.hartshorn.events.handle.EventExecutionFilter;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.handle.EventParameterLoader;
 
 import jakarta.inject.Singleton;
 
-@Service(activators = UseEvents.class)
+@Service
+@RequiresActivator(UseEvents.class)
 public class EventProviders {
 
     @Singleton
@@ -36,5 +41,10 @@ public class EventProviders {
     @Provider("event_loader")
     public ParameterLoader eventParameterLoader() {
         return new EventParameterLoader();
+    }
+
+    @Bean
+    public static EventExecutionFilter conditionMatchingExecutionFilter() {
+        return new ConditionMatcherEventExecutionFilter();
     }
 }

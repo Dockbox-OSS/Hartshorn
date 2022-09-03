@@ -20,11 +20,13 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-@Service(activators = UseCommands.class)
+@Service
+@RequiresActivator(UseCommands.class)
 public class CommandParameterValidator implements LifecycleObserver {
 
     @Override
@@ -36,10 +38,5 @@ public class CommandParameterValidator implements LifecycleObserver {
             applicationContext.log().warn("   Add -parameters to your compiler args to keep parameter names.");
             applicationContext.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
         }
-    }
-
-    @Override
-    public void onExit(final ApplicationContext applicationContext) {
-        // Nothing happens
     }
 }

@@ -21,14 +21,14 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -52,7 +52,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
-
 import javassist.util.proxy.ProxyFactory;
 
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
@@ -210,7 +209,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public static <T> TypeContext<T> of(final Type type) {
         if (type instanceof Class<?>) return of((Class<T>) type);
-        if (type instanceof ParameterizedType parameterizedType) return of((ParameterizedType) type);
+        if (type instanceof ParameterizedType parameterizedType) return of(parameterizedType);
         throw new RuntimeException("Unexpected type " + type);
     }
 
@@ -328,7 +327,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (!this.childOf(superInterface)) throw new IllegalArgumentException("Provided interface " + superInterface.name() + " is not a super type of " + this.name());
 
         if (this.interfaceTypeParameters == null) {
-            this.interfaceTypeParameters = new ArrayListMultiMap<>();
+            this.interfaceTypeParameters = new SynchronizedArrayListMultiMap<>();
         }
 
         if (!this.interfaceTypeParameters.containsKey(superInterface)) {
@@ -364,7 +363,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return Arrays.stream(arguments)
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
-                    if (type instanceof Class clazz) return TypeContext.of(clazz);
+                    if (type instanceof Class<?> clazz) return TypeContext.of(clazz);
                     else if (type instanceof WildcardType wildcard) {
                         if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
                             return TypeContext.of(wildcard.getUpperBounds()[0]);
@@ -382,8 +381,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         this.collectFields();
         if (this.fields.containsKey(field))
             return Result.of(this.fields.get(field));
-        else
+        else if (!this.parent().isVoid())
             return this.parent().field(field);
+        return Result.empty();
     }
 
     public List<FieldContext<?>> fields() {
@@ -462,7 +462,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
         if (!primitive.isPrimitive()) {
-            throw new IllegalArgumentException("Second argument has to be primitive type");
+            throw new IllegalArgumentException("Expected second argument to be primitive type");
         }
         return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
     }
@@ -500,7 +500,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             this.verifyMetadataAvailable();
             this.elementType = this.isArray()
                     ? Result.of(of(this.type().getComponentType()))
-                    : Result.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
+                    : Result.of(new IllegalArgumentException("The reflected type must be an array to look up its element type"));
         }
         return this.elementType;
     }
@@ -525,7 +525,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 .filter(constructor -> {
                     final List<? extends Class<?>> parameters = constructor.parameterTypes().stream()
                             .map(TypeContext::type)
-                            .collect(Collectors.toList());
+                            .toList();
                     return parameters.equals(parameterTypes);
                 })
                 .findFirst());
@@ -534,7 +534,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public List<ConstructorContext<T>> constructors(final Class<? extends Annotation> annotation) {
         return this.constructors().stream()
                 .filter(constructor -> constructor.annotation(annotation).present())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<ConstructorContext<T>> boundConstructors() {
@@ -579,7 +579,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public static <T> T toPrimitive(TypeContext<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
-            return (T) Enum.valueOf((Class<? extends Enum>) type.type(), String.valueOf(value).toUpperCase());
+            final String name = String.valueOf(value).toUpperCase();
+            return (T) Enum.valueOf((Class<? extends Enum>) type.type(), name);
         }
         else {
             if (!type.isPrimitive()) {
@@ -634,7 +635,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
             // so instead we only link it by name and perform the list comparison on request.
-            this.methods = new ArrayListMultiMap<>();
+            this.methods = new SynchronizedArrayListMultiMap<>();
             for (final MethodContext<?, T> method : this.methods()) {
                 this.methods.put(method.name(), method);
             }
@@ -696,5 +697,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isDeclaredIn(final String prefix) {
         return this.type().getPackageName().startsWith(prefix);
+    }
+
+    public boolean isInstance(final Object object) {
+        return this.type().isInstance(object);
+    }
+
+    public T cast(final Object object) {
+        if (isInstance(object)) return this.type.cast(object);
+        else throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(object, this.type));
     }
 }

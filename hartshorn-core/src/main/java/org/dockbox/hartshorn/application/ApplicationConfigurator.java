@@ -18,9 +18,6 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
-
-import java.util.Set;
 
 /**
  * The {@link ApplicationConfigurator} is responsible for configuring the {@link ApplicationManager}. Configuration
@@ -39,15 +36,6 @@ public interface ApplicationConfigurator {
      * @param manager The {@link ApplicationManager} to configure.
      */
     void configure(ApplicationManager manager);
-
-    /**
-     * Applies the given {@link InjectConfiguration}s to the given {@link ApplicationManager}. Configurations may be
-     * validated, modified, or applied to the {@link ApplicationContext}.
-     *
-     * @param manager The {@link ApplicationManager} to configure.
-     * @param configurations The {@link InjectConfiguration}s to apply.
-     */
-    void apply(ApplicationManager manager, Set<InjectConfiguration> configurations);
 
     /**
      * Binds the given prefix to the given {@link ApplicationManager}. Prefixes may be validated, modified, or applied

@@ -17,18 +17,21 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.MetaProvider;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.Result;
@@ -49,10 +52,10 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     public Self activator(final TypeContext<?> activator) {
         final Result<Activator> annotation = activator.annotation(Activator.class);
         if (annotation.absent())
-            throw new IllegalArgumentException("Application type should be decorated with @Activator");
+            throw new InvalidActivationSourceException("Application type should be decorated with @Activator");
 
         if (activator.isAbstract())
-            throw new IllegalArgumentException("Bootstrap type cannot be abstract, got " + activator.name());
+            throw new InvalidActivationSourceException("Bootstrap type cannot be abstract, got " + activator.name());
 
         this.configuration.activator = activator;
         return this.self();
@@ -113,12 +116,6 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     }
 
     @Override
-    public Self configuration(final InjectConfiguration injectConfiguration) {
-        this.configuration.injectConfigurations.add(injectConfiguration);
-        return this.self();
-    }
-
-    @Override
     public Self activatorHolder(final Initializer<ActivatorHolder> activatorHolder) {
         this.configuration.activatorHolder = activatorHolder.cached();
         return this.self();
@@ -161,6 +158,12 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     }
 
     @Override
+    public Self componentPostConstructor(final Initializer<ComponentPostConstructor> componentPostConstructor) {
+        this.configuration.componentPostConstructor = componentPostConstructor.cached();
+        return this.self();
+    }
+
+    @Override
     public Self metaProvider(final Initializer<MetaProvider> metaProvider) {
         this.configuration.metaProvider = metaProvider.cached();
         return this.self();
@@ -199,6 +202,18 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     @Override
     public Self componentPopulator(final Initializer<ComponentPopulator> componentPopulator) {
         this.configuration.componentPopulator = componentPopulator.cached();
+        return this.self();
+    }
+
+    @Override
+    public Self conditionMatcher(final Initializer<ConditionMatcher> conditionMatcher) {
+        this.configuration.conditionMatcher = conditionMatcher.cached();
+        return this.self();
+    }
+
+    @Override
+    public Self manager(final Initializer<ApplicationManager> manager) {
+        this.configuration.manager = manager.cached();
         return this.self();
     }
 }

@@ -18,16 +18,14 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
-import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.data.context.ConfigurationURIContext;
+import org.dockbox.hartshorn.data.context.ConfigurationURIContextList;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,7 +79,7 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
         }
 
         if (configuration.failOnMissing()) {
-            throw new IllegalStateException("None of the configured sources in " + key.type().name() + " were found");
+            throw new MissingSourceException("None of the configured sources in " + key.type().name() + " were found");
         } else {
             context.log().warn("None of the configured sources in {} were found, proceeding without configuration", key.type().name());
         }
@@ -106,40 +104,18 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
             context.log().warn("Found multiple configuration files for " + key.type().name() + ": " + config);
         }
 
+        final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.class).get();
         for (final URI uri : config) {
-            final FileFormat format = this.lookupFileFormat(uri, matchedSource, context, strategy);
-
-            if (format == null) {
-                context.log().error("Unknown file format: " + matchedSource + ", declared by " + key.type().name());
-                return false;
-            }
-
-            final Map<String, Object> cache = context.get(ObjectMapper.class)
-                    .fileType(format)
-                    .read(uri, Map.class)
-                    .orElse(HashMap::new)
-                    .get();
-
-            context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
-            context.get(PropertyHolder.class).set(cache);
+            final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, matchedSource, strategy);
+            uriContextList.add(uriContext);
         }
+
         return true;
-    }
-
-    protected FileFormat lookupFileFormat(final URI uri, final String source, final ApplicationContext context, final ResourceLookupStrategy strategy) {
-        // If the source has a file extension, use that
-        final FileFormats lookup = FileFormats.lookup(source);
-        if (lookup != null) {
-            return lookup;
-        }
-        else {
-            final String fileName = new File(uri).getName();
-            return FileFormats.lookup(fileName);
-        }
     }
 
     @Override
     public Integer order() {
-        return ProcessingOrder.FIRST;
+        // Run before the ProviderServicePreProcessor, so this context is available for configuration objects
+        return (Integer.MIN_VALUE / 2) - 256;
     }
 }

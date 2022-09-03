@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
 
-public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<InterfaceProxy, Service> {
+public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<InterfaceProxy> {
     @Override
     protected Class<InterfaceProxy> parentTarget() {
         return InterfaceProxy.class;

@@ -26,6 +26,7 @@ public class HartshornFactoryTests {
 
     @HartshornFactory
     public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
+        // Typically this would be done with @TestProperties, but we're testing the factory here
         return factory.argument("--factory.modified=true");
     }
 

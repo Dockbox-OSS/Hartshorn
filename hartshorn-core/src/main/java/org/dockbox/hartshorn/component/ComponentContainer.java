@@ -18,10 +18,6 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Set;
-
 public interface ComponentContainer {
 
     String id();
@@ -31,8 +27,6 @@ public interface ComponentContainer {
     TypeContext<?> type();
 
     TypeContext<?> owner();
-
-    List<Class<? extends Annotation>> activators();
 
     boolean singleton();
 
@@ -44,5 +38,4 @@ public interface ComponentContainer {
 
     boolean permitsProcessing();
 
-    Set<String> requiredTypes();
 }

@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.processing.HttpServletParameterLoader;
@@ -25,7 +26,8 @@ import org.dockbox.hartshorn.web.servlet.ErrorServlet;
 import org.dockbox.hartshorn.web.servlet.WebServlet;
 import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 
-@Service(activators = UseHttpServer.class)
+@Service
+@RequiresActivator(UseHttpServer.class)
 public abstract class HttpServerProviders {
 
     @Provider
@@ -49,7 +51,7 @@ public abstract class HttpServerProviders {
     }
 
     @Provider("http_webserver")
-    public ParameterLoader parameterLoader() {
+    public ParameterLoader<?> parameterLoader() {
         return new HttpServletParameterLoader();
     }
 }

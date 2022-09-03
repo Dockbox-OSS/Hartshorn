@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
+import org.dockbox.hartshorn.proxy.UseProxying;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,5 +32,6 @@ import java.lang.annotation.Target;
         FactoryServicePreProcessor.class,
 })
 @UseServiceProvision
+@UseProxying
 public @interface UseFactoryServices {
 }

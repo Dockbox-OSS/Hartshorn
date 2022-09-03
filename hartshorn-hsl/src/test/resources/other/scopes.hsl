@@ -1,0 +1,21 @@
+var a = "global a";
+var b = "global b";
+var c = "global c";
+{
+  // Re-declare a and b in the scope of the block
+  var a = "outer a";
+  var b = "outer b";
+  {
+    // Re-declare a in the scope of the block
+    var a = "inner a";
+    print (a);
+    print b;
+    print c;
+  }
+  print (a);
+  print (b);
+  print (c);
+}
+print (a);
+print (b);
+print (c);

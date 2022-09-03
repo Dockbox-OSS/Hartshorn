@@ -18,8 +18,14 @@ package org.dockbox.hartshorn.util.reflect;
 
 import org.dockbox.hartshorn.util.ApplicationException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class CyclicComponentException extends ApplicationException {
-    public CyclicComponentException(final ConstructorContext<?> constructorContext, final TypeContext<?> other) {
-        super("Cyclic dependency detected in constructor: %s. Cyclic dependency between %s and %s".formatted(constructorContext.qualifiedName(), constructorContext.type().qualifiedName(), other == null ? "[Unknown component]" : other.qualifiedName()));
+    public CyclicComponentException(final TypeContext<?> type, final List<TypeContext<?>> other) {
+        super("Cyclic dependency detected in constructor of %s. Cyclic dependency path: %s".formatted(
+                type.qualifiedName(),
+                other.stream().map(TypeContext::name).collect(Collectors.joining(" -> "))
+        ));
     }
 }

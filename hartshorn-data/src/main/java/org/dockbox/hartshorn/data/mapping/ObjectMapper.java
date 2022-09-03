@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormat;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -45,11 +47,17 @@ public interface ObjectMapper {
         return this.read(url, type.type());
     }
 
+    default  <T> Result<T> read(final InputStream stream, final TypeContext<T> type) {
+        return this.read(stream, type.type());
+    }
+
     <T> Result<T> read(String content, Class<T> type);
 
     <T> Result<T> read(Path path, Class<T> type);
 
     <T> Result<T> read(URL url, Class<T> type);
+
+    <T> Result<T> read(InputStream stream, Class<T> type);
 
     default <T> Result<T> read(final URI uri, final Class<T> type) {
         return Result.of(() -> this.read(uri.toURL(), type).orNull());
@@ -61,6 +69,8 @@ public interface ObjectMapper {
 
     <T> Result<T> read(URL url, GenericType<T> type);
 
+    <T> Result<T> read(InputStream stream, GenericType<T> type);
+
     default <T> Result<T> read(final URI uri, final GenericType<T> type) {
         return Result.of(() -> this.read(uri.toURL(), type).orNull());
     }
@@ -70,6 +80,8 @@ public interface ObjectMapper {
     <T> Result<T> update(T object, Path path, Class<T> type);
 
     <T> Result<T> update(T object, URL url, Class<T> type);
+
+    <T> Result<T> update(T object, InputStream stream, Class<T> type);
 
     default <T> Result<T> update(final T object, final URI uri, final Class<T> type) {
         return Result.of(() -> this.update(object, uri.toURL(), type).orNull());
@@ -81,11 +93,15 @@ public interface ObjectMapper {
 
     Map<String, Object> flat(URL url);
 
+    Map<String, Object> flat(InputStream stream);
+
     default Map<String, Object> flat(final URI uri) {
         return Result.of(() -> this.flat(uri.toURL())).or(new HashMap<>());
     }
 
     <T> Result<Boolean> write(Path path, T content);
+
+    <T> Result<Boolean> write(OutputStream outputStream, T content);
 
     <T> Result<String> write(T content);
 

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -25,18 +26,19 @@ import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.events.parents.Cancellable;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.Message;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -51,9 +53,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
  */
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
-public class MethodCommandExecutorContext<T> extends DefaultCarrierContext implements CommandExecutorContext {
+public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {
 
-    private final ApplicationContext applicationContext;
     private final MethodContext<?, T> method;
     private final Key<T> key;
     private final List<String> parentAliases;
@@ -69,7 +70,6 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
-        this.applicationContext = context;
         this.method = method;
         this.key = key;
         this.command = annotated.get();
@@ -94,10 +94,6 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         }
         this.parameters = this.parameters();
         this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
-    }
-
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
     }
 
     protected MethodContext<?, T> method() {
@@ -141,6 +137,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     @Override
     public CommandExecutor executor() {
+        final ConditionMatcher conditionMatcher = applicationContext().get(ConditionMatcher.class);
         return (ctx) -> {
             final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
             if (before.cancelled()) {
@@ -153,9 +150,17 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             final T instance = this.applicationContext().get(this.key());
             final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.key().type(), null, this.applicationContext(), ctx, this);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
-            this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-            this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
-            new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
+
+            if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {
+                this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
+                this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
+                new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
+            }
+            else {
+                this.applicationContext().log().debug("Conditions didn't match for " + this.method().qualifiedName());
+                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
+                ctx.source().send(cancelled);
+            }
         };
     }
 
@@ -231,7 +236,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     private CommandDefinitionContext definition() {
         final Result<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
-        if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
+        if (definition.absent()) throw new DefinitionContextLostException();
         return definition.get();
     }
 

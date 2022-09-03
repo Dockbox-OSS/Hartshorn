@@ -19,11 +19,27 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.util.Result;
 
 /**
- * Represents a collection of entries of type <code>T</code>.
+ * Represents a semi-persistent mapping between keys of type {@link K} and values
+ * of type {@link V}. Cache values are manually added using either {@link #put(Object, Object)}
+ * or {@link #putIfAbsent(Object, Object)}, but never by an implementation. Cache values
+ * are retrieved using {@link #get(Object)}.
  *
- * @param <T> The type of object stored in the cache.
+ * <p>Caches can automatically expire values after a certain amount of time. This is
+ * done by providing a {@link Expiration} to the implementation (either through the
+ * constructor, or {@link CacheFactory#cache(Expiration)}). If the expiration is
+ * {@link Expiration#never()}, then the cache will never expire values.
+ *
+ * <p>Caches can also be manually cleared using {@link #invalidate()}. Individual keys
+ * can also be removed using {@link #invalidate(Object)}.
+ *
+ * <p>Implementations are typically thread-safe, though they are not required to be.
+ *
+ * @see CacheFactory
+ * @see Expiration
+ * @author Guus Lieben
+ * @since 21.2
  */
-public interface Cache<T> {
+public interface Cache<K, V> {
 
     /**
      * Provides the stored values of the cache. If the cache is not
@@ -31,29 +47,53 @@ public interface Cache<T> {
      *
      * @return The content of the cache, or {@link Result#empty()}
      */
-    Result<T> get();
+    Result<V> get(K key);
 
     /**
-     * Populates the cache with the given content. If the cache is
-     * already populated the new content is rejected.
+     * Returns {@code true} if the cache contains the given key. If the cache is not
+     * populated, this will return {@code false}.
      *
-     * @param content The content to populate the cache with.
-     *
-     * @throws IllegalStateException When the cache is already populated.
+     * @param key The key to check
+     * @return {@code true} if the cache contains the given key
      */
-    void populate(T content);
+    boolean contains(K key);
 
     /**
-     * Updates the cache by adding the provided object to the cache. If
-     * the cache has not been populated, this will initialize an empty
-     * cache before adding the object.
+     * Puts the given value into the cache if the key is not already present. If the
+     * key is already present, this will not change the value.
      *
-     * @param object The object to add.
+     * @param key The key to store the value under
+     * @param value The value to store
      */
-    void update(T object);
+    void putIfAbsent(K key, V value);
 
     /**
-     * Evicts the cache, removing all content.
+     * Puts the given value into the cache. If the key is already present, this will
+     * change the value. If the cache is configured to expire values, this will reset
+     * the expiration of the key to start counting from the moment the new value is
+     * stored.
+     *
+     * @param key The key to store the value under
+     * @param value The value to store
      */
-    void evict();
+    void put(K key, V value);
+
+    /**
+     * Removes the given key from the cache. If the key is not present, this will
+     * not change the cache.
+     *
+     * @param key The key to remove
+     */
+    void invalidate(K key);
+
+    /**
+     * Removes all keys from the cache.
+     */
+    void invalidate();
+
+    /**
+     * Returns the number of keys in the cache.
+     * @return The number of keys in the cache
+     */
+    int size();
 }

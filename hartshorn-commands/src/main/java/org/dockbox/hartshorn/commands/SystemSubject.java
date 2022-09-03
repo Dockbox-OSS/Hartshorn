@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Identifiable;
 
@@ -31,6 +30,7 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
 
     @Inject
     private ApplicationContext applicationContext;
+    private Locale locale = Locale.getDefault();
 
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
@@ -45,12 +45,12 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
 
     @Override
     public Locale language() {
-        return Locale.getDefault();
+        return this.locale;
     }
 
     @Override
     public void language(final Locale language) {
-        // Nothing happens
+        this.locale = language;
     }
 
     @Override
@@ -61,15 +61,5 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     @Override
     public String name() {
         return "System";
-    }
-
-    @Override
-    public void execute(final String command) {
-        try {
-            this.applicationContext.get(CommandGateway.class).accept(this, command);
-        }
-        catch (final ParsingException e) {
-            this.applicationContext.handle(e);
-        }
     }
 }

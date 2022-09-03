@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.events.annotations.Listener;
@@ -58,21 +57,21 @@ public class EventBusImpl implements EventBus {
         // Event listeners need a @Listener annotation
         this.addValidationRule(method -> {
             if (method.annotation(Listener.class).absent()) {
-                return Result.of(false, new IllegalArgumentException("Needs @Listener annotation: " + method.qualifiedName()));
+                return Result.of(false, new InvalidEventListenerException("Expected @Listener annotation on " + method.qualifiedName()));
             }
             return Result.of(true);
         });
         // Event listeners cannot be abstract
         this.addValidationRule(method -> {
             if (method.isAbstract()) {
-                return Result.of(false, new IllegalArgumentException("Method cannot be abstract: " + method.qualifiedName()));
+                return Result.of(false, new InvalidEventListenerException("Method cannot be abstract: " + method.qualifiedName()));
             }
             return Result.of(true);
         });
         // Event listeners must have one and only parameter which is a subclass of Event
         this.addValidationRule(method -> {
             if (1 != method.parameterCount() || !method.parameterTypes().get(0).childOf(Event.class)) {
-                return Result.of(false, new IllegalArgumentException("Must have one (and only one) parameter, which is a subclass of Event: " + method.qualifiedName()));
+                return Result.of(false, new InvalidEventListenerException("Must have one (and only one) parameter, which is a subclass of " + Event.class.getCanonicalName() + ": " + method.qualifiedName()));
             }
             return Result.of(true);
         });
@@ -121,7 +120,7 @@ public class EventBusImpl implements EventBus {
 
     @Override
     public void post(final Event event, final Key<?> target) {
-        if (event.first(this.context, ApplicationContext.class).absent()) {
+        if (event.first(ApplicationContext.class).absent()) {
             this.context.log().debug("Event " + TypeContext.of(event).name() + " was not enhanced with the active application context, adding it before handling event");
             event.add(this.context);
         }
@@ -131,12 +130,6 @@ public class EventBusImpl implements EventBus {
     @Override
     public void post(final Event event) {
         this.post(event, null);
-    }
-
-    @NonNull
-    @Override
-    public Map<Key<?>, Set<EventWrapper>> invokers() {
-        return this.listenerToInvokers;
     }
 
     @Override
@@ -180,7 +173,7 @@ public class EventBusImpl implements EventBus {
     protected void checkListenerMethod(final MethodContext<?, ?> method) throws IllegalArgumentException {
         for (final Function<MethodContext<?, ?>, Result<Boolean>> validator : this.validators) {
             final boolean result = validator.apply(method).rethrowUnchecked().get();
-            if (!result) throw new IllegalArgumentException("Unspecified validation error while validating: " + method.qualifiedName());
+            if (!result) throw new EventValidationException("Unspecified validation error while validating: " + method.qualifiedName());
         }
     }
 }

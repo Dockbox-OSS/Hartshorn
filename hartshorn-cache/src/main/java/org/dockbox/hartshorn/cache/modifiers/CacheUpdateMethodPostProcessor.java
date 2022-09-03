@@ -31,6 +31,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link UpdateCache}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to update specific {@link org.dockbox.hartshorn.cache.Cache caches}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<UpdateCache> {
 
@@ -45,7 +48,8 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
         return interceptorContext -> {
             try {
                 final Object o = interceptorContext.args()[0];
-                cacheContext.manager().update(cacheContext.name(), o);
+                cacheContext.manager().get(cacheContext.cacheName())
+                        .present(cache -> cache.put(cacheContext.key(), o));
                 return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);

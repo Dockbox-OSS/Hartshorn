@@ -23,7 +23,6 @@ package org.dockbox.hartshorn.application.lifecycle;
  * @author Guus Lieben
  * @since 21.9
  */
-@FunctionalInterface
 public interface LifecycleObservable {
 
     /**
@@ -31,5 +30,7 @@ public interface LifecycleObservable {
      *
      * @param observer the observer to add
      */
-    void register(LifecycleObserver observer);
+    void register(Observer observer);
+
+    void register(Class<? extends Observer> observer);
 }

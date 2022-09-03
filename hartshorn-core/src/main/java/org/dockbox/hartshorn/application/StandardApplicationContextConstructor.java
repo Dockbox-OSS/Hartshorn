@@ -17,31 +17,25 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.context.ClasspathApplicationContext;
+import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.inject.binding.InjectConfig;
-import org.dockbox.hartshorn.inject.binding.InjectConfiguration;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class StandardApplicationContextConstructor implements ApplicationContextConstructor<ClasspathApplicationContext> {
+public class StandardApplicationContextConstructor implements ApplicationContextConstructor<ApplicationContext> {
 
     private final Logger logger;
 
@@ -50,9 +44,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     @Override
-    public ClasspathApplicationContext createContext(final ApplicationContextConfiguration configuration) {
+    public ApplicationContext createContext(final ApplicationContextConfiguration configuration) {
         final ApplicationManager manager = this.createManager(configuration);
-        final ClasspathApplicationContext applicationContext = this.createContext(manager, configuration);
+        final ApplicationContext applicationContext = this.createContext(manager, configuration);
 
         this.configure(manager, applicationContext, configuration);
         this.process(applicationContext, configuration);
@@ -77,8 +71,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return configuration.activator().annotation(Activator.class).get();
     }
 
-    protected DelegatingApplicationManager createManager(final ApplicationContextConfiguration configuration) {
-        return new DelegatingApplicationManager(configuration);
+    protected ApplicationManager createManager(final ApplicationContextConfiguration configuration) {
+        final InitializingContext context = new InitializingContext(null, null, null, configuration);
+        return configuration.manager(context);
     }
 
     protected ApplicationEnvironment createEnvironment(final InitializingContext context) {
@@ -87,18 +82,15 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return environment;
     }
 
-    protected ClasspathApplicationContext createContext(final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
+    protected ApplicationContext createContext(final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
         InitializingContext initializingContext = new InitializingContext(null, null, manager, configuration);
         final ApplicationEnvironment environment = this.createEnvironment(initializingContext);
 
         initializingContext = new InitializingContext(environment, null, manager, configuration);
-        final ClasspathApplicationContext context = this.createContext(initializingContext);
-        context.addActivator(new ServiceImpl());
-
-        return context;
+        return this.createContext(initializingContext);
     }
 
-    protected ClasspathApplicationContext createContext(final InitializingContext context) {
+    protected ApplicationContext createContext(final InitializingContext context) {
         return new ClasspathApplicationContext(context);
     }
 
@@ -111,9 +103,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         final ApplicationConfigurator configurator = configuration.applicationConfigurator(initializingContext);
         configurator.configure(manager);
 
-        if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
+        if (applicationContext instanceof ModifiableActivatorHolder modifiable) {
             for (final Annotation serviceActivator : configuration.serviceActivators())
-                activatingApplicationContext.addActivator(serviceActivator);
+                modifiable.addActivator(serviceActivator);
         }
 
         // Always load Hartshorn internals first
@@ -125,15 +117,6 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
         if (activator.includeBasePackage())
             scanPrefixes.add(configuration.activator().type().getPackageName());
-
-        final Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())
-                .map(InjectConfig::value)
-                .map(TypeContext::of)
-                .map(applicationContext::get)
-                .collect(Collectors.toSet());
-
-        configurator.apply(manager, configurations);
-        configurator.apply(manager, configuration.injectConfigurations());
 
         for (final String prefix : scanPrefixes)
             configurator.bind(manager, prefix);
@@ -150,7 +133,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
     protected void finalize(final ApplicationContext applicationContext, final ApplicationManager manager) {
         if (manager instanceof ObservableApplicationManager observable) {
-            for (final LifecycleObserver observer : observable.observers())
+            for (final LifecycleObserver observer : observable.observers(LifecycleObserver.class))
                 observer.onStarted(applicationContext);
         }
 

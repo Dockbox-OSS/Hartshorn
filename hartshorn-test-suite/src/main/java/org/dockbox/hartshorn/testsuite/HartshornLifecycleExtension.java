@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 import org.dockbox.hartshorn.application.ServiceImpl;
 import org.dockbox.hartshorn.application.StandardApplicationFactory;
@@ -104,7 +105,7 @@ public class HartshornLifecycleExtension implements
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        final ApplicationFactory applicationFactory = this.prepareFactory(testClass, testComponentSources);
+        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(testClass, testComponentSources);
         final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationFactory, testClass).orNull();
         if (applicationContext == null) {
             if (applicationContext == null) throw new IllegalStateException("Could not create application context");
@@ -170,7 +171,7 @@ public class HartshornLifecycleExtension implements
         ApplicationFactory<?, ?> applicationFactory = new StandardApplicationFactory()
                 .loadDefaults()
                 .applicationFSProvider(ctx -> new JUnitFSProvider())
-                .componentLocator(ctx -> this.getComponentLocator(ctx.applicationContext(), testComponentSources));
+                .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources));
 
         final TypeContext<VirtualServiceActivator> virtualActivator = TypeContext.of(VirtualServiceActivator.class);
         final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
@@ -182,6 +183,7 @@ public class HartshornLifecycleExtension implements
         final ServiceActivatorImpl serviceActivator = new ServiceActivatorImpl();
         modifier.add(serviceActivator);
 
+        final List<String> arguments = new ArrayList<>();
         elements.stream().map(e -> {
             if (e instanceof Class<?> clazz) {
                 return TypeContext.of(clazz);
@@ -191,12 +193,15 @@ public class HartshornLifecycleExtension implements
             }
             return null;
         }).filter(Objects::nonNull).forEach(context -> {
-            context.annotation(HartshornTest.class).present(annotation -> {
-                serviceActivator.addProcessors(annotation.processors());
-            });
+            context.annotation(HartshornTest.class)
+                    .present(annotation -> serviceActivator.addProcessors(annotation.processors()));
+            context.annotation(TestProperties.class)
+                    .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         });
 
-        applicationFactory.serviceActivator(new VirtualServiceActivator.Impl());
+        applicationFactory
+                .arguments(arguments.toArray(new String[0]))
+                .serviceActivator(new VirtualServiceActivator.Impl());
 
         final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
         for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
@@ -216,22 +221,21 @@ public class HartshornLifecycleExtension implements
                     applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
                 }
                 else {
-                    throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
+                    throw new InvalidFactoryModifierException("parameters", parameters.get(0));
                 }
-
                 jlrMethod.setAccessible(false);
             }
             else {
-                throw new IllegalStateException("Invalid return type for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + factoryModifier.returnType().name());
+                throw new InvalidFactoryModifierException("return type", factoryModifier.returnType());
             }
         }
 
         return applicationFactory;
     }
 
-    private ComponentLocator getComponentLocator(final ApplicationContext applicationContext, final AnnotatedElement... testComponentSources) {
-        final ComponentLocator componentLocator = new ComponentLocatorImpl(applicationContext);
-        ((ModifiableActivatorHolder) applicationContext).addActivator(new ServiceImpl());
+    private ComponentLocator getComponentLocator(final InitializingContext context, final AnnotatedElement... testComponentSources) {
+        final ComponentLocator componentLocator = new ComponentLocatorImpl(context);
+        ((ModifiableActivatorHolder) context.applicationContext()).addActivator(new ServiceImpl());
 
         for (final AnnotatedElement testComponentSource : testComponentSources) {
             if (testComponentSource == null) continue;

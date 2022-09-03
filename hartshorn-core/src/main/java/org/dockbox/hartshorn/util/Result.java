@@ -149,51 +149,6 @@ public final class Result<T> {
     }
 
     /**
-     * Provides a {@link Result} instance based on a provided <code>condition</code>. If the condition
-     * is met, the value of <code>ifTrue</code> is used. If the condition is not met the {@link Throwable}
-     * provided by <code>ifFalseException</code> is used.
-     *
-     * @param condition The condition
-     * @param ifTrue The value if the condition is met
-     * @param ifFalseException The throwable if the condition is not met
-     * @param <T> The type of the value
-     *
-     * @return The {@link Result}
-     */
-    @NonNull
-    public static <T> Result<T> of(@NonNull final Callable<Boolean> condition, @NonNull final Callable<T> ifTrue, @NonNull final Supplier<Throwable> ifFalseException) {
-        return of(condition, ifTrue, () -> null, ifFalseException);
-    }
-
-    /**
-     * Provides a {@link Result} instance based on a provided <code>condition</code>. If the condition
-     * is met, the value of <code>ifTrue</code> is used. If the condition is not met the {@link Throwable}
-     * provided by <code>ifFalseException</code> is used together with the value of <code>ifFalse</code>.
-     *
-     * @param condition The condition
-     * @param ifTrue The value if the condition is met
-     * @param ifFalse The value if the condition is not met
-     * @param ifFalseException The throwable if the condition is not met
-     * @param <T> The type of the value
-     *
-     * @return The {@link Result}
-     */
-    @NonNull
-    public static <T> Result<T> of(@NonNull final Callable<@NonNull Boolean> condition,
-                                   @NonNull final Callable<@Nullable T> ifTrue,
-                                   @NonNull final Supplier<@Nullable T> ifFalse,
-                                   @NonNull final Supplier<@Nullable Throwable> ifFalseException)
-    {
-        try {
-            if (condition.call()) return of(ifTrue);
-            else return of(ifFalse.get(), ifFalseException.get());
-        }
-        catch (final Throwable e) {
-            return of(e);
-        }
-    }
-
-    /**
      * Return the value if present, otherwise invoke {@code other} and return the result of that
      * invocation.
      *
@@ -515,7 +470,7 @@ public final class Result<T> {
 
     /**
      * Return the contained value, if present, otherwise throw the provided exception. The provided
-     * exception is rethrown as unchecked, so it need not be declared in a throws clause.
+     * exception is rethrown as unchecked, so it need not be declared in a {@code throws} clause.
      *
      * @param exceptionSupplier The supplier which will return the exception to be thrown.
      * @return The present value
@@ -643,11 +598,11 @@ public final class Result<T> {
      */
     @NonNull
     public T get() {
-        if (null == this.value) {
-            throw new NoSuchElementException("No value present");
-        }
         if (null != this.throwable) {
             this.rethrowUnchecked();
+        }
+        if (null == this.value) {
+            throw new NoSuchElementException("No value present");
         }
         return this.value;
     }

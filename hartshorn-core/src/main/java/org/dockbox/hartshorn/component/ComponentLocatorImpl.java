@@ -16,38 +16,28 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ObservingApplicationContext;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.HashSetMultiMap;
-import org.dockbox.hartshorn.util.MultiMap;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ComponentLocatorImpl implements ComponentLocator {
 
-    private final MultiMap<String, ComponentContainer> cache = new HashSetMultiMap<>();
+    private final MultiMap<String, ComponentContainer> cache = new SynchronizedHashSetMultiMap<>();
     private final ApplicationContext applicationContext;
-    private final Set<ComponentActivationFilter> activationFilters = ConcurrentHashMap.newKeySet();
+    private final ConditionMatcher conditionMatcher;
 
-    public ComponentLocatorImpl(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        this.registerDefaultActivationFilters();
-    }
-
-    protected void registerDefaultActivationFilters() {
-        this.registerActivationFilter(new ActivatorPresenceActivationFilter(this.applicationContext()));
-        this.registerActivationFilter(new TypePresenceActivationFilter());
-    }
-
-    public void registerActivationFilter(final ComponentActivationFilter activationFilter) {
-        if (activationFilter == null) return;
-        this.activationFilters.add(activationFilter);
+    public ComponentLocatorImpl(final InitializingContext context) {
+        this.applicationContext = context.applicationContext();
+        this.conditionMatcher = context.conditionMatcher();
     }
 
     public ApplicationContext applicationContext() {
@@ -74,7 +64,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
                 .map(ComponentContainer.class::cast).toList();
 
         final List<ComponentContainer> filteredComponentContainers = newComponentContainers.stream()
-                .filter(container -> this.activationFilters.stream().allMatch(activationFilter -> activationFilter.doActivate(container.type(), container)))
+                .filter(container -> this.conditionMatcher.match(container.type()))
                 .toList();
 
         final long duration = System.currentTimeMillis() - start;
@@ -92,7 +82,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
     public void register(final TypeContext<?> type) {
         if (this.container(type).absent()) {
             final ComponentContainer container = new ComponentContainerImpl(this.applicationContext(), type);
-            if (!container.type().isAnnotation() && this.activationFilters.stream().allMatch(activationFilter -> activationFilter.doActivate(container.type(), container))) {
+            if (!container.type().isAnnotation() && this.conditionMatcher.match(container.type())) {
                 this.cache.put(type.type().getPackageName(), container);
                 if (this.applicationContext() instanceof ObservingApplicationContext context) {
                     context.componentAdded(container);

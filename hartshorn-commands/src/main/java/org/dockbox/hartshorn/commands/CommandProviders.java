@@ -16,16 +16,25 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.beans.Bean;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
+import org.dockbox.hartshorn.commands.extension.CooldownExtension;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import jakarta.inject.Singleton;
 
-@Service(activators = UseCommands.class)
+@Service
+@RequiresActivator(UseCommands.class)
 public class CommandProviders {
+
+    @Bean
+    public static CooldownExtension cooldownExtension() {
+        return new CooldownExtension();
+    }
 
     @Provider
     public Class<? extends CommandListener> listener() {
@@ -50,7 +59,7 @@ public class CommandProviders {
     }
 
     @Provider("command_loader")
-    public ParameterLoader parameterLoader() {
+    public ParameterLoader<?> parameterLoader() {
         return new CommandParameterLoader();
     }
 }

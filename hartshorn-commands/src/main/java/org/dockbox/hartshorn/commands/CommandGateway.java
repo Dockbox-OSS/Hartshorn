@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;

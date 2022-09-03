@@ -16,23 +16,22 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
+import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.ArrayListMultiMap;
-import org.dockbox.hartshorn.component.Enableable;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.MultiMap;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,15 +39,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
 /**
  * Simple implementation of {@link CommandGateway}.
  */
 @Component
-public class CommandGatewayImpl implements CommandGateway, Enableable {
+public class CommandGatewayImpl implements CommandGateway {
 
-    private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
+    private final transient MultiMap<String, CommandExecutorContext> contexts = new CopyOnWriteArrayListMultiMap<>();
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
 
     @Inject
@@ -66,16 +66,14 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
         return this.extensions;
     }
 
-    @Override
-    public boolean canEnable() {
-        return this.extensions.isEmpty();
-    }
-
-    @Override
+    @PostConstruct
     public void enable() {
-        for (final TypeContext<? extends CommandExecutorExtension> extension : this.context.environment().children(CommandExecutorExtension.class)) {
-            this.context.log().debug("Adding extension " + extension.name() + " to command gateway");
-            this.add(this.context.get(extension));
+        if (this.extensions.isEmpty()) {
+            final CommandExtensionContext extensionContext = this.context.first(CommandExtensionContext.class).get();
+            for (final CommandExecutorExtension extension : extensionContext.extensions()) {
+                this.context.log().debug("Adding extension " + TypeContext.of(extension).name() + " to command gateway");
+                this.add(extension);
+            }
         }
     }
 
@@ -150,7 +148,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     @Override
     public void register(final CommandExecutorContext context) {
         final Result<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
-        if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
+        if (container.absent()) throw new InvalidExecutorException("Executor contexts should contain at least one container context");
 
         final List<String> aliases;
         final TypeContext<?> typeContext = context.parent();
@@ -162,7 +160,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
             aliases = container.get().aliases();
         }
         else {
-            throw new IllegalArgumentException("Executor should either be declared in command type or container should provide aliases");
+            throw new InvalidExecutorException("Executor should either be declared in command type or container should provide aliases");
         }
 
         for (final String alias : aliases) {

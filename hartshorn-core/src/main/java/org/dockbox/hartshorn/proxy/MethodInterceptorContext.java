@@ -53,8 +53,8 @@ public class MethodInterceptorContext<T> {
         this(context.method.method(), context.args, context.instance, context.callable, context.customInvocation, result);
     }
 
-    public MethodInterceptorContext(final Method method, final Object[] args, final T instance, final Callable<Object> callable, final CustomInvocation customInvocation) {
-        this(method, args, instance, callable, customInvocation, MethodContext.of(method).returnType().defaultOrNull());
+    public MethodInterceptorContext(final Method method, final Object[] args, final T instance, final CustomInvocation customInvocation) {
+        this(method, args, instance, customInvocation.toCallable(args), customInvocation, MethodContext.of(method).returnType().defaultOrNull());
     }
 
     /**

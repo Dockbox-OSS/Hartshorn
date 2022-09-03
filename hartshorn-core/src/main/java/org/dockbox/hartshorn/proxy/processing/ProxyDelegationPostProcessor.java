@@ -17,16 +17,14 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
-import java.lang.annotation.Annotation;
-
-public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends FunctionalComponentPostProcessor {
+public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponentPostProcessor {
 
     protected abstract Class<P> parentTarget();
 
@@ -42,12 +40,12 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));
+        final ProxyFactory<P, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         if (this.skipConcreteMethods()) {
             // Ensure we keep the original instance as delegate, to avoid losing context. This rule is defined by the finalizing process.
-            factory.delegate(instance);
+            factory.delegate((P) instance);
             factory.delegateAbstract(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
         }
         else {
