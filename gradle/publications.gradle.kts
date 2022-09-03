@@ -25,25 +25,25 @@ configure<PublishingExtension> {
             from(components["java"])
 
             pom {
-                afterEvaluate {
-                    description = project.description
-                    url.set("https://github.com/GuusLieben")
-                }
+                name.set(project.name as String)
+                description.set(project.description as String)
+                url.set("https://github.com/Dockbox-OSS/Hartshorn/")
+
                 organization {
                     name.set("Hartshorn")
-                    url.set("https://github.com/GuusLieben")
+                    url.set("https://github.com/Dockbox-OSS")
                 }
                 licenses {
                     license {
                         name.set("Apache License, Version 2.0")
-                        url.set("https://github.com/GuusLieben/Hartshorn/blob/develop/LICENSE")
+                        url.set("https://github.com/Dockbox-OSS/Hartshorn/blob/develop/LICENSE")
                         distribution.set("repo")
                     }
                 }
                 scm {
-                    url.set("https://www.github.com/GuusLieben/Hartshorn")
-                    connection.set("scm:git:git://github.com/GuusLieben/Hartshorn")
-                    developerConnection.set("scm:git:git://github.com/GuusLieben/Hartshorn")
+                    url.set("https://www.github.com/Dockbox-OSS/Hartshorn")
+                    connection.set("scm:git:git://github.com/Dockbox-OSS/Hartshorn")
+                    developerConnection.set("scm:git:git://github.com/Dockbox-OSS/Hartshorn")
                 }
                 developers {
                     developer {
@@ -54,7 +54,7 @@ configure<PublishingExtension> {
                 }
                 issueManagement {
                     system.set("GitHub")
-                    url.set("https://www.github.com/GuusLieben/Hartshorn/issues")
+                    url.set("https://www.github.com/Dockbox-OSS/Hartshorn/issues")
                 }
             }
             versionMapping {
