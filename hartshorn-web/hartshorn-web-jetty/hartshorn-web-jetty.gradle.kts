@@ -19,6 +19,6 @@ apply {
 }
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-web'
-    implementation libs.bundles.jetty
+    implementation("org.dockbox.hartshorn:hartshorn-web")
+    implementation(libs.bundles.jetty)
 }

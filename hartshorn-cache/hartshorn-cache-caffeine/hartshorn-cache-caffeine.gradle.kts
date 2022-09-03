@@ -19,6 +19,6 @@ apply {
 }
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-cache'
-    implementation libs.caffeine
+    implementation("org.dockbox.hartshorn:hartshorn-cache")
+    implementation(libs.caffeine)
 }

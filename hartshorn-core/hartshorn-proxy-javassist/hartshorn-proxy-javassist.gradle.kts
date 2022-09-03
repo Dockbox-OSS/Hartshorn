@@ -19,5 +19,5 @@ apply {
 }
 
 dependencies {
-    implementation libs.javassist
+    implementation(libs.javassist)
 }

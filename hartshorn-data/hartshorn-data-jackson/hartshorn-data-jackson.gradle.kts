@@ -19,6 +19,6 @@ apply {
 }
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-data'
-    implementation libs.bundles.jackson
+    implementation("org.dockbox.hartshorn:hartshorn-data")
+    implementation(libs.bundles.jackson)
 }

@@ -19,5 +19,5 @@ apply {
 }
 
 dependencies {
-    implementation libs.cglib
+    implementation(libs.cglib)
 }

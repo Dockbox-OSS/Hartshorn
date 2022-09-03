@@ -18,17 +18,23 @@ rootProject.name = "Hartshorn"
 gradle.startParameter.isContinueOnFailure = true
 
 includeAll(rootDir, "")
+configureChildren(rootProject)
 
 fun includeAll(dir: File, prefix: String) {
     dir.listFiles()?.forEach {
         if (it.isDirectory && File(it, "${it.name}.gradle.kts").exists()) {
             include("${prefix}:${it.name}")
             // Include all nested projects
-            includeAll(it, it.name)
+            includeAll(it, ":${it.name}")
         }
     }
 }
 
-rootProject.children.forEach {
-    it.buildFileName = "${it.name}.gradle.kts"
+fun configureChildren(project: ProjectDescriptor) {
+    if (project.children.isNotEmpty()) {
+        project.children.forEach {
+            it.buildFileName = "${it.name}.gradle.kts"
+            configureChildren(it)
+        }
+    }
 }

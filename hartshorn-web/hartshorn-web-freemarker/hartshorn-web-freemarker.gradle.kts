@@ -19,6 +19,6 @@ apply {
 }
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-web'
-    implementation libs.freemarker
+    implementation("org.dockbox.hartshorn:hartshorn-web")
+    implementation(libs.freemarker)
 }
