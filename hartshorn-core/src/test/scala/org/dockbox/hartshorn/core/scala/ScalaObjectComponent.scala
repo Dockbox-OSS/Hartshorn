@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.core.scala
 
-plugins {
-    kotlin("jvm") version "1.7.10"
-    scala
-}
+import org.dockbox.hartshorn.component.Component
 
-dependencies {
-    api(libs.bundles.jakarta)
-    api(libs.javassist)
-    api(libs.cglib)
-
-    implementation(libs.reflections)
-    implementation(libs.logback)
-
-    testImplementation(libs.scala)
-}
+@Component
+object ScalaObjectComponent

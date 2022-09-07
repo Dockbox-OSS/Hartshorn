@@ -67,6 +67,7 @@ allprojects {
         include(
                 "**/*.java",
                 "**/*.kt",
+                "**/*.scala",
                 "**/*.yml",
                 "**/*.properties",
                 "**/*.toml",
