@@ -64,7 +64,15 @@ allprojects {
     license {
         header.set(resources.text.fromFile(rootProject.file("HEADER.txt")))
         ignoreFailures.set(false)
-        include("**/*.java")
+        include(
+                "**/*.java",
+                "**/*.kt",
+                "**/*.groovy",
+                "**/*.scala",
+                "**/*.yml",
+                "**/*.properties",
+                "**/*.toml",
+        )
     }
 
     java {
