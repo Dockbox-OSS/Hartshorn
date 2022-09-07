@@ -39,6 +39,7 @@ caffeine = "3.1.1"
 cglib = "3.3.0"
 derby = "10.16.1.1"
 freemarker = "2.3.31"
+groovy = "4.0.2"
 hamcrest = "2.2"
 hibernate = "6.1.2.Final"
 httpclient = "4.5.13"
@@ -99,6 +100,7 @@ cglib = { module = "cglib:cglib", version.ref = "cglib" }
 derby = { module = "org.apache.derby:derby", version.ref = "derby" }
 derby-tools = { module = "org.apache.derby:derbytools", version.ref = "derby" }
 freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
+groovy = { module = "org.apache.groovy:groovy-all", version.ref = "groovy" }
 hamcrest = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest" }
 hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
 httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpclient" }
