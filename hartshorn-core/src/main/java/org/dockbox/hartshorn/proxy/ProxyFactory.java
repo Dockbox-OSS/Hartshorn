@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 
 import java.lang.reflect.Method;
@@ -309,6 +310,23 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @throws ApplicationException If the proxy could not be created
      */
     Result<T> proxy() throws ApplicationException;
+
+    /**
+     * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
+     * invokes the given {@link ConstructorContext} to create the proxy instance. This also creates a new
+     * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
+     * known behaviors.
+     *
+     * <p>If the proxy could not be created, {@link Result#empty()} will be returned. If the proxy is
+     * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
+     * throw an {@link ApplicationException}, or use {@link Result#error()}.
+     *
+     * @param constructor The constructor to use
+     * @param args The arguments to pass to the constructor
+     * @return A proxy instance
+     * @throws ApplicationException If the proxy could not be created
+     */
+    Result<T> proxy(ConstructorContext<T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.
