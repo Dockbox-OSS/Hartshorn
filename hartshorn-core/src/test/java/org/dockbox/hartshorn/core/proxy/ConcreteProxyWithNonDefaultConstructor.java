@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy;
+package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
-public interface ProxyConstructorFunction<T> {
-    T create() throws ApplicationException;
-    T create(ConstructorContext<T> constructor, Object[] args) throws ApplicationException;
+public class ConcreteProxyWithNonDefaultConstructor {
+
+    private final ApplicationContext applicationContext;
+
+    public ConcreteProxyWithNonDefaultConstructor(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 }

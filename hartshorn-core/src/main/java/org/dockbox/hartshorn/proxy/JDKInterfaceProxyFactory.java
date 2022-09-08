@@ -20,6 +20,8 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
+import org.dockbox.hartshorn.util.reflect.ConstructorContext;
 import org.dockbox.hartshorn.util.reflect.FieldContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
@@ -33,6 +35,21 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
 
     @Override
     public Result<T> proxy() throws ApplicationException {
+        return this.createProxy(interceptor -> this.type().isInterface()
+                ? this.interfaceProxy(interceptor)
+                : this.concreteOrAbstractProxy(interceptor));
+    }
+
+    @Override
+    public Result<T> proxy(final ConstructorContext<T> constructor, final Object[] args) throws ApplicationException {
+        if (args.length != constructor.parameterCount()) {
+            throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
+        }
+        if (this.type().isInterface()) return this.proxy(); // Cannot invoke constructor on interface
+        else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
+    }
+
+    protected Result<T> createProxy(final CheckedFunction<StandardMethodInterceptor<T>, Result<T>> instantiate) throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
 
         this.contextContainer().contexts().forEach(manager::add);
@@ -40,9 +57,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
 
         final StandardMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationContext());
 
-        final Result<T> proxy = this.type().isInterface()
-                ? this.interfaceProxy(interceptor)
-                : this.concreteOrAbstractProxy(interceptor);
+        final Result<T> proxy = instantiate.apply(interceptor);
 
         proxy.present(manager::proxy);
         return proxy;
@@ -55,9 +70,17 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(StandardMethodInterceptor<T> interceptor);
 
     protected Result<T> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor) throws ApplicationException {
+        return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
+    }
+
+    protected Result<T> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor, final ConstructorContext<T> constructor, final Object[] args) throws ApplicationException {
+        return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
+    }
+
+    protected Result<T> createClassProxy(final StandardMethodInterceptor<T> interceptor, final CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
         final ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
-            final T proxy = enhancer.create();
+            final T proxy = instantiate.apply(enhancer);
             if (this.typeDelegate() != null) this.restoreFields(this.typeDelegate(), proxy);
             return Result.of(proxy);
         }

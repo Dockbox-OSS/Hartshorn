@@ -20,11 +20,14 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class ComponentFinalizingPostProcessor implements ComponentPostProcessor {
 
@@ -34,8 +37,10 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor 
         if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
             final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
             try {
-                if (((StateAwareProxyFactory<?, ?>) factory).modified() || (instance == null && key.type().isAbstract())) {
-                    finalizingInstance = factory.proxy().or(instance);
+                final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
+                final boolean noConcreteInstancePossible = instance == null && key.type().isAbstract();
+                if (stateModified || noConcreteInstancePossible) {
+                    finalizingInstance = this.createProxyInstance(context, factory, instance);
                 }
             }
             catch (final ApplicationException e) {
@@ -43,6 +48,20 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor 
             }
         }
         return context.get(ComponentPopulator.class).populate(finalizingInstance);
+    }
+
+    protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T, ?> factory, @Nullable final T instance) throws ApplicationException {
+        final TypeContext<T> factoryType = TypeContext.of(factory.type());
+        // Ensure we use a non-default constructor if there is no default constructor to use
+        if (!factoryType.isInterface() && factoryType.defaultConstructor().absent()) {
+            final ConstructorContext<T> constructorContext = CyclingConstructorAnalyzer.findConstructor(factoryType)
+                    .rethrowUnchecked()
+                    .orThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
+
+            final Object[] arguments = constructorContext.arguments(context);
+            return factory.proxy(constructorContext, arguments).or(instance);
+        }
+        return factory.proxy().or(instance);
     }
 
     @Override

@@ -39,6 +39,8 @@ import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -144,6 +146,18 @@ public class ProxyTests {
 
         final InterfaceProxy proxyInstance = proxy.get();
         Assertions.assertEquals("concrete", proxyInstance.name());
+    }
+
+    @Test
+    void testConcreteProxyWithNonDefaultConstructorUsesConstructor() {
+        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor, ?> factory = this.applicationContext.environment().manager().factory(ConcreteProxyWithNonDefaultConstructor.class);
+
+        final ConstructorContext<ConcreteProxyWithNonDefaultConstructor> constructor = TypeContext.of(ConcreteProxyWithNonDefaultConstructor.class).constructors().get(0);
+        final Result<ConcreteProxyWithNonDefaultConstructor> proxy = Assertions.assertDoesNotThrow(() -> factory.proxy(constructor, new Object[]{this.applicationContext}));
+        Assertions.assertTrue(proxy.present());
+
+        final ConcreteProxyWithNonDefaultConstructor proxyInstance = proxy.get();
+        Assertions.assertSame(this.applicationContext, proxyInstance.applicationContext());
     }
 
     @ParameterizedTest
