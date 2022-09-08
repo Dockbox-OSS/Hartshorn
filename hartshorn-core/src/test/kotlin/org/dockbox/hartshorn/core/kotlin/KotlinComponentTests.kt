@@ -56,11 +56,11 @@ class KotlinComponentTests {
         Assertions.assertTrue(container.present())
 
         if (applicationContextFunction != null) {
-            Assertions.assertEquals(this.applicationContext, applicationContextFunction(component))
+            Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
         }
 
         if (applicationManagerFunction != null) {
-            Assertions.assertEquals(this.applicationContext.environment().manager(), applicationManagerFunction(component))
+            Assertions.assertSame(this.applicationContext.environment().manager(), applicationManagerFunction(component))
         }
 
     }
