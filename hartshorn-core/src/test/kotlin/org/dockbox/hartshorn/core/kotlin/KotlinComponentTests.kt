@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core
+package org.dockbox.hartshorn.core.kotlin
 
 import jakarta.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.application.environment.ApplicationManager
 import org.dockbox.hartshorn.component.ComponentLocator
-import org.dockbox.hartshorn.kotlin.KotlinClassComponent
-import org.dockbox.hartshorn.kotlin.KotlinInterfaceComponent
-import org.dockbox.hartshorn.kotlin.KotlinObjectComponent
-import org.dockbox.hartshorn.kotlin.KotlinSealedInterfaceComponent
 import org.dockbox.hartshorn.testsuite.HartshornTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
@@ -50,22 +47,32 @@ class KotlinComponentTests {
 
     @ParameterizedTest
     @MethodSource("components")
-    fun <T> testComponent(componentType: Class<T>) {
+    fun <T> testComponent(componentType: Class<T>, applicationContextFunction: ((T) -> ApplicationContext)?, applicationManagerFunction: ((T) -> ApplicationManager)?) {
         val component: T = this.applicationContext.get(componentType)
         Assertions.assertNotNull(component)
 
         val container = this.componentLocator.container(componentType)
         Assertions.assertNotNull(container)
         Assertions.assertTrue(container.present())
+
+        if (applicationContextFunction != null) {
+            Assertions.assertEquals(this.applicationContext, applicationContextFunction(component))
+        }
+
+        if (applicationManagerFunction != null) {
+            Assertions.assertEquals(this.applicationContext.environment().manager(), applicationManagerFunction(component))
+        }
+
     }
 
     companion object {
+        @Suppress("RedundantLambdaArrow") // 'it' in KotlinObjectComponent, required as type is not inferred.
         @JvmStatic
         fun components(): Stream<Arguments> = Stream.of(
-                Arguments.of(KotlinClassComponent::class.java),
-                Arguments.of(KotlinInterfaceComponent::class.java),
-                Arguments.of(KotlinObjectComponent::class.java),
-                Arguments.of(KotlinSealedInterfaceComponent::class.java),
+                Arguments.of(KotlinClassComponent::class.java, KotlinClassComponent::applicationContext, KotlinClassComponent::applicationManager),
+                Arguments.of(KotlinInterfaceComponent::class.java, null, null),
+                Arguments.of(KotlinObjectComponent::class.java, { it: KotlinObjectComponent -> it.applicationContext() }, null),
+                Arguments.of(KotlinSealedInterfaceComponent::class.java, null, null),
         )
     }
 }
