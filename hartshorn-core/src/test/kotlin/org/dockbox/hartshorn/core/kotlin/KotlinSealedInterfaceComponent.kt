@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.kotlin
+package org.dockbox.hartshorn.core.kotlin
 
 import org.dockbox.hartshorn.component.Component
 
 @Component
-class KotlinClassComponent
+sealed interface KotlinSealedInterfaceComponent

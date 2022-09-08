@@ -16,8 +16,28 @@
 
 package org.dockbox.hartshorn.core.groovy
 
+import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.application.environment.ApplicationManager
 import org.dockbox.hartshorn.component.Component
 
 @Component
 class GroovyClassComponent {
+
+    @Inject
+    private ApplicationContext applicationContext;
+    private ApplicationManager applicationManager
+
+    @Inject
+    GroovyClassComponent(ApplicationManager applicationManager) {
+        this.applicationManager = applicationManager
+    }
+
+    ApplicationContext applicationContext() {
+        return applicationContext
+    }
+
+    ApplicationManager applicationManager() {
+        return applicationManager
+    }
 }

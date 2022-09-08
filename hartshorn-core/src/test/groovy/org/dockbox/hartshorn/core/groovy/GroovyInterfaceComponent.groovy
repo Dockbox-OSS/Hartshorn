@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.core.groovy
 
+
 import org.dockbox.hartshorn.component.Component
 
 @Component

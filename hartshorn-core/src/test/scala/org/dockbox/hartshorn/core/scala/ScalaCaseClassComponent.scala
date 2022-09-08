@@ -16,7 +16,22 @@
 
 package org.dockbox.hartshorn.core.scala
 
+import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.application.environment.ApplicationManager
 import org.dockbox.hartshorn.component.Component
 
 @Component
-case class ScalaCaseClassComponent()
+case class ScalaCaseClassComponent @Inject() (private val applicationManager: ApplicationManager) {
+
+  @Inject
+  private var applicationContext: ApplicationContext = _
+
+  def getApplicationContext: ApplicationContext = {
+    this.applicationContext
+  }
+
+  def getApplicationManager: ApplicationManager = {
+    this.applicationManager
+  }
+}

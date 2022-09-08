@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.scala
+package org.dockbox.hartshorn.core.kotlin
 
+import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.component.Component
 
 @Component
-trait ScalaTraitComponent
+object KotlinObjectComponent {
+
+    @Inject
+    private lateinit var applicationContext: ApplicationContext
+
+    fun applicationContext(): ApplicationContext {
+        return this.applicationContext
+    }
+}

@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -70,6 +71,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         }
     };
 
+    private static final TypeContext<? extends Annotation> GROOVY_TRAIT = (TypeContext<? extends Annotation>) TypeContext.lookup("groovy.transform.Trait");
+
     // Delegates and interceptors
     private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
     private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
@@ -89,6 +92,16 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     public DefaultProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
         this.type = type;
         this.applicationContext = applicationContext;
+        this.validate();
+    }
+
+    protected void validate() {
+        if (this.isGroovyTrait(this.type))
+            throw new IllegalArgumentException("Cannot create proxy for Groovy trait " + this.type.getName());
+    }
+
+    protected boolean isGroovyTrait(final Class<?> type) {
+        return !GROOVY_TRAIT.isVoid() && GROOVY_TRAIT.isAnnotation() && type.isAnnotationPresent(GROOVY_TRAIT.type());
     }
 
     protected void updateState() {
