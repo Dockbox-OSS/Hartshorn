@@ -130,11 +130,12 @@ public class StandardMethodInterceptor<T> {
         // If no handler is known, default to the original method. This is delegated to the instance
         // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
         Invokable target = source;
-        if (this.manager.delegate().absent() && source == null)
-            target = proxy;
+        if (this.manager.delegate().absent()) {
+            if (source == null) target = proxy;
 
-        if (this.isEqualsMethod(target)) {
-            return this.proxyEquals(args[0]);
+            if (this.isEqualsMethod(target)) return this.proxyEquals(args[0]);
+            if (this.isToStringMethod(target)) return this.proxyToString(self);
+            if (this.isHashCodeMethod(target)) return this.proxyHashCode(self);
         }
 
         final Object result;
@@ -185,13 +186,35 @@ public class StandardMethodInterceptor<T> {
     protected boolean isEqualsMethod(final Invokable invokable) {
         return "equals".equals(invokable.getName())
                 && invokable.getDeclaringClass().equals(Object.class)
-                && this.manager.delegate().absent();
+                && invokable.getParameterTypes().length == 1;
+    }
+
+    protected boolean isToStringMethod(final Invokable invokable) {
+        return "toString".equals(invokable.getName())
+                && invokable.getDeclaringClass().equals(Object.class)
+                && invokable.getParameterTypes().length == 0;
+    }
+
+    protected boolean isHashCodeMethod(final Invokable invokable) {
+        return "hashCode".equals(invokable.getName())
+                && invokable.getDeclaringClass().equals(Object.class)
+                && invokable.getParameterTypes().length == 0;
     }
 
     protected boolean proxyEquals(final Object obj) {
         if (obj == null) return false;
         if (this.manager.delegate().map(instance -> instance.equals(obj)).or(false)) return true;
         return this.manager.proxy() == obj;
+    }
+
+    protected String proxyToString(final Object self) {
+        if (self == null) return "null";
+        final String canonicalName = this.manager().targetClass().getCanonicalName();
+        return "Proxy: " + canonicalName + "@" + Integer.toHexString(this.proxyHashCode(self));
+    }
+
+    protected int proxyHashCode(final Object self) {
+        return System.identityHashCode(self);
     }
 
     protected Object invokeTarget(final Object self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
@@ -219,6 +242,7 @@ public class StandardMethodInterceptor<T> {
 
     protected ProxyInvocationException invokeFailed(final Object self, final Invokable source, final Invokable target, final Object[] args, final TypeContext<T> targetType) {
         final TypeContext<Object> selfContext = TypeContext.of(self);
+
         return new ProxyInvocationException("""
                 Could not invoke local method %s (targeting %s) on proxy %s of qualified type %s(isProxy=%s) with arguments %s.
                 This typically indicates that there is no appropriate proxy property (delegate or interceptor) for the method.
