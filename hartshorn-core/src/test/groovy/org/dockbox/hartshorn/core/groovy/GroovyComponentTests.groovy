@@ -26,7 +26,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
 import java.util.stream.Stream
-
 /**
  * Tests compatibility with Groovy classes, traits and interfaces.
  * This is similar to the tests seen in {@code KotlinComponentTests} and {@code ScalaComponentsTests}.
@@ -47,20 +46,30 @@ class GroovyComponentTests {
 
     @ParameterizedTest
     @MethodSource("components")
-    <T> void testComponent(Class<T> componentType) {
+    <T> void testComponent(Class<T> componentType, applicationContextFunction, applicationManagerFunction) {
         def component = this.applicationContext.get(componentType)
         Assertions.assertNotNull(component)
 
         def container = this.componentLocator.container(componentType)
         Assertions.assertNotNull(container)
         Assertions.assertTrue(container.present())
+
+        if (applicationContextFunction != null) {
+            Assertions.assertEquals(this.applicationContext, applicationContextFunction(component))
+        }
+
+        if (applicationManagerFunction != null) {
+            Assertions.assertEquals(this.applicationContext.environment().manager(), applicationManagerFunction(component))
+        }
     }
 
     static Stream<Arguments> components() {
         return Stream.of(
-                Arguments.of(GroovyInterfaceComponent.class),
-                Arguments.of(GroovyTraitComponent.class),
-                Arguments.of(GroovyClassComponent.class),
+                Arguments.of(GroovyInterfaceComponent.class, null, null),
+                Arguments.of(GroovyClassComponent.class,
+                        { GroovyClassComponent component -> component.applicationContext() },
+                        { GroovyClassComponent component -> component.applicationManager() },
+                ),
         )
     }
 }
