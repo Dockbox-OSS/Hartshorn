@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.core.scala
 
 import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context
 import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.application.environment.ApplicationManager
 import org.dockbox.hartshorn.component.ComponentLocator
 import org.dockbox.hartshorn.testsuite.HartshornTest
 import org.junit.jupiter.api.Assertions
@@ -46,22 +48,29 @@ class ScalaComponentTests {
 
   @ParameterizedTest
   @MethodSource(Array("components"))
-  def testComponent[T](componentType: Class[T]): Unit = {
+  def testComponent[T](componentType: Class[T], applicationContextFunction: T => ApplicationContext, applicationManagerFunction: T => ApplicationManager): Unit = {
     val component = this.applicationContext.get(componentType)
     Assertions.assertNotNull(component)
 
     val container = this.componentLocator.container(componentType)
     Assertions.assertNotNull(container)
     Assertions.assertTrue(container.present())
+
+    if (applicationContextFunction != null) {
+      Assertions.assertEquals(this.applicationContext, applicationContextFunction(component))
+    }
+
+    if (applicationManagerFunction != null) {
+      Assertions.assertEquals(this.applicationContext.environment().manager(), applicationManagerFunction(component))
+    }
   }
 }
 
 object ScalaComponentTests {
 
   def components(): Stream[Arguments] = Stream.of(
-      Arguments.of(classOf[ScalaCaseClassComponent]),
-      Arguments.of(classOf[ScalaClassComponent]),
-      Arguments.of(ScalaObjectComponent.getClass),
-      Arguments.of(classOf[ScalaTraitComponent])
+      Arguments.of(classOf[ScalaCaseClassComponent], (_: ScalaCaseClassComponent).getApplicationContext, (_: ScalaCaseClassComponent).getApplicationManager),
+      Arguments.of(classOf[ScalaClassComponent], (_: ScalaClassComponent).getApplicationContext, (_: ScalaClassComponent).getApplicationManager),
+      Arguments.of(ScalaObjectComponent.getClass, (_: ScalaObjectComponent.type).getApplicationContext, null),
     )
 }

@@ -16,7 +16,17 @@
 
 package org.dockbox.hartshorn.core.scala
 
+import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.component.Component
 
 @Component
-object ScalaObjectComponent
+object ScalaObjectComponent {
+
+  @Inject
+  private var applicationContext: ApplicationContext = _
+
+  def getApplicationContext: ApplicationContext = {
+    this.applicationContext
+  }
+}
