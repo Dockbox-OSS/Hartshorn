@@ -80,7 +80,7 @@ public abstract class ExecutableElementContext<A extends Executable, P> extends 
         return this.parent;
     }
 
-    protected Object[] arguments(final ApplicationContext context) {
+    public Object[] arguments(final ApplicationContext context) {
         final ParameterLoaderContext loaderContext = new ParameterLoaderContext(this, null, null, context);
         return this.parameterLoader.loadArguments(loaderContext).toArray();
     }
