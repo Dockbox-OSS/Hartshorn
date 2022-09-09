@@ -46,6 +46,7 @@ import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyLookup;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.AnnotationLookup;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -100,6 +101,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     protected abstract void prepareInitialization();
 
     protected void registerDefaultBindings(final InitializingContext context) {
+        this.bind(AnnotationLookup.class).singleton(this.environment().manager().annotationLookup());
+
         this.bind(ComponentPopulator.class).singleton(this.componentPopulator);
         this.bind(ComponentPostConstructor.class).singleton(context.componentPostConstructor());
         this.bind(ComponentProvider.class).singleton(this);
