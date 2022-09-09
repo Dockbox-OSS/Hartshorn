@@ -40,6 +40,14 @@ import java.util.stream.Collectors;
  */
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
+    /**
+     * Non-final to allow the default lookup to be replaced with a custom one. As {@link AnnotatedElementContext}
+     * is a static context, and not attached to an active {@link org.dockbox.hartshorn.application.context.ApplicationContext},
+     * this is the only way to replace the default lookup (as DI is not possible).
+     */
+    @SuppressWarnings("FieldMayBeFinal")
+    private static AnnotationLookup ANNOTATION_LOOKUP = new VirtualHierarchyAnnotationLookup();
+
     private Map<Class<?>, Annotation> annotationCache;
 
     /**
@@ -136,14 +144,14 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
         if (annotations.containsKey(annotation))
             return Result.of(() -> (T) annotations.get(annotation));
 
-        final T oneOrNull = AnnotationHelper.oneOrNull(this.element(), annotation);
-        if (oneOrNull != null) annotations.put(annotation, oneOrNull);
-        return Result.of(oneOrNull);
+        final T virtual = ANNOTATION_LOOKUP.find(this.element(), annotation);
+        if (virtual != null) annotations.put(annotation, virtual);
+        return Result.of(virtual);
     }
 
     public <T extends Annotation> Set<T> annotations(final Class<T> annotation) {
         if (!annotation.isAnnotation()) return Collections.emptySet();
-        final List<T> annotations = AnnotationHelper.allOrEmpty(this.element(), annotation);
+        final List<T> annotations = ANNOTATION_LOOKUP.findAll(this.element(), annotation);
         return Set.copyOf(annotations);
     }
 
