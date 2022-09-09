@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.util.reflect.AnnotationLookup;
 
 /**
  * The {@link ApplicationManager} is responsible for managing the lifecycle of the application. It combines the
@@ -47,4 +48,6 @@ public interface ApplicationManager extends ContextCarrier, ApplicationLogger, A
      * @see ApplicationEnvironment#isCI()
      */
     boolean isCI();
+
+    AnnotationLookup annotationLookup();
 }
