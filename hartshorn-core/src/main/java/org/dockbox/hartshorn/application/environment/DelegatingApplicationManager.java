@@ -31,7 +31,9 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.reflect.AnnotationLookup;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.reflect.VirtualHierarchyAnnotationLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +73,7 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     private final boolean isCI;
 
     private ApplicationContext applicationContext;
+    private AnnotationLookup annotationLookup;
 
     public DelegatingApplicationManager(final ApplicationContextConfiguration configuration) {
         final InitializingContext context = new InitializingContext(null, null, this, configuration);
@@ -170,6 +173,13 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     @Override
     public boolean isCI() {
         return this.isCI;
+    }
+
+    @Override
+    public AnnotationLookup annotationLookup() {
+        if (this.annotationLookup == null)
+            this.annotationLookup = new VirtualHierarchyAnnotationLookup();
+        return this.annotationLookup;
     }
 
     @Override

@@ -18,9 +18,8 @@ package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.reflect.AnnotationHelper;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.annotation.Annotation;
@@ -109,7 +108,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     protected <A extends Annotation> Set<Class<? extends Annotation>> extensions(final Class<A> annotation) {
         if (this.annotationHierarchy.isEmpty()) {
             for (final TypeContext<? extends Annotation> annotationType : this.children(Annotation.class)) {
-                for (final Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType.type())) {
+                for (final Class<? extends Annotation> selfOrParent : this.manager().annotationLookup().annotationHierarchy(annotationType.type())) {
                     this.annotationHierarchy.put(selfOrParent, annotationType.type());
                 }
             }
