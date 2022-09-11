@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.util.introspect.annotations;
 
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-/**
- * Standard service for generating keys for {@link Cache} entries from annotated elements.
- * This is used by {@link org.dockbox.hartshorn.cache.modifiers.CacheServicePostProcessor}s
- * to generate unique keys for cache entries.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public interface KeyGenerator {
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    /**
-     * Generate a key for the given annotated element.
-     * @param element the annotated element
-     * @return the generated key
-     */
-    String generateKey(AnnotatedElementView element);
+public class DuplicateAnnotationCompositeException extends ApplicationRuntimeException {
+    public DuplicateAnnotationCompositeException(final Object target, final List<? extends Annotation> annotations) {
+        super("Found more than one annotation on " + target + ":\n"
+                + annotations.stream().map(Annotation::toString).collect(Collectors.joining("\n")));
+    }
 }

@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
+import org.dockbox.hartshorn.util.introspect.AccessModifier;
 
-/**
- * The default {@link KeyGenerator} implementation. This implementation uses the
- * {@link #hashCode()} method of the annotated element to generate a key.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class HashCodeKeyGenerator implements KeyGenerator {
+public interface ReflectionModifierCarrierView extends ModifierCarrierView {
+
+    int modifiers();
 
     @Override
-    public String generateKey(final AnnotatedElementView element) {
-        return element.name() + "_" + element.hashCode();
+    default boolean has(final AccessModifier modifier) {
+        return modifier.test(this.modifiers());
     }
 }

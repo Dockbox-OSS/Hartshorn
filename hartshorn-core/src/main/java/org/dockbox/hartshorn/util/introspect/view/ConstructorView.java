@@ -14,21 +14,30 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.Result;
 
-/**
- * The default {@link KeyGenerator} implementation. This implementation uses the
- * {@link #hashCode()} method of the annotated element to generate a key.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class HashCodeKeyGenerator implements KeyGenerator {
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.List;
 
-    @Override
-    public String generateKey(final AnnotatedElementView element) {
-        return element.name() + "_" + element.hashCode();
+public interface ConstructorView<T> extends ExecutableElementView<T> {
+
+    Constructor<T> constructor();
+
+    default Result<T> create(final Object... arguments) {
+        return this.create(List.of(arguments));
     }
+
+    Result<T> create(Collection<?> arguments);
+
+    Result<T> createWithContext();
+
+    TypeView<T> type();
+
+    String name();
+
+    String qualifiedName();
+
 }

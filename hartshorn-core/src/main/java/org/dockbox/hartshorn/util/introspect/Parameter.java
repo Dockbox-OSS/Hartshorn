@@ -14,40 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache.annotations;
-
-import org.dockbox.hartshorn.cache.KeyGenerator;
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+package org.dockbox.hartshorn.util.introspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Method decorator to indicate the method can be used to evict a cache.
- * @author Guus Lieben
- * @since 21.2
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@Extends(CacheDecorator.class)
-public @interface EvictCache {
-
-    /**
-     * @see CacheDecorator#cacheName() ()
-     */
-    @AliasFor("cacheName")
-    String value() default "";
-
-    /**
-     * @see CacheDecorator#keyGenerator()
-     */
-    Class<? extends KeyGenerator> keyGenerator() default KeyGenerator.class;
-
-    /**
-     * @see CacheDecorator#key()
-     */
-    String key() default "";
+@Target(ElementType.PARAMETER)
+public @interface Parameter {
+    String value();
 }

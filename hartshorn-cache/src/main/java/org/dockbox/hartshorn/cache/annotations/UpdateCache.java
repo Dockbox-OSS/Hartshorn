@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.cache.KeyGenerator;
-import org.dockbox.hartshorn.util.reflect.AliasFor;
-import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
 public @interface UpdateCache {
 
     /**
-     * @see CacheDecorator#cacheName() ()
+     * @see CacheDecorator#cacheName()
      */
     @AliasFor("cacheName")
     String value() default "";

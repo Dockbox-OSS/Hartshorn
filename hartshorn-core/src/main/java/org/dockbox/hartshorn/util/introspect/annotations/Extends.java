@@ -14,43 +14,34 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache.annotations;
+package org.dockbox.hartshorn.util.introspect.annotations;
 
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An extension of {@link Service} which registers the service as
- * a cache owner. The {@link #value()} is used as the ID of the cache
- * kept in the service.
+ * Marks that the annotated annotation extends another annotation, inheriting its attributes.
+ * Similar to class inheritance, if annotation X extends annotation Y, when searching Y
+ * annotation, X annotation will also be returned.
  *
- * @see UseCaching
+ * <p>A common example of this inheritance is {@link Service}, which extends {@link Component}.
+ *
+ * <p>If an attribute in the extended (Component) annotation is also present in the extending
+ * (Service) annotation, the extending annotation will override the attribute value of the
+ * extended annotation.
  *
  * @author Guus Lieben
  * @since 21.2
+ * @see AliasFor
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Extends(Service.class)
-@Service
-@RequiresActivator(UseCaching.class)
-public @interface CacheService {
-    /**
-     * The ID of the cache kept in the service. Also used as the ID of the
-     * service itself.
-     */
-    @AliasFor("id")
-    String value();
-
-    /**
-     * @see Service#lazy()
-     */
-    boolean lazy() default false;
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface Extends {
+    Class<? extends Annotation> value();
 }

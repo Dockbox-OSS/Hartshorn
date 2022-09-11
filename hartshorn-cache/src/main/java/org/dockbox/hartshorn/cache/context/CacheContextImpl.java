@@ -42,10 +42,12 @@ public class CacheContextImpl implements CacheContext {
         this.key = key;
     }
 
+    @Override
     public CacheManager manager() {
         return this.manager;
     }
 
+    @Override
     public String cacheName() {
         return this.name;
     }

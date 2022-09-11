@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
 
-/**
- * The default {@link KeyGenerator} implementation. This implementation uses the
- * {@link #hashCode()} method of the annotated element to generate a key.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class HashCodeKeyGenerator implements KeyGenerator {
+import java.lang.annotation.Annotation;
+import java.util.List;
 
-    @Override
-    public String generateKey(final AnnotatedElementView element) {
-        return element.name() + "_" + element.hashCode();
-    }
+public interface TypeFieldsIntrospector<T> {
+
+    Result<FieldView<T, ?>> named(String name);
+
+    List<FieldView<T, ?>> all();
+
+    List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation);
+
+    <F> List<FieldView<T, ? extends F>> typed(Class<F> type);
+
+    <F> List<FieldView<T, ? extends F>> typed(GenericType<F> type);
+
 }

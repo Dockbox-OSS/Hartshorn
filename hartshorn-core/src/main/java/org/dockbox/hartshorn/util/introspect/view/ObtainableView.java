@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.Result;
 
 /**
- * Standard service for generating keys for {@link Cache} entries from annotated elements.
- * This is used by {@link org.dockbox.hartshorn.cache.modifiers.CacheServicePostProcessor}s
- * to generate unique keys for cache entries.
- *
- * @author Guus Lieben
- * @since 22.4
+ * Implementation note: this serves only as an implementation detail, not as an
+ * API contract. Should be fixed somehow to keep this in mind... (e.g. in BeanServicePreProcessor)
+ * @param <T>
  */
-public interface KeyGenerator {
-
-    /**
-     * Generate a key for the given annotated element.
-     * @param element the annotated element
-     * @return the generated key
-     */
-    String generateKey(AnnotatedElementView element);
+public interface ObtainableView<T> extends View {
+    Result<T> getWithContext();
 }
