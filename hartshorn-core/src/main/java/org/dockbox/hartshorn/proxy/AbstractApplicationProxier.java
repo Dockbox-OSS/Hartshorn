@@ -48,7 +48,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     @Override
     public <T> Result<Class<T>> real(final T instance) {
         if (instance instanceof Proxy) {
-            Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             return Result.of(proxy.manager().targetClass());
         }
         return Result.empty();
@@ -57,7 +57,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     @Override
     public <T> Result<ProxyManager<T>> manager(final T instance) {
         if (instance instanceof Proxy) {
-            Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             return Result.of(proxy.manager());
         }
         return Result.empty();
@@ -66,7 +66,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     @Override
     public <D, T extends D> Result<D> delegate(final TypeView<D> type, final T instance) {
         if (instance instanceof Proxy) {
-            Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             final ProxyManager<?> manager = proxy.manager();
             return manager.delegate(type.type());
         }
