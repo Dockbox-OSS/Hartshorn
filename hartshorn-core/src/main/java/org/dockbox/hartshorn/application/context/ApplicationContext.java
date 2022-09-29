@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ActivatorHolder;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -35,7 +36,7 @@ import java.io.Closeable;
  * environment, including components, global contexts, and properties. It also provides the ability
  * to log messages and exceptions in a standardized way.
  *
- * <p>The primary context is created by the {@link org.dockbox.hartshorn.application.ApplicationFactory}
+ * <p>The primary context is created by the {@link ApplicationBuilder}
  * and is accessible through any {@link org.dockbox.hartshorn.context.ContextCarrier} that is attached
  * to the application. If the context supports component injection, it can also be accessed through
  * any form of injection.

@@ -19,5 +19,5 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 public interface ApplicationContextConstructor<C extends ApplicationContext> {
-    <F extends ApplicationFactory<F, C>> C createContext(ApplicationContextConfiguration configuration);
+    <F extends ApplicationBuilder<F, C>> C createContext(F builder);
 }

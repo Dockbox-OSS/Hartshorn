@@ -26,13 +26,11 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
-import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 public class StandardApplicationContextConstructor implements ApplicationContextConstructor<ApplicationContext> {
@@ -44,12 +42,12 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     @Override
-    public ApplicationContext createContext(final ApplicationContextConfiguration configuration) {
-        final ApplicationManager manager = this.createManager(configuration);
-        final ApplicationContext applicationContext = this.createContext(manager, configuration);
+    public <F extends ApplicationBuilder<F, ApplicationContext>> ApplicationContext createContext(final F builder) {
+        final ApplicationManager manager = this.createManager(builder);
+        final ApplicationContext applicationContext = this.createContext(manager, builder);
 
-        this.configure(manager, applicationContext, configuration);
-        this.process(applicationContext, configuration);
+        this.configure(manager, applicationContext, builder);
+        this.process(applicationContext, builder);
         this.finalize(applicationContext, manager);
 
         return applicationContext;
@@ -67,26 +65,20 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         }, "ShutdownHook"));
     }
 
-    protected Activator activatorAnnotation(final ApplicationContextConfiguration configuration) {
-        return configuration.activator().annotation(Activator.class).get();
-    }
-
-    protected ApplicationManager createManager(final ApplicationContextConfiguration configuration) {
-        final InitializingContext context = new InitializingContext(null, null, null, configuration);
-        return configuration.manager(context);
+    protected ApplicationManager createManager(final ApplicationBuilder<?, ?> builder) {
+        final InitializingContext context = new InitializingContext(null, null, null, builder);
+        return builder.manager(context);
     }
 
     protected ApplicationEnvironment createEnvironment(final InitializingContext context) {
-        final ApplicationEnvironment environment = context.configuration().applicationEnvironment(context);
-        context.configuration().prefixes().forEach(environment.prefixContext()::prefix);
-        return environment;
+        return context.builder().applicationEnvironment(context);
     }
 
-    protected ApplicationContext createContext(final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
-        InitializingContext initializingContext = new InitializingContext(null, null, manager, configuration);
+    protected ApplicationContext createContext(final ApplicationManager manager, final ApplicationBuilder<?, ?> builder) {
+        InitializingContext initializingContext = new InitializingContext(null, null, manager, builder);
         final ApplicationEnvironment environment = this.createEnvironment(initializingContext);
 
-        initializingContext = new InitializingContext(environment, null, manager, configuration);
+        initializingContext = new InitializingContext(environment, null, manager, builder);
         return this.createContext(initializingContext);
     }
 
@@ -94,37 +86,30 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return new ClasspathApplicationContext(context);
     }
 
-    protected void configure(final ApplicationManager manager, final ApplicationContext applicationContext, final ApplicationContextConfiguration configuration) {
-        if (manager instanceof ModifiableContextCarrier modifiable) {
-            modifiable.applicationContext(applicationContext);
-        }
-
-        final InitializingContext initializingContext = new InitializingContext(applicationContext.environment(), applicationContext, manager, configuration);
-        final ApplicationConfigurator configurator = configuration.applicationConfigurator(initializingContext);
+    protected void configure(final ApplicationManager manager, final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
+        final InitializingContext initializingContext = new InitializingContext(applicationContext.environment(), applicationContext, manager, builder);
+        final ApplicationConfigurator configurator = builder.applicationConfigurator(initializingContext);
         configurator.configure(manager);
 
         if (applicationContext instanceof ModifiableActivatorHolder modifiable) {
-            for (final Annotation serviceActivator : configuration.serviceActivators())
+            for (final Annotation serviceActivator : builder.serviceActivators())
                 modifiable.addActivator(serviceActivator);
         }
 
-        // Always load Hartshorn internals first
+        // Always load Hartshorn internals first, to ensure they are available for other activators
         configurator.bind(manager, Hartshorn.PACKAGE_PREFIX);
 
-        final Activator activator = this.activatorAnnotation(configuration);
-        final Set<String> scanPackages = Set.of(activator.scanPackages());
-        final Collection<String> scanPrefixes = CollectionUtilities.merge(configuration.prefixes(), scanPackages);
-
-        if (activator.includeBasePackage())
-            scanPrefixes.add(configuration.activator().type().getPackageName());
+        final Set<String> scanPrefixes = new HashSet<>(builder.prefixes());
+        if (builder.includeBasePackages())
+            scanPrefixes.add(builder.mainClass().getPackageName());
 
         for (final String prefix : scanPrefixes)
             configurator.bind(manager, prefix);
     }
 
-    protected void process(final ApplicationContext applicationContext, final ApplicationContextConfiguration configuration) {
-        configuration.componentPreProcessors().forEach(applicationContext::add);
-        configuration.componentPostProcessors().forEach(applicationContext::add);
+    protected void process(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
+        builder.componentPreProcessors().forEach(applicationContext::add);
+        builder.componentPostProcessors().forEach(applicationContext::add);
 
         if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
             activatingApplicationContext.process();

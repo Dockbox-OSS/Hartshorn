@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationManager;
 /**
  * The {@link ApplicationConfigurator} is responsible for configuring the {@link ApplicationManager}. Configuration
  * actions can range from setting environment values to overriding internal components. Applications are configured
- * in the {@link ApplicationFactory} after the manager and {@link ApplicationContext} have been created, but before
+ * in the {@link ApplicationBuilder} after the manager and {@link ApplicationContext} have been created, but before
  * active bindings are added.
  *
  * @author Guus Lieben

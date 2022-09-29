@@ -21,25 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Indicates a class can be used as activation source by providing the
- * required metadata.
- *
- * @author Guus Lieben
- * @since 21.2
- */
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Activator {
-
-    /**
-     * Whether to include the base package of the activator class explicitly, or to only
-     * use the {@link #scanPackages() custom defined packages}.
-     */
-    boolean includeBasePackage() default true;
-
-    /**
-     * @return The default prefix for the activator. If this is left empty the package of the activation source is used
-     */
-    String[] scanPackages() default {};
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ApplicationComponent {
 }

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 /**
  * This class is responsible for configuring the application manager. This default implementation of the
@@ -69,7 +69,7 @@ public class EnvironmentDrivenApplicationConfigurator implements ApplicationConf
                 .property(property)
                 .map(value -> {
                     try {
-                        return (T) TypeContext.toPrimitive(TypeContext.of(type), value);
+                        return (T) TypeUtils.toPrimitive(type, value);
                     } catch (final TypeConversionException e) {
                         throw new ApplicationException(e);
                     }
