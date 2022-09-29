@@ -22,40 +22,37 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponentPostProcessor {
 
     protected abstract Class<P> parentTarget();
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return key.type().childOf(this.parentTarget());
+    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        // Don't use .isAssignableFrom() here, as we want to support primitive wrappers as well
+        return super.preconditions(context, instance, processingContext) && processingContext.type().isChildOf(this.parentTarget());
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        throw new UnsupportedOperationException("Processing service methods without a context is not supported");
-    }
-
-    @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final ProxyFactory<P, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
+
+        final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
 
         if (this.skipConcreteMethods()) {
             // Ensure we keep the original instance as delegate, to avoid losing context. This rule is defined by the finalizing process.
             factory.delegate((P) instance);
-            factory.delegateAbstract(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
+            factory.delegateAbstract(this.parentTarget(), concreteDelegator);
         }
         else {
-            factory.delegate(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
+            factory.delegate(this.parentTarget(), concreteDelegator);
         }
 
         return instance;
     }
 
-    protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P, ?> handler, final TypeContext<? extends P> parent) {
+    protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P, ?> handler, final Class<? extends P> parent) {
         return context.get(this.parentTarget());
     }
 

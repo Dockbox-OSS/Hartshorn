@@ -18,14 +18,14 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.inject.Key;
 
 public interface ServicePreProcessor extends ComponentPreProcessor {
 
     @Override
-    default boolean modifies(final ApplicationContext context, final Key<?> key) {
-        return key.type().annotation(Service.class).present() && this.preconditions(context, key);
+    default <T> boolean preconditions(final ComponentProcessingContext<T> processingContext) {
+        return processingContext.type().annotations().has(Service.class)
+                && ComponentPreProcessor.super.preconditions(processingContext);
     }
 
-    boolean preconditions(ApplicationContext context, Key<?> key);
+    <T> boolean preconditions(ApplicationContext context, ComponentProcessingContext<T> processingContext);
 }

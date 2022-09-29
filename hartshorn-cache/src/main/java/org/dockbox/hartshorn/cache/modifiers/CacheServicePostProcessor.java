@@ -47,18 +47,18 @@ import java.util.function.Supplier;
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext processingContext) {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext<T> processingContext) {
         final CacheMethodContext cacheMethodContext = this.context(proxyContext);
         final CacheManager manager = context.get(CacheManager.class);
 
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Result<CacheService> annotation = proxyContext.type().annotation(CacheService.class);
+            final Result<CacheService> annotation = proxyContext.type().annotations().get(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }
             else {
-                name = ComponentUtilities.id(context, proxyContext.type());
+                name = ComponentUtilities.id(context, proxyContext.type().type());
             }
         }
 
@@ -95,7 +95,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
     protected abstract <T, R> MethodInterceptor<T> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         return true;
     }
 }

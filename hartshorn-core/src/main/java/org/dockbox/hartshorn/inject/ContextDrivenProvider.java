@@ -18,11 +18,11 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorContext} to
+ * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorView} to
  * create a new instance of a class. The constructor is looked up based on its parameters, where the
  * constructor with the most parameters is chosen in order to satisfy as many dependencies as possible.
  *
@@ -39,35 +39,32 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
  */
 public class ContextDrivenProvider<C> implements Provider<C> {
 
-    private final TypeContext<? extends C> context;
-    private ConstructorContext<? extends C> optimalConstructor;
+    private final Class<? extends C> context;
+    private ConstructorView<? extends C> optimalConstructor;
 
     public ContextDrivenProvider(final Class<? extends C> type) {
-        this(TypeContext.of(type));
-    }
-
-    public ContextDrivenProvider(final TypeContext<? extends C> context) {
-        this.context = context;
+        this.context = type;
     }
 
     @Override
     public final Result<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return this.optimalConstructor()
-                .flatMap(constructor -> constructor.createInstance(context))
-                .map(this.context().type()::cast)
+        return this.optimalConstructor(context)
+                .flatMap(ConstructorView::createWithContext)
+                .map(this.type()::cast)
                 .map(instance -> new ObjectContainer<>(instance, false));
     }
 
-    protected Result<? extends ConstructorContext<? extends C>> optimalConstructor() {
+    protected Result<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) {
+        final TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
         if (this.optimalConstructor == null) {
-            this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(this.context())
+            this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(typeView)
                     .rethrowUnchecked()
                     .orNull();
         }
         return Result.of(this.optimalConstructor);
     }
 
-    public TypeContext<? extends C> context() {
+    public Class<? extends C> type() {
         return this.context;
     }
 }

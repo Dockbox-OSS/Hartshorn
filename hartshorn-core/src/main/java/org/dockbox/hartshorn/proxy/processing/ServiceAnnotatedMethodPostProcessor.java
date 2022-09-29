@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -30,26 +30,25 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return !key.type().methods(this.annotation()).isEmpty();
+    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
     }
 
     public abstract Class<M> annotation();
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        final TypeContext<T> type = key.type();
-        final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
-        for (final MethodContext<?, T> method : methods) {
-            this.process(context, key, instance, method);
+        for (final MethodView<T, ?> method : methods) {
+            this.process(context, processingContext.key(), instance, method);
         }
         return instance;
     }
 
-    protected abstract <T> void process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final MethodContext<?, T> method);
+    protected abstract <T> void process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final MethodView<T, ?> method);
 
-    protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
-        return type.methods(this.annotation());
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final TypeView<T> type) {
+        return type.methods().annotatedWith(this.annotation());
     }
 }

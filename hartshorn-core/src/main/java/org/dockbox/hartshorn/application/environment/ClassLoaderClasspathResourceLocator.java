@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.reflect.Resources;
+import org.dockbox.hartshorn.util.Resources;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Result;
 

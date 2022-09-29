@@ -59,8 +59,8 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        return methodContext.method().parameters().size() == 1;
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        return methodContext.method().parameters().count() == 1;
     }
 
     @Override

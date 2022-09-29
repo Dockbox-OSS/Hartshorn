@@ -17,8 +17,8 @@
 package com.specific.sub;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
-import org.dockbox.hartshorn.inject.Key;
 
 import jakarta.inject.Singleton;
 
@@ -32,13 +32,13 @@ public class DemoServicePreProcessor implements ServicePreProcessor {
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return key.type().is(DemoService.class);
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return processingContext.type().is(DemoService.class);
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        context.log().debug("Processing %s".formatted(key));
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        context.log().debug("Processing %s".formatted(processingContext));
         this.processed++;
     }
 }

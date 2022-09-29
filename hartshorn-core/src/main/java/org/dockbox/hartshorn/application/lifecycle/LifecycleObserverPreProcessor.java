@@ -17,19 +17,19 @@
 package org.dockbox.hartshorn.application.lifecycle;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
-import org.dockbox.hartshorn.inject.Key;
 
 public class LifecycleObserverPreProcessor implements ServicePreProcessor {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return key.type().childOf(Observer.class);
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return processingContext.type().isChildOf(Observer.class);
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        context.environment().manager().register((Class<? extends Observer>) key.type().type());
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        context.environment().manager().register((Class<? extends Observer>) processingContext.type().type());
     }
 
     @Override

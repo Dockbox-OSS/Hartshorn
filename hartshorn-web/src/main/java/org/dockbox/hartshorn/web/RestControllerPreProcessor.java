@@ -17,25 +17,26 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.web.annotations.RestController;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
 public class RestControllerPreProcessor implements ServicePreProcessor {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        final TypeContext<?> type = key.type();
-        return type.annotation(RestController.class).present() && !type.methods(HttpRequest.class).isEmpty();
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final TypeView<T> type = processingContext.type();
+        return type.annotations().has(RestController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final ControllerContext controllerContext = context.first(ControllerContext.class).get();
-        for (final MethodContext<?, T> method : key.type().methods(HttpRequest.class)) {
+
+        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
             controllerContext.add(new RequestHandlerContext(context, method));
         }
     }

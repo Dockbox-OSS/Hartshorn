@@ -17,31 +17,31 @@
 package org.dockbox.hartshorn.i18n.services;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 public class LanguageProviderServicePreProcessor implements ServicePreProcessor {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return !key.type().methods(TranslationProvider.class).isEmpty();
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return !processingContext.type().methods().annotatedWith(TranslationProvider.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final TranslationService translationService = context.get(TranslationService.class);
-        for (final MethodContext<?, T> method : key.type().methods(TranslationProvider.class)) {
-            if (method.returnType().childOf(TranslationBundle.class)) {
-                final TranslationBundle bundle = (TranslationBundle) method.invoke(context).rethrowUnchecked().get();
+        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(TranslationProvider.class)) {
+            if (method.returnType().isChildOf(TranslationBundle.class)) {
+                final TranslationBundle bundle = (TranslationBundle) method.invokeWithContext().rethrowUnchecked().get();
                 translationService.add(bundle);
             }
-            else if (method.returnType().childOf(Message.class)) {
-                final Message message = (Message) method.invoke(context).rethrowUnchecked().get();
+            else if (method.returnType().isChildOf(Message.class)) {
+                final Message message = (Message) method.invokeWithContext().rethrowUnchecked().get();
                 translationService.add(message);
             }
         }

@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
@@ -45,7 +46,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
-        this.environment().annotationsWith(context.configuration().activator(), ServiceActivator.class).forEach(this::addActivator);
+        this.environment().annotationsWith(context.builder().mainClass(), ServiceActivator.class).forEach(this::addActivator);
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
     }
 

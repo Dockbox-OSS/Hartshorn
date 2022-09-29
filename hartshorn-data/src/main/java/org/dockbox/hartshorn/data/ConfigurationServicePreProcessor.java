@@ -18,12 +18,12 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.context.ConfigurationURIContext;
 import org.dockbox.hartshorn.data.context.ConfigurationURIContextList;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.net.URI;
 import java.util.Map;
@@ -63,25 +63,25 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
     }
 
     @Override
-    public boolean modifies(final ApplicationContext context, final Key<?> key) {
-        return key.type().annotation(Configuration.class).present();
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return processingContext.type().annotations().has(Configuration.class);
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        final Configuration configuration = key.type().annotation(Configuration.class).get();
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
 
         final String[] sources = configuration.value();
 
         for (final String source : sources) {
-            if (this.processSource(source, context, key)) return;
+            if (this.processSource(source, context, processingContext.key())) return;
             context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
         }
 
         if (configuration.failOnMissing()) {
-            throw new MissingSourceException("None of the configured sources in " + key.type().name() + " were found");
+            throw new MissingSourceException("None of the configured sources in " + processingContext.type().name() + " were found");
         } else {
-            context.log().warn("None of the configured sources in {} were found, proceeding without configuration", key.type().name());
+            context.log().warn("None of the configured sources in {} were found, proceeding without configuration", processingContext.type().name());
         }
     }
 
@@ -93,15 +93,15 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
             strategy = this.strategies.getOrDefault(matcher.group(1), strategy);
             matchedSource = matcher.group(2);
         }
-        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + matchedSource + ", declared by " + key.type().name());
+        context.log().debug("Determined strategy " + strategy.getClass().getSimpleName() + " for " + matchedSource + ", declared by " + key.type().getSimpleName());
 
         final Set<URI> config = strategy.lookup(context, matchedSource);
         if (config.isEmpty()) {
-            context.log().warn("No configuration file found for " + key.type().name());
+            context.log().warn("No configuration file found for " + key.type().getSimpleName());
             return false;
         }
         else if (config.size() > 1) {
-            context.log().warn("Found multiple configuration files for " + key.type().name() + ": " + config);
+            context.log().warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
         }
 
         final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.class).get();

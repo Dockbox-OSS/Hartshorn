@@ -17,47 +17,50 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.ObtainableElement;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.reflect.TypedElementContext;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
 public final class ProviderServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return !(key.type().methods(Provider.class).isEmpty() && key.type().fields(Provider.class).isEmpty());
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return !(
+                processingContext.type().methods().annotatedWith(Provider.class).isEmpty()
+                && processingContext.type().fields().annotatedWith(Provider.class).isEmpty()
+        );
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        final TypeContext<T> type = key.type();
-        final List<MethodContext<?, T>> methods = type.methods(Provider.class);
-        final List<FieldContext<?>> fields = type.fields(Provider.class);
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final List<MethodView<T, ?>> methods = processingContext.type().methods().annotatedWith(Provider.class);
+        final List<FieldView<T, ?>> fields = processingContext.type().fields().annotatedWith(Provider.class);
 
-        context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + type.name());
+        context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + processingContext.type().name());
 
         final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
-        for (final MethodContext<?, T> method : methods) {
+        for (final MethodView<T, ?> method : methods) {
             this.register(providerContext, method);
         }
-        for (final FieldContext<?> field : fields) {
+        for (final FieldView<T, ?> field : fields) {
             this.register(providerContext, field);
         }
     }
 
-    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void register(final ProviderContextList context, final E element) {
+    private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> void register(final ProviderContextList context, final E element) {
         final Key<?> key = this.key(element);
-        final Provider provider = element.annotation(Provider.class).get();
+        final Provider provider = element.annotations().get(Provider.class).get();
         final ProviderContext providerContext = new ProviderContext(key, element, provider);
         context.add(providerContext);
     }
@@ -75,14 +78,14 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
         }
     }
 
-    private <E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> Key<?> key(final E element) {
-        final Provider annotation = element.annotation(Provider.class).get();
-        if (element.type().is(Class.class) || element.type().is(TypeContext.class)) {
-            final TypeContext<?> typeContext = element.genericType().typeParameters().get(0);
-            return Key.of(typeContext, annotation.value());
+    private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> Key<?> key(final E element) {
+        final Provider annotation = element.annotations().get(Provider.class).get();
+        if (element.type().is(Class.class) || element.type().is(TypeView.class)) {
+            final TypeView<?> view = element.genericType().typeParameters().at(0).get();
+            return Key.of(view.type(), annotation.value());
         }
         else {
-            return Key.of(element.type(), annotation.value());
+            return Key.of(element.type().type(), annotation.value());
         }
     }
 

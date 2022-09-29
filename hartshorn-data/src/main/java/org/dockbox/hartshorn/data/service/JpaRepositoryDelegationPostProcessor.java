@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
@@ -36,13 +36,14 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
     }
 
     @Override
-    protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyFactory<JpaRepository, ?> handler, final TypeContext<? extends JpaRepository> parent) {
-        final TypeContext<JpaRepository> repositoryType = TypeContext.of(handler.type());
-        final List<TypeContext<?>> list = repositoryType.typeParameters(JpaRepository.class);
+    protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyFactory<JpaRepository, ?> handler, final Class<? extends JpaRepository> parent) {
+        final TypeView<JpaRepository> repositoryType = context.environment().introspect(handler.type());
+        final List<TypeView<?>> list = repositoryType.typeParameters().from(JpaRepository.class);
         final Class<?> type = list.get(0).type();
 
         final DataSourceList dataSourceList = context.get(DataSourceList.class);
-        final DataSourceConfiguration sourceConfiguration = repositoryType.annotation(DataSource.class)
+        final DataSourceConfiguration sourceConfiguration = repositoryType.annotations()
+                .get(DataSource.class)
                 .map(DataSource::value)
                 .map(dataSourceList::get)
                 .orElse(dataSourceList::defaultConnection)

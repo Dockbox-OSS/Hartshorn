@@ -18,15 +18,15 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 public class ProviderContext {
 
     private final Key<?> key;
-    private final AnnotatedElementContext<?> element;
+    private final AnnotatedElementView element;
     private final Provider provider;
 
-    public ProviderContext(final Key<?> key, final AnnotatedElementContext<?> element, final Provider provider) {
+    public ProviderContext(final Key<?> key, final AnnotatedElementView element, final Provider provider) {
         this.key = key;
         this.element = element;
         this.provider = provider;
@@ -36,7 +36,7 @@ public class ProviderContext {
         return this.key;
     }
 
-    public AnnotatedElementContext<?> element() {
+    public AnnotatedElementView element() {
         return this.element;
     }
 
