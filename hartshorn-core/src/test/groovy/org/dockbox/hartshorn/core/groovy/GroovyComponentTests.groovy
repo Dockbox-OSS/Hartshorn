@@ -46,11 +46,11 @@ class GroovyComponentTests {
 
     @ParameterizedTest
     @MethodSource("components")
-    <T> void testComponent(Class<T> componentType, applicationContextFunction, applicationManagerFunction) {
-        def component = this.applicationContext.get(componentType)
+    <T> void testComponent(final Class<T> componentType, final applicationContextFunction, final applicationManagerFunction) {
+        final def component = this.applicationContext.get(componentType)
         Assertions.assertNotNull(component)
 
-        def container = this.componentLocator.container(componentType)
+        final def container = this.componentLocator.container(componentType)
         Assertions.assertNotNull(container)
         Assertions.assertTrue(container.present())
 
@@ -67,8 +67,8 @@ class GroovyComponentTests {
         return Stream.of(
                 Arguments.of(GroovyInterfaceComponent.class, null, null),
                 Arguments.of(GroovyClassComponent.class,
-                        { GroovyClassComponent component -> component.applicationContext() },
-                        { GroovyClassComponent component -> component.applicationManager() },
+                        { final GroovyClassComponent component -> component.applicationContext() },
+                        { final GroovyClassComponent component -> component.applicationManager() },
                 ),
         )
     }

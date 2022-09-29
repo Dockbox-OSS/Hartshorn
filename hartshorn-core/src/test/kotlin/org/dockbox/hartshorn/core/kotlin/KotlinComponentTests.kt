@@ -66,7 +66,6 @@ class KotlinComponentTests {
     }
 
     companion object {
-        @Suppress("RedundantLambdaArrow") // 'it' in KotlinObjectComponent, required as type is not inferred.
         @JvmStatic
         fun components(): Stream<Arguments> = Stream.of(
                 Arguments.of(KotlinClassComponent::class.java, KotlinClassComponent::applicationContext, KotlinClassComponent::applicationManager),

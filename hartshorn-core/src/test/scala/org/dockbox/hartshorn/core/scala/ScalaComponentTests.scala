@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.core.scala
 
 import jakarta.inject.Inject
-import org.dockbox.hartshorn.application.context
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.environment.ApplicationManager
 import org.dockbox.hartshorn.component.ComponentLocator
