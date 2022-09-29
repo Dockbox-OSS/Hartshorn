@@ -39,13 +39,13 @@ public class CommandConditionMatchingTests {
 
     @Test
     void testMethodConditionMatchingProceedsIfMatched() throws ParsingException {
-        gateway.accept(subject, "demo condition value");
-        Assertions.assertEquals("value", sampleCommand.valueAfterCondition());
+        this.gateway.accept(this.subject, "demo condition value");
+        Assertions.assertEquals("value", this.sampleCommand.valueAfterCondition());
     }
 
     @Test
     void testMethodConditionMatchingFailsIfNotMatched() throws ParsingException {
-        gateway.accept(subject, "demo condition");
-        Assertions.assertNull(sampleCommand.valueAfterCondition());
+        this.gateway.accept(this.subject, "demo condition");
+        Assertions.assertNull(this.sampleCommand.valueAfterCondition());
     }
 }

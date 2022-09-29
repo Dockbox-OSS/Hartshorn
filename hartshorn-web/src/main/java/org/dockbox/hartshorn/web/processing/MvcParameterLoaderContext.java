@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.web.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.web.mvc.ViewModel;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ public class MvcParameterLoaderContext extends HttpRequestParameterLoaderContext
 
     private final ViewModel viewModel;
 
-    public MvcParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response,
+    public MvcParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response,
                                      final ViewModel viewModel) {
         super(method, type, instance, applicationContext, request, response);
         this.viewModel = viewModel;

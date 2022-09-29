@@ -92,17 +92,17 @@ public class BindingHierarchyTests {
         final Result<Provider<Contract>> priorityZero = hierarchy.get(0);
         Assertions.assertTrue(priorityZero.present());
         Assertions.assertTrue(priorityZero.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityZero.get()).context().type(), ImplementationA.class);
+        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityZero.get()).type(), ImplementationA.class);
 
         final Result<Provider<Contract>> priorityOne = hierarchy.get(1);
         Assertions.assertTrue(priorityOne.present());
         Assertions.assertTrue(priorityOne.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityOne.get()).context().type(), ImplementationB.class);
+        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityOne.get()).type(), ImplementationB.class);
 
         final Result<Provider<Contract>> priorityTwo = hierarchy.get(2);
         Assertions.assertTrue(priorityTwo.present());
         Assertions.assertTrue(priorityTwo.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityTwo.get()).context().type(), ImplementationC.class);
+        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityTwo.get()).type(), ImplementationC.class);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class BindingHierarchyTests {
         final Result<Provider<LocalContract>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
         Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<LocalContract>) provider.get()).context().type(), LocalImpl.class);
+        Assertions.assertEquals(((ContextDrivenProvider<LocalContract>) provider.get()).type(), LocalImpl.class);
     }
 
     interface LocalContract {

@@ -39,7 +39,7 @@ public class EventProviders {
     }
 
     @Provider("event_loader")
-    public ParameterLoader eventParameterLoader() {
+    public ParameterLoader<?> eventParameterLoader() {
         return new EventParameterLoader();
     }
 

@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -35,7 +34,7 @@ import java.lang.annotation.Target;
  * <ul>
  *     <li>{@link #id()} - The unique identifier of the component. This is used to identify the component in the framework.
  *         If not specified, the type of the component is used to generate a valid ID through
- *         {@link ComponentUtilities#id(ApplicationContext, TypeContext)}</li>
+ *         {@link ComponentUtilities#id(ApplicationContext, Class)}</li>
  *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
  *         specified, the name of the class is used.</li>
  *     <li>{@link #singleton()} - Indicates whether a component should be treated as a singleton. When this is {@code true}
@@ -68,7 +67,7 @@ public @interface Component {
     /**
      * The unique identifier of the component. This is used to identify the component in the framework.
      * If not specified, the type of the component is used to generate a valid ID through
-     * {@link ComponentUtilities#id(ApplicationContext, TypeContext)}
+     * {@link ComponentUtilities#id(ApplicationContext, Class)}
      *
      * @return The unique identifier of the component
      * @see ComponentContainer#id()

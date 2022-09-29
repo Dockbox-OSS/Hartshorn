@@ -16,25 +16,25 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class EventHandlerRegistry {
 
-    private final Map<TypeContext<? extends Event>, EventHandler> handlers = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Event>, EventHandler> handlers = new ConcurrentHashMap<>();
 
-    public Map<TypeContext<? extends Event>, EventHandler> handlers() {
+    public Map<Class<? extends Event>, EventHandler> handlers() {
         return this.handlers;
     }
 
-    public EventHandler handler(final TypeContext<? extends Event> type) {
-        EventHandler handler = this.handlers.get(type);
+    public EventHandler handler(final TypeView<? extends Event> type) {
+        EventHandler handler = this.handlers.get(type.type());
         if (null == handler) {
             this.computeHierarchy(handler = new EventHandler(type));
-            this.handlers.put(type, handler);
+            this.handlers.put(type.type(), handler);
         }
         return handler;
     }

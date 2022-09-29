@@ -17,14 +17,15 @@
 package org.dockbox.hartshorn.events.handle;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -54,19 +55,19 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     };
 
     private final ParameterLoader<EventParameterLoaderContext> parameterLoader;
-    private final TypeContext<? extends Event> eventType;
-    private final List<TypeContext<?>> eventParameters;
+    private final TypeView<? extends Event> eventType;
+    private final List<TypeView<?>> eventParameters;
     private final Key<T> listenerType;
     private final ApplicationContext context;
-    private final MethodContext<?, T> method;
+    private final MethodView<T, ?> method;
     private final int priority;
     private T listener;
 
     private EventWrapperImpl(
             final ParameterLoader<EventParameterLoaderContext> parameterLoader,
             final Key<T> key,
-            final TypeContext<? extends Event> eventType,
-            final MethodContext<?, T> method,
+            final TypeView<? extends Event> eventType,
+            final MethodView<T, ?> method,
             final int priority,
             final ApplicationContext context
     ) {
@@ -77,18 +78,22 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         this.eventType = eventType;
         this.method = method;
         this.priority = priority;
-        this.eventParameters = method.parameters().get(0).typeParameters();
+        this.eventParameters = method.parameters().at(0).get()
+                .type()
+                .typeParameters()
+                .all();
     }
 
     public ParameterLoader<EventParameterLoaderContext> parameterLoader() {
         return this.parameterLoader;
     }
 
-    public TypeContext<? extends Event> eventType() {
+    @Override
+    public TypeView<? extends Event> eventType() {
         return this.eventType;
     }
 
-    public List<TypeContext<?>> eventParameters() {
+    public List<TypeView<?>> eventParameters() {
         return this.eventParameters;
     }
 
@@ -100,14 +105,17 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         return this.context;
     }
 
-    public MethodContext<?, T> method() {
+    @Override
+    public MethodView<T, ?> method() {
         return this.method;
     }
 
+    @Override
     public int priority() {
         return this.priority;
     }
 
+    @Override
     public T listener() {
         return this.listener;
     }
@@ -122,12 +130,12 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      *
      * @return The list of {@link EventWrapperImpl}s
      */
-    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final Key<T> key, final MethodContext<?, T> method, final int priority) {
+    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final Key<T> key, final MethodView<T, ?> method, final int priority) {
         final List<EventWrapperImpl<T>> invokeWrappers = new CopyOnWriteArrayList<>();
         final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(Key.of(ParameterLoader.class, "event_loader"));
-        for (final TypeContext<?> param : method.parameterTypes()) {
-            if (param.childOf(Event.class)) {
-                invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, key, (TypeContext<? extends Event>) param, method, priority, context));
+        for (final TypeView<?> param : method.parameters().types()) {
+            if (param.isChildOf(Event.class)) {
+                invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, key, (TypeView<? extends Event>) param, method, priority, context));
             }
         }
         return invokeWrappers;
@@ -136,13 +144,17 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Override
     public void invoke(final Event event) throws SecurityException {
         if (this.filtersMatch(event)) {
-            final String eventName = TypeContext.of(event).name();
+            final String eventName = event.getClass().getSimpleName();
             event.applicationContext().log().debug("Invoking event " + eventName + " to method context of " + this.method.qualifiedName());
             // Lazy initialisation to allow processors to register first
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
-            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listenerType.type(), this.listener, this.context, event);
+
+            final TypeView<T> listenerType = event.applicationContext().environment().introspect(this.listenerType.type());
+            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, listenerType, this.listener, this.context, event);
+
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             final Result<?> result = this.method.invoke(this.listener, arguments);
+
             if (result.caught()) {
                 this.context().handle("Could not finish event runner for " + eventName, result.error());
             }
@@ -151,13 +163,14 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
 
     private boolean filtersMatch(final Event event) {
         if (!this.eventParameters.isEmpty()) {
-            final List<TypeContext<?>> typeParameters = TypeContext.of(event).typeParameters();
-            if (typeParameters.size() != this.eventParameters.size()) return false;
+            final TypeView<Event> typeView = event.applicationContext().environment().introspect(event);
+            final TypeParametersIntrospector typeParameters = typeView.typeParameters();
+            if (typeParameters.count() != this.eventParameters.size()) return false;
 
             for (int i = 0; i < this.eventParameters.size(); i++) {
-                final TypeContext<?> eventParameter = this.eventParameters.get(i);
-                final TypeContext<?> actualTypeArgument = typeParameters.get(i);
-                if (!actualTypeArgument.childOf(eventParameter)) return false;
+                final TypeView<?> eventParameter = this.eventParameters.get(i);
+                final TypeView<?> actualTypeArgument = typeParameters.at(i).get();
+                if (!actualTypeArgument.isChildOf(eventParameter.type())) return false;
             }
         }
         return true;

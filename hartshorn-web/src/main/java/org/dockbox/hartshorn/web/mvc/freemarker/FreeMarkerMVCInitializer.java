@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.web.mvc.freemarker;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.mvc.ClassPathViewTemplate;
 import org.dockbox.hartshorn.web.mvc.FileViewTemplate;
@@ -35,13 +34,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import jakarta.inject.Singleton;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class FreeMarkerMVCInitializer implements MVCInitializer {
@@ -60,7 +58,7 @@ public class FreeMarkerMVCInitializer implements MVCInitializer {
 
     @Override
     public String transform(final ViewTemplate template, final ViewModel model) throws ApplicationException {
-        final String name = TypeContext.of(template).name() + System.nanoTime();
+        final String name = template.getClass().getSimpleName() + System.nanoTime();
         final Template freeMarkerTemplate = this.transformTemplate(name, template);
         try {
             final Writer writer = new StringWriter();

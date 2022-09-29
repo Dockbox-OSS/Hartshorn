@@ -18,21 +18,21 @@ package org.dockbox.hartshorn.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 public class ProxyCallbackContext<T> extends DefaultContext {
 
     private final T delegate;
     private final T proxy;
-    private final MethodContext<?, T> method;
+    private final MethodView<T, ?> method;
     private final Object[] args;
     private Throwable error;
 
-    public ProxyCallbackContext(final T delegate, final T proxy, final MethodContext<?, T> method, final Object[] args) {
+    public ProxyCallbackContext(final T delegate, final T proxy, final MethodView<T, ?> method, final Object[] args) {
         this(delegate, proxy, method, args, null);
     }
 
-    public ProxyCallbackContext(final T delegate, final T proxy, final MethodContext<?, T> method, final Object[] args, final Throwable error) {
+    public ProxyCallbackContext(final T delegate, final T proxy, final MethodView<T, ?> method, final Object[] args, final Throwable error) {
         this.delegate = delegate;
         this.proxy = proxy;
         this.method = method;
@@ -49,7 +49,7 @@ public class ProxyCallbackContext<T> extends DefaultContext {
         return this.proxy;
     }
 
-    public MethodContext<?, T> method() {
+    public MethodView<T, ?> method() {
         return this.method;
     }
 

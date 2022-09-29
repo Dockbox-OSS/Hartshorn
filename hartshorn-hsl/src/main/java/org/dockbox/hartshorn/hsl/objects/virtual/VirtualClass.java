@@ -171,7 +171,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
             throw new ScriptEvaluationError("Cannot call a class as an instance", Phase.INTERPRETING, at);
         }
         if (this.superClass instanceof ExternalClass) {
-            final CompositeInstance compositeInstance = new CompositeInstance(this);
+            final CompositeInstance<?> compositeInstance = new CompositeInstance<>(this);
             compositeInstance.makeInstance(at, interpreter, arguments, this.constructor());
             return compositeInstance;
         }

@@ -18,11 +18,11 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -56,7 +56,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         private int counter = 0;
 
         @Override
-        public String get(final TypeContext<?> type) {
+        public String get(final TypeView<?> type) {
             return this.get(type.type());
         }
 
@@ -71,7 +71,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         }
     };
 
-    private static final TypeContext<? extends Annotation> GROOVY_TRAIT = (TypeContext<? extends Annotation>) TypeContext.lookup("groovy.transform.Trait");
+    private static final String GROOVY_TRAIT = "groovy.transform.Trait";
 
     // Delegates and interceptors
     private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
@@ -101,7 +101,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     protected boolean isGroovyTrait(final Class<?> type) {
-        return !GROOVY_TRAIT.isVoid() && GROOVY_TRAIT.isAnnotation() && type.isAnnotationPresent(GROOVY_TRAIT.type());
+        final TypeView<?> groovyTraitType = this.applicationContext().environment().introspect(GROOVY_TRAIT);
+        return !groovyTraitType.isVoid() && groovyTraitType.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTraitType.type());
     }
 
     protected void updateState() {
@@ -174,7 +175,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> delegate(final MethodContext<?, T> method, final T delegate) {
+    public DefaultProxyFactory<T> delegate(final MethodView<T, ?> method, final T delegate) {
         return this.delegate(method.method(), delegate);
     }
 
@@ -184,7 +185,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
-        if (!TypeContext.of(delegate).childOf(method.getDeclaringClass())) {
+        final TypeView<T> delegateType = this.applicationContext().environment().introspect(delegate);
+        if (!delegateType.isChildOf(method.getDeclaringClass())) {
             throw new IllegalArgumentException("Delegate must implement- or be of type " + method.getDeclaringClass().getName());
         }
         this.delegates.put(method, delegate);
@@ -192,7 +194,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final MethodContext<?, T> method, final MethodInterceptor<T> interceptor) {
+    public DefaultProxyFactory<T> intercept(final MethodView<T, ?> method, final MethodInterceptor<T> interceptor) {
         return this.intercept(method.method(), interceptor);
     }
 
@@ -211,7 +213,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final MethodContext<?, T> method, final MethodWrapper<T> wrapper) {
+    public DefaultProxyFactory<T> intercept(final MethodView<T, ?> method, final MethodWrapper<T> wrapper) {
         return this.intercept(method.method(), wrapper);
     }
 

@@ -18,10 +18,9 @@ package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class EventNotEnhancedException extends ApplicationRuntimeException {
     public EventNotEnhancedException(final ContextCarrierEvent event) {
-        super("Event instance (" + TypeContext.of(event).name() + ") has not been enhanced with application context");
+        super("Event instance (" + event.getClass().getSimpleName() + ") has not been enhanced with application context");
     }
 }

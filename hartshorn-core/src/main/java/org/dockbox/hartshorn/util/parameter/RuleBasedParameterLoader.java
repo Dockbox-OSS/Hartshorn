@@ -17,12 +17,11 @@
 package org.dockbox.hartshorn.util.parameter;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,13 +42,13 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     @Override
     public List<Object> loadArguments(final C context, final Object... args) {
         final List<Object> arguments = new ArrayList<>();
-        final LinkedList<ParameterContext<?>> parameters = context.executable().parameters();
+        final List<ParameterView<?>> parameters = context.executable().parameters().all();
         parameters:
         for (int i = 0; i < parameters.size(); i++) {
-            final ParameterContext<?> parameter = parameters.get(i);
+            final ParameterView<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
                 if (rule.accepts(parameter, i, context, args)) {
-                    final Result<Object> argument = rule.load((ParameterContext<Object>) parameter, i, context, args);
+                    final Result<Object> argument = rule.load((ParameterView<Object>) parameter, i, context, args);
                     arguments.add(argument.orNull());
                     continue parameters;
                 }
@@ -59,7 +58,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         return Collections.unmodifiableList(arguments);
     }
 
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final C context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final C context, final Object... args) {
         return parameter.type().defaultOrNull();
     }
 }

@@ -17,17 +17,12 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public interface Binder {
 
     <C> BindingFunction<C> bind(Key<C> key);
 
     default <C> BindingFunction<C> bind(final Class<C> type) {
-        return this.bind(Key.of(type));
-    }
-
-    default <C> BindingFunction<C> bind(final TypeContext<C> type) {
         return this.bind(Key.of(type));
     }
 }

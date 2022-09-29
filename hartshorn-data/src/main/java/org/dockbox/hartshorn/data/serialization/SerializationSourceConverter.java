@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.data.serialization;
 
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface SerializationSourceConverter {
-    InputStream inputStream(AnnotatedElementContext<?> context, Object... args) throws ApplicationException;
+    InputStream inputStream(AnnotatedElementView context, Object... args) throws ApplicationException;
 
-    OutputStream outputStream(AnnotatedElementContext<?> context, Object... args) throws ApplicationException;
+    OutputStream outputStream(AnnotatedElementView context, Object... args) throws ApplicationException;
 }

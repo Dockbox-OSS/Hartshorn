@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
 public interface ProxyConstructorFunction<T> {
     T create() throws ApplicationException;
-    T create(ConstructorContext<T> constructor, Object[] args) throws ApplicationException;
+    T create(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
 }

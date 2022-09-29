@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class CommandBeanListener implements BeanObserver {
 
         final CommandExtensionContext extensionContext = applicationContext.first(CommandExtensionContext.class).get(); // This will fail, as bindings aren't available here yet..
         for (final CommandExecutorExtension extension : provider.all(CommandExecutorExtension.class)) {
-            applicationContext.log().debug("Adding extension " + TypeContext.of(extension).name() + " to command gateway");
+            applicationContext.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
             extensionContext.add(extension);
         }
     }

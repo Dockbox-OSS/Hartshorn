@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 public class HartshornFactoryTests {
 
     @HartshornFactory
-    public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
+    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
         // Typically this would be done with @TestProperties, but we're testing the factory here
         return factory.argument("--factory.modified=true");
     }

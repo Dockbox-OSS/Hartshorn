@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 public class MissingEntityManagerException extends ApplicationRuntimeException {
-    public MissingEntityManagerException(final MethodContext<?,?> methodContext) {
+    public MissingEntityManagerException(final MethodView<?,?> methodContext) {
         super("No entity manager found in execution cache for method %s in type %s."
-                .formatted(methodContext.qualifiedName(), methodContext.parent().name()));
+                .formatted(methodContext.qualifiedName(), methodContext.declaredBy().name()));
     }
 }

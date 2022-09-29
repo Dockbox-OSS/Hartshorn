@@ -26,16 +26,17 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
-public class CompositeInstance extends VirtualInstance implements ExternalObjectReference {
+public class CompositeInstance<T> extends VirtualInstance implements ExternalObjectReference {
 
-    private final TypeContext<?> firstExternalClass;
-    private Object instance;
+    private final TypeView<T> firstExternalClass;
+    private T instance;
 
     public CompositeInstance(final VirtualClass virtualClass) {
         super(virtualClass);
@@ -46,8 +47,8 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
         if (superClass == null) {
             throw new IllegalArgumentException("No external class found in " + virtualClass.name());
         }
-        this.firstExternalClass = ((ExternalClass<?>) superClass).type();
-        if (this.firstExternalClass.constructor().absent()) {
+        this.firstExternalClass = TypeUtils.adjustWildcards(((ExternalClass<?>) superClass).type(), TypeView.class);
+        if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
             throw new IllegalArgumentException("No empty or default constructor found in " + this.firstExternalClass.name() + ", composite instances cannot carry complex constructors.");
         }
     }
@@ -57,8 +58,8 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
             throw new IllegalStateException("Instance already made");
         }
         // External class constructor
-        final ConstructorContext<?> constructor = this.firstExternalClass.constructor().get();
-        this.instance = constructor.createInstance().rethrowUnchecked().orNull();
+        final ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
+        this.instance = constructor.create().rethrowUnchecked().orNull();
         // Virtual class constructor
         if (virtualConstructor != null) {
             virtualConstructor.call(at, interpreter, this, arguments);
@@ -73,7 +74,7 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
             super.set(name, value, fromScope);
         }
         else {
-            final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
+            final Result<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 field.get().set(this.instance, value);
             }
@@ -91,7 +92,7 @@ public class CompositeInstance extends VirtualInstance implements ExternalObject
             return super.get(name, fromScope);
         }
         else {
-            final Result<FieldContext<?>> field = this.firstExternalClass.field(name.lexeme());
+            final Result<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 return field.get().get(this.instance);
             }

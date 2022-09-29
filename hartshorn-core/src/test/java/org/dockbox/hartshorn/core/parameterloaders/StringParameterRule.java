@@ -17,18 +17,18 @@
 package org.dockbox.hartshorn.core.parameterloaders;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         return parameter.type().is(String.class);
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         return Result.of((T) "JUnit");
     }
 }

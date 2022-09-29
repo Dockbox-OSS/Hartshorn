@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -191,14 +191,14 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
 
         Result<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) {
-            final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
+            final Collection<TypeView<?>> entities = this.applicationContext.environment().types(Entity.class);
             final EntityContext entityContext = new EntityContext(entities);
             this.applicationContext.add(entityContext);
             context = Result.of(entityContext);
         }
 
-        final Collection<TypeContext<?>> entities = context.get().entities();
-        for (final TypeContext<?> entity : entities) {
+        final Collection<TypeView<?>> entities = context.get().entities();
+        for (final TypeView<?> entity : entities) {
             this.hibernateConfiguration.addAnnotatedClass(entity.type());
         }
 

@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.web.servlet;
 
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
@@ -39,7 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class MvcServlet implements WebServlet {
 
-    private final MethodContext<ViewTemplate, ?> methodContext;
+    private final MethodView<?, ViewTemplate> method;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -52,19 +52,20 @@ public class MvcServlet implements WebServlet {
     private ParameterLoader<MvcParameterLoaderContext> parameterLoader;
 
     @Bound
-    public MvcServlet(final MethodContext<ViewTemplate, ?> methodContext) {
-        this.methodContext = methodContext;
+    public MvcServlet(final MethodView<?, ViewTemplate> method) {
+        this.method = method;
     }
 
     @Override
     public void get(final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallback) throws ApplicationException {
         final ParameterLoader<MvcParameterLoaderContext> loader = this.parameterLoader;
         final ViewModelImpl viewModel = new ViewModelImpl();
-        final MvcParameterLoaderContext loaderContext = new MvcParameterLoaderContext(this.methodContext, TypeContext.of(ViewTemplate.class),
+        final TypeView<ViewTemplate> typeView = this.applicationContext.environment().introspect(ViewTemplate.class);
+        final MvcParameterLoaderContext loaderContext = new MvcParameterLoaderContext(this.method, typeView,
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 
-        final Result<ViewTemplate> result = this.methodContext.invoke(this.applicationContext, arguments);
+        final Result<ViewTemplate> result = this.method.invokeWithContext(arguments);
 
         if (result.present()) {
             final ViewTemplate template = result.get();

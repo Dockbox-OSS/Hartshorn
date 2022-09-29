@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.beans;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -45,8 +45,9 @@ public class BeanContext extends DefaultApplicationAwareContext implements BeanC
     }
 
     @Override
-    public <T> BeanReference<T> register(final T bean, final TypeContext<T> type, final String id) {
-        final BeanReference<T> beanReference = new BeanReference<>(bean, type, id);
+    public <T> BeanReference<T> register(final T bean, final Class<T> type, final String id) {
+        final TypeView<T> typeView = this.applicationContext().environment().introspect(type);
+        final BeanReference<T> beanReference = new BeanReference<>(bean, typeView, id);
         this.beans.add(beanReference);
         return beanReference;
     }

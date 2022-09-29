@@ -43,7 +43,7 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
             final FileFormat format = this.lookupFileFormat(uri, source, context, uriContext.strategy());
 
             if (format == null) {
-                context.log().error("Unknown file format: " + source + ", declared by " + uriContext.key().type().name());
+                context.log().error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
                 return;
             }
 

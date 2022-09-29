@@ -18,8 +18,9 @@ package org.dockbox.hartshorn.proxy.cglib;
 
 import net.sf.cglib.proxy.MethodProxy;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.Invokable;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.reflect.Method;
 
@@ -27,16 +28,16 @@ public class ProxyMethodInvokable implements Invokable {
 
     private final MethodProxy methodProxy;
     private final Object proxy;
-    private final Class<?> returnType;
     private final Class<?>[] parameterTypes;
     private final Method method;
+    private final TypeView<?> returnType;
 
-    public ProxyMethodInvokable(final MethodProxy methodProxy, final Object proxy, final Method method) {
+    public ProxyMethodInvokable(final ApplicationContext applicationContext, final MethodProxy methodProxy, final Object proxy, final Method method) {
         this.methodProxy = methodProxy;
         this.proxy = proxy;
-        this.returnType = method.getReturnType();
         this.parameterTypes = method.getParameterTypes();
         this.method = method;
+        this.returnType = applicationContext.environment().introspect(method.getReturnType());
     }
 
     @Override
@@ -45,7 +46,7 @@ public class ProxyMethodInvokable implements Invokable {
             return this.methodProxy.invokeSuper(obj, args);
         }
         catch (final AbstractMethodError e) {
-            return TypeContext.of(this.getReturnType()).defaultOrNull();
+            return this.returnType.defaultOrNull();
         }
         catch (final Exception e) {
             throw e;
@@ -77,7 +78,7 @@ public class ProxyMethodInvokable implements Invokable {
 
     @Override
     public Class<?> getReturnType() {
-        return this.returnType;
+        return this.returnType.type();
     }
 
     @Override

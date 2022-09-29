@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
 
 import java.util.Collection;
@@ -36,7 +35,7 @@ public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;
 
-    public DynamicPatternConverter(final TypeContext<T> type, final CustomParameterPattern pattern, final String... keys) {
+    public DynamicPatternConverter(final Class<T> type, final CustomParameterPattern pattern, final String... keys) {
         super(type, keys);
         this.pattern = pattern;
     }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornFactory;
@@ -34,7 +34,7 @@ public class ExceptTests {
     private static TestExceptionHandle HANDLE;
 
     @HartshornFactory
-    public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
+    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
         return factory.exceptionHandler(ctx -> (HANDLE  = new TestExceptionHandle()));
     }
 

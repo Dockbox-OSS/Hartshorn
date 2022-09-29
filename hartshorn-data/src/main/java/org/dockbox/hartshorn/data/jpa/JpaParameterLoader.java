@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.data.context.JpaParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
 public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoaderContext> {
 
@@ -27,7 +27,7 @@ public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoa
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
         final Object value = args[index];
         context.query().setParameter(parameter.name(), value);
         return super.loadDefault(parameter, index, context, args);

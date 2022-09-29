@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.data.service;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.data.context.SerializationTarget;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class UnsupportedSerializationTargetException extends ApplicationRuntimeException {
-    public UnsupportedSerializationTargetException(final SerializationTarget target) {
-        super("Unsupported serialization target: " + target);
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CyclicComponentException extends ApplicationException {
+    public CyclicComponentException(final TypeView<?> type, final List<TypeView<?>> other) {
+        super("Cyclic dependency detected in constructor of %s. Cyclic dependency path: %s".formatted(
+                type.qualifiedName(),
+                other.stream().map(TypeView::name).collect(Collectors.joining(" -> "))
+        ));
     }
 }

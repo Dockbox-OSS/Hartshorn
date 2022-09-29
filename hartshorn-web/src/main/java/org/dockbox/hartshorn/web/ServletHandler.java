@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
@@ -40,7 +40,7 @@ public class ServletHandler {
 
     private final HttpWebServer starter;
     private final HttpMethod httpMethod;
-    private final MethodContext<?, ?> methodContext;
+    private final MethodView<?, ?> method;
     private final HttpRequest httpRequest;
 
     @Inject
@@ -53,12 +53,12 @@ public class ServletHandler {
     private boolean addHeader = true;
 
     @Bound
-    public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
+    public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodView<?, ?> method) {
         this.starter = starter;
         this.httpMethod = httpMethod;
-        this.methodContext = methodContext;
-        this.httpRequest = methodContext.annotation(HttpRequest.class)
-                .orThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(methodContext.qualifiedName())));
+        this.method = method;
+        this.httpRequest = method.annotations().get(HttpRequest.class)
+                .orThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(method.qualifiedName())));
     }
 
     public ObjectMapper mapper() {
@@ -82,10 +82,10 @@ public class ServletHandler {
                 if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
                 final ParameterLoader<HttpRequestParameterLoaderContext> loader = this.starter.loader();
-                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.methodContext, this.methodContext.parent(), null, this.context, req, res);
+                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), null, this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
 
-                final Result<?> result = this.methodContext.invoke(this.context, arguments);
+                final Result<?> result = this.method.invokeWithContext(arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {

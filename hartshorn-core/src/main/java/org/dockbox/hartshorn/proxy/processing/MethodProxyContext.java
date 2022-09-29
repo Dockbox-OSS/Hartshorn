@@ -17,16 +17,16 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 
 public interface MethodProxyContext<T> extends ApplicationAwareContext {
 
-    TypeContext<T> type();
+    TypeView<T> type();
 
-    MethodContext<?, T> method();
+    MethodView<T, ?> method();
 
     <A extends Annotation> A annotation(Class<A> annotation);
 }

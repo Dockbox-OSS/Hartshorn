@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
@@ -33,7 +34,7 @@ import java.util.List;
  * @author Guus Lieben
  * @since 22.4
  */
-public interface NativeModule {
+public interface NativeModule extends ContextCarrier {
 
     /**
      * Call the native function with the given name and arguments. The arguments are passed as a list of objects,

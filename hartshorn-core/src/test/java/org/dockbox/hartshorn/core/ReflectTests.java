@@ -16,41 +16,40 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.annotations.Base;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.core.bridge.BridgeImpl;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.MethodModifier;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.reflect.WildcardTypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.core.annotations.Base;
+import org.dockbox.hartshorn.core.bridge.BridgeImpl;
 import org.dockbox.hartshorn.core.types.AnnotatedImpl;
 import org.dockbox.hartshorn.core.types.ParentTestType;
 import org.dockbox.hartshorn.core.types.ReflectTestType;
 import org.dockbox.hartshorn.core.types.TestEnumType;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javassist.util.proxy.ProxyFactory;
+import jakarta.inject.Inject;
 
 @HartshornTest
 public class ReflectTests {
@@ -131,13 +130,19 @@ public class ReflectTests {
                 Arguments.of(TestEnumType.class, "A", TestEnumType.A)
         );
     }
+    
+    @Inject 
+    private Introspector introspector;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @ParameterizedTest
     @MethodSource("fields")
     void testFieldValueReturnsValue(final String field) {
         final ReflectTestType instance = new ReflectTestType();
-        final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        final Result<?> value = type.field(field).get().get(instance);
+        final TypeView<ReflectTestType> type = this.introspector.introspect(instance);
+        final Result<?> value = type.fields().named(field).get().get(instance);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
@@ -146,8 +151,8 @@ public class ReflectTests {
     @MethodSource("methods")
     void testRunMethodReturnsValue(final String method) {
         final ReflectTestType instance = new ReflectTestType();
-        final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        final Result<?> value = type.method(method, List.of(TypeContext.of(String.class))).get().invoke(instance, "value");
+        final TypeView<ReflectTestType> type = this.introspector.introspect(instance);
+        final Result<?> value = type.methods().named(method, List.of(String.class)).get().invoke(instance, "value");
         Assertions.assertTrue(value.present());
         Assertions.assertEquals("VALUE", value.get());
     }
@@ -155,29 +160,29 @@ public class ReflectTests {
     @ParameterizedTest
     @MethodSource("assignablePrimitives")
     void testAssignableFromPrimitives(final Class<?> primitive, final Class<?> wrapper) {
-        final TypeContext<?> pt = TypeContext.of(primitive);
-        final TypeContext<?> wt = TypeContext.of(wrapper);
-        Assertions.assertTrue(pt.childOf(wt));
-        Assertions.assertTrue(wt.childOf(pt));
+        final TypeView<?> pt = this.introspector.introspect(primitive);
+        final TypeView<?> wt = this.introspector.introspect(wrapper);
+        Assertions.assertTrue(pt.isChildOf(wt.type()));
+        Assertions.assertTrue(wt.isChildOf(pt.type()));
     }
 
     @Test
     void testAssignableFromSuper() {
-        Assertions.assertTrue(TypeContext.of(ReflectTestType.class).childOf(ParentTestType.class));
+        Assertions.assertTrue(this.introspector.introspect(ReflectTestType.class).isChildOf(ParentTestType.class));
     }
 
     @Test
     void testAssignableFromSame() {
-        Assertions.assertTrue(TypeContext.of(ReflectTestType.class).childOf(ReflectTestType.class));
+        Assertions.assertTrue(this.introspector.introspect(ReflectTestType.class).isChildOf(ReflectTestType.class));
     }
 
     @Test
     void testAnnotatedMethodsReturnsAllModifiers() {
-        final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        final List<MethodContext<?, ReflectTestType>> methods = type.methods(Demo.class);
+        final TypeView<ReflectTestType> type = this.introspector.introspect(ReflectTestType.class);
+        final List<MethodView<ReflectTestType, ?>> methods = type.methods().annotatedWith(Demo.class);
         Assertions.assertEquals(3, methods.size());
 
-        final List<String> names = methods.stream().map(MethodContext::name).toList();
+        final List<String> names = methods.stream().map(MethodView::name).toList();
         Assertions.assertTrue(names.contains("publicAnnotatedMethod"));
         Assertions.assertTrue(names.contains("privateAnnotatedMethod"));
     }
@@ -186,7 +191,7 @@ public class ReflectTests {
     void testAnnotatedTypesReturnsAllInPrefix(final ApplicationManager manager) {
         final PrefixContext context = new ReflectionsPrefixContext(manager);
         context.prefix("org.dockbox.hartshorn.core.types");
-        final Collection<TypeContext<?>> types = context.types(Demo.class);
+        final Collection<TypeView<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
@@ -195,39 +200,41 @@ public class ReflectTests {
     void testSubTypesReturnsAllSubTypes(final ApplicationManager manager) {
         final PrefixContext context = new ReflectionsPrefixContext(manager);
         context.prefix("org.dockbox.hartshorn.core.types");
-        final Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
+        final Collection<TypeView<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
 
     @Test
     void testStaticFieldsReturnsAllModifiers() {
-        final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields().stream()
-                .filter(FieldContext::isStatic)
+        final List<FieldView<ReflectTestType, ?>> fields = this.introspector.introspect(ReflectTestType.class).fields().all().stream()
+                .filter(FieldView::isStatic)
                 .toList();
         Assertions.assertEquals(2, fields.size());
     }
 
     @Test
     void testHasAnnotationOnMethod() {
-        final Result<MethodContext<?, ReflectTestType>> method = TypeContext.of(ReflectTestType.class).method("publicAnnotatedMethod");
+        final Result<MethodView<ReflectTestType, ?>> method = this.introspector.introspect(ReflectTestType.class)
+                .methods()
+                .named("publicAnnotatedMethod");
         Assertions.assertTrue(method.present());
-        Assertions.assertTrue(method.get().annotation(Demo.class).present());
+        Assertions.assertTrue(method.get().annotations().has(Demo.class));
     }
 
     @Test
     void testSuperTypesReturnsAllSuperTypesWithoutObject() {
-        final TypeContext<?> parent = TypeContext.of(ReflectTestType.class).parent();
+        final TypeView<?> parent = this.introspector.introspect(ReflectTestType.class).superClass();
         Assertions.assertFalse(parent.isVoid());
         Assertions.assertEquals(ParentTestType.class, parent.type());
     }
 
     @Test
     void testMethodsReturnsAllDeclaredAndParentMethods() {
-        final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        final List<MethodContext<?, ReflectTestType>> methods = type.methods();
+        final TypeView<ReflectTestType> type = this.introspector.introspect(ReflectTestType.class);
+        final List<MethodView<ReflectTestType, ?>> methods = type.methods().all();
         boolean fail = true;
-        for (final MethodContext<?, ReflectTestType> method : methods) {
+        for (final MethodView<ReflectTestType, ?> method : methods) {
             if ("parentMethod".equals(method.name())) fail = false;
         }
         if (fail) Assertions.fail("Parent types were not included");
@@ -235,17 +242,17 @@ public class ReflectTests {
 
     @Test
     void testTypeContextMethodsDoNotIncludeBridgeMethods() {
-        final TypeContext<BridgeImpl> bridge = TypeContext.of(BridgeImpl.class);
-        final List<MethodContext<?, BridgeImpl>> methods = bridge.methods();
-        for (final MethodContext<?, BridgeImpl> method : methods) {
+        final TypeView<BridgeImpl> bridge = this.introspector.introspect(BridgeImpl.class);
+        final List<MethodView<BridgeImpl, ?>> methods = bridge.methods().all();
+        for (final MethodView<BridgeImpl, ?> method : methods) {
             Assertions.assertFalse(method.method().isBridge());
         }
     }
 
     @Test
     void testTypeContextBridgeMethodsCanBeObtained() {
-        final TypeContext<BridgeImpl> bridge = TypeContext.of(BridgeImpl.class);
-        final List<MethodContext<?, BridgeImpl>> methods = bridge.bridgeMethods();
+        final TypeView<BridgeImpl> bridge = this.introspector.introspect(BridgeImpl.class);
+        final List<MethodView<BridgeImpl, ?>> methods = bridge.methods().bridges();
         Assertions.assertEquals(1, methods.size());
         Assertions.assertEquals(Object.class, methods.get(0).returnType().type());
         Assertions.assertTrue(methods.get(0).method().isBridge());
@@ -253,66 +260,81 @@ public class ReflectTests {
 
     @Test
     void testLookupReturnsClassIfPresent() {
-        final TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.core.types.ReflectTestType");
+        final TypeView<?> lookup = this.introspector.introspect("org.dockbox.hartshorn.core.types.ReflectTestType");
         Assertions.assertNotNull(lookup);
         Assertions.assertEquals(ReflectTestType.class, lookup.type());
     }
 
     @Test
-    void testLookupReturnsNullIfAbsent() {
-        final TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.util.AnotherClass");
-        Assertions.assertEquals(TypeContext.VOID, lookup);
+    void testLookupReturnsVoidIfAbsent() {
+        final TypeView<?> lookup = this.introspector.introspect("org.dockbox.hartshorn.util.AnotherClass");
+        Assertions.assertTrue(lookup.isVoid());
     }
 
     @Test
     void testHasMethodIsTrueIfMethodExists() {
-        Assertions.assertTrue(TypeContext.of(ReflectTestType.class).method("publicMethod", List.of(TypeContext.of(String.class))).present());
+        Assertions.assertTrue(this.introspector.introspect(ReflectTestType.class)
+                .methods()
+                .named("publicMethod", String.class)
+                .present());
     }
 
     @Test
     void testHasMethodIsFalseIfMethodDoesNotExist() {
-        Assertions.assertFalse(TypeContext.of(ReflectTestType.class).method("otherMethod").present());
+        Assertions.assertFalse(this.introspector.introspect(ReflectTestType.class)
+                .methods()
+                .named("otherMethod")
+                .present());
     }
 
     @Test
     void testInstanceHasMethodIsTrueIfMethodExists() {
-        Assertions.assertTrue(TypeContext.of(new ReflectTestType()).method("publicMethod", List.of(TypeContext.of(String.class))).present());
+        Assertions.assertTrue(this.introspector.introspect(new ReflectTestType())
+                .methods()
+                .named("publicMethod", String.class)
+                .present());
     }
 
     @Test
     void testInstanceHasMethodIsFalseIfMethodDoesNotExist() {
-        Assertions.assertFalse(TypeContext.of(new ReflectTestType()).method("otherMethod").present());
+        Assertions.assertFalse(this.introspector.introspect(new ReflectTestType())
+                .methods()
+                .named("otherMethod")
+                .present());
     }
 
     @ParameterizedTest
     @MethodSource("nonVoidTypes")
     void testVoidIsFalseIfTypeIsNotVoid(final Class<?> type) {
-        Assertions.assertFalse(TypeContext.of(type).isVoid());
+        Assertions.assertFalse(this.introspector.introspect(type).isVoid());
     }
 
     @Test
     void testVoidIsTrueIfTypeIsVoid() {
-        Assertions.assertTrue(TypeContext.of(Void.class).isVoid());
+        Assertions.assertTrue(this.introspector.introspect(Void.class).isVoid());
     }
 
     @Test
     void testVoidIsTrueIfTypeIsVoidPrimitive() {
-        Assertions.assertTrue(TypeContext.of(void.class).isVoid());
+        Assertions.assertTrue(this.introspector.introspect(void.class).isVoid());
     }
 
     @ParameterizedTest
     @MethodSource("fields")
     void testHasFieldReturnsTrue(final String field) {
-        Assertions.assertTrue(TypeContext.of(ReflectTestType.class).field(field).present());
+        Assertions.assertTrue(this.introspector.introspect(ReflectTestType.class)
+                .fields()
+                .named(field)
+                .present());
     }
 
     @ParameterizedTest
     @MethodSource("fields")
     void testFieldsConsumesAllFields(final String field) {
         boolean activated = false;
-        final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        for (final FieldContext<?> fieldContext : type.fields()) {
-            if (fieldContext.name().equals(field)) activated = true;
+        final TypeView<ReflectTestType> type = this.introspector.introspect(ReflectTestType.class);
+        for (final FieldView<ReflectTestType, ?> fieldView : type.fields().all()) {
+            if (fieldView.name().equals(field)) activated = true;
         }
         Assertions.assertTrue(activated);
     }
@@ -320,8 +342,8 @@ public class ReflectTests {
     @Test
     void testSetFieldUpdatesAccessorField() throws NoSuchFieldException {
         final Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
+        final FieldView<?, ?> field = this.introspector.introspect(fieldRef);
         final ReflectTestType instance = new ReflectTestType();
-        final FieldContext<?> field = FieldContext.of(fieldRef);
         field.set(instance, "newValue");
 
         Assertions.assertTrue(instance.activatedSetter());
@@ -330,8 +352,8 @@ public class ReflectTests {
     @Test
     void testSetFieldUpdatesNormalField() throws NoSuchFieldException {
         final Field fieldRef = ReflectTestType.class.getDeclaredField("publicField");
+        final FieldView<?, ?> field = this.introspector.introspect(fieldRef);
         final ReflectTestType instance = new ReflectTestType();
-        final FieldContext<?> field = FieldContext.of(fieldRef);
         field.set(instance, "newValue");
 
         Assertions.assertEquals("newValue", instance.publicField);
@@ -339,10 +361,10 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedFieldsIncludesStatic() {
-        final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields(Demo.class);
+        final List<FieldView<ReflectTestType, ?>> fields = this.introspector.introspect(ReflectTestType.class).fields().annotatedWith(Demo.class);
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
-        for (final FieldContext<?> field : fields) {
+        for (final FieldView<ReflectTestType, ?> field : fields) {
             if (field.isStatic()) statics++;
         }
         Assertions.assertEquals(1, statics);
@@ -350,125 +372,32 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedConstructors() {
-        final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        final List<ConstructorContext<ReflectTestType>> constructors = type.constructors(Demo.class);
+        final TypeView<ReflectTestType> type = this.introspector.introspect(ReflectTestType.class);
+        final List<ConstructorView<ReflectTestType>> constructors = type.constructors().annotatedWith(Demo.class);
         Assertions.assertEquals(1, constructors.size());
     }
 
     @Test
-    void testIsProxyIsTrueIfTypeIsProxy() {
-        final Class<?> type = new ProxyFactory().createClass();
-        Assertions.assertTrue(TypeContext.of(type).isProxy());
+    void testIsProxyIsTrueIfTypeIsProxy() throws ApplicationException {
+        final Object proxy = this.applicationContext.environment()
+                .manager().factory(Object.class)
+                .proxy().get();
+        // Ensure we introspect .getClass directly, as introspecting the instance will
+        // automatically unproxy the view.
+        Assertions.assertTrue(this.introspector.introspect(proxy.getClass()).isProxy());
     }
 
     @Test
     void testIsProxyIsFalseIfTypeIsNormal() {
-        Assertions.assertFalse(TypeContext.of(ReflectTestType.class).isProxy());
+        Assertions.assertFalse(this.introspector.introspect(ReflectTestType.class).isProxy());
     }
 
     @ParameterizedTest
     @MethodSource("primitiveValues")
     void testStringToPrimitive(final Class<?> type, final String value, final Object expected) throws TypeConversionException {
-        final byte b = 0x0;
-        final Object o = TypeContext.toPrimitive(TypeContext.of(type), value);
+        final Object o = TypeUtils.toPrimitive(type, value);
         Assertions.assertNotNull(o);
         Assertions.assertEquals(expected, o);
-    }
-
-    @Test
-    void testAddVirtualAnnotation() {
-        final TypeContext<String> string = TypeContext.of(String.class);
-        Assertions.assertFalse(string.annotation(Demo.class).present());
-
-        final Demo demo = new Demo() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return Demo.class;
-            }
-        };
-
-        AnnotatedElementModifier.of(string).add(demo);
-
-        final Result<Demo> annotation = string.annotation(Demo.class);
-        Assertions.assertTrue(annotation.present());
-        Assertions.assertSame(demo, annotation.get());
-    }
-
-    @Test
-    void testRemoveVirtualAnnotation() {
-        final TypeContext<String> string = TypeContext.of(String.class);
-        final Demo demo = new Demo() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return Demo.class;
-            }
-        };
-        final AnnotatedElementModifier<Class<String>> modifier = AnnotatedElementModifier.of(string);
-        modifier.add(demo);
-        Assertions.assertTrue(string.annotation(Demo.class).present());
-
-        modifier.remove(Demo.class);
-        Assertions.assertFalse(string.annotation(Demo.class).present());
-    }
-
-    @Test
-    void testVirtualAnnotationToMethod() {
-        final MethodContext<?, ReflectTests> method = TypeContext.of(ReflectTests.class).method("testVirtualAnnotationToMethod").get();
-        final AnnotatedElementModifier<Method> modifier = AnnotatedElementModifier.of(method);
-        final Demo demo = new Demo() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return Demo.class;
-            }
-        };
-
-        modifier.add(demo);
-        Assertions.assertTrue(method.annotation(Demo.class).present());
-
-        modifier.remove(Demo.class);
-        Assertions.assertFalse(method.annotation(Demo.class).present());
-    }
-
-    @Test
-    void testMethodInvokerCanBeChanged() {
-        final Result<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
-                .method("helloWorld")
-                .map(method -> (MethodContext<String, ReflectTests>) method);
-        Assertions.assertTrue(helloWorld.present());
-        final MethodContext<String, ReflectTests> method = helloWorld.get();
-
-        final Result<?> unmodifiedResult = method.invoke(this);
-        Assertions.assertTrue(unmodifiedResult.present());
-        Assertions.assertEquals("Hello World", unmodifiedResult.get());
-
-        final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
-        modifier.invoker((methodContext, instance, args) -> Result.of("Goodbye World"));
-
-        final Result<String> modifiedResult = method.invoke(this);
-        Assertions.assertTrue(modifiedResult.present());
-        Assertions.assertEquals("Goodbye World", modifiedResult.get());
-    }
-
-    @Test
-    void testMethodAccessorCanBeChanged() {
-        final Result<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
-                .method("privateHelloWorld")
-                .map(method -> (MethodContext<String, ReflectTests>) method);
-        Assertions.assertTrue(helloWorld.present());
-        final MethodContext<String, ReflectTests> method = helloWorld.get();
-
-        final Result<String> unmodifiedResult = method.invoke(this);
-        Assertions.assertTrue(unmodifiedResult.absent());
-        Assertions.assertTrue(unmodifiedResult.caught());
-        final Throwable error = unmodifiedResult.error();
-        Assertions.assertTrue(error instanceof IllegalAccessException);
-
-        final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
-        modifier.access(true);
-
-        final Result<String> modifiedResult = method.invoke(this);
-        Assertions.assertTrue(modifiedResult.present());
-        Assertions.assertEquals("Hello World", modifiedResult.get());
     }
 
     private String privateHelloWorld() {
@@ -481,31 +410,36 @@ public class ReflectTests {
 
     @Test
     void testRedefinedAnnotationsTakePriority() {
-        final TypeContext<AnnotatedImpl> typeContext = TypeContext.of(AnnotatedImpl.class);
-        final Result<Base> annotation = typeContext.annotation(Base.class);
+        final TypeView<AnnotatedImpl> typeContext = this.introspector.introspect(AnnotatedImpl.class);
+        final Result<Base> annotation = typeContext.annotations().get(Base.class);
         Assertions.assertTrue(annotation.present());
         Assertions.assertEquals("impl", annotation.get().value());
     }
 
     @Test
     public void genericTypeTests() {
-        final ParameterContext<?> parameter = TypeContext.of(this).method("genericTestMethod", List.class)
+        final ParameterView<?> parameter = this.introspector.introspect(this)
+                .methods()
+                .named("genericTestMethod", List.class)
                 .get()
                 .parameters()
-                .get(0);
+                .at(0)
+                .orNull();
 
-        final TypeContext<?> first = parameter.genericType();
+        final TypeView<?> first = parameter.genericType();
 
         Assertions.assertTrue(first.is(List.class));
-        Assertions.assertEquals(1, first.typeParameters().size());
+        Assertions.assertEquals(1, first.typeParameters().count());
 
-        final TypeContext<?> second = first.typeParameters().get(0);
+        final TypeView<?> second = first.typeParameters().at(0).orNull();
+        Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(List.class));
-        Assertions.assertEquals(1, second.typeParameters().size());
+        Assertions.assertEquals(1, second.typeParameters().count());
 
-        final TypeContext<?> third = second.typeParameters().get(0);
+        final TypeView<?> third = second.typeParameters().at(0).orNull();
+        Assertions.assertNotNull(third);
         Assertions.assertTrue(third.is(String.class));
-        Assertions.assertEquals(0, third.typeParameters().size());
+        Assertions.assertEquals(0, third.typeParameters().count());
     }
 
     public void genericTestMethod(final List<List<String>> nestedGeneric) { }
@@ -514,18 +448,23 @@ public class ReflectTests {
 
     @Test
     void testWildcardsWithUpperBounds() {
-        final ParameterContext<?> parameter = TypeContext.of(this).method("methodWithWildcardUpperbounds", List.class)
+        final ParameterView<?> parameter = this.introspector.introspect(this)
+                .methods()
+                .named("methodWithWildcardUpperbounds", List.class)
                 .get()
                 .parameters()
-                .get(0);
+                .at(0)
+                .orNull();
 
-        final TypeContext<?> first = parameter.genericType();
+        Assertions.assertNotNull(parameter);
+        final TypeView<?> first = parameter.genericType();
 
         Assertions.assertTrue(first.is(List.class));
-        Assertions.assertEquals(1, first.typeParameters().size());
+        Assertions.assertEquals(1, first.typeParameters().count());
 
-        final TypeContext<?> second = first.typeParameters().get(0);
+        final TypeView<?> second = first.typeParameters().at(0).orNull();
+        Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(String.class));
-        Assertions.assertFalse(second instanceof WildcardTypeContext);
+        Assertions.assertFalse(second.isWildcard());
     }
 }

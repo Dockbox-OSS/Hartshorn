@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
 import org.dockbox.hartshorn.data.jpa.EntityQueryFunction;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 @Service
 @RequiresActivator(UsePersistence.class)
@@ -39,8 +40,8 @@ public class HibernateProviders {
     }
 
     @Provider
-    public Class<? extends JpaRepository> jpaRepository() {
-        return HibernateJpaRepository.class;
+    public Class<? extends JpaRepository<?, ?>> jpaRepository() {
+        return TypeUtils.adjustWildcards(HibernateJpaRepository.class, Class.class);
     }
 
     @Provider

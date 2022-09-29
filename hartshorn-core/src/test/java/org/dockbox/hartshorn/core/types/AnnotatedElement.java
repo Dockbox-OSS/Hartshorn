@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.application.Activator;
+import org.dockbox.hartshorn.core.annotations.Sample;
 
-@Activator
+@Sample
 public class AnnotatedElement {
 }

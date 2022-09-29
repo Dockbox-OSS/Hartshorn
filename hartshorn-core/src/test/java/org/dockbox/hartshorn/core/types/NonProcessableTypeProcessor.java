@@ -20,20 +20,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class NonProcessableTypeProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        final TypeContext<T> type = key.type();
-        type.field("nonNullIfProcessed").get().set(instance, "processed");
-        return instance;
+    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        return instance instanceof NonProcessableType;
     }
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return instance instanceof NonProcessableType;
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
+        return instance;
     }
 }

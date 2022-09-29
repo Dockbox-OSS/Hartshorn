@@ -39,8 +39,8 @@ import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -152,7 +152,8 @@ public class ProxyTests {
     void testConcreteProxyWithNonDefaultConstructorUsesConstructor() {
         final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor, ?> factory = this.applicationContext.environment().manager().factory(ConcreteProxyWithNonDefaultConstructor.class);
 
-        final ConstructorContext<ConcreteProxyWithNonDefaultConstructor> constructor = TypeContext.of(ConcreteProxyWithNonDefaultConstructor.class).constructors().get(0);
+        final TypeView<ConcreteProxyWithNonDefaultConstructor> typeView = this.applicationContext.environment().introspect(ConcreteProxyWithNonDefaultConstructor.class);
+        final ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor = typeView.constructors().all().get(0);
         final Result<ConcreteProxyWithNonDefaultConstructor> proxy = Assertions.assertDoesNotThrow(() -> factory.proxy(constructor, new Object[]{this.applicationContext}));
         Assertions.assertTrue(proxy.present());
 
@@ -346,7 +347,7 @@ public class ProxyTests {
         final Result<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
-        final ProxyManager manager = ((Proxy) proxy.get()).manager();
+        final ProxyManager<InterfaceProxy> manager = ((Proxy<InterfaceProxy>) proxy.get()).manager();
         Assertions.assertNotNull(manager.proxyClass());
         Assertions.assertNotNull(manager.targetClass());
 

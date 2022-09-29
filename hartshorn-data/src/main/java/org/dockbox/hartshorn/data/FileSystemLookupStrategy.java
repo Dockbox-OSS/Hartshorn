@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.net.URI;
@@ -28,7 +27,8 @@ import java.util.stream.Collectors;
 
 /**
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
- * the {@link TypeContext owner}, typically this will be similar to {@code /config/{owner-id}/}.
+ * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
+ *
  * <p>This strategy does not require the name to be present, as it is the default strategy used in
  * {@link ConfigurationServicePreProcessor}.
  */

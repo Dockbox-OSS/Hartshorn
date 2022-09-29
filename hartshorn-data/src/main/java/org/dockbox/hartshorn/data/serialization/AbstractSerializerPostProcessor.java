@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.lang.annotation.Annotation;
 import java.util.Optional;
@@ -32,18 +32,18 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
     private static final Key<SerializationSourceConverter> CONVERTER_KEY = Key.of(SerializationSourceConverter.class);
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         return converter != null;
     }
 
-    protected <T> SerializationSourceConverter findConverter(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    protected <T> SerializationSourceConverter findConverter(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.containsKey(CONVERTER_KEY)) {
             return processingContext.get(CONVERTER_KEY);
         }
 
-        final MethodContext<?, T> method = methodContext.method();
-        final SerializationSourceConverter converter = method.annotation(SerializationSource.class)
+        final MethodView<T, ?> method = methodContext.method();
+        final SerializationSourceConverter converter = method.annotations().get(SerializationSource.class)
                 .map(serializationSource -> (SerializationSourceConverter) context.get(serializationSource.converter()))
                 .orElse(() -> context.get(ArgumentSerializationSourceConverter.class))
                 .rethrowUnchecked().orNull();
@@ -54,7 +54,7 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
         return converter;
     }
 
-    protected Object wrapSerializationResult(final MethodContext<?, ?> methodContext, final Result<?> result) {
+    protected Object wrapSerializationResult(final MethodView<?, ?> methodContext, final Result<?> result) {
         if (methodContext.returnType().is(Result.class))
             return result;
         else if (methodContext.returnType().is(Optional.class))

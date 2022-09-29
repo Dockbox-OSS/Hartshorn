@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public interface ComponentContainer {
 
@@ -24,9 +24,7 @@ public interface ComponentContainer {
 
     String name();
 
-    TypeContext<?> type();
-
-    TypeContext<?> owner();
+    TypeView<?> type();
 
     boolean singleton();
 

@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,12 @@ import java.util.List;
 public abstract class PrefixedParameterPattern implements CustomParameterPattern {
 
     @Override
-    public <T> Result<Boolean> preconditionsMatch(final TypeContext<T> type, final CommandSource source, final String raw) {
+    public <T> Result<Boolean> preconditionsMatch(final Class<T> type, final CommandSource source, final String raw) {
         String prefix = this.prefix() + "";
         if (this.requiresTypeName()) {
-            final String parameterName = type.annotation(Parameter.class).get().value();
+            final ApplicationContext applicationContext = source.applicationContext();
+            final TypeView<T> typeView = applicationContext.environment().introspect(type);
+            final String parameterName = typeView.annotations().get(Parameter.class).get().value();
             prefix = this.prefix() + parameterName;
         }
         if (raw.startsWith(prefix)) {

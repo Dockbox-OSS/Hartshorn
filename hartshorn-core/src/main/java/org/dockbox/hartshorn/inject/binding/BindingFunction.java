@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-
 import java.util.function.Supplier;
 
 public interface BindingFunction<T> {
@@ -32,15 +30,6 @@ public interface BindingFunction<T> {
      * @return The binder
      */
     Binder to(Class<? extends T> type);
-
-    /**
-     * Binds to the given type, this will create a new instance of the given type
-     * every time it is requested.
-     *
-     * @param type The type to bind to
-     * @return The binder
-     */
-    Binder to(TypeContext<? extends T> type);
 
     /**
      * Binds to the given supplier, this will call the supplier every time it is
@@ -71,17 +60,6 @@ public interface BindingFunction<T> {
      * @return The binder
      */
     Binder lazySingleton(Class<T> type);
-
-    /**
-     * Binds to a supplier that will provide a lazy instance of the given type
-     * every time it is requested. This will create the instance the first time
-     * it is requested and then return the same instance every time it is
-     * requested.
-     *
-     * @param type The type to bind to
-     * @return The binder
-     */
-    Binder lazySingleton(TypeContext<T> type);
 
     /**
      * Binds to a supplier that will provide a lazy instance of the given type

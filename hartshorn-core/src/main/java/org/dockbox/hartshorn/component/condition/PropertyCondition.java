@@ -22,7 +22,7 @@ public class PropertyCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElementContext().annotation(RequiresProperty.class).map(condition -> {
+        return context.annotatedElement().annotations().get(RequiresProperty.class).map(condition -> {
             final String name = condition.name();
             final Result<String> result = context.applicationContext().property(name);
             if (result.absent()) {

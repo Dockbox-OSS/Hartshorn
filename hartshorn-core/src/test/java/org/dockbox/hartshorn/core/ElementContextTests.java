@@ -16,19 +16,22 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.util.reflect.AccessModifier;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.core.annotations.Sample;
 import org.dockbox.hartshorn.core.types.AnnotatedElement;
 import org.dockbox.hartshorn.core.types.BoundUserImpl;
 import org.dockbox.hartshorn.core.types.ImplementationWithTP;
 import org.dockbox.hartshorn.core.types.InterfaceWithTP;
 import org.dockbox.hartshorn.core.types.TestEnumType;
 import org.dockbox.hartshorn.core.types.User;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,6 +42,9 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.stream.Stream;
 
+import jakarta.inject.Inject;
+
+@HartshornTest
 public class ElementContextTests {
 
     public static Stream<Arguments> primitives() {
@@ -105,286 +111,264 @@ public class ElementContextTests {
                 Arguments.of(Short.class, "0", (short) 0)
         );
     }
+    
+    @Inject
+    private Introspector introspector;
 
     @Test
-    void testTypeContextsAreReused() {
-        final TypeContext<ElementContextTests> tc1 = TypeContext.of(ElementContextTests.class);
-        final TypeContext<ElementContextTests> tc2 = TypeContext.of(ElementContextTests.class);
+    void testTypesAreCached() {
+        final TypeView<ElementContextTests> tc1 = this.introspector.introspect(ElementContextTests.class);
+        final TypeView<ElementContextTests> tc2 = this.introspector.introspect(ElementContextTests.class);
         Assertions.assertSame(tc1, tc2);
     }
 
     @Test
-    void testTypeContextsAreNotReusedForDifferentTypes() {
-        final TypeContext<ElementContextTests> tc1 = TypeContext.of(ElementContextTests.class);
-        final TypeContext<Object> tc2 = TypeContext.of(Object.class);
+    void testCachedItemsAreNotReusedForDifferentTypes() {
+        final TypeView<ElementContextTests> tc1 = this.introspector.introspect(ElementContextTests.class);
+        final TypeView<Object> tc2 = this.introspector.introspect(Object.class);
         Assertions.assertNotSame(tc1, tc2);
     }
 
     @ParameterizedTest
     @MethodSource("primitives")
     public void testIsPrimitiveAcceptsPrimitives(final Class<?> primitive) {
-        Assertions.assertTrue(TypeContext.of(primitive).isPrimitive());
+        Assertions.assertTrue(this.introspector.introspect(primitive).isPrimitive());
     }
 
     @ParameterizedTest
     @MethodSource("wrappers")
     public void testIsPrimitiveRejectsPrimitiveWrappers(final Class<?> wrapper) {
-        Assertions.assertFalse(TypeContext.of(wrapper).isPrimitive());
+        Assertions.assertFalse(this.introspector.introspect(wrapper).isPrimitive());
     }
 
     @Test
     public void testIsVoidAcceptsPrimitiveAndWrapper() {
-        Assertions.assertTrue(TypeContext.of(void.class).isVoid());
-        Assertions.assertTrue(TypeContext.of(Void.class).isVoid());
-        Assertions.assertTrue(TypeContext.VOID.isVoid());
+        Assertions.assertTrue(this.introspector.introspect(void.class).isVoid());
+        Assertions.assertTrue(this.introspector.introspect(Void.class).isVoid());
     }
 
     @Test
     public void testIsVoidRejectsNonPrimitiveAndNonWrapper() {
-        Assertions.assertFalse(TypeContext.of(String.class).isVoid());
-        Assertions.assertFalse(TypeContext.of(Object.class).isVoid());
+        Assertions.assertFalse(this.introspector.introspect(String.class).isVoid());
+        Assertions.assertFalse(this.introspector.introspect(Object.class).isVoid());
     }
 
     @Test
     public void testIsPrimitiveRejectsNonPrimitiveAndNonWrapper() {
-        Assertions.assertFalse(TypeContext.of(String.class).isPrimitive());
-        Assertions.assertFalse(TypeContext.of(Object.class).isPrimitive());
-    }
-
-    @Test
-    public void testIsPrimitiveRejectsVoid() {
-        Assertions.assertFalse(TypeContext.VOID.isPrimitive());
+        Assertions.assertFalse(this.introspector.introspect(String.class).isPrimitive());
+        Assertions.assertFalse(this.introspector.introspect(Object.class).isPrimitive());
     }
 
     @Test
     public void testIsPrimitiveRejectsVoidWrapper() {
-        Assertions.assertFalse(TypeContext.of(Void.class).isPrimitive());
+        Assertions.assertFalse(this.introspector.introspect(Void.class).isPrimitive());
     }
 
     @Test
     public void testIsPrimitiveAcceptsVoidPrimitive() {
-        Assertions.assertTrue(TypeContext.of(void.class).isPrimitive());
+        Assertions.assertTrue(this.introspector.introspect(void.class).isPrimitive());
     }
 
     @Test
     public void testAnonymousTypesAreAnonymous() {
-        final TypeContext<Object> anonymous = TypeContext.of(new Object() {
+        final TypeView<Object> anonymous = this.introspector.introspect(new Object() {
         });
         Assertions.assertTrue(anonymous.isAnonymous());
     }
 
     @Test
     public void testNonAnonymousTypesAreNotAnonymous() {
-        final TypeContext<Object> anonymous = TypeContext.of(Object.class);
+        final TypeView<Object> anonymous = this.introspector.introspect(Object.class);
         Assertions.assertFalse(anonymous.isAnonymous());
     }
 
     @Test
     void testAnonymousWrappersReturnCorrectType() {
-        final TypeContext<Object> anonymous = TypeContext.of(new Object() {
+        final TypeView<Object> anonymous = this.introspector.introspect(new Object() {
         });
         Assertions.assertNotEquals(Object.class, anonymous.type());
     }
 
     @Test
     public void testEnumsAreEnum() {
-        Assertions.assertTrue(TypeContext.of(TestEnumType.class).isEnum());
+        Assertions.assertTrue(this.introspector.introspect(TestEnumType.class).isEnum());
     }
 
     @Test
     public void testNonEnumsAreNotEnum() {
-        Assertions.assertFalse(TypeContext.of(Object.class).isEnum());
+        Assertions.assertFalse(this.introspector.introspect(Object.class).isEnum());
     }
 
     @Test
     public void testEnumsAreNotAnonymous() {
-        Assertions.assertFalse(TypeContext.of(TestEnumType.class).isAnonymous());
+        Assertions.assertFalse(this.introspector.introspect(TestEnumType.class).isAnonymous());
     }
 
     @Test
     public void enumConstantsCanBeObtained() {
-        final TypeContext<TestEnumType> enumContext = TypeContext.of(TestEnumType.class);
+        final TypeView<TestEnumType> enumContext = this.introspector.introspect(TestEnumType.class);
         Assertions.assertEquals(TestEnumType.VALUES.length, enumContext.enumConstants().size());
     }
 
     @Test
     public void testAnnotationsAreAnnotations() {
-        Assertions.assertTrue(TypeContext.of(ServiceActivator.class).isAnnotation());
+        Assertions.assertTrue(this.introspector.introspect(ServiceActivator.class).isAnnotation());
     }
 
     @Test
     public void testNonAnnotationsAreNotAnnotations() {
-        Assertions.assertFalse(TypeContext.of(Object.class).isAnnotation());
+        Assertions.assertFalse(this.introspector.introspect(Object.class).isAnnotation());
     }
 
     @Test
     public void testAnnotationsAreNotAnonymous() {
-        Assertions.assertFalse(TypeContext.of(Annotation.class).isAnonymous());
+        Assertions.assertFalse(this.introspector.introspect(Annotation.class).isAnonymous());
     }
 
     @Test
     public void testAnnotationsAreNotEnum() {
-        Assertions.assertFalse(TypeContext.of(Annotation.class).isEnum());
+        Assertions.assertFalse(this.introspector.introspect(Annotation.class).isEnum());
     }
 
     @Test
     public void testAnnotationsAreNotPrimitive() {
-        Assertions.assertFalse(TypeContext.of(Annotation.class).isPrimitive());
+        Assertions.assertFalse(this.introspector.introspect(Annotation.class).isPrimitive());
     }
 
     @Test
     public void testAnnotationsAreNotVoid() {
-        Assertions.assertFalse(TypeContext.of(Annotation.class).isVoid());
+        Assertions.assertFalse(this.introspector.introspect(Annotation.class).isVoid());
     }
 
     @Test
     public void testAnnotationsAreNotArray() {
-        Assertions.assertFalse(TypeContext.of(Annotation.class).isArray());
+        Assertions.assertFalse(this.introspector.introspect(Annotation.class).isArray());
     }
 
     @Test
     void testArraysAreArrays() {
-        Assertions.assertTrue(TypeContext.of(Object[].class).isArray());
+        Assertions.assertTrue(this.introspector.introspect(Object[].class).isArray());
     }
 
     @Test
     void testArraysAreNotAnonymous() {
-        Assertions.assertFalse(TypeContext.of(Object[].class).isAnonymous());
+        Assertions.assertFalse(this.introspector.introspect(Object[].class).isAnonymous());
     }
 
     @Test
     void testArraysAreNotEnum() {
-        Assertions.assertFalse(TypeContext.of(Object[].class).isEnum());
+        Assertions.assertFalse(this.introspector.introspect(Object[].class).isEnum());
     }
 
     @Test
     void testArraysAreNotPrimitive() {
-        Assertions.assertFalse(TypeContext.of(Object[].class).isPrimitive());
+        Assertions.assertFalse(this.introspector.introspect(Object[].class).isPrimitive());
     }
 
     @Test
     void testArraysAreNotVoid() {
-        Assertions.assertFalse(TypeContext.of(Object[].class).isVoid());
+        Assertions.assertFalse(this.introspector.introspect(Object[].class).isVoid());
     }
 
     @Test
     void testArraysAreNotAnnotation() {
-        Assertions.assertFalse(TypeContext.of(Object[].class).isAnnotation());
+        Assertions.assertFalse(this.introspector.introspect(Object[].class).isAnnotation());
     }
 
     @ParameterizedTest
     @MethodSource("primitiveDefaults")
     void testPrimitiveDefaults(final Class<?> primitive, final Object defaultValue) {
-        Assertions.assertEquals(defaultValue, TypeContext.of(primitive).defaultOrNull());
-    }
-
-    @Test
-    void testVoidDefaultsToNull() {
-        Assertions.assertNull(TypeContext.VOID.defaultOrNull());
+        Assertions.assertEquals(defaultValue, this.introspector.introspect(primitive).defaultOrNull());
     }
 
     @Test
     void testObjectDefaultsToNull() {
-        Assertions.assertNull(TypeContext.of(Object.class).defaultOrNull());
+        Assertions.assertNull(this.introspector.introspect(Object.class).defaultOrNull());
     }
 
     @Test
     void testAnnotationDefaultsToNull() {
-        Assertions.assertNull(TypeContext.of(ServiceActivator.class).defaultOrNull());
+        Assertions.assertNull(this.introspector.introspect(ServiceActivator.class).defaultOrNull());
     }
 
     @Test
     void testEnumDefaultsToNull() {
-        Assertions.assertNull(TypeContext.of(TestEnumType.class).defaultOrNull());
+        Assertions.assertNull(this.introspector.introspect(TestEnumType.class).defaultOrNull());
     }
 
     @Test
     void testArrayDefaultsToNull() {
-        Assertions.assertNull(TypeContext.of(Object[].class).defaultOrNull());
+        Assertions.assertNull(this.introspector.introspect(Object[].class).defaultOrNull());
     }
 
     @ParameterizedTest
     @MethodSource("wrapperDefaults")
     void testWrapperDefaults(final Class<?> wrapper, final Object defaultValue) {
-        Assertions.assertEquals(defaultValue, TypeContext.of(wrapper).defaultOrNull());
+        Assertions.assertEquals(defaultValue, this.introspector.introspect(wrapper).defaultOrNull());
     }
 
     @Test
     void testInterfacesAreObtainable() {
-        Assertions.assertEquals(1, TypeContext.of(BoundUserImpl.class).interfaces().size());
-        Assertions.assertEquals(TypeContext.of(User.class), TypeContext.of(BoundUserImpl.class).interfaces().get(0));
+        Assertions.assertEquals(1, this.introspector.introspect(BoundUserImpl.class).interfaces().size());
+        Assertions.assertEquals(this.introspector.introspect(User.class), this.introspector.introspect(BoundUserImpl.class).interfaces().get(0));
     }
 
     @ParameterizedTest
     @MethodSource("primitiveStrings")
     void testPrimitivesFromString(final Class<?> primitive, final String value, final Object real) throws TypeConversionException {
-        final Object out = TypeContext.toPrimitive(TypeContext.of(primitive), value);
+        final Object out = TypeUtils.toPrimitive(primitive, value);
         Assertions.assertEquals(real, out);
     }
 
     @Test
     void testTypeParametersWithoutSourceAreFromSuperclass() {
-        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
-        final List<TypeContext<?>> typeParameters = typeContext.typeParameters();
-        Assertions.assertEquals(1, typeParameters.size());
-        Assertions.assertEquals(Integer.class, typeParameters.get(0).type());
+        final TypeView<ImplementationWithTP> type = this.introspector.introspect(ImplementationWithTP.class);
+        final TypeParametersIntrospector typeParameters = type.typeParameters();
+        Assertions.assertEquals(1, typeParameters.count());
+        Assertions.assertEquals(Integer.class, typeParameters.at(0).get().type());
     }
 
     @Test
     void testTypeParametersThrowsIllegalArgumentOnNonInterface() {
-        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> typeContext.typeParameters(Object.class));
+        final TypeView<ImplementationWithTP> type = this.introspector.introspect(ImplementationWithTP.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> type.typeParameters().from(Object.class));
     }
 
     @Test
     void testTypeParametersWithSourceAreFromGivenSource() {
-        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
-        final List<TypeContext<?>> typeParameters = typeContext.typeParameters(InterfaceWithTP.class);
-        Assertions.assertEquals(1, typeParameters.size());
-        Assertions.assertEquals(String.class, typeParameters.get(0).type());
-    }
-
-    @Test
-    void testTypeParametersWithSourceContextAreFromGivenSource() {
-        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
-        final List<TypeContext<?>> typeParameters = typeContext.typeParameters(TypeContext.of(InterfaceWithTP.class));
+        final TypeView<ImplementationWithTP> type = this.introspector.introspect(ImplementationWithTP.class);
+        final List<TypeView<?>> typeParameters = type.typeParameters().from(InterfaceWithTP.class);
         Assertions.assertEquals(1, typeParameters.size());
         Assertions.assertEquals(String.class, typeParameters.get(0).type());
     }
 
     @Test
     void testAnnotatedTypeHasAnnotations() {
-        final TypeContext<AnnotatedElement> typeContext = TypeContext.of(AnnotatedElement.class);
-        Assertions.assertEquals(1, typeContext.annotations().size());
-        Assertions.assertEquals(Activator.class, typeContext.annotations().iterator().next().annotationType());
-    }
-
-    @Test
-    void testAnnotatedTypeCanGetAnnotationFromContext() {
-        Assertions.assertTrue(TypeContext.of(AnnotatedElement.class).annotation(TypeContext.of(Activator.class)).present());
+        final TypeView<AnnotatedElement> type = this.introspector.introspect(AnnotatedElement.class);
+        Assertions.assertEquals(1, type.annotations().count());
+        Assertions.assertEquals(Sample.class, type.annotations().all().iterator().next().annotationType());
     }
 
     @Test
     void testAnnotatedTypeCanGetAnnotationFromAnnotation() {
-        Assertions.assertTrue(TypeContext.of(AnnotatedElement.class).annotation(Activator.class).present());
+        Assertions.assertTrue(this.introspector.introspect(AnnotatedElement.class)
+                .annotations()
+                .has(Sample.class));
     }
 
     @Test
-    void testTypeContextCanReflect() {
-        Assertions.assertDoesNotThrow(() -> TypeContext.of(TypeContext.class));
-    }
-
-    @Test
-    void testWrappedTypeContextIsTypeContext() {
-        Assertions.assertTrue(TypeContext.of(TypeContext.class).isTypeContext());
+    void testTypeViewCanReflect() {
+        Assertions.assertDoesNotThrow(() -> this.introspector.introspect(TypeView.class));
     }
 
     @Test
     void testStaticMethodCanInvokeStatic() {
-        final Result<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testStatic");
+        final Result<MethodView<ElementContextTests, ?>> test = this.introspector.introspect(this)
+                .methods()
+                .named("testStatic");
         Assertions.assertTrue(test.present());
-        final MethodContext<?, ElementContextTests> methodContext = test.get();
-        Assertions.assertTrue(methodContext.has(AccessModifier.STATIC));
+        final MethodView<ElementContextTests, ?> methodContext = test.get();
+        Assertions.assertTrue(methodContext.isStatic());
         final Result<?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
@@ -393,10 +377,12 @@ public class ElementContextTests {
 
     @Test
     void testNonStaticMethodCannotInvokeStatic() {
-        final Result<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testNonStatic");
+        final Result<MethodView<ElementContextTests, ?>> test = this.introspector.introspect(this)
+                .methods()
+                .named("testNonStatic");
         Assertions.assertTrue(test.present());
-        final MethodContext<?, ElementContextTests> methodContext = test.get();
-        Assertions.assertFalse(methodContext.has(AccessModifier.STATIC));
+        final MethodView<ElementContextTests, ?> methodContext = test.get();
+        Assertions.assertFalse(methodContext.isStatic());
         final Result<?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.caught());
         Assertions.assertTrue(result.error() instanceof IllegalAccessException);

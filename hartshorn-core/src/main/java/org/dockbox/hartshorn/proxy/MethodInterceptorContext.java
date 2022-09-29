@@ -16,15 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
 /**
  * The context of a {@link MethodInterceptor}. It contains the method to be intercepted, the arguments to be passed to the method,
- * the return type of the method, the {@link MethodContext} of the method, the instance of the object to be intercepted, and
+ * the return type of the method, the {@link MethodView view} of the method, the instance of the object to be intercepted, and
  * utility callables to call the underlying method.
  *
  * @param <T> the type of the proxy object
@@ -33,15 +31,15 @@ import java.util.concurrent.Callable;
  */
 public class MethodInterceptorContext<T> {
 
-    private final MethodContext<?, T> method;
+    private final MethodView<T, ?> method;
     private final Object[] args;
     private final T instance;
     private final Callable<Object> callable;
     private final CustomInvocation customInvocation;
     private final Object result;
 
-    public MethodInterceptorContext(final Method method, final Object[] args, final T instance, final Callable<Object> callable, final CustomInvocation customInvocation, final Object result) {
-        this.method = (MethodContext<?, T>) MethodContext.of(method);
+    public MethodInterceptorContext(final MethodView<T, ?> method, final Object[] args, final T instance, final Callable<Object> callable, final CustomInvocation customInvocation, final Object result) {
+        this.method = method;
         this.args = args;
         this.instance = instance;
         this.callable = callable;
@@ -50,18 +48,18 @@ public class MethodInterceptorContext<T> {
     }
 
     public MethodInterceptorContext(final MethodInterceptorContext<T> context, final Object result) {
-        this(context.method.method(), context.args, context.instance, context.callable, context.customInvocation, result);
+        this(context.method, context.args, context.instance, context.callable, context.customInvocation, result);
     }
 
-    public MethodInterceptorContext(final Method method, final Object[] args, final T instance, final CustomInvocation customInvocation) {
-        this(method, args, instance, customInvocation.toCallable(args), customInvocation, MethodContext.of(method).returnType().defaultOrNull());
+    public MethodInterceptorContext(final MethodView<T, ?> method, final Object[] args, final T instance, final CustomInvocation customInvocation) {
+        this(method, args, instance, customInvocation.toCallable(args), customInvocation, method.returnType().defaultOrNull());
     }
 
     /**
      * Returns the intercepted method, as it was defined on the original class.
      * @return the intercepted method
      */
-    public MethodContext<?, T> method() {
+    public MethodView<T, ?> method() {
         return this.method;
     }
 
@@ -116,7 +114,7 @@ public class MethodInterceptorContext<T> {
      * for the return type of the intercepted method.
      *
      * @return the result of the previous interceptor, if any
-     * @see TypeContext#defaultOrNull()
+     * @see org.dockbox.hartshorn.util.introspect.view.TypeView#defaultOrNull()
      */
     public Object result() {
         return this.result;

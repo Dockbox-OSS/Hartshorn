@@ -17,8 +17,9 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 import java.util.Map;
@@ -81,6 +82,8 @@ public interface ConditionContext extends Context {
      */
     void imports(final String name, final Class<?> type);
 
+    void imports(final String name, final TypeView<?> type);
+
     /**
      * Adds the given class as an import to the context. The class will be made available using
      * its simple name (e.g. {@code org.example.User} will be accessible using {@code User}). This
@@ -90,12 +93,14 @@ public interface ConditionContext extends Context {
      */
     void imports(final Class<?> type);
 
+    void imports(final TypeView<?> type);
+
     /**
      * Adds the given imports to the context under the given aliases. This will override existing
      * imports if there is another import with the same name or alias.
      * @param imports The classes to import, identified by their alias.
      */
-    void imports(final Map<String, Class<?>> imports);
+    void imports(final Map<String, TypeView<?>> imports);
 
     /**
      * Gets all global variables stored in this context, identified by their alias.
@@ -107,7 +112,7 @@ public interface ConditionContext extends Context {
      * Gets all imports stored in this context, identified by their alias.
      * @return The imports.
      */
-    Map<String, Class<?>> imports();
+    Map<String, TypeView<?>> imports();
 
     /**
      * Gets all customizers stored in this context.

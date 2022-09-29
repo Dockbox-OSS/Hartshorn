@@ -16,22 +16,22 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.data.context.JpaParameterLoaderContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 import jakarta.persistence.Query;
 
 public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
-        return parameter.type().childOf(Pagination.class);
+    public boolean accepts(final ParameterView<?> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
+        return parameter.type().isChildOf(Pagination.class);
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
         final Query query = context.query();
         final Pagination pagination = (Pagination) args[index];
         if (pagination.max() != null) query.setMaxResults(pagination.max());

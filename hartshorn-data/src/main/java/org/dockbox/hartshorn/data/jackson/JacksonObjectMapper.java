@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -62,11 +62,6 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     public JacksonObjectMapper() {
         super(FileFormats.JSON);
-    }
-
-    @Override
-    public <T> Result<T> read(final String content, final TypeContext<T> type) {
-        return super.read(content, type);
     }
 
     @Override
@@ -143,7 +138,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Result<Boolean> write(final Path path, final T content) {
-        this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to path " + path);
+        if (content == null) return Result.of(false);
+
+        this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to path " + path);
         if (content instanceof String string) return this.writePlain(path, string);
         return Result.of(() -> {
             this.writer(content).writeValue(path.toFile(), content);
@@ -153,7 +150,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Result<Boolean> write(final OutputStream outputStream, final T content) {
-        this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to output stream");
+        if (content == null) return Result.of(false);
+
+        this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to output stream");
         if (content instanceof String string) return this.writePlain(outputStream, string);
         return Result.of(() -> {
             this.writer(content).writeValue(outputStream, content);
@@ -163,7 +162,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Result<String> write(final T content) {
-        this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to string value");
+        if (content == null) return Result.of("");
+        this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to string value");
         return Result.of(() -> this.writer(content).writeValueAsString(content))
                 .map(out -> out.replace("\\r", ""));
     }
@@ -231,7 +231,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private ObjectWriter writer(final Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        final Result<Component> annotated = TypeContext.of(content).annotation(Component.class);
+        final TypeView<Object> typeView = this.context.environment().introspect(content);
+        final Result<Component> annotated = typeView.annotations().get(Component.class);
 
         // Currently, only XML supports changing the root name, if XML is used we can change the
         // root name to be equal to the ID of the component.

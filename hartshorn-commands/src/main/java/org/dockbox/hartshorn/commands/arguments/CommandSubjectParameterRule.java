@@ -16,19 +16,20 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class CommandSubjectParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        return TypeContext.of(context.commandContext().source()).childOf(parameter.type());
+    public boolean accepts(final ParameterView<?> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
+        final TypeView<?> type = context.applicationContext().environment().introspect(context.commandContext());
+        return type.isChildOf(parameter.type().type());
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
         return Result.of((T) context.commandContext());
     }
 }

@@ -26,13 +26,20 @@ import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.Property;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.Property;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
 public class JacksonPropertyAnnotationIntrospector extends JacksonAnnotationIntrospector {
+
+    private final Introspector introspector;
+
+    public JacksonPropertyAnnotationIntrospector(Introspector introspector) {
+        this.introspector = introspector;
+    }
 
     @Override
     public JavaType refineSerializationType(final MapperConfig<?> config, final Annotated a, final JavaType baseType) throws JsonMappingException {
@@ -135,19 +142,8 @@ public class JacksonPropertyAnnotationIntrospector extends JacksonAnnotationIntr
     private PropertyName findName(final Annotated a, final Function<Annotated, PropertyName> defaultValue) {
         final AnnotatedElement annotated = a.getAnnotated();
         if (annotated != null) {
-            final AnnotatedElementContext<?> context = new AnnotatedElementContext<>() {
-                @Override
-                public String qualifiedName() {
-                    return a.getName();
-                }
-
-                @Override
-                protected AnnotatedElement element() {
-                    return annotated;
-                }
-            };
-
-            final Result<Property> annotation = context.annotation(Property.class);
+            final ElementAnnotationsIntrospector introspector = this.introspector.introspect(annotated);
+            final Result<Property> annotation = introspector.get(Property.class);
             if (annotation.present()) {
                 return new PropertyName(annotation.get().name());
             }

@@ -29,7 +29,7 @@ public class ContextBeanProvider implements BeanProvider {
     }
 
     private Predicate<BeanReference<?>> typeFilter(final Class<?> type) {
-        return ref -> ref.type().childOf(type);
+        return ref -> ref.type().isChildOf(type);
     }
 
     private Predicate<BeanReference<?>> idFilter(final String id) {

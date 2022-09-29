@@ -36,12 +36,12 @@ public class CommandExecutorTests {
 
     @InjectTest
     void testMethodCancelling() throws ParsingException {
-        Assertions.assertTrue(subject.received().isEmpty());
+        Assertions.assertTrue(this.subject.received().isEmpty());
 
-        gateway.accept(subject, "demo sub 1 --skip 1 2 3 4");
-        Assertions.assertFalse(subject.received().isEmpty());
+        this.gateway.accept(this.subject, "demo sub 1 --skip 1 2 3 4");
+        Assertions.assertFalse(this.subject.received().isEmpty());
 
-        final Message message = subject.received().get(0);
+        final Message message = this.subject.received().get(0);
         Assertions.assertEquals("command.cancelled", message.key());
     }
 }

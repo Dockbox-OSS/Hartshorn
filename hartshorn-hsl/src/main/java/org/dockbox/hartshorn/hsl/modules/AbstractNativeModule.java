@@ -25,9 +25,10 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -69,26 +70,26 @@ public abstract class AbstractNativeModule implements NativeModule {
     @Override
     public Object call(final Token at, final Interpreter interpreter, final NativeFunctionStatement function, final List<Object> arguments) throws NativeExecutionException {
         try {
-
-            final TypeContext<Object> type = TypeContext.of((Class<Object>) this.moduleClass());
-            final MethodContext<?, Object> method;
+            final TypeView<Object> type = TypeUtils.adjustWildcards(this.applicationContext().environment().introspect(this.moduleClass()), TypeView.class);
+            final MethodView<Object, ?> method;
             if (function.method() == null) {
                 final String functionName = function.name().lexeme();
                 if (arguments.isEmpty()) {
-                    method = type.method(functionName).rethrow().get();
+                    method = type.methods().named(functionName).rethrow().get();
                 }
                 else {
                     method = ExecutableLookup.method(at, type, functionName, arguments);
                 }
             }
             else {
-                method = (MethodContext<?, Object>) function.method();
+                method = TypeUtils.adjustWildcards(function.method(), MethodView.class);
             }
             if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method))) {
                 final Object result = method.invoke(this.instance(), arguments.toArray(new Object[0]))
                         .rethrowUnchecked()
                         .orNull();
-                return new ExternalInstance(result);
+
+                return new ExternalInstance(result, TypeUtils.adjustWildcards(method.returnType(), TypeView.class));
             } else throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
         }
         catch (final InvocationTargetException e) {
@@ -110,12 +111,13 @@ public abstract class AbstractNativeModule implements NativeModule {
         if (this.supportedFunctions == null) {
             final List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
-            for (final MethodContext<?, ?> method : TypeContext.of(this.moduleClass()).methods()) {
+            final TypeView<?> typeView = this.applicationContext().environment().introspect(this.moduleClass());
+            for (final MethodView<?, ?> method : typeView.methods().all()) {
                 if (!method.isPublic()) continue;
                 final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
 
                 final List<Parameter> parameters = new ArrayList<>();
-                for (final ParameterContext<?> parameter : method.parameters()) {
+                for (final ParameterView<?> parameter : method.parameters().all()) {
                     final Token parameterName = new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1);
                     parameters.add(new Parameter(parameterName));
                 }

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
 
 import java.io.IOException;
@@ -123,8 +124,10 @@ public class StandardPropertyHolder implements PropertyHolder {
             final String part = split[i];
             if (i == split.length - 1) {
                 final Object origin = current.get(part);
-                if (origin instanceof Map map && patch instanceof Map) {
-                    this.patchConfigurationMap(map, (Map<String, Object>) patch);
+                if (origin instanceof Map && patch instanceof Map) {
+                    final Map<String, Object> adjustedOrigin = TypeUtils.adjustWildcards(origin, Map.class);
+                    final Map<String, Object> adjustedPatch = TypeUtils.adjustWildcards(patch, Map.class);
+                    this.patchConfigurationMap(adjustedOrigin, adjustedPatch);
                     return;
                 }
                 current.put(part, patch); // Overwrite
@@ -136,7 +139,7 @@ public class StandardPropertyHolder implements PropertyHolder {
             if (!(current.get(part) instanceof Map)) {
                 current.put(part, this.createConfigurationMap());
             }
-            current = (Map<String, Object>) current.get(part);
+            current = TypeUtils.adjustWildcards(current.get(part), Map.class);
         }
     }
 

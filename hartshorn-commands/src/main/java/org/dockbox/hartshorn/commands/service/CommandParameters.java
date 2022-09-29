@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.Key;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
@@ -36,16 +36,16 @@ import org.dockbox.hartshorn.inject.Key;
 public class CommandParameters implements ComponentPreProcessor {
 
     @Override
-    public boolean modifies(final ApplicationContext context, final Key<?> key) {
-        return key.type().annotation(Parameter.class).present();
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return processingContext.type().annotations().has(Parameter.class);
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        final Parameter meta = key.type().annotation(Parameter.class).get();
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final Parameter meta = processingContext.type().annotations().get(Parameter.class).get();
         final CustomParameterPattern pattern = context.get(meta.pattern());
         final String parameterKey = meta.value();
-        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(key.type(), pattern, parameterKey);
+        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
         context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
     }
 

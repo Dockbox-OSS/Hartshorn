@@ -18,17 +18,17 @@ package org.dockbox.hartshorn.proxy.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 
 public class MethodProxyContextImpl<T> extends DefaultApplicationAwareContext implements MethodProxyContext<T> {
 
-    private final TypeContext<T> type;
-    private final MethodContext<?, T> method;
+    private final TypeView<T> type;
+    private final MethodView<T, ?> method;
 
-    public MethodProxyContextImpl(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method) {
+    public MethodProxyContextImpl(final ApplicationContext context, final TypeView<T> type, final MethodView<T, ?> method) {
         super(context);
         this.type = type;
         this.method = method;
@@ -36,16 +36,16 @@ public class MethodProxyContextImpl<T> extends DefaultApplicationAwareContext im
 
     @Override
     public <A extends Annotation> A annotation(final Class<A> annotation) {
-        return this.method.annotation(annotation).orNull();
+        return this.method.annotations().get(annotation).orNull();
     }
 
     @Override
-    public TypeContext<T> type() {
+    public TypeView<T> type() {
         return this.type;
     }
 
     @Override
-    public MethodContext<?, T> method() {
+    public MethodView<T, ?> method() {
         return this.method;
     }
 }

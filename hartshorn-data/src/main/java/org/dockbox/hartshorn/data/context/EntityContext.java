@@ -17,19 +17,19 @@
 package org.dockbox.hartshorn.data.context;
 
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 
 public class EntityContext extends DefaultContext {
 
-    private final Collection<TypeContext<?>> entities;
+    private final Collection<TypeView<?>> entities;
 
-    public EntityContext(final Collection<TypeContext<?>> entities) {
+    public EntityContext(final Collection<TypeView<?>> entities) {
         this.entities = entities;
     }
 
-    public Collection<TypeContext<?>> entities() {
+    public Collection<TypeView<?>> entities() {
         return this.entities;
     }
 }

@@ -17,28 +17,28 @@
 package org.dockbox.hartshorn.proxy.loaders;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.proxy.Unproxy;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.Unproxy;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
-import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class UnproxyParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-        return parameter.annotation(Unproxy.class).present() || parameter.declaredBy().annotation(Unproxy.class).present();
+    public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+        return parameter.annotations().has(Unproxy.class) || parameter.declaredBy().annotations().has(Unproxy.class);
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
         final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
         return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Result<Object>>) ProxyManager::delegate).orElse(() -> {
-            final Unproxy unproxy = parameter.annotation(Unproxy.class).orElse(() -> parameter.declaredBy().annotation(Unproxy.class).orNull()).get();
+            final Unproxy unproxy = parameter.annotations().get(Unproxy.class).orElse(() -> parameter.declaredBy().annotations().get(Unproxy.class).orNull()).get();
             if (unproxy.fallbackToProxy()) return argument;
             else return null;
-        }).map(a -> (T) a);
+        }).map(parameter.type()::cast);
     }
 }
