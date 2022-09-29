@@ -17,7 +17,8 @@
 package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
@@ -47,15 +48,16 @@ public class ReflectionsPrefixContext extends AbstractPrefixContext<Reflections>
     }
 
     @Override
-    public <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
+    public <A extends Annotation> Collection<TypeView<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
         final Reflections reflections = this.get(prefix);
         final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
-        final Set<TypeContext<?>> types = new HashSet<>();
+        final Set<TypeView<?>> types = new HashSet<>();
 
         this.manager().log().debug("Scanning for types with annotation {} in prefix {}", annotation.getName(), prefix);
+        final Introspector introspector = this.manager().applicationContext().environment();
         for (final Class<? extends Annotation> extension : extensions) {
             for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
-                types.add(TypeContext.of(type));
+                types.add(introspector.introspect(type));
             }
         }
         this.manager().log().debug("Found {} types with annotation {} in prefix {}", types.size(), annotation.getName(), prefix);
@@ -72,13 +74,16 @@ public class ReflectionsPrefixContext extends AbstractPrefixContext<Reflections>
      * @return The list of sub-types, or an empty list
      */
     @Override
-    public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
+    public <T> Collection<TypeView<? extends T>> children(final Class<T> parent) {
         final Set<Class<? extends T>> subTypes = new HashSet<>();
-        this.manager().log().debug("Scanning for sub-types of {}", parent.type().getName());
+        this.manager().log().debug("Scanning for sub-types of {}", parent.getName());
         for (final Reflections reflections : this.all()) {
-            subTypes.addAll(reflections.getSubTypesOf(parent.type()));
+            subTypes.addAll(reflections.getSubTypesOf(parent));
         }
-        this.manager().log().debug("Found {} sub-types of {}", subTypes.size(), parent.type().getName());
-        return List.copyOf(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
+        final Introspector introspector = this.manager().applicationContext().environment();
+        this.manager().log().debug("Found {} sub-types of {}", subTypes.size(), parent.getName());
+        return List.copyOf(subTypes).stream()
+                .map(introspector::introspect)
+                .collect(Collectors.toList());
     }
 }

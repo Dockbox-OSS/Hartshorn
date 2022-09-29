@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -78,7 +78,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
      * @return The annotated types
      */
     @Override
-    public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation) {
+    public <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation) {
         return this.types(annotation, false);
     }
 
@@ -94,20 +94,20 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
      * @return The annotated types
      */
     @Override
-    public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents) {
+    public <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation, final boolean skipParents) {
         return this.prefixes().stream()
                 .flatMap(prefix -> this.types(prefix, annotation, skipParents).stream())
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public <T> Collection<TypeContext<? extends T>> children(final Class<T> type) {
-        return this.children(TypeContext.of(type));
+    public <T> Collection<TypeView<? extends T>> children(final TypeView<T> parent) {
+        return this.children(parent.type());
     }
 
     protected <A extends Annotation> Set<Class<? extends Annotation>> extensions(final Class<A> annotation) {
         if (this.annotationHierarchy.isEmpty()) {
-            for (final TypeContext<? extends Annotation> annotationType : this.children(Annotation.class)) {
+            for (final TypeView<? extends Annotation> annotationType : this.children(Annotation.class)) {
                 for (final Class<? extends Annotation> selfOrParent : this.manager().annotationLookup().annotationHierarchy(annotationType.type())) {
                     this.annotationHierarchy.put(selfOrParent, annotationType.type());
                 }

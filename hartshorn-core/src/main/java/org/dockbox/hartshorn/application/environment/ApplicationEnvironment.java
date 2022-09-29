@@ -16,12 +16,14 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.UseBootstrap;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.proxy.UseProxying;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -32,7 +34,7 @@ import java.util.List;
  * responsible for multiple {@link ApplicationContext}s, though typically only one {@link ApplicationContext} is bound
  * to the {@link ApplicationEnvironment}.
  */
-public interface ApplicationEnvironment {
+public interface ApplicationEnvironment extends Introspector {
 
     /**
      * Gets the context of all registered prefixes. This context is responsible for keeping track of known prefixes,
@@ -40,6 +42,14 @@ public interface ApplicationEnvironment {
      * @return The context of all registered prefixes
      */
     PrefixContext prefixContext();
+
+    /**
+     * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible
+     * for all introspection operations within the environment. This may or may not be the same as the binding for
+     * {@link Introspector}, but is typically the same.
+     * @return The primary {@link Introspector}
+     */
+    Introspector introspector();
 
     /**
      * Indicates whether the current environment exists within a Continuous Integration environment. If this returns
@@ -71,7 +81,7 @@ public interface ApplicationEnvironment {
      * @param annotation The annotation expected to be present on one or more types
      * @return The annotated types
      */
-    <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation);
+    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation);
 
     /**
      * Gets types decorated with a given annotation, both classes and annotations. The prefix is typically a package.
@@ -83,7 +93,7 @@ public interface ApplicationEnvironment {
      * @param <A> The annotation constraint
      * @return The annotated types
      */
-    <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents);
+    <A extends Annotation> Collection<TypeView<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents);
 
     /**
      * Gets types decorated with a given annotation, both classes and annotations. If <code>skipParents</code> is
@@ -94,7 +104,7 @@ public interface ApplicationEnvironment {
      * @param skipParents Whether to include the type if supertypes are annotated
      * @return The annotated types
      */
-    <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents);
+    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation, final boolean skipParents);
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
@@ -104,7 +114,7 @@ public interface ApplicationEnvironment {
      * @param <T> The type of the parent
      * @return The list of sub-types, or an empty list
      */
-    <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent);
+    <T> Collection<TypeView<? extends T>> children(final TypeView<T> parent);
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
@@ -114,7 +124,7 @@ public interface ApplicationEnvironment {
      * @param <T> The type of the parent
      * @return The list of sub-types, or an empty list
      */
-    <T> Collection<TypeContext<? extends T>> children(final Class<T> parent);
+    <T> Collection<TypeView<? extends T>> children(final Class<T> parent);
 
     /**
      * Gets annotations of the given type, which are decorated with the given annotation. For example, if the given
@@ -125,5 +135,17 @@ public interface ApplicationEnvironment {
      * @param annotation The annotation expected to be present on zero or more annotations
      * @return The annotated annotations
      */
-    List<Annotation> annotationsWith(final TypeContext<?> type, final Class<? extends Annotation> annotation);
+    List<Annotation> annotationsWith(final TypeView<?> type, final Class<? extends Annotation> annotation);
+    List<Annotation> annotationsWith(final Class<?> type, final Class<? extends Annotation> annotation);
+
+    /**
+     * Indicates whether the given type should be treated as a singleton. How this is determined is up to the
+     * implementation, but typically this is determined by the presence of the {@link jakarta.inject.Singleton}
+     * annotation, or the value of {@link Component#singleton()}.
+     *
+     * @param type The type to check
+     * @return <code>true</code> if the type should be treated as a singleton, <code>false</code> otherwise.
+     */
+    boolean singleton(Class<?> type);
+    boolean singleton(TypeView<?> type);
 }

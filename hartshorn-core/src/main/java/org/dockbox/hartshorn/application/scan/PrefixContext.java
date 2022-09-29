@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -29,13 +29,13 @@ public interface PrefixContext extends Context {
 
     Set<String> prefixes();
 
-    <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation);
+    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation);
 
-    <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents);
+    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation, final boolean skipParents);
 
-    <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents);
+    <A extends Annotation> Collection<TypeView<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents);
 
-    <T> Collection<TypeContext<? extends T>> children(final Class<T> type);
+    <T> Collection<TypeView<? extends T>> children(final Class<T> type);
 
-    <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent);
+    <T> Collection<TypeView<? extends T>> children(final TypeView<T> parent);
 }
