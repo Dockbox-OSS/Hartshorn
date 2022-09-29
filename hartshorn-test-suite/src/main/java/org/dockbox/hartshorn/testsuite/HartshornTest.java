@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.testsuite;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.Populate;
-import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
@@ -48,4 +48,5 @@ import jakarta.inject.Inject;
 @Populate(executables = false)
 public @interface HartshornTest {
     Class<? extends ComponentProcessor>[] processors() default  {};
+    String[] scanPackages() default {};
 }

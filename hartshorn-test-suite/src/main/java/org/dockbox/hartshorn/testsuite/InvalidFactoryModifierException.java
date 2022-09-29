@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class InvalidFactoryModifierException extends ApplicationRuntimeException {
-    public InvalidFactoryModifierException(final String what, final TypeContext<?> actual) {
-        super("Invalid " + what + " for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + actual.name());
+    public InvalidFactoryModifierException(final String what, final Class<?> actual) {
+        super("Invalid " + what + " for @HartshornFactory modifier, expected " + ApplicationBuilder.class.getSimpleName() + " but got " + actual.getSimpleName());
     }
 }

@@ -16,22 +16,20 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.Activator;
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 import org.dockbox.hartshorn.application.ServiceImpl;
-import org.dockbox.hartshorn.application.StandardApplicationFactory;
+import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.AccessModifier;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -47,18 +45,16 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 
-@Activator
 public class HartshornLifecycleExtension implements
         ParameterResolver,
         BeforeAllCallback, AfterAllCallback,
@@ -105,8 +101,8 @@ public class HartshornLifecycleExtension implements
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(testClass, testComponentSources);
-        final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationFactory, testClass).orNull();
+        final ApplicationBuilder<?, ?> applicationBuilder = this.prepareFactory(testClass, testComponentSources);
+        final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationBuilder, testClass).orNull();
         if (applicationContext == null) {
             if (applicationContext == null) throw new IllegalStateException("Could not create application context");
         }
@@ -133,7 +129,8 @@ public class HartshornLifecycleExtension implements
         final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) return false;
 
-        return MethodContext.of(testMethod.get()).annotation(Inject.class).present();
+        final MethodView<?, ?> method = this.applicationContext.environment().introspect(testMethod.get());
+        return method.annotations().has(Inject.class);
     }
 
     @Override
@@ -151,91 +148,91 @@ public class HartshornLifecycleExtension implements
         populator.populate(instance);
     }
 
-    public static Result<ApplicationContext> createTestContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
-        TypeContext<?> applicationActivator = TypeContext.of(activator);
+    public static Result<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, Class<?> activator) {
+        Class<?> next = activator;
+        final Set<Annotation> serviceActivators = new HashSet<>();
+        while (next != null) {
+            Arrays.stream(next.getAnnotations())
+                    .filter(annotation -> annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+                    .forEach(serviceActivators::add);
 
-        if (applicationActivator.annotation(Activator.class).absent()) {
-            applicationActivator = TypeContext.of(HartshornLifecycleExtension.class);
-            final Set<Annotation> serviceActivators = TypeContext.of(activator).annotations().stream()
-                    .filter(annotation -> TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present())
-                    .collect(Collectors.toSet());
-
-            applicationFactory.serviceActivators(serviceActivators);
+            next = next.getSuperclass();
         }
+        applicationBuilder.serviceActivators(serviceActivators);
 
-        final ApplicationContext context = applicationFactory.activator(applicationActivator).create();
+        final ApplicationContext context = applicationBuilder.mainClass(activator).create();
         return Result.of(context);
     }
 
-    private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
-        ApplicationFactory<?, ?> applicationFactory = new StandardApplicationFactory()
+    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
+        ApplicationBuilder<?, ?> applicationBuilder = new StandardApplicationBuilder()
                 .loadDefaults()
                 .applicationFSProvider(ctx -> new JUnitFSProvider())
-                .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources));
+                .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources))
+                .serviceActivator(new ServiceImpl());
 
-        final TypeContext<VirtualServiceActivator> virtualActivator = TypeContext.of(VirtualServiceActivator.class);
         final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
         elements.add(testClass);
 
-        final AnnotatedElementModifier<Class<VirtualServiceActivator>> modifier = AnnotatedElementModifier.of(virtualActivator);
-        modifier.clear();
-
-        final ServiceActivatorImpl serviceActivator = new ServiceActivatorImpl();
-        modifier.add(serviceActivator);
-
         final List<String> arguments = new ArrayList<>();
-        elements.stream().map(e -> {
-            if (e instanceof Class<?> clazz) {
-                return TypeContext.of(clazz);
-            }
-            else if (e instanceof Method method) {
-                return MethodContext.of(method);
-            }
-            return null;
-        }).filter(Objects::nonNull).forEach(context -> {
-            context.annotation(HartshornTest.class)
-                    .present(annotation -> serviceActivator.addProcessors(annotation.processors()));
-            context.annotation(TestProperties.class)
+        final ApplicationBuilder<?, ?> finalApplicationBuilder = applicationBuilder;
+
+        for (final AnnotatedElement element : elements) {
+            Result.of(element.getAnnotation(HartshornTest.class))
+                    .present(annotation -> {
+                        for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
+                            final ComponentProcessor componentProcessor = Result.of(() -> processor.getConstructor().newInstance()).rethrowUnchecked().get();
+                            if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
+                                finalApplicationBuilder.preProcessor(preProcessor);
+                            }
+                            else if (componentProcessor instanceof ComponentPostProcessor postProcessor) {
+                                finalApplicationBuilder.postProcessor(postProcessor);
+                            }
+                        }
+
+                        finalApplicationBuilder.prefixes(annotation.scanPackages());
+                    });
+
+            Result.of(element.getAnnotation(TestProperties.class))
                     .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
-        });
+        }
 
-        applicationFactory
-                .arguments(arguments.toArray(new String[0]))
-                .serviceActivator(new VirtualServiceActivator.Impl());
+        applicationBuilder.arguments(arguments.toArray(new String[0]));
 
-        final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
-        for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
-            if (!factoryModifier.has(AccessModifier.STATIC)) {
-                throw new IllegalStateException("Expected " + factoryModifier.qualifiedName() + " to be static.");
+        final List<Method> methods = Arrays.stream(testClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(HartshornFactory.class))
+                .toList();
+
+        for (final Method factoryModifier : methods) {
+            if (!Modifier.isStatic(factoryModifier.getModifiers())) {
+                throw new IllegalStateException("Expected " + factoryModifier.getName() + " to be static.");
             }
-            if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
+            if (ApplicationBuilder.class.isAssignableFrom(factoryModifier.getReturnType())) {
+                if (!factoryModifier.canAccess(null)) factoryModifier.setAccessible(true);
 
-                final Method jlrMethod = factoryModifier.method();
-                if (!jlrMethod.canAccess(null)) jlrMethod.setAccessible(true);
-
-                final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
-                if (parameters.isEmpty()) {
-                    applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
+                final Class<?>[] parameters = factoryModifier.getParameterTypes();
+                if (parameters.length == 0) {
+                    applicationBuilder = Result.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null)).rethrowUnchecked().orNull();
                 }
-                else if (parameters.get(0).childOf(ApplicationFactory.class)) {
-                    applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
+                else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
+                    final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
+                    applicationBuilder = Result.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg)).rethrowUnchecked().orNull();
                 }
                 else {
-                    throw new InvalidFactoryModifierException("parameters", parameters.get(0));
+                    throw new InvalidFactoryModifierException("parameters", parameters[0]);
                 }
-                jlrMethod.setAccessible(false);
+                factoryModifier.setAccessible(false);
             }
             else {
-                throw new InvalidFactoryModifierException("return type", factoryModifier.returnType());
+                throw new InvalidFactoryModifierException("return type", factoryModifier.getReturnType());
             }
         }
 
-        return applicationFactory;
+        return applicationBuilder;
     }
 
     private ComponentLocator getComponentLocator(final InitializingContext context, final AnnotatedElement... testComponentSources) {
         final ComponentLocator componentLocator = new ComponentLocatorImpl(context);
-        ((ModifiableActivatorHolder) context.applicationContext()).addActivator(new ServiceImpl());
 
         for (final AnnotatedElement testComponentSource : testComponentSources) {
             if (testComponentSource == null) continue;
