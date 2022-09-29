@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.List;
 
@@ -71,10 +70,6 @@ public interface Context {
      */
     <N extends Context> Result<N> first(String name, Class<N> context);
 
-    default <N extends Context> Result<N> first(final String name, final TypeContext<N> context) {
-        return this.first(name, context.type());
-    }
-
     /**
      * Returns all contexts of the given type. If no contexts of the given type exist, an empty {@link List} will be
      * returned.
@@ -111,17 +106,6 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type.
      */
-    default <C extends Context> Result<C> first(final TypeContext<C> context) {
-        return this.first(context.type());
-    }
-
-    /**
-     * Returns the first context of the given type.
-     *
-     * @param context The type of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type.
-     */
     <C extends Context> Result<C> first(Class<C> context);
 
     /**
@@ -133,18 +117,6 @@ public interface Context {
      * @return The first context of the given type and name.
      */
     <C extends Context> Result<C> first(Class<C> context, String name);
-
-    /**
-     * Returns the first context of the given type and name.
-     *
-     * @param context The type of the context.
-     * @param name The name of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type and name.
-     */
-    default <C extends Context> Result<C> first(final TypeContext<C> context, final String name) {
-        return this.first(context.type(), name);
-    }
 
     /**
      * Returns the first context of the given type and name, which are represented by the given key.
