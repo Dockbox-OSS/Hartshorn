@@ -16,17 +16,14 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
-import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import net.sf.cglib.proxy.Enhancer;
 
-public class CglibApplicationProxier extends AbstractApplicationProxier {
+import org.dockbox.hartshorn.proxy.StandardProxyLookup;
 
-    public CglibApplicationProxier() {
-        this.registerProxyLookup(new CglibProxyLookup());
-    }
+public class CglibProxyLookup implements StandardProxyLookup {
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return new CglibProxyFactory<>(type, this.applicationManager().applicationContext());
+    public boolean isProxy(final Class<?> candidate) {
+        return Enhancer.isEnhanced(candidate);
     }
 }

@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.cglib;
+package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.proxy.StandardProxyLookup;
 
-public class CglibApplicationProxier extends AbstractApplicationProxier {
+import javassist.util.proxy.ProxyFactory;
 
-    public CglibApplicationProxier() {
-        this.registerProxyLookup(new CglibProxyLookup());
-    }
+public class JavassistProxyLookup implements StandardProxyLookup {
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return new CglibProxyFactory<>(type, this.applicationManager().applicationContext());
+    public boolean isProxy(final Class<?> candidate) {
+        return ProxyFactory.isProxyClass(candidate);
     }
 }
