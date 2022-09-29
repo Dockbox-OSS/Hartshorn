@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.application.ApplicationContextConfiguration;
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.application.environment.banner.Banner;
+import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
+import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
@@ -31,9 +32,8 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.AnnotationLookup;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.reflect.VirtualHierarchyAnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,37 +55,31 @@ import java.util.concurrent.ConcurrentHashMap;
 @LogExclude
 public class DelegatingApplicationManager implements ObservableApplicationManager, ModifiableContextCarrier {
 
-    private static final String BANNER = """
-                 _   _            _       _                     \s
-                | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __ \s
-                | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\\s
-                |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |
-            ====|_| |_|\\__,_|_|===\\__|___/_|=|_|\\___/|_|==|_|=|_|====
-                                             -- Hartshorn v%s --
-            """.formatted(Hartshorn.VERSION);
-
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
     private final ApplicationFSProvider applicationFSProvider;
     private final ApplicationLogger applicationLogger;
     private final ApplicationProxier applicationProxier;
     private final ExceptionHandler exceptionHandler;
+    private final AnnotationLookup annotationLookup;
     private final boolean isCI;
 
     private ApplicationContext applicationContext;
-    private AnnotationLookup annotationLookup;
 
-    public DelegatingApplicationManager(final ApplicationContextConfiguration configuration) {
-        final InitializingContext context = new InitializingContext(null, null, this, configuration);
+    public DelegatingApplicationManager(final InitializingContext initializingContext) {
+        final InitializingContext context = new InitializingContext(null, null, this, initializingContext.builder());
 
-        this.exceptionHandler = this.configure(configuration.exceptionHandler(context));
-        this.applicationFSProvider = this.configure(configuration.applicationFSProvider(context));
-        this.applicationLogger = this.configure(configuration.applicationLogger(context));
-        this.applicationProxier = this.configure(configuration.applicationProxier(context));
+        this.exceptionHandler = this.configure(context.exceptionHandler());
+        this.applicationFSProvider = this.configure(context.applicationFSProvider());
+        this.applicationLogger = this.configure(context.applicationLogger());
+        this.applicationProxier = this.configure(context.applicationProxier());
+        this.annotationLookup = this.configure(context.annotationLookup());
+
         this.isCI = this.checkCI();
         this.checkForDebugging(context);
 
-        if (!this.isCI()) this.printHeader(configuration.activator());
+        if (!this.isCI() && context.builder().enableBanner())
+            this.printBanner(context);
     }
 
     private <T> T configure(final T instance) {
@@ -129,10 +123,6 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
         return this.exceptionHandler;
     }
 
-    public boolean CI() {
-        return this.isCI;
-    }
-
     @Override
     public ApplicationContext applicationContext() {
         return Objects.requireNonNull(this.applicationContext, "Application context has not been initialized yet");
@@ -150,22 +140,27 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
                 || System.getenv().containsKey("APPVEYOR");
     }
 
-    private void printHeader(final TypeContext<?> activator) {
-        final Logger logger = LoggerFactory.getLogger(activator.type());
-        for (final String line : BANNER.split("\n")) {
-            logger.info(line);
-        }
-        logger.info("");
+    private void printBanner(final InitializingContext context) {
+        final Logger logger = LoggerFactory.getLogger(context.builder().mainClass());
+        this.createBanner(context).print(logger);
+    }
+
+    private Banner createBanner(final InitializingContext context) {
+        final ClasspathResourceLocator resourceLocator = context.resourceLocator();
+        return resourceLocator.resource("banner.txt")
+                .map(resource -> (Banner) new ResourcePathBanner(resource))
+                .orElse(HartshornBanner::new)
+                .get();
     }
 
     private void checkForDebugging(final InitializingContext context) {
-        final Set<String> arguments = context.configuration().arguments();
+        final Set<String> arguments = context.builder().arguments();
         final ApplicationArgumentParser parser = context.argumentParser();
 
-        final boolean debug = Result.of(parser.parse(arguments).get("debug"))
+        final boolean debug = Boolean.TRUE.equals(Result.of(parser.parse(arguments).get("hartshorn:debug"))
                 .map(String.class::cast)
                 .map(Boolean::valueOf)
-                .or(false);
+                .or(false));
 
         this.setDebugActive(debug);
     }
@@ -177,8 +172,6 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
 
     @Override
     public AnnotationLookup annotationLookup() {
-        if (this.annotationLookup == null)
-            this.annotationLookup = new VirtualHierarchyAnnotationLookup();
         return this.annotationLookup;
     }
 
@@ -193,7 +186,7 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     }
 
     @Override
-    public <T> Result<TypeContext<T>> real(final T instance) {
+    public <T> Result<Class<T>> real(final T instance) {
         return this.applicationProxier.real(instance);
     }
 
@@ -203,12 +196,12 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     }
 
     @Override
-    public <D, T extends D> Result<D> delegate(final TypeContext<D> type, final T instance) {
+    public <D, T extends D> Result<D> delegate(final TypeView<D> type, final T instance) {
         return this.applicationProxier.delegate(type, instance);
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final TypeContext<T> type) {
+    public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
         return this.applicationProxier.factory(type);
     }
 
