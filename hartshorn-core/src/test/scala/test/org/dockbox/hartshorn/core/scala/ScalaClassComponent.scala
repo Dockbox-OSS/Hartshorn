@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.scala
+package test.org.dockbox.hartshorn.core.scala
 
 import jakarta.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationManager
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.component.Component
 
 @Component
-case class ScalaCaseClassComponent @Inject() (private val applicationManager: ApplicationManager) {
+class ScalaClassComponent @Inject() (private val environment: ApplicationEnvironment) {
 
   @Inject
   private var applicationContext: ApplicationContext = _
@@ -31,7 +31,7 @@ case class ScalaCaseClassComponent @Inject() (private val applicationManager: Ap
     this.applicationContext
   }
 
-  def getApplicationManager: ApplicationManager = {
-    this.applicationManager
+  def getApplicationManager: ApplicationEnvironment = {
+    this.environment
   }
 }

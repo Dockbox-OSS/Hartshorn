@@ -14,9 +14,30 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.kotlin
+package test.org.dockbox.hartshorn.core.groovy
 
+import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.component.Component
 
 @Component
-interface KotlinInterfaceComponent
+class GroovyClassComponent {
+
+    @Inject
+    private ApplicationContext applicationContext;
+    private ApplicationEnvironment environment
+
+    @Inject
+    GroovyClassComponent(ApplicationEnvironment environment) {
+        this.environment = environment
+    }
+
+    ApplicationContext applicationContext() {
+        return applicationContext
+    }
+
+    ApplicationEnvironment applicationManager() {
+        return environment
+    }
+}

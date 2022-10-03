@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.kotlin
+package test.org.dockbox.hartshorn.core.kotlin
 
 import jakarta.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
@@ -27,6 +27,6 @@ object KotlinObjectComponent {
     private lateinit var applicationContext: ApplicationContext
 
     fun applicationContext(): ApplicationContext {
-        return this.applicationContext
+        return applicationContext
     }
 }

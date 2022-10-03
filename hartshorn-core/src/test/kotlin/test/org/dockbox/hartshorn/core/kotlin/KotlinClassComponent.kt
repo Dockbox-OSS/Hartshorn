@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.kotlin
+package test.org.dockbox.hartshorn.core.kotlin
 
+import jakarta.inject.Inject
+import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.component.Component
 
 @Component
-sealed interface KotlinSealedInterfaceComponent
+class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {
+
+    @Inject
+    private lateinit var applicationContext: ApplicationContext
+
+    fun applicationContext(): ApplicationContext {
+        return this.applicationContext
+    }
+
+    fun environment(): ApplicationEnvironment {
+        return this.environment
+    }
+}

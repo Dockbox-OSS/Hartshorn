@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.scala
+package org.dockbox.hartshorn.testsuite;
 
-import jakarta.inject.Inject
-import org.dockbox.hartshorn.application.context.ApplicationContext
-import org.dockbox.hartshorn.component.Component
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Component
-object ScalaObjectComponent {
-
-  @Inject
-  private var applicationContext: ApplicationContext = _
-
-  def getApplicationContext: ApplicationContext = {
-    this.applicationContext
-  }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(java.lang.annotation.ElementType.METHOD)
+public @interface ModifyApplication {
 }

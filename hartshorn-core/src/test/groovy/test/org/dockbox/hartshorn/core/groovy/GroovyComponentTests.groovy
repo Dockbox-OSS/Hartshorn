@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.kotlin
+package test.org.dockbox.hartshorn.core.groovy
 
 import jakarta.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationManager
 import org.dockbox.hartshorn.component.ComponentLocator
 import org.dockbox.hartshorn.testsuite.HartshornTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.util.stream.Stream
 
+import java.util.stream.Stream
 /**
- * Tests compatibility with Kotlin classes, interfaces, objects and sealed interfaces.
- * This is similar to the tests seen in {@code GroovyComponentTests} and {@code ScalaComponentsTests}.
+ * Tests compatibility with Groovy classes, traits and interfaces.
+ * This is similar to the tests seen in {@code KotlinComponentTests} and {@code ScalaComponentsTests}.
  * Instead of using a common test class for all three languages, each language has its own test class.
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
@@ -37,21 +36,21 @@ import java.util.stream.Stream
  * @since 22.5
  */
 @HartshornTest
-class KotlinComponentTests {
+class GroovyComponentTests {
 
     @Inject
-    private lateinit var applicationContext: ApplicationContext
+    private ApplicationContext applicationContext
 
     @Inject
-    private lateinit var componentLocator: ComponentLocator
+    private ComponentLocator componentLocator
 
     @ParameterizedTest
     @MethodSource("components")
-    fun <T> testComponent(componentType: Class<T>, applicationContextFunction: ((T) -> ApplicationContext)?, applicationManagerFunction: ((T) -> ApplicationManager)?) {
-        val component: T = this.applicationContext.get(componentType)
+    <T> void testComponent(final Class<T> componentType, final applicationContextFunction, final applicationManagerFunction) {
+        final def component = this.applicationContext.get(componentType)
         Assertions.assertNotNull(component)
 
-        val container = this.componentLocator.container(componentType)
+        final def container = this.componentLocator.container(componentType)
         Assertions.assertNotNull(container)
         Assertions.assertTrue(container.present())
 
@@ -60,18 +59,17 @@ class KotlinComponentTests {
         }
 
         if (applicationManagerFunction != null) {
-            Assertions.assertSame(this.applicationContext.environment().manager(), applicationManagerFunction(component))
+            Assertions.assertSame(this.applicationContext.environment(), applicationManagerFunction(component))
         }
-
     }
 
-    companion object {
-        @JvmStatic
-        fun components(): Stream<Arguments> = Stream.of(
-                Arguments.of(KotlinClassComponent::class.java, KotlinClassComponent::applicationContext, KotlinClassComponent::applicationManager),
-                Arguments.of(KotlinInterfaceComponent::class.java, null, null),
-                Arguments.of(KotlinObjectComponent::class.java, { it: KotlinObjectComponent -> it.applicationContext() }, null),
-                Arguments.of(KotlinSealedInterfaceComponent::class.java, null, null),
+    static Stream<Arguments> components() {
+        return Stream.of(
+                Arguments.of(GroovyInterfaceComponent.class, null, null),
+                Arguments.of(GroovyClassComponent.class,
+                        { final GroovyClassComponent component -> component.applicationContext() },
+                        { final GroovyClassComponent component -> component.applicationManager() },
+                ),
         )
     }
 }

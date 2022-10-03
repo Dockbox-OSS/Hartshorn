@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.scala
+package test.org.dockbox.hartshorn.core.scala
 
 import jakarta.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationManager
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.component.ComponentLocator
 import org.dockbox.hartshorn.testsuite.HartshornTest
 import org.junit.jupiter.api.Assertions
@@ -47,7 +47,7 @@ class ScalaComponentTests {
 
   @ParameterizedTest
   @MethodSource(Array("components"))
-  def testComponent[T](componentType: Class[T], applicationContextFunction: T => ApplicationContext, applicationManagerFunction: T => ApplicationManager): Unit = {
+  def testComponent[T](componentType: Class[T], applicationContextFunction: T => ApplicationContext, applicationManagerFunction: T => ApplicationEnvironment): Unit = {
     val component = this.applicationContext.get(componentType)
     Assertions.assertNotNull(component)
 
@@ -60,7 +60,7 @@ class ScalaComponentTests {
     }
 
     if (applicationManagerFunction != null) {
-      Assertions.assertSame(this.applicationContext.environment().manager(), applicationManagerFunction(component))
+      Assertions.assertSame(this.applicationContext.environment(), applicationManagerFunction(component))
     }
   }
 }
@@ -70,6 +70,6 @@ object ScalaComponentTests {
   def components(): Stream[Arguments] = Stream.of(
       Arguments.of(classOf[ScalaCaseClassComponent], (_: ScalaCaseClassComponent).getApplicationContext, (_: ScalaCaseClassComponent).getApplicationManager),
       Arguments.of(classOf[ScalaClassComponent], (_: ScalaClassComponent).getApplicationContext, (_: ScalaClassComponent).getApplicationManager),
-      Arguments.of(ScalaObjectComponent.getClass, (_: ScalaObjectComponent.type).getApplicationContext, null),
+      Arguments.of(ScalaObjectComponent.getClass, (_: ScalaObjectComponent.type).getApplicationContext, null)
     )
 }
