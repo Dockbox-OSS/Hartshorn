@@ -34,7 +34,7 @@ public class UnproxyParameterLoaderRule implements ParameterLoaderRule<Parameter
     @Override
     public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
+        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager(argument);
         return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Result<Object>>) ProxyManager::delegate).orElse(() -> {
             final Unproxy unproxy = parameter.annotations().get(Unproxy.class).orElse(() -> parameter.declaredBy().annotations().get(Unproxy.class).orNull()).get();
             if (unproxy.fallbackToProxy()) return argument;

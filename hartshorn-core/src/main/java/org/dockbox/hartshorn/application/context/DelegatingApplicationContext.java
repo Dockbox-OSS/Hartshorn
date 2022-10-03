@@ -20,9 +20,8 @@ import org.dockbox.hartshorn.application.ActivatorHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
@@ -52,10 +51,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     public DelegatingApplicationContext(InitializingContext context) {
         super(null);
-        context = new InitializingContext(context.environment(), this, context.manager(), context.builder());
+        context = new InitializingContext(context.environment(), this, context.builder());
         this.add(context);
 
-        if (context.manager() instanceof ModifiableContextCarrier modifiable) {
+        if (context.environment() instanceof ModifiableContextCarrier modifiable) {
             modifiable.applicationContext(this);
         }
 
@@ -122,17 +121,17 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public void handle(final Throwable throwable) {
-        this.environment().manager().handle(throwable);
+        this.environment().handle(throwable);
     }
 
     @Override
     public void handle(final String message, final Throwable throwable) {
-        this.environment().manager().handle(message, throwable);
+        this.environment().handle(message, throwable);
     }
 
     @Override
     public ExceptionHandler stacktraces(final boolean stacktraces) {
-        return this.environment().manager().stacktraces(stacktraces);
+        return this.environment().stacktraces(stacktraces);
     }
 
     @Override
@@ -171,7 +170,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public void setDebugActive(final boolean active) {
-        this.environment().manager().setDebugActive(active);
+        this.environment().setDebugActive(active);
     }
 
     @Override

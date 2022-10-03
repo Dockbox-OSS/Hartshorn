@@ -36,9 +36,9 @@ public class StandardApplicationBuilder extends DefaultApplicationBuilder<Standa
     }
 
     private FactoryState state = FactoryState.WAITING;
-    protected Function<Logger, ApplicationContextConstructor<ApplicationContext>> constructor;
+    protected Function<Logger, ApplicationContextConstructor> constructor;
 
-    public StandardApplicationBuilder constructor(final Function<Logger, ApplicationContextConstructor<ApplicationContext>> constructor) {
+    public StandardApplicationBuilder constructor(final Function<Logger, ApplicationContextConstructor> constructor) {
         this.constructor = constructor;
         return this.self();
     }

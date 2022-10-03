@@ -119,6 +119,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                     this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), instanceType.name(), instanceType.name());
                 }
             }
+
             objectContainer.processed(true);
         }
 
@@ -198,7 +199,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         processingContext.put(Key.of(ComponentContainer.class), container);
 
         if (container.permitsProxying()) {
-            final StateAwareProxyFactory<T, ?> factory = this.applicationContext().environment().manager().factory(key.type());
+            final StateAwareProxyFactory<T, ?> factory = this.applicationContext().environment().factory(key.type());
 
             if (instance != null) {
                 factory.trackState(false);

@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.application.lifecycle;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 
 import java.util.Set;
 
-public interface ObservableApplicationManager extends ApplicationManager {
+public interface ObservableApplicationEnvironment extends ApplicationEnvironment {
 
     <T extends Observer> Set<T> observers(Class<T> type);
 }

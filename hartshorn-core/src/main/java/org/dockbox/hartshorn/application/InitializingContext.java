@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
@@ -45,13 +44,11 @@ import java.util.Objects;
 public final class InitializingContext extends DefaultApplicationAwareContext {
 
     private final ApplicationEnvironment environment;
-    private final ApplicationManager manager;
     private final ApplicationBuilder<?, ?> configuration;
 
-    public InitializingContext(final ApplicationEnvironment environment, final ApplicationContext applicationContext, final ApplicationManager manager, final ApplicationBuilder<?, ?> builder) {
+    public InitializingContext(final ApplicationEnvironment environment, final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
         super(applicationContext);
         this.environment = environment;
-        this.manager = manager;
         this.configuration = Objects.requireNonNull(builder);
     }
 
@@ -62,10 +59,6 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
     @Override
     public ApplicationContext applicationContext() {
         return Objects.requireNonNull(super.applicationContext(), "Application context has not been initialized yet");
-    }
-
-    public ApplicationManager manager() {
-        return Objects.requireNonNull(this.manager, "Application manager has not been initialized yet");
     }
 
     public ConditionMatcher conditionMatcher() {
@@ -147,14 +140,11 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         // Application environment
         binder.bind(Introspector.class).singleton(this.environment());
         binder.bind(ApplicationEnvironment.class).singleton(this.environment());
-
-        // Application manager
-        binder.bind(ProxyLookup.class).singleton(this.manager());
-        binder.bind(ApplicationLogger.class).singleton(this.manager());
-        binder.bind(ApplicationProxier.class).singleton(this.manager());
-        binder.bind(ApplicationManager.class).singleton(this.manager());
-        binder.bind(LifecycleObservable.class).singleton(this.manager());
-        binder.bind(ApplicationFSProvider.class).singleton(this.manager());
+        binder.bind(ProxyLookup.class).singleton(this.environment());
+        binder.bind(ApplicationLogger.class).singleton(this.environment());
+        binder.bind(ApplicationProxier.class).singleton(this.environment());
+        binder.bind(LifecycleObservable.class).singleton(this.environment());
+        binder.bind(ApplicationFSProvider.class).singleton(this.environment());
 
         // Standalone components - alphabetical order
         binder.bind(ActivatorHolder.class).singleton(this.activatorHolder());
@@ -180,14 +170,13 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (InitializingContext) obj;
         return Objects.equals(this.environment, that.environment) &&
-                Objects.equals(this.applicationContext(), that.applicationContext()) &&
-                Objects.equals(this.manager, that.manager) &&
+                Objects.equals(super.applicationContext(), that.applicationContext()) &&
                 Objects.equals(this.configuration, that.configuration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(environment, this.applicationContext(), manager, configuration);
+        return Objects.hash(environment, this.applicationContext(), configuration);
     }
 
     @Override
@@ -195,7 +184,6 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         return "InitializingContext[" +
                 "environment=" + environment + ", " +
                 "applicationContext=" + this.applicationContext() + ", " +
-                "manager=" + manager + ", " +
                 "configuration=" + configuration + ']';
     }
 

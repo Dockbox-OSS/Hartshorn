@@ -173,7 +173,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public boolean isProxy() {
         if (this.isProxy == Tristate.UNDEFINED) {
-            final boolean proxy = this.introspector.applicationContext().environment().manager().isProxy(this.type);
+            final boolean proxy = this.introspector.applicationContext().environment().isProxy(this.type);
             this.isProxy = Tristate.valueOf(proxy);
         }
         return this.isProxy.booleanValue();

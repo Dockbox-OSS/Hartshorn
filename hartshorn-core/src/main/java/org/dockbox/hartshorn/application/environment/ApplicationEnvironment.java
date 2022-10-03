@@ -16,13 +16,19 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.UseProxying;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
@@ -30,11 +36,19 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * The environment of an active application. The environment is managed by a {@link ApplicationManager} and can be
- * responsible for multiple {@link ApplicationContext}s, though typically only one {@link ApplicationContext} is bound
- * to the {@link ApplicationEnvironment}.
+ * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
+ * and will never be bound to multiple contexts at the same time.
  */
-public interface ApplicationEnvironment extends Introspector {
+public interface ApplicationEnvironment extends
+        Introspector,
+        ContextCarrier,
+        ApplicationLogger,
+        ApplicationProxier,
+        LifecycleObservable,
+        ApplicationFSProvider,
+        ExceptionHandler,
+        AnnotationLookup
+{
 
     /**
      * Gets the context of all registered prefixes. This context is responsible for keeping track of known prefixes,
@@ -59,13 +73,6 @@ public interface ApplicationEnvironment extends Introspector {
      * @return <code>true</code> if the environment is a CI environment, <code>false</code> otherwise.
      */
     boolean isCI();
-
-    /**
-     * Gets the {@link ApplicationManager} responsible for managing this environment.
-     *
-     * @return The {@link ApplicationManager} responsible for managing this environment.
-     */
-    ApplicationManager manager();
 
     /**
      * Registers the given prefix, allowing it to be indexed for components.

@@ -29,7 +29,7 @@ public class LifecycleObserverPreProcessor implements ServicePreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        context.environment().manager().register((Class<? extends Observer>) processingContext.type().type());
+        context.environment().register((Class<? extends Observer>) processingContext.type().type());
     }
 
     @Override

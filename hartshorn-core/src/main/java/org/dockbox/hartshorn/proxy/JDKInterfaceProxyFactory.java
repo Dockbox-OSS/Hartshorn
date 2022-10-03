@@ -105,7 +105,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected void restoreFields(final T existing, final T proxy) {
-        final TypeView<T> typeView = this.applicationContext().environment().manager().isProxy(existing)
+        final TypeView<T> typeView = this.applicationContext().environment().isProxy(existing)
                 ? this.applicationContext().environment().introspect(this.type())
                 : this.applicationContext().environment().introspect(this.typeDelegate());
 

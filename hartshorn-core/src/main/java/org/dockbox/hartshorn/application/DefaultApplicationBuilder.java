@@ -22,11 +22,9 @@ import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProviderImpl;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClassLoaderClasspathResourceLocator;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.DelegatingApplicationManager;
 import org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
@@ -97,16 +95,15 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected ComponentInitializer<ExceptionHandler> exceptionHandler = ComponentInitializer.of(ctx -> new LoggingExceptionHandler());
     protected ComponentInitializer<ApplicationArgumentParser> argumentParser = ComponentInitializer.of(ctx -> new StandardApplicationArgumentParser());
     protected ComponentInitializer<ApplicationLogger> applicationLogger = ComponentInitializer.of(ctx -> new LogbackApplicationLogger());
-    protected ComponentInitializer<ApplicationEnvironment> applicationEnvironment = ComponentInitializer.of(ctx -> new ContextualApplicationEnvironment(ctx.prefixContext(), ctx.manager()));
+    protected ComponentInitializer<ApplicationEnvironment> applicationEnvironment = ComponentInitializer.of(ContextualApplicationEnvironment::new);
     protected ComponentInitializer<ComponentLocator> componentLocator = ComponentInitializer.of(ComponentLocatorImpl::new);
     protected ComponentInitializer<ComponentPostConstructor> componentPostConstructor = ComponentInitializer.of(ComponentPostConstructorImpl::new);
-    protected ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.applicationContext()));
+    protected ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.environment()));
     protected ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(HierarchicalApplicationComponentProvider::new);
     protected ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
-    protected ComponentInitializer<PrefixContext> prefixContext = ComponentInitializer.of(ctx -> new ReflectionsPrefixContext(ctx.manager()));
+    protected ComponentInitializer<PrefixContext> prefixContext = ComponentInitializer.of(ctx -> new ReflectionsPrefixContext(ctx.environment()));
     protected ComponentInitializer<ActivatorHolder> activatorHolder = ComponentInitializer.of(ctx -> new StandardActivatorHolder(ctx.applicationContext()));
     protected ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
-    protected ComponentInitializer<ApplicationManager> manager = ComponentInitializer.of(DelegatingApplicationManager::new);
     protected ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
 
     @Override
@@ -400,14 +397,4 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
         return this.conditionMatcher.initialize(context);
     }
 
-    @Override
-    public Self manager(final Initializer<ApplicationManager> manager) {
-        this.manager.initializer(manager);
-        return this.self();
-    }
-
-    @Override
-    public ApplicationManager manager(final InitializingContext context) {
-        return this.manager.initialize(context);
-    }
 }

@@ -47,8 +47,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     public <T> T populate(final T instance) {
         if (null != instance) {
             T modifiableInstance = instance;
-            if (this.applicationContext().environment().manager().isProxy(instance)) {
-                modifiableInstance = this.applicationContext().environment().manager()
+            if (this.applicationContext().environment().isProxy(instance)) {
+                modifiableInstance = this.applicationContext().environment()
                         .manager(instance)
                         .flatMap((CheckedFunction<ProxyManager<T>, @NonNull Result<T>>) ProxyManager::delegate)
                         .or(modifiableInstance);

@@ -75,10 +75,10 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
                             final Map<Method, MethodInterceptor<T>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
         super(applicationContext);
 
-        if (applicationContext.environment().manager().isProxy(targetClass)) {
+        if (applicationContext.environment().isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
-        if (proxyClass != null && !applicationContext.environment().manager().isProxy(proxyClass)) {
+        if (proxyClass != null && !applicationContext.environment().isProxy(proxyClass)) {
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
@@ -99,7 +99,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
         if (this.proxy != null) {
             throw new IllegalModificationException("Proxy instance already set.");
         }
-        if (!this.applicationContext().environment().manager().isProxy(proxy)) {
+        if (!this.applicationContext().environment().isProxy(proxy)) {
             throw new IllegalArgumentException("Provided object is not a proxy");
         }
         this.proxy = proxy;

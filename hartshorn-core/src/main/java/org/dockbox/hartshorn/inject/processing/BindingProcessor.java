@@ -111,7 +111,7 @@ public class BindingProcessor {
             final boolean lazy = annotation.lazy() || Boolean.TRUE.equals(context.get(ComponentLocator.class).container(targetType).map(ComponentContainer::lazy).or(false));
             if (lazy) function.lazySingleton(() -> context.get(targetType));
             else {
-                final Proxy<R> proxy = TypeUtils.adjustWildcards(context.environment().manager().factory(targetType)
+                final Proxy<R> proxy = TypeUtils.adjustWildcards(context.environment().factory(targetType)
                         .proxy()
                         .rethrowUnchecked()
                         .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above.")), Proxy.class);

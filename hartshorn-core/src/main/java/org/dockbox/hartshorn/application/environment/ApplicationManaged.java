@@ -17,25 +17,24 @@
 package org.dockbox.hartshorn.application.environment;
 
 /**
- * An application component that is directly bound to an active {@link ApplicationManager}. This is respected
- * by the {@link ApplicationManager}, which will set itself as the component's manager when the component is
- * used by the manager.
+ * An application component that is directly bound to an active {@link ApplicationEnvironment}. This is respected
+ * by the {@link ApplicationEnvironment}, which will set itself as the component's environment when the component
+ * is used by the environment.
  *
- * @see ApplicationManager
- * @see DelegatingApplicationManager
+ * @see ApplicationEnvironment
  * @author Guus Lieben
  * @since 21.9
  */
 public interface ApplicationManaged {
 
     /**
-     * @return the {@link ApplicationManager} that is managing this component.
+     * @return the {@link ApplicationEnvironment} that is managing this component.
      */
-    ApplicationManager applicationManager();
+    ApplicationEnvironment environment();
 
     /**
-     * Sets the {@link ApplicationManager} that is managing this component.
-     * @param applicationManager the {@link ApplicationManager} that is managing this component.
+     * Sets the {@link ApplicationEnvironment} that is managing this component.
+     * @param environment the {@link ApplicationEnvironment} that is managing this component.
      */
-    void applicationManager(ApplicationManager applicationManager);
+    void environment(ApplicationEnvironment environment);
 }

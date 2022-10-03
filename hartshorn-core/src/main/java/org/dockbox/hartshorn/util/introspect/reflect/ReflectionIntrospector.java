@@ -79,8 +79,8 @@ public class ReflectionIntrospector implements Introspector {
         if (instance == null) {
             return this.voidType();
         }
-        else if (this.applicationContext().environment().manager().isProxy(instance)) {
-            final Class<T> unproxied = this.applicationContext().environment().manager().unproxy(instance);
+        else if (this.applicationContext().environment().isProxy(instance)) {
+            final Class<T> unproxied = this.applicationContext().environment().unproxy(instance);
             return this.introspect(unproxied);
         }
         else {

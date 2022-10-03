@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application.scan;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
@@ -27,24 +27,29 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public abstract class AbstractPrefixContext<S> extends DefaultContext implements PrefixContext {
 
-    private final ApplicationManager manager;
+    private final ApplicationEnvironment environment;
 
     private final Map<String, S> prefixes = new ConcurrentHashMap<>();
     private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new CopyOnWriteArrayListMultiMap<>();
 
-    protected AbstractPrefixContext(final ApplicationManager manager) {
-        this.manager = manager;
+    protected AbstractPrefixContext(final ApplicationEnvironment environment) {
+        this.environment = environment;
     }
 
-    protected ApplicationManager manager() {
-        return this.manager;
+    protected ApplicationEnvironment environment() {
+        return this.environment;
     }
 
     protected abstract S process(String prefix);
+
+    protected boolean validPrefix(final String prefix) {
+        return Pattern.matches("[a-z]+(\\.[a-zA-Z]+)*", prefix);
+    }
 
     protected S get(final String prefix) {
         return this.prefixes.computeIfAbsent(prefix, this::process);
@@ -57,7 +62,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     @Override
     public void prefix(final String prefix) {
         if (!this.prefixes.containsKey(prefix)) {
-            this.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
+            this.environment().log().debug("Registering and caching prefix '%s'".formatted(prefix));
             this.prefixes.put(prefix, this.process(prefix));
         }
     }
@@ -108,7 +113,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     protected <A extends Annotation> Set<Class<? extends Annotation>> extensions(final Class<A> annotation) {
         if (this.annotationHierarchy.isEmpty()) {
             for (final TypeView<? extends Annotation> annotationType : this.children(Annotation.class)) {
-                for (final Class<? extends Annotation> selfOrParent : this.manager().annotationLookup().annotationHierarchy(annotationType.type())) {
+                for (final Class<? extends Annotation> selfOrParent : this.environment().annotationHierarchy(annotationType.type())) {
                     this.annotationHierarchy.put(selfOrParent, annotationType.type());
                 }
             }

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +33,10 @@ import org.slf4j.LoggerFactory;
 public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
     private boolean stacktraces;
-    private ApplicationManager applicationManager;
+    private ApplicationEnvironment environment;
 
     public LoggingExceptionHandler stacktraces(final boolean stacktraces) {
+        findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabling" : "Disabling");
         this.stacktraces = stacktraces;
         return this;
     }
@@ -44,8 +45,14 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
         return this.stacktraces;
     }
 
-    public ApplicationManager applicationManager() {
-        return this.applicationManager;
+    public ApplicationEnvironment environment() {
+        return this.environment;
+    }
+
+    @Override
+    public void environment(final ApplicationEnvironment environment) {
+        if (this.environment == null) this.environment = environment;
+        else throw new IllegalModificationException("Application environment has already been configured");
     }
 
     @Override
@@ -56,7 +63,7 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     @Override
     public void handle(String message, final Throwable throwable) {
         if (null != throwable) {
-            final Logger log = this.applicationManager() != null ? this.applicationManager().log() : LoggerFactory.getLogger(LoggingExceptionHandler.class);
+            final Logger log = findLogger();
 
             String location = "";
             if (0 < throwable.getStackTrace().length) {
@@ -103,6 +110,10 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
         }
     }
 
+    private Logger findLogger() {
+        return this.environment() != null ? this.environment().log() : LoggerFactory.getLogger(LoggingExceptionHandler.class);
+    }
+
     /**
      * Returns the first message of the given {@link Throwable} or {@code null} if the given {@link Throwable} is
      * {@code null}.
@@ -121,11 +132,5 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
             }
         }
         return "No message provided";
-    }
-
-    @Override
-    public void applicationManager(final ApplicationManager applicationManager) {
-        if (this.applicationManager == null) this.applicationManager = applicationManager;
-        else throw new IllegalModificationException("Application manager has already been configured");
     }
 }

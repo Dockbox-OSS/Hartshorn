@@ -267,7 +267,6 @@ class SqlServiceTest {
 
         final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
         final JpaRepository<?, ?> delegate = this.applicationContext.environment()
-                .manager()
                 .manager(repository).get()
                 .delegate(JpaRepository.class).get();
 

@@ -252,7 +252,7 @@ public class StandardMethodInterceptor<T> {
                 This typically indicates that there is no appropriate proxy property (delegate or interceptor) for the method.
                 """.formatted(
                 source.getQualifiedName(), target.getQualifiedName(), targetType.qualifiedName(), self.getClass().getCanonicalName(),
-                this.applicationContext().environment().manager().isProxy(self), Arrays.toString(args))
+                this.applicationContext().environment().isProxy(self), Arrays.toString(args))
         );
     }
 

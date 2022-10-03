@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 
 /**
- * The {@link ApplicationConfigurator} is responsible for configuring the {@link ApplicationManager}. Configuration
+ * The {@link ApplicationConfigurator} is responsible for configuring the {@link ApplicationEnvironment}. Configuration
  * actions can range from setting environment values to overriding internal components. Applications are configured
- * in the {@link ApplicationBuilder} after the manager and {@link ApplicationContext} have been created, but before
+ * in the {@link ApplicationBuilder} after the environment and {@link ApplicationContext} have been created, but before
  * active bindings are added.
  *
  * @author Guus Lieben
@@ -31,18 +31,18 @@ import org.dockbox.hartshorn.application.environment.ApplicationManager;
 public interface ApplicationConfigurator {
 
     /**
-     * Early configuration actions performed after the {@link ApplicationContext} has been created, but before the
+     * Early configuration actions performed after the {@link ApplicationEnvironment} has been created, but before the
      * active bindings are added.
-     * @param manager The {@link ApplicationManager} to configure.
+     * @param environment The {@link ApplicationEnvironment} to configure.
      */
-    void configure(ApplicationManager manager);
+    void configure(ApplicationEnvironment environment);
 
     /**
-     * Binds the given prefix to the given {@link ApplicationManager}. Prefixes may be validated, modified, or applied
+     * Binds the given prefix to the given {@link ApplicationEnvironment}. Prefixes may be validated, modified, or applied
      * to the {@link ApplicationContext}.
      *
-     * @param manager The {@link ApplicationManager} to configure.
+     * @param environment The {@link ApplicationEnvironment} to configure.
      * @param prefix The prefix to bind.
      */
-    void bind(ApplicationManager manager, String prefix);
+    void bind(ApplicationEnvironment environment, String prefix);
 }

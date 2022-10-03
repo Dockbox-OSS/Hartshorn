@@ -41,7 +41,7 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
     @Override
     public Set<URI> lookup(final ApplicationContext context, final String path) {
-        final File resolved = context.environment().manager().applicationPath().resolve(path).toFile();
+        final File resolved = context.environment().applicationPath().resolve(path).toFile();
         if (resolved.exists()) return Collections.singleton(resolved.toURI());
 
         final File parent = resolved.getParentFile();
@@ -57,6 +57,6 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
     @Override
     public URI baseUrl(final ApplicationContext context) {
-        return context.environment().manager().applicationPath().toUri();
+        return context.environment().applicationPath().toUri();
     }
 }

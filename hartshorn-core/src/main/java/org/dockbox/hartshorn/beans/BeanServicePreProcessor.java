@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.beans;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
@@ -98,9 +98,9 @@ public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComp
 
     @Override
     public void exit(final ApplicationContext context) {
-        final ApplicationManager manager = context.environment().manager();
+        final ApplicationEnvironment environment = context.environment();
         final BeanContext beanContext = context.first(BeanContext.class).get();
-        if (manager instanceof ObservableApplicationManager observable) {
+        if (environment instanceof ObservableApplicationEnvironment observable) {
             for (final BeanObserver observer : observable.observers(BeanObserver.class))
                 observer.onBeansCollected(context, beanContext);
         }

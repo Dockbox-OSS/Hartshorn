@@ -42,7 +42,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
         this.element = element;
         // Could be instantiated early during application startup, so we don't want to use component provision here. This
         // does limit it to only being able to be overridden through the application factory.
-        this.annotationLookup = introspector.applicationContext().environment().manager().annotationLookup();
+        this.annotationLookup = introspector.applicationContext().environment();
     }
 
     protected Map<Class<?>, Annotation> annotationCache() {

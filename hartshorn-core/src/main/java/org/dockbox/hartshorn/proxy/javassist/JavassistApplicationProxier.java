@@ -27,7 +27,7 @@ public class JavassistApplicationProxier extends AbstractApplicationProxier {
 
     @Override
     public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return new JavassistProxyFactory<>(type, this.applicationManager().applicationContext());
+        return new JavassistProxyFactory<>(type, this.environment().applicationContext());
     }
 
 }

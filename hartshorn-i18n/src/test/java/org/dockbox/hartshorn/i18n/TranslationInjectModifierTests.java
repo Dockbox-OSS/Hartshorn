@@ -34,7 +34,7 @@ public class TranslationInjectModifierTests {
     @Test
     public void testResourceServiceIsProxied() {
         final ITestResources resources = this.applicationContext.get(ITestResources.class);
-        final boolean proxy = this.applicationContext.environment().manager().isProxy(resources);
+        final boolean proxy = this.applicationContext.environment().isProxy(resources);
         Assertions.assertTrue(proxy);
     }
 

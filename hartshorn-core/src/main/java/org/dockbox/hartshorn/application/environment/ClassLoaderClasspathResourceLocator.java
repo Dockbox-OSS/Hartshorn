@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.util.Resources;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Result;
 
 import java.io.File;
@@ -40,10 +39,10 @@ import java.util.stream.Collectors;
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
-    private final ApplicationContext applicationContext;
+    private final ApplicationEnvironment environment;
 
-    public ClassLoaderClasspathResourceLocator(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public ClassLoaderClasspathResourceLocator(final ApplicationEnvironment environment) {
+        this.environment = environment;
     }
 
     @Override
@@ -79,7 +78,7 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
             return Hartshorn.class.getClassLoader().getResource("").toURI();
         }
         catch (final URISyntaxException e) {
-            this.applicationContext.handle("Could not look up classpath base", e);
+            this.environment.handle("Could not look up classpath base", e);
             return null;
         }
     }

@@ -97,7 +97,7 @@ public class ConfigurationManagerTests {
 
     @Test
     void testFsConfigurations() {
-        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().manager().applicationPath(), "junit");
+        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().applicationPath(), "junit");
         final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
         objectMapper.write(file, """
                 junit:

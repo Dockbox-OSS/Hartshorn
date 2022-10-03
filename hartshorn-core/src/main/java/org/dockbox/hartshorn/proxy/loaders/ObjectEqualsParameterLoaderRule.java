@@ -35,7 +35,7 @@ public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<Para
     @Override
     public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
+        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager(argument);
         return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Result<Object>>) ProxyManager::delegate).orElse(() -> argument).map(a -> (T) a);
     }
 }

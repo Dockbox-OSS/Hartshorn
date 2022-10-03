@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -28,20 +28,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractApplicationProxier implements ApplicationProxier, ApplicationManaged {
 
-    private ApplicationManager applicationManager;
+    private ApplicationEnvironment environment;
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public AbstractApplicationProxier() {
         this.registerProxyLookup(new NativeProxyLookup());
     }
 
-    public ApplicationManager applicationManager() {
-        return this.applicationManager;
+    public ApplicationEnvironment environment() {
+        return this.environment;
     }
 
-    @Override
-    public void applicationManager(final ApplicationManager applicationManager) {
-        if (this.applicationManager == null) this.applicationManager = applicationManager;
+    public void environment(final ApplicationEnvironment environment) {
+        if (this.environment == null) this.environment = environment;
         else throw new IllegalModificationException("Application manager has already been configured");
     }
 

@@ -81,7 +81,7 @@ public interface ApplicationContext extends
 
     @Override
     default Logger log() {
-        return this.environment().manager().log();
+        return this.environment().log();
     }
 
     /**

@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -325,7 +324,7 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
      *
      * @param prefix The prefix to register.
      * @return The {@link ApplicationBuilder} instance.
-     * @see ApplicationConfigurator#bind(ApplicationManager, String)
+     * @see ApplicationConfigurator#bind(ApplicationEnvironment, String)
      * @see ApplicationEnvironment#prefix(String)
      */
     Self prefix(String prefix);
@@ -336,7 +335,7 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
      *
      * @param prefixes The prefixes to register.
      * @return The {@link ApplicationBuilder} instance.
-     * @see ApplicationConfigurator#bind(ApplicationManager, String)
+     * @see ApplicationConfigurator#bind(ApplicationEnvironment, String)
      * @see ApplicationEnvironment#prefix(String)
      */
     Self prefixes(String... prefixes);
@@ -347,7 +346,7 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
      *
      * @param prefixes The prefixes to register.
      * @return The {@link ApplicationBuilder} instance.
-     * @see ApplicationConfigurator#bind(ApplicationManager, String)
+     * @see ApplicationConfigurator#bind(ApplicationEnvironment, String)
      * @see ApplicationEnvironment#prefix(String)
      */
     Self prefixes(Set<String> prefixes);
@@ -375,17 +374,6 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     Self conditionMatcher(Initializer<ConditionMatcher> conditionMatcher);
 
     ConditionMatcher conditionMatcher(final InitializingContext context);
-
-    /**
-     * Registers a custom {@link ApplicationManager} which is used to manage the lifecycle of
-     * the application.
-     *
-     * @param manager The application manager to register.
-     * @return The {@link ApplicationBuilder} instance.
-     */
-    Self manager(Initializer<ApplicationManager> manager);
-
-    ApplicationManager manager(final InitializingContext context);
 
     /**
      * Returns itself, for chaining without losing the fluent API.
