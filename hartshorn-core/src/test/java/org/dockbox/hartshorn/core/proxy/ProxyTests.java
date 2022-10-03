@@ -150,7 +150,7 @@ public class ProxyTests {
 
     @Test
     void testConcreteProxyWithNonDefaultConstructorUsesConstructor() {
-        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor, ?> factory = this.applicationContext.environment().manager().factory(ConcreteProxyWithNonDefaultConstructor.class);
+        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor, ?> factory = this.applicationContext.environment().factory(ConcreteProxyWithNonDefaultConstructor.class);
 
         final TypeView<ConcreteProxyWithNonDefaultConstructor> typeView = this.applicationContext.environment().introspect(ConcreteProxyWithNonDefaultConstructor.class);
         final ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor = typeView.constructors().all().get(0);
@@ -354,7 +354,7 @@ public class ProxyTests {
         Assertions.assertNotEquals(proxyType, manager.proxyClass());
         Assertions.assertEquals(proxyType, manager.targetClass());
 
-        Assertions.assertTrue(this.applicationContext.environment().manager().isProxy(manager.proxyClass()));
+        Assertions.assertTrue(this.applicationContext.environment().isProxy(manager.proxyClass()));
     }
 
     @Test

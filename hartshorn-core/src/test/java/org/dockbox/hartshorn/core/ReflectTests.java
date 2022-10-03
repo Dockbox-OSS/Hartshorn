@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.core.annotations.Base;
@@ -188,8 +188,8 @@ public class ReflectTests {
     }
 
     @InjectTest
-    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationManager manager) {
-        final PrefixContext context = new ReflectionsPrefixContext(manager);
+    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationEnvironment environment) {
+        final PrefixContext context = new ReflectionsPrefixContext(environment);
         context.prefix("org.dockbox.hartshorn.core.types");
         final Collection<TypeView<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
@@ -197,8 +197,8 @@ public class ReflectTests {
     }
 
     @InjectTest
-    void testSubTypesReturnsAllSubTypes(final ApplicationManager manager) {
-        final PrefixContext context = new ReflectionsPrefixContext(manager);
+    void testSubTypesReturnsAllSubTypes(final ApplicationEnvironment environment) {
+        final PrefixContext context = new ReflectionsPrefixContext(environment);
         context.prefix("org.dockbox.hartshorn.core.types");
         final Collection<TypeView<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
@@ -380,7 +380,7 @@ public class ReflectTests {
     @Test
     void testIsProxyIsTrueIfTypeIsProxy() throws ApplicationException {
         final Object proxy = this.applicationContext.environment()
-                .manager().factory(Object.class)
+                .factory(Object.class)
                 .proxy().get();
         // Ensure we introspect .getClass directly, as introspecting the instance will
         // automatically unproxy the view.

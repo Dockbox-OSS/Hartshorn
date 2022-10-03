@@ -327,7 +327,7 @@ public class ApplicationContextTests {
     void testPermittedComponentsAreProxiedWhenRegularProvisionFails() {
         final ComponentType instance = this.applicationContext.get(ComponentType.class);
         Assertions.assertNotNull(instance);
-        Assertions.assertTrue(this.applicationContext.environment().manager().isProxy(instance));
+        Assertions.assertTrue(this.applicationContext.environment().isProxy(instance));
     }
 
     @Test
