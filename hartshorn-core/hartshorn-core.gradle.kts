@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright 2019-2022 the original author or authors.
  *
@@ -22,6 +24,12 @@ plugins {
     kotlin("jvm") version "1.7.10"
     scala
     groovy
+}
+
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
 }
 
 dependencies {
