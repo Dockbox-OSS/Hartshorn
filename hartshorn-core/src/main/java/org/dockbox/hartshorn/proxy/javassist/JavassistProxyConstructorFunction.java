@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -47,7 +47,7 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
     }
 
     @Override
-    public T create(final ConstructorContext<T> constructor, final Object[] args) throws ApplicationException {
+    public T create(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
         try {
             final Class<?>[] parameterTypes = constructor.constructor().getParameterTypes();
             return this.type.cast(this.factory.create(parameterTypes, args, this.methodHandler));

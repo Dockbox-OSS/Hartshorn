@@ -25,11 +25,8 @@ import org.dockbox.hartshorn.inject.Key;
 public abstract class FunctionalComponentPostProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
-        if (container.componentType() != ComponentType.FUNCTIONAL) {
-            return false;
-        }
-        return ComponentPostProcessor.super.preconditions(context, key, instance, processingContext);
+        return container.componentType() == ComponentType.FUNCTIONAL;
     }
 }

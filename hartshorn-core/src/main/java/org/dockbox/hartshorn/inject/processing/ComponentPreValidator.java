@@ -18,13 +18,13 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.Key;
 
 public abstract class ComponentPreValidator implements ComponentPreProcessor {
 
     @Override
-    public boolean modifies(final ApplicationContext context, final Key<?> key) {
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         return true;
     }
 

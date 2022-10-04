@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.web.servlet.MvcServlet;
 public class MVCProviders {
 
     @Provider("mvc_webserver")
-    public ParameterLoader mvcParameterLoader() {
+    public ParameterLoader<?> mvcParameterLoader() {
         return new MvcParameterLoader();
     }
 

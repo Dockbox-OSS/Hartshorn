@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.reflect.InvocationHandler;
 
@@ -41,8 +41,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Result<T> proxy(final ConstructorContext<T> constructor, final Object[] args) throws ApplicationException {
-        if (args.length != constructor.parameterCount()) {
+    public Result<T> proxy(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+        if (args.length != constructor.parameters().count()) {
             throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
         if (this.type().isInterface()) return this.proxy(); // Cannot invoke constructor on interface
@@ -64,7 +64,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected InvocationHandler invocationHandler(final StandardMethodInterceptor<T> interceptor) {
-        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method), null, args);
+        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationContext()), null, args);
     }
 
     protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(StandardMethodInterceptor<T> interceptor);
@@ -73,7 +73,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
-    protected Result<T> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor, final ConstructorContext<T> constructor, final Object[] args) throws ApplicationException {
+    protected Result<T> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor, final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 
@@ -97,18 +97,19 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected Result<T> interfaceProxy(final StandardMethodInterceptor<T> interceptor) {
-        final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
+        final Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 this.proxyInterfaces(true),
                 this.invocationHandler(interceptor));
-        return Result.of(proxy);
+        return Result.of(this.type().cast(proxy));
     }
 
     protected void restoreFields(final T existing, final T proxy) {
-        final TypeContext<T> typeContext = this.applicationContext().environment().manager().isProxy(existing)
-                ? TypeContext.of(this.type())
-                : TypeContext.of(this.typeDelegate());
-        for (final FieldContext<?> field : typeContext.fields()) {
+        final TypeView<T> typeView = this.applicationContext().environment().isProxy(existing)
+                ? this.applicationContext().environment().introspect(this.type())
+                : this.applicationContext().environment().introspect(this.typeDelegate());
+
+        for (final FieldView<T, ?> field : typeView.fields().all()) {
             if (field.isStatic()) continue;
             field.set(proxy, field.get(existing).orNull());
         }

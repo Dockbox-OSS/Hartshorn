@@ -17,46 +17,54 @@
 package org.dockbox.hartshorn.beans;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.AccessModifier;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.ModifierCarrier;
-import org.dockbox.hartshorn.util.reflect.ObtainableElement;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.reflect.TypedElementContext;
+import org.dockbox.hartshorn.util.introspect.AccessModifier;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
+import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
 public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return !(key.type().fields(Bean.class).isEmpty() && key.type().methods(Bean.class).isEmpty());
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final TypeView<T> type = processingContext.type();
+        final boolean hasBeanFields = !type.fields().annotatedWith(Bean.class).isEmpty();
+        final boolean hasBeanMethods = !type.methods().annotatedWith(Bean.class).isEmpty();
+        return hasBeanFields || hasBeanMethods;
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final BeanContext beanContext = context.first(BeanContext.class).get();
         try {
-            this.process(context, beanContext, key.type().fields(Bean.class));
-            this.process(context, beanContext, key.type().methods(Bean.class));
+            final TypeView<T> type = processingContext.type();
+            final List<FieldView<T, ?>> fields = type.fields().annotatedWith(Bean.class);
+            this.process(context, beanContext, fields);
+            final List<MethodView<T, ?>> methods = type.methods().annotatedWith(Bean.class);
+            this.process(context, beanContext, methods);
         }
         catch (final ApplicationException e) {
             throw new ApplicationRuntimeException(e);
         }
     }
 
-    private <E extends AnnotatedElementContext<?>
-            & ObtainableElement<?>
-            & ModifierCarrier
-            & TypedElementContext<?>>
+    private <E extends AnnotatedElementView
+            & ObtainableView<?>
+            & ModifierCarrierView
+            & GenericTypeView<?>>
     void process(final ApplicationContext applicationContext, final BeanContext context, final List<E> elements) throws ApplicationException {
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         for (final E element : elements) {
@@ -64,21 +72,23 @@ public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComp
                 throw new ApplicationException("Bean service pre-processor can only process static fields and methods");
             }
             if (conditionMatcher.match(element)) {
-                this.process(element, applicationContext, context);
+                this.process(element, context);
             }
         }
     }
 
-    private <T, E extends AnnotatedElementContext<?>
-            & ObtainableElement<?>
-            & ModifierCarrier
-            & TypedElementContext<?>>
-    void process(final E element, final ApplicationContext applicationContext, final BeanContext context) throws ApplicationException {
-        final Bean bean = element.annotation(Bean.class).get();
+    private <T, E extends AnnotatedElementView
+            & ObtainableView<?>
+            & ModifierCarrierView
+            & GenericTypeView<?>>
+    void process(final E element, final BeanContext context) throws ApplicationException {
+        final Bean bean = element.annotations().get(Bean.class).get();
         final String id = bean.id();
-        final T beanInstance = (T) element.obtain(applicationContext).orThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
-        final TypeContext<T> type = (TypeContext<T>) element.genericType();
-        context.register(beanInstance, type, id);
+        final Object beanInstance = element.getWithContext()
+                .orThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
+        final TypeView<?> type = element.genericType();
+        //noinspection unchecked - We know the type is correct
+        context.register((T) beanInstance, (Class<T>) type.type(), id);
     }
 
     @Override
@@ -88,9 +98,9 @@ public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComp
 
     @Override
     public void exit(final ApplicationContext context) {
-        final ApplicationManager manager = context.environment().manager();
+        final ApplicationEnvironment environment = context.environment();
         final BeanContext beanContext = context.first(BeanContext.class).get();
-        if (manager instanceof ObservableApplicationManager observable) {
+        if (environment instanceof ObservableApplicationEnvironment observable) {
             for (final BeanObserver observer : observable.observers(BeanObserver.class))
                 observer.onBeansCollected(context, beanContext);
         }

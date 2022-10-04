@@ -31,7 +31,7 @@ public class ThrowingComponentLocatorImpl extends ComponentLocatorImpl {
 
     public ThrowingComponentLocatorImpl(final InitializingContext context) {
         super(context);
-        this.proxy = Mockito.spy(this.applicationContext());
+        this.proxy = Mockito.spy(super.applicationContext());
     }
 
     @Override
@@ -43,12 +43,13 @@ public class ThrowingComponentLocatorImpl extends ComponentLocatorImpl {
     @Override
     public <T> void validate(final Key<T> key) {
         this.mock = true;
-        final Logger logger = Mockito.spy(this.proxy.log());
+        final Logger logger = Mockito.mock(Logger.class);
         Mockito.doAnswer(invocation -> {
             final String message = invocation.getArgument(0, String.class);
             throw new ApplicationException(message);
         }).when(logger).warn(Mockito.anyString());
-        Mockito.when(this.proxy.log()).thenReturn(logger);
+        Mockito.doReturn(logger).when(this.proxy).log();
+        Mockito.doReturn(super.applicationContext().environment()).when(this.proxy).environment();
         super.validate(key);
         this.mock = false;
     }

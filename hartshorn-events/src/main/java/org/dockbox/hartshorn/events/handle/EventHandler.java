@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.events.EventExecutionFilterContext;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,17 +33,17 @@ import java.util.stream.Collectors;
 
 public class EventHandler {
 
-    private final TypeContext<? extends Event> eventType;
+    private final TypeView<? extends Event> eventType;
     private final Set<EventHandler> superTypeHandlers = ConcurrentHashMap.newKeySet();
     private final Set<EventExecutionFilter> executionFilters = ConcurrentHashMap.newKeySet();
     private final SortedSet<EventWrapperImpl<?>> invokers = new TreeSet<>(EventWrapperImpl.COMPARATOR);
     private transient EventWrapperImpl<?>[] computedInvokerCache;
 
-    EventHandler(final TypeContext<? extends Event> eventType) {
+    EventHandler(final TypeView<? extends Event> eventType) {
         this.eventType = eventType;
     }
 
-    public List<MethodContext<?, ?>> methods() {
+    public List<MethodView<?, ?>> methods() {
         return this.invokers.stream().map(EventWrapperImpl::method).collect(Collectors.toList());
     }
 
@@ -106,11 +106,11 @@ public class EventHandler {
     }
 
     public boolean subtypeOf(final EventHandler handler) {
-        if (handler != null) return this.eventType().childOf(handler.eventType());
+        if (handler != null) return this.eventType().isChildOf(handler.eventType().type());
         return false;
     }
 
-    private TypeContext<? extends Event> eventType() {
+    private TypeView<? extends Event> eventType() {
         return this.eventType;
     }
 
@@ -121,7 +121,7 @@ public class EventHandler {
     }
 
     public boolean addFilter(final EventExecutionFilter eventExecutionFilter) {
-        return executionFilters.add(eventExecutionFilter);
+        return this.executionFilters.add(eventExecutionFilter);
     }
 
     @Override

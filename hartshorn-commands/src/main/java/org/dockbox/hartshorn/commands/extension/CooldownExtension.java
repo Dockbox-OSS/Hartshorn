@@ -57,7 +57,7 @@ public class CooldownExtension implements CommandExecutorExtension {
             return ExtensionResult.reject(this.resources.cooldownActive());
         }
         else {
-            final Cooldown cooldown = executorContext.element().annotation(Cooldown.class).get();
+            final Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
             this.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
@@ -65,7 +65,7 @@ public class CooldownExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(final CommandExecutorContext context) {
-        return context.element().annotation(Cooldown.class).present();
+        return context.element().annotations().has(Cooldown.class);
     }
 
     /**

@@ -20,7 +20,7 @@ public class ClassCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElementContext().annotation(RequiresClass.class).map(condition -> {
+        return context.annotatedElement().annotations().get(RequiresClass.class).map(condition -> {
             for (final String name : condition.value()) {
                 try {
                     Class.forName(name);

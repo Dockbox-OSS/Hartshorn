@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Objects;
 
@@ -25,15 +25,15 @@ import jakarta.inject.Named;
 
 public class Key<C> {
 
-    private final TypeContext<C> type;
+    private final Class<C> type;
     private final Named name;
 
-    public Key(final TypeContext<C> type, final Named name) {
+    public Key(final Class<C> type, final Named name) {
         this.type = type;
         this.name = name;
     }
 
-    public TypeContext<C> type() {
+    public Class<C> type() {
         return this.type;
     }
 
@@ -41,30 +41,26 @@ public class Key<C> {
         return this.name;
     }
 
-    public static <C> Key<C> of(final TypeContext<C> type) {
-        return new Key<>(type, null);
+    public static <C> Key<C> of(final TypeView<C> type) {
+        return of(type.type());
     }
 
     public static <C> Key<C> of(final Class<C> type) {
-        return of(TypeContext.of(type));
+        return new Key<>(type, null);
     }
 
-    public static <C> Key<C> of(final TypeContext<C> type, final Named name) {
+    public static <C> Key<C> of(final TypeView<C> type, final Named name) {
+        return of(type.type(), name);
+    }
+
+    public static <C> Key<C> of(final Class<C> type, final Named name) {
         if (name != null && !StringUtilities.empty(name.value())) {
             return new Key<>(type, name);
         }
         return new Key<>(type, null);
     }
 
-    public static <C> Key<C> of(final Class<C> type, final Named name) {
-        return of(TypeContext.of(type), name);
-    }
-
     public static <C> Key<C> of(final Class<C> type, final String name) {
-        return of(TypeContext.of(type), new NamedImpl(name));
-    }
-
-    public static <C> Key<C> of(final TypeContext<C> type, final String name) {
         return of(type, new NamedImpl(name));
     }
 
@@ -90,7 +86,7 @@ public class Key<C> {
 
     @Override
     public String toString() {
-        if (this.name == null) return "Key<" + this.type.name() + ">";
-        else return "Key<" + this.type.name() + ", " + this.name.value() + ">";
+        if (this.name == null) return "Key<" + this.type.getSimpleName() + ">";
+        else return "Key<" + this.type.getSimpleName() + ", " + this.name.value() + ">";
     }
 }

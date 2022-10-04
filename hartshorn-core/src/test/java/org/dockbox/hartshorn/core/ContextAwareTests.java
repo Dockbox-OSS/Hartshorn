@@ -18,14 +18,12 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
-
 import test.types.SampleContextAwareType;
 
 @HartshornTest
@@ -45,12 +43,6 @@ public class ContextAwareTests {
         Assertions.assertNotNull(sampleContextAwareType.context());
 
         Assertions.assertSame(applicationContext, sampleContextAwareType.context());
-    }
-
-    @Test
-    void testMetaProviderIsBound() {
-        final MetaProvider metaProvider = this.applicationContext.get(MetaProvider.class);
-        Assertions.assertNotNull(metaProvider);
     }
 
     @Test

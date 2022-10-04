@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.logging;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +40,16 @@ public abstract class CallerLookupApplicationLogger implements ApplicationLogger
         StackTraceElement element = null;
         for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
             final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
-            final boolean isExcluded = TypeContext.lookup(ste.getClassName().split("\\$")[0]).annotation(LogExclude.class).present();
-            if (!isJavaModule && !isExcluded) {
-                element = ste;
-                break;
+
+            try {
+                final Class<?> clazz = Class.forName(ste.getClassName());
+                final boolean isExcluded = clazz.isAnnotationPresent(LogExclude.class);
+                if (!isJavaModule && !isExcluded) {
+                    element = ste;
+                    break;
+                }
+            }
+            catch (final ClassNotFoundException ignored) {
             }
         }
 
@@ -53,7 +58,7 @@ public abstract class CallerLookupApplicationLogger implements ApplicationLogger
         final String className = element.getClassName().split("\\$")[0];
         if (this.loggers.containsKey(className)) return this.loggers.get(className);
 
-        final Logger logger = LoggerFactory.getLogger(TypeContext.lookup(className).type());
+        final Logger logger = LoggerFactory.getLogger(className);
         this.loggers.put(className, logger);
         return logger;
     }

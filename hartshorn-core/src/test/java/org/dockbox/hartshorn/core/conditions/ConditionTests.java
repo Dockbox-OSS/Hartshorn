@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.conditions;
 
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.ActivatorCondition;
 import org.dockbox.hartshorn.component.condition.ClassCondition;
@@ -32,8 +32,8 @@ import org.dockbox.hartshorn.testsuite.HartshornFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.testsuite.TestProperties;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,7 +58,7 @@ public class ConditionTests {
     private ApplicationContext applicationContext;
 
     @HartshornFactory
-    public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
+    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
         return factory.arguments("--property.c=o",
                 "--property.d=d",
                 "--property.e=otherValue")
@@ -98,11 +98,15 @@ public class ConditionTests {
     }
 
     @Test
-    void testActivatorConditions() throws NoSuchMethodException {
+    void testActivatorConditions() {
         Assertions.assertTrue(this.applicationContext.hasActivator(DemoActivator.class));
 
-        final MethodContext<?, ?> method = MethodContext.of(ConditionTests.class.getDeclaredMethod("requiresActivator"));
-        final RequiresCondition annotation = method.annotation(RequiresCondition.class).get();
+        final MethodView<ConditionTests, ?> method = this.applicationContext.environment()
+                .introspect(ConditionTests.class)
+                .methods()
+                .named("requiresActivator")
+                .get();
+        final RequiresCondition annotation = method.annotations().get(RequiresCondition.class).get();
 
         final ConditionContext context = new ConditionContext(this.applicationContext, method, annotation);
         final Condition condition = new ActivatorCondition();
@@ -116,16 +120,16 @@ public class ConditionTests {
 
     @Test
     void testClassConditions() {
-        final TypeContext<ConditionTests> type = TypeContext.of(ConditionTests.class);
+        final TypeView<ConditionTests> type = this.applicationContext.environment().introspect(ConditionTests.class);
         final Condition condition = new ClassCondition();
 
-        final MethodContext<?, ConditionTests> requiresClass = type.method("requiresClass").get();
-        final RequiresCondition annotationForPresent = requiresClass.annotation(RequiresCondition.class).get();
+        final MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
+        final RequiresCondition annotationForPresent = requiresClass.annotations().get(RequiresCondition.class).get();
         final ConditionContext contextForPresent = new ConditionContext(this.applicationContext, requiresClass, annotationForPresent);
         Assertions.assertTrue(condition.matches(contextForPresent).matches());
 
-        final MethodContext<?, ConditionTests> requiresAbsentClass = type.method("requiresAbsentClass").get();
-        final RequiresCondition annotationForAbsent = requiresAbsentClass.annotation(RequiresCondition.class).get();
+        final MethodView<ConditionTests, ?> requiresAbsentClass = type.methods().named("requiresAbsentClass").get();
+        final RequiresCondition annotationForAbsent = requiresAbsentClass.annotations().get(RequiresCondition.class).get();
         final ConditionContext contextForAbsent = new ConditionContext(this.applicationContext, requiresAbsentClass, annotationForAbsent);
         Assertions.assertFalse(condition.matches(contextForAbsent).matches());
     }

@@ -24,18 +24,16 @@ import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
@@ -66,7 +64,7 @@ public class ConditionTests {
 
     @Test
     void testApplicationContextIsOptInAvailable() {
-        final ExpressionConditionContext context = new ExpressionConditionContext().includeApplicationContext(true);
+        final ExpressionConditionContext context = new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
         final String expression = "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass().getName());
         final ConditionResult result = this.match(expression, context);
         Assertions.assertTrue(result.matches());
@@ -86,29 +84,24 @@ public class ConditionTests {
 
     ConditionResult match(final String expression, final Context... contexts) {
         final ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
-        final AnnotatedElementContext<?> element = this.enhanceWithVirtualCondition(expression);
+        final AnnotatedElementView element = this.createAnnotatedElement(expression);
         final ConditionContext context = new ConditionContext(this.applicationContext, element, null);
         for (final Context child : contexts) context.add(child);
         return condition.matches(context);
     }
 
-    private AnnotatedElementContext<?> enhanceWithVirtualCondition(final String expression) {
-        final MethodContext<?, ?> method = TypeContext.of(this).method("mockTarget").get();
-        final RequiresExpression annotation = new RequiresExpression() {
+    private AnnotatedElementView createAnnotatedElement(final String expression) {
+        final RequiresExpression condition = Mockito.mock(RequiresExpression.class);
+        Mockito.when(condition.value()).thenReturn(expression);
+        Mockito.doReturn(RequiresExpression.class).when(condition).annotationType();
 
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return RequiresExpression.class;
-            }
+        final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
+        Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Result.of(condition));
 
-            @Override
-            public String value() {
-                return expression;
-            }
-        };
-        final AnnotatedElementModifier<Method> modifier = AnnotatedElementModifier.of(method);
-        modifier.add(annotation);
-        return method;
+        final AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
+        Mockito.when(elementView.annotations()).thenReturn(annotationsIntrospector);
+
+        return elementView;
     }
 
     private void mockTarget() {}

@@ -65,7 +65,7 @@ public class SerializationTests {
     }
 
     private Path path() {
-        return this.applicationContext.environment().manager().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
+        return this.applicationContext.environment().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
     }
 
     @Test

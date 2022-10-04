@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -43,8 +43,8 @@ public class StandardActivatorHolder implements ModifiableActivatorHolder {
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
-        final Result<ServiceActivator> annotation = TypeContext.of(activator).annotation(ServiceActivator.class);
-        if (annotation.absent())
+        final TypeView<? extends Annotation> activatorView = this.applicationContext.environment().introspect(activator);
+        if (!activatorView.annotations().has(ServiceActivator.class))
             throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators.containsKey(activator);
@@ -62,8 +62,11 @@ public class StandardActivatorHolder implements ModifiableActivatorHolder {
     @Override
     public void addActivator(final Annotation annotation) {
         if (this.activators.containsKey(annotation.annotationType())) return;
-        final TypeContext<? extends Annotation> annotationType = TypeContext.of(annotation.annotationType());
-        final Result<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
+        final TypeView<? extends Annotation> annotationType = this.applicationContext.environment()
+                .introspector()
+                .introspect(annotation.annotationType());
+
+        final Result<ServiceActivator> activator = annotationType.annotations().get(ServiceActivator.class);
         if (activator.present()) {
             this.activators.put(annotation.annotationType(), annotation);
             for (final String scan : activator.get().scanPackages()) {

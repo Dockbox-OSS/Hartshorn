@@ -120,12 +120,15 @@ public class CacheTests {
 
     @Test
     void testCacheCanWriteAndReadMultipleWithExpiration() throws InterruptedException {
-        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class).cache(Expiration.of(1, TimeUnit.MILLISECONDS));
+        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class)
+                // Would be nice to use a lower amount here, but slower devices and CI environments
+                // may not be able to keep up with 1ms reliably
+                .cache(Expiration.of(10, TimeUnit.MILLISECONDS));
 
         cache.put("key", "value");
         cache.put("key2", "value2");
 
-        Thread.sleep(2);
+        Thread.sleep(15);
 
         final Result<String> result = cache.get("key");
         final Result<String> result2 = cache.get("key2");
@@ -136,12 +139,15 @@ public class CacheTests {
 
     @Test
     void testCacheCanWriteAndReadMultipleWithExpirationAndInvalidation() throws InterruptedException {
-        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class).cache(Expiration.of(1, TimeUnit.MILLISECONDS));
+        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class)
+                // Would be nice to use a lower amount here, but slower devices and CI environments
+                // may not be able to keep up with 1ms reliably
+                .cache(Expiration.of(10, TimeUnit.MILLISECONDS));
 
         cache.put("key", "value");
         cache.put("key2", "value2");
 
-        Thread.sleep(2);
+        Thread.sleep(15);
 
         Assertions.assertDoesNotThrow(() -> cache.invalidate("key"));
 
@@ -165,12 +171,15 @@ public class CacheTests {
 
     @Test
     void testCacheContainsBeforeAfterExpiration() throws InterruptedException {
-        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class).cache(Expiration.of(1, TimeUnit.MILLISECONDS));
+        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class)
+                // Would be nice to use a lower amount here, but slower devices and CI environments
+                // may not be able to keep up with 1ms reliably
+                .cache(Expiration.of(10, TimeUnit.MILLISECONDS));
 
         cache.put("key", "value");
         Assertions.assertTrue(cache.contains("key"));
 
-        Thread.sleep(2);
+        Thread.sleep(15);
 
         Assertions.assertFalse(cache.contains("key"));
     }

@@ -28,10 +28,10 @@ import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,7 +71,7 @@ public class CommandGatewayImpl implements CommandGateway {
         if (this.extensions.isEmpty()) {
             final CommandExtensionContext extensionContext = this.context.first(CommandExtensionContext.class).get();
             for (final CommandExecutorExtension extension : extensionContext.extensions()) {
-                this.context.log().debug("Adding extension " + TypeContext.of(extension).name() + " to command gateway");
+                this.context.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
                 this.add(extension);
             }
         }
@@ -123,7 +123,7 @@ public class CommandGatewayImpl implements CommandGateway {
                 final ExtensionResult result = extension.execute(commandContext, context);
                 if (result.send()) commandContext.source().send(result.reason());
                 if (!result.proceed()) {
-                    context.applicationContext().log().debug("Extension " + TypeContext.of(extension).name() + " rejected direct execution, cancelling command executor.");
+                    context.applicationContext().log().debug("Extension " + extension.getClass().getSimpleName() + " rejected direct execution, cancelling command executor.");
                     return;
                 }
             }
@@ -140,7 +140,8 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public <T> void register(final Key<T> key) {
-        for (final MethodContext<?, T> method : key.type().methods(Command.class)) {
+        final TypeView<T> typeView = this.context.environment().introspect(key.type());
+        for (final MethodView<T, ?> method : typeView.methods().annotatedWith(Command.class)) {
             this.register(method, key);
         }
     }
@@ -151,8 +152,8 @@ public class CommandGatewayImpl implements CommandGateway {
         if (container.absent()) throw new InvalidExecutorException("Executor contexts should contain at least one container context");
 
         final List<String> aliases;
-        final TypeContext<?> typeContext = context.parent();
-        final Result<Command> annotated = typeContext.annotation(Command.class);
+        final TypeView<?> typeContext = context.parent();
+        final Result<Command> annotated = typeContext.annotations().get(Command.class);
         if (!typeContext.isVoid() && annotated.present()) {
             aliases = List.of(annotated.get().value());
         }
@@ -204,7 +205,7 @@ public class CommandGatewayImpl implements CommandGateway {
         this.extensions.add(extension);
     }
 
-    private <T> void register(final MethodContext<?, T> method, final Key<T> key) {
+    private <T> void register(final MethodView<T, ?> method, final Key<T> key) {
         this.register(new MethodCommandExecutorContext<>(this.context, method, key));
     }
 }

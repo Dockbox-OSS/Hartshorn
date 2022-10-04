@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import java.util.function.Function;
 
@@ -81,7 +82,7 @@ public class JacksonProviders {
     }
 
     @Provider(phase = DATA_MAPPER_PHASE + 16) // Before ObjectMapper
-    public JacksonObjectMapperConfigurator mapperConfigurator() {
+    public JacksonObjectMapperConfigurator mapperConfigurator(final Introspector introspector) {
         final Function<JsonInclusionRule, Include> rules = (rule) -> switch (rule) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
@@ -90,7 +91,7 @@ public class JacksonProviders {
             default -> throw new IllegalArgumentException("Unknown modifier: " + rule);
         };
         return (builder, format, inclusionRule) -> {
-            MapperBuilder<?, ?> mb = builder.annotationIntrospector(new JacksonPropertyAnnotationIntrospector())
+            MapperBuilder<?, ?> mb = builder.annotationIntrospector(new JacksonPropertyAnnotationIntrospector(introspector))
                     .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
                     .enable(Feature.ALLOW_COMMENTS)
                     .enable(Feature.ALLOW_YAML_COMMENTS)

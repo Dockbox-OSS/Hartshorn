@@ -19,11 +19,10 @@ package org.dockbox.hartshorn.hsl.objects.external;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.reflect.Executable;
 import java.util.List;
 
 /**
@@ -48,20 +47,20 @@ public class ExecutableLookup {
      * @return The found executable.
      * @param <T> The type of the declaring type.
      */
-    public static <T> MethodContext<?, T> method(final Token at, final TypeContext<T> declaring, final String function, final List<Object> arguments) {
-        final Result<MethodContext<?, T>> zeroParameterMethod = declaring.method(function);
+    public static <T> MethodView<T, ?> method(final Token at, final TypeView<T> declaring, final String function, final List<Object> arguments) {
+        final Result<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
-        final List<MethodContext<?, T>> methods = declaring.methods().stream()
+        final List<MethodView<T, ?>> methods = declaring.methods().all().stream()
                 .filter(m -> m.name().equals(function))
-                .filter(m -> m.parameterCount() == arguments.size())
+                .filter(m -> m.parameters().count() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
             throw new RuntimeError(at, "Method '" + function + "' with " + arguments.size() + " parameters does not exist on external instance of type " + declaring.name());
         }
 
-        final MethodContext<?, T> executable = executable(methods, arguments);
+        final MethodView<T, ?> executable = executable(methods, arguments);
         if (executable != null) return executable;
 
         throw new RuntimeError(at, "Method '" + function + "' with parameters accepting " + arguments + " does not exist on external instance of type " + declaring.name());
@@ -75,16 +74,15 @@ public class ExecutableLookup {
      * @param executables The list of executables.
      * @param arguments The list of arguments.
      * @return The found executable.
-     * @param <A> The type of the executable.
      * @param <P> The type of the declaring parent of the executable.
      * @param <T> The context type representing the executable.
      */
-    public static <A extends Executable, P, T extends ExecutableElementContext<A, P>> T executable(final List<T> executables, final List<Object> arguments) {
+    public static <P, T extends ExecutableElementView<P>> T executable(final List<T> executables, final List<Object> arguments) {
         for (final T executable : executables) {
             boolean pass = true;
-            if (executable.parameterCount() != arguments.size()) continue;
-            for (int i = 0; i < executable.parameterTypes().size(); i++) {
-                final TypeContext<?> parameter = executable.parameterTypes().get(i);
+            if (executable.parameters().count() != arguments.size()) continue;
+            for (int i = 0; i < executable.parameters().count(); i++) {
+                final TypeView<?> parameter = executable.parameters().types().get(i);
                 final Object argument = arguments.get(i);
                 if (!parameter.isInstance(argument)) {
                     pass = false;

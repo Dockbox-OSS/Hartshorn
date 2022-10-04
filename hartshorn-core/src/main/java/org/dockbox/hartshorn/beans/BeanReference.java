@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public record BeanReference<T>(T bean, TypeContext<T> type, String id) {
+public record BeanReference<T>(T bean, TypeView<T> type, String id) {
 }

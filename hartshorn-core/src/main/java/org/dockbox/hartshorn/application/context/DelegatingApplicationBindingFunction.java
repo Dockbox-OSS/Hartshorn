@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.function.Supplier;
 
@@ -43,12 +42,6 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public ApplicationContext to(final TypeContext<? extends T> type) {
-        this.delegate.to(type);
-        return this.applicationContext;
-    }
-
-    @Override
     public ApplicationContext to(final Supplier<T> supplier) {
         this.delegate.to(supplier);
         return this.applicationContext;
@@ -62,12 +55,6 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
 
     @Override
     public ApplicationContext lazySingleton(final Class<T> type) {
-        this.delegate.lazySingleton(type);
-        return this.applicationContext;
-    }
-
-    @Override
-    public ApplicationContext lazySingleton(final TypeContext<T> type) {
         this.delegate.lazySingleton(type);
         return this.applicationContext;
     }

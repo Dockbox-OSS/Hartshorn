@@ -22,13 +22,14 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -45,7 +46,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
-        this.environment().annotationsWith(context.configuration().activator(), ServiceActivator.class).forEach(this::addActivator);
+        this.environment().annotationsWith(context.builder().mainClass(), ServiceActivator.class).forEach(this::addActivator);
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
     }
 
@@ -70,7 +71,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         this.checkRunning();
 
         final Integer order = processor.order();
-        final String name = TypeContext.of(processor).name();
+        final String name = processor.getClass().getSimpleName();
 
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof StandardComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
@@ -114,11 +115,12 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         this.checkRunning();
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
             for (final ComponentContainer container : containers) {
-                final TypeContext<?> service = container.type();
+                final TypeView<?> service = container.type();
                 final Key<?> key = Key.of(service);
-                if (serviceProcessor.modifies(this, key)) {
-                    this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), TypeContext.of(serviceProcessor).name()));
-                    serviceProcessor.process(this, key);
+                final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+                if (serviceProcessor.preconditions(context)) {
+                    this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+                    serviceProcessor.process(context);
                 }
             }
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {

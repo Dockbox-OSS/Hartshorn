@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.serialization;
 
-import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

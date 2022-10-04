@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
@@ -32,5 +32,5 @@ public interface WebServletFactory {
     WebServletImpl webServlet(final HttpWebServer starter, final RequestHandlerContext context);
 
     @Factory(required = false)
-    MvcServlet mvc(final MethodContext<ViewTemplate, ?> methodContext);
+    MvcServlet mvc(final MethodView<?, ViewTemplate> method);
 }

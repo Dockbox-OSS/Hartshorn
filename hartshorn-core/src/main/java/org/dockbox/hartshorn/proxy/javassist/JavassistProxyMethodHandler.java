@@ -33,7 +33,10 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler {
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
-        return this.interceptor.intercept(self, new MethodInvokable(thisMethod), new MethodInvokable(proceed), args);
+        return this.interceptor.intercept(self,
+                new MethodInvokable(thisMethod, this.interceptor().applicationContext()),
+                new MethodInvokable(proceed, this.interceptor().applicationContext()),
+                args);
     }
 
     public StandardMethodInterceptor<T> interceptor() {

@@ -39,6 +39,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     private final HslLanguageFactory factory;
 
     protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+        super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
     }

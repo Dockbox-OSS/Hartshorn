@@ -17,18 +17,18 @@
 package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.inject.Key;
 
 public class EventServicePreProcessor implements ServicePreProcessor {
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return !key.type().methods(Listener.class).isEmpty();
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return !processingContext.type().methods().annotatedWith(Listener.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        context.get(EventBus.class).subscribe(key);
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        context.get(EventBus.class).subscribe(processingContext.key());
     }
 }

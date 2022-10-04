@@ -20,17 +20,11 @@ import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
 import org.dockbox.hartshorn.core.boot.activators.AbstractActivator;
 import org.dockbox.hartshorn.core.boot.activators.InterfaceActivator;
-import org.dockbox.hartshorn.core.boot.activators.NonDecoratedActivator;
 import org.dockbox.hartshorn.core.boot.activators.ValidActivator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class HartshornApplicationTests {
-
-    @Test
-    void testCreationFailsWithAbsentDecorator() {
-        Assertions.assertThrows(InvalidActivationSourceException.class, () -> HartshornApplication.create(NonDecoratedActivator.class));
-    }
 
     @Test
     void testCreationFailsWithAbstractActivator() {

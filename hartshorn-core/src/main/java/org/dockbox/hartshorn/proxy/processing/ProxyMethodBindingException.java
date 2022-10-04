@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.processing;
 
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.lang.reflect.Method;
 
@@ -26,7 +26,7 @@ public class ProxyMethodBindingException extends RuntimeException {
         this(ctx.method());
     }
 
-    public ProxyMethodBindingException(final MethodContext<?, ?> ctx) {
+    public ProxyMethodBindingException(final MethodView<?, ?> ctx) {
         this(ctx.method());
     }
 

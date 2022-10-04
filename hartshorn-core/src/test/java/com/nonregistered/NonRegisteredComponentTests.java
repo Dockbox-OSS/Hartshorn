@@ -16,7 +16,7 @@
 
 package com.nonregistered;
 
-import org.dockbox.hartshorn.application.ApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.testsuite.HartshornFactory;
@@ -28,12 +28,15 @@ import org.junit.jupiter.api.Assertions;
 public class NonRegisteredComponentTests {
 
     @HartshornFactory
-    public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
-        return factory.componentLocator(ThrowingComponentLocatorImpl::new);
+    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
+        return factory
+                .includeBasePackages(false) // Exclude component scanning in the current package
+                .componentLocator(ThrowingComponentLocatorImpl::new);
     }
 
     @InjectTest
     void testComponents(final ApplicationContext applicationContext) {
-        Assertions.assertThrows(ApplicationException.class, () -> applicationContext.get(DemoComponent.class));
+        final ApplicationException exception = Assertions.assertThrows(ApplicationException.class, () -> applicationContext.get(DemoComponent.class));
+        Assertions.assertEquals("Component key 'com.nonregistered.DemoComponent' is annotated with @Component, but is not registered.", exception.getMessage());
     }
 }

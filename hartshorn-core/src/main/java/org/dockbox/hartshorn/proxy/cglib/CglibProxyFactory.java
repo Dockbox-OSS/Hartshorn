@@ -45,8 +45,8 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         enhancer.setClassLoader(this.defaultClassLoader());
 
         enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> {
-            final MethodInvokable realMethod = new MethodInvokable(method);
-            final Invokable proxyMethod = new ProxyMethodInvokable(proxy, obj, method);
+            final MethodInvokable realMethod = new MethodInvokable(method, this.applicationContext());
+            final Invokable proxyMethod = new ProxyMethodInvokable(this.applicationContext(), proxy, obj, method);
             return interceptor.intercept(obj, realMethod, proxyMethod, args);
         });
         return new CglibProxyConstructorFunction<>(this.type(), enhancer);

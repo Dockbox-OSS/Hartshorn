@@ -19,18 +19,18 @@ package org.dockbox.hartshorn.application.context;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ParameterLoaderContext extends DefaultContext implements ContextCarrier {
 
-    private final ExecutableElementContext<?, ?> executable;
-    private final TypeContext<?> type;
+    private final ExecutableElementView<?> executable;
+    private final TypeView<?> type;
     private final Object instance;
     private final ApplicationContext applicationContext;
     private final ComponentProvider provider;
 
-    public ParameterLoaderContext(final ExecutableElementContext<?, ?> executable, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext) {
+    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext) {
         this.executable = executable;
         this.type = type;
         this.instance = instance;
@@ -38,7 +38,7 @@ public class ParameterLoaderContext extends DefaultContext implements ContextCar
         this.provider = applicationContext;
     }
 
-    public ParameterLoaderContext(final ExecutableElementContext<?, ?> executable, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider) {
+    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider) {
         this.executable = executable;
         this.type = type;
         this.instance = instance;
@@ -51,11 +51,11 @@ public class ParameterLoaderContext extends DefaultContext implements ContextCar
         return this.applicationContext;
     }
 
-    public ExecutableElementContext<?, ?> executable() {
+    public ExecutableElementView<?> executable() {
         return this.executable;
     }
 
-    public TypeContext<?> type() {
+    public TypeView<?> type() {
         return this.type;
     }
 

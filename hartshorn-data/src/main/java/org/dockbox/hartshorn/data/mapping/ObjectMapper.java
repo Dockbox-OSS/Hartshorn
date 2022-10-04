@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormat;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.Result;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,26 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface ObjectMapper {
-
-    default <T> Result<T> read(final String content, final TypeContext<T> type) {
-        return this.read(content, type.type());
-    }
-
-    default <T> Result<T> read(final Path path, final TypeContext<T> type) {
-        return this.read(path, type.type());
-    }
-
-    default <T> Result<T> read(final URI uri, final TypeContext<T> type) {
-        return this.read(uri, type.type());
-    }
-
-    default  <T> Result<T> read(final URL url, final TypeContext<T> type) {
-        return this.read(url, type.type());
-    }
-
-    default  <T> Result<T> read(final InputStream stream, final TypeContext<T> type) {
-        return this.read(stream, type.type());
-    }
 
     <T> Result<T> read(String content, Class<T> type);
 

@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
@@ -33,13 +33,13 @@ public interface ComponentProvider {
 
     /**
      * Returns the component for the given type and name metadata. If <code>named</code> is null, the given
-     * {@link TypeContext} is used to identify the component.
+     * {@link TypeView} is used to identify the component.
      * @param type The type of the component to return.
      * @param named The name metadata of the component to return.
      * @param <T> The type of the component to return.
      * @return The component for the given type and name metadata.
      */
-    default <T> T get(final TypeContext<T> type, final Named named) {
+    default <T> T get(final TypeView<T> type, final Named named) {
         return this.get(Key.of(type, named));
     }
 
@@ -80,7 +80,7 @@ public interface ComponentProvider {
      * @param <T> The type of the component to return.
      * @return The component for the given type.
      */
-    default <T> T get(final TypeContext<T> type) {
+    default <T> T get(final TypeView<T> type) {
         return this.get(Key.of(type));
     }
 

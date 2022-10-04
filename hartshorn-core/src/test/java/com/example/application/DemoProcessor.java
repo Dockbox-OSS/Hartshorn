@@ -18,7 +18,7 @@ package com.example.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -41,11 +41,11 @@ public class DemoProcessor implements ComponentPreProcessor {
     }
 
     @Override
-    public boolean modifies(final ApplicationContext context, final Key<?> key) {
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         return false;
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
     }
 }

@@ -77,7 +77,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         if (this.bindings.containsKey(priority) && priority != -1) {
             this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
-                    .type().name(), priority, this));
+                    .type().getSimpleName(), priority, this));
         }
         this.bindings.put(priority, provider);
         return this;
@@ -116,7 +116,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public String toString() {
-        final String contract = this.key().type().name();
+        final String contract = this.key().type().getSimpleName();
         final Named named = this.key().name();
         String name = "";
         if (named != null) {
@@ -131,8 +131,8 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
                 .map(entry -> {
                     final Provider<C> value = entry.getValue();
                     String target = value.toString();
-                    if (value instanceof ContextDrivenProvider contextDrivenProvider) {
-                        target = contextDrivenProvider.context().name();
+                    if (value instanceof ContextDrivenProvider<?> contextDrivenProvider) {
+                        target = contextDrivenProvider.type().getSimpleName();
                     }
                     return "%s: %s".formatted(String.valueOf(entry.getKey()), target);
                 })

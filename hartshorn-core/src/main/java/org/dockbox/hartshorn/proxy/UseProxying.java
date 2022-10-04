@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.StandardApplicationFactory;
+import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation to indicate that {@link Provided} methods can be proxied when {@link Component#permitProxying()}
  * is {@code true} for any given component. This acts as a service activator, and is loaded as a default in
- * {@link StandardApplicationFactory}.
+ * {@link StandardApplicationBuilder}.
  *
  * @author Guus Lieben
  * @since 21.2

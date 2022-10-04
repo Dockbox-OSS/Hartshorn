@@ -61,6 +61,6 @@ public class SampleCommand {
     }
 
     public String valueAfterCondition() {
-        return valueAfterCondition;
+        return this.valueAfterCondition;
     }
 }

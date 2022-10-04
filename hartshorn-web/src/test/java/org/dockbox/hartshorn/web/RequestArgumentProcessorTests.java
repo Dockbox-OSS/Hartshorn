@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -66,12 +66,13 @@ public class RequestArgumentProcessorTests {
         final BufferedReader reader = new BufferedReader(new StringReader("Unparsed body"));
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getReader()).thenReturn(reader);
-        final ParameterContext<String> context = Mockito.mock(ParameterContext.class);
-        Mockito.when(context.type()).thenReturn(TypeContext.of(String.class));
+
+        final ParameterView<String> parameter = Mockito.mock(ParameterView.class);
+        Mockito.when(parameter.type()).thenReturn(this.applicationContext.environment().introspect(String.class));
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Result<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
+        final Result<String> result = new BodyRequestParameterRule().load(parameter, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Unparsed body", result.get());
     }
@@ -83,15 +84,20 @@ public class RequestArgumentProcessorTests {
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getReader()).thenReturn(reader);
 
-        final ParameterContext<Message> context = Mockito.mock(ParameterContext.class);
-        Mockito.when(context.type()).thenReturn(TypeContext.of(Message.class));
+        final ParameterView<Message> context = Mockito.mock(ParameterView.class);
+        Mockito.when(context.type()).thenReturn(this.applicationContext.environment().introspect(Message.class));
 
-        final ExecutableElementContext<?, ?> declaring = Mockito.mock(ExecutableElementContext.class);
         final HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
         Mockito.when(httpRequest.consumes()).thenReturn(mediaType);
-        Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Result.of(httpRequest));
+
+        final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
+        Mockito.when(annotationsIntrospector.get(HttpRequest.class)).thenReturn(Result.of(httpRequest));
+
+        final ExecutableElementView<?> element = Mockito.mock(ExecutableElementView.class);
+        Mockito.when(element.annotations()).thenReturn(annotationsIntrospector);
+
         // Different order due to generic return type
-        Mockito.doReturn(declaring).when(context).declaredBy();
+        Mockito.doReturn(element).when(context).declaredBy();
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
@@ -105,11 +111,16 @@ public class RequestArgumentProcessorTests {
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getHeader("string-header")).thenReturn("Header!");
         Mockito.when(request.getHeaders("string-header")).thenReturn(Collections.enumeration(List.of("Header!")));
-        final ParameterContext<String> context = Mockito.mock(ParameterContext.class);
-        Mockito.when(context.type()).thenReturn(TypeContext.of(String.class));
+
         final RequestHeader requestHeader = Mockito.mock(RequestHeader.class);
         Mockito.when(requestHeader.value()).thenReturn("string-header");
-        Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Result.of(requestHeader));
+
+        final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
+        Mockito.when(annotationsIntrospector.get(RequestHeader.class)).thenReturn(Result.of(requestHeader));
+
+        final ParameterView<String> context = Mockito.mock(ParameterView.class);
+        Mockito.when(context.type()).thenReturn(this.applicationContext.environment().introspect(String.class));
+        Mockito.when(context.annotations()).thenReturn(annotationsIntrospector);
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
@@ -123,15 +134,20 @@ public class RequestArgumentProcessorTests {
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getIntHeader("int-header")).thenReturn(1);
         Mockito.when(request.getHeaders("int-header")).thenReturn(Collections.enumeration(List.of("Header!")));
-        final ParameterContext<Integer> context = Mockito.mock(ParameterContext.class);
-        Mockito.when(context.type()).thenReturn(TypeContext.of(Integer.class));
+
         final RequestHeader requestHeader = Mockito.mock(RequestHeader.class);
         Mockito.when(requestHeader.value()).thenReturn("int-header");
-        Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Result.of(requestHeader));
+
+        final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
+        Mockito.when(annotationsIntrospector.get(RequestHeader.class)).thenReturn(Result.of(requestHeader));
+
+        final ParameterView<Integer> parameter = Mockito.mock(ParameterView.class);
+        Mockito.when(parameter.type()).thenReturn(this.applicationContext.environment().introspect(Integer.class));
+        Mockito.when(parameter.annotations()).thenReturn(annotationsIntrospector);
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Result<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
+        final Result<Integer> result = new HeaderRequestParameterRule().load(parameter, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(1, result.get().intValue());
     }

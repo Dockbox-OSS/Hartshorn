@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.core.types.SimpleComponent;
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-@Activator
 public class ApplicationBatchingTest {
 
     /**

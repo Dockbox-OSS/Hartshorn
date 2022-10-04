@@ -23,11 +23,10 @@ import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -45,8 +44,10 @@ public interface CustomParameterPattern {
      *
      * @return An instance of {@code T}, wrapped in a {@link Result}, or {@link Result#empty()} if {@code null}
      */
-    default <T> Result<T> request(final TypeContext<T> type, final CommandSource source, final String raw) {
+    default <T> Result<T> request(final Class<T> type, final CommandSource source, final String raw) {
         final ApplicationContext context = source.applicationContext();
+        final TypeView<T> typeView = context.environment().introspect(type);
+
         final Result<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
         if (preconditionsMatch.caught()) {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
@@ -58,7 +59,7 @@ public interface CustomParameterPattern {
         }
 
         final List<String> rawArguments = this.splitArguments(raw);
-        final List<TypeContext<?>> argumentTypes = new ArrayList<>();
+        final List<Class<?>> argumentTypes = new ArrayList<>();
         final List<Object> arguments = new ArrayList<>();
 
         for (final String rawArgument : rawArguments) {
@@ -79,7 +80,7 @@ public interface CustomParameterPattern {
 
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
-                return Result.of(new MissingConverterException(context, type)
+                return Result.of(new MissingConverterException(context, typeView)
                 );
             }
 
@@ -88,25 +89,25 @@ public interface CustomParameterPattern {
             arguments.add(converter.get().convert(source, rawArgument).orNull());
         }
 
-        return this.constructor(argumentTypes, arguments, type, source)
-                .flatMap(constructor -> constructor.createInstance(arguments.toArray(new Object[0])));
+        return this.constructor(argumentTypes, arguments, typeView, source)
+                .flatMap(constructor -> constructor.create(arguments.toArray(new Object[0])));
     }
 
-    <T> Result<Boolean> preconditionsMatch(TypeContext<T> type, CommandSource source, String raw);
+    <T> Result<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw);
 
     List<String> splitArguments(String raw);
 
     Result<String> parseIdentifier(String argument);
 
-    default <T> Result<ConstructorContext<T>> constructor(final List<TypeContext<?>> argumentTypes, final List<Object> arguments, final TypeContext<T> type, final CommandSource source) {
-        for (final ConstructorContext<T> constructor : type.constructors()) {
-            if (constructor.parameterCount() != arguments.size()) continue;
-            final LinkedList<TypeContext<?>> parameters = constructor.parameterTypes();
+    default <T> Result<ConstructorView<T>> constructor(final List<Class<?>> argumentTypes, final List<Object> arguments, final TypeView<T> type, final CommandSource source) {
+        for (final ConstructorView<T> constructor : type.constructors().all()) {
+            if (constructor.parameters().count() != arguments.size()) continue;
+            final List<TypeView<?>> parameters = constructor.parameters().types();
 
             boolean passed = true;
             for (int i = 0; i < parameters.size(); i++) {
-                final TypeContext<?> parameter = parameters.get(i);
-                final TypeContext<?> argument = argumentTypes.get(i);
+                final TypeView<?> parameter = parameters.get(i);
+                final Class<?> argument = argumentTypes.get(i);
 
                 if (argument == null) {
                     final Result<? extends ArgumentConverter<?>> converter = source.applicationContext()
@@ -120,7 +121,7 @@ public interface CustomParameterPattern {
                         }
                     }
                 }
-                else if (parameter.equals(argument)) continue;
+                else if (parameter.is(argument)) continue;
 
                 passed = false;
                 break; // Parameter is not what we expected, do not continue

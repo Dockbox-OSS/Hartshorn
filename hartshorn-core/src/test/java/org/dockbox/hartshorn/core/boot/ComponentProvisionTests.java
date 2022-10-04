@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -49,13 +49,14 @@ public class ComponentProvisionTests {
                 // org.dockbox.hartshorn.core.types is test-specific and includes a few test-specific types
                 // that are not part of the core types, and thus should not be tested here.
                 .filter(type -> !type.isDeclaredIn("org.dockbox.hartshorn.core.types"))
-                .filter(type -> type.boundConstructors().size() != type.constructors().size())
+                .filter(type -> type.constructors().bound().size() != type.constructors().count())
+                .map(TypeView::type)
                 .map(Arguments::of);
     }
 
     @ParameterizedTest
     @MethodSource("components")
-    public void testComponentProvision(final TypeContext<?> component) {
+    public void testComponentProvision(final Class<?> component) {
         Assertions.assertDoesNotThrow(() -> {
             final Object instance = this.applicationContext().get(component);
             Assertions.assertNotNull(instance);

@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
@@ -43,17 +43,17 @@ import java.util.List;
 public class ExternalFunction extends AbstractFinalizable implements MethodReference {
 
     private final String methodName;
-    private final TypeContext<Object> type;
+    private final TypeView<Object> type;
     private final InstanceReference instance;
 
-    public ExternalFunction(final Class<?> type, final String methodName) {
+    public ExternalFunction(final TypeView<?> type, final String methodName) {
         this(type, methodName, null);
     }
 
-    public ExternalFunction(final Class<?> type, final String methodName, final InstanceReference instance) {
+    public ExternalFunction(final TypeView<?> type, final String methodName, final InstanceReference instance) {
         super(false);
         this.methodName = methodName;
-        this.type = (TypeContext<Object>) TypeContext.of(type);
+        this.type = (TypeView<Object>) type;
         this.instance = instance;
     }
 
@@ -66,27 +66,27 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
     }
 
     /**
-     * Returns the {@link TypeContext} which declares the method represented by this class.
-     * @return The {@link TypeContext} which declares the method represented by this class.
+     * Returns the {@link TypeView} which declares the method represented by this class.
+     * @return The {@link TypeView} which declares the method represented by this class.
      */
-    public TypeContext<?> type() {
+    public TypeView<?> type() {
         return this.type;
     }
 
-    private MethodContext<?, Object> method(final Token at, final List<Object> arguments) {
-        final Result<MethodContext<?, Object>> zeroParameterMethod = this.type.method(this.methodName);
+    private MethodView<Object, ?> method(final Token at, final List<Object> arguments) {
+        final Result<MethodView<Object, ?>> zeroParameterMethod = this.type.methods().named(this.methodName);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
-        final List<MethodContext<?, Object>> methods = this.type.methods().stream()
+        final List<MethodView<Object, ?>> methods = this.type.methods().all().stream()
                 .filter(m -> m.name().equals(this.methodName))
-                .filter(m -> m.parameterCount() == arguments.size())
+                .filter(m -> m.parameters().count() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
             throw new RuntimeError(at, "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name());
         }
 
-        final MethodContext<?, Object> executable = ExecutableLookup.executable(methods, arguments);
+        final MethodView<Object, ?> executable = ExecutableLookup.executable(methods, arguments);
         if (executable != null) return executable;
 
         throw new RuntimeError(at, "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name());
@@ -100,13 +100,13 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
             throw new RuntimeError(at, "Cannot call method '" + this.methodName + "' on non-external instance");
         }
-        final MethodContext<?, Object> method = this.method(at, arguments);
+        final MethodView<Object, ?> method = this.method(at, arguments);
         final Result<?> result = method.invoke(externalObjectReference.externalObject(), arguments);
         if (result.caught()) {
             if (result.error() instanceof ApplicationException ae) throw ae;
             throw new ApplicationException(result.error());
         }
-        return result.map(ExternalInstance::new).orNull();
+        return result.map(o -> new ExternalInstance(o, interpreter.applicationContext().environment().introspect(o))).orNull();
     }
 
     @Override
@@ -132,7 +132,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             throw new RuntimeError(null, "Cannot bind external function to virtual instance of type " + virtualClass.name());
         }
 
-        return new ExternalFunction(externalClass.type().type(), this.methodName, instance);
+        return new ExternalFunction(externalClass.type(), this.methodName, instance);
     }
 
     @Override

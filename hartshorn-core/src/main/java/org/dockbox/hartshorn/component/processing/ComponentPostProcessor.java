@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.inject.Key;
 
 /**
  * A component post processor is responsible for processing a component after it has been created. This
@@ -40,4 +42,19 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * @since 22.1
  */
 public non-sealed interface ComponentPostProcessor extends ComponentProcessor {
+
+    @Override
+    default <T> boolean preconditions(final ComponentProcessingContext<T> processingContext) {
+        return processingContext.get(Key.of(ComponentContainer.class)) != null
+                && this.preconditions(processingContext.applicationContext(), processingContext.instance(), processingContext);
+    }
+
+    @Override
+    default <T> T process(final ComponentProcessingContext<T> processingContext) {
+        return this.process(processingContext.applicationContext(), processingContext.instance(), processingContext);
+    }
+
+    <T> boolean preconditions(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext);
+
+    <T> T process(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext);
 }

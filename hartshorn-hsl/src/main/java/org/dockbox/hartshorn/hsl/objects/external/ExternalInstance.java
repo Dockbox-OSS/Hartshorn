@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Map;
 
@@ -40,11 +41,14 @@ import java.util.Map;
 public class ExternalInstance implements InstanceReference, ExternalObjectReference {
 
     private final Object instance;
-    private final TypeContext<Object> type;
+    private final TypeView<Object> type;
 
-    public ExternalInstance(final Object instance) {
+    public <T> ExternalInstance(final T instance, final TypeView<T> type) {
+        if (instance != null && !type.isInstance(instance)) {
+            throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
+        }
         this.instance = instance;
-        this.type = TypeContext.of(instance);
+        this.type = (TypeView<Object>) type;
     }
 
     /**
@@ -57,18 +61,20 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
 
     @Override
     public void set(final Token name, final Object value, final VariableScope fromScope) {
-        this.type.field(name.lexeme())
+        this.type.fields().named(name.lexeme())
+                .map(field -> (FieldView<Object, Object>) field)
                 .present(field -> field.set(this.instance(), value))
                 .orThrow(() -> this.propertyDoesNotExist(name));
     }
 
     @Override
     public Object get(final Token name, final VariableScope fromScope) {
-        final boolean isMethod = this.type.methods().stream()
+        final boolean isMethod = this.type.methods().all().stream()
                 .anyMatch(method -> method.name().equals(name.lexeme()));
-        if (isMethod) return new ExternalFunction(this.type.type(), name.lexeme());
 
-        return this.type.field(name.lexeme())
+        if (isMethod) return new ExternalFunction(this.type, name.lexeme());
+
+        return this.type.fields().named(name.lexeme())
                 .flatMap(field -> field.get(this.instance()))
                 .orThrow(() -> this.propertyDoesNotExist(name));
     }
@@ -84,7 +90,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
 
     @Override
     public ClassReference type() {
-        return new ExternalClass<>(this.type.type());
+        return new ExternalClass<>(this.type);
     }
 
     @Override

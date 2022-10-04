@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.arguments.ArgumentMatchingFailedException;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
@@ -27,11 +28,10 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,9 +120,9 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     private final Command command;
     private final CommandDefinition definition;
     private final ApplicationContext context;
-    private final MethodContext<?, ?> method;
+    private final MethodView<?, ?> method;
 
-    public CommandDefinitionContextImpl(final ApplicationContext context, final Command command, final MethodContext<?, ?> method) {
+    public CommandDefinitionContextImpl(final ApplicationContext context, final Command command, final MethodView<?, ?> method) {
         this.command = command;
         this.context = context;
         this.method = method;
@@ -219,7 +219,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
             return new CommandElementImpl<>(converter.get(), name, optional, converter.get().size());
         }
         else {
-            final TypeContext<?> lookup = TypeContext.lookup(type);
+            final TypeView<?> lookup = this.context.environment().introspect(type);
             if (lookup.isVoid()) {
                 this.context.log().error("No argument of type `" + type + "` can be read");
                 return null;
@@ -227,7 +227,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
             if (lookup.isEnum()) {
                 this.context.log().debug(type + " is an enum, creating explicit enum element.");
-                return EnumCommandElement.of(name, (TypeContext<E>) lookup, optional);
+                return EnumCommandElement.of(name, (TypeView<E>) lookup, optional);
             }
             else {
                 this.context.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
@@ -290,8 +290,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public TypeContext<?> parent() {
-        return TypeContext.of(this.command.parent());
+    public Class<?> parent() {
+        return this.command.parent();
     }
 
     @Override

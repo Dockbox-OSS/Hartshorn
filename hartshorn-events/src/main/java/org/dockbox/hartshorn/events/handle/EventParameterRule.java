@@ -16,19 +16,21 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class EventParameterRule implements ParameterLoaderRule<EventParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
-        return TypeContext.of(context.event()).childOf(parameter.type());
+    public boolean accepts(final ParameterView<?> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
+        TypeView<Event> typeView = context.applicationContext().environment().introspect(context.event());
+        return typeView.isChildOf(parameter.type().type());
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
         return Result.of((T) context.event());
     }
 }

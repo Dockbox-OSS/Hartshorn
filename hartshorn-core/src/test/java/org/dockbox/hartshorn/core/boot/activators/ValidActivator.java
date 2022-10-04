@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.core.boot.activators;
 
-import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.HartshornApplication;
 
-@Activator
 public class ValidActivator {
 
     public static void main(final String... args) {
-        HartshornApplication.create(args);
+        HartshornApplication.create(ValidActivator.class, args);
     }
 }

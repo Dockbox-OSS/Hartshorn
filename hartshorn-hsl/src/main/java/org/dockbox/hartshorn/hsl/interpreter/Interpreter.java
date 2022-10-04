@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
@@ -90,6 +92,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 
 import java.math.BigDecimal;
@@ -100,6 +103,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import jakarta.inject.Inject;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -123,7 +128,7 @@ import java.util.stream.Collectors;
  * @author Guus Lieben
  * @since 22.4
  */
-public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<Void> {
+public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<Void>, ContextCarrier {
 
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
     private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
@@ -136,6 +141,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private VariableScope visitingScope = this.global;
     private boolean isRunning = false;
 
+    @Inject
+    private ApplicationContext applicationContext;
     @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
         this.resultCollector = resultCollector;
@@ -1086,10 +1093,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     public void global(final Map<String, Object> globalVariables) {
-        globalVariables.forEach((name, instance) -> this.externalVariables.put(name, new ExternalInstance(instance)));
+        globalVariables.forEach((name, instance) -> {
+            TypeView<Object> typeView = this.applicationContext().environment().introspect(instance);
+            this.externalVariables.put(name, new ExternalInstance(instance, typeView));
+        });
     }
 
-    public void imports(final Map<String, Class<?>> imports) {
+    public void imports(final Map<String, TypeView<?>> imports) {
         imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
     }
 
@@ -1099,5 +1109,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         this.visitingScope = nextScope;
         runnable.run();
         this.visitingScope = previous;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 }

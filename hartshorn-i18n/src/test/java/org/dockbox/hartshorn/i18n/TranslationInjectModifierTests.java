@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -35,7 +34,8 @@ public class TranslationInjectModifierTests {
     @Test
     public void testResourceServiceIsProxied() {
         final ITestResources resources = this.applicationContext.get(ITestResources.class);
-        Assertions.assertTrue(TypeContext.of(resources).isProxy());
+        final boolean proxy = this.applicationContext.environment().isProxy(resources);
+        Assertions.assertTrue(proxy);
     }
 
     @Test

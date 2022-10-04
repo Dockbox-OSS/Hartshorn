@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.component.processing;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,26 +28,41 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-public class ComponentProcessingContext extends DefaultApplicationAwareContext {
+public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
 
-    private final Key<?> key;
-    private ProcessingPhase phase;
-    private final Map<Key<?>, Object> data = new ConcurrentHashMap<>();
+    protected final Key<T> key;
+    private final Map<Key<?>, Object> data;
 
-    public ComponentProcessingContext(final ApplicationContext applicationContext, final Key<?> key) {
+    protected ProcessingPhase phase;
+    protected T instance;
+
+    public ComponentProcessingContext(final ApplicationContext applicationContext, final Key<T> key, final T instance) {
         super(applicationContext);
         this.key = key;
+        this.instance = instance;
+        this.data = new ConcurrentHashMap<>();
     }
 
-    public Key<?> key() {
+    public Key<T> key() {
         return this.key;
+    }
+
+    public T instance() {
+        return this.instance;
+    }
+    
+    public TypeView<T> type() {
+        if (this.instance != null) {
+            return this.applicationContext().environment().introspect(this.instance);
+        }
+        return this.applicationContext().environment().introspect(this.key.type());
     }
 
     public ProcessingPhase phase() {
         return this.phase;
     }
 
-    public ComponentProcessingContext phase(final ProcessingPhase phase) {
+    public ComponentProcessingContext<T> phase(final ProcessingPhase phase) {
         this.phase = phase;
         return this;
     }
@@ -67,16 +83,16 @@ public class ComponentProcessingContext extends DefaultApplicationAwareContext {
         return this.data.containsValue(value);
     }
 
-    public <T> T get(final Key<T> key) {
-        return (T) this.data.get(key);
+    public <R> R get(final Key<R> key) {
+        return key.type().cast(this.data.get(key));
     }
 
-    public <T> T put(final Key<T> key, final T value) {
-        return (T) this.data.put(key, value);
+    public <R> R put(final Key<R> key, final R value) {
+        return key.type().cast(this.data.put(key, value));
     }
 
-    public <T> T remove(final Key<T> key) {
-        return (T) this.data.remove(key);
+    public <R> R remove(final Key<R> key) {
+        return key.type().cast(this.data.remove(key));
     }
 
     public void clear() {
@@ -95,23 +111,23 @@ public class ComponentProcessingContext extends DefaultApplicationAwareContext {
         return this.data.entrySet();
     }
 
-    public <T> T getOrDefault(final Key<T> key, final T defaultValue) {
-        return (T) this.data.getOrDefault(key, defaultValue);
+    public <R> R getOrDefault(final Key<R> key, final R defaultValue) {
+        return key.type().cast(this.data.getOrDefault(key, defaultValue));
     }
 
-    public <T> T putIfAbsent(final Key<T> key, final T value) {
-        return (T) this.data.putIfAbsent(key, value);
+    public <R> R putIfAbsent(final Key<R> key, final R value) {
+        return key.type().cast(this.data.putIfAbsent(key, value));
     }
 
-    public <T> boolean remove(final Key<T> key, final T value) {
+    public <R> boolean remove(final Key<R> key, final R value) {
         return this.data.remove(key, value);
     }
 
-    public <T> boolean replace(final Key<T> key, final T oldValue, final T newValue) {
+    public <R> boolean replace(final Key<R> key, final R oldValue, final R newValue) {
         return this.data.replace(key, oldValue, newValue);
     }
 
-    public <T> T computeIfAbsent(final Key<T> key, final Function<? super Key<T>, T> mappingFunction) {
-        return (T) this.data.computeIfAbsent(key, (Function<? super Key<?>, ?>) mappingFunction);
+    public <R> R computeIfAbsent(final Key<R> key, final Function<? super Key<R>, R> mappingFunction) {
+        return key.type().cast(this.data.computeIfAbsent(key, (Function<? super Key<?>, ?>) mappingFunction));
     }
 }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.web.processing.rules.BodyRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.HeaderRequestParameterRule;
@@ -35,7 +35,7 @@ public class HttpServletParameterLoader extends RuleBasedParameterLoader<HttpReq
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         return context.provider().get(parameter.type());
     }
 }

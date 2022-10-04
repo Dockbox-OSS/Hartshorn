@@ -453,7 +453,7 @@ public final class Result<T> {
      * @throws X If there is no value present
      * @throws NoSuchElementException If the value and exception are both not present
      */
-    @Nullable
+    @NonNull
     public <X extends Throwable> T orThrow(@NonNull final Supplier<@Nullable ? extends X> exceptionSupplier) throws X {
         if (null != this.value) {
             return this.value;
@@ -615,6 +615,10 @@ public final class Result<T> {
      */
     public Result<T> discardError() {
         return Result.of(this.value);
+    }
+
+    public <R> Result<R> adjustWildcards() {
+        return TypeUtils.adjustWildcards(this, Result.class);
     }
 
     @Override

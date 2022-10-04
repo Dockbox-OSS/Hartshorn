@@ -19,11 +19,10 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class IllegalPhaseModificationException extends ApplicationRuntimeException {
     public IllegalPhaseModificationException(final ComponentPostProcessor processor, final ProcessingPhase previous, final ProcessingPhase current) {
-        super("Post-processor %s changed the processing phase from %s to %s".formatted(TypeContext.of(processor).name(), previous, current));
+        super("Post-processor %s changed the processing phase from %s to %s".formatted(processor.getClass().getSimpleName(), previous, current));
     }
 }
 

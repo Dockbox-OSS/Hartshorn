@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,11 +38,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ExpressionConditionContext extends DefaultContext implements ConditionContext {
 
     private final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
-    private final Map<String, Class<?>> imports = new ConcurrentHashMap<>();
+    private final Map<String, TypeView<?>> imports = new ConcurrentHashMap<>();
     private final Set<CodeCustomizer> customizers = ConcurrentHashMap.newKeySet();
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
+    private final ApplicationContext applicationContext;
 
     private boolean includeApplicationContext;
+
+    public ExpressionConditionContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public boolean includeApplicationContext() {
@@ -122,6 +129,11 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      */
     @Override
     public void imports(final String name, final Class<?> type) {
+        this.imports.put(name, this.applicationContext.environment().introspect(type));
+    }
+
+    @Override
+    public void imports(final String name, final TypeView<?> type) {
         this.imports.put(name, type);
     }
 
@@ -137,13 +149,18 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
         this.imports(type.getSimpleName(), type);
     }
 
+    @Override
+    public void imports(final TypeView<?> type) {
+        this.imports(type.name(), type);
+    }
+
     /**
      * Adds the given imports to the context under the given aliases. This will override existing
      * imports if there is another import with the same name or alias.
      * @param imports The classes to import, identified by their alias.
      */
     @Override
-    public void imports(final Map<String, Class<?>> imports) {
+    public void imports(final Map<String, TypeView<?>> imports) {
         this.imports.putAll(imports);
     }
 
@@ -161,7 +178,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @return The imports.
      */
     @Override
-    public Map<String, Class<?>> imports() {
+    public Map<String, TypeView<?>> imports() {
         return this.imports;
     }
 

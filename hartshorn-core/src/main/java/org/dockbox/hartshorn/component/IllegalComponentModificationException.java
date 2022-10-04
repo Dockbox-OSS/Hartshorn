@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 public class IllegalComponentModificationException extends ApplicationRuntimeException {
 
@@ -26,7 +25,7 @@ public class IllegalComponentModificationException extends ApplicationRuntimeExc
         super("""
               Component %s was modified during phase with priority %s by %s.
               Component processors are only able to discard existing instances in phases with priority < 0.
-              """.formatted(name, priority, TypeContext.of(processor).name()));
+              """.formatted(name, priority, processor.getClass().getSimpleName()));
 
     }
 }

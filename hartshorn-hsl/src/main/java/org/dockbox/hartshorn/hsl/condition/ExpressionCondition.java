@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
 /**
  * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
- * is obtained from the {@link org.dockbox.hartshorn.util.reflect.AnnotatedElementContext} provided through the
+ * is obtained from the {@link org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView} provided through the
  * {@link ConditionContext} for the condition.
  *
  * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the active
@@ -49,7 +49,7 @@ public class ExpressionCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElementContext().annotation(RequiresExpression.class).map(condition -> {
+        return context.annotatedElement().annotations().get(RequiresExpression.class).map(condition -> {
             final String expression = condition.value();
             final ValidateExpressionRuntime runtime = this.createRuntime(context);
 

@@ -16,10 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.TypedElementContext;
-
-import java.lang.reflect.AnnotatedElement;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 /**
  * The default {@link KeyGenerator} implementation. This implementation uses the
@@ -31,10 +28,7 @@ import java.lang.reflect.AnnotatedElement;
 public class HashCodeKeyGenerator implements KeyGenerator {
 
     @Override
-    public <A extends AnnotatedElement> String generateKey(final AnnotatedElementContext<A> element) {
-        if (element instanceof TypedElementContext typedElement) {
-            return typedElement.name() + "_" + typedElement.hashCode();
-        }
-        return String.valueOf(element.hashCode());
+    public String generateKey(final AnnotatedElementView element) {
+        return element.name() + "_" + element.hashCode();
     }
 }

@@ -20,42 +20,45 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.inject.MetaProvider;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.slf4j.Logger;
 
 import java.util.Objects;
 
-public record InitializingContext(ApplicationEnvironment environment, ApplicationContext applicationContext, ApplicationManager manager, ApplicationContextConfiguration configuration) {
+public final class InitializingContext extends DefaultApplicationAwareContext {
 
-    public InitializingContext(final ApplicationEnvironment environment, final ApplicationContext applicationContext, final ApplicationManager manager, final ApplicationContextConfiguration configuration) {
+    private final ApplicationEnvironment environment;
+    private final ApplicationBuilder<?, ?> configuration;
+
+    public InitializingContext(final ApplicationEnvironment environment, final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
+        super(applicationContext);
         this.environment = environment;
-        this.applicationContext = applicationContext;
-        this.manager = manager;
-        this.configuration = Objects.requireNonNull(configuration);
+        this.configuration = Objects.requireNonNull(builder);
     }
 
-    @Override
     public ApplicationEnvironment environment() {
         return Objects.requireNonNull(this.environment, "Application environment has not been initialized yet");
     }
 
     @Override
     public ApplicationContext applicationContext() {
-        return Objects.requireNonNull(this.applicationContext, "Application context has not been initialized yet");
-    }
-
-    @Override
-    public ApplicationManager manager() {
-        return Objects.requireNonNull(this.manager, "Application manager has not been initialized yet");
+        return Objects.requireNonNull(super.applicationContext(), "Application context has not been initialized yet");
     }
 
     public ConditionMatcher conditionMatcher() {
@@ -98,8 +101,8 @@ public record InitializingContext(ApplicationEnvironment environment, Applicatio
         return this.configuration.resourceLocator(this);
     }
 
-    public MetaProvider metaProvider() {
-        return this.configuration.metaProvider(this);
+    public AnnotationLookup annotationLookup() {
+        return this.configuration.annotationLookup(this);
     }
 
     public ComponentProvider componentProvider() {
@@ -121,4 +124,67 @@ public record InitializingContext(ApplicationEnvironment environment, Applicatio
     public ActivatorHolder activatorHolder() {
         return this.configuration.activatorHolder(this);
     }
+
+    public ApplicationBuilder<?, ?> builder() {
+        return this.configuration;
+    }
+
+    public void applyTo(Binder binder) {
+        // Application context
+        binder.bind(ComponentProvider.class).singleton(this.applicationContext());
+        binder.bind(ExceptionHandler.class).singleton(this.applicationContext());
+        binder.bind(ApplicationContext.class).singleton(this.applicationContext());
+        binder.bind(ApplicationPropertyHolder.class).singleton(this.applicationContext());
+        binder.bind(ApplicationBinder.class).singleton(this.applicationContext());
+
+        // Application environment
+        binder.bind(Introspector.class).singleton(this.environment());
+        binder.bind(ApplicationEnvironment.class).singleton(this.environment());
+        binder.bind(ProxyLookup.class).singleton(this.environment());
+        binder.bind(ApplicationLogger.class).singleton(this.environment());
+        binder.bind(ApplicationProxier.class).singleton(this.environment());
+        binder.bind(LifecycleObservable.class).singleton(this.environment());
+        binder.bind(ApplicationFSProvider.class).singleton(this.environment());
+
+        // Standalone components - alphabetical order
+        binder.bind(ActivatorHolder.class).singleton(this.activatorHolder());
+        binder.bind(AnnotationLookup.class).singleton(this.annotationLookup());
+        binder.bind(ComponentLocator.class).singleton(this.componentLocator());
+        binder.bind(ComponentPopulator.class).singleton(this.componentPopulator());
+        binder.bind(ComponentPostConstructor.class).singleton(this.componentPostConstructor());
+        binder.bind(ComponentProvider.class).singleton(this.componentProvider());
+        binder.bind(ConditionMatcher.class).singleton(this.conditionMatcher());
+        binder.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator());
+
+        // Standalone components - special behavior
+        if (this.componentProvider() instanceof StandardComponentProvider provider)
+            binder.bind(StandardComponentProvider.class).singleton(provider);
+
+        // Dynamic components
+        binder.bind(Logger.class).to(this.applicationContext()::log);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (InitializingContext) obj;
+        return Objects.equals(this.environment, that.environment) &&
+                Objects.equals(super.applicationContext(), that.applicationContext()) &&
+                Objects.equals(this.configuration, that.configuration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(environment, this.applicationContext(), configuration);
+    }
+
+    @Override
+    public String toString() {
+        return "InitializingContext[" +
+                "environment=" + environment + ", " +
+                "applicationContext=" + this.applicationContext() + ", " +
+                "configuration=" + configuration + ']';
+    }
+
 }

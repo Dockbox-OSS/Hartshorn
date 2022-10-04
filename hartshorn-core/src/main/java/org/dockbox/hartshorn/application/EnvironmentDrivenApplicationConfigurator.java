@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 /**
  * This class is responsible for configuring the application manager. This default implementation of the
@@ -33,43 +33,44 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 public class EnvironmentDrivenApplicationConfigurator implements ApplicationConfigurator {
 
     @Override
-    public void configure(final ApplicationManager manager) {
-        manager.stacktraces(this.stacktraces(manager));
+    public void configure(final ApplicationEnvironment environment) {
+        environment.stacktraces(this.stacktraces(environment));
     }
 
     @Override
-    public void bind(final ApplicationManager manager, final String prefix) {
-        manager.applicationContext().bind(prefix);
+    public void bind(final ApplicationEnvironment environment, final String prefix) {
+        environment.log().debug("Binding prefix " + prefix + " to environment");
+        environment.applicationContext().bind(prefix);
     }
 
     /**
      * Returns whether stacktraces should be enabled. Uses the {@code hartshorn.exceptions.stacktraces} property
      * to determine this.
      *
-     * @param manager The application manager.
+     * @param environment The application manager.
      * @return Whether stacktraces should be enabled.
      */
-    protected boolean stacktraces(final ApplicationManager manager) {
-        return this.primitiveProperty(manager, "hartshorn.exceptions.stacktraces", boolean.class, true);
+    protected boolean stacktraces(final ApplicationEnvironment environment) {
+        return this.primitiveProperty(environment, "hartshorn.exceptions.stacktraces", boolean.class, true);
     }
 
     /**
      * Returns the value of the specified property as the specified primitive type, or the default value if the property is
      * not set.
      *
-     * @param manager The application manager.
+     * @param environment The application manager.
      * @param property The property to get.
      * @param type The type of the property.
      * @param defaultValue The default value of the property.
      * @param <T> The type of the property.
      * @return The value of the specified property as the specified primitive type, or the default value.
      */
-    protected <T> T primitiveProperty(final ApplicationManager manager, final String property, final Class<T> type, final T defaultValue) {
-        return manager.applicationContext()
+    protected <T> T primitiveProperty(final ApplicationEnvironment environment, final String property, final Class<T> type, final T defaultValue) {
+        return environment.applicationContext()
                 .property(property)
                 .map(value -> {
                     try {
-                        return (T) TypeContext.toPrimitive(TypeContext.of(type), value);
+                        return (T) TypeUtils.toPrimitive(type, value);
                     } catch (final TypeConversionException e) {
                         throw new ApplicationException(e);
                     }

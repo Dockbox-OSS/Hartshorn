@@ -35,10 +35,12 @@ public class CacheMethodContextImpl implements CacheMethodContext {
         this.expiration = expiration;
     }
 
+    @Override
     public String name() {
         return this.name;
     }
 
+    @Override
     public Expiration expiration() {
         return this.expiration;
     }

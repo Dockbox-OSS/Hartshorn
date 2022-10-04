@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.data.context;
 
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.annotations.Query;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import jakarta.persistence.EntityManager;
 
@@ -32,16 +32,16 @@ public class QueryContext {
 
     private final Query annotation;
     private final Object[] args;
-    private final MethodContext<?, ?> method;
-    private final TypeContext<?> entityType;
+    private final MethodView<?, ?> method;
+    private final TypeView<?> entityType;
 
     private final ApplicationContext applicationContext;
     private final JpaRepository<?, ?> repository;
     private final boolean modifiesEntity;
 
     public QueryContext(
-            final Query annotation, final Object[] args, final MethodContext<?, ?> method,
-            final TypeContext<?> entityType, final ApplicationContext applicationContext,
+            final Query annotation, final Object[] args, final MethodView<?, ?> method,
+            final TypeView<?> entityType, final ApplicationContext applicationContext,
             final JpaRepository<?, ?> repository, final boolean modifiesEntity) {
         this.annotation = annotation;
         this.args = args;

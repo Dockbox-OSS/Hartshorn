@@ -26,19 +26,19 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ComponentFinalizingPostProcessor implements ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         T finalizingInstance = instance;
         if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
             final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
             try {
                 final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
-                final boolean noConcreteInstancePossible = instance == null && key.type().isAbstract();
+                final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();
                 if (stateModified || noConcreteInstancePossible) {
                     finalizingInstance = this.createProxyInstance(context, factory, instance);
                 }
@@ -51,26 +51,21 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor 
     }
 
     protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T, ?> factory, @Nullable final T instance) throws ApplicationException {
-        final TypeContext<T> factoryType = TypeContext.of(factory.type());
+        final TypeView<T> factoryType = context.environment().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
-        if (!factoryType.isInterface() && factoryType.defaultConstructor().absent()) {
-            final ConstructorContext<T> constructorContext = CyclingConstructorAnalyzer.findConstructor(factoryType)
+        if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
+            final ConstructorView<T> constructor = CyclingConstructorAnalyzer.findConstructor(factoryType)
                     .rethrowUnchecked()
                     .orThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
-            final Object[] arguments = constructorContext.arguments(context);
-            return factory.proxy(constructorContext, arguments).or(instance);
+            final Object[] arguments = constructor.parameters().loadFromContext();
+            return factory.proxy(constructor, arguments).or(instance);
         }
         return factory.proxy().or(instance);
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        throw new UnsupportedOperationException("Finalizing without a context is not supported");
-    }
-
-    @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         return processingContext.get(Key.of(ComponentContainer.class)).permitsProxying();
     }
 

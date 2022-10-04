@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
@@ -37,12 +37,15 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
 
     @Override
     public <T> T doPostConstruct(final T type) throws ApplicationException {
-        final TypeContext<T> unproxiedType = TypeContext.unproxy(this.applicationContext, type);
-        final List<MethodContext<?, T>> postConstructMethods = unproxiedType.methods(PostConstruct.class);
-        for (final MethodContext<?, T> postConstructMethod : postConstructMethods) {
-            final Result<?> result = postConstructMethod.invoke(this.applicationContext, type);
+        final TypeView<T> typeView = this.applicationContext.environment().introspect(type);
+        final List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWith(PostConstruct.class);
+
+        for (final MethodView<T, ?> postConstructMethod : postConstructMethods) {
+            final Result<?> result = postConstructMethod.invokeWithContext(type);
+
             if (result.caught()) {
                 final Throwable error = result.error();
+
                 if (error instanceof ApplicationException applicationException) {
                     throw applicationException;
                 } else {

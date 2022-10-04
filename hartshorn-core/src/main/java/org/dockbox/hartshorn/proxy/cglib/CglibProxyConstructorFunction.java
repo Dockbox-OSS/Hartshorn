@@ -20,7 +20,7 @@ import net.sf.cglib.proxy.Enhancer;
 
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
 public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunction<T> {
 
@@ -39,7 +39,7 @@ public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunctio
     }
 
     @Override
-    public T create(final ConstructorContext<T> constructor, final Object[] args) throws ApplicationException {
+    public T create(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
         final Class<?>[] parameterTypes = constructor.constructor().getParameterTypes();
         final Object instance = this.enhancer.create(parameterTypes, args);
         return this.type.cast(instance);

@@ -16,8 +16,5 @@
 
 package org.dockbox.hartshorn.core.boot.activators;
 
-import org.dockbox.hartshorn.application.Activator;
-
-@Activator
 public interface InterfaceActivator {
 }

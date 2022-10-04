@@ -18,22 +18,24 @@ package org.dockbox.hartshorn.proxy.loaders;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
-import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-        return parameter.declaredBy().parent().is(Object.class) && "equals".equals(parameter.declaredBy().name());
+    public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+        final ExecutableElementView<?> executable = parameter.declaredBy();
+        return executable.declaredBy().is(Object.class) && "equals".equals(executable.name());
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
+        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager(argument);
         return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Result<Object>>) ProxyManager::delegate).orElse(() -> argument).map(a -> (T) a);
     }
 }

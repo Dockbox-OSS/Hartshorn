@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,7 +72,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
-    public boolean hasConverter(final TypeContext<?> type) {
+    public boolean hasConverter(final TypeView<?> type) {
         return this.converter(type).present();
     }
 
@@ -85,9 +85,9 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @return The converter if it exists, or {@link Result#empty()}
      */
-    public <T> Result<ArgumentConverter<T>> converter(final TypeContext<T> type) {
+    public <T> Result<ArgumentConverter<T>> converter(final TypeView<T> type) {
         return Result.of(this.converterMap.values().stream()
-                .filter(converter -> type.childOf(converter.type()))
+                .filter(converter -> type.isChildOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }

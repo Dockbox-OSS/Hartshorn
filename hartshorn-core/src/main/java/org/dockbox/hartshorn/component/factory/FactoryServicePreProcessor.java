@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
@@ -25,39 +26,41 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.processing.BindingProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FactoryServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return !key.type().methods(Factory.class).isEmpty();
+    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        return !processingContext.type().methods().annotatedWith(Factory.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
         methods:
-        for (final MethodContext<?, T> method : key.type().methods(Factory.class)) {
-            final Factory annotation = method.annotation(Factory.class).get();
+        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(Factory.class)) {
+            final Factory annotation = method.annotations().get(Factory.class).get();
             Key<?> returnKey = Key.of(method.returnType());
             if (!"".equals(annotation.value())) returnKey = returnKey.name(annotation.value());
 
+            final List<Class<?>> methodParameters = method.parameters().types().stream()
+                    .map(TypeView::type)
+                    .collect(Collectors.toList());
+
             for (final Provider<?> provider : context.hierarchy(returnKey).providers()) {
                 if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
-                    final TypeContext<?> typeContext = contextDrivenProvider.context();
+                    final TypeView<?> typeContext = context.environment().introspect(contextDrivenProvider.type());
 
-                    for (final ConstructorContext<?> constructor : typeContext.boundConstructors()) {
-                        final LinkedList<TypeContext<?>> constructorParameters = constructor.parameterTypes();
-                        final LinkedList<TypeContext<?>> methodParameters = method.parameterTypes();
-
-                        if (methodParameters.equals(constructorParameters)) {
-                            factoryContext.register((MethodContext<Object, ?>) method, (ConstructorContext<Object>) constructor);
+                    for (final ConstructorView<?> constructor : typeContext.constructors().bound()) {
+                        if (constructor.parameters().matches(methodParameters)) {
+                            factoryContext.register((MethodView<Object, ?>) method, (ConstructorView<Object>) constructor);
                             continue methods;
                         }
                     }

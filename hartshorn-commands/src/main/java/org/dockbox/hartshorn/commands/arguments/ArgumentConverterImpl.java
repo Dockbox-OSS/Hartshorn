@@ -18,9 +18,8 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.util.StringTypeAdapter;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.StringTypeAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +37,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     private final BiFunction<CommandSource, String, Result<T>> converter;
     private final BiFunction<CommandSource, String, Collection<String>> suggestionProvider;
 
-    private ArgumentConverterImpl(final TypeContext<T> type, final int size, final BiFunction<CommandSource, String, Result<T>> converter, final BiFunction<CommandSource, String, Collection<String>> suggestionProvider, final String... keys) {
+    private ArgumentConverterImpl(final Class<T> type, final int size, final BiFunction<CommandSource, String, Result<T>> converter, final BiFunction<CommandSource, String, Collection<String>> suggestionProvider, final String... keys) {
         super(type, size, keys);
         this.converter = converter;
         this.suggestionProvider = suggestionProvider;
@@ -59,7 +58,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
      * @return A new {@link CommandValueConverterBuilder} with the provided type and keys.
      */
     public static <T> CommandValueConverterBuilder<T> builder(final Class<T> type, final String... keys) {
-        return new CommandValueConverterBuilder<>(TypeContext.of(type), keys);
+        return new CommandValueConverterBuilder<>(type, keys);
     }
 
     @Override
@@ -74,12 +73,12 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
      */
     public static final class CommandValueConverterBuilder<T> {
         private final String[] keys;
-        private final TypeContext<T> type;
+        private final Class<T> type;
         private int size;
         private BiFunction<CommandSource, String, Result<T>> converter = (source, in) -> Result.empty();
         private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> new ArrayList<>();
 
-        private CommandValueConverterBuilder(final TypeContext<T> type, final String... keys) {
+        private CommandValueConverterBuilder(final Class<T> type, final String... keys) {
             this.type = type;
             this.keys = keys;
             this.size = 1;

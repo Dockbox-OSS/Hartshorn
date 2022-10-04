@@ -44,15 +44,14 @@ import org.dockbox.hartshorn.core.types.SetterInjectedComponentWithNonRequiredAb
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
+import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -311,7 +310,7 @@ public class ApplicationContextTests {
 
     @Test
     void servicesAreSingletonsByDefault() {
-        Assertions.assertTrue(this.applicationContext.get(MetaProvider.class).singleton(TypeContext.of(EmptyService.class)));
+        Assertions.assertTrue(this.applicationContext.environment().singleton(EmptyService.class));
 
         final EmptyService emptyService = this.applicationContext.get(EmptyService.class);
         final EmptyService emptyService2 = this.applicationContext.get(EmptyService.class);
@@ -328,7 +327,7 @@ public class ApplicationContextTests {
     void testPermittedComponentsAreProxiedWhenRegularProvisionFails() {
         final ComponentType instance = this.applicationContext.get(ComponentType.class);
         Assertions.assertNotNull(instance);
-        Assertions.assertTrue(this.applicationContext.environment().manager().isProxy(instance));
+        Assertions.assertTrue(this.applicationContext.environment().isProxy(instance));
     }
 
     @Test
@@ -368,7 +367,9 @@ public class ApplicationContextTests {
     @ParameterizedTest
     @MethodSource("circular")
     void testCircularDependencyPathCanBeDetermined(final Class<?> type, final Class<?>... expected) {
-        final List<TypeContext<?>> path = CyclingConstructorAnalyzer.findCyclicPath(TypeContext.of(type));
+        final TypeView<?> typeView = this.applicationContext.environment().introspect(type);
+        final List<TypeView<?>> path = CyclingConstructorAnalyzer.findCyclicPath(typeView);
+        
         Assertions.assertNotNull(path);
         Assertions.assertEquals(expected.length, path.size());
         for (int i = 0; i < expected.length; i++) {

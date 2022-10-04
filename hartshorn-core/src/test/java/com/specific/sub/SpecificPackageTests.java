@@ -16,7 +16,6 @@
 
 package com.specific.sub;
 
-import org.dockbox.hartshorn.application.Activator;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -28,8 +27,7 @@ import org.junit.jupiter.api.Assertions;
  * {@code com.specific} is bound to the same application context.
  */
 @Demo
-@HartshornTest
-@Activator(scanPackages = "com.specific")
+@HartshornTest(scanPackages = "com.specific")
 public class SpecificPackageTests {
 
     @InjectTest

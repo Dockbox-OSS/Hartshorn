@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
@@ -96,14 +97,15 @@ public class ConfigurationManagerTests {
 
     @Test
     void testFsConfigurations() {
-        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().manager().applicationPath(), "junit");
+        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().applicationPath(), "junit");
         final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
         objectMapper.write(file, """
                 junit:
                     fs: "This is a value"
                     """);
 
-        new ConfigurationServicePreProcessor().process(this.applicationContext, Key.of(DemoFSConfiguration.class));
+        ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, Key.of(DemoFSConfiguration.class), null);
+        new ConfigurationServicePreProcessor().process(this.applicationContext, processingContext);
 
         final DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);

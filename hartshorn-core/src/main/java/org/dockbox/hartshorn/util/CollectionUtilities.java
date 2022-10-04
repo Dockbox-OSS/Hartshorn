@@ -65,9 +65,9 @@ public final class CollectionUtilities {
     }
 
     public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
-        final T[] merged = (T[]) Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length, arrayOne.getClass());
+        final Object[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length, arrayOne.getClass());
         System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);
-        return merged;
+        return TypeUtils.adjustWildcards(merged, Object.class);
     }
 
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {

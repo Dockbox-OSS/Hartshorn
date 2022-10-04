@@ -120,7 +120,7 @@ public class ScriptRuntimeTests {
     @Test
     void testExpressionWithNativeAccess() {
         final HslExpression expression = new HslExpression(this.applicationContext, "log() != null");
-        expression.runtime().module("application", new InstanceNativeModule(this.applicationContext));
+        expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
 

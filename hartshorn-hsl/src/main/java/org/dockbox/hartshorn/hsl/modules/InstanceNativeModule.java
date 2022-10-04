@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+
 import java.util.Objects;
 
 /**
@@ -29,10 +31,12 @@ public class InstanceNativeModule extends AbstractNativeModule {
 
     private final Class<?> moduleClass;
     private final Object instance;
+    private final ApplicationContext applicationContext;
 
-    public InstanceNativeModule(final Object instance) {
+    public InstanceNativeModule(final ApplicationContext applicationContext, final Object instance) {
         this.instance = Objects.requireNonNull(instance);
         this.moduleClass = instance.getClass();
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -43,5 +47,10 @@ public class InstanceNativeModule extends AbstractNativeModule {
     @Override
     protected Object instance() {
         return this.instance;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 }
