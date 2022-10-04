@@ -167,7 +167,7 @@ public class HartshornLifecycleExtension implements
         }
         applicationBuilder.serviceActivators(serviceActivators);
 
-        final ApplicationContext context = applicationBuilder.mainClass(activator).create();
+        final ApplicationContext context = applicationBuilder.create();
         return Result.of(context);
     }
 
@@ -198,17 +198,28 @@ public class HartshornLifecycleExtension implements
                             }
                         }
 
-                        finalApplicationBuilder.prefixes(annotation.scanPackages());
+                        finalApplicationBuilder
+                                .prefixes(annotation.scanPackages())
+                                .includeBasePackages(annotation.includeBasePackages());
+
+                        if (annotation.mainClass() != Void.class) {
+                            finalApplicationBuilder.mainClass(annotation.mainClass());
+                        }
                     });
+
+            if (applicationBuilder.mainClass() == null) {
+                applicationBuilder.mainClass(testClass);
+            }
 
             Result.of(element.getAnnotation(TestProperties.class))
                     .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         }
 
-        applicationBuilder.arguments(arguments.toArray(new String[0]));
+        applicationBuilder.arguments(arguments.toArray(new String[0]))
+                .enableBanner(false); // Disable banner for tests, can be re-enabled by modifying the application builder in a @ModifyApplication method
 
         final List<Method> methods = Arrays.stream(testClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(HartshornFactory.class))
+                .filter(method -> method.isAnnotationPresent(ModifyApplication.class))
                 .toList();
 
         for (final Method factoryModifier : methods) {
