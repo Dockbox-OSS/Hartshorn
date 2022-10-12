@@ -143,24 +143,22 @@ public class Parser {
     public List<Statement> parse() {
         final List<Statement> statements = new ArrayList<>();
         while (!this.isAtEnd()) {
-            statements.add(this.declaration());
+            statements.add(this.statement());
         }
         return statements;
     }
 
     private Statement statement() {
-        if (this.match(TokenType.IF)) return this.ifStatement();
-        if (this.match(TokenType.DO)) return this.doWhileStatement();
-        if (this.match(TokenType.WHILE)) return this.whileStatement();
-        if (this.match(TokenType.FOR)) return this.forStatement();
-        if (this.match(TokenType.REPEAT)) return this.repeatStatement();
-        if (this.match(TokenType.RETURN)) return this.returnStatement();
-        if (this.check(TokenType.LEFT_BRACE)) return this.block();
-        if (this.match(TokenType.BREAK)) return this.breakStatement();
-        if (this.match(TokenType.CONTINUE)) return this.continueStatement();
-        if (this.match(TokenType.TEST)) return this.testStatement();
-        if (this.match(TokenType.USING)) return this.moduleStatement();
-        if (this.match(TokenType.SWITCH)) return this.switchStatement();
+        if (this.match(TokenType.PREFIX, TokenType.INFIX) && this.match(TokenType.FUN))
+            return this.funcDeclaration(this.tokens.get(this.current - 2));
+        if (this.match(TokenType.FUN))
+            return this.funcDeclaration(this.previous());
+        if (this.match(TokenType.CLASS))
+            return this.classDeclaration();
+        if (this.match(TokenType.NATIVE))
+            return this.nativeFuncDeclaration();
+        if (this.match(TokenType.FINAL))
+            return this.finalDeclaration();
 
         final TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
@@ -168,22 +166,6 @@ public class Parser {
         }
 
         return this.expressionStatement();
-    }
-
-    private Statement moduleStatement() {
-        final Token name = this.expect(TokenType.IDENTIFIER, "module name");
-        this.expectAfter(TokenType.SEMICOLON, TokenType.USING);
-        return new ModuleStatement(name);
-    }
-
-    private Statement declaration() {
-        if (this.match(TokenType.PREFIX, TokenType.INFIX) && this.match(TokenType.FUN)) return this.funcDeclaration(this.tokens.get(this.current - 2));
-        if (this.match(TokenType.FUN)) return this.funcDeclaration(this.previous());
-        if (this.match(TokenType.VAR)) return this.varDeclaration();
-        if (this.match(TokenType.CLASS)) return this.classDeclaration();
-        if (this.match(TokenType.NATIVE)) return this.nativeFuncDeclaration();
-        if (this.match(TokenType.FINAL)) return this.finalDeclaration();
-        return this.statement();
     }
 
     private ClassStatement classDeclaration() {
@@ -327,18 +309,6 @@ public class Parser {
         return new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal);
     }
 
-    private VariableStatement varDeclaration() {
-        final Token name = this.expect(TokenType.IDENTIFIER, "variable name");
-
-        Expression initializer = null;
-        if (this.match(TokenType.EQUAL)) {
-            initializer = this.expression();
-        }
-
-        this.expectAfter(TokenType.SEMICOLON, "variable declaration");
-        return new VariableStatement(name, initializer);
-    }
-
     private Statement finalDeclaration() {
         final FinalizableStatement finalizable;
 
@@ -353,108 +323,6 @@ public class Parser {
         return finalizable;
     }
 
-    private Statement breakStatement() {
-        final Token keyword = this.previous();
-        this.expectAfter(TokenType.SEMICOLON, "value");
-        return new BreakStatement(keyword);
-    }
-
-    private Statement continueStatement() {
-        final Token keyword = this.previous();
-        this.expectAfter(TokenType.SEMICOLON, "value");
-        return new ContinueStatement(keyword);
-    }
-
-    private Statement ifStatement() {
-        this.expectAfter(TokenType.LEFT_PAREN, TokenType.IF);
-        final Expression condition = this.expression();
-        this.expectAfter(TokenType.RIGHT_PAREN, "if condition");
-        final BlockStatement thenBlock = this.block();
-        BlockStatement elseBlock = null;
-        if (this.match(TokenType.ELSE)) {
-            elseBlock = this.block();
-        }
-        return new IfStatement(condition, thenBlock, elseBlock);
-    }
-
-    private Statement whileStatement() {
-        this.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
-        final Expression condition = this.expression();
-        this.expectAfter(TokenType.RIGHT_PAREN, "while condition");
-        final BlockStatement loopBody = this.block();
-        return new WhileStatement(condition, loopBody);
-    }
-
-    private Statement forStatement() {
-        this.expectAfter(TokenType.LEFT_PAREN, TokenType.FOR);
-
-        this.expect(TokenType.VAR);
-        final VariableStatement initializer = this.varDeclaration();
-
-        if (this.match(TokenType.IN)) {
-            final Expression collection = this.expression();
-            this.expectAfter(TokenType.RIGHT_PAREN, "for collection");
-
-            final BlockStatement loopBody = this.block();
-            return new ForEachStatement(initializer, collection, loopBody);
-
-        } else {
-            this.expectAfter(TokenType.SEMICOLON, "for assignment");
-
-            final Expression condition = this.expression();
-            this.expectAfter(TokenType.SEMICOLON, "for condition");
-
-            final Statement increment = this.expressionStatement();
-            this.expectAfter(TokenType.RIGHT_PAREN, "for increment");
-
-            final BlockStatement loopBody = this.block();
-            return new ForStatement(initializer, condition, increment, loopBody);
-        }
-    }
-
-    private Statement doWhileStatement() {
-        final BlockStatement loopBody = this.block();
-        this.expect(TokenType.WHILE);
-        this.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
-        final Expression condition = this.expression();
-        this.expectAfter(TokenType.RIGHT_PAREN, "do while condition");
-        this.expectAfter(TokenType.SEMICOLON, "do while condition");
-        return new DoWhileStatement(condition, loopBody);
-    }
-
-    private Statement repeatStatement() {
-        this.expectAfter(TokenType.LEFT_PAREN, "repeat");
-        final Expression value = this.expression();
-        this.expectAfter(TokenType.RIGHT_PAREN, "repeat value");
-        final BlockStatement loopBody = this.block();
-        return new RepeatStatement(value, loopBody);
-    }
-
-    private Statement returnStatement() {
-        final Token keyword = this.previous();
-        Expression value = null;
-        if (!this.check(TokenType.SEMICOLON)) {
-            value = this.expression();
-        }
-        this.expectAfter(TokenType.SEMICOLON, "return value");
-        return new ReturnStatement(keyword, value);
-    }
-
-    private Statement testStatement() {
-        this.expectAfter(TokenType.LEFT_PAREN, "test statement");
-        final Token name = this.expect(TokenType.STRING, "test name");
-        this.expectAfter(TokenType.RIGHT_PAREN, "test statement name value");
-        this.expectBefore(TokenType.LEFT_BRACE, "test body");
-        final List<Statement> statements = new ArrayList<>();
-        final Token bodyStart = this.peek();
-        while (!this.match(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
-            final Statement statement = this.declaration();
-            statements.add(statement);
-        }
-        final BlockStatement body = new BlockStatement(bodyStart, statements);
-        return new TestStatement(name, body);
-    }
-
     private ExpressionStatement expressionStatement() {
         final Expression expr = this.expression();
         this.expectAfter(TokenType.SEMICOLON, "expression");
@@ -464,18 +332,10 @@ public class Parser {
     private List<Statement> consumeStatements() {
         final List<Statement> statements = new ArrayList<>();
         while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
-            statements.add(this.declaration());
+            statements.add(this.statement());
         }
         this.expectAfter(TokenType.RIGHT_BRACE, "block");
         return statements;
-    }
-
-    private BlockStatement block() {
-        final Token start = this.peek();
-        this.expectBefore(TokenType.LEFT_BRACE, "block");
-
-        final List<Statement> statements = this.consumeStatements();
-        return new BlockStatement(start, statements);
     }
 
     private Expression expression() {
@@ -596,14 +456,10 @@ public class Parser {
         return null;
     }
 
-    private boolean check(final TokenType type) {
+    private boolean check(final TokenType... types) {
         if (this.isAtEnd()) return false;
-        return this.peek().type() == type;
-    }
-
-    private boolean check(final TokenType... type) {
-        for (final TokenType t : type) {
-            if (this.check(t)) return true;
+        for (final TokenType type : types) {
+            if (this.peek().type() == type) return true;
         }
         return false;
     }
@@ -814,63 +670,6 @@ public class Parser {
         final Token close = this.expectAfter(TokenType.ARRAY_CLOSE, "array");
 
         return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
-    }
-
-    private Statement switchStatement() {
-        final Token switchToken = this.previous();
-        this.expectAfter(TokenType.LEFT_PAREN, "switch");
-        final Expression expr = this.expression();
-        this.expectAfter(TokenType.RIGHT_PAREN, "expression");
-
-        this.expectAfter(TokenType.LEFT_BRACE, "switch");
-
-        SwitchCase defaultBody = null;
-        final List<SwitchCase> cases = new ArrayList<>();
-        final Set<Object> matchedLiterals = new HashSet<>();
-
-        while (this.match(TokenType.CASE, TokenType.DEFAULT)) {
-            final Token caseToken = this.previous();
-
-            if (caseToken.type() == TokenType.CASE) {
-                final Expression caseExpr = this.primary();
-                if (!(caseExpr instanceof final LiteralExpression literal)) {
-                    throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
-                }
-
-                if (matchedLiterals.contains(literal.value())) {
-                    throw new ScriptEvaluationError("Duplicate case expression '" + literal.value() + "'.", Phase.PARSING, caseToken);
-                }
-                matchedLiterals.add(literal.value());
-
-                final Statement body = this.caseBody();
-                cases.add(new SwitchCase(caseToken, body, literal, false));
-            }
-            else {
-                final Statement body = this.caseBody();
-                defaultBody = new SwitchCase(caseToken, body, null, true);
-            }
-        }
-
-        this.expectAfter(TokenType.RIGHT_BRACE, "switch");
-
-        return new SwitchStatement(switchToken, expr, cases, defaultBody);
-    }
-
-    private Statement caseBody() {
-        if (this.match(TokenType.COLON)) {
-            final Token colon = this.previous();
-            final List<Statement> statements = new ArrayList<>();
-            while (!this.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
-                statements.add(this.declaration());
-            }
-            return new BlockStatement(colon, statements);
-        }
-        else if (this.match(TokenType.ARROW)) {
-            return this.expressionStatement();
-        }
-        else {
-            throw new ScriptEvaluationError("Expected ':' or '->'", Phase.PARSING, this.peek());
-        }
     }
 
     private Token consume(final TokenType type, final String message) {
