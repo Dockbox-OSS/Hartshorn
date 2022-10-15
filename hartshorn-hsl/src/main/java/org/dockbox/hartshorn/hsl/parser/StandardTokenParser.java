@@ -5,17 +5,22 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
@@ -25,7 +30,7 @@ public class StandardTokenParser implements TokenParser {
     private List<Token> tokens;
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
-    private final Set<ASTNodeParser<? extends Expression>> expressionParsers = ConcurrentHashMap.newKeySet();
+    private final Set<ExpressionParser<?>> expressionParsers = new ConcurrentSkipListSet<>(new ExpressionParserComparator());
     private final TokenStepValidator validator;
 
     @Inject
@@ -106,6 +111,12 @@ public class StandardTokenParser implements TokenParser {
             final Result<? extends Statement> statement = parser.parse(this, this.validator);
             if (statement.present()) return statement.get();
         }
+
+        final TokenType type = this.peek().type();
+        if (type.standaloneStatement()) {
+            throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
+        }
+
         return this.expressionStatement();
     }
 
@@ -137,16 +148,44 @@ public class StandardTokenParser implements TokenParser {
 
     @Override
     public <T extends ASTNode> Set<ASTNodeParser<T>> compatibleParsers(final Class<T> type) {
+        return this.compatibleParserStream(type)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public <T extends ASTNode> Result<ASTNodeParser<T>> firstCompatibleParser(final Class<T> type) {
+        return this.compatibleParserStream(type)
+                .findFirst()
+                .map(Result::of)
+                .orElseGet(Result::empty);
+    }
+
+    private <T extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Class<T> type) {
         if (Statement.class.isAssignableFrom(type)) {
-            this.statementParsers.stream()
-                    .filter(parser -> parser.types().contains(type))
-                    .collect(Collectors.toUnmodifiableSet());
+            return this.compatibleParserStream(this.statementParsers, type);
         }
         else if (Expression.class.isAssignableFrom(type)) {
-            this.expressionParsers.stream()
-                    .filter(parser -> parser.types().contains(type))
-                    .collect(Collectors.toUnmodifiableSet());
+            return this.compatibleParserStream(this.expressionParsers, type);
         }
-        return Set.of();
+        return Stream.empty();
+    }
+
+    private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Set<? extends ASTNodeParser<? extends N>> parsers, final Class<T> type) {
+        return parsers.stream()
+                .filter(parser -> parser.types().contains(type))
+                .map(parser -> TypeUtils.adjustWildcards(parser, ASTNodeParser.class));
+    }
+
+    private static class ExpressionParserComparator implements Comparator<ExpressionParser<?>> {
+
+        @Override
+        public int compare(final ExpressionParser<?> current, final ExpressionParser<?> next) {
+            final boolean isCurrentValueExpression = current.isValueExpression();
+            final boolean isNextValueExpression = next.isValueExpression();
+            if (isCurrentValueExpression && isNextValueExpression) return 0;
+            if (isCurrentValueExpression) return -1;
+            else if (isNextValueExpression) return 1;
+            return 0;
+        }
     }
 }
