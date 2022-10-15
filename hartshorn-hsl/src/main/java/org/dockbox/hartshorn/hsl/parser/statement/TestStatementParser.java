@@ -15,10 +15,6 @@ import java.util.Set;
 
 public class TestStatementParser extends AbstractBodyStatementParser<TestStatement> {
 
-    public TestStatementParser(final BlockStatementParser blockStatementParser) {
-        super(blockStatementParser);
-    }
-
     @Override
     public Result<TestStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.TEST)) {

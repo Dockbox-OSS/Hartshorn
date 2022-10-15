@@ -13,24 +13,12 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
-
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
-
-    private final VariableDeclarationParser variableDeclarationParser;
-
-    @Inject
-    @Bound
-    public ForStatementParser(final VariableDeclarationParser variableDeclarationParser, final BlockStatementParser blockStatementParser) {
-        super(blockStatementParser);
-        this.variableDeclarationParser = variableDeclarationParser;
-    }
 
     @Override
     public Result<BodyStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
@@ -39,7 +27,8 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.FOR);
 
             validator.expect(TokenType.VAR);
-            final VariableStatement initializer = this.variableDeclarationParser.parse(parser, validator)
+            final VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
+                    .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                     .orThrow(() -> new ScriptEvaluationError("Expected variable statement in for-each loop", Phase.PARSING, forToken));
 
             if (parser.match(TokenType.IN)) {

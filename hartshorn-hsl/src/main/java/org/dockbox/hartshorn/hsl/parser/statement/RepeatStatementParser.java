@@ -6,20 +6,11 @@ import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.Result;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
-
 public class RepeatStatementParser extends AbstractBodyStatementParser<RepeatStatement> {
-
-    @Inject
-    @Bound
-    public RepeatStatementParser(final BlockStatementParser blockStatementParser) {
-        super(blockStatementParser);
-    }
 
     @Override
     public Result<RepeatStatement> parse(final TokenParser parser, final TokenStepValidator validator) {

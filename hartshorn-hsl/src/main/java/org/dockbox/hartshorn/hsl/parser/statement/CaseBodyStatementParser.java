@@ -31,6 +31,7 @@ public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
             return Result.of(parser.expressionStatement());
         }
         else {
+            // TODO: use representation for : and -> instead of hardcoding
             throw new ScriptEvaluationError("Expected ':' or '->'", Phase.PARSING, parser.peek());
         }
     }
