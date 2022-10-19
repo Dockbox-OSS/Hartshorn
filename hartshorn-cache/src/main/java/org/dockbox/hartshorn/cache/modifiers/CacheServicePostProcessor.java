@@ -47,7 +47,7 @@ import java.util.function.Supplier;
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext<T> processingContext) {
         final CacheMethodContext cacheMethodContext = this.context(proxyContext);
         final CacheManager manager = context.get(CacheManager.class);
 
@@ -92,7 +92,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
 
     protected abstract CacheMethodContext context(MethodProxyContext<?> context);
 
-    protected abstract <T, R> MethodInterceptor<T> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
+    protected abstract <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {

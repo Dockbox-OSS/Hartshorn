@@ -251,7 +251,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interceptor The interceptor to use
      * @return This factory
      */
-    F intercept(MethodView<T, ?> method, MethodInterceptor<T> interceptor);
+    <R> F intercept(MethodView<T, R> method, MethodInterceptor<T, R> interceptor);
 
     /**
      * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
@@ -261,7 +261,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interceptor The interceptor to use
      * @return This factory
      */
-    F intercept(Method method, MethodInterceptor<T> interceptor);
+    F intercept(Method method, MethodInterceptor<T, ?> interceptor);
 
     /**
      * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
@@ -357,7 +357,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      *
      * @return All known interceptors, or an empty map
      */
-    Map<Method, MethodInterceptor<T>> interceptors();
+    Map<Method, MethodInterceptor<T, ?>> interceptors();
 
     /**
      * Gets all known wrappers. This will return an empty map if no wrappers were set. If there are

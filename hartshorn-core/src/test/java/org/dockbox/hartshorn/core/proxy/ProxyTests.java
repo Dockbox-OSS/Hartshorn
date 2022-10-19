@@ -289,7 +289,7 @@ public class ProxyTests {
         final AgedProxy aged = () -> 12;
         factory.delegate(AgedProxy.class, aged);
 
-        final MethodInterceptor<NamedAgedProxy> named = context -> "NamedProxy";
+        final MethodInterceptor<NamedAgedProxy, ?> named = context -> "NamedProxy";
         factory.intercept(NamedProxy.class.getMethod("name"), named);
         final Result<NamedAgedProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());

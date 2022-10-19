@@ -51,7 +51,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final MethodView<T, ?> method = methodContext.method();
         final QueryFunction function = context.get(QueryFunction.class);
 
@@ -67,7 +67,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
 
             final QueryContext queryContext = new QueryContext(query, interceptorContext.args(), method, entityType, context, repository, modifying);
 
-            return function.execute(queryContext);
+            return interceptorContext.checkedCast(function.execute(queryContext));
         };
     }
 

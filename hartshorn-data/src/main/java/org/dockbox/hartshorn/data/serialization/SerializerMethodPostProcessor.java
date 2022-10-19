@@ -35,7 +35,7 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         final MethodView<T, ?> method = methodContext.method();
         final Serialize serialize = method.annotations().get(Serialize.class).get();
@@ -51,7 +51,7 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
                 if (outputStream == null && returnsStringOrWrapper) result = mapper.write(arguments[0]);
                 else result = mapper.write(outputStream, arguments[0]);
 
-                return this.wrapSerializationResult(method, result);
+                return interceptorContext.checkedCast(this.wrapSerializationResult(method, result));
             }
         };
     }
@@ -59,6 +59,6 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
     private boolean returnsStringOrWrapper(final MethodView<?, ?> method) {
         if (method.returnType().is(String.class)) return true;
         final TypeParametersIntrospector typeParameters = method.genericReturnType().typeParameters();
-        return typeParameters.count() == 1 && typeParameters.at(0).map(t -> t.is(String.class)).or(false);
+        return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.at(0).map(t -> t.is(String.class)).or(false));
     }
 }

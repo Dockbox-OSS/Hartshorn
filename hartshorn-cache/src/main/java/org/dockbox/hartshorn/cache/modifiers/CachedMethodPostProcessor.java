@@ -41,17 +41,17 @@ import org.dockbox.hartshorn.util.Result;
 public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached> {
 
     @Override
-    protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
         final String elementKey = cacheContext.key();
 
         return (interceptorContext) -> {
             final Cache<String, Object> cache = cacheContext.cache();
-            final Result<Object> content = cache.get(elementKey);
+            final Result<R> content = cache.get(elementKey).map(interceptorContext::checkedCast);
 
             return content.orElse(() -> {
                 context.log().debug("Cache " + cacheContext.cacheName() + " has not been populated yet, or content has expired.");
                 try {
-                    final Object out = interceptorContext.invokeDefault();
+                    final R out = interceptorContext.invokeDefault();
                     cache.putIfAbsent(elementKey, out);
                     return out;
                 }
