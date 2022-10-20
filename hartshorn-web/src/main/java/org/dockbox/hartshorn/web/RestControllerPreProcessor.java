@@ -27,17 +27,14 @@ import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 public class RestControllerPreProcessor implements ServicePreProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final TypeView<T> type = processingContext.type();
-        return type.annotations().has(RestController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty();
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final ControllerContext controllerContext = context.first(ControllerContext.class).get();
+        final TypeView<T> type = processingContext.type();
+        if (type.annotations().has(RestController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty()) {
+            final ControllerContext controllerContext = context.first(ControllerContext.class).get();
 
-        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
-            controllerContext.add(new RequestHandlerContext(context, method));
+            for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
+                controllerContext.add(new RequestHandlerContext(context, method));
+            }
         }
     }
 }

@@ -41,11 +41,6 @@ public class DemoProcessor implements ComponentPreProcessor {
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return false;
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
     }
 }

@@ -36,12 +36,9 @@ import java.util.stream.Collectors;
 public class FactoryServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(Factory.class).isEmpty();
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().methods().annotatedWith(Factory.class).isEmpty()) return;
+
         final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
         methods:

@@ -39,14 +39,6 @@ import java.util.List;
 public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final TypeView<T> type = processingContext.type();
-        final boolean hasBeanFields = !type.fields().annotatedWith(Bean.class).isEmpty();
-        final boolean hasBeanMethods = !type.methods().annotatedWith(Bean.class).isEmpty();
-        return hasBeanFields || hasBeanMethods;
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final BeanContext beanContext = context.first(BeanContext.class).get();
         try {

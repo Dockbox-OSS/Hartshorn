@@ -23,13 +23,10 @@ import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 public class LifecycleObserverPreProcessor implements ServicePreProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.type().isChildOf(Observer.class);
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        context.environment().register((Class<? extends Observer>) processingContext.type().type());
+        if (processingContext.type().isChildOf(Observer.class)) {
+            context.environment().register((Class<? extends Observer>) processingContext.type().type());
+        }
     }
 
     @Override

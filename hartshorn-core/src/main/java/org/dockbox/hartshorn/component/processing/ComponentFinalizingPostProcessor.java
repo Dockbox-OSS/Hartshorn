@@ -33,6 +33,9 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor 
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        if (!processingContext.get(Key.of(ComponentContainer.class)).permitsProxying())
+            return instance;
+
         T finalizingInstance = instance;
         if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
             final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
@@ -62,11 +65,6 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor 
             return factory.proxy(constructor, arguments).or(instance);
         }
         return factory.proxy().or(instance);
-    }
-
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.get(Key.of(ComponentContainer.class)).permitsProxying();
     }
 
     @Override

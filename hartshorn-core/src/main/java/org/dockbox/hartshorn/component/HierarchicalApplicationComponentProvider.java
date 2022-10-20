@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -138,7 +138,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return instance;
     }
 
-    @Nullable
+    @NonNull
     private <T> Result<ObjectContainer<T>> create(final Key<T> key) {
         return this.provide(key)
                 .rethrowUnchecked()
@@ -220,30 +220,26 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         for (final Integer priority : this.postProcessors.keySet()) {
             if (phase.test(priority)) {
                 for (final ComponentPostProcessor postProcessor : this.postProcessors.get(priority)) {
+                    final T modified = postProcessor.process(processingContext);
 
-                    if (postProcessor.preconditions(processingContext)) {
-                        final T modified = postProcessor.process(processingContext);
+                    if (processingContext.phase() != phase) {
+                        throw new IllegalPhaseModificationException(postProcessor, phase, processingContext.phase());
+                    }
 
-                        if (processingContext.phase() != phase) {
-                            throw new IllegalPhaseModificationException(postProcessor, phase, processingContext.phase());
-                        }
+                    if (instance != modified) {
 
-                        if (instance != modified) {
+                        checkForIllegalModification:
+                        if (!phase.modifiable()) {
+                            if (modified instanceof Proxy<?> proxy) {
+                                final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
 
-                            checkForIllegalModification:
-                            if (!phase.modifiable()) {
-                                if (modified instanceof Proxy) {
-                                    final Proxy<T> proxy = (Proxy<T>) modified;
-                                    final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
-
-                                    if (delegateMatches)
-                                        break checkForIllegalModification;
-                                }
-                                throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
+                                if (delegateMatches)
+                                    break checkForIllegalModification;
                             }
-
-                            processingContext.instance(modified);
+                            throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
                         }
+
+                        processingContext.instance(modified);
                     }
                 }
             }

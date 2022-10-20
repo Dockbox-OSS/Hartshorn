@@ -47,8 +47,11 @@ import jakarta.persistence.EntityManager;
 public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallbackPostProcessor<UsePersistence> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(Transactional.class).isEmpty();
+    public <T> T process(final ComponentProcessingContext<T> processingContext) {
+        if (!processingContext.type().methods().annotatedWith(Transactional.class).isEmpty()) {
+            return super.process(processingContext);
+        }
+        return processingContext.instance();
     }
 
     @Override

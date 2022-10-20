@@ -118,10 +118,8 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
                 final TypeView<?> service = container.type();
                 final Key<?> key = Key.of(service);
                 final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
-                if (serviceProcessor.preconditions(context)) {
-                    this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
-                    serviceProcessor.process(context);
-                }
+                this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+                serviceProcessor.process(context);
             }
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
                 exiting.exit(this);

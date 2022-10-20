@@ -22,13 +22,11 @@ import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
 public class EventServicePreProcessor implements ServicePreProcessor {
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(Listener.class).isEmpty();
-    }
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        context.get(EventBus.class).subscribe(processingContext.key());
+        if (!processingContext.type().methods().annotatedWith(Listener.class).isEmpty()) {
+            context.get(EventBus.class).subscribe(processingContext.key());
+        }
     }
 }

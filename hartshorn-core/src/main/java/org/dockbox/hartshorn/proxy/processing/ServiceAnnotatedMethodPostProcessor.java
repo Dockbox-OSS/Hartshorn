@@ -29,19 +29,16 @@ import java.util.Collection;
 
 public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> extends FunctionalComponentPostProcessor {
 
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
-    }
-
     public abstract Class<M> annotation();
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
+        if (!processingContext.type().methods().annotatedWith(this.annotation()).isEmpty()) {
+            final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
-        for (final MethodView<T, ?> method : methods) {
-            this.process(context, processingContext.key(), instance, method);
+            for (final MethodView<T, ?> method : methods) {
+                this.process(context, processingContext.key(), instance, method);
+            }
         }
         return instance;
     }

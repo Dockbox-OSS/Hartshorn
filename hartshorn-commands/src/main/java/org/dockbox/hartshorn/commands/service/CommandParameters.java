@@ -33,17 +33,14 @@ import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 public class CommandParameters implements ComponentPreProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.type().annotations().has(Parameter.class);
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final Parameter meta = processingContext.type().annotations().get(Parameter.class).get();
-        final CustomParameterPattern pattern = context.get(meta.pattern());
-        final String parameterKey = meta.value();
-        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
-        context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
+        if (processingContext.type().annotations().has(Parameter.class)) {
+            final Parameter meta = processingContext.type().annotations().get(Parameter.class).get();
+            final CustomParameterPattern pattern = context.get(meta.pattern());
+            final String parameterKey = meta.value();
+            final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
+            context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
+        }
     }
 
     @Override

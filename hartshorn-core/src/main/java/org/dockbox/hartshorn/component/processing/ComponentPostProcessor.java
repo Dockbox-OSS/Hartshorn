@@ -44,17 +44,12 @@ import org.dockbox.hartshorn.inject.Key;
 public non-sealed interface ComponentPostProcessor extends ComponentProcessor {
 
     @Override
-    default <T> boolean preconditions(final ComponentProcessingContext<T> processingContext) {
-        return processingContext.get(Key.of(ComponentContainer.class)) != null
-                && this.preconditions(processingContext.applicationContext(), processingContext.instance(), processingContext);
-    }
-
-    @Override
     default <T> T process(final ComponentProcessingContext<T> processingContext) {
+        final boolean hasContainer = processingContext.get(Key.of(ComponentContainer.class)) != null;
+        if (!hasContainer) return processingContext.instance();
+
         return this.process(processingContext.applicationContext(), processingContext.instance(), processingContext);
     }
-
-    <T> boolean preconditions(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext);
 
     <T> T process(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext);
 }

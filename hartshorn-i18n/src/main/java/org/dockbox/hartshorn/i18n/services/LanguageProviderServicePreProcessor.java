@@ -28,21 +28,18 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 public class LanguageProviderServicePreProcessor implements ServicePreProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(TranslationProvider.class).isEmpty();
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final TranslationService translationService = context.get(TranslationService.class);
-        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(TranslationProvider.class)) {
-            if (method.returnType().isChildOf(TranslationBundle.class)) {
-                final TranslationBundle bundle = (TranslationBundle) method.invokeWithContext().rethrowUnchecked().get();
-                translationService.add(bundle);
-            }
-            else if (method.returnType().isChildOf(Message.class)) {
-                final Message message = (Message) method.invokeWithContext().rethrowUnchecked().get();
-                translationService.add(message);
+        if (!processingContext.type().methods().annotatedWith(TranslationProvider.class).isEmpty()) {
+            final TranslationService translationService = context.get(TranslationService.class);
+            for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(TranslationProvider.class)) {
+                if (method.returnType().isChildOf(TranslationBundle.class)) {
+                    final TranslationBundle bundle = (TranslationBundle) method.invokeWithContext().rethrowUnchecked().get();
+                    translationService.add(bundle);
+                }
+                else if (method.returnType().isChildOf(Message.class)) {
+                    final Message message = (Message) method.invokeWithContext().rethrowUnchecked().get();
+                    translationService.add(message);
+                }
             }
         }
     }

@@ -63,25 +63,23 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.type().annotations().has(Configuration.class);
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
+        if (processingContext.type().annotations().has(Configuration.class)) {
+            final Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
 
-        final String[] sources = configuration.value();
+            final String[] sources = configuration.value();
 
-        for (final String source : sources) {
-            if (this.processSource(source, context, processingContext.key())) return;
-            context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
-        }
+            for (final String source : sources) {
+                if (this.processSource(source, context, processingContext.key())) return;
+                context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
+            }
 
-        if (configuration.failOnMissing()) {
-            throw new MissingSourceException("None of the configured sources in " + processingContext.type().name() + " were found");
-        } else {
-            context.log().warn("None of the configured sources in {} were found, proceeding without configuration", processingContext.type().name());
+            if (configuration.failOnMissing()) {
+                throw new MissingSourceException("None of the configured sources in " + processingContext.type().name() + " were found");
+            }
+            else {
+                context.log().warn("None of the configured sources in {} were found, proceeding without configuration", processingContext.type().name());
+            }
         }
     }
 

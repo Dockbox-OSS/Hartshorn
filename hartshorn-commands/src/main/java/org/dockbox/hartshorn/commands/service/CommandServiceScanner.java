@@ -25,16 +25,13 @@ import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 public class CommandServiceScanner implements ServicePreProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type()
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        if (!processingContext.type()
                 .methods()
                 .annotatedWith(Command.class)
-                .isEmpty();
-    }
-
-    @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final CommandGateway gateway = context.get(CommandGateway.class);
-        gateway.register(processingContext.key());
+                .isEmpty()) {
+            final CommandGateway gateway = context.get(CommandGateway.class);
+            gateway.register(processingContext.key());
+        }
     }
 }

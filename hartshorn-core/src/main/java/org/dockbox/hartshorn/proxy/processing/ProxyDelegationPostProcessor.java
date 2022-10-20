@@ -28,27 +28,23 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
     protected abstract Class<P> parentTarget();
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        // Don't use .isAssignableFrom() here, as we want to support primitive wrappers as well
-        return super.preconditions(context, instance, processingContext) && processingContext.type().isChildOf(this.parentTarget());
-    }
-
-    @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        final ProxyFactory<P, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
-        if (factory == null) return instance;
+        // Don't use .isAssignableFrom() here, as we want to support primitive wrappers as well
+        if (processingContext.type().isChildOf(this.parentTarget())) {
+            final ProxyFactory<P, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+            if (factory == null) return instance;
 
-        final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
+            final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
 
-        if (this.skipConcreteMethods()) {
-            // Ensure we keep the original instance as delegate, to avoid losing context. This rule is defined by the finalizing process.
-            factory.delegate((P) instance);
-            factory.delegateAbstract(this.parentTarget(), concreteDelegator);
+            if (this.skipConcreteMethods()) {
+                // Ensure we keep the original instance as delegate, to avoid losing context. This rule is defined by the finalizing process.
+                factory.delegate(this.parentTarget().cast(instance));
+                factory.delegateAbstract(this.parentTarget(), concreteDelegator);
+            }
+            else {
+                factory.delegate(this.parentTarget(), concreteDelegator);
+            }
         }
-        else {
-            factory.delegate(this.parentTarget(), concreteDelegator);
-        }
-
         return instance;
     }
 

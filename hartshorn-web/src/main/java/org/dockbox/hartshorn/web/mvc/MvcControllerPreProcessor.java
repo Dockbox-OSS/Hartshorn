@@ -29,21 +29,18 @@ import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 public class MvcControllerPreProcessor implements ServicePreProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final TypeView<T> type = processingContext.type();
-        return type.annotations().has(MvcController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty();
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final MvcControllerContext controllerContext = context.first(MvcControllerContext.class).get();
-        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
-            if (method.returnType().isChildOf(ViewTemplate.class)) {
-                final RequestHandlerContext handlerContext = new RequestHandlerContext(context, method);
-                controllerContext.add(handlerContext);
-            }
-            else {
-                throw new IllegalArgumentException("Method " + method.name() + " must return a ViewTemplate");
+        final TypeView<T> type = processingContext.type();
+        if (type.annotations().has(MvcController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty()) {
+            final MvcControllerContext controllerContext = context.first(MvcControllerContext.class).get();
+            for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
+                if (method.returnType().isChildOf(ViewTemplate.class)) {
+                    final RequestHandlerContext handlerContext = new RequestHandlerContext(context, method);
+                    controllerContext.add(handlerContext);
+                }
+                else {
+                    throw new IllegalArgumentException("Method " + method.name() + " must return a ViewTemplate");
+                }
             }
         }
     }

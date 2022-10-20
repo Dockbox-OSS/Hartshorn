@@ -35,21 +35,15 @@ import java.util.List;
 public final class ProviderServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !(
-                processingContext.type().methods().annotatedWith(Provider.class).isEmpty()
-                && processingContext.type().fields().annotatedWith(Provider.class).isEmpty()
-        );
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final List<MethodView<T, ?>> methods = processingContext.type().methods().annotatedWith(Provider.class);
         final List<FieldView<T, ?>> fields = processingContext.type().fields().annotatedWith(Provider.class);
 
+        if (methods.isEmpty() && fields.isEmpty()) return;
+
         context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + processingContext.type().name());
 
-        final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
+        final ProviderContextList providerContext = context.first(ProviderContextList.class).get();
         for (final MethodView<T, ?> method : methods) {
             this.register(providerContext, method);
         }
@@ -70,7 +64,8 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
         final BindingProcessor processor = new BindingProcessor();
         context.bind(BindingProcessor.class).singleton(processor);
 
-        final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
+        final ProviderContextList providerContext = context.first(ProviderContextList.class)
+                .orThrowUnchecked(() -> new ApplicationException("No provider context found"));
         try {
             processor.process(providerContext, context);
         } catch (final ApplicationException e) {

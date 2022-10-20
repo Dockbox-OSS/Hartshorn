@@ -32,12 +32,8 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().fields().annotatedWith(Value.class).isEmpty();
-    }
-
-    @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) return instance;
         final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
         this.verifyPropertiesAvailable(context, propertyHolder);
 

@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 
 public interface ServicePreProcessor extends ComponentPreProcessor {
 
     @Override
-    default <T> boolean preconditions(final ComponentProcessingContext<T> processingContext) {
-        return processingContext.type().annotations().has(Service.class)
-                && ComponentPreProcessor.super.preconditions(processingContext);
+    default <T> T process(final ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().annotations().has(Service.class)) {
+            ComponentPreProcessor.super.process(processingContext);
+        }
+        return processingContext.instance();
     }
-
-    <T> boolean preconditions(ApplicationContext context, ComponentProcessingContext<T> processingContext);
 }
