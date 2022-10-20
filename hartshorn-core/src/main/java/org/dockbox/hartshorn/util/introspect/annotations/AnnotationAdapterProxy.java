@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.Result;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -143,7 +143,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
         }
     }
 
-    @Nullable
+    @NonNull
     private Result<Object> searchSuper(final Collection<Class<? extends Annotation>> hierarchy, final Method proxyMethod, final String name) {
         for (final Class<? extends Annotation> klass : hierarchy) {
             try {
@@ -174,7 +174,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
         return Result.empty();
     }
 
-    @Nullable
+    @NonNull
     private Result<Object> searchAlias(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Method proxyMethod, final String name) {
         for (final Method method : actual.annotationType().getMethods()) {
             final AliasFor aliasFor = method.getAnnotation(AliasFor.class);

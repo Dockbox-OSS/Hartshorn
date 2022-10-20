@@ -16,8 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 public interface InstanceReference extends PropertyContainer {
 
+    @NonNull
     ClassReference type();
 
 }

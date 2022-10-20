@@ -69,8 +69,11 @@ public class ExternalClass<T> implements ClassReference {
             throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
         }
         final ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
-        final T objectInstance = executable.create(arguments.toArray()).rethrowUnchecked().orNull();
-        return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspect(objectInstance));
+        if (executable != null) {
+            final T objectInstance = executable.create(arguments.toArray()).rethrowUnchecked().orNull();
+            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspect(objectInstance));
+        }
+        throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
     }
 
     @Override

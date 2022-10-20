@@ -26,7 +26,7 @@ public class AbsentBindingCondition implements Condition {
         final ProviderContextList listContext = context.applicationContext().first(ProviderContextList.class).orNull();
         return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
             final Key<?> key = Key.of(condition.value(), condition.name());
-            if (listContext.containsKey(key)) {
+            if (listContext != null && listContext.containsKey(key)) {
                 return ConditionResult.matched();
             }
             else return ConditionResult.notFound("Binding", String.valueOf(key));

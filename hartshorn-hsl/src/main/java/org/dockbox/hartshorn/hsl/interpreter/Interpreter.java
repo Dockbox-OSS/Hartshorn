@@ -885,7 +885,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     @Override
     public Void visit(final TestStatement statement) {
-        final String name = statement.name().literal().toString();
+        final String name = String.valueOf(statement.name().literal());
         final VariableScope variableScope = new VariableScope(this.global);
         try {
             this.execute(statement.body(), variableScope);

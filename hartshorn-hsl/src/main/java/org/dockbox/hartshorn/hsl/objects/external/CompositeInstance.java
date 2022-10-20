@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -38,7 +39,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     private final TypeView<T> firstExternalClass;
     private T instance;
 
-    public CompositeInstance(final VirtualClass virtualClass) {
+    public CompositeInstance(final @NonNull VirtualClass virtualClass) {
         super(virtualClass);
         ClassReference superClass = virtualClass.superClass();
         while (superClass != null && !(superClass instanceof ExternalClass<?>)) {
