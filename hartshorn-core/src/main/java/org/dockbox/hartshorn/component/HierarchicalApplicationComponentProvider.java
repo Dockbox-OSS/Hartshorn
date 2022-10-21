@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -138,7 +138,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return instance;
     }
 
-    @NonNull
+    @Nullable
     private <T> Result<ObjectContainer<T>> create(final Key<T> key) {
         return this.provide(key)
                 .rethrowUnchecked()
@@ -230,7 +230,8 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
                         checkForIllegalModification:
                         if (!phase.modifiable()) {
-                            if (modified instanceof Proxy<?> proxy) {
+                            if (modified instanceof Proxy) {
+                                final Proxy<T> proxy = (Proxy<T>) modified;
                                 final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
 
                                 if (delegateMatches)

@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.application.lifecycle;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 
-public class LifecycleObserverPreProcessor implements ServicePreProcessor {
+public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {

@@ -30,9 +30,8 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        final Result<ConfigurationObject> configurationAnnotation = processingContext.type().annotations().get(ConfigurationObject.class);
-        if (configurationAnnotation.present()) {
-            final ConfigurationObject configurationObject = configurationAnnotation.get();
+        if (processingContext.type().annotations().has(ConfigurationObject.class)) {
+            final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
             final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
             this.verifyPropertiesAvailable(context, propertyHolder);

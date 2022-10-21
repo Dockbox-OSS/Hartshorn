@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentContextInjectionPreProcessor implements ComponentPreProcessor {
+public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -64,7 +64,7 @@ public class ComponentContextInjectionPreProcessor implements ComponentPreProces
     }
 
     @Override
-    public Integer order() {
+    public final Integer order() {
         return ProcessingOrder.FIRST;
     }
 }

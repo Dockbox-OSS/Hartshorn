@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.AccessModifier;
@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
-public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
+public class BeanServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -58,6 +58,8 @@ public class BeanServicePreProcessor implements ServicePreProcessor, ExitingComp
             & ModifierCarrierView
             & GenericTypeView<?>>
     void process(final ApplicationContext applicationContext, final BeanContext context, final List<E> elements) throws ApplicationException {
+        if (elements.isEmpty()) return;
+
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         for (final E element : elements) {
             if (!element.has(AccessModifier.STATIC)) {

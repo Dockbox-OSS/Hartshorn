@@ -24,7 +24,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class DemoProcessor implements ComponentPreProcessor {
+public class DemoProcessor extends ComponentPreProcessor {
 
     @Inject
     private DemoService demoService;

@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
-public class EventServicePreProcessor implements ServicePreProcessor {
+public class EventServicePreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 
-public class NonProcessableTypeProcessor implements ComponentPostProcessor {
+public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {

@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
-public final class ProviderServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
+public final class ProviderServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -43,7 +43,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
 
         context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + processingContext.type().name());
 
-        final ProviderContextList providerContext = context.first(ProviderContextList.class).get();
+        final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
         for (final MethodView<T, ?> method : methods) {
             this.register(providerContext, method);
         }
@@ -64,8 +64,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor, E
         final BindingProcessor processor = new BindingProcessor();
         context.bind(BindingProcessor.class).singleton(processor);
 
-        final ProviderContextList providerContext = context.first(ProviderContextList.class)
-                .orThrowUnchecked(() -> new ApplicationException("No provider context found"));
+        final ProviderContextList providerContext = context.first(ProviderContextList.class).orNull();
         try {
             processor.process(providerContext, context);
         } catch (final ApplicationException e) {

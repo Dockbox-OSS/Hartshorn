@@ -40,10 +40,10 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * @author Guus Lieben
  * @since 22.1
  */
-public non-sealed interface ComponentPreProcessor extends ComponentProcessor {
+public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 
     @Override
-    default <T> T process(final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(final ComponentProcessingContext<T> processingContext) {
         this.process(processingContext.applicationContext(), processingContext);
         return processingContext.instance();
     }
@@ -57,5 +57,5 @@ public non-sealed interface ComponentPreProcessor extends ComponentProcessor {
      * @param <T> The type of the component.
      * @see ComponentProcessor#process(ComponentProcessingContext)
      */
-    <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext);
+    public abstract <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext);
 }

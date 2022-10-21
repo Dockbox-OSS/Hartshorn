@@ -16,18 +16,22 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentType;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 
-public abstract class FunctionalComponentPostProcessor implements ComponentPostProcessor {
+public abstract class FunctionalComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ComponentProcessingContext<T> processingContext) {
+    public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
         if (container.componentType() == ComponentType.FUNCTIONAL) {
-            return ComponentPostProcessor.super.process(processingContext);
+            return this.process(context, instance, container, processingContext);
         }
-        return processingContext.instance();
+        return instance;
     }
+
+    public abstract  <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext);
 }

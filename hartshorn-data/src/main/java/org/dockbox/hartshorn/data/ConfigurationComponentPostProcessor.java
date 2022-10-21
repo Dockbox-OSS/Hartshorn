@@ -34,6 +34,7 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) return instance;
+
         final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
         this.verifyPropertiesAvailable(context, propertyHolder);
 

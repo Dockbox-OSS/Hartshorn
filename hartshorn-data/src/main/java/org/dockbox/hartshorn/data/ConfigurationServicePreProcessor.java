@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
  * defaults to {@link FileSystemLookupStrategy}.
  */
-public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
+public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
     private final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
@@ -66,7 +66,6 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor {
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(Configuration.class)) {
             final Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
-
             final String[] sources = configuration.value();
 
             for (final String source : sources) {

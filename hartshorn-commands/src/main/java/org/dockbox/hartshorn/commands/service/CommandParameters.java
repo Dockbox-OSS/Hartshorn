@@ -25,17 +25,19 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
  * for each type found.
  */
-public class CommandParameters implements ComponentPreProcessor {
+public class CommandParameters extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().annotations().has(Parameter.class)) {
-            final Parameter meta = processingContext.type().annotations().get(Parameter.class).get();
+        final ElementAnnotationsIntrospector annotationsIntrospector = processingContext.type().annotations();
+        if (annotationsIntrospector.has(Parameter.class)) {
+            final Parameter meta = annotationsIntrospector.get(Parameter.class).get();
             final CustomParameterPattern pattern = context.get(meta.pattern());
             final String parameterKey = meta.value();
             final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
