@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.ServiceImpl;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ComponentPopulator;
@@ -29,7 +30,9 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -140,7 +143,11 @@ public class HartshornLifecycleExtension implements
         final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
 
-        return this.applicationContext.get(parameterContext.getParameter().getType());
+        final ParameterLoader<ParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
+        final MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
+        final ParameterLoaderContext parameterLoaderContext = new ParameterLoaderContext(executable, executable.declaredBy(), extensionContext.getTestInstance().orElse(null), this.applicationContext);
+
+        return parameterLoader.loadArgument(parameterLoaderContext, parameterContext.getIndex());
     }
 
     protected void populateTestInstance(final Object instance, final ApplicationContext applicationContext) {
