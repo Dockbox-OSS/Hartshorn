@@ -19,9 +19,16 @@ package org.dockbox.hartshorn.proxy.cglib;
 import net.sf.cglib.proxy.Enhancer;
 
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
+import org.dockbox.hartshorn.proxy.javassist.JavassistProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
+/**
+ * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
+ *             It is recommended to use Javassist instead, through the
+ *             {@link JavassistProxyConstructorFunction}.
+ */
+@Deprecated(since = "22.5")
 public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunction<T> {
 
     private final Class<T> type;
