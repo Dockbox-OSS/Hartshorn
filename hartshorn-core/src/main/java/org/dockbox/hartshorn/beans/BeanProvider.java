@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.beans;
 
+import org.dockbox.hartshorn.inject.Key;
+
 import java.util.List;
 
 public interface BeanProvider {
@@ -23,7 +25,11 @@ public interface BeanProvider {
 
     <T> T first(Class<T> type, String id);
 
+    <T> T first(Key<T> key);
+
     <T> List<T> all(Class<T> type);
 
     <T> List<T> all(Class<T> type, String id);
+
+    <T> List<T> all(Key<T> key);
 }

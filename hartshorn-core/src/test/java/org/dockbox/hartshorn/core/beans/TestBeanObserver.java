@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.parameter;
+package org.dockbox.hartshorn.core.beans;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.beans.BeanContext;
+import org.dockbox.hartshorn.beans.BeanObserver;
+import org.dockbox.hartshorn.component.Service;
 
 import java.util.List;
 
-public abstract class ParameterLoader<C extends ParameterLoaderContext> {
+@Service
+public class TestBeanObserver implements BeanObserver {
 
-    public abstract Object loadArgument(C context, int index, Object... args);
+    private List<BeanObject> beans;
 
-    public abstract List<Object> loadArguments(C context, Object... args);
+    @Override
+    public void onBeansCollected(final ApplicationContext applicationContext, final BeanContext beanContext) {
+        this.beans = beanContext.provider().all(BeanObject.class);
+    }
+
+    public List<BeanObject> beans() {
+        return this.beans;
+    }
 }

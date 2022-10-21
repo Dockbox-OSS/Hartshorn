@@ -40,6 +40,22 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     }
 
     @Override
+    public Object loadArgument(final C context, final int index, final Object... args) {
+        final Result<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
+        if (parameterCandidate.present()) {
+            final ParameterView<?> parameter = parameterCandidate.get();
+            for (final ParameterLoaderRule<C> rule : this.rules()) {
+                if (rule.accepts(parameter, index, context, args)) {
+                    final Result<?> argument = rule.load(parameter, index, context, args);
+                    if (argument.present()) return argument.get();
+                }
+            }
+            return this.loadDefault(parameter, index, context, args);
+        }
+        return null;
+    }
+
+    @Override
     public List<Object> loadArguments(final C context, final Object... args) {
         final List<Object> arguments = new ArrayList<>();
         final List<ParameterView<?>> parameters = context.executable().parameters().all();
@@ -48,7 +64,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
             final ParameterView<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
                 if (rule.accepts(parameter, i, context, args)) {
-                    final Result<Object> argument = rule.load((ParameterView<Object>) parameter, i, context, args);
+                    final Result<?> argument = rule.load(parameter, i, context, args);
                     arguments.add(argument.orNull());
                     continue parameters;
                 }

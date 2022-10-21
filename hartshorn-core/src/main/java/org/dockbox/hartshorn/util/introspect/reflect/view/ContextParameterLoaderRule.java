@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -31,7 +32,6 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
 
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-
         return parameter.annotations().has(Context.class) && parameter.type().isChildOf(org.dockbox.hartshorn.context.Context.class);
     }
 
@@ -41,7 +41,7 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
         final String name = parameter.annotations().get(Context.class).map(Context::value).orNull();
 
         TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
-        final Result<? extends org.dockbox.hartshorn.context.Context> out = name == null
+        final Result<? extends org.dockbox.hartshorn.context.Context> out = StringUtilities.empty(name)
                 ? applicationContext.first(type.type())
                 : applicationContext.first(type.type(), name);
 

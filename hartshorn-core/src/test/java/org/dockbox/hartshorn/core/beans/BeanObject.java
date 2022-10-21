@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.parameter;
+package org.dockbox.hartshorn.core.beans;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-
-import java.util.List;
-
-public abstract class ParameterLoader<C extends ParameterLoaderContext> {
-
-    public abstract Object loadArgument(C context, int index, Object... args);
-
-    public abstract List<Object> loadArguments(C context, Object... args);
+public record BeanObject(String name) {
 }
