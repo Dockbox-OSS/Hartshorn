@@ -35,7 +35,7 @@ import java.util.Objects;
  * @since 22.2
  */
 @FunctionalInterface
-public interface MethodInterceptor<T> {
+public interface MethodInterceptor<T, R> {
 
     /**
      * Intercepts a method call. This method is called in series with any other interceptors that have been added to
@@ -48,7 +48,7 @@ public interface MethodInterceptor<T> {
      * @throws Throwable if the interceptor fails to complete. This will cancel any further interceptors and the
      *                  method call and throw the exception to the caller.
      */
-    Object intercept(MethodInterceptorContext<T> context) throws Throwable;
+    R intercept(MethodInterceptorContext<T, R> context) throws Throwable;
 
     /**
      * A utility method to chain the given interceptor after the current interceptor. This method is typically used
@@ -57,10 +57,10 @@ public interface MethodInterceptor<T> {
      * @param after the interceptor to chain after the current interceptor.
      * @return the chained interceptor.
      */
-    default MethodInterceptor<T> andThen(final MethodInterceptor<T> after) {
+    default MethodInterceptor<T, R> andThen(final MethodInterceptor<T, R> after) {
         Objects.requireNonNull(after);
         return ctx -> {
-            final Object previous = this.intercept(ctx);
+            final R previous = this.intercept(ctx);
             return after.intercept(new MethodInterceptorContext<>(ctx, previous));
         };
     }

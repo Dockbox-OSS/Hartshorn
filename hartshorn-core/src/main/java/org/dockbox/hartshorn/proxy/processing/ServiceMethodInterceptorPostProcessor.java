@@ -42,7 +42,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
             final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, processingContext.type(), method);
 
             if (this.preconditions(context, ctx, processingContext)) {
-                final MethodInterceptor<T> function = this.process(context, ctx, processingContext);
+                final MethodInterceptor<T, ?> function = this.process(context, ctx, processingContext);
                 if (function != null) factory.intercept(method.method(), function);
             }
             else {
@@ -59,7 +59,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
 
     public abstract <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 
-    public abstract <T, R> MethodInterceptor<T> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
+    public abstract <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 
     public boolean failOnPrecondition() {
         return true;

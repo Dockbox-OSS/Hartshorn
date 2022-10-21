@@ -63,7 +63,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
 
     private final Map<Method, ?> delegates;
     private final ConcurrentClassMap<Object> typeDelegates;
-    private final Map<Method, MethodInterceptor<T>> interceptors;
+    private final Map<Method, MethodInterceptor<T, ?>> interceptors;
     private final MultiMap<Method, MethodWrapper<T>> wrappers;
     private T delegate;
 
@@ -72,7 +72,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     }
 
     public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
-                            final Map<Method, MethodInterceptor<T>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
+                            final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
         super(applicationContext);
 
         if (applicationContext.environment().isProxy(targetClass)) {
@@ -142,7 +142,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     }
 
     @Override
-    public Result<MethodInterceptor<T>> interceptor(final Method method) {
+    public Result<MethodInterceptor<T, ?>> interceptor(final Method method) {
         return Result.of(this.interceptors).map(map -> map.get(method));
     }
 

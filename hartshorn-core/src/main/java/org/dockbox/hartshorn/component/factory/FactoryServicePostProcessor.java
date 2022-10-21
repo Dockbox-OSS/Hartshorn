@@ -43,16 +43,19 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final MethodView<T, ?> method = methodContext.method();
-        final boolean enable = method.annotations().get(Enable.class).map(Enable::value).or(true);
+        final boolean enable = Boolean.TRUE.equals(method.annotations().get(Enable.class).map(Enable::value).or(true));
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
             final Result<? extends ConstructorView<?>> constructorCandidate = factoryContext.get(method);
             if (constructorCandidate.present()) {
                 final ConstructorView<?> constructor = constructorCandidate.get();
-                return interceptorContext -> this.processInstance(context, (R) constructor.create(interceptorContext.args()).orNull(), enable);
+                return interceptorContext -> {
+                    final Object instance = constructor.create(interceptorContext.args()).orNull();
+                    return this.processInstance(context, interceptorContext.checkedCast(instance), enable);
+                };
             }
             else {
                 final Factory factory = method.annotations().get(Factory.class).get();
@@ -65,7 +68,11 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             }
         }
         else {
-            return interceptorContext -> this.processInstance(context, (R) methodContext.method().invoke(interceptorContext.instance(), interceptorContext.args()).orNull(), enable);
+            return interceptorContext -> {
+                final T instance = interceptorContext.instance();
+                final Object result = methodContext.method().invoke(instance, interceptorContext.args()).orNull();
+                return this.processInstance(context, interceptorContext.checkedCast(result), enable);
+            };
         }
     }
 

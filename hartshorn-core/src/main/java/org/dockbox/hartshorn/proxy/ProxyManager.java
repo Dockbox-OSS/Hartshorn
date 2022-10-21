@@ -93,7 +93,7 @@ public interface ProxyManager<T> extends ApplicationAwareContext {
      * @param method the method for which to obtain the interceptor
      * @return the interceptor for the given method
      */
-    Result<MethodInterceptor<T>> interceptor(Method method);
+    Result<MethodInterceptor<T, ?>> interceptor(Method method);
 
     /**
      * Gets all method wrappers for the given method. If the method is not intercepted, this method returns an empty set.

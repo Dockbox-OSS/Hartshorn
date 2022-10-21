@@ -29,16 +29,16 @@ import java.util.concurrent.Callable;
  * @author Guus Lieben
  * @since 22.2
  */
-public class MethodInterceptorContext<T> {
+public class MethodInterceptorContext<T, R> {
 
-    private final MethodView<T, ?> method;
+    private final MethodView<T, R> method;
     private final Object[] args;
     private final T instance;
-    private final Callable<Object> callable;
-    private final CustomInvocation customInvocation;
-    private final Object result;
+    private final Callable<R> callable;
+    private final CustomInvocation<R> customInvocation;
+    private final R result;
 
-    public MethodInterceptorContext(final MethodView<T, ?> method, final Object[] args, final T instance, final Callable<Object> callable, final CustomInvocation customInvocation, final Object result) {
+    public MethodInterceptorContext(final MethodView<T, R> method, final Object[] args, final T instance, final Callable<R> callable, final CustomInvocation<R> customInvocation, final R result) {
         this.method = method;
         this.args = args;
         this.instance = instance;
@@ -47,11 +47,11 @@ public class MethodInterceptorContext<T> {
         this.result = result;
     }
 
-    public MethodInterceptorContext(final MethodInterceptorContext<T> context, final Object result) {
+    public MethodInterceptorContext(final MethodInterceptorContext<T, R> context, final R result) {
         this(context.method, context.args, context.instance, context.callable, context.customInvocation, result);
     }
 
-    public MethodInterceptorContext(final MethodView<T, ?> method, final Object[] args, final T instance, final CustomInvocation customInvocation) {
+    public MethodInterceptorContext(final MethodView<T, R> method, final Object[] args, final T instance, final CustomInvocation<R> customInvocation) {
         this(method, args, instance, customInvocation.toCallable(args), customInvocation, method.returnType().defaultOrNull());
     }
 
@@ -59,7 +59,7 @@ public class MethodInterceptorContext<T> {
      * Returns the intercepted method, as it was defined on the original class.
      * @return the intercepted method
      */
-    public MethodView<T, ?> method() {
+    public MethodView<T, R> method() {
         return this.method;
     }
 
@@ -87,7 +87,7 @@ public class MethodInterceptorContext<T> {
      * @return the result of the underlying method
      * @throws Throwable if the underlying method throws an exception
      */
-    public Object invokeDefault() throws Throwable {
+    public R invokeDefault() throws Throwable {
         if (this.callable != null) {
             return this.callable.call();
         }
@@ -102,7 +102,7 @@ public class MethodInterceptorContext<T> {
      * @return the result of the underlying method
      * @throws Throwable if the underlying method throws an exception
      */
-    public Object invokeDefault(final Object... args) throws Throwable {
+    public R invokeDefault(final Object... args) throws Throwable {
         if (this.customInvocation != null) {
             return this.customInvocation.call(args);
         }
@@ -116,7 +116,12 @@ public class MethodInterceptorContext<T> {
      * @return the result of the previous interceptor, if any
      * @see org.dockbox.hartshorn.util.introspect.view.TypeView#defaultOrNull()
      */
-    public Object result() {
+    public R result() {
         return this.result;
+    }
+
+    public R checkedCast(final Object o) {
+        if (this.method.returnType().isVoid()) return null;
+        return this.method.returnType().cast(o);
     }
 }

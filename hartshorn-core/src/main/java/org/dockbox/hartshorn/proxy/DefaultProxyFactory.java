@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
@@ -75,7 +76,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
 
     // Delegates and interceptors
     private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
-    private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
+    private final Map<Method, MethodInterceptor<T, ?>> interceptors = new ConcurrentHashMap<>();
     private final MultiMap<Method, MethodWrapper<T>> wrappers = new ConcurrentSetMultiMap<>();
     private final ConcurrentClassMap<Object> typeDelegates = new ConcurrentClassMap<>();
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
@@ -194,15 +195,16 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final MethodView<T, ?> method, final MethodInterceptor<T> interceptor) {
+    public <R> DefaultProxyFactory<T> intercept(final MethodView<T, R> method, final MethodInterceptor<T, R> interceptor) {
         return this.intercept(method.method(), interceptor);
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final Method method, final MethodInterceptor<T> interceptor) {
-        final MethodInterceptor<T> methodInterceptor;
+    public DefaultProxyFactory<T> intercept(final Method method, final MethodInterceptor<T, ?> interceptor) {
+        final MethodInterceptor<T, ?> methodInterceptor;
         if (this.interceptors.containsKey(method)) {
-            methodInterceptor = this.interceptors.get(method).andThen(interceptor);
+            methodInterceptor = this.interceptors.get(method)
+                    .andThen(TypeUtils.adjustWildcards(interceptor, MethodInterceptor.class));
         }
         else {
             methodInterceptor = interceptor;
@@ -268,7 +270,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public Map<Method, MethodInterceptor<T>> interceptors() {
+    public Map<Method, MethodInterceptor<T, ?>> interceptors() {
         return this.interceptors;
     }
 

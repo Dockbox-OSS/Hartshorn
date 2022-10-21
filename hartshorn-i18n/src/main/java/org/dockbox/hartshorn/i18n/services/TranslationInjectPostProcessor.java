@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final String key = this.key(context, methodContext.type(), methodContext.method());
         final InjectTranslation annotation = methodContext.method().annotations().get(InjectTranslation.class).get();
 
@@ -42,7 +42,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
             // Prevents NPE when formatting cached resources without arguments
             final Object[] args = interceptorContext.args();
             final Object[] objects = null == args ? new Object[0] : args;
-            return (R) context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects);
+            return interceptorContext.checkedCast(context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects));
         };
     }
 
