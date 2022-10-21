@@ -19,7 +19,14 @@ package org.dockbox.hartshorn.proxy.cglib;
 import net.sf.cglib.proxy.Enhancer;
 
 import org.dockbox.hartshorn.proxy.StandardProxyLookup;
+import org.dockbox.hartshorn.proxy.javassist.JavassistProxyLookup;
 
+/**
+ * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
+ *             It is recommended to use Javassist instead, through the
+ *             {@link JavassistProxyLookup}.
+ */
+@Deprecated(since = "22.5")
 public class CglibProxyLookup implements StandardProxyLookup {
 
     @Override

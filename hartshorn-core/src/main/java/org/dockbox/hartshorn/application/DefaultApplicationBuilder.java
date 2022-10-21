@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.cglib.CglibApplicationProxier;
+import org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxier;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 
@@ -90,7 +90,7 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected final Set<ComponentPreProcessor> componentPreProcessors = ConcurrentHashMap.newKeySet();
 
     protected ComponentInitializer<ApplicationConfigurator> applicationConfigurator = ComponentInitializer.of(ctx -> new EnvironmentDrivenApplicationConfigurator());
-    protected ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> new CglibApplicationProxier());
+    protected ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> new JavassistApplicationProxier());
     protected ComponentInitializer<ApplicationFSProvider> applicationFSProvider = ComponentInitializer.of(ctx -> new ApplicationFSProviderImpl());
     protected ComponentInitializer<ExceptionHandler> exceptionHandler = ComponentInitializer.of(ctx -> new LoggingExceptionHandler());
     protected ComponentInitializer<ApplicationArgumentParser> argumentParser = ComponentInitializer.of(ctx -> new StandardApplicationArgumentParser());

@@ -33,6 +33,7 @@ public class MethodInvokable implements Invokable {
 
     @Override
     public Object invoke(final Object obj, final Object... args) throws Exception {
+        if (this.method == null) return null;
         return this.method.invoke(obj, args);
     }
 

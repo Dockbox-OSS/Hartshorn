@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
@@ -330,18 +331,20 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
         if (this.isPrimitive()) {
-            return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
+            return TypeUtils.adjustWildcards(PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null), Object.class);
         } else {
             final Class<?> primitive = WRAPPERS_TO_PRIMITIVE.get(this.type());
             if (primitive == null) return null;
-            else return (T) PRIMITIVE_DEFAULTS.getOrDefault(primitive, null);
+            else return TypeUtils.adjustWildcards(PRIMITIVE_DEFAULTS.getOrDefault(primitive, null), Object.class);
         }
     }
 
     @Override
     public T cast(final Object object) {
         if (object == null) return null;
-        if (this.isInstance(object)) return this.type.cast(object);
+        // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
+        // unboxes it correctly, but .cast will yield a ClassCastException.
+        if (this.isInstance(object)) return TypeUtils.adjustWildcards(object, Object.class);
         else throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(object, this.type));
     }
 
