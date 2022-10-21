@@ -29,18 +29,16 @@ import org.dockbox.hartshorn.util.TypeUtils;
 public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.type().annotations().has(ConfigurationObject.class);
-    }
-
-    @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
+        if (processingContext.type().annotations().has(ConfigurationObject.class)) {
+            final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
-        final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
-        this.verifyPropertiesAvailable(context, propertyHolder);
+            final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
+            this.verifyPropertiesAvailable(context, propertyHolder);
 
-        return this.createOrUpdate(processingContext.key(), instance, configurationObject, propertyHolder, context);
+            return this.createOrUpdate(processingContext.key(), instance, configurationObject, propertyHolder, context);
+        }
+        return instance;
     }
 
     private <T> T createOrUpdate(final Key<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder, final ApplicationContext applicationContext) {

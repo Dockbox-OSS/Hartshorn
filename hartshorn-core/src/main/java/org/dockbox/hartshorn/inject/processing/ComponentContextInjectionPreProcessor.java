@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.InvalidComponentException;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
@@ -30,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentContextInjectionPreProcessor extends ComponentPreValidator {
+public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -59,5 +61,10 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreValidator
                     Context.class.getSimpleName(),
                     org.dockbox.hartshorn.context.Context.class.getSimpleName())
             );
+    }
+
+    @Override
+    public final Integer order() {
+        return ProcessingOrder.FIRST;
     }
 }

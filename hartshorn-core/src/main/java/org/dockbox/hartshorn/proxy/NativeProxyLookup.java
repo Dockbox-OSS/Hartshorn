@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationInvocationHandler;
 
@@ -33,7 +34,7 @@ import java.lang.reflect.Proxy;
 public class NativeProxyLookup implements ProxyLookup {
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
+    public <T> Class<T> unproxy(final @NonNull T instance) {
         // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
         if (Proxy.isProxyClass(instance.getClass())) {
             final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
@@ -47,7 +48,7 @@ public class NativeProxyLookup implements ProxyLookup {
         else if (instance instanceof org.dockbox.hartshorn.proxy.Proxy<?> proxy) {
             return TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
         }
-        return instance != null ? TypeUtils.adjustWildcards(instance.getClass(), Class.class) : null;
+        return TypeUtils.adjustWildcards(instance.getClass(), Class.class);
     }
 
     @Override

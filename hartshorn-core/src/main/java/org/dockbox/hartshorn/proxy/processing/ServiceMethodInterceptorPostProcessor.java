@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
@@ -32,7 +33,7 @@ import java.util.Collection;
 public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
         final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));

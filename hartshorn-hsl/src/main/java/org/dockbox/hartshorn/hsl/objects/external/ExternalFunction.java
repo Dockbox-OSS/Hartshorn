@@ -120,7 +120,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         ClassReference classReference = virtualClass;
         ExternalClass<?> externalClass = null;
 
-        while (externalClass == null && classReference != null) {
+        while (classReference != null) {
             if (classReference instanceof ExternalClass<?> external) {
                 externalClass = external;
                 break;

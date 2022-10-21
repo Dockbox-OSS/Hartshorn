@@ -21,16 +21,13 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 
-public class NonProcessableTypeProcessor implements ComponentPostProcessor {
-
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return instance instanceof NonProcessableType;
-    }
+public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
+        if (instance instanceof NonProcessableType) {
+            processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
+        }
         return instance;
     }
 }

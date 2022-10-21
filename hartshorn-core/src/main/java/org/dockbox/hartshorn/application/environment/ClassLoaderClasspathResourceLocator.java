@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -75,7 +76,9 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     @Override
     public URI classpathUri() {
         try {
-            return Hartshorn.class.getClassLoader().getResource("").toURI();
+            final URL resource = Hartshorn.class.getClassLoader().getResource("");
+            if (resource == null) return null;
+            return resource.toURI();
         }
         catch (final URISyntaxException e) {
             this.environment.handle("Could not look up classpath base", e);

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.web.mvc;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.web.MvcControllerContext;
@@ -26,24 +26,28 @@ import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.annotations.MvcController;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-public class MvcControllerPreProcessor implements ServicePreProcessor {
+import java.util.List;
 
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final TypeView<T> type = processingContext.type();
-        return type.annotations().has(MvcController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty();
-    }
+public class MvcControllerPreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final MvcControllerContext controllerContext = context.first(MvcControllerContext.class).get();
-        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
-            if (method.returnType().isChildOf(ViewTemplate.class)) {
-                final RequestHandlerContext handlerContext = new RequestHandlerContext(context, method);
-                controllerContext.add(handlerContext);
-            }
-            else {
-                throw new IllegalArgumentException("Method " + method.name() + " must return a ViewTemplate");
+        final TypeView<T> type = processingContext.type();
+
+        final boolean isMvcController = type.annotations().has(MvcController.class);
+        final List<MethodView<T, ?>> httpRequestHandlers = type.methods().annotatedWith(HttpRequest.class);
+        final boolean hasHttpRequestHandlers = !httpRequestHandlers.isEmpty();
+
+        if (isMvcController && hasHttpRequestHandlers) {
+            final MvcControllerContext controllerContext = context.first(MvcControllerContext.class).get();
+            for (final MethodView<T, ?> method : httpRequestHandlers) {
+                if (method.returnType().isChildOf(ViewTemplate.class)) {
+                    final RequestHandlerContext handlerContext = new RequestHandlerContext(context, method);
+                    controllerContext.add(handlerContext);
+                }
+                else {
+                    throw new IllegalArgumentException("Method " + method.name() + " must return a ViewTemplate");
+                }
             }
         }
     }

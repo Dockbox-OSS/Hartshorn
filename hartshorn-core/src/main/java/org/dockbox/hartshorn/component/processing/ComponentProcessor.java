@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
 
@@ -32,17 +30,6 @@ import org.dockbox.hartshorn.inject.Provider;
  * @since 22.1
  */
 public sealed interface ComponentProcessor extends OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
-
-    /**
-     * Determines whether the component processor should be called for the given context. By default,
-     * the processor will only process components that are known to the application's {@link ComponentLocator}
-     * through the active {@link ComponentContainer} of the component.
-     *
-     * @param processingContext The context of the component being processed. This contains the application context and introspection details.
-     * @param <T> The type of the component.
-     * @return True if the processor should be called, false otherwise.
-     */
-    <T> boolean preconditions(final ComponentProcessingContext<T> processingContext);
 
     /**
      * Processes a given component context. The given context should contain the application context, the component type and key, and

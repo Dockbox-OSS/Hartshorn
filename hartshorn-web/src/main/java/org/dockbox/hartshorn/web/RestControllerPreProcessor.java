@@ -17,27 +17,30 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.web.annotations.RestController;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-public class RestControllerPreProcessor implements ServicePreProcessor {
+import java.util.List;
 
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final TypeView<T> type = processingContext.type();
-        return type.annotations().has(RestController.class) && !type.methods().annotatedWith(HttpRequest.class).isEmpty();
-    }
+public class RestControllerPreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final ControllerContext controllerContext = context.first(ControllerContext.class).get();
+        final TypeView<T> type = processingContext.type();
 
-        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(HttpRequest.class)) {
-            controllerContext.add(new RequestHandlerContext(context, method));
+        final boolean isRestController = type.annotations().has(RestController.class);
+        final List<MethodView<T, ?>> httpRequestHandlers = type.methods().annotatedWith(HttpRequest.class);
+        final boolean hasHttpRequestHandlers = !httpRequestHandlers.isEmpty();
+
+        if (isRestController && hasHttpRequestHandlers) {
+            final ControllerContext controllerContext = context.first(ControllerContext.class).get();
+            for (final MethodView<T, ?> method : httpRequestHandlers) {
+                controllerContext.add(new RequestHandlerContext(context, method));
+            }
         }
     }
 }

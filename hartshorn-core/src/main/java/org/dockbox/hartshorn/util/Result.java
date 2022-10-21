@@ -18,13 +18,10 @@ package org.dockbox.hartshorn.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.util.function.CheckedBiFunction;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -57,7 +54,6 @@ import java.util.function.Supplier;
  */
 public final class Result<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Result.class);
     private static final Result<?> EMPTY = new Result<>();
 
     @Nullable private final T value;

@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
@@ -33,19 +33,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FactoryServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
-
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(Factory.class).isEmpty();
-    }
+public class FactoryServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final List<MethodView<T, ?>> factoryMethods = processingContext.type().methods().annotatedWith(Factory.class);
+        if (factoryMethods.isEmpty()) return;
+
         final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
         methods:
-        for (final MethodView<T, ?> method : processingContext.type().methods().annotatedWith(Factory.class)) {
+        for (final MethodView<T, ?> method : factoryMethods) {
             final Factory annotation = method.annotations().get(Factory.class).get();
             Key<?> returnKey = Key.of(method.returnType());
             if (!"".equals(annotation.value())) returnKey = returnKey.name(annotation.value());

@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.inject.Key;
@@ -33,7 +34,7 @@ import java.util.Collection;
 public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
+    public final <T> T process(final ApplicationContext context, @Nullable T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
         final Key<T> key = processingContext.key();
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 

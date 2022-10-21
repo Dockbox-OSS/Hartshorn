@@ -24,7 +24,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class DemoProcessor implements ComponentPreProcessor {
+public class DemoProcessor extends ComponentPreProcessor {
 
     @Inject
     private DemoService demoService;
@@ -38,11 +38,6 @@ public class DemoProcessor implements ComponentPreProcessor {
 
     public Demo demo() {
         return this.demo;
-    }
-
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return false;
     }
 
     @Override

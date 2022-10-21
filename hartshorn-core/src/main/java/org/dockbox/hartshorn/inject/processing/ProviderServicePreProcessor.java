@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
@@ -32,20 +32,14 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
-public final class ProviderServicePreProcessor implements ServicePreProcessor, ExitingComponentProcessor {
-
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return !(
-                processingContext.type().methods().annotatedWith(Provider.class).isEmpty()
-                && processingContext.type().fields().annotatedWith(Provider.class).isEmpty()
-        );
-    }
+public final class ProviderServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final List<MethodView<T, ?>> methods = processingContext.type().methods().annotatedWith(Provider.class);
         final List<FieldView<T, ?>> fields = processingContext.type().fields().annotatedWith(Provider.class);
+
+        if (methods.isEmpty() && fields.isEmpty()) return;
 
         context.log().debug("Found " + (methods.size() + fields.size()) + " method providers in " + processingContext.type().name());
 

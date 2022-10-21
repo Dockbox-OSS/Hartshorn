@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.Value;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
@@ -58,7 +59,7 @@ public class DemoClasspathConfiguration {
         return this.list;
     }
 
-    public CopyOnWriteArrayList<Integer> copyOnWriteArrayList() {
+    public List<Integer> copyOnWriteArrayList() {
         return this.copyOnWriteArrayList;
     }
 }

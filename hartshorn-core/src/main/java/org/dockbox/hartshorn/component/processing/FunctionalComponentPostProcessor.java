@@ -22,11 +22,16 @@ import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 
-public abstract class FunctionalComponentPostProcessor implements ComponentPostProcessor {
+public abstract class FunctionalComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
-        return container.componentType() == ComponentType.FUNCTIONAL;
+        if (container.componentType() == ComponentType.FUNCTIONAL) {
+            return this.process(context, instance, container, processingContext);
+        }
+        return instance;
     }
+
+    public abstract  <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext);
 }

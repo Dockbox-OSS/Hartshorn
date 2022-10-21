@@ -104,7 +104,7 @@ public class HartshornLifecycleExtension implements
         final ApplicationBuilder<?, ?> applicationBuilder = this.prepareFactory(testClass, testComponentSources);
         final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationBuilder, testClass).orNull();
         if (applicationContext == null) {
-            if (applicationContext == null) throw new IllegalStateException("Could not create application context");
+            throw new IllegalStateException("Could not create application context");
         }
 
         applicationContext.bind(HartshornLifecycleExtension.class).singleton(this);
@@ -167,6 +167,7 @@ public class HartshornLifecycleExtension implements
     private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
         ApplicationBuilder<?, ?> applicationBuilder = new StandardApplicationBuilder()
                 .loadDefaults()
+                .enableBanner(false)
                 .applicationFSProvider(ctx -> new JUnitFSProvider())
                 .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources))
                 .serviceActivator(new ServiceImpl());

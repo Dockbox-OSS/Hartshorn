@@ -47,12 +47,9 @@ import jakarta.persistence.EntityManager;
 public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallbackPostProcessor<UsePersistence> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return !processingContext.type().methods().annotatedWith(Transactional.class).isEmpty();
-    }
-
-    @Override
     protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T, ?> proxyFactory) {
+        if (processingContext.type().methods().annotatedWith(Transactional.class).isEmpty()) return instance;
+
         // JpaRepository and EntityManagerCarrier expose their own EntityManager, so we don't need to do anything here.
         if (!(instance instanceof JpaRepository || instance instanceof EntityManagerCarrier)) {
             final DataSourceList dataSourceList = context.get(DataSourceList.class);

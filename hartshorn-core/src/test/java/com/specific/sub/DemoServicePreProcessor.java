@@ -17,13 +17,13 @@
 package com.specific.sub;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
 
 import jakarta.inject.Singleton;
 
 @Singleton
-public class DemoServicePreProcessor implements ServicePreProcessor {
+public class DemoServicePreProcessor extends ComponentPreProcessor {
 
     private int processed = 0;
 
@@ -32,13 +32,10 @@ public class DemoServicePreProcessor implements ServicePreProcessor {
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.type().is(DemoService.class);
-    }
-
-    @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        context.log().debug("Processing %s".formatted(processingContext));
-        this.processed++;
+        if (processingContext.type().is(DemoService.class)) {
+            context.log().debug("Processing %s".formatted(processingContext));
+            this.processed++;
+        }
     }
 }

@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.inject.Key;
@@ -28,13 +29,9 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
     protected abstract Class<P> parentTarget();
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        // Don't use .isAssignableFrom() here, as we want to support primitive wrappers as well
-        return super.preconditions(context, instance, processingContext) && processingContext.type().isChildOf(this.parentTarget());
-    }
+    public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
+        if (!processingContext.type().isChildOf(this.parentTarget())) return instance;
 
-    @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final ProxyFactory<P, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
 

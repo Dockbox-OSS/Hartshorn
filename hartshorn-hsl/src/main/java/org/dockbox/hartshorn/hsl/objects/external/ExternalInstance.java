@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
@@ -88,6 +89,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
         return String.valueOf(this.instance);
     }
 
+    @NonNull
     @Override
     public ClassReference type() {
         return new ExternalClass<>(this.type);

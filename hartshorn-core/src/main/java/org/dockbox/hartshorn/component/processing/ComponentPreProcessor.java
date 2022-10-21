@@ -40,30 +40,13 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * @author Guus Lieben
  * @since 22.1
  */
-public non-sealed interface ComponentPreProcessor extends ComponentProcessor {
+public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 
     @Override
-    default <T> boolean preconditions(final ComponentProcessingContext<T> processingContext) {
-        return this.preconditions(processingContext.applicationContext(), processingContext);
-    }
-
-    @Override
-    default <T> T process(final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(final ComponentProcessingContext<T> processingContext) {
         this.process(processingContext.applicationContext(), processingContext);
         return processingContext.instance();
     }
-
-    /**
-     * Determines whether the component pre-processor modifies the component. As component instances will
-     * not exist yet, this method does not expect the <code>instance</code> to be specified.
-     *
-     * @param context The application context.
-     * @param processingContext The processing context.
-     * @return <code>true</code> if the component pre-processor modifies the component, <code>false</code>
-     * otherwise.
-     * @see ComponentProcessor#preconditions(ComponentProcessingContext)
-     */
-    <T> boolean preconditions(ApplicationContext context, ComponentProcessingContext<T> processingContext);
 
     /**
      * Processes a given component. As component instances will not exist yet, this method does not expect
@@ -74,5 +57,5 @@ public non-sealed interface ComponentPreProcessor extends ComponentProcessor {
      * @param <T> The type of the component.
      * @see ComponentProcessor#process(ComponentProcessingContext)
      */
-    <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext);
+    public abstract <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext);
 }

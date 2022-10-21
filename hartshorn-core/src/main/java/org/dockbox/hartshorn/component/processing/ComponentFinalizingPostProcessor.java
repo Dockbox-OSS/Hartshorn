@@ -29,25 +29,28 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class ComponentFinalizingPostProcessor implements ComponentPostProcessor {
+public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        T finalizingInstance = instance;
-        if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
-            final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
-            try {
-                final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
-                final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();
-                if (stateModified || noConcreteInstancePossible) {
-                    finalizingInstance = this.createProxyInstance(context, factory, instance);
+        if (processingContext.get(Key.of(ComponentContainer.class)).permitsProxying()) {
+            T finalizingInstance = instance;
+            if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
+                final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+                try {
+                    final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
+                    final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();
+                    if (stateModified || noConcreteInstancePossible) {
+                        finalizingInstance = this.createProxyInstance(context, factory, instance);
+                    }
+                }
+                catch (final ApplicationException e) {
+                    throw new ApplicationRuntimeException(e);
                 }
             }
-            catch (final ApplicationException e) {
-                throw new ApplicationRuntimeException(e);
-            }
+            return context.get(ComponentPopulator.class).populate(finalizingInstance);
         }
-        return context.get(ComponentPopulator.class).populate(finalizingInstance);
+        return instance;
     }
 
     protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T, ?> factory, @Nullable final T instance) throws ApplicationException {
@@ -62,11 +65,6 @@ public class ComponentFinalizingPostProcessor implements ComponentPostProcessor 
             return factory.proxy(constructor, arguments).or(instance);
         }
         return factory.proxy().or(instance);
-    }
-
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        return processingContext.get(Key.of(ComponentContainer.class)).permitsProxying();
     }
 
     @Override
