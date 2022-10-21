@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.beans;
 
+import org.dockbox.hartshorn.inject.Key;
+
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -50,6 +52,12 @@ public class ContextBeanProvider implements BeanProvider {
         return this.first(type, this.typeAndIdFilter(type, id));
     }
 
+    @Override
+    public <T> T first(final Key<T> key) {
+        if (key.name() != null) return this.first(key.type(), key.name().value());
+        else return this.first(key.type());
+    }
+
     private <T> T first(final Class<T> type, final Predicate<BeanReference<?>> predicate) {
         return this.stream(type, predicate)
                 .findFirst()
@@ -66,6 +74,12 @@ public class ContextBeanProvider implements BeanProvider {
     public <T> List<T> all(final Class<T> type, final String id) {
         return this.stream(type, this.typeAndIdFilter(type, id))
                 .toList();
+    }
+
+    @Override
+    public <T> List<T> all(final Key<T> key) {
+        if (key.name() != null) return this.all(key.type(), key.name().value());
+        else return this.all(key.type());
     }
 
     private <T>Stream<T> stream(final Class<T> type, final Predicate<BeanReference<?>> predicate) {
