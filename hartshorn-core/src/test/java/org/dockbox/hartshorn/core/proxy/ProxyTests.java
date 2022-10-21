@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.proxy.ProxyInvocationException;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.proxy.UseProxying;
-import org.dockbox.hartshorn.proxy.cglib.CglibProxyFactory;
 import org.dockbox.hartshorn.proxy.javassist.JavassistProxyFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -67,8 +66,8 @@ public class ProxyTests {
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> factories() {
+        // Does not include deprecated/unsupported factories
         return Stream.of(
-                Arguments.of((BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>>) CglibProxyFactory::new),
                 Arguments.of((BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>>) JavassistProxyFactory::new)
         );
     }
