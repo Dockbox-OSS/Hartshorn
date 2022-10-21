@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.beans;
 
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -35,6 +36,7 @@ public class ContextBeanProvider implements BeanProvider {
     }
 
     private Predicate<BeanReference<?>> idFilter(final String id) {
+        if (StringUtilities.empty(id)) return ref -> true;
         return ref -> ref.id().equals(id);
     }
 
