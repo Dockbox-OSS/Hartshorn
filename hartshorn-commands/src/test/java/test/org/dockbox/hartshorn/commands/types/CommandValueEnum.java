@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands.types;
+package test.org.dockbox.hartshorn.commands.types;
 
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.context.CommandContext;
-
-@Command("demo")
-public class SampleCommandExtension {
-
-    @Command(value = "second", arguments = "<name>")
-    public void second(final CommandContext context) {
-    }
-
+public enum CommandValueEnum {
+    ONE, TWO, THREE
 }

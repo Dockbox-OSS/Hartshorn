@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 

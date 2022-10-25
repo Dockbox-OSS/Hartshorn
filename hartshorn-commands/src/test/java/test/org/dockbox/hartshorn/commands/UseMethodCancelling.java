@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
-import jakarta.inject.Singleton;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Service
-@RequiresActivator(UseCommands.class)
-public class TestCommandProviders {
-
-    @Provider(priority = 0)
-    @Singleton
-    public Class<? extends SystemSubject> systemSubject = JUnitSystemSubject.class;
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@ServiceActivator
+public @interface UseMethodCancelling {
 }

@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands.types;
+package test.org.dockbox.hartshorn.commands.types;
 
-public enum CommandValueEnum {
-    ONE, TWO, THREE
+import org.dockbox.hartshorn.commands.annotations.Parameter;
+
+@Parameter("cuboid")
+public class CuboidArgument {
+
+    private final int size;
+
+    public CuboidArgument(final int size) {
+        this.size = size;
+    }
+
+    public int size() {
+        return this.size;
+    }
 }

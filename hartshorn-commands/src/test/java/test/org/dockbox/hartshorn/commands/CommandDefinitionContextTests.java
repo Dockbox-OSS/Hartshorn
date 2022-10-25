@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.CommandGateway;
+import org.dockbox.hartshorn.commands.CommandGatewayImpl;
+import org.dockbox.hartshorn.commands.ParsingException;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
-import org.dockbox.hartshorn.commands.types.CommandValueEnum;
-import org.dockbox.hartshorn.commands.types.SampleCommand;
-import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,9 +38,12 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.commands.types.CommandValueEnum;
+import test.org.dockbox.hartshorn.commands.types.SampleCommand;
+import test.org.dockbox.hartshorn.commands.types.SampleCommandExtension;
 
 @UseCommands
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class CommandDefinitionContextTests {
 
     @Inject
@@ -54,6 +59,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
+    @TestComponents(SampleCommandExtension.class)
     void testExtensionCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);

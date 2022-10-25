@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands.types;
+package test.org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.commands.annotations.Parameter;
+import org.dockbox.hartshorn.commands.SystemSubject;
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 
-@Parameter("cuboid")
-public class CuboidArgument {
+import jakarta.inject.Singleton;
 
-    private final int size;
+@Service
+@RequiresActivator(UseCommands.class)
+public class TestCommandProviders {
 
-    public CuboidArgument(final int size) {
-        this.size = size;
-    }
+    @Provider(priority = 0)
+    @Singleton
+    public Class<? extends SystemSubject> systemSubject = JUnitSystemSubject.class;
 
-    public int size() {
-        return this.size;
-    }
 }

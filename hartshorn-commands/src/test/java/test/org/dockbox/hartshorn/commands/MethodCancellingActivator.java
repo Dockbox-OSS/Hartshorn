@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.events.annotations.Listener;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@Service
+@RequiresActivator(UseMethodCancelling.class)
+public class MethodCancellingActivator {
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator
-public @interface UseMethodCancelling {
+    @Listener
+    public void onBefore(final Before before) {
+        before.cancelled(true);
+    }
 }

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
-import org.dockbox.hartshorn.commands.types.CuboidArgument;
+import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -34,7 +35,7 @@ import java.util.Locale;
 import jakarta.inject.Inject;
 
 @UseCommands
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class HashtagParameterPatternTests {
 
     @Inject

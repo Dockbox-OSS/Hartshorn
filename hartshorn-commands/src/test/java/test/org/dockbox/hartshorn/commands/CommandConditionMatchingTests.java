@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.commands.CommandGateway;
+import org.dockbox.hartshorn.commands.ParsingException;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.commands.types.SampleCommand;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseCommands
 @UseExpressionValidation
+@TestComponents(SampleCommand.class)
 public class CommandConditionMatchingTests {
 
     @Inject

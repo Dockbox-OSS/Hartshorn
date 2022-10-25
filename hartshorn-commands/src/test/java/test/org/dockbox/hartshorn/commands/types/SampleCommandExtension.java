@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands;
+package test.org.dockbox.hartshorn.commands.types;
 
-import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.context.CommandContext;
 
-@Service
-@RequiresActivator(UseMethodCancelling.class)
-public class MethodCancellingActivator {
+@Command("demo")
+public class SampleCommandExtension {
 
-    @Listener
-    public void onBefore(final Before before) {
-        before.cancelled(true);
+    @Command(value = "second", arguments = "<name>")
+    public void second(final CommandContext context) {
     }
+
 }
