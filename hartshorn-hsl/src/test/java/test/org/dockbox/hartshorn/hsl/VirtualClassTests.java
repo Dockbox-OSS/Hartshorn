@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl;
+package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +30,7 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
 public class VirtualClassTests {
 

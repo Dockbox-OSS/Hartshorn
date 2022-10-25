@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl;
+package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;

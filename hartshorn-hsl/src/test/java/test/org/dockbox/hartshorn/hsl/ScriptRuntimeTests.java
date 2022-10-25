@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl;
+package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.HslExpression;
+import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -43,7 +46,7 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ScriptRuntimeTests {
 
@@ -96,7 +99,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithGlobal() {
-        final HslExpression expression = new HslExpression(this.applicationContext, "a == 12");
+        final HslExpression expression = HslExpression.of(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
         this.assertValid(expression);
     }
@@ -104,7 +107,7 @@ public class ScriptRuntimeTests {
     @Test
     void testExpressionWithGlobalFunctionAccess() {
         final String expression = "context != null && context.log() != null";
-        final HslExpression hslExpression = new HslExpression(this.applicationContext, expression);
+        final HslExpression hslExpression = HslExpression.of(this.applicationContext, expression);
         hslExpression.runtime().global("context", this.applicationContext);
         this.assertValid(hslExpression);
     }
@@ -119,7 +122,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithNativeAccess() {
-        final HslExpression expression = new HslExpression(this.applicationContext, "log() != null");
+        final HslExpression expression = HslExpression.of(this.applicationContext, "log() != null");
         expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
@@ -207,7 +210,7 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertValid(final String expression) {
-        final HslExpression hslExpression = new HslExpression(this.applicationContext, expression);
+        final HslExpression hslExpression = HslExpression.of(this.applicationContext, expression);
         return this.assertValid(hslExpression);
     }
 

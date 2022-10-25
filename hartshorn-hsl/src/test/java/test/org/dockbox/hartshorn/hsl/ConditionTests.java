@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl;
+package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
 import org.dockbox.hartshorn.component.condition.ConditionResult;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
@@ -38,7 +39,7 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ConditionTests {
 
