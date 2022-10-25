@@ -36,7 +36,7 @@ import java.util.stream.Stream
  * @author Guus Lieben
  * @since 22.5
  */
-@HartshornTest
+@HartshornTest(includeBasePackages = false, scanPackages = Array("test.org.dockbox.hartshorn.core.scala"))
 class ScalaComponentTests {
 
   @Inject
