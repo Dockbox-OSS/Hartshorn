@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package test.org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.cache.Cache;
+import org.dockbox.hartshorn.cache.CacheFactory;
+import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.Result;
@@ -28,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import jakarta.inject.Inject;
 
 @UseCaching
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class CacheTests {
 
     @Inject

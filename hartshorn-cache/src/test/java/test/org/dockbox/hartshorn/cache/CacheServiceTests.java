@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package test.org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.cache.Cache;
+import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -27,19 +30,22 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 
 @UseCaching
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
+@TestComponents(JUnitCacheManager.class)
 public class CacheServiceTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
+    @TestComponents(NonAbstractCacheService.class)
     void testEvictMethodIsCalled() {
         final NonAbstractCacheService service = this.applicationContext.get(NonAbstractCacheService.class);
         Assertions.assertTrue(service.evict());
     }
 
     @Test
+    @TestComponents(NonAbstractCacheService.class)
     void testUpdateMethodIsCalled() {
         final NonAbstractCacheService service = this.applicationContext.get(NonAbstractCacheService.class);
         final long update = service.update(3L);
@@ -47,6 +53,7 @@ public class CacheServiceTests {
     }
 
     @Test
+    @TestComponents(TestCacheService.class)
     void testCacheIsReused() {
         final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long first = service.getCachedTime();
@@ -57,6 +64,7 @@ public class CacheServiceTests {
     }
 
     @Test
+    @TestComponents(TestCacheService.class)
     void testCacheCanBeUpdated() {
         final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         long cached = service.getCachedTime();
@@ -68,6 +76,7 @@ public class CacheServiceTests {
     }
 
     @Test
+    @TestComponents(TestCacheService.class)
     void testCacheCanBeEvicted() {
         final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long first = service.getCachedTime();
@@ -77,6 +86,7 @@ public class CacheServiceTests {
     }
 
     @Test
+    @TestComponents(TestCacheService.class)
     void testCacheCanBeUpdatedThroughManager() {
         final TestCacheService service = this.applicationContext.get(TestCacheService.class);
         final long cached = service.getCachedTime();
@@ -96,6 +106,7 @@ public class CacheServiceTests {
     }
 
     @Test
+    @TestComponents(TestCacheService.class)
     void testCacheCanBeEvictedThroughManager() {
         // Initial population through source service
         final TestCacheService service = this.applicationContext.get(TestCacheService.class);

@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package test.org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.CacheService;
+import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 
-@CacheService("non-abstract")
-public class NonAbstractCacheService {
+@CacheService("sample")
+public abstract class TestCacheService {
 
-    @UpdateCache
-    public long update(final long s) {
-        return s*2;
+    @Cached(key = "sample_key")
+    public long getCachedTime() {
+        // Return nanoseconds, as some tests evict and request within 1ms.
+        return System.nanoTime();
     }
 
-    @EvictCache
-    public boolean evict() {
-        return true;
-    }
+    @UpdateCache(key = "sample_key")
+    public abstract void update(long s);
+
+    @EvictCache(key = "sample_key")
+    public abstract void evict();
 
 }

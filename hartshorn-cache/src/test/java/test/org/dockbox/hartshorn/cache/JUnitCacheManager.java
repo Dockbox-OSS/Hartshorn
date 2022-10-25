@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.cache;
+package test.org.dockbox.hartshorn.cache;
 
+import org.dockbox.hartshorn.cache.CacheManagerImpl;
 import org.dockbox.hartshorn.component.Component;
 
 @Component(singleton = true)
