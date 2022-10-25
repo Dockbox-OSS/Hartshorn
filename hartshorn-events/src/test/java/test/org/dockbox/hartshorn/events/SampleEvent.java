@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events;
+package test.org.dockbox.hartshorn.events;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
-import java.util.Map;
-import java.util.Set;
-
-@Component(singleton = true)
-public class TestEventBus extends EventBusImpl {
-
-    public @NonNull Map<Key<?>, Set<EventWrapper>> invokers() {
-        return this.listenerToInvokers;
-    }
+public class SampleEvent extends ContextCarrierEvent {
 }

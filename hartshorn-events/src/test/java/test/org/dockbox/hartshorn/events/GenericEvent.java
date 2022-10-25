@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events;
+package test.org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
-import org.dockbox.hartshorn.util.Named;
 
-public class SampleNamedEvent extends ContextCarrierEvent implements Named {
+public abstract class GenericEvent<T> extends ContextCarrierEvent {
 
-    private final String name;
+    private final T value;
 
-    public SampleNamedEvent(final String name) {
-        this.name = name;
+    public GenericEvent(final T value) {
+        this.value = value;
     }
 
-    @Override
-    public String name() {
-        return this.name;
+    public T value() {
+        return this.value;
     }
 }

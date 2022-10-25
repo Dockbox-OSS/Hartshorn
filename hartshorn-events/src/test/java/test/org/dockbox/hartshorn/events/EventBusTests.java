@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events;
+package test.org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
-import org.dockbox.hartshorn.events.listeners.BasicEventListener;
-import org.dockbox.hartshorn.events.listeners.ConditionalEventListener;
-import org.dockbox.hartshorn.events.listeners.GenericEventListener;
-import org.dockbox.hartshorn.events.listeners.PriorityEventListener;
-import org.dockbox.hartshorn.events.listeners.StaticEventListener;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,22 +30,30 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.events.listeners.BasicEventListener;
+import test.org.dockbox.hartshorn.events.listeners.ConditionalEventListener;
+import test.org.dockbox.hartshorn.events.listeners.GenericEventListener;
+import test.org.dockbox.hartshorn.events.listeners.PriorityEventListener;
+import test.org.dockbox.hartshorn.events.listeners.StaticEventListener;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseEvents
 @UseExpressionValidation
+@TestComponents(TestEventBus.class)
 public class EventBusTests {
 
     @Inject
     private TestEventBus bus;
     
     @Test
+    @TestComponents(BasicEventListener.class)
     public void testTypesCanSubscribe() {
         this.bus.subscribe(Key.of(BasicEventListener.class));
         Assertions.assertTrue(this.bus.invokers().containsKey(Key.of(BasicEventListener.class)));
     }
 
     @Test
+    @TestComponents(BasicEventListener.class)
     public void testNonStaticMethodsCanListen() {
         this.bus.subscribe(Key.of(BasicEventListener.class));
         this.bus.post(new SampleEvent());
@@ -57,6 +61,7 @@ public class EventBusTests {
     }
 
     @Test
+    @TestComponents(StaticEventListener.class)
     public void testStaticMethodsCanListen() {
         this.bus.subscribe(Key.of(StaticEventListener.class));
         this.bus.post(new SampleEvent());
@@ -64,6 +69,7 @@ public class EventBusTests {
     }
 
     @Test
+    @TestComponents(PriorityEventListener.class)
     public void testEventsArePostedInCorrectPriorityOrder() {
         this.bus.subscribe(Key.of(PriorityEventListener.class));
         this.bus.post(new SampleEvent());
@@ -71,6 +77,7 @@ public class EventBusTests {
     }
 
     @Test
+    @TestComponents(GenericEventListener.class)
     void testGenericEventsAreFiltered() {
         this.bus.subscribe(Key.of(GenericEventListener.class));
         final Event event = new GenericEvent<>("String") {
@@ -79,6 +86,7 @@ public class EventBusTests {
     }
 
     @Test
+    @TestComponents(GenericEventListener.class)
     void testGenericWildcardsArePosted() {
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects.clear();
@@ -96,6 +104,7 @@ public class EventBusTests {
     }
 
     @Test
+    @TestComponents(ConditionalEventListener.class)
     void testConditionEventIsNotFiredIfMismatch() {
         this.bus.subscribe(Key.of(ConditionalEventListener.class));
 
@@ -105,6 +114,7 @@ public class EventBusTests {
     }
 
     @Test
+    @TestComponents(ConditionalEventListener.class)
     void testConditionEventIsFiredIfMatch() {
         this.bus.subscribe(Key.of(ConditionalEventListener.class));
 

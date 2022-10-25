@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events.listeners;
+package test.org.dockbox.hartshorn.events.listeners;
 
-import org.dockbox.hartshorn.events.GenericEvent;
+import test.org.dockbox.hartshorn.events.GenericEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
 import java.util.List;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events.listeners;
+package test.org.dockbox.hartshorn.events.listeners;
 
-import org.dockbox.hartshorn.events.SampleEvent;
+import test.org.dockbox.hartshorn.events.SampleEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.junit.jupiter.api.Assertions;

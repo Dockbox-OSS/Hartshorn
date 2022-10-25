@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events.listeners;
+package test.org.dockbox.hartshorn.events.listeners;
 
-import org.dockbox.hartshorn.events.SampleEvent;
+import org.dockbox.hartshorn.component.Service;
+import test.org.dockbox.hartshorn.events.SampleNamedEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
 
-public final class StaticEventListener {
+@Service
+public class ConditionalEventListener {
 
     public static boolean fired;
 
-    private StaticEventListener() {}
-
     @Listener
-    public static void on(final SampleEvent event) {
-        StaticEventListener.fired = true;
+    @RequiresExpression("event.name() != null")
+    public void on(final SampleNamedEvent event) {
+        if (event.name() == null) {
+            throw new IllegalArgumentException("Event name is null");
+        }
+        ConditionalEventListener.fired = true;
     }
 }

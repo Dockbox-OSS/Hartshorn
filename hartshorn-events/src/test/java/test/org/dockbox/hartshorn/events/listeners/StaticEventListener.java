@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.events.listeners;
+package test.org.dockbox.hartshorn.events.listeners;
 
-import org.dockbox.hartshorn.events.SampleEvent;
+import test.org.dockbox.hartshorn.events.SampleEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
-public class BasicEventListener {
+public final class StaticEventListener {
 
     public static boolean fired;
 
-    @Listener
-    public void on(final SampleEvent event) {
-        BasicEventListener.fired = true;
-    }
+    private StaticEventListener() {}
 
+    @Listener
+    public static void on(final SampleEvent event) {
+        StaticEventListener.fired = true;
+    }
 }
