@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web;
+package test.org.dockbox.hartshorn.web;
 
 public class Message {
 

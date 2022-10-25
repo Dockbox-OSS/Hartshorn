@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web;
+package test.org.dockbox.hartshorn.web;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -34,6 +34,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestProperties;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.junit.jupiter.api.AfterEach;
 
@@ -43,7 +45,7 @@ import java.util.function.Function;
 import jakarta.inject.Inject;
 
 @UseHttpServer
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @TestProperties("--hartshorn.web.port=0")
 public abstract class RestIntegrationTest {
 

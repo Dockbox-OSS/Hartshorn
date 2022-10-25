@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web;
+package test.org.dockbox.hartshorn.web;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.dockbox.hartshorn.web.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;

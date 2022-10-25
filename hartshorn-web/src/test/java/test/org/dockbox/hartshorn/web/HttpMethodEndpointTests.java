@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web;
+package test.org.dockbox.hartshorn.web;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicHeader;
+import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
