@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.i18n;
+package test.org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.i18n.DefaultTranslationBundle;
+import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.MessageTemplate;
+import org.dockbox.hartshorn.i18n.TranslationBundle;
+import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Locale;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseTranslations
 public class MessageTemplateServiceTests {
 
@@ -147,6 +154,7 @@ public class MessageTemplateServiceTests {
     }
 
     @InjectTest
+    @TestComponents(TranslationProviderService.class)
     void testTranslationProvidersGetRegistered(final ApplicationContext applicationContext) {
         final TranslationService translationService = applicationContext.get(TranslationService.class);
         final Result<Message> message = translationService.get("lang.name");

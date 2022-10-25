@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.i18n;
+package test.org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 
-@Service(id = "resource")
-public interface ITestResources {
+@Service
+public class TestResources {
 
     @InjectTranslation("Hello world!")
-    Message testEntry();
-
-    @InjectTranslation("Hello {0}!")
-    Message parameterTestEntry(String name);
+    public Message testEntry() {return null;}
 
 }

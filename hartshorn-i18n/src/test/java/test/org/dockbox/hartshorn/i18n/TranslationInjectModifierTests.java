@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.i18n;
+package test.org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 @UseTranslations
 public class TranslationInjectModifierTests {
 
@@ -32,6 +34,7 @@ public class TranslationInjectModifierTests {
     private ApplicationContext applicationContext;
 
     @Test
+    @TestComponents(ITestResources.class)
     public void testResourceServiceIsProxied() {
         final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final boolean proxy = this.applicationContext.environment().isProxy(resources);
@@ -39,6 +42,7 @@ public class TranslationInjectModifierTests {
     }
 
     @Test
+    @TestComponents(ITestResources.class)
     public void testResourceServiceReturnsValidResourceKey() {
         final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final Message testEntry = resources.testEntry();
@@ -48,6 +52,7 @@ public class TranslationInjectModifierTests {
     }
 
     @Test
+    @TestComponents(ITestResources.class)
     public void testResourceServiceReturnsValidResourceValue() {
         final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final Message testEntry = resources.testEntry();
@@ -57,6 +62,7 @@ public class TranslationInjectModifierTests {
     }
 
     @Test
+    @TestComponents(ITestResources.class)
     public void testResourceServiceFormatsParamResource() {
         final ITestResources resources = this.applicationContext.get(ITestResources.class);
         final Message testEntry = resources.parameterTestEntry("world");
@@ -66,6 +72,7 @@ public class TranslationInjectModifierTests {
     }
 
     @Test
+    @TestComponents(AbstractTestResources.class)
     void testAbstractServiceAbstractMethodIsProxied() {
         final AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
         final Message testEntry = resources.abstractEntry();
@@ -75,6 +82,7 @@ public class TranslationInjectModifierTests {
     }
 
     @Test
+    @TestComponents(AbstractTestResources.class)
     void testAbstractServiceConcreteMethodIsProxied() {
         final AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
         final Message testEntry = resources.concreteEntry();
@@ -84,6 +92,7 @@ public class TranslationInjectModifierTests {
     }
 
     @Test
+    @TestComponents(TestResources.class)
     void testConcreteServiceMethodIsProxied() {
         final TestResources resources = this.applicationContext.get(TestResources.class);
         final Message testEntry = resources.testEntry();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.i18n;
+package test.org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
