@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -25,19 +24,17 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
+public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext, ObserverApplicationContext {
 
     public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
 
@@ -46,7 +43,6 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
-        this.environment().annotationsWith(context.builder().mainClass(), ServiceActivator.class).forEach(this::addActivator);
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
     }
 
@@ -54,16 +50,6 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     protected void prepareInitialization() {
         this.preProcessors = new ConcurrentSetTreeMultiMap<>();
         this.prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
-    }
-
-    @Override
-    public void addActivator(final Annotation annotation) {
-        this.checkRunning();
-        if (this.activatorHolder() instanceof ModifiableActivatorHolder modifiable) {
-            modifiable.addActivator(annotation);
-            return;
-        }
-        throw new IllegalModificationException("Activator holder is not modifiable");
     }
 
     @Override
@@ -88,32 +74,21 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         }
     }
 
-    protected void processPrefixQueue() {
-        this.checkRunning();
-        String next;
-        while ((next = this.prefixQueue.poll()) != null) {
-            this.processPrefix(next);
-        }
-    }
-
-    protected void processPrefix(final String prefix) {
-        this.checkRunning();
-        this.locator().register(prefix);
-    }
-
     @Override
-    public void process() {
+    public void loadContext() {
         this.checkRunning();
-        this.processPrefixQueue();
+        // TODO: Register additional components (should this be moved? Probably..)
+
         final Collection<ComponentContainer> containers = this.locator().containers();
         this.log().debug("Located %d components from classpath".formatted(containers.size()));
-        this.process(containers);
+        this.processComponents(containers);
         this.isRunning = true;
     }
 
-    protected void process(final Collection<ComponentContainer> containers) {
+    protected void processComponents(final Collection<ComponentContainer> containers) {
         this.checkRunning();
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
+            this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
             for (final ComponentContainer container : containers) {
                 final TypeView<?> service = container.type();
                 final Key<?> key = Key.of(service);
@@ -128,17 +103,16 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     }
 
     @Override
-    public void bind(final String prefix) {
-        this.checkRunning();
-        for (final String scannedPrefix : this.environment().prefixContext().prefixes()) {
-            if (prefix.startsWith(scannedPrefix)) return;
-            if (scannedPrefix.startsWith(prefix)) {
-                // If a previously scanned prefix is a prefix of the current prefix, it is more specific and should be ignored,
-                // as this prefix will include the specific prefix.
-                this.environment().prefixContext().prefixes().remove(scannedPrefix);
+    public void componentAdded(final ComponentContainer container) {
+        for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
+            this.log().debug("Processing standalone component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+            final TypeView<?> service = container.type();
+            final Key<?> key = Key.of(service);
+            final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+            serviceProcessor.process(context);
+            if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
+                exiting.exit(this);
             }
         }
-        this.environment().prefix(prefix);
-        this.prefixQueue.add(prefix);
     }
 }

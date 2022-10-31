@@ -14,40 +14,33 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.application.scan;
 
-import org.dockbox.hartshorn.component.Service;
+public class ClassReference implements TypeReference {
 
-import java.lang.annotation.Annotation;
+    private final Class<?> type;
 
-public class ServiceImpl implements Service {
-    @Override
-    public String id() {
-        return "";
+    public ClassReference(final Class<?> type) {
+        this.type = type;
     }
 
     @Override
-    public String name() {
-        return "";
+    public Class<?> getOrLoad() {
+        return this.type;
     }
 
     @Override
-    public boolean singleton() {
-        return false;
+    public String qualifiedName() {
+        return this.type.getCanonicalName();
     }
 
     @Override
-    public boolean lazy() {
-        return false;
+    public String simpleName() {
+        return this.type.getSimpleName();
     }
 
     @Override
-    public boolean permitProxying() {
-        return true;
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return Service.class;
+    public String packageName() {
+        return this.type.getPackage().getName();
     }
 }

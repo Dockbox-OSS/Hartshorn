@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.application.ActivatorHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.ServiceActivatorContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.ProviderContext;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.Result;
@@ -43,7 +42,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
-    private final transient ActivatorHolder activatorHolder;
     private final transient ComponentLocator locator;
 
     private boolean isClosed = false;
@@ -60,7 +58,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
         this.prepareInitialization();
 
-        this.activatorHolder = context.activatorHolder();
         this.environmentValues = context.argumentParser().parse(context.builder().arguments());
         this.componentProvider = context.componentProvider();
         this.locator = context.componentLocator();
@@ -88,35 +85,26 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public Set<Annotation> activators() {
-        return this.activatorHolder.activators();
+        return this.first(ServiceActivatorContext.class)
+                .map(ServiceActivatorContext::activators)
+                .orElse(Set::of)
+                .get();
     }
 
     @Override
     public <A> A activator(final Class<A> activator) {
-        return this.activatorHolder.activator(activator);
+        return this.first(ServiceActivatorContext.class)
+                .map(c -> c.activator(activator))
+                .orElse(() -> null)
+                .get();
     }
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
-        return this.activatorHolder.hasActivator(activator);
-    }
-
-    @Override
-    public <T> void add(final ProviderContext<T> context) {
-        final Key<T> key = context.key();
-        final BindingFunction<T> function = this.bind(key);
-
-        if (context.singleton()) {
-            if (context.lazy()) {
-                function.lazySingleton(context.provider());
-            }
-            else {
-                function.singleton(context.provider().get());
-            }
-        }
-        else {
-            function.to(context.provider());
-        }
+        return this.first(ServiceActivatorContext.class)
+                .map(c -> c.hasActivator(activator))
+                .orElse(() -> false)
+                .get();
     }
 
     @Override
@@ -207,10 +195,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     public ComponentProvider componentProvider() {
         return this.componentProvider;
-    }
-
-    public ActivatorHolder activatorHolder() {
-        return this.activatorHolder;
     }
 
     @Override

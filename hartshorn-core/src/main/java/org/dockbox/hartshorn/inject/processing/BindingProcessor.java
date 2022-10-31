@@ -76,7 +76,6 @@ public class BindingProcessor {
 
         if (conditionMatcher.match(element)) {
             if (element.type().is(Class.class)) {
-                applicationContext.log().debug("Processing class binding for " + element.type().name());
                 this.processClassBinding(applicationContext, TypeUtils.adjustWildcards(element, ObtainableView.class), key, singleton, annotation);
             }
             else {
@@ -103,6 +102,8 @@ public class BindingProcessor {
                                                              final Key<R> key, boolean singleton, final Provider annotation) throws ApplicationException {
         final C targetType = element.getWithContext().rethrowUnchecked()
                 .orThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));
+
+        context.log().debug("Processing class binding for %s -> %s".formatted(key.type().getSimpleName(), targetType.getSimpleName()));
 
         singleton = singleton || context.environment().singleton(targetType);
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());

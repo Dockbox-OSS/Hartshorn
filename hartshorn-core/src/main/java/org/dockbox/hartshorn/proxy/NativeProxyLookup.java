@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationInvocationHandler;
+import org.dockbox.hartshorn.util.introspect.annotations.PolymorphicAnnotationInvocationHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -38,7 +38,7 @@ public class NativeProxyLookup implements ProxyLookup {
         // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
         if (Proxy.isProxyClass(instance.getClass())) {
             final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-            if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
+            if (invocationHandler instanceof PolymorphicAnnotationInvocationHandler annotationInvocationHandler) {
                 return TypeUtils.adjustWildcards(annotationInvocationHandler.annotation().annotationType(), Class.class);
             }
         }

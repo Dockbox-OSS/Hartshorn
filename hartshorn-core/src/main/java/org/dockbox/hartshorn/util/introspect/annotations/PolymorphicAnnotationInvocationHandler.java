@@ -22,13 +22,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationInvocationHandler implements InvocationHandler {
+public class PolymorphicAnnotationInvocationHandler implements InvocationHandler {
 
     final Map<String, Object> cache;
     private final Class<?> type;
     private final Annotation annotation;
 
-    public AnnotationInvocationHandler(final Class<?> type, final Annotation annotation) {
+    public PolymorphicAnnotationInvocationHandler(final Class<?> type, final Annotation annotation) {
         this.type = type;
         this.annotation = annotation;
         this.cache = new HashMap<>();

@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.slf4j.Logger;
@@ -53,7 +52,6 @@ public interface ApplicationContext extends
         HierarchicalComponentProvider,
         ApplicationPropertyHolder,
         ApplicationAwareContext,
-        ApplicationBinder,
         ApplicationLogger,
         ExceptionHandler,
         ActivatorHolder,
@@ -71,11 +69,10 @@ public interface ApplicationContext extends
     void add(ComponentProcessor processor);
 
     /**
-     * Gets the active {@link ApplicationEnvironment} for the application. This allows the application
-     * to access the environment in which it is running, providing access to the application's
-     * {@link org.dockbox.hartshorn.application.scan.PrefixContext} and all of its metadata.
+     * Gets the active {@link ApplicationEnvironment} for the application.
      *
      * @return The active {@link ApplicationEnvironment} for the application.
+     * @see ApplicationEnvironment
      */
     ApplicationEnvironment environment();
 

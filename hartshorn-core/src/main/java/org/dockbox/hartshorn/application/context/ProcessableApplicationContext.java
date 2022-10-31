@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
-
-public interface ProcessableApplicationContext extends ApplicationContext, ModifiableActivatorHolder {
-    void process();
+public interface ProcessableApplicationContext extends ApplicationContext {
+    void loadContext();
 }

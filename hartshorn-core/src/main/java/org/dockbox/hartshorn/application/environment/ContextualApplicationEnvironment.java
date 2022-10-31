@@ -25,7 +25,8 @@ import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
 import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.application.scan.PrefixContext;
+import org.dockbox.hartshorn.application.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
@@ -35,6 +36,7 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
@@ -62,8 +64,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import jakarta.inject.Singleton;
 
@@ -78,9 +83,9 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
     private final boolean isCI;
+    private final boolean isBatchMode;
 
     private ApplicationContext applicationContext;
-    private final PrefixContext prefixContext;
     private Introspector introspector;
 
     public ContextualApplicationEnvironment(final InitializingContext initializingContext) {
@@ -92,14 +97,13 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         this.applicationProxier = this.configure(context.applicationProxier());
         this.annotationLookup = this.configure(context.annotationLookup());
 
+        this.isBatchMode = context.builder().enableBatchMode();
+
         this.isCI = this.checkCI();
         this.checkForDebugging(context);
 
         if (!this.isCI() && context.builder().enableBanner())
             this.printBanner(context);
-
-        this.prefixContext = context.prefixContext();
-        this.log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.prefixContext().prefixes().size()));
     }
 
     private <T> T configure(final T instance) {
@@ -117,28 +121,23 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     public ApplicationFSProvider applicationFSProvider() {
-        return applicationFSProvider;
+        return this.applicationFSProvider;
     }
 
     public ApplicationLogger applicationLogger() {
-        return applicationLogger;
+        return this.applicationLogger;
     }
 
     public ApplicationProxier applicationProxier() {
-        return applicationProxier;
+        return this.applicationProxier;
     }
 
     public ExceptionHandler exceptionHandler() {
-        return exceptionHandler;
+        return this.exceptionHandler;
     }
 
     public AnnotationLookup annotationLookup() {
-        return annotationLookup;
-    }
-
-    @Override
-    public PrefixContext prefixContext() {
-        return this.prefixContext;
+        return this.annotationLookup;
     }
 
     @Override
@@ -155,33 +154,37 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public void prefix(final String prefix) {
-        this.prefixContext.prefix(prefix);
+    public boolean isBatchMode() {
+        return this.isBatchMode;
     }
 
     @Override
     public <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation) {
-        return this.prefixContext.types(annotation);
-    }
-
-    @Override
-    public <A extends Annotation> Collection<TypeView<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
-        return this.prefixContext.types(prefix, annotation, skipParents);
-    }
-
-    @Override
-    public <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation, final boolean skipParents) {
-        return this.prefixContext.types(annotation, skipParents);
-    }
-
-    @Override
-    public <T> Collection<TypeView<? extends T>> children(final TypeView<T> parent) {
-        return this.prefixContext.children(parent);
+        return this.types(type -> type.annotations().has(annotation));
     }
 
     @Override
     public <T> Collection<TypeView<? extends T>> children(final Class<T> parent) {
-        return this.prefixContext.children(parent);
+        return this.types(type -> type.isChildOf(parent));
+    }
+
+    private <T> Collection<TypeView<? extends T>> types(final Predicate<TypeView<?>> predicate) {
+        return TypeUtils.adjustWildcards(this.applicationContext().first(TypeReferenceCollectorContext.class)
+                .map(collectorContext -> collectorContext.collector().collect().stream()
+                        .map(reference -> {
+                            try {
+                                return reference.getOrLoad();
+                            }
+                            catch (final ClassReferenceLoadException e) {
+                                this.handle(e);
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .map(this::introspect)
+                        .filter(predicate)
+                        .collect(Collectors.toSet()))
+                .orThrow(() -> new IllegalStateException("TypeReferenceCollectorContext not available")), Collection.class);
     }
 
     @Override

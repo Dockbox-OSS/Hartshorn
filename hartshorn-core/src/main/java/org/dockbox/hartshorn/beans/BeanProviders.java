@@ -16,13 +16,16 @@
 
 package org.dockbox.hartshorn.beans;
 
-import java.util.Collection;
-import java.util.Set;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Provider;
 
-public interface BeanCollector {
-    <T> BeanReference<T> register(T bean, Class<T> type, String id);
+@Service
+@RequiresActivator(UseBeanScanning.class)
+public class BeanProviders {
 
-    <T> Set<BeanReference<T>> register(Class<T> type, Collection<T> beans, String id);
-
-    void unregister(BeanReference<?> beanReference);
+    @Provider
+    public Class<? extends BeanProvider> beanProvider() {
+        return ContextBeanProvider.class;
+    }
 }

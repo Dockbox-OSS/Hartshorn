@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.application.scan;
 
-import java.util.Collection;
 import java.util.Set;
 
-public interface BeanCollector {
-    <T> BeanReference<T> register(T bean, Class<T> type, String id);
-
-    <T> Set<BeanReference<T>> register(Class<T> type, Collection<T> beans, String id);
-
-    void unregister(BeanReference<?> beanReference);
+public interface TypeReferenceCollector {
+    Set<TypeReference> collect();
 }

@@ -17,9 +17,8 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
@@ -27,21 +26,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class StandardActivatorHolder implements ModifiableActivatorHolder {
+public class ServiceActivatorContext extends DefaultContext {
 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
-    public StandardActivatorHolder(final ApplicationContext applicationContext) {
+    public ServiceActivatorContext(final ApplicationContext applicationContext, final Set<Annotation> serviceActivators) {
         this.applicationContext = applicationContext;
+        for (final Annotation serviceActivator : serviceActivators) {
+            if (!applicationContext.environment().introspect(serviceActivator).annotations().has(ServiceActivator.class)) {
+                throw new IllegalArgumentException("Annotation " + serviceActivator + " is not a valid service activator");
+            }
+            this.activators.put(serviceActivator.annotationType(), serviceActivator);
+        }
     }
 
-    @Override
     public Set<Annotation> activators() {
         return Set.copyOf(this.activators.values());
     }
 
-    @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         final TypeView<? extends Annotation> activatorView = this.applicationContext.environment().introspect(activator);
         if (!activatorView.annotations().has(ServiceActivator.class))
@@ -50,35 +53,11 @@ public class StandardActivatorHolder implements ModifiableActivatorHolder {
         return this.activators.containsKey(activator);
     }
 
-    @Override
     public <A> A activator(final Class<A> activator) {
         final Annotation annotation = this.activators.get(activator);
         if (annotation != null) {
             return activator.cast(annotation);
         }
         return null;
-    }
-
-    @Override
-    public void addActivator(final Annotation annotation) {
-        if (this.activators.containsKey(annotation.annotationType())) return;
-        final TypeView<? extends Annotation> annotationType = this.applicationContext.environment()
-                .introspector()
-                .introspect(annotation.annotationType());
-
-        final Result<ServiceActivator> activator = annotationType.annotations().get(ServiceActivator.class);
-        if (activator.present()) {
-            this.activators.put(annotation.annotationType(), annotation);
-            for (final String scan : activator.get().scanPackages()) {
-                this.applicationContext.bind(scan);
-            }
-
-            for (final Class<? extends ComponentProcessor> processor : activator.get().processors()) {
-                final ComponentProcessor componentProcessor = this.applicationContext.get(processor);
-                this.applicationContext.add(componentProcessor);
-            }
-
-            this.applicationContext.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
-        }
     }
 }

@@ -37,12 +37,6 @@ public class EnvironmentDrivenApplicationConfigurator implements ApplicationConf
         environment.stacktraces(this.stacktraces(environment));
     }
 
-    @Override
-    public void bind(final ApplicationEnvironment environment, final String prefix) {
-        environment.log().debug("Binding prefix " + prefix + " to environment");
-        environment.applicationContext().bind(prefix);
-    }
-
     /**
      * Returns whether stacktraces should be enabled. Uses the {@code hartshorn.exceptions.stacktraces} property
      * to determine this.

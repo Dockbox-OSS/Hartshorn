@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.application.scan;
 
-import java.lang.annotation.Annotation;
+import java.util.Set;
 
-public interface ModifiableActivatorHolder extends ActivatorHolder {
-    void addActivator(Annotation annotation);
+public class CachedTypeReferenceCollector implements TypeReferenceCollector {
+
+    private final TypeReferenceCollector collector;
+    private Set<TypeReference> cache;
+
+    public CachedTypeReferenceCollector(final TypeReferenceCollector collector) {
+        this.collector = collector;
+    }
+
+    @Override
+    public Set<TypeReference> collect() {
+        if (this.cache == null) {
+            this.cache = this.collector.collect();
+        }
+        return this.cache;
+    }
 }

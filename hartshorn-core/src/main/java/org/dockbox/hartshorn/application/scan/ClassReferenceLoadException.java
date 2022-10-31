@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.context;
+package org.dockbox.hartshorn.application.scan;
 
-import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-public interface ObservingApplicationContext {
-    void componentAdded(ComponentContainer componentType);
+public class ClassReferenceLoadException extends ApplicationException {
+
+    public ClassReferenceLoadException(final String message) {
+        super(message);
+    }
+
+    public ClassReferenceLoadException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public ClassReferenceLoadException(final Throwable cause) {
+        super(cause);
+    }
 }
