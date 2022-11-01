@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.testsuite.TestProperties;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
@@ -62,12 +63,7 @@ public class ConditionTests {
         return factory.arguments("--property.c=o",
                 "--property.d=d",
                 "--property.e=otherValue")
-                .serviceActivator(new DemoActivator() {
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return DemoActivator.class;
-                    }
-                });
+                .serviceActivator(TypeUtils.annotation(DemoActivator.class));
     }
 
     public static Stream<Arguments> properties() {

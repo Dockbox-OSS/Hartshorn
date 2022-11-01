@@ -16,8 +16,12 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.dockbox.hartshorn.util.introspect.annotations.MapBackedAnnotationInvocationHandler;
 import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -88,5 +92,16 @@ public class TypeUtils {
             //noinspection unchecked
             return (AdjustedType) obj;
         throw new IllegalArgumentException("Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName());
+    }
+
+    public static <A extends Annotation> A annotation(final Class<A> annotationType) {
+        return annotation(annotationType, Collections.emptyMap());
+    }
+
+    public static <A extends Annotation> A annotation(final Class<A> annotationType, final Map<String, Object> values) {
+        final Object instance = Proxy.newProxyInstance(annotationType.getClassLoader(),
+                new Class[] { annotationType },
+                new MapBackedAnnotationInvocationHandler(annotationType, values == null ? Collections.emptyMap() : values));
+        return adjustWildcards(instance, annotationType);
     }
 }

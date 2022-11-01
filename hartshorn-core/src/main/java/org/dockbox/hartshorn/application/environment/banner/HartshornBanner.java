@@ -29,7 +29,7 @@ public class HartshornBanner implements Banner {
             ====|_| |_|\\__,_|_|===\\__|___/_|=|_|\\___/|_|==|_|=|_|====
                                              -- Hartshorn v%s --
             """.formatted(Hartshorn.VERSION);
-    
+
     @Override
     public void print(final Logger logger) {
         for (final String line : BANNER.split("\n")) {
