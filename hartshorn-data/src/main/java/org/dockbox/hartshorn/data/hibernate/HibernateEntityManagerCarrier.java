@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.hibernate.Session;
@@ -37,7 +36,10 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import java.sql.Driver;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -189,15 +191,17 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this.hibernateConfiguration.setProperty("hibernate.connection.driver_class", driver.getCanonicalName());
         this.hibernateConfiguration.setProperty("hibernate.dialect", dialect);
 
-        Result<EntityContext> context = this.applicationContext().first(EntityContext.class);
-        if (context.absent()) {
+        final List<EntityContext> entityContexts = new ArrayList<>(this.applicationContext().all(EntityContext.class));
+        if (entityContexts.isEmpty()) {
             final Collection<TypeView<?>> entities = this.applicationContext.environment().types(Entity.class);
             final EntityContext entityContext = new EntityContext(entities);
             this.applicationContext.add(entityContext);
-            context = Result.of(entityContext);
+            entityContexts.add(entityContext);
         }
 
-        final Collection<TypeView<?>> entities = context.get().entities();
+        final Collection<TypeView<?>> entities = entityContexts.stream()
+                .flatMap(context -> context.entities().stream())
+                .collect(Collectors.toSet());
         for (final TypeView<?> entity : entities) {
             this.hibernateConfiguration.addAnnotatedClass(entity.type());
         }
