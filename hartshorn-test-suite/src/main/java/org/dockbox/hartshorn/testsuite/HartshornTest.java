@@ -67,15 +67,15 @@ public @interface HartshornTest {
      * for the test class or method. These will be added to the default set of packages scanned by the
      * test suite, even if they are not known to the chosen {@link #mainClass()}.
      *
-     * @see ApplicationBuilder#prefixes(String...)
+     * @see ApplicationBuilder#scanPackages(String...)
      */
     String[] scanPackages() default {};
 
     /**
      * Whether to include the base package of the main class explicitly, or to only use the prefixes provided to
-     * {@link ApplicationBuilder#prefixes(String...)} (and overloaded methods).
+     * {@link ApplicationBuilder#scanPackages(String...)} (and overloaded methods).
      *
-     * @see ApplicationBuilder#prefixes(String...)
+     * @see ApplicationBuilder#scanPackages(String...)
      */
     boolean includeBasePackages() default true;
 

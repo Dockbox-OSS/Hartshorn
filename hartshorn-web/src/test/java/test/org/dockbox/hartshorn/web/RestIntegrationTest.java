@@ -32,6 +32,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.testsuite.TestProperties;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpMethod;
@@ -47,6 +48,7 @@ import jakarta.inject.Inject;
 @UseHttpServer
 @HartshornTest(includeBasePackages = false)
 @TestProperties("--hartshorn.web.port=0")
+@TestComponents(TestController.class)
 public abstract class RestIntegrationTest {
 
     @Inject

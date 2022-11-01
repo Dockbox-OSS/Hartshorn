@@ -31,7 +31,7 @@ import test.org.dockbox.hartshorn.commands.types.SampleCommand;
 @HartshornTest(includeBasePackages = false)
 @UseCommands
 @UseExpressionValidation
-@TestComponents(SampleCommand.class)
+@TestComponents({SampleCommand.class, JUnitSystemSubject.class})
 public class CommandConditionMatchingTests {
 
     @Inject

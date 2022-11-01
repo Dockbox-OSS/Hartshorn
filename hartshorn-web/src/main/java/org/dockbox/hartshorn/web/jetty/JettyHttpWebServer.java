@@ -55,7 +55,6 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     @Inject
     public JettyHttpWebServer(final JettyResourceService resourceService) {
-        super();
         this.contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         this.contextHandler.setContextPath("/");
         final URL staticContent = Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT.substring(1));

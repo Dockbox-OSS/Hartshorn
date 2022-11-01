@@ -40,6 +40,7 @@ public class CommandExecutorTests {
     private JUnitSystemSubject subject;
 
     @InjectTest
+    @TestComponents(MethodCancellingActivator.class)
     void testMethodCancelling() throws ParsingException {
         Assertions.assertTrue(this.subject.received().isEmpty());
 

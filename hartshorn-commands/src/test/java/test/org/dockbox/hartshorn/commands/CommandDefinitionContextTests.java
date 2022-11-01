@@ -52,6 +52,7 @@ public class CommandDefinitionContextTests {
     private final Key<SampleCommand> typeContext = Key.of(SampleCommand.class);
 
     @Test
+    @TestComponents(SampleCommand.class)
     void testParsingCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -68,6 +69,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
+    @TestComponents(SampleCommand.class)
     void testComplexParsingCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -96,6 +98,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
+    @TestComponents(SampleCommand.class)
     void testArgumentParameters() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -113,6 +116,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
+    @TestComponents(SampleCommand.class)
     void testGroups() throws ParsingException {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -184,7 +188,7 @@ public class CommandDefinitionContextTests {
 
         @Override
         public String arguments() {
-            return "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
+            return "<required{String}> [optional{String}]  [enum{test.org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
         }
 
         @Override

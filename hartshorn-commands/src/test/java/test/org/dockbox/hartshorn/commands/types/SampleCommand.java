@@ -39,7 +39,7 @@ public class SampleCommand {
     public void subsub(final CommandContext context) {
     }
 
-    @Command(value = "complex", arguments = "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s")
+    @Command(value = "complex", arguments = "<required{String}> [optional{String}]  [enum{test.org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s")
     public void complex(final CommandContext context) {
     }
 
