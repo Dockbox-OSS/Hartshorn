@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.PredefinedSetTypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.ReflectionsTypeReferenceCollector;
+import org.dockbox.hartshorn.application.scan.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -168,9 +168,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     protected void enhanceTypeReferenceCollectorContext(final ApplicationBuilder<?, ?> builder, final ApplicationEnvironment environment, final TypeReferenceCollectorContext collectorContext) {
-        collectorContext.register(new ReflectionsTypeReferenceCollector(environment, Hartshorn.PACKAGE_PREFIX));
+        collectorContext.register(new ClassPathScannerTypeReferenceCollector(environment, Hartshorn.PACKAGE_PREFIX));
         if (builder.includeBasePackages()) {
-            collectorContext.register(new ReflectionsTypeReferenceCollector(environment, builder.mainClass().getPackageName()));
+            collectorContext.register(new ClassPathScannerTypeReferenceCollector(environment, builder.mainClass().getPackageName()));
         }
 
         final Set<Class<? extends ComponentProcessor>> componentProcessorTypes = new HashSet<>();
@@ -188,7 +188,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         }
 
         prefixes.stream()
-                .map(prefix -> new ReflectionsTypeReferenceCollector(environment, prefix))
+                .map(prefix -> new ClassPathScannerTypeReferenceCollector(environment, prefix))
                 .forEach(collectorContext::register);
 
         collectorContext.register(PredefinedSetTypeReferenceCollector.of(builder.standaloneComponents()));

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application.scan;
 
+import java.util.Objects;
+
 public class ClassNameReference implements TypeReference {
 
     private final String name;
@@ -46,5 +48,17 @@ public class ClassNameReference implements TypeReference {
     @Override
     public String packageName() {
         return this.name.substring(0, this.name.lastIndexOf('.'));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof final ClassNameReference that)) return false;
+        return this.name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name);
     }
 }

@@ -37,7 +37,6 @@ dependencies {
     api(libs.javassist)
     api(libs.cglib)
 
-    implementation(libs.reflections)
     implementation(libs.logback)
 
     testImplementation(libs.scala)

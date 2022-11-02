@@ -41,6 +41,10 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
         return this.packageName;
     }
 
+    protected ApplicationEnvironment environment() {
+        return this.environment;
+    }
+
     @Override
     public Set<TypeReference> collect() {
         if (this.environment.isBatchMode() && BATCH_CACHE.containsKey(this.packageName)) {

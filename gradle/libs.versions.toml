@@ -111,7 +111,6 @@ mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito
 mssql = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssql" }
 mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 scala = { module = "org.scala-lang:scala-library", version.ref = "scala" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 woodstox = { module = "org.codehaus.woodstox:woodstox-core-asl", version.ref = "woodstox" }
