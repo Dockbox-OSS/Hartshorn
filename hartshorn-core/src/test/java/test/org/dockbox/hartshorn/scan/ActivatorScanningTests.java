@@ -17,9 +17,13 @@
 package test.org.dockbox.hartshorn.scan;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.scan.ClasspathTypeReferenceCollector;
+import org.dockbox.hartshorn.application.scan.TypeReferenceCollector;
+import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.util.Result;
 import org.junit.jupiter.api.Assertions;
 
 @UseDemo
@@ -28,7 +32,18 @@ public class ActivatorScanningTests {
 
     @InjectTest
     void testPrefixFromActivatorIsRegistered(final ApplicationContext applicationContext) {
-        // TODO: Reimplement this test
+        final Result<TypeReferenceCollectorContext> contextCandidate = applicationContext.first(TypeReferenceCollectorContext.class);
+        Assertions.assertTrue(contextCandidate.present());
+
+        final TypeReferenceCollectorContext context = contextCandidate.get();
+        for (final TypeReferenceCollector collector : context.collectors()) {
+            if (collector instanceof ClasspathTypeReferenceCollector referenceCollector) {
+                if ("test.org.dockbox.hartshorn.scan".equals(referenceCollector.packageName())) {
+                    return;
+                }
+            }
+        }
+        Assertions.fail("No collector found for package test.org.dockbox.hartshorn.scan");
     }
 
     @InjectTest

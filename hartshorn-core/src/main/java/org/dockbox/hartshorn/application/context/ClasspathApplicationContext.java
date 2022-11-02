@@ -77,10 +77,8 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     @Override
     public void loadContext() {
         this.checkRunning();
-        // TODO: Register additional components (should this be moved? Probably..)
-
         final Collection<ComponentContainer> containers = this.locator().containers();
-        this.log().debug("Located %d components from classpath".formatted(containers.size()));
+        this.log().debug("Located %d components".formatted(containers.size()));
         this.processComponents(containers);
         this.isRunning = true;
     }

@@ -165,7 +165,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
     @Override
     public <T> Collection<TypeView<? extends T>> children(final Class<T> parent) {
-        return this.types(type -> type.isChildOf(parent));
+        return this.types(type -> type.isChildOf(parent) && !type.is(parent));
     }
 
     private <T> Collection<TypeView<? extends T>> types(final Predicate<TypeView<?>> predicate) {

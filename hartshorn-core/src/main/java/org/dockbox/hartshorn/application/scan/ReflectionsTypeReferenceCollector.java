@@ -17,56 +17,34 @@
 package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
-public class ReflectionsTypeReferenceCollector implements TypeReferenceCollector {
-
-    private static final MultiMap<String, TypeReference> BATCH_CACHE = new ConcurrentSetMultiMap<>();
-
-    private final ApplicationEnvironment environment;
-    private final String packageName;
-    private final Set<TypeReference> cache = ConcurrentHashMap.newKeySet();
+public class ReflectionsTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
     public ReflectionsTypeReferenceCollector(final ApplicationEnvironment environment, final String packageName) {
-        this.environment = environment;
-        this.packageName = packageName;
+        super(environment, packageName);
     }
 
     @Override
-    public Set<TypeReference> collect() {
-        if (this.environment.isBatchMode() && BATCH_CACHE.containsKey(this.packageName)) {
-            // Don't use local cache in batch mode, to avoid n*2 memory usage
-            return Set.copyOf(BATCH_CACHE.get(this.packageName));
-        }
+    protected Set<TypeReference> createCache() {
+        final FilterBuilder inputsFilter = new FilterBuilder();
+        inputsFilter.includePackage(this.packageName());
 
-        // TODO: This can probably be improved, so let's do that!
-        if (this.cache.isEmpty()) {
-            final FilterBuilder inputsFilter = new FilterBuilder();
-            inputsFilter.includePackage(this.packageName);
-            final Reflections reflections = new Reflections(new ConfigurationBuilder()
-                    .forPackage(this.packageName)
-                    .setInputsFilter(inputsFilter)
-                    .setScanners(new TypeElementsScanner())
-            );
-            final Set<String> names = reflections.getStore().get(TypeElementsScanner.class.getSimpleName()).keySet();
-            for (final String name : names) {
-                final TypeReference classNameReference = new ClassNameReference(name);
-                this.cache.add(classNameReference);
-            }
-
-            if (this.environment.isBatchMode()) {
-                BATCH_CACHE.putAll(this.packageName, this.cache);
-            }
-        }
-        return Collections.unmodifiableSet(this.cache);
+        final Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .forPackage(this.packageName())
+                .setInputsFilter(inputsFilter)
+                .setScanners(new TypeElementsScanner())
+                .setExpandSuperTypes(false)
+        );
+        return reflections.getStore().get(TypeElementsScanner.class.getSimpleName())
+                .keySet().stream()
+                .map(ClassNameReference::new)
+                .collect(Collectors.toSet());
     }
 }

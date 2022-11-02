@@ -18,6 +18,9 @@ package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.scan.ReflectionsTypeReferenceCollector;
+import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -37,6 +40,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -186,13 +190,19 @@ public class ReflectTests {
     }
 
     @InjectTest
-    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationEnvironment environment) {
-        // TODO: Reinstate this test when the environment is fixed
+    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationEnvironment environment, @Context final TypeReferenceCollectorContext context) {
+        context.register(new ReflectionsTypeReferenceCollector(environment, "test.org.dockbox.hartshorn.components.reflect"));
+        final Collection<TypeView<?>> types = environment.types(Demo.class);
+        Assertions.assertEquals(1, types.size());
+        Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
 
     @InjectTest
-    void testSubTypesReturnsAllSubTypes(final ApplicationEnvironment environment) {
-        // TODO: Reinstate this test when the environment is fixed
+    void testSubTypesReturnsAllSubTypes(final ApplicationEnvironment environment, @Context final TypeReferenceCollectorContext context) {
+        context.register(new ReflectionsTypeReferenceCollector(environment, "test.org.dockbox.hartshorn.components.reflect"));
+        final Collection<TypeView<? extends ParentTestType>> types = environment.children(ParentTestType.class);
+        Assertions.assertEquals(1, types.size());
+        Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
 
     @Test
