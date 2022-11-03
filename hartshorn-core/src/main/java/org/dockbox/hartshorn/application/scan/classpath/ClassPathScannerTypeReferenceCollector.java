@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.scan;
+package org.dockbox.hartshorn.application.scan.classpath;
 
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.scan.ClassNameReference;
+import org.dockbox.hartshorn.application.scan.TypeReference;
 
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
@@ -30,15 +33,23 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
     @Override
     protected Set<TypeReference> createCache() {
         final Set<TypeReference> typeReferences = new HashSet<>();
-        final ClassPathScanner classpathScanner = ClassPathScanner.create();
-        classpathScanner
-                .filterBeginResourceName(this.packageName())
-                .filterClassOnly()
-                .scan(resource -> {
-                    if (resource.isClassResource()) {
-                        typeReferences.add(new ClassNameReference(resource.getResourceName()));
-                    }
-                });
+        final ClassPathScanner classpathScanner = ClassPathScanner.create()
+                .includeDefaultClassPath()
+                .filterPrefix(this.packageName())
+                .classesOnly();
+
+        try {
+            classpathScanner.scan(resource -> {
+                if(resource.isClassResource()) {
+                    typeReferences.add(new ClassNameReference(resource.resourceName()));
+                }
+            });
+        }
+        catch(ClassPathWalkingException e) {
+            this.environment().handle("Could not scan classpath for types", e);
+            return Collections.emptySet();
+        }
+
         this.environment().log().debug("Located {} classes in package {} in {} seconds", typeReferences.size(), this.packageName(), (classpathScanner.scanTime() / 1000.0));
         return typeReferences;
     }

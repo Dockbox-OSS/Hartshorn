@@ -17,9 +17,9 @@
 package test.org.dockbox.hartshorn.scan;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.scan.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.application.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.application.scan.classpath.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;

@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.PredefinedSetTypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.application.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
@@ -173,9 +173,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
             collectorContext.register(new ClassPathScannerTypeReferenceCollector(environment, builder.mainClass().getPackageName()));
         }
 
-        final Set<Class<? extends ComponentProcessor>> componentProcessorTypes = new HashSet<>();
         final Set<String> prefixes = new HashSet<>(builder.scanPackages());
-
         for (final ServiceActivator serviceActivator : environment.introspect(builder.mainClass()).annotations().all(ServiceActivator.class)) {
             prefixes.addAll(List.of(serviceActivator.scanPackages()));
         }

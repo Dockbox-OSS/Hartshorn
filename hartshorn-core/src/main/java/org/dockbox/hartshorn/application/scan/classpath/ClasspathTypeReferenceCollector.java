@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.scan;
-
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+package org.dockbox.hartshorn.application.scan.classpath;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.scan.TypeReference;
+import org.dockbox.hartshorn.application.scan.TypeReferenceCollector;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 
 public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCollector {
 
