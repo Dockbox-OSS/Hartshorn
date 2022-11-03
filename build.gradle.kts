@@ -32,7 +32,7 @@ plugins {
     java
     `java-library`
     id("org.cadixdev.licenser") version "0.6.1"
-    id("org.checkerframework") version "0.6.5"
+    id("org.checkerframework") version "0.6.19"
 }
 
 apply {
@@ -118,6 +118,8 @@ allprojects {
         testImplementation(project(":hartshorn-test-suite"))
         testImplementation(rootProject.libs.bundles.test)
         testImplementation(rootProject.libs.bundles.testRuntime)
+
+        checkerFramework("org.checkerframework:checker:3.27.0")
     }
 
     tasks {
