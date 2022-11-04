@@ -23,10 +23,6 @@ import java.util.Collection;
 
 public interface ComponentLocator {
 
-    void register(String prefix);
-
-    void register(final Class<?> type);
-
     Collection<ComponentContainer> containers();
 
     Collection<ComponentContainer> containers(ComponentType functional);

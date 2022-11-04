@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.eclipse.jetty.http.HttpMethod;
@@ -31,6 +33,7 @@ import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 
+@Component
 public class JettyServer extends Server {
 
     @Inject

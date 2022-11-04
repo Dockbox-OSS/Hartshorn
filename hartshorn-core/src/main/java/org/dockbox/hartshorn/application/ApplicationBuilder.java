@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
-import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
@@ -83,10 +82,10 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     Set<String> arguments();
 
     /**
-     * Whether to include the base package of the activator class explicitly, or to only use the prefixes provided to
-     * {@link #prefixes(String...)} (and overloaded methods).
+     * Whether to include the base package of the main class explicitly, or to only use the prefixes provided to
+     * {@link #scanPackages(String...)} (and overloaded methods).
      *
-     * @param include Whether to include the base package of the activator class explicitly.
+     * @param include Whether to include the base package of the main class explicitly.
      * @return The {@link ApplicationBuilder} instance.
      */
     Self includeBasePackages(boolean include);
@@ -102,6 +101,10 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     Self enableBanner(boolean enable);
 
     boolean enableBanner();
+
+    Self enableBatchMode(boolean enable);
+
+    boolean enableBatchMode();
 
     /**
      * Adds a service activator to the application. These are later used by the active {@link ApplicationContext} to
@@ -261,18 +264,6 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     ApplicationArgumentParser argumentParser(final InitializingContext context);
 
     /**
-     * Sets the {@link PrefixContext} to use. The prefix context is responsible for keeping track of known prefixes and provide
-     * access to annotated- and subtypes in the application.
-     *
-     * @param prefixContext The prefix context to use.
-     * @return The {@link ApplicationBuilder} instance.
-     * @see PrefixContext
-     */
-    Self prefixContext(Initializer<PrefixContext> prefixContext);
-
-    PrefixContext prefixContext(final InitializingContext context);
-
-    /**
      * Sets the {@link ComponentProvider} to use. The component provider is responsible for providing components and services
      * to the application. This acts as the primary component provider.
      *
@@ -318,50 +309,38 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
 
     Set<ComponentPreProcessor> componentPreProcessors();
 
+    Self standaloneComponent(Class<?> component);
+
+    Set<Class<?>> standaloneComponents();
+
     /**
      * Registers a custom package prefix which should be known to the application. These prefixes are bound using the
      * configured {@link ApplicationConfigurator} during application creation.
      *
-     * @param prefix The prefix to register.
+     * @param packageName The prefix to register.
      * @return The {@link ApplicationBuilder} instance.
-     * @see ApplicationConfigurator#bind(ApplicationEnvironment, String)
-     * @see ApplicationEnvironment#prefix(String)
      */
-    Self prefix(String prefix);
+    Self scanPackage(String packageName);
 
     /**
      * Registers custom prefixes which should be known to the application. These prefixes are bound using the configured
      * {@link ApplicationConfigurator} during application creation.
      *
-     * @param prefixes The prefixes to register.
+     * @param packages The prefixes to register.
      * @return The {@link ApplicationBuilder} instance.
-     * @see ApplicationConfigurator#bind(ApplicationEnvironment, String)
-     * @see ApplicationEnvironment#prefix(String)
      */
-    Self prefixes(String... prefixes);
+    Self scanPackages(String... packages);
 
     /**
      * Registers custom prefixes which should be known to the application. These prefixes are bound using the configured
      * {@link ApplicationConfigurator} during application creation.
      *
-     * @param prefixes The prefixes to register.
-     * @return The {@link ApplicationBuilder} instance.
-     * @see ApplicationConfigurator#bind(ApplicationEnvironment, String)
-     * @see ApplicationEnvironment#prefix(String)
-     */
-    Self prefixes(Set<String> prefixes);
-
-    Set<String> prefixes();
-
-    /**
-     * Registers a custom {@link ActivatorHolder} which should be known to the application.
-     *
-     * @param activatorHolder The activator holder to register.
+     * @param packages The prefixes to register.
      * @return The {@link ApplicationBuilder} instance.
      */
-    Self activatorHolder(Initializer<ActivatorHolder> activatorHolder);
+    Self scanPackages(Set<String> packages);
 
-    ActivatorHolder activatorHolder(final InitializingContext context);
+    Set<String> scanPackages();
 
     /**
      * Registers a custom {@link ConditionMatcher} which should be known to the application.

@@ -17,13 +17,9 @@
 package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
-import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.ServiceImpl;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -104,8 +100,12 @@ public class HartshornLifecycleExtension implements
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        final ApplicationBuilder<?, ?> applicationBuilder = this.prepareFactory(testClass, testComponentSources);
+        final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
+        elements.add(testClass);
+
+        final ApplicationBuilder<?, ?> applicationBuilder = this.prepareFactory(testClass, elements);
         final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationBuilder, testClass).orNull();
+
         if (applicationContext == null) {
             throw new IllegalStateException("Could not create application context");
         }
@@ -167,25 +167,20 @@ public class HartshornLifecycleExtension implements
         }
         applicationBuilder.serviceActivators(serviceActivators);
 
-        final ApplicationContext context = applicationBuilder.mainClass(activator).create();
+        final ApplicationContext context = applicationBuilder.create();
         return Result.of(context);
     }
 
-    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
+    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final List<AnnotatedElement> testComponentSources) {
         ApplicationBuilder<?, ?> applicationBuilder = new StandardApplicationBuilder()
                 .loadDefaults()
                 .enableBanner(false)
-                .applicationFSProvider(ctx -> new JUnitFSProvider())
-                .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources))
-                .serviceActivator(new ServiceImpl());
-
-        final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
-        elements.add(testClass);
+                .applicationFSProvider(ctx -> new JUnitFSProvider());
 
         final List<String> arguments = new ArrayList<>();
         final ApplicationBuilder<?, ?> finalApplicationBuilder = applicationBuilder;
 
-        for (final AnnotatedElement element : elements) {
+        for (final AnnotatedElement element : testComponentSources) {
             Result.of(element.getAnnotation(HartshornTest.class))
                     .present(annotation -> {
                         for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
@@ -198,17 +193,41 @@ public class HartshornLifecycleExtension implements
                             }
                         }
 
-                        finalApplicationBuilder.prefixes(annotation.scanPackages());
+                        finalApplicationBuilder
+                                .scanPackages(annotation.scanPackages())
+                                .includeBasePackages(annotation.includeBasePackages());
+
+                        if (annotation.mainClass() != Void.class) {
+                            finalApplicationBuilder.mainClass(annotation.mainClass());
+                        }
                     });
+
+            if (applicationBuilder.mainClass() == null) {
+                applicationBuilder.mainClass(testClass);
+            }
 
             Result.of(element.getAnnotation(TestProperties.class))
                     .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         }
 
-        applicationBuilder.arguments(arguments.toArray(new String[0]));
+        applicationBuilder.arguments(arguments.toArray(new String[0]))
+                // Properties below are sensible defaults for testing, but can be enabled/disabled by modifying the application builder in a @ModifyApplication
+                // method if needed.
+                .enableBatchMode(true) // Enable batch mode, to make use of additional caching
+                .enableBanner(false); // Disable banner for tests
+
+        for (final AnnotatedElement testComponentSource : testComponentSources) {
+            if (testComponentSource == null) continue;
+            if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
+                final TestComponents testComponents = testComponentSource.getAnnotation(TestComponents.class);
+                for (final Class<?> component : testComponents.value()) {
+                    applicationBuilder.standaloneComponent(component);
+                }
+            }
+        }
 
         final List<Method> methods = Arrays.stream(testClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(HartshornFactory.class))
+                .filter(method -> method.isAnnotationPresent(ModifyApplication.class))
                 .toList();
 
         for (final Method factoryModifier : methods) {
@@ -237,21 +256,5 @@ public class HartshornLifecycleExtension implements
         }
 
         return applicationBuilder;
-    }
-
-    private ComponentLocator getComponentLocator(final InitializingContext context, final AnnotatedElement... testComponentSources) {
-        final ComponentLocator componentLocator = new ComponentLocatorImpl(context);
-
-        for (final AnnotatedElement testComponentSource : testComponentSources) {
-            if (testComponentSource == null) continue;
-            if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
-                final TestComponents testComponents = testComponentSource.getAnnotation(TestComponents.class);
-                for (final Class<?> component : testComponents.value()) {
-                    componentLocator.register(component);
-                }
-            }
-        }
-
-        return componentLocator;
     }
 }

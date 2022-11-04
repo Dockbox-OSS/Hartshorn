@@ -26,16 +26,14 @@ import org.dockbox.hartshorn.application.environment.ClassLoaderClasspathResourc
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser;
-import org.dockbox.hartshorn.application.scan.PrefixContext;
-import org.dockbox.hartshorn.application.scan.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.ComponentLocatorImpl;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentPostConstructorImpl;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
+import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -82,12 +80,14 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected Class<?> mainClass;
     protected boolean includeBasePackages = true;
     protected boolean enableBanner = true;
+    private boolean enableBatchMode = false;
 
     protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
     protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
     protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
     protected final Set<ComponentPostProcessor> componentPostProcessors = ConcurrentHashMap.newKeySet();
     protected final Set<ComponentPreProcessor> componentPreProcessors = ConcurrentHashMap.newKeySet();
+    protected final Set<Class<?>> standaloneComponents = ConcurrentHashMap.newKeySet();
 
     protected ComponentInitializer<ApplicationConfigurator> applicationConfigurator = ComponentInitializer.of(ctx -> new EnvironmentDrivenApplicationConfigurator());
     protected ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> new JavassistApplicationProxier());
@@ -96,13 +96,11 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected ComponentInitializer<ApplicationArgumentParser> argumentParser = ComponentInitializer.of(ctx -> new StandardApplicationArgumentParser());
     protected ComponentInitializer<ApplicationLogger> applicationLogger = ComponentInitializer.of(ctx -> new LogbackApplicationLogger());
     protected ComponentInitializer<ApplicationEnvironment> applicationEnvironment = ComponentInitializer.of(ContextualApplicationEnvironment::new);
-    protected ComponentInitializer<ComponentLocator> componentLocator = ComponentInitializer.of(ComponentLocatorImpl::new);
+    protected ComponentInitializer<ComponentLocator> componentLocator = ComponentInitializer.of(ctx -> new TypeReferenceLookupComponentLocator(ctx.applicationContext()));
     protected ComponentInitializer<ComponentPostConstructor> componentPostConstructor = ComponentInitializer.of(ComponentPostConstructorImpl::new);
     protected ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.environment()));
     protected ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(HierarchicalApplicationComponentProvider::new);
     protected ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
-    protected ComponentInitializer<PrefixContext> prefixContext = ComponentInitializer.of(ctx -> new ReflectionsPrefixContext(ctx.environment()));
-    protected ComponentInitializer<ActivatorHolder> activatorHolder = ComponentInitializer.of(ctx -> new StandardActivatorHolder(ctx.applicationContext()));
     protected ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
     protected ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
 
@@ -160,6 +158,17 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     }
 
     @Override
+    public Self enableBatchMode(final boolean enable) {
+        this.enableBatchMode = enable;
+        return this.self();
+    }
+
+    @Override
+    public boolean enableBatchMode() {
+        return this.enableBatchMode;
+    }
+
+    @Override
     public Self serviceActivator(final Annotation annotation) {
         this.serviceActivators.add(annotation);
         return this.self();
@@ -199,25 +208,36 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     }
 
     @Override
-    public Self prefix(final String prefix) {
-        this.prefixes.add(prefix);
+    public Self standaloneComponent(final Class<?> component) {
+        this.standaloneComponents.add(component);
         return this.self();
     }
 
     @Override
-    public Self prefixes(final String... prefixes) {
-        this.prefixes.addAll(Set.of(prefixes));
+    public Set<Class<?>> standaloneComponents() {
+        return this.standaloneComponents;
+    }
+
+    @Override
+    public Self scanPackage(final String packageName) {
+        this.prefixes.add(packageName);
         return this.self();
     }
 
     @Override
-    public Self prefixes(final Set<String> prefixes) {
-        this.prefixes.addAll(prefixes);
+    public Self scanPackages(final String... packages) {
+        this.prefixes.addAll(Set.of(packages));
         return this.self();
     }
 
     @Override
-    public Set<String> prefixes() {
+    public Self scanPackages(final Set<String> packages) {
+        this.prefixes.addAll(packages);
+        return this.self();
+    }
+
+    @Override
+    public Set<String> scanPackages() {
         return this.prefixes;
     }
 
@@ -343,17 +363,6 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     }
 
     @Override
-    public Self prefixContext(final Initializer<PrefixContext> prefixContext) {
-        this.prefixContext.initializer(prefixContext);
-        return this.self();
-    }
-
-    @Override
-    public PrefixContext prefixContext(final InitializingContext context) {
-        return this.prefixContext.initialize(context);
-    }
-
-    @Override
     public Self componentProvider(final Initializer<ComponentProvider> componentProvider) {
         this.componentProvider.initializer(componentProvider);
         return this.self();
@@ -373,17 +382,6 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     @Override
     public ComponentPopulator componentPopulator(final InitializingContext context) {
         return this.componentPopulator.initialize(context);
-    }
-
-    @Override
-    public Self activatorHolder(final Initializer<ActivatorHolder> activatorHolder) {
-        this.activatorHolder.initializer(activatorHolder);
-        return this.self();
-    }
-
-    @Override
-    public ActivatorHolder activatorHolder(final InitializingContext context) {
-        return this.activatorHolder.initialize(context);
     }
 
     @Override

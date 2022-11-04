@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * <p>The {@link #value()} does not have to include the file extension, the file format is automatically adjusted based on available files if
  * no explicit file extension is provided.
  *
- * <p>Assuming there is a file called `demo.yml` on the classpath, the following will adapt to {@link org.dockbox.hartshorn.data.FileFormats#YAML}.
+ * <p>Assuming there is a file called {@code demo.yml} on the classpath, the following will adapt to {@link org.dockbox.hartshorn.data.FileFormats#YAML}.
  * <pre>{@code
  * @Component
  * @Configuration("classpath:demo")

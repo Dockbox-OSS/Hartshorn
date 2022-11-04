@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+import java.util.function.Consumer;
+
 /**
  * Application starter for Hartshorn applications. This takes a single type
  * which provides application metadata, and a set of command line arguments.
@@ -43,5 +45,25 @@ public final class HartshornApplication {
                 .mainClass(mainClass)
                 .arguments(args)
                 .create();
+    }
+
+    public static ApplicationContext create(final Class<?> mainClass, final Consumer<ApplicationBuilder<?, ApplicationContext>> modifier) {
+        final ApplicationBuilder<?, ApplicationContext> builder = new StandardApplicationBuilder()
+                .loadDefaults()
+                .mainClass(mainClass);
+        modifier.accept(builder);
+        return builder.create();
+    }
+
+    public static ApplicationContext create(final String... args) {
+        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        final StackTraceElement element = stackTrace[2];
+        try {
+            final Class<?> mainClass = Class.forName(element.getClassName());
+            return create(mainClass, args);
+        }
+        catch (final ClassNotFoundException e) {
+            throw new IllegalStateException("Could not deduce main class", e);
+        }
     }
 }

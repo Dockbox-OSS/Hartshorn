@@ -20,10 +20,10 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.UseBeanScanning;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.function.Function;
@@ -76,27 +76,10 @@ public class StandardApplicationBuilder extends DefaultApplicationBuilder<Standa
 
     public StandardApplicationBuilder loadDefaults() {
         return this.constructor(StandardApplicationContextConstructor::new)
-                .serviceActivator(new UseBootstrap() {
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return UseBootstrap.class;
-                    }
-                }).serviceActivator(new UseProxying() {
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return UseProxying.class;
-                    }
-                }).serviceActivator(new UseServiceProvision() {
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return UseServiceProvision.class;
-                    }
-                }).serviceActivator(new UseBeanScanning() {
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return UseBeanScanning.class;
-                    }
-                });
+                .serviceActivator(TypeUtils.annotation(UseBootstrap.class))
+                .serviceActivator(TypeUtils.annotation(UseProxying.class))
+                .serviceActivator(TypeUtils.annotation(UseServiceProvision.class))
+                .serviceActivator(TypeUtils.annotation(UseBeanScanning.class));
     }
 
     @Override

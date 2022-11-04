@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class StandardApplicationArgumentParser implements ApplicationArgumentParser {
 
-    private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.]+)=(.+)");
+    private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.:_-]+)=(.+)");
 
     @Override
     public Properties parse(final Set<String> arguments) {

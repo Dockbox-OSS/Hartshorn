@@ -42,6 +42,7 @@ import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
@@ -113,6 +114,11 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
             instance = this.process(key, objectContainer, container.get());
         }
         else {
+            final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
+            if (typeView.annotations().has(Component.class)) {
+                throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
+            }
+
             if (instance != null) {
                 final TypeView<Object> instanceType = this.applicationContext().environment().introspect(instance);
                 for (final FieldView<?, ?> field : instanceType.fields().annotatedWith(Inject.class)) {

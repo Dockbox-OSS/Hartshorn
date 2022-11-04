@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
-import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
@@ -30,7 +29,6 @@ import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
@@ -117,14 +115,6 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         return this.configuration.componentPopulator(this);
     }
 
-    public PrefixContext prefixContext() {
-        return this.configuration.prefixContext(this);
-    }
-
-    public ActivatorHolder activatorHolder() {
-        return this.configuration.activatorHolder(this);
-    }
-
     public ApplicationBuilder<?, ?> builder() {
         return this.configuration;
     }
@@ -135,7 +125,6 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         binder.bind(ExceptionHandler.class).singleton(this.applicationContext());
         binder.bind(ApplicationContext.class).singleton(this.applicationContext());
         binder.bind(ApplicationPropertyHolder.class).singleton(this.applicationContext());
-        binder.bind(ApplicationBinder.class).singleton(this.applicationContext());
 
         // Application environment
         binder.bind(Introspector.class).singleton(this.environment());
@@ -147,7 +136,6 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         binder.bind(ApplicationFSProvider.class).singleton(this.environment());
 
         // Standalone components - alphabetical order
-        binder.bind(ActivatorHolder.class).singleton(this.activatorHolder());
         binder.bind(AnnotationLookup.class).singleton(this.annotationLookup());
         binder.bind(ComponentLocator.class).singleton(this.componentLocator());
         binder.bind(ComponentPopulator.class).singleton(this.componentPopulator());

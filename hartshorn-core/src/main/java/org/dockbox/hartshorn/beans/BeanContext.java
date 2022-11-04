@@ -21,8 +21,11 @@ import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 
@@ -50,6 +53,13 @@ public class BeanContext extends DefaultApplicationAwareContext implements BeanC
         final BeanReference<T> beanReference = new BeanReference<>(bean, typeView, id);
         this.beans.add(beanReference);
         return beanReference;
+    }
+
+    @Override
+    public <T> Set<BeanReference<T>> register(final Class<T> type, final Collection<T> beans, final String id) {
+        return beans.stream()
+                .map(b -> this.register(b, type, id))
+                .collect(Collectors.toSet());
     }
 
     @Override

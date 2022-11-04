@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
-import org.dockbox.hartshorn.application.scan.PrefixContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -51,13 +50,6 @@ public interface ApplicationEnvironment extends
 {
 
     /**
-     * Gets the context of all registered prefixes. This context is responsible for keeping track of known prefixes,
-     * and the components known within those prefixes.
-     * @return The context of all registered prefixes
-     */
-    PrefixContext prefixContext();
-
-    /**
      * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible
      * for all introspection operations within the environment. This may or may not be the same as the binding for
      * {@link Introspector}, but is typically the same.
@@ -74,12 +66,7 @@ public interface ApplicationEnvironment extends
      */
     boolean isCI();
 
-    /**
-     * Registers the given prefix, allowing it to be indexed for components.
-     *
-     * @param prefix The prefix to register.
-     */
-    void prefix(String prefix);
+    boolean isBatchMode();
 
     /**
      * Gets types decorated with a given annotation, both classes and annotations.
@@ -89,39 +76,6 @@ public interface ApplicationEnvironment extends
      * @return The annotated types
      */
     <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation);
-
-    /**
-     * Gets types decorated with a given annotation, both classes and annotations. The prefix is typically a package.
-     * If <code>skipParents</code> is true, the type will only be included if it is annotated directly.
-     *
-     * @param prefix The prefix to scan for annotated types
-     * @param annotation The annotation expected to be present on one or more types
-     * @param skipParents Whether to skip the parent types
-     * @param <A> The annotation constraint
-     * @return The annotated types
-     */
-    <A extends Annotation> Collection<TypeView<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents);
-
-    /**
-     * Gets types decorated with a given annotation, both classes and annotations. If <code>skipParents</code> is
-     * true, the type will only be included if it is annotated directly.
-     *
-     * @param <A> The annotation constraint
-     * @param annotation The annotation expected to be present on one or more types
-     * @param skipParents Whether to include the type if supertypes are annotated
-     * @return The annotated types
-     */
-    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation, final boolean skipParents);
-
-    /**
-     * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
-     * and empty list is returned.
-     *
-     * @param parent The parent type to scan for subclasses
-     * @param <T> The type of the parent
-     * @return The list of sub-types, or an empty list
-     */
-    <T> Collection<TypeView<? extends T>> children(final TypeView<T> parent);
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,

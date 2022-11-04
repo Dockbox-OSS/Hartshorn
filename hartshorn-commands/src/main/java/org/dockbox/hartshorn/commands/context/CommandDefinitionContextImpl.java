@@ -221,7 +221,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         else {
             final TypeView<?> lookup = this.context.environment().introspect(type);
             if (lookup.isVoid()) {
-                this.context.log().error("No argument of type `" + type + "` can be read");
+                this.context.log().error("No argument of type '" + type + "' can be read");
                 return null;
             }
 

@@ -16,8 +16,12 @@
 
 package org.dockbox.hartshorn.testsuite;
 
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +51,40 @@ import jakarta.inject.Inject;
 @Extends(Populate.class)
 @Populate(executables = false)
 public @interface HartshornTest {
+
+    /**
+     * Additional {@link ComponentProcessor}s to use when creating the {@link ApplicationContext} for
+     * the test class or method. These will be added to the default set of {@link ComponentProcessor}s
+     * used by the test suite, even if they are not found through prefix scanning.
+     *
+     * @see ApplicationBuilder#preProcessor(ComponentPreProcessor)
+     * @see ApplicationBuilder#postProcessor(ComponentPostProcessor)
+     */
     Class<? extends ComponentProcessor>[] processors() default  {};
+
+    /**
+     * Additional packages to scan for {@link ComponentProcessor}s when creating the {@link ApplicationContext}
+     * for the test class or method. These will be added to the default set of packages scanned by the
+     * test suite, even if they are not known to the chosen {@link #mainClass()}.
+     *
+     * @see ApplicationBuilder#scanPackages(String...)
+     */
     String[] scanPackages() default {};
+
+    /**
+     * Whether to include the base package of the main class explicitly, or to only use the prefixes provided to
+     * {@link ApplicationBuilder#scanPackages(String...)} (and overloaded methods).
+     *
+     * @see ApplicationBuilder#scanPackages(String...)
+     */
+    boolean includeBasePackages() default true;
+
+    /**
+     * Sets the main class to use. Depending on the type of application environment, this may require the
+     * class to have relevant {@link ServiceActivator service activators}. Alternative metadata sources may be
+     * used, depending on the application environment.
+     *
+     * @see ApplicationBuilder#mainClass(Class)
+     */
+    Class<?> mainClass() default Void.class;
 }

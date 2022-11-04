@@ -37,12 +37,4 @@ public interface ApplicationConfigurator {
      */
     void configure(ApplicationEnvironment environment);
 
-    /**
-     * Binds the given prefix to the given {@link ApplicationEnvironment}. Prefixes may be validated, modified, or applied
-     * to the {@link ApplicationContext}.
-     *
-     * @param environment The {@link ApplicationEnvironment} to configure.
-     * @param prefix The prefix to bind.
-     */
-    void bind(ApplicationEnvironment environment, String prefix);
 }
