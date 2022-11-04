@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.hsl.objects.external;
 
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ExecutableLookup {
      * @param <T> The type of the declaring type.
      */
     public static <T> MethodView<T, ?> method(final Token at, final TypeView<T> declaring, final String function, final List<Object> arguments) {
-        final Result<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
+        final Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }

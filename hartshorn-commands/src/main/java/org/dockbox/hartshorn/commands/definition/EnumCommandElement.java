@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -51,8 +51,8 @@ public final class EnumCommandElement<E extends Enum<E>> implements CommandEleme
     }
 
     @Override
-    public Result<E> parse(final CommandSource source, final String argument) {
-        return Result.of(this.values.get(argument.toLowerCase()));
+    public Option<E> parse(final CommandSource source, final String argument) {
+        return Option.of(this.values.get(argument.toLowerCase()));
     }
 
     @Override

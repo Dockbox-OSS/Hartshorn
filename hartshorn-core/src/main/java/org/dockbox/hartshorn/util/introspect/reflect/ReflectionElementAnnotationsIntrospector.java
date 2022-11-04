@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -83,16 +83,16 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     }
 
     @Override
-    public <T extends Annotation> Result<T> get(final Class<T> annotation) {
-        if (!annotation.isAnnotation()) return Result.empty();
+    public <T extends Annotation> Option<T> get(final Class<T> annotation) {
+        if (!annotation.isAnnotation()) return Option.empty();
 
         final Map<Class<?>, Annotation> annotations = this.annotationCache();
         if (annotations.containsKey(annotation))
-            return Result.of(() -> annotation.cast(annotations.get(annotation)));
+            return Option.of(() -> annotation.cast(annotations.get(annotation)));
 
         final T virtual = this.annotationLookup.find(this.element, annotation);
         if (virtual != null) annotations.put(annotation, virtual);
-        return Result.of(virtual);
+        return Option.of(virtual);
     }
 
     @Override

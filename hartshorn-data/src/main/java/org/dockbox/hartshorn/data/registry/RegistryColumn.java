@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.registry;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,32 +106,32 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *
      * @param predicate The predicate takes in a value of type {@code T} or its parents and returns true if that value is a match, otherwise it returns false.
      *
-     * @return An {@link Result} containing the value of the first match, if one is found.
+     * @return An {@link Option} containing the value of the first match, if one is found.
      */
-    public Result<T> firstMatch(final Predicate<? super T> predicate) {
+    public Option<T> firstMatch(final Predicate<? super T> predicate) {
         for (final T value : this) {
-            if (predicate.test(value)) return Result.of(value);
+            if (predicate.test(value)) return Option.of(value);
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     /**
      * Safely returns the first element in the RegistryColumn.
      *
-     * @return An {@link Result} containing the first element in the RegistryColumn, if one is found.
+     * @return An {@link Option} containing the first element in the RegistryColumn, if one is found.
      */
-    public Result<T> first() {
+    public Option<T> first() {
         return this.safe(0);
     }
 
     /**
-     * Safely get an element by wrapping it within an {@link Result}.
+     * Safely get an element by wrapping it within an {@link Option}.
      *
      * @param index The index of the element to retrieve.
      *
-     * @return An {@link Result} containing the element at the provided index in the RegistryColumn, if one is found.
+     * @return An {@link Option} containing the element at the provided index in the RegistryColumn, if one is found.
      */
-    public Result<T> safe(final int index) {
-        return Result.of(() -> this.get(index));
+    public Option<T> safe(final int index) {
+        return Option.of(() -> this.get(index));
     }
 }

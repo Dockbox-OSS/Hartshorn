@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.loaders;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
@@ -33,9 +31,11 @@ public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<Para
     }
 
     @Override
-    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Result<ProxyManager<Object>> handler = context.applicationContext().environment().manager(argument);
-        return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Result<Object>>) ProxyManager::delegate).orElse(() -> argument).map(a -> (T) a);
+        final Option<ProxyManager<Object>> handler = context.applicationContext().environment().manager(argument);
+        return handler.flatMap(ProxyManager::delegate)
+                .orCompute(() -> argument)
+                .map(a -> (T) a);
     }
 }

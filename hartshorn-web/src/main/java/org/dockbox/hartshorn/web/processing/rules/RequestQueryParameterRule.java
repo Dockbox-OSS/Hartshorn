@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.web.annotations.RequestParam;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
@@ -31,8 +31,8 @@ public class RequestQueryParameterRule extends AnnotatedParameterLoaderRule<Requ
     }
 
     @Override
-    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        return Result.of(() -> {
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        return Option.of(() -> {
             final RequestParam requestParam = parameter.annotations().get(RequestParam.class).get();
             String value = context.request().getParameter(requestParam.value());
             if (value == null) value = requestParam.or();

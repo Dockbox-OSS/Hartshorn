@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A provider is a class that can provide an instance of a {@link Key} binding. The provider is
@@ -38,6 +38,6 @@ public interface Provider<T> {
      * @param context The {@link ApplicationContext} to use.
      * @return The instance, if it can be created.
      */
-    Result<ObjectContainer<T>> provide(ApplicationContext context);
+    Option<ObjectContainer<T>> provide(ApplicationContext context);
 
 }

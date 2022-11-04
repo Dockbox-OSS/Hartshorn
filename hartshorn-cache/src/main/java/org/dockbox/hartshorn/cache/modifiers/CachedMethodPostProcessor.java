@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
@@ -46,9 +46,9 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
 
         return (interceptorContext) -> {
             final Cache<String, Object> cache = cacheContext.cache();
-            final Result<R> content = cache.get(elementKey).map(interceptorContext::checkedCast);
+            final Option<R> content = cache.get(elementKey).map(interceptorContext::checkedCast);
 
-            return content.orElse(() -> {
+            return content.orElseGet(() -> {
                 context.log().debug("Cache " + cacheContext.cacheName() + " has not been populated yet, or content has expired.");
                 try {
                     final R out = interceptorContext.invokeDefault();
@@ -59,7 +59,7 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
                     context.handle(e);
                     return null;
                 }
-            }).orNull(); // In case of void returns
+            });
         };
     }
 

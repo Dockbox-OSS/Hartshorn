@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.util.parameter;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C>{
 
@@ -41,12 +41,12 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
 
     @Override
     public Object loadArgument(final C context, final int index, final Object... args) {
-        final Result<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
+        final Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
         if (parameterCandidate.present()) {
             final ParameterView<?> parameter = parameterCandidate.get();
             for (final ParameterLoaderRule<C> rule : this.rules()) {
                 if (rule.accepts(parameter, index, context, args)) {
-                    final Result<?> argument = rule.load(parameter, index, context, args);
+                    final Option<?> argument = rule.load(parameter, index, context, args);
                     if (argument.present()) return argument.get();
                 }
             }
@@ -64,7 +64,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
             final ParameterView<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
                 if (rule.accepts(parameter, i, context, args)) {
-                    final Result<?> argument = rule.load(parameter, i, context, args);
+                    final Option<?> argument = rule.load(parameter, i, context, args);
                     arguments.add(argument.orNull());
                     continue parameters;
                 }

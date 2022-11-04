@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     public ComponentContainerImpl(final ApplicationContext context, final Class<?> component) {
         this.introspectedComponent = context.environment().introspect(component);
-        final Result<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
+        final Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
         if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
 
         this.component = component;

@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
 public interface TypeVariablesIntrospector {
 
-    Result<TypeView<?>> at(int index);
+    Option<TypeView<?>> at(int index);
 
     List<TypeView<?>> all();
 

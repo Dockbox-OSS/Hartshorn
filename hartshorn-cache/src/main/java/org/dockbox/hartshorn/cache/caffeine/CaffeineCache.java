@@ -21,7 +21,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Caffeine-based {@link Cache} implementation. This implementation is active by
@@ -57,8 +57,8 @@ public class CaffeineCache<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public Result<V> get(final K key) {
-        return Result.of(this.cache.getIfPresent(key));
+    public Option<V> get(final K key) {
+        return Option.of(this.cache.getIfPresent(key));
     }
 
     @Override

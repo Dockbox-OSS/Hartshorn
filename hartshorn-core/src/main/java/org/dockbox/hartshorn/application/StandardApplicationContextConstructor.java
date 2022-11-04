@@ -30,8 +30,8 @@ import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -179,8 +179,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         }
 
         for (final Annotation serviceActivator : builder.serviceActivators()) {
-            final Result<ServiceActivator> activatorCandidate = environment.introspect(serviceActivator).annotations().get(ServiceActivator.class);
+            final Option<ServiceActivator> activatorCandidate = environment.introspect(serviceActivator).annotations().get(ServiceActivator.class);
             if (activatorCandidate.absent()) throw new IllegalStateException("Service activator annotation " + serviceActivator + " is not annotated with @ServiceActivator");
+
             final ServiceActivator activator = activatorCandidate.get();
             prefixes.addAll(List.of(activator.scanPackages()));
         }

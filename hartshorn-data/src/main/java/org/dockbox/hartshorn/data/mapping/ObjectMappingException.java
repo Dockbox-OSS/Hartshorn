@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.view;
+package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-/**
- * Implementation note: this serves only as an implementation detail, not as an
- * API contract. Should be fixed somehow to keep this in mind... (e.g. in BeanServicePreProcessor)
- * @param <T>
- */
-public interface ObtainableView<T> extends View {
-    FailableOption<T, Throwable> getWithContext();
+public class ObjectMappingException extends ApplicationException {
+    public ObjectMappingException(final String message) {
+        super(message);
+    }
+
+    public ObjectMappingException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public ObjectMappingException(final Throwable cause) {
+        super(cause);
+    }
 }

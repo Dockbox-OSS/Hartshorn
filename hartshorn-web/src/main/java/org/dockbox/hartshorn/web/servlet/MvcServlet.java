@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.option.FailableOption;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpStatus;
@@ -65,7 +65,7 @@ public class MvcServlet implements WebServlet {
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 
-        final Result<ViewTemplate> result = this.method.invokeWithContext(arguments);
+        final FailableOption<ViewTemplate, Throwable> result = this.method.invokeWithContext(arguments);
 
         if (result.present()) {
             final ViewTemplate template = result.get();
@@ -83,7 +83,7 @@ public class MvcServlet implements WebServlet {
             }
         }
 
-        if (result.caught()) {
+        if (result.errorPresent()) {
             final Throwable error = result.error();
             if (error instanceof ApplicationException applicationException) throw applicationException;
             else throw new ApplicationException(error);

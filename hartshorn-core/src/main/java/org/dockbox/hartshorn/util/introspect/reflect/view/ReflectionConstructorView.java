@@ -16,14 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -31,13 +23,21 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.FailableOption;
+
 public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
 
     private final Constructor<T> constructor;
     private final Introspector introspector;
 
     private TypeVariablesIntrospector typeParametersIntrospector;
-    private Function<Object[], Result<T>> invoker;
+    private Function<Object[], FailableOption<T, Throwable>> invoker;
     private String qualifiedName;
 
     public ReflectionConstructorView(final Introspector introspector, final Constructor<T> constructor) {
@@ -46,16 +46,16 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         this.introspector = introspector;
     }
 
-    protected Function<Object[], Result<T>> invoker() {
+    protected Function<Object[], FailableOption<T, Throwable>> invoker() {
         if (this.invoker == null) {
-            this.invoker = args -> Result.of(() -> {
+            this.invoker = args -> FailableOption.of(() -> {
                 try {
                     return this.constructor.newInstance(args);
                 } catch (final InvocationTargetException e) {
                     if (e.getCause() instanceof Exception ex) throw ex;
                     throw e;
                 }
-            });
+            }, Throwable.class);
         }
         return this.invoker;
     }
@@ -66,12 +66,12 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public Result<T> create(final Collection<?> arguments) {
+    public FailableOption<T, Throwable> create(final Collection<?> arguments) {
         return this.invoker().apply(arguments.toArray());
     }
 
     @Override
-    public Result<T> createWithContext() {
+    public FailableOption<T, Throwable> createWithContext() {
         final Object[] args = this.parameters().loadFromContext();
         return this.create(args);
     }

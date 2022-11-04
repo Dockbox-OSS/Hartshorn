@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.cache.CacheFactory;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +48,7 @@ public class CacheTests {
         final Cache<String, String> cache = this.applicationContext.get(Cache.class);
 
         cache.put("key", "value");
-        final Result<String> result = cache.get("key");
+        final Option<String> result = cache.get("key");
 
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("value", result.get());
@@ -60,7 +60,7 @@ public class CacheTests {
 
         cache.put("key", "value");
         cache.invalidate("key");
-        final Result<String> result = cache.get("key");
+        final Option<String> result = cache.get("key");
 
         Assertions.assertTrue(result.absent());
     }
@@ -81,8 +81,8 @@ public class CacheTests {
 
         cache.put("key", "value");
         cache.put("key2", "value2");
-        final Result<String> result = cache.get("key");
-        final Result<String> result2 = cache.get("key2");
+        final Option<String> result = cache.get("key");
+        final Option<String> result2 = cache.get("key2");
 
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("value", result.get());
@@ -98,8 +98,8 @@ public class CacheTests {
         cache.put("key2", "value2");
 
         cache.invalidate("key");
-        final Result<String> result = cache.get("key");
-        final Result<String> result2 = cache.get("key2");
+        final Option<String> result = cache.get("key");
+        final Option<String> result2 = cache.get("key2");
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result2.present());
@@ -114,8 +114,8 @@ public class CacheTests {
         cache.put("key2", "value2");
 
         cache.invalidate();
-        final Result<String> result = cache.get("key");
-        final Result<String> result2 = cache.get("key2");
+        final Option<String> result = cache.get("key");
+        final Option<String> result2 = cache.get("key2");
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result2.absent());
@@ -133,8 +133,8 @@ public class CacheTests {
 
         Thread.sleep(15);
 
-        final Result<String> result = cache.get("key");
-        final Result<String> result2 = cache.get("key2");
+        final Option<String> result = cache.get("key");
+        final Option<String> result2 = cache.get("key2");
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result2.absent());
@@ -154,8 +154,8 @@ public class CacheTests {
 
         Assertions.assertDoesNotThrow(() -> cache.invalidate("key"));
 
-        final Result<String> result = cache.get("key");
-        final Result<String> result2 = cache.get("key2");
+        final Option<String> result = cache.get("key");
+        final Option<String> result2 = cache.get("key2");
 
         Assertions.assertTrue(result.absent()); // Through expiration and invalidation
         Assertions.assertTrue(result2.absent()); // Through expiration

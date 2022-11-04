@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -52,11 +53,11 @@ public final class StringUtilities {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
 
-    public static Result<Duration> durationOf(final String in) {
+    public static Option<Duration> durationOf(final String in) {
         // First, if just digits, return the number in seconds.
 
         if (StringUtilities.minorTimeString.matcher(in).matches()) {
-            return Result.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
+            return Option.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
         }
 
         final Matcher m = StringUtilities.timeString.matcher(in);
@@ -68,10 +69,10 @@ public final class StringUtilities {
             time += StringUtilities.durationAmount(m.group(10), 1);
 
             if (0 < time) {
-                return Result.of(Duration.ofSeconds(time));
+                return Option.of(Duration.ofSeconds(time));
             }
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     private static long durationAmount(@Nullable final String g, final int multiplier) {

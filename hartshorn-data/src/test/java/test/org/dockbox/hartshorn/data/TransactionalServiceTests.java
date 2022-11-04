@@ -16,8 +16,6 @@
 
 package test.org.dockbox.hartshorn.data;
 
-import com.mysql.cj.jdbc.Driver;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.annotations.UseTransactionManagement;
@@ -27,12 +25,14 @@ import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.mysql.cj.jdbc.Driver;
 
 import jakarta.persistence.EntityManager;
 import test.org.dockbox.hartshorn.data.service.TransactionalService;
@@ -55,7 +55,7 @@ public class TransactionalServiceTests {
 
         // Ensure appropriate context is available
         final EntityManagerLookup entityManagerLookup = applicationContext.get(EntityManagerLookup.class);
-        final Result<EntityManager> entityManager = entityManagerLookup.lookup(service);
+        final Option<EntityManager> entityManager = entityManagerLookup.lookup(service);
         Assertions.assertTrue(entityManager.present());
 
         final EntityManager manager = entityManager.get();

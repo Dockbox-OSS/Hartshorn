@@ -18,9 +18,8 @@ package org.dockbox.hartshorn.data.serialization;
 
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -41,14 +40,16 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
 
     @Override
     public InputStream inputStream(final AnnotatedElementView context, final Object... args) {
-        return this.resolvePath(context).map(path -> {
+        return this.resolvePath(context)
+                .map(path -> {
                     try {
                         return Files.newInputStream(path);
                     }
                     catch (final IOException e) {
-                        throw new ApplicationException(e);
+                        return null;
                     }
-                }).map(BufferedInputStream::new)
+                })
+                .map(BufferedInputStream::new)
                 .orNull();
     }
 
@@ -59,13 +60,13 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
                         return Files.newOutputStream(path);
                     }
                     catch (final IOException e) {
-                        throw new ApplicationException(e);
+                        return null;
                     }
                 }).map(BufferedOutputStream::new)
                 .orNull();
     }
 
-    private Result<Path> resolvePath(final AnnotatedElementView context) {
+    private Option<Path> resolvePath(final AnnotatedElementView context) {
         return context.annotations().get(FileSource.class)
                 .map(fileSource -> {
                     if (fileSource.relativeToApplicationPath()) {

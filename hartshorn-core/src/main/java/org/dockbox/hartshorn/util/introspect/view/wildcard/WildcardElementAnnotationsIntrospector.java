@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -50,8 +50,8 @@ public class WildcardElementAnnotationsIntrospector implements ElementAnnotation
     }
 
     @Override
-    public <T extends Annotation> Result<T> get(final Class<T> annotation) {
-        return Result.empty();
+    public <T extends Annotation> Option<T> get(final Class<T> annotation) {
+        return Option.empty();
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 
 @HartshornTest(includeBasePackages = false)
@@ -35,7 +35,7 @@ public class ModifyApplicationTests {
 
     @InjectTest
     void testFactoryWasModified(final ApplicationContext applicationContext) {
-        final Result<String> property = applicationContext.property("factory.modified");
+        final Option<String> property = applicationContext.property("factory.modified");
         Assertions.assertTrue(property.present());
         Assertions.assertEquals("true", property.get());
     }

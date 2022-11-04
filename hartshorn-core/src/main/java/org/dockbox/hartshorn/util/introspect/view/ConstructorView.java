@@ -16,23 +16,23 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.Result;
-
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
+
+import org.dockbox.hartshorn.util.option.FailableOption;
 
 public interface ConstructorView<T> extends ExecutableElementView<T> {
 
     Constructor<T> constructor();
 
-    default Result<T> create(final Object... arguments) {
+    default FailableOption<T, Throwable> create(final Object... arguments) {
         return this.create(List.of(arguments));
     }
 
-    Result<T> create(Collection<?> arguments);
+    FailableOption<T, Throwable> create(Collection<?> arguments);
 
-    Result<T> createWithContext();
+    FailableOption<T, Throwable> createWithContext();
 
     TypeView<T> type();
 

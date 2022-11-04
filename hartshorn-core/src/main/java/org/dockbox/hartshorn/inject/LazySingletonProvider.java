@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Supplier;
 
@@ -31,10 +31,10 @@ public class LazySingletonProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Result<ObjectContainer<T>> provide(final ApplicationContext context) {
+    public Option<ObjectContainer<T>> provide(final ApplicationContext context) {
         if (this.container == null) {
             this.container = this.supplier.get();
         }
-        return Result.of(this.container);
+        return Option.of(this.container);
     }
 }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -41,7 +41,7 @@ public interface ElementAnnotationsIntrospector {
 
     boolean hasAll(Set<Class<? extends Annotation>> annotations);
 
-    <T extends Annotation> Result<T> get(Class<T> annotation);
+    <T extends Annotation> Option<T> get(Class<T> annotation);
 
     <T extends Annotation> Set<T> all(Class<T> annotation);
 

@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 import java.util.Map;
@@ -47,14 +47,14 @@ public class CacheManagerImpl implements CacheManager {
     }
 
     @Override
-    public <K, V> Result<Cache<K, V>> get(final String cache) {
-        return Result.of(this.caches.get(cache)).map(c -> (Cache<K, V>) c);
+    public <K, V> Option<Cache<K, V>> get(final String cache) {
+        return Option.of(this.caches.get(cache)).map(c -> (Cache<K, V>) c);
     }
 
     @Override
     public <K, V> Cache<K, V> getOrCreate(final String name, final Expiration expiration) {
         return this.get(name)
-                .orElse(() -> {
+                .orCompute(() -> {
                     this.context.log().debug("Cache '" + name + "' does not exist, creating new instance");
                     final Cache<Object, Object> cache = this.context.get(CacheFactory.class).cache(expiration);
                     this.caches.put(name, cache);

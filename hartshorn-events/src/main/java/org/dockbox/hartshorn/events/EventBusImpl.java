@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.FailableOption;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -42,7 +42,7 @@ import jakarta.inject.Inject;
 @Component(singleton = true)
 public class EventBusImpl implements EventBus {
 
-    protected final Set<Function<MethodView<?, ?>, Result<Boolean>>> validators = ConcurrentHashMap.newKeySet();
+    protected final Set<Function<MethodView<?, ?>, FailableOption<Boolean, InvalidEventListenerException>>> validators = ConcurrentHashMap.newKeySet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
     protected final Map<Key<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();
@@ -57,23 +57,23 @@ public class EventBusImpl implements EventBus {
         // Event listeners need a @Listener annotation
         this.addValidationRule(method -> {
             if (!method.annotations().has(Listener.class)) {
-                return Result.of(false, new InvalidEventListenerException("Expected @Listener annotation on " + method.qualifiedName()));
+                return FailableOption.of(false, new InvalidEventListenerException("Expected @Listener annotation on " + method.qualifiedName()));
             }
-            return Result.of(true);
+            return FailableOption.of(true);
         });
         // Event listeners cannot be abstract
         this.addValidationRule(method -> {
             if (method.isAbstract()) {
-                return Result.of(false, new InvalidEventListenerException("Method cannot be abstract: " + method.qualifiedName()));
+                return FailableOption.of(false, new InvalidEventListenerException("Method cannot be abstract: " + method.qualifiedName()));
             }
-            return Result.of(true);
+            return FailableOption.of(true);
         });
         // Event listeners must have one and only parameter which is a subclass of Event
         this.addValidationRule(method -> {
             if (1 != method.parameters().count() || !method.parameters().at(0).get().type().isChildOf(Event.class)) {
-                return Result.of(false, new InvalidEventListenerException("Must have one (and only one) parameter, which is a subclass of " + Event.class.getCanonicalName() + ": " + method.qualifiedName()));
+                return FailableOption.of(false, new InvalidEventListenerException("Must have one (and only one) parameter, which is a subclass of " + Event.class.getCanonicalName() + ": " + method.qualifiedName()));
             }
-            return Result.of(true);
+            return FailableOption.of(true);
         });
     }
 
@@ -134,7 +134,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public void addValidationRule(final Function<MethodView<?, ?>, Result<Boolean>> validator) {
+    public void addValidationRule(final Function<MethodView<?, ?>, FailableOption<Boolean, InvalidEventListenerException>> validator) {
         this.validators.add(validator);
     }
 
@@ -171,8 +171,11 @@ public class EventBusImpl implements EventBus {
      * @throws IllegalArgumentException the illegal argument exception
      */
     protected void checkListenerMethod(final MethodView<?, ?> method) throws IllegalArgumentException {
-        for (final Function<MethodView<?, ?>, Result<Boolean>> validator : this.validators) {
-            final boolean result = validator.apply(method).rethrowUnchecked().get();
+        for (final Function<MethodView<?, ?>, FailableOption<Boolean, InvalidEventListenerException>> validator : this.validators) {
+            final FailableOption<Boolean, InvalidEventListenerException> validation = validator.apply(method);
+            if (validation.errorPresent()) validation.rethrow();
+
+            final boolean result = validation.get();
             if (!result) throw new EventValidationException("Unspecified validation error while validating: " + method.qualifiedName());
         }
     }

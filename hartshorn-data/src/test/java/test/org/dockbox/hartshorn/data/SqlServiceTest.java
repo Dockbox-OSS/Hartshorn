@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.hibernate.Session;
 import org.hibernate.dialect.DerbyDialect;
 import org.hibernate.dialect.Dialect;
@@ -203,7 +203,7 @@ class SqlServiceTest {
         guus.name("NotGuus");
         sql.update(guus);
 
-        final Result<User> persisted = sql.findById(guus.id());
+        final Option<User> persisted = sql.findById(guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
     }

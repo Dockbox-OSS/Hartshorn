@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -97,7 +97,7 @@ public class ConditionTests {
         Mockito.doReturn(RequiresExpression.class).when(condition).annotationType();
 
         final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
-        Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Result.of(condition));
+        Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Option.of(condition));
 
         final AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
         Mockito.when(elementView.annotations()).thenReturn(annotationsIntrospector);

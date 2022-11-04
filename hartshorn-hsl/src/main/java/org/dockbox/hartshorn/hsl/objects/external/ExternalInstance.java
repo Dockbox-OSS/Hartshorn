@@ -64,8 +64,8 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     public void set(final Token name, final Object value, final VariableScope fromScope) {
         this.type.fields().named(name.lexeme())
                 .map(field -> (FieldView<Object, Object>) field)
-                .present(field -> field.set(this.instance(), value))
-                .orThrow(() -> this.propertyDoesNotExist(name));
+                .peek(field -> field.set(this.instance(), value))
+                .orElseThrow(() -> this.propertyDoesNotExist(name));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
 
         return this.type.fields().named(name.lexeme())
                 .flatMap(field -> field.get(this.instance()))
-                .orThrow(() -> this.propertyDoesNotExist(name));
+                .orElseThrow(() -> this.propertyDoesNotExist(name));
     }
 
     private RuntimeError propertyDoesNotExist(final Token name) {

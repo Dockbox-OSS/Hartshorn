@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringTypeAdapter;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,17 +34,17 @@ import java.util.function.Function;
  */
 public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> {
 
-    private final BiFunction<CommandSource, String, Result<T>> converter;
+    private final BiFunction<CommandSource, String, Option<T>> converter;
     private final BiFunction<CommandSource, String, Collection<String>> suggestionProvider;
 
-    private ArgumentConverterImpl(final Class<T> type, final int size, final BiFunction<CommandSource, String, Result<T>> converter, final BiFunction<CommandSource, String, Collection<String>> suggestionProvider, final String... keys) {
+    private ArgumentConverterImpl(final Class<T> type, final int size, final BiFunction<CommandSource, String, Option<T>> converter, final BiFunction<CommandSource, String, Collection<String>> suggestionProvider, final String... keys) {
         super(type, size, keys);
         this.converter = converter;
         this.suggestionProvider = suggestionProvider;
     }
 
     @Override
-    public Result<T> convert(final CommandSource source, final String argument) {
+    public Option<T> convert(final CommandSource source, final String argument) {
         return this.converter.apply(source, argument);
     }
 
@@ -62,7 +62,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     }
 
     @Override
-    public Result<T> convert(final CommandSource source, final CommandParameter<String> value) {
+    public Option<T> convert(final CommandSource source, final CommandParameter<String> value) {
         return this.convert(source, value.value());
     }
 
@@ -75,7 +75,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         private final String[] keys;
         private final Class<T> type;
         private int size;
-        private BiFunction<CommandSource, String, Result<T>> converter = (source, in) -> Result.empty();
+        private BiFunction<CommandSource, String, Option<T>> converter = (source, in) -> Option.empty();
         private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> new ArrayList<>();
 
         private CommandValueConverterBuilder(final Class<T> type, final String... keys) {
@@ -106,7 +106,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
          *
          * @return The existing builder instance
          */
-        public CommandValueConverterBuilder<T> withConverter(final BiFunction<CommandSource, String, Result<T>> converter) {
+        public CommandValueConverterBuilder<T> withConverter(final BiFunction<CommandSource, String, Option<T>> converter) {
             this.converter = converter;
             return this;
         }
@@ -128,7 +128,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
          *
          * @return The existing builder instance
          */
-        public CommandValueConverterBuilder<T> withConverter(final Function<String, Result<T>> converter) {
+        public CommandValueConverterBuilder<T> withConverter(final Function<String, Option<T>> converter) {
             this.converter = (source, in) -> converter.apply(in);
             return this;
         }

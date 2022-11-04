@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 public interface ApplicationAwareContext extends Context, ContextCarrier {
 
@@ -32,7 +32,7 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @return The first context of the given type.
      */
     @Override
-    <C extends Context> Result<C> first(Class<C> context);
+    <C extends Context> Option<C> first(Class<C> context);
 
     /**
      * Returns the first context of the given type and name. If it doesn't exist, but the context is annotated with
@@ -45,7 +45,7 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @return The first context of the given type and name.
      */
     @Override
-    <C extends Context> Result<C> first(Class<C> context, String name);
+    <C extends Context> Option<C> first(Class<C> context, String name);
 
     /**
      * Returns the first context of the given type and name, which are represented by the given key. If it doesn't exist,
@@ -57,5 +57,5 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @return The first context of the given type and name.
      */
     @Override
-    <C extends Context> Result<C> first(Key<C> context);
+    <C extends Context> Option<C> first(Key<C> context);
 }

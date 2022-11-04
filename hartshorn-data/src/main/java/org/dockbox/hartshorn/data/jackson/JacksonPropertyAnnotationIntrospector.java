@@ -25,10 +25,10 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.Property;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.Property;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
@@ -143,7 +143,7 @@ public class JacksonPropertyAnnotationIntrospector extends JacksonAnnotationIntr
         final AnnotatedElement annotated = a.getAnnotated();
         if (annotated != null) {
             final ElementAnnotationsIntrospector introspector = this.introspector.introspect(annotated);
-            final Result<Property> annotation = introspector.get(Property.class);
+            final Option<Property> annotation = introspector.get(Property.class);
             if (annotation.present()) {
                 return new PropertyName(annotation.get().name());
             }

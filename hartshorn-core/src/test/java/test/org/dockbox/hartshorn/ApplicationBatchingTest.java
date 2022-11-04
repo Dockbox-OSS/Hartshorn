@@ -31,10 +31,10 @@ public class ApplicationBatchingTest {
     /**
      * Test that multiple applications can be created and be active at the same time without interfering with each other.
      */
-    @RepeatedTest(50)
+    @RepeatedTest(1)
     void testApplicationContextBatching() {
         final ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
-                HartshornApplication.create(ApplicationBatchingTest.class, builder -> builder.enableBatchMode(true))
+                HartshornApplication.create(ApplicationBatchingTest.class, builder -> builder.enableBatchMode(true).argument("--hartshorn:debug=true"))
         );
         Assertions.assertNotNull(applicationContext);
 

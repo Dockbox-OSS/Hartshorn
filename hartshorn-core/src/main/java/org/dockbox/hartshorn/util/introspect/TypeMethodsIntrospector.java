@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -25,15 +25,15 @@ import java.util.List;
 
 public interface TypeMethodsIntrospector<T> {
 
-    default Result<MethodView<T, ?>> named(final String name) {
+    default Option<MethodView<T, ?>> named(final String name) {
         return this.named(name, List.of());
     }
 
-    default Result<MethodView<T, ?>> named(final String name, final Class<?>... parameterTypes) {
+    default Option<MethodView<T, ?>> named(final String name, final Class<?>... parameterTypes) {
         return this.named(name, List.of(parameterTypes));
     }
 
-    Result<MethodView<T, ?>> named(String name, Collection<Class<?>> parameterTypes);
+    Option<MethodView<T, ?>> named(String name, Collection<Class<?>> parameterTypes);
 
     List<MethodView<T, ?>> all();
 

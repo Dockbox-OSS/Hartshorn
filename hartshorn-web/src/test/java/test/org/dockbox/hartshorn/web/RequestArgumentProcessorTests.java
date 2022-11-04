@@ -16,13 +16,20 @@
 
 package test.org.dockbox.hartshorn.web;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.MediaType;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
@@ -35,13 +42,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,7 +73,7 @@ public class RequestArgumentProcessorTests {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Result<String> result = new BodyRequestParameterRule().load(parameter, 0, loaderContext);
+        final Option<String> result = new BodyRequestParameterRule().load(parameter, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Unparsed body", result.get());
     }
@@ -92,7 +92,7 @@ public class RequestArgumentProcessorTests {
         Mockito.when(httpRequest.consumes()).thenReturn(mediaType);
 
         final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
-        Mockito.when(annotationsIntrospector.get(HttpRequest.class)).thenReturn(Result.of(httpRequest));
+        Mockito.when(annotationsIntrospector.get(HttpRequest.class)).thenReturn(Option.of(httpRequest));
 
         final ExecutableElementView<?> element = Mockito.mock(ExecutableElementView.class);
         Mockito.when(element.annotations()).thenReturn(annotationsIntrospector);
@@ -102,7 +102,7 @@ public class RequestArgumentProcessorTests {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Result<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
+        final Option<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Hello world!", result.get().message());
     }
@@ -117,7 +117,7 @@ public class RequestArgumentProcessorTests {
         Mockito.when(requestHeader.value()).thenReturn("string-header");
 
         final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
-        Mockito.when(annotationsIntrospector.get(RequestHeader.class)).thenReturn(Result.of(requestHeader));
+        Mockito.when(annotationsIntrospector.get(RequestHeader.class)).thenReturn(Option.of(requestHeader));
 
         final ParameterView<String> context = Mockito.mock(ParameterView.class);
         Mockito.when(context.type()).thenReturn(this.applicationContext.environment().introspect(String.class));
@@ -125,7 +125,7 @@ public class RequestArgumentProcessorTests {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Result<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
+        final Option<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Header!", result.get());
     }
@@ -140,7 +140,7 @@ public class RequestArgumentProcessorTests {
         Mockito.when(requestHeader.value()).thenReturn("int-header");
 
         final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
-        Mockito.when(annotationsIntrospector.get(RequestHeader.class)).thenReturn(Result.of(requestHeader));
+        Mockito.when(annotationsIntrospector.get(RequestHeader.class)).thenReturn(Option.of(requestHeader));
 
         final ParameterView<Integer> parameter = Mockito.mock(ParameterView.class);
         Mockito.when(parameter.type()).thenReturn(this.applicationContext.environment().introspect(Integer.class));
@@ -148,7 +148,7 @@ public class RequestArgumentProcessorTests {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext, request, null);
 
-        final Result<Integer> result = new HeaderRequestParameterRule().load(parameter, 0, loaderContext);
+        final Option<Integer> result = new HeaderRequestParameterRule().load(parameter, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(1, result.get().intValue());
     }

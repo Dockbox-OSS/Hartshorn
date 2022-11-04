@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.data.serialization;
 
+import java.io.InputStream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.io.InputStream;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class DeserializerMethodPostProcessor extends AbstractSerializerPostProcessor<Deserialize> {
     @Override
@@ -43,7 +43,7 @@ public class DeserializerMethodPostProcessor extends AbstractSerializerPostProce
 
         return interceptorContext -> {
             try (final InputStream inputStream = converter.inputStream(method, interceptorContext.args())) {
-                final Result<?> result = mapper.read(inputStream, returnType.type());
+                final Option<?> result = mapper.read(inputStream, returnType.type());
                 return interceptorContext.checkedCast(this.wrapSerializationResult(method, result));
             }
         };

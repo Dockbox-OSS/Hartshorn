@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.beans;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
@@ -33,8 +35,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
 
 public class BeanServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
@@ -79,7 +79,7 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
         final Bean bean = element.annotations().get(Bean.class).get();
         final String id = bean.id();
         final Object beanInstance = element.getWithContext()
-                .orThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
+                .orElseThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
         final TypeView<?> type = element.genericType();
         //noinspection unchecked - We know the type is correct
         context.register((T) beanInstance, (Class<T>) type.type(), id);

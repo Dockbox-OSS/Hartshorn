@@ -16,16 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.proxy.loaders.UnproxyingParameterLoader;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.reflect.MethodInvoker;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -35,6 +25,16 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.proxy.loaders.UnproxyingParameterLoader;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.reflect.MethodInvoker;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import javassist.util.proxy.ProxyFactory;
 
@@ -56,7 +56,7 @@ public class StandardMethodInterceptor<T> {
     }
 
     public Object intercept(final Object self, final MethodInvokable source, final Invokable proxy, final Object[] args) throws Throwable {
-        final T callbackTarget = this.manager.delegate().or((T) self);
+        final T callbackTarget = this.manager.delegate().orElse((T) self);
         final MethodView<T, ?> methodView = (MethodView<T, ?>) source.toIntrospector();
 
         final CustomInvocation<?> customInvocation = this.createDefaultInvocation(source, proxy, callbackTarget);
@@ -99,7 +99,7 @@ public class StandardMethodInterceptor<T> {
 
         try {
             final Object result;
-            final Result<MethodInterceptor<T, ?>> interceptor = this.manager.interceptor(source.toMethod());
+            final Option<MethodInterceptor<T, ?>> interceptor = this.manager.interceptor(source.toMethod());
             if (interceptor.present()) {
                 result = this.invokeInterceptor(interceptor.get(), callbackTarget,
                         TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class),
@@ -107,7 +107,7 @@ public class StandardMethodInterceptor<T> {
                         arguments);
             }
             else {
-                final Result<T> delegate = this.manager.delegate(source.toMethod());
+                final Option<T> delegate = this.manager.delegate(source.toMethod());
                 if (delegate.present())
                     result = this.invokeDelegate(delegate.get(), callbackTarget, source, arguments);
                 else
@@ -210,7 +210,7 @@ public class StandardMethodInterceptor<T> {
         if (obj == null) return false;
         if (Boolean.TRUE.equals(this.manager.delegate()
                 .map(instance -> instance.equals(obj))
-                .or(false))
+                .orElse(false))
         ) return true;
         return this.manager.proxy() == obj;
     }
@@ -278,8 +278,7 @@ public class StandardMethodInterceptor<T> {
         Object result;
         if (target instanceof MethodInvokable methodInvokable) {
             result = function.invoke(TypeUtils.adjustWildcards(methodInvokable.toIntrospector(), MethodView.class), self, args)
-                    .orElse(() -> this.applicationContext().environment().introspect(target.getReturnType()).defaultOrNull())
-                    .orNull();
+                    .orElseGet(() -> this.applicationContext().environment().introspect(target.getReturnType()).defaultOrNull());
         }
         else {
             try {

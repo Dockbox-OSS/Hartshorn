@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.beans.Bean;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
@@ -26,16 +32,9 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Vector3N;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import org.dockbox.hartshorn.util.option.Option;
 
 @Service(permitProxying = false)
 @RequiresActivator(UseCommands.class)
@@ -108,7 +107,7 @@ public final class DefaultArgumentConverters {
     @Bean
     public static ArgumentConverter<Vector3N> vector3NArgumentConverter() {
         return ArgumentConverterImpl.builder(Vector3N.class, "vec3", "vector", "v3n")
-                .withConverter(in -> Result.of(
+                .withConverter(in -> Option.of(
                         () -> {
                             final String[] xyz = in.split(",");
                             // IndexOutOfBounds is caught by Callable handle in Result
@@ -145,7 +144,7 @@ public final class DefaultArgumentConverters {
     @Bean
     public static ArgumentConverter<ComponentContainer> componentContainerArgumentConverter() {
         return ArgumentConverterImpl.builder(ComponentContainer.class, "service")
-                .withConverter((src, in) -> Result.of(src.applicationContext()
+                .withConverter((src, in) -> Option.of(src.applicationContext()
                         .get(ComponentLocator.class).containers().stream()
                         .filter(container -> container.id().equalsIgnoreCase(in))
                         .findFirst()))
@@ -160,7 +159,7 @@ public final class DefaultArgumentConverters {
     @Bean
     public static ArgumentConverter<String> remainingStringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "remaining", "remainingString")
-                .withConverter((Function<String, Result<String>>) Result::of)
+                .withConverter(Option::of)
                 .withSize(-1)
                 .build();
     }
@@ -175,7 +174,7 @@ public final class DefaultArgumentConverters {
                         final String part = parts[i];
                         integers[i] = BuiltInStringTypeAdapters.INTEGER.adapt(part).get();
                     }
-                    return Result.of(integers);
+                    return Option.of(integers);
                 })
                 .withSize(-1)
                 .build();

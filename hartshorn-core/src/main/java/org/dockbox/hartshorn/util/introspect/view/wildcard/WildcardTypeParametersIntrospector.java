@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,8 +31,8 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
     }
 
     @Override
-    public Result<TypeView<?>> at(final int index) {
-        return Result.empty();
+    public Option<TypeView<?>> at(final int index) {
+        return Option.empty();
     }
 
     @Override

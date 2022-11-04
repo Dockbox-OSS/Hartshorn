@@ -25,9 +25,10 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -155,7 +156,7 @@ public class HartshornLifecycleExtension implements
         populator.populate(instance);
     }
 
-    public static Result<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, Class<?> activator) {
+    public static Option<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, Class<?> activator) {
         Class<?> next = activator;
         final Set<Annotation> serviceActivators = new HashSet<>();
         while (next != null) {
@@ -168,7 +169,7 @@ public class HartshornLifecycleExtension implements
         applicationBuilder.serviceActivators(serviceActivators);
 
         final ApplicationContext context = applicationBuilder.create();
-        return Result.of(context);
+        return Option.of(context);
     }
 
     private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final List<AnnotatedElement> testComponentSources) {
@@ -181,10 +182,10 @@ public class HartshornLifecycleExtension implements
         final ApplicationBuilder<?, ?> finalApplicationBuilder = applicationBuilder;
 
         for (final AnnotatedElement element : testComponentSources) {
-            Result.of(element.getAnnotation(HartshornTest.class))
-                    .present(annotation -> {
+            Option.of(element.getAnnotation(HartshornTest.class))
+                    .peek(annotation -> {
                         for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
-                            final ComponentProcessor componentProcessor = Result.of(() -> processor.getConstructor().newInstance()).rethrowUnchecked().get();
+                            final ComponentProcessor componentProcessor = FailableOption.of(() -> processor.getConstructor().newInstance(), Throwable.class).rethrowUnchecked().get();
                             if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
                                 finalApplicationBuilder.preProcessor(preProcessor);
                             }
@@ -206,8 +207,8 @@ public class HartshornLifecycleExtension implements
                 applicationBuilder.mainClass(testClass);
             }
 
-            Result.of(element.getAnnotation(TestProperties.class))
-                    .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
+            Option.of(element.getAnnotation(TestProperties.class))
+                    .peek(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         }
 
         applicationBuilder.arguments(arguments.toArray(new String[0]))
@@ -239,11 +240,11 @@ public class HartshornLifecycleExtension implements
 
                 final Class<?>[] parameters = factoryModifier.getParameterTypes();
                 if (parameters.length == 0) {
-                    applicationBuilder = Result.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null)).rethrowUnchecked().orNull();
+                    applicationBuilder = FailableOption.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class).rethrowUnchecked().orNull();
                 }
                 else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
                     final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
-                    applicationBuilder = Result.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg)).rethrowUnchecked().orNull();
+                    applicationBuilder = FailableOption.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class).rethrowUnchecked().orNull();
                 }
                 else {
                     throw new InvalidFactoryModifierException("parameters", parameters[0]);

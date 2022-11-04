@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.proxy;
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,31 +45,31 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     }
 
     @Override
-    public <T> Result<Class<T>> real(final T instance) {
+    public <T> Option<Class<T>> real(final T instance) {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
-            return Result.of(proxy.manager().targetClass());
+            return Option.of(proxy.manager().targetClass());
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
-    public <T> Result<ProxyManager<T>> manager(final T instance) {
+    public <T> Option<ProxyManager<T>> manager(final T instance) {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
-            return Result.of(proxy.manager());
+            return Option.of(proxy.manager());
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
-    public <D, T extends D> Result<D> delegate(final TypeView<D> type, final T instance) {
+    public <D, T extends D> Option<D> delegate(final TypeView<D> type, final T instance) {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             final ProxyManager<?> manager = proxy.manager();
             return manager.delegate(type.type());
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

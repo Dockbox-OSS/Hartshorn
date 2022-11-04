@@ -17,8 +17,8 @@
 package test.org.dockbox.hartshorn.parameterloaders;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderContext> {
@@ -28,7 +28,7 @@ public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderC
     }
 
     @Override
-    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-        return Result.of((T) "JUnit");
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+        return Option.of((T) "JUnit");
     }
 }

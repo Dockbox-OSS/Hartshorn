@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.service.PropertyAwareComponentPostProcessor;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Looks up and populates fields annotated with {@link Value}.
@@ -43,7 +43,7 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
                 final Value annotation = field.annotations().get(Value.class).get();
 
                 final String valueKey = annotation.value();
-                final Result<?> property = propertyHolder.get(valueKey, field.genericType().type());
+                final Option<?> property = propertyHolder.get(valueKey, field.genericType().type());
 
                 if (property.absent()) {
                     context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());

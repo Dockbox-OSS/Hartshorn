@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
  * A type adapter that converts a string to a potential value of type {@code T}. If the conversion fails,
- * {@link Result#empty()} is returned.
+ * {@link Option#empty()} is returned.
  *
  * @param <T> The type to convert to
  * @author Guus Lieben
@@ -26,13 +28,13 @@ package org.dockbox.hartshorn.util;
  */
 public interface StringTypeAdapter<T> {
     /**
-     * Converts a string to a potential value of type {@code T}. If the conversion fails, {@link Result#empty()} is
+     * Converts a string to a potential value of type {@code T}. If the conversion fails, {@link Option#empty()} is
      * returned.
      *
      * @param value The string to convert
      * @return The converted value
      */
-    Result<T> adapt(String value);
+    Option<T> adapt(String value);
 
     /**
      * Gets the target type of the current adapter.

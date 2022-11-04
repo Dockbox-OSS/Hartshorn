@@ -16,7 +16,8 @@
 
 package test.org.dockbox.hartshorn.data;
 
-import com.mysql.cj.jdbc.Driver;
+import java.util.List;
+import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
@@ -25,7 +26,7 @@ import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,8 +34,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-import java.util.Set;
+import com.mysql.cj.jdbc.Driver;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.TransactionRequiredException;
@@ -112,7 +112,7 @@ public class QueryRepositoryTests {
         repository.refresh(user);
         Assertions.assertEquals(22, user.age());
 
-        final Result<JpaUser> userLookup = repository.findById(user.id());
+        final Option<JpaUser> userLookup = repository.findById(user.id());
         Assertions.assertTrue(userLookup.present());
         Assertions.assertEquals(22, userLookup.get().age());
     }

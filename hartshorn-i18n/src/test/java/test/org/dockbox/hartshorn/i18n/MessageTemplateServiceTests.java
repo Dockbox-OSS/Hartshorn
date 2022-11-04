@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
+import java.util.Locale;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.DefaultTranslationBundle;
 import org.dockbox.hartshorn.i18n.Message;
@@ -27,12 +29,10 @@ import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Locale;
 
 @HartshornTest(includeBasePackages = false)
 @UseTranslations
@@ -69,7 +69,7 @@ public class MessageTemplateServiceTests {
 
     @Test
     public void testResourceReturnsCopyOnTranslateLanguage() {
-        final Result<Message> demo = this.bundle().message("demo");
+        final Option<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final Message entry = demo.get();
@@ -80,7 +80,7 @@ public class MessageTemplateServiceTests {
 
     @Test
     public void testResourceReturnsSelfOnTranslateMessageReceiver() {
-        final Result<Message> demo = this.bundle().message("demo");
+        final Option<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final MessageReceiver mock = Mockito.mock(MessageReceiver.class);
@@ -94,7 +94,7 @@ public class MessageTemplateServiceTests {
 
     @Test
     void testMessageReturnsCloneOnDetach() {
-        final Result<Message> demo = this.bundle().message("demo");
+        final Option<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final Message message = demo.get();
@@ -105,14 +105,14 @@ public class MessageTemplateServiceTests {
 
     @Test
     public void testResourceBundleUsesBundle() {
-        final Result<Message> demo = this.bundle().message("demo");
+        final Option<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
         Assertions.assertEquals("demo", demo.get().key());
     }
 
     @Test
     public void testResourceBundleKeepsTranslations() {
-        final Result<Message> demo = this.bundle().message("demo");
+        final Option<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
         final Message entry = demo.get();
 
@@ -157,7 +157,7 @@ public class MessageTemplateServiceTests {
     @TestComponents(TranslationProviderService.class)
     void testTranslationProvidersGetRegistered(final ApplicationContext applicationContext) {
         final TranslationService translationService = applicationContext.get(TranslationService.class);
-        final Result<Message> message = translationService.get("lang.name");
+        final Option<Message> message = translationService.get("lang.name");
         Assertions.assertTrue(message.present());
         Assertions.assertEquals("English", message.get().translate(EN_US).string());
         Assertions.assertEquals("Nederlands", message.get().translate(NL_NL).string());

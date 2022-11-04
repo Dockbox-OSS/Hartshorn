@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-public class NotPrimitiveException extends RuntimeException {
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+
+public class NotPrimitiveException extends ApplicationRuntimeException {
 
     public NotPrimitiveException(final Class<?> type) {
         super(type.getSimpleName() + " is not a primitive type");

@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
@@ -85,9 +85,9 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     }
 
     @Override
-    public Result<ParameterView<?>> at(final int index) {
-        if (this.all().size() > index) return Result.of(this.all().get(index));
-        else return Result.empty();
+    public Option<ParameterView<?>> at(final int index) {
+        if (this.all().size() > index) return Option.of(this.all().get(index));
+        else return Option.empty();
     }
 
     @Override

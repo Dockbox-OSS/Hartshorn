@@ -38,12 +38,13 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         final Key<T> key = Key.of(parameter.type(), named);
         final boolean enable = Boolean.TRUE.equals(parameter.annotations().get(Enable.class)
                 .map(Enable::value)
-                .or(true));
+                .orElse(true));
         final T out = context.provider().get(key, enable);
 
         final boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
                 .map(Required::value)
-                .or(false));
+                .orElse(false));
+
         if (required && out == null) throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
 
         return out;

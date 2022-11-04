@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Property;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -38,7 +38,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     private final Field field;
     private final Introspector introspector;
 
-    private Function<Object, Result<FieldType>> getter;
+    private Function<Object, FailableOption<FieldType, Throwable>> getter;
     private BiConsumer<Object, FieldType> setter;
 
     public ReflectionFieldView(final Introspector introspector, final Field field) {
@@ -62,11 +62,11 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
         }
 
         if (this.setter == null) {
-            final Result<Property> property = this.annotations().get(Property.class);
+            final Option<Property> property = this.annotations().get(Property.class);
             if (property.present() && !"".equals(property.get().setter())) {
                 final String setter = property.get().setter();
-                final Result<MethodView<Parent, ?>> method = this.declaredBy().methods().named(setter, List.of(this.type().type()));
-                final MethodView<Parent, ?> methodView = method.orThrowUnchecked(() -> new ApplicationException("Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
+                final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(setter, List.of(this.type().type()));
+                final MethodView<Parent, ?> methodView = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
                 this.setter = (o, v) -> methodView.invoke(this.declaredBy().cast(instance), v);
             } else {
                 this.setter = (o, v) -> {
@@ -83,30 +83,30 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public Result<FieldType> get(final Parent instance) {
+    public FailableOption<FieldType, Throwable> get(final Parent instance) {
         if (this.getter == null) {
-            final Result<Property> property = this.annotations().get(Property.class);
+            final Option<Property> property = this.annotations().get(Property.class);
             if (property.present() && !"".equals(property.get().getter())) {
                 final String getter = property.get().getter();
-                final Result<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
-                final MethodView<Parent, ?> methodContext = method.orThrowUnchecked(() -> new ApplicationException("Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
+                final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
+                final MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
                 this.getter = o -> methodContext.invoke(instance).map(this.type()::cast);
             } else {
-                this.getter = o -> Result.of(() -> {
+                this.getter = o -> FailableOption.of(() -> {
                     try {
                         return this.type().cast(this.field.get(o));
                     }
                     catch (final IllegalAccessException e) {
                         throw new IllegalIntrospectionException(this, e.getMessage());
                     }
-                });
+                }, Throwable.class);
             }
         }
-        return this.getter.apply(instance).orElse(() -> this.type().defaultOrNull());
+        return this.getter.apply(instance).orCompute(() -> this.type().defaultOrNull());
     }
 
     @Override
-    public Result<FieldType> getStatic() {
+    public FailableOption<FieldType, Throwable> getStatic() {
         return this.get(null);
     }
 
@@ -171,7 +171,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public Result<FieldType> getWithContext() {
+    public FailableOption<FieldType, Throwable> getWithContext() {
         final Parent parent = this.introspector.applicationContext().get(this.declaredBy().type());
         return this.get(parent);
     }

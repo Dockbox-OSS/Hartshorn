@@ -16,6 +16,10 @@
 
 package test.org.dockbox.hartshorn.beans;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.BeanContext;
@@ -26,14 +30,10 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.components.BeanAwareComponent;
@@ -109,7 +109,7 @@ public class BeanTests {
     @InjectTest
     @TestComponents(BeanService.class)
     void testApplicationHasBeanContext(final ApplicationContext applicationContext) {
-        final Result<BeanContext> beanContext = applicationContext.first(BeanContext.class);
+        final Option<BeanContext> beanContext = applicationContext.first(BeanContext.class);
         Assertions.assertTrue(beanContext.present());
 
         final BeanProvider provider = beanContext.get().provider();

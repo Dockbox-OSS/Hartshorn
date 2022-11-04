@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -33,7 +33,7 @@ public interface ExecutableParametersIntrospector {
 
     List<ParameterView<?>> annotedWith(Class<? extends Annotation> annotation);
 
-    Result<ParameterView<?>> at(int index);
+    Option<ParameterView<?>> at(int index);
 
     int count();
 

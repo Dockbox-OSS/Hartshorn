@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class SingletonProvider<T> implements Provider<T> {
 
@@ -32,7 +32,7 @@ public class SingletonProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Result<ObjectContainer<T>> provide(final ApplicationContext context) {
-        return Result.of(this.container);
+    public Option<ObjectContainer<T>> provide(final ApplicationContext context) {
+        return Option.of(this.container);
     }
 }

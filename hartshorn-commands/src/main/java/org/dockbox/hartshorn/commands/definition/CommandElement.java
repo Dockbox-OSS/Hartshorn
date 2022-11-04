@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 
@@ -45,9 +45,9 @@ public interface CommandElement<T> extends CommandPartial {
      * @param source The command source executing a command containing the argument
      * @param argument The raw argument without the associated key
      *
-     * @return The converted object of type <code>T</code>, or {@link Result#empty()}
+     * @return The converted object of type <code>T</code>, or {@link Option#empty()}
      */
-    Result<T> parse(CommandSource source, String argument);
+    Option<T> parse(CommandSource source, String argument);
 
     /**
      * Gets the suggestions to complete a currently incomplete argument value. Suggestions

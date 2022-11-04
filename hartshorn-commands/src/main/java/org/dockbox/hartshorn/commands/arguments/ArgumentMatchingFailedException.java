@@ -17,9 +17,8 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-public class ArgumentMatchingFailedException extends ApplicationRuntimeException {
+public class ArgumentMatchingFailedException extends ConverterException {
     public ArgumentMatchingFailedException(final Message message) {
         this(message.string());
     }

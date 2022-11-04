@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -78,7 +78,7 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 
     String qualifiedName();
 
-    Result<TypeView<?>> elementType();
+    Option<TypeView<?>> elementType() throws IllegalArgumentException;
 
     List<T> enumConstants();
 

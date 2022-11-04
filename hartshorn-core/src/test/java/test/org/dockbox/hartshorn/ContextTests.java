@@ -16,19 +16,19 @@
 
 package test.org.dockbox.hartshorn;
 
+import java.util.List;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.context.AutoCreating;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import jakarta.inject.Inject;
 
@@ -45,7 +45,7 @@ public class ContextTests {
 
         context.add(child);
 
-        final Result<TestContext> first = context.first(TestContext.class);
+        final Option<TestContext> first = context.first(TestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -69,7 +69,7 @@ public class ContextTests {
 
         context.add(named);
 
-        final Result<Context> first = context.first(NamedTestContext.NAME);
+        final Option<Context> first = context.first(NamedTestContext.NAME);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -81,7 +81,7 @@ public class ContextTests {
 
         context.add(named);
 
-        final Result<NamedTestContext> first = context.first(NamedTestContext.NAME, NamedTestContext.class);
+        final Option<NamedTestContext> first = context.first(NamedTestContext.NAME, NamedTestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -93,7 +93,7 @@ public class ContextTests {
 
         context.add(NamedTestContext.NAME, child);
 
-        final Result<Context> first = context.first(NamedTestContext.NAME);
+        final Option<Context> first = context.first(NamedTestContext.NAME);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -137,7 +137,7 @@ public class ContextTests {
     @Test
     void testAutoCreatingContext() {
         final ApplicationAwareContext context = new TestContext(this.applicationContext);
-        final Result<AutoCreatingContext> first = context.first(AutoCreatingContext.class);
+        final Option<AutoCreatingContext> first = context.first(AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 

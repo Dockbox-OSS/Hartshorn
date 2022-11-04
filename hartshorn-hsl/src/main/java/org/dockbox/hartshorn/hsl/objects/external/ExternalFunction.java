@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -74,7 +74,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
     }
 
     private MethodView<Object, ?> method(final Token at, final List<Object> arguments) {
-        final Result<MethodView<Object, ?>> zeroParameterMethod = this.type.methods().named(this.methodName);
+        final Option<MethodView<Object, ?>> zeroParameterMethod = this.type.methods().named(this.methodName);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
@@ -101,12 +101,13 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             throw new RuntimeError(at, "Cannot call method '" + this.methodName + "' on non-external instance");
         }
         final MethodView<Object, ?> method = this.method(at, arguments);
-        final Result<?> result = method.invoke(externalObjectReference.externalObject(), arguments);
-        if (result.caught()) {
-            if (result.error() instanceof ApplicationException ae) throw ae;
-            throw new ApplicationException(result.error());
-        }
-        return result.map(o -> new ExternalInstance(o, interpreter.applicationContext().environment().introspect(o))).orNull();
+
+        return method.invoke(externalObjectReference.externalObject(), arguments)
+                .mapError(error -> {
+                    if (error instanceof ApplicationException ae) return ae;
+                    return new ApplicationException(error);
+                }).map(o -> new ExternalInstance(o, interpreter.applicationContext().environment().introspect(o)))
+                .orNull();
     }
 
     @Override

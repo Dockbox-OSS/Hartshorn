@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class MissingInjectConstructorException extends ApplicationRuntimeException {
+public class MissingInjectConstructorException extends ApplicationException {
     public MissingInjectConstructorException(final TypeView<?> type) {
         super("No injectable constructors found for " + type.name());
     }

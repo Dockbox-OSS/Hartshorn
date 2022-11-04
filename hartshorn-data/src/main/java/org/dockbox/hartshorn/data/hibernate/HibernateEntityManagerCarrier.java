@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
+import java.sql.Driver;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
@@ -34,12 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-import java.sql.Driver;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -159,7 +159,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
 
         return this.applicationContext()
                 .property("hartshorn.data.hibernate.dialect")
-                .orThrow(() -> new ApplicationException("No default dialect was configured"));
+                .orElseThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 
     protected boolean isInvalidConnection() {
@@ -187,7 +187,8 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver.getCanonicalName(), dialect));
 
         final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
-        this.hibernateConfiguration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto").or("update"));
+        this.hibernateConfiguration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto")
+                .orElse("update"));
         this.hibernateConfiguration.setProperty("hibernate.connection.driver_class", driver.getCanonicalName());
         this.hibernateConfiguration.setProperty("hibernate.dialect", dialect);
 

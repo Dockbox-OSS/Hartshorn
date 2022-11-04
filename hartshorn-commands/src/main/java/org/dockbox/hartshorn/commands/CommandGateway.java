@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -82,9 +82,9 @@ public interface CommandGateway {
      *
      * @param context The context to apply
      *
-     * @return The first {@link CommandExecutorContext}, or {@link Result#empty()}
+     * @return The first {@link CommandExecutorContext}, or {@link Option#empty()}
      */
-    Result<CommandExecutorContext> get(CommandContext context);
+    Option<CommandExecutorContext> get(CommandContext context);
 
     /**
      * Adds the given {@link CommandExecutorExtension} to any {@link CommandExecutorContext} stored in the

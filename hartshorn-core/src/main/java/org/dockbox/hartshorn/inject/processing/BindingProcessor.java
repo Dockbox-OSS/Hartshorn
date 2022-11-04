@@ -100,8 +100,9 @@ public class BindingProcessor {
 
     private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final ObtainableView<C> element,
                                                              final Key<R> key, boolean singleton, final Provider annotation) throws ApplicationException {
-        final C targetType = element.getWithContext().rethrowUnchecked()
-                .orThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));
+        final C targetType = element.getWithContext()
+                .rethrowUnchecked()
+                .orElseThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));
 
         context.log().debug("Processing class binding for %s -> %s".formatted(key.type().getSimpleName(), targetType.getSimpleName()));
 
@@ -109,13 +110,17 @@ public class BindingProcessor {
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
 
         if (singleton) {
-            final boolean lazy = annotation.lazy() || Boolean.TRUE.equals(context.get(ComponentLocator.class).container(targetType).map(ComponentContainer::lazy).or(false));
+            final boolean lazy = annotation.lazy() || Boolean.TRUE.equals(context.get(ComponentLocator.class)
+                    .container(targetType)
+                    .map(ComponentContainer::lazy)
+                    .orElse(false)
+            );
             if (lazy) function.lazySingleton(() -> context.get(targetType));
             else {
                 final Proxy<R> proxy = TypeUtils.adjustWildcards(context.environment().factory(targetType)
                         .proxy()
                         .rethrowUnchecked()
-                        .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above.")), Proxy.class);
+                        .orElseThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above.")), Proxy.class);
                 this.proxiesToInitialize.add(new LateSingletonContext<>(targetType, proxy));
             }
         }

@@ -32,7 +32,7 @@ public class CommandParameterLoader extends RuleBasedParameterLoader<CommandPara
     @Override
     protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
         final CommandParameterContext parameterContext = new ArrayList<>(context.executorContext().parameters().values()).get(index);
-        final Object out = context.commandContext().get(parameterContext.parameter().name());
-        return out == null ? super.loadDefault(parameter, index, context, args) : (T) out;
+        final T out = context.commandContext().get(parameterContext.parameter().name(), parameter.type().type());
+        return out == null ? super.loadDefault(parameter, index, context, args) : out;
     }
 }

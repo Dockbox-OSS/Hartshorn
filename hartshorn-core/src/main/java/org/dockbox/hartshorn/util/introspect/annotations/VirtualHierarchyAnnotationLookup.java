@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 
 public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
 
-    private static final Map<HierarchyKey, Result<Object>> cache = new ConcurrentHashMap<>();
+    private static final Map<HierarchyKey, Option<Object>> cache = new ConcurrentHashMap<>();
 
     @Override
     public <A extends Annotation> A find(final AnnotatedElement element, final Class<A> annotationType) throws DuplicateAnnotationCompositeException {
@@ -50,12 +50,11 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     protected <T> T fromCache(final HierarchyKey key, final Supplier<T> supplier) {
-        Result<Object> ret = cache.get(key);
+        Option<Object> ret = cache.get(key);
         if (ret == null) {
-            ret = Result.of(supplier::get);
+            ret = Option.of(supplier::get);
             cache.put(key, ret);
         }
-        ret.rethrowUnchecked();
         return (T) ret.get();
     }
 

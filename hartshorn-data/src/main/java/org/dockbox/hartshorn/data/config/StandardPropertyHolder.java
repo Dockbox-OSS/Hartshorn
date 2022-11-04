@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.data.config;
 
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.function.CheckedFunction;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 
 import jakarta.inject.Inject;
 
@@ -44,15 +45,18 @@ public class StandardPropertyHolder implements PropertyHolder {
 
     private final ObjectMapper objectMapper;
     private final ObjectMapper propertyMapper;
+    private final ApplicationContext applicationContext;
 
     @Inject
-    public StandardPropertyHolder(final ApplicationPropertyHolder applicationContext,
+    public StandardPropertyHolder(final ApplicationContext applicationContext,
+                                  final ApplicationPropertyHolder propertyHolder,
                                   final ObjectMapper objectMapper,
                                   final ObjectMapper propertyMapper) {
+        this.applicationContext = applicationContext;
         this.objectMapper = objectMapper.fileType(FileFormats.JSON);
         this.propertyMapper = propertyMapper.fileType(FileFormats.PROPERTIES);
         this.properties = this.createConfigurationMap();
-        applicationContext.properties()
+        propertyHolder.properties()
                 .forEach((k, v) -> this.set(String.valueOf(k), v));
     }
 
@@ -62,26 +66,26 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     @Override
-    public <T> Result<T> update(final T object, final String key, final Class<T> type) {
+    public <T> Option<T> update(final T object, final String key, final Class<T> type) {
         return this.restore(key, serialized -> this.objectMapper.update(object, serialized, type));
     }
 
-    private <T> Result<T> restore(final String key, final CheckedFunction<String, Result<T>> mapper) {
+    private <T> Option<T> restore(final String key, final Function<String, Option<T>> mapper) {
         final Object value = this.find(key);
-        return Result.of(value)
-                .flatMap(object -> this.objectMapper.write(object))
+        return Option.of(value)
+                .flatMap(result -> this.objectMapper.write(result).peekError(this.applicationContext::handle))
                 .flatMap(mapper);
     }
 
     @Override
-    public <T> Result<T> update(final T object, final String key, final GenericType<T> type) {
-        return Result.of(this.find(key))
-                .flatMap(value -> this.objectMapper.write(value))
+    public <T> Option<T> update(final T object, final String key, final GenericType<T> type) {
+        return Option.of(this.find(key))
+                .flatMap(value -> this.objectMapper.write(value).peekError(this.applicationContext::handle))
                 .flatMap(serialized -> this.objectMapper.read(serialized, type));
     }
 
     @Override
-    public <T> Result<T> get(final String key, final Class<T> type) {
+    public <T> Option<T> get(final String key, final Class<T> type) {
         return this.restore(key, serialized -> this.objectMapper.read(serialized, type));
     }
 
@@ -99,9 +103,9 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     @Override
-    public <T> Result<T> get(final String key, final GenericType<T> type) {
-        return Result.of(this.find(key))
-                .flatMap(value -> this.objectMapper.write(value))
+    public <T> Option<T> get(final String key, final GenericType<T> type) {
+        return Option.of(this.find(key))
+                .flatMap(value -> this.objectMapper.write(value).peekError(this.applicationContext::handle))
                 .flatMap(serialized -> this.objectMapper.read(serialized, type));
     }
 
@@ -117,7 +121,7 @@ public class StandardPropertyHolder implements PropertyHolder {
         final Object patch = this.objectMapper.write(value)
                 .flatMap(serialized -> this.objectMapper.read(serialized, Map.class))
                 .map(map -> (Object) map)
-                .or(value);
+                .orElse(value);
 
         Map<String, Object> current = this.properties;
         for (int i = 0; i < split.length; i++) {
@@ -199,7 +203,7 @@ public class StandardPropertyHolder implements PropertyHolder {
         final Properties properties = new Properties();
         this.propertyMapper.write(this.properties)
                 .map(StringReader::new)
-                .present(reader -> {
+                .peek(reader -> {
                     try {
                         properties.load(reader);
                     }

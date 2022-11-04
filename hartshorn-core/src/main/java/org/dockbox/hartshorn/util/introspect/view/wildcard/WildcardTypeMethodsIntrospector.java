@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -27,8 +27,8 @@ import java.util.List;
 
 public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<Object> {
     @Override
-    public Result<MethodView<Object, ?>> named(final String name, final Collection<Class<?>> parameterTypes) {
-        return Result.empty();
+    public Option<MethodView<Object, ?>> named(final String name, final Collection<Class<?>> parameterTypes) {
+        return Option.empty();
     }
 
     @Override

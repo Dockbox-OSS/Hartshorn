@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,7 @@ public class ViewModelImpl implements ViewModel {
     }
 
     @Override
-    public Result<Object> attribute(final String name) {
-        return Result.of(this.attributes.get(name));
+    public Option<Object> attribute(final String name) {
+        return Option.of(this.attributes.get(name));
     }
 }

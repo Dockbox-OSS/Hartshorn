@@ -26,10 +26,10 @@ import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
 
@@ -63,7 +63,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     }
 
     protected String createI18nKey(final ApplicationContext context, final MethodView<?, ?> method) {
-        final Result<InjectTranslation> resource = method.annotations().get(InjectTranslation.class);
+        final Option<InjectTranslation> resource = method.annotations().get(InjectTranslation.class);
 
         // If the method has an explicit key, use that without further processing
         if (resource.present()) {
@@ -77,7 +77,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
         String methodKey = String.join(".", StringUtilities.splitCapitals(methodName)).toLowerCase();
 
         final TypeView<?> declaringType = method.declaredBy();
-        final Result<ComponentContainer> container = context.get(ComponentLocator.class).container(declaringType.type());
+        final Option<ComponentContainer> container = context.get(ComponentLocator.class).container(declaringType.type());
         if (container.present()) {
             final String containerKey = container.get().id();
             if (containerKey != null) methodKey = containerKey + "." + methodKey;

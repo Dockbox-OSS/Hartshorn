@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -44,17 +45,17 @@ public class HeaderRequestParameterRule extends AnnotatedParameterLoaderRule<Req
     }
 
     @Override
-    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         final RequestHeader requestHeader = parameter.annotations().get(RequestHeader.class).get();
 
         final HttpServletRequest request = context.request();
 
-        if (!request.getHeaders(requestHeader.value()).hasMoreElements()) return Result.empty();
+        if (!request.getHeaders(requestHeader.value()).hasMoreElements()) return Option.empty();
 
-        if (parameter.type().is(String.class)) return Result.of(() -> (T) request.getHeader(requestHeader.value()));
-        else if (parameter.type().isChildOf(int.class)) return Result.of(() -> request.getIntHeader(requestHeader.value())).map(v -> (T) v);
-        else if (parameter.type().isChildOf(long.class)) return Result.of(() -> request.getDateHeader(requestHeader.value())).map(v -> (T) v);
+        if (parameter.type().is(String.class)) return Option.of(() -> request.getHeader(requestHeader.value())).map(v -> TypeUtils.adjustWildcards(v, Object.class));
+        else if (parameter.type().isChildOf(int.class)) return Option.of(() -> request.getIntHeader(requestHeader.value())).map(v -> TypeUtils.adjustWildcards(v, Object.class));
+        else if (parameter.type().isChildOf(long.class)) return Option.of(() -> request.getDateHeader(requestHeader.value())).map(v -> TypeUtils.adjustWildcards(v, Object.class));
 
-        return Result.empty();
+        return Option.empty();
     }
 }

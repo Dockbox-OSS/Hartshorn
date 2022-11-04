@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.data.remote;
 
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public class DataSourceConfigurations {
         return this.sources;
     }
 
-    public Result<DataSourceConfiguration> source(final String id) {
-        return Result.of(this.sources.get(id));
+    public Option<DataSourceConfiguration> source(final String id) {
+        return Option.of(this.sources.get(id));
     }
 }

@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.util.Result;
-
 import java.lang.reflect.Method;
 import java.util.Set;
+
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A proxy manager is responsible for managing the lifecycle of a single proxy object. How the proxy is created is
@@ -65,7 +65,7 @@ public interface ProxyManager<T> extends ApplicationAwareContext {
      * @return the original instance delegate of the proxy
      * @see ProxyFactory#typeDelegate()
      */
-    Result<T> delegate();
+    Option<T> delegate();
 
     /**
      * Returns the delegate for the given method. This method is used to obtain the delegate for the given method, which
@@ -74,7 +74,7 @@ public interface ProxyManager<T> extends ApplicationAwareContext {
      * @param method the method for which to obtain the delegate
      * @return the delegate for the given method
      */
-    Result<T> delegate(Method method);
+    Option<T> delegate(Method method);
 
     /**
      * Returns the delegate for the given type. This method is used to obtain the delegate for the given type, which is
@@ -84,16 +84,16 @@ public interface ProxyManager<T> extends ApplicationAwareContext {
      * @param <S> the type of the delegate
      * @return the delegate for the given type
      */
-    <S> Result<S> delegate(Class<S> type);
+    <S> Option<S> delegate(Class<S> type);
 
     /**
      * Gets the interceptor for the given method. This method is used to obtain the interceptor for the given method,
-     * which may be a chained or single interceptor. If the method is not intercepted, this method returns {@link Result#empty()}
+     * which may be a chained or single interceptor. If the method is not intercepted, this method returns {@link Option#empty()}
      *
      * @param method the method for which to obtain the interceptor
      * @return the interceptor for the given method
      */
-    Result<MethodInterceptor<T, ?>> interceptor(Method method);
+    Option<MethodInterceptor<T, ?>> interceptor(Method method);
 
     /**
      * Gets all method wrappers for the given method. If the method is not intercepted, this method returns an empty set.
