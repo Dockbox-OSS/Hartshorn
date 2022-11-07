@@ -29,6 +29,14 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Represents an empty {@link Option}.
+ *
+ * @param <T> The type of the value
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
 public class None<T> implements Option<T> {
 
     @Override

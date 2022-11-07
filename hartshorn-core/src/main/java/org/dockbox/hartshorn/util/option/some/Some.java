@@ -29,6 +29,14 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Represents an {@link Option} containing a non-null value.
+ *
+ * @param <T> The type of the value.
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
 public class Some<T> implements Option<T> {
 
     private final T value;

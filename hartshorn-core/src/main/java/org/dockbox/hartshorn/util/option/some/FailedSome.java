@@ -30,6 +30,15 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Represents a successful {@link Attempt} at retrieving a value, which also contains an exception.
+ *
+ * @param <T> The type of the value
+ * @param <E> The type of the exception
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
 public class FailedSome<T, E extends Throwable> extends Some<T> implements Attempt<T, E> {
 
     private final E error;

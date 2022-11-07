@@ -30,6 +30,15 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Represents a failed {@link Attempt} which contains an error, but no value.
+ *
+ * @param <T> The type of the value
+ * @param <E> The type of the exception
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
 public class FailedNone<T, E extends Throwable> extends None<T> implements Attempt<T, E> {
 
     private final E error;
