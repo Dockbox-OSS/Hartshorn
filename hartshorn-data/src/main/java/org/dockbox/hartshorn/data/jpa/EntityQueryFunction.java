@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.context.QueryContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Function;
 
@@ -41,7 +41,7 @@ public class EntityQueryFunction implements QueryFunction {
     }
 
     private Object executeQuery(final QueryContext context, final Function<EntityManager, Object> action) {
-        final Result<EntityManager> entityManager = context.applicationContext().get(EntityManagerLookup.class)
+        final Option<EntityManager> entityManager = context.applicationContext().get(EntityManagerLookup.class)
                 .lookup(context.repository());
 
         if (entityManager.present()) {

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.data.context.JpaParameterLoaderContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 import jakarta.persistence.Query;
@@ -31,11 +31,11 @@ public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParame
     }
 
     @Override
-    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
         final Query query = context.query();
         final Pagination pagination = (Pagination) args[index];
         if (pagination.max() != null) query.setMaxResults(pagination.max());
         if (pagination.start() != null) query.setFirstResult(pagination.start());
-        return Result.of((T) args[index]);
+        return Option.of(() -> (T) args[index]);
     }
 }

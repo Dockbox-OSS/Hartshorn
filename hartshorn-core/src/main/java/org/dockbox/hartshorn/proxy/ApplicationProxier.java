@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The {@link ApplicationProxier} is responsible for creating proxies of components. It is used by the
@@ -41,11 +41,11 @@ public interface ApplicationProxier extends ProxyLookup {
      * @return The type of the instance.
      * @see ProxyLookup#unproxy(Object)
      */
-    <T> Result<Class<T>> real(T instance);
+    <T> Option<Class<T>> real(T instance);
 
-    <T> Result<ProxyManager<T>> manager(T instance);
+    <T> Option<ProxyManager<T>> manager(T instance);
 
-    <D, T extends D> Result<D> delegate(TypeView<D> type, T instance);
+    <D, T extends D> Option<D> delegate(TypeView<D> type, T instance);
 
     <T> StateAwareProxyFactory<T, ?> factory(TypeView<T> type);
 

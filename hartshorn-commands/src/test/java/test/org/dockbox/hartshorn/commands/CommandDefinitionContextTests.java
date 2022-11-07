@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandGatewayImpl;
@@ -30,12 +33,9 @@ import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.commands.types.CommandValueEnum;
@@ -157,7 +157,7 @@ public class CommandDefinitionContextTests {
         final CommandElement<?> enumElement = context.elements().get(2);
         Assertions.assertTrue(enumElement.optional());
         Assertions.assertEquals("enum", enumElement.name());
-        final Result<?> one = enumElement.parse(null, "ONE");
+        final Option<?> one = enumElement.parse(null, "ONE");
         Assertions.assertTrue(one.present());
         Assertions.assertTrue(one.get() instanceof CommandValueEnum);
         Assertions.assertEquals(CommandValueEnum.ONE, one.get());

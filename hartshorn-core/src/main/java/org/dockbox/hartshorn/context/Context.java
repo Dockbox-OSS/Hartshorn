@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -58,7 +58,7 @@ public interface Context {
      * @param name The name of the context.
      * @return The first context of the given name, if it exists.
      */
-    Result<Context> first(String name);
+    Option<Context> first(String name);
 
     /**
      * Returns the first named context of the given named and type.
@@ -68,7 +68,7 @@ public interface Context {
      * @param <N> The type of the context.
      * @return The first named context of the given named and type, if it exists.
      */
-    <N extends Context> Result<N> first(String name, Class<N> context);
+    <N extends Context> Option<N> first(String name, Class<N> context);
 
     /**
      * Returns all contexts of the given type. If no contexts of the given type exist, an empty {@link List} will be
@@ -106,7 +106,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type.
      */
-    <C extends Context> Result<C> first(Class<C> context);
+    <C extends Context> Option<C> first(Class<C> context);
 
     /**
      * Returns the first context of the given type and name.
@@ -116,7 +116,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
-    <C extends Context> Result<C> first(Class<C> context, String name);
+    <C extends Context> Option<C> first(Class<C> context, String name);
 
     /**
      * Returns the first context of the given type and name, which are represented by the given key.
@@ -125,6 +125,6 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
-    <C extends Context> Result<C> first(Key<C> context);
+    <C extends Context> Option<C> first(Key<C> context);
 
 }

@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Optional;
@@ -45,8 +45,8 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
         final MethodView<T, ?> method = methodContext.method();
         final SerializationSourceConverter converter = method.annotations().get(SerializationSource.class)
                 .map(serializationSource -> (SerializationSourceConverter) context.get(serializationSource.converter()))
-                .orElse(() -> context.get(ArgumentSerializationSourceConverter.class))
-                .rethrowUnchecked().orNull();
+                .orCompute(() -> context.get(ArgumentSerializationSourceConverter.class))
+                .orNull();
 
         if (converter != null) {
             processingContext.put(CONVERTER_KEY, converter);
@@ -54,8 +54,8 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
         return converter;
     }
 
-    protected Object wrapSerializationResult(final MethodView<?, ?> methodContext, final Result<?> result) {
-        if (methodContext.returnType().is(Result.class))
+    protected Object wrapSerializationResult(final MethodView<?, ?> methodContext, final Option<?> result) {
+        if (methodContext.returnType().is(Option.class))
             return result;
         else if (methodContext.returnType().is(Optional.class))
             return Optional.ofNullable(result.orNull());

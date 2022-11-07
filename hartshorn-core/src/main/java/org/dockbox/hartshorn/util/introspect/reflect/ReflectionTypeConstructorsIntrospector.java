@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -32,7 +32,7 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     private final Class<T> type;
     private final Introspector introspector;
 
-    private Result<ConstructorView<T>> defaultConstructor;
+    private Option<ConstructorView<T>> defaultConstructor;
     private List<ConstructorView<T>> constructors;
     public ReflectionTypeConstructorsIntrospector(final Class<T> type, final Introspector introspector) {
         this.type = type;
@@ -40,9 +40,9 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     }
 
     @Override
-    public Result<ConstructorView<T>> defaultConstructor() {
+    public Option<ConstructorView<T>> defaultConstructor() {
         if (this.defaultConstructor == null) {
-            this.defaultConstructor = Result.of(() -> this.introspector.introspect(this.type.getDeclaredConstructor()));
+            this.defaultConstructor = Option.of(() -> this.introspector.introspect(this.type.getDeclaredConstructor()));
         }
         return this.defaultConstructor;
     }
@@ -55,8 +55,8 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     }
 
     @Override
-    public Result<ConstructorView<T>> withParameters(final List<Class<?>> parameters) {
-        return Result.of(() -> {
+    public Option<ConstructorView<T>> withParameters(final List<Class<?>> parameters) {
+        return Option.of(() -> {
             final Constructor<T> constructor = this.type.getDeclaredConstructor(parameters.toArray(new Class[0]));
             return this.introspector.introspect(constructor);
         });

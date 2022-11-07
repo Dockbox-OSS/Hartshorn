@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -27,7 +27,7 @@ import jakarta.inject.Inject;
 
 public interface TypeConstructorsIntrospector<T> {
 
-    Result<ConstructorView<T>> defaultConstructor();
+    Option<ConstructorView<T>> defaultConstructor();
 
     List<ConstructorView<T>> annotatedWith(Class<? extends Annotation> annotation);
 
@@ -39,11 +39,11 @@ public interface TypeConstructorsIntrospector<T> {
         return this.annotatedWith(Bound.class);
     }
 
-    default Result<ConstructorView<T>> withParameters(final Class<?>... parameters) {
+    default Option<ConstructorView<T>> withParameters(final Class<?>... parameters) {
         return this.withParameters(List.of(parameters));
     }
 
-    Result<ConstructorView<T>> withParameters(List<Class<?>> parameters);
+    Option<ConstructorView<T>> withParameters(List<Class<?>> parameters);
 
     List<ConstructorView<T>> all();
 

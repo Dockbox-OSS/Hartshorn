@@ -17,35 +17,26 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Supplier;
 
 /**
- * A {@link Supplier} that is able to provide instances using the given {@link Supplier}.
- * If the {@link Supplier} is unable to provide an instance, an empty {@link Result}
- * will be returned without throwing an exception.
+ * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
+ * {@link Supplier} is unable to provide an instance, an empty {@link Option} will be returned
+ * without throwing an exception.
  *
  * @param <C> The type to be provided.
+ *
  * @author Guus Lieben
- * @since 21.4
  * @see Provider
  * @see ContextDrivenProvider
+ * @since 21.4
  */
-public class SupplierProvider<C> implements Provider<C> {
-
-    private final Supplier<C> supplier;
-
-    public SupplierProvider(final Supplier<C> supplier) {
-        this.supplier = supplier;
-    }
-
-    public Supplier<C> supplier() {
-        return this.supplier;
-    }
+public record SupplierProvider<C>(Supplier<C> supplier) implements Provider<C> {
 
     @Override
-    public Result<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return Result.of(() -> new ObjectContainer<>(this.supplier.get(), false));
+    public Option<ObjectContainer<C>> provide(final ApplicationContext context) {
+        return Option.of(() -> new ObjectContainer<>(this.supplier.get(), false));
     }
 }

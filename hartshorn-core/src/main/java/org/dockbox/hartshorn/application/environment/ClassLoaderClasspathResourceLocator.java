@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.util.Resources;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,8 +47,8 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     }
 
     @Override
-    public Result<Path> resource(final String name) {
-        return Result.of(() -> Resources.getResourceAsFile(name)).map(File::toPath);
+    public Attempt<Path, IOException> resource(final String name) {
+        return Attempt.of(() -> Resources.getResourceAsFile(name), IOException.class).map(File::toPath);
     }
 
     @Override

@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.util.option.Option;
 
 public enum MediaType {
     ALL("*", "*"),
@@ -62,8 +62,8 @@ public enum MediaType {
         return this.format != null;
     }
 
-    public Result<FileFormat> fileFormat() {
-        return Result.of(this.format);
+    public Option<FileFormat> fileFormat() {
+        return Option.of(this.format);
     }
 
     public String value() {

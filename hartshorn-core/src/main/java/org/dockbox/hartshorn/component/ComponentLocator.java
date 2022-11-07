@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 
@@ -27,7 +27,7 @@ public interface ComponentLocator {
 
     Collection<ComponentContainer> containers(ComponentType functional);
 
-    Result<ComponentContainer> container(final Class<?> type);
+    Option<ComponentContainer> container(final Class<?> type);
 
     <T> void validate(Key<T> key);
 }

@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.util.List;
 
@@ -41,9 +41,9 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
         final List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWith(PostConstruct.class);
 
         for (final MethodView<T, ?> postConstructMethod : postConstructMethods) {
-            final Result<?> result = postConstructMethod.invokeWithContext(type);
+            final Attempt<?, Throwable> result = postConstructMethod.invokeWithContext(type);
 
-            if (result.caught()) {
+            if (result.errorPresent()) {
                 final Throwable error = result.error();
 
                 if (error instanceof ApplicationException applicationException) {

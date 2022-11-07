@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 /**
  * Implementation note: this serves only as an implementation detail, not as an
@@ -24,5 +24,5 @@ import org.dockbox.hartshorn.util.Result;
  * @param <T>
  */
 public interface ObtainableView<T> extends View {
-    Result<T> getWithContext();
+    Attempt<T, Throwable> getWithContext();
 }

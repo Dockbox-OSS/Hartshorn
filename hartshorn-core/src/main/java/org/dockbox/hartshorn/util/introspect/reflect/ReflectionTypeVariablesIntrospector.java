@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -38,11 +38,11 @@ public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrosp
     }
 
     @Override
-    public Result<TypeView<?>> at(final int index) {
+    public Option<TypeView<?>> at(final int index) {
         if (this.variables.size() > index) {
-            return Result.of(this.introspector.introspect((Type) this.variables.get(index)));
+            return Option.of(this.introspector.introspect((Type) this.variables.get(index)));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -26,29 +26,29 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
 
     Method method();
 
-    default Result<ReturnType> invoke(final Parent instance, final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invoke(final Parent instance, final Object... arguments) {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
-    Result<ReturnType> invoke(Parent instance, Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments);
 
-    Result<ReturnType> invokeWithContext(Parent instance);
+    Attempt<ReturnType, Throwable> invokeWithContext(Parent instance);
 
-    default Result<ReturnType> invokeWithContext(final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invokeWithContext(final Object... arguments) {
         return this.invokeWithContext(Arrays.asList(arguments));
     }
 
-    Result<ReturnType> invokeWithContext(Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invokeWithContext(Collection<?> arguments);
 
-    Result<ReturnType> invokeWithContext();
+    Attempt<ReturnType, Throwable> invokeWithContext();
 
-    default Result<ReturnType> invokeStatic(final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invokeStatic(final Object... arguments) {
         return this.invokeStatic(Arrays.asList(arguments));
     }
 
-    Result<ReturnType> invokeStatic(Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments);
 
-    Result<ReturnType> invokeStaticWithContext();
+    Attempt<ReturnType, Throwable> invokeStaticWithContext();
 
     TypeView<ReturnType> returnType();
 

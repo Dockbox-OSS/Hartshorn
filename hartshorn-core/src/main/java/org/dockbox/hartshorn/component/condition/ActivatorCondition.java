@@ -29,6 +29,6 @@ public class ActivatorCondition implements Condition {
                 }
             }
             return ConditionResult.matched();
-        }).or(ConditionResult.invalidCondition("activator"));
+        }).orElse(ConditionResult.invalidCondition("activator"));
     }
 }

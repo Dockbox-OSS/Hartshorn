@@ -46,8 +46,7 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
                 .get(DataSource.class)
                 .map(DataSource::value)
                 .map(dataSourceList::get)
-                .orElse(dataSourceList::defaultConnection)
-                .orNull();
+                .orElseGet(dataSourceList::defaultConnection);
 
         return context.get(JpaRepositoryFactory.class).repository(type, sourceConfiguration);
     }

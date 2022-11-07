@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -33,6 +32,7 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -144,7 +144,7 @@ public class ReflectTests {
     void testFieldValueReturnsValue(final String field) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeView<ReflectTestType> type = this.introspector.introspect(instance);
-        final Result<?> value = type.fields().named(field).get().get(instance);
+        final Option<?> value = type.fields().named(field).get().get(instance);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
@@ -154,7 +154,7 @@ public class ReflectTests {
     void testRunMethodReturnsValue(final String method) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeView<ReflectTestType> type = this.introspector.introspect(instance);
-        final Result<?> value = type.methods().named(method, List.of(String.class)).get().invoke(instance, "value");
+        final Option<?> value = type.methods().named(method, List.of(String.class)).get().invoke(instance, "value");
         Assertions.assertTrue(value.present());
         Assertions.assertEquals("VALUE", value.get());
     }
@@ -215,7 +215,7 @@ public class ReflectTests {
 
     @Test
     void testHasAnnotationOnMethod() {
-        final Result<MethodView<ReflectTestType, ?>> method = this.introspector.introspect(ReflectTestType.class)
+        final Option<MethodView<ReflectTestType, ?>> method = this.introspector.introspect(ReflectTestType.class)
                 .methods()
                 .named("publicAnnotatedMethod");
         Assertions.assertTrue(method.present());
@@ -411,7 +411,7 @@ public class ReflectTests {
     @Test
     void testRedefinedAnnotationsTakePriority() {
         final TypeView<AnnotatedImpl> typeContext = this.introspector.introspect(AnnotatedImpl.class);
-        final Result<Base> annotation = typeContext.annotations().get(Base.class);
+        final Option<Base> annotation = typeContext.annotations().get(Base.class);
         Assertions.assertTrue(annotation.present());
         Assertions.assertEquals("impl", annotation.get().value());
     }

@@ -49,7 +49,7 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
             try {
                 final Object o = interceptorContext.args()[0];
                 cacheContext.manager().get(cacheContext.cacheName())
-                        .present(cache -> cache.put(cacheContext.key(), o));
+                        .peek(cache -> cache.put(cacheContext.key(), o));
                 return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);

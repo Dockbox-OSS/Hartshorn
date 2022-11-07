@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.scan.classpath.ClasspathTypeReferenceCo
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 
 @UseDemo
@@ -32,7 +32,7 @@ public class ActivatorScanningTests {
 
     @InjectTest
     void testPrefixFromActivatorIsRegistered(final ApplicationContext applicationContext) {
-        final Result<TypeReferenceCollectorContext> contextCandidate = applicationContext.first(TypeReferenceCollectorContext.class);
+        final Option<TypeReferenceCollectorContext> contextCandidate = applicationContext.first(TypeReferenceCollectorContext.class);
         Assertions.assertTrue(contextCandidate.present());
 
         final TypeReferenceCollectorContext context = contextCandidate.get();

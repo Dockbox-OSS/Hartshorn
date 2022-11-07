@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -26,13 +26,13 @@ public interface ConstructorView<T> extends ExecutableElementView<T> {
 
     Constructor<T> constructor();
 
-    default Result<T> create(final Object... arguments) {
+    default Attempt<T, Throwable> create(final Object... arguments) {
         return this.create(List.of(arguments));
     }
 
-    Result<T> create(Collection<?> arguments);
+    Attempt<T, Throwable> create(Collection<?> arguments);
 
-    Result<T> createWithContext();
+    Attempt<T, Throwable> createWithContext();
 
     TypeView<T> type();
 

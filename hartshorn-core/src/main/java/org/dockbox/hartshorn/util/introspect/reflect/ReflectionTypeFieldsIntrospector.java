@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -68,14 +68,14 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public Result<FieldView<T, ?>> named(String name) {
+    public Option<FieldView<T, ?>> named(String name) {
         this.collect();
         if (this.fields.containsKey(name))
-            return Result.of(this.fields.get(name));
+            return Option.of(this.fields.get(name));
         else if (!this.type.superClass().isVoid())
             return this.type.superClass().fields().named(name)
                     .map(field -> (FieldView<T, ?>) field);
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
                 .filter(field -> {
                     final TypeView<?> genericType = field.genericType();
                     final List<TypeView<?>> typeParameters = genericType.typeParameters().all();
-                    final Result<Class<F>> classType = type.asClass();
+                    final Option<Class<F>> classType = type.asClass();
                     if (classType.absent()) return false;
 
                     final TypeView<F> targetGenericType = introspector.introspect(classType.get());

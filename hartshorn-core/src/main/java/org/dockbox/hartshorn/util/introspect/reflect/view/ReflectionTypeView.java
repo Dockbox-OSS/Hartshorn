@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -34,6 +33,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrosp
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Modifier;
@@ -84,7 +84,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     private List<T> enumConstants;
     private TypeView<?> parent;
     private List<TypeView<?>> interfaces;
-    private Result<TypeView<?>> elementType;
+    private Option<TypeView<?>> elementType;
     private Tristate isProxy = Tristate.UNDEFINED;
 
     private TypeMethodsIntrospector<T> methodsIntrospector;
@@ -303,12 +303,11 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
-    public Result<TypeView<?>> elementType() {
+    public Option<TypeView<?>> elementType() throws IllegalArgumentException {
         if (this.elementType == null) {
             this.checkProxy();
-            this.elementType = this.isArray()
-                    ? Result.of(this.introspector.introspect(this.type().getComponentType()))
-                    : Result.of(new IllegalArgumentException("The introspected type must be an array to look up its element type"));
+            if (this.isArray()) this.elementType = Option.of(this.introspector.introspect(this.type().getComponentType()));
+            else throw new IllegalArgumentException("The introspected type must be an array to look up its element type");
         }
         return this.elementType;
     }

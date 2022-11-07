@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -50,10 +50,10 @@ public class ReflectionTypeParametersIntrospector<T> implements TypeParametersIn
     }
 
     @Override
-    public Result<TypeView<?>> at(final int index) {
+    public Option<TypeView<?>> at(final int index) {
         final List<TypeView<?>> parameters = this.all();
-        if (parameters.size() > index) return Result.of(parameters.get(index));
-        return Result.empty();
+        if (parameters.size() > index) return Option.of(parameters.get(index));
+        return Option.empty();
     }
 
     @Override

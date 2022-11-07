@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.data.service;
 
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
@@ -36,11 +39,8 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.persistence.EntityManager;
 
@@ -57,8 +57,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
                     .get(DataSource.class)
                     .map(DataSource::value)
                     .map(dataSourceList::get)
-                    .orElse(dataSourceList::defaultConnection)
-                    .orNull();
+                    .orElseGet(dataSourceList::defaultConnection);
 
             // Do not fail if no data source is configured, as this may be configured in a different way.
             if (sourceConfiguration != null) {
@@ -88,7 +87,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     }
 
     private <T> TransactionManager transactionManager(final TransactionFactory transactionFactory, final EntityManagerLookup lookup, final MethodView<T, ?> methodContext, final T target) {
-        final Result<EntityManager> entityManager = lookup.lookup(target);
+        final Option<EntityManager> entityManager = lookup.lookup(target);
         if (entityManager.absent()) {
             throw new MissingEntityManagerException(methodContext);
         }

@@ -33,11 +33,11 @@ import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import java.lang.reflect.Method;
@@ -66,7 +66,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     public MethodCommandExecutorContext(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key) {
         super(context);
-        final Result<Command> annotated = method.annotations().get(Command.class);
+        final Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
@@ -75,7 +75,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         this.command = annotated.get();
         this.type = context.environment().introspect(key.type());
 
-        final Result<Command> annotation = this.type.annotations().get(Command.class);
+        final Option<Command> annotation = this.type.annotations().get(Command.class);
         final Command parent;
         if (annotation.present()) {
             parent = annotation.get();
@@ -156,7 +156,8 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
             if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {
                 this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-                this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
+                this.method().invoke(instance, arguments.toArray())
+                        .peekError(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
                 new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
             }
             else {
@@ -238,7 +239,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     private CommandDefinitionContext definition() {
-        final Result<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        final Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
         if (definition.absent()) throw new DefinitionContextLostException();
         return definition.get();
     }

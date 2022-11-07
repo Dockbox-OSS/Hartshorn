@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.data.mapping;
 
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -26,14 +28,13 @@ import org.dockbox.hartshorn.data.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.data.Address;
@@ -57,13 +58,13 @@ public class ObjectMappingTests {
 
         propertyHolder.set("user.name", "John Doe");
 
-        final Result<User> user = propertyHolder.get("user", User.class);
+        final Option<User> user = propertyHolder.get("user", User.class);
         Assertions.assertTrue(user.present());
         Assertions.assertEquals("John Doe", user.get().name());
 
         propertyHolder.set("user.address", new Address("Darwin City", "Darwin Street", 12));
 
-        final Result<Address> address = propertyHolder.get("user.address", Address.class);
+        final Option<Address> address = propertyHolder.get("user.address", Address.class);
         Assertions.assertTrue(address.present());
         Assertions.assertEquals("Darwin City", address.get().city());
         Assertions.assertEquals("Darwin Street", address.get().street());
@@ -71,7 +72,7 @@ public class ObjectMappingTests {
 
         propertyHolder.set("user.address.street", "Darwin Lane");
 
-        final Result<Address> address2 = propertyHolder.get("user.address", Address.class);
+        final Option<Address> address2 = propertyHolder.get("user.address", Address.class);
         Assertions.assertTrue(address2.present());
         Assertions.assertEquals("Darwin City", address2.get().city());
         Assertions.assertEquals("Darwin Lane", address2.get().street());
@@ -136,7 +137,7 @@ public class ObjectMappingTests {
         mapper.fileType(fileFormat);
 
         content.name("sample");
-        final Result<String> result = mapper.write(content);
+        final Option<String> result = mapper.write(content);
 
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(expected.replaceAll("[ \n]+", ""), result.get().replaceAll("[ \n\r]+", ""));
@@ -149,11 +150,11 @@ public class ObjectMappingTests {
         mapper.fileType(fileFormat);
         expected.name("sample");
 
-        final Result<? extends Element> result = mapper.read(content, expected.getClass());
+        final Attempt<? extends Element, ?> result = mapper.read(content, expected.getClass());
 
         if (result.absent()) throw new RuntimeException(result.error().getMessage());
         Assertions.assertTrue(result.present());
-        Assertions.assertEquals(expected.getClass(), result.type());
+        Assertions.assertEquals(expected.getClass(), result.get().getClass());
         Assertions.assertEquals(expected, result.get());
     }
 }

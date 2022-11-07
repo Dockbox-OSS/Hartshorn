@@ -47,7 +47,7 @@ public class CacheEvictionMethodPostProcessor extends CacheServicePostProcessor<
     protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
         return interceptorContext -> {
             try {
-                cacheContext.manager().get(cacheContext.cacheName()).present(Cache::invalidate);
+                cacheContext.manager().get(cacheContext.cacheName()).peek(Cache::invalidate);
                 return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);

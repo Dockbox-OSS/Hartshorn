@@ -33,9 +33,9 @@ import java.lang.annotation.Target;
  * the parameter is a {@link java.nio.file.Path} or {@link java.io.File}, the provided
  * path will be used as the source.
  *
- * <p>The method can return either a {@link org.dockbox.hartshorn.util.Result}, a
+ * <p>The method can return either a {@link org.dockbox.hartshorn.util.option.Option}, a
  * {@link java.util.Optional}, or the type it deserializes to. If it returns a
- * {@link org.dockbox.hartshorn.util.Result} or {@link java.util.Optional}, the
+ * {@link org.dockbox.hartshorn.util.option.Option} or {@link java.util.Optional}, the
  * type is determined based on the type parameter.
  *
  * <p><pre>{@code

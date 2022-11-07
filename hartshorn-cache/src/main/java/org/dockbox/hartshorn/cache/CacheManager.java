@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -45,9 +45,9 @@ public interface CacheManager {
      * @param <K> The type of the key of the cache
      * @param <V> The type of the value of the cache
      *
-     * @return The cache, or {@link Result#empty()}
+     * @return The cache, or {@link Option#empty()}
      */
-    <K, V> Result<Cache<K, V>> get(String cache);
+    <K, V> Option<Cache<K, V>> get(String cache);
 
     /**
      * Gets the {@link Cache} associated with the given <code>cache</code>

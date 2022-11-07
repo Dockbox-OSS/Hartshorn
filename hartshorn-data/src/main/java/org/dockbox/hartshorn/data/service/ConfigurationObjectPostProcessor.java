@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
@@ -42,7 +42,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
     }
 
     private <T> T createOrUpdate(final Key<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder, final ApplicationContext applicationContext) {
-        final Result<T> configuration;
+        final Option<T> configuration;
         final Class<T> type = instance == null
                 ? key.type()
                 : TypeUtils.adjustWildcards(instance.getClass(), Class.class);
@@ -53,7 +53,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
         else {
             configuration = propertyHolder.update(instance, configurationObject.prefix(), type);
         }
-        return configuration.rethrowUnchecked().or(instance);
+        return configuration.orElse(instance);
     }
 
     @Override

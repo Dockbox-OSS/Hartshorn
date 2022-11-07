@@ -16,16 +16,16 @@
 
 package test.org.dockbox.hartshorn;
 
+import java.lang.reflect.Method;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
-
-import java.lang.reflect.Method;
 
 import test.org.dockbox.hartshorn.components.ContextCarrierService;
 import test.org.dockbox.hartshorn.components.IContextCarrierService;
@@ -58,7 +58,7 @@ public class ContextCarrierDelegationTests {
 
         Assertions.assertTrue(service instanceof Proxy<?>);
         final Method method = ContextCarrier.class.getMethod("applicationContext");
-        final Result<?> methodDelegate = ((Proxy<?>) service).manager().delegate(method);
+        final Option<?> methodDelegate = ((Proxy<?>) service).manager().delegate(method);
         Assertions.assertTrue(methodDelegate.present());
 
         Assertions.assertNotNull(service.applicationContext());
@@ -66,11 +66,11 @@ public class ContextCarrierDelegationTests {
     }
     private void testDelegateAbsent(final Object object) throws NoSuchMethodException {
         if (object instanceof Proxy<?>) {
-            final Result<ContextCarrier> delegate = ((Proxy<?>) object).manager().delegate(ContextCarrier.class);
+            final Option<ContextCarrier> delegate = ((Proxy<?>) object).manager().delegate(ContextCarrier.class);
             Assertions.assertTrue(delegate.absent());
 
             final Method method = ContextCarrier.class.getMethod("applicationContext");
-            final Result<?> methodDelegate = ((Proxy<?>) object).manager().delegate(method);
+            final Option<?> methodDelegate = ((Proxy<?>) object).manager().delegate(method);
             Assertions.assertTrue(methodDelegate.absent());
         }
     }

@@ -59,12 +59,12 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
             final ConstructorView<T> constructor = CyclingConstructorAnalyzer.findConstructor(factoryType)
                     .rethrowUnchecked()
-                    .orThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
+                    .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
             final Object[] arguments = constructor.parameters().loadFromContext();
-            return factory.proxy(constructor, arguments).or(instance);
+            return factory.proxy(constructor, arguments).orElse(instance);
         }
-        return factory.proxy().or(instance);
+        return factory.proxy().orElse(instance);
     }
 
     @Override

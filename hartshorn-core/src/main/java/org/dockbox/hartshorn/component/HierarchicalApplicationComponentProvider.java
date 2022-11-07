@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -43,14 +45,11 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
@@ -87,9 +86,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         this.locator.validate(key);
 
         final ObjectContainer<T> objectContainer = this.create(key)
-                .rethrowUnchecked()
-                .orElse(() -> new ObjectContainer<>(null, false))
-                .get();
+                .orElseGet(() -> new ObjectContainer<>(null, false));
 
         T instance = objectContainer.instance();
 
@@ -107,7 +104,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
             type = (Class<T>) instance.getClass();
         }
 
-        final Result<ComponentContainer> container = this.locator.container(type);
+        final Option<ComponentContainer> container = this.locator.container(type);
         if (container.present()) {
             // Will only mark the object container as processed if the component container permits
             // processing.
@@ -144,11 +141,8 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         return instance;
     }
 
-    @Nullable
-    private <T> Result<ObjectContainer<T>> create(final Key<T> key) {
-        return this.provide(key)
-                .rethrowUnchecked()
-                .orFlat(() -> this.raw(key));
+    private <T> Option<ObjectContainer<T>> create(final Key<T> key) {
+        return this.provide(key).orComputeFlat(() -> this.raw(key));
     }
 
     @Override
@@ -170,16 +164,16 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         else return new ContextWrappedHierarchy<>(hierarchy, this.applicationContext(), updated -> this.hierarchies.put(key, updated));
     }
 
-    public <T> Result<ObjectContainer<T>> provide(final Key<T> key) {
-        return Result.of(key)
+    public <T> Option<ObjectContainer<T>> provide(final Key<T> key) {
+        return Option.of(key)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
                     for (final Provider<T> provider : hierarchy.providers()) {
-                        final Result<ObjectContainer<T>> provided = provider.provide(this.applicationContext()).rethrowUnchecked();
+                        final Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
                         if (provided.present()) return provided;
                     }
-                    return Result.empty();
+                    return Option.empty();
                 });
     }
 
@@ -280,7 +274,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         this.singletonCache.put(Key.of((Class<ComponentPostProcessor>) postProcessor.getClass()), postProcessor);
     }
 
-    public <T> Result<ObjectContainer<T>> raw(final Key<T> key) {
-        return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext()).rethrowUnchecked();
+    public <T> Option<ObjectContainer<T>> raw(final Key<T> key) {
+        return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext());
     }
 }

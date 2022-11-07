@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -28,8 +28,8 @@ import java.util.List;
 public class WildcardTypeFieldsIntrospector implements TypeFieldsIntrospector<Object> {
 
     @Override
-    public Result<FieldView<Object, ?>> named(final String name) {
-        return Result.empty();
+    public Option<FieldView<Object, ?>> named(final String name) {
+        return Option.empty();
     }
 
     @Override

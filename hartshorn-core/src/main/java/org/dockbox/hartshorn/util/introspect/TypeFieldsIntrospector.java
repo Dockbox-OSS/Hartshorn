@@ -17,15 +17,15 @@
 package org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 public interface TypeFieldsIntrospector<T> {
 
-    Result<FieldView<T, ?>> named(String name);
+    Option<FieldView<T, ?>> named(String name);
 
     List<FieldView<T, ?>> all();
 

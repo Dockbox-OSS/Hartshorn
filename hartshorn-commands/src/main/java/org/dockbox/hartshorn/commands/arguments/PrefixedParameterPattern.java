@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 public abstract class PrefixedParameterPattern implements CustomParameterPattern {
 
     @Override
-    public <T> Result<Boolean> preconditionsMatch(final Class<T> type, final CommandSource source, final String raw) {
+    public <T> Attempt<Boolean, ConverterException> preconditionsMatch(final Class<T> type, final CommandSource source, final String raw) {
         String prefix = this.prefix() + "";
         if (this.requiresTypeName()) {
             final ApplicationContext applicationContext = source.applicationContext();
@@ -42,9 +42,9 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
             prefix = this.prefix() + parameterName;
         }
         if (raw.startsWith(prefix)) {
-            return Result.of(true);
+            return Attempt.of(true);
         } else {
-            return Result.of(new ArgumentMatchingFailedException(this.wrongFormat()));
+            return Attempt.of(new ArgumentMatchingFailedException(this.wrongFormat()));
         }
     }
 
@@ -72,12 +72,12 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public Result<String> parseIdentifier(final String argument) {
+    public Attempt<String, ConverterException> parseIdentifier(final String argument) {
         if (argument.startsWith(this.prefix() + "")) {
-            return Result.of(argument.substring(1, argument.indexOf(this.opening())));
+            return Attempt.of(argument.substring(1, argument.indexOf(this.opening())));
         }
         else {
-            return Result.of(new ArgumentMatchingFailedException(this.wrongFormat()));
+            return Attempt.of(new ArgumentMatchingFailedException(this.wrongFormat()));
         }
     }
 

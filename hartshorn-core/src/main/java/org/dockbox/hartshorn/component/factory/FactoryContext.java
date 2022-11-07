@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -56,8 +56,8 @@ public class FactoryContext extends DefaultContext {
      * @return The constructor associated with the given method.
      * @throws NoSuchElementException If no constructor is associated with the method.
      */
-    public <T> Result<ConstructorView<T>> get(final MethodView<T, ?> method) {
+    public <T> Option<ConstructorView<T>> get(final MethodView<T, ?> method) {
         final ConstructorView<?> constructor = this.bounds.get(method);
-        return Result.of((ConstructorView<T>) constructor);
+        return Option.of((ConstructorView<T>) constructor);
     }
 }

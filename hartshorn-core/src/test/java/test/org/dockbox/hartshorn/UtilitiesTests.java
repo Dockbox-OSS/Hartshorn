@@ -16,16 +16,6 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.Tuple;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,6 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Tuple;
+import org.dockbox.hartshorn.util.option.Option;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class UtilitiesTests {
 
@@ -147,7 +147,7 @@ public class UtilitiesTests {
     @ParameterizedTest
     @MethodSource("durations")
     void testDurationOf(final String in, final long expected) {
-        final Result<Duration> duration = StringUtilities.durationOf(in);
+        final Option<Duration> duration = StringUtilities.durationOf(in);
         Assertions.assertTrue(duration.present());
         Assertions.assertEquals(expected, duration.get().getSeconds());
     }

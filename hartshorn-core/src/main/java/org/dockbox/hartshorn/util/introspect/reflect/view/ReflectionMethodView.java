@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.reflect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
@@ -49,7 +49,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Result<ReturnType> invoke(final Parent instance, final Collection<?> arguments) {
+    public Attempt<ReturnType, Throwable> invoke(final Parent instance, final Collection<?> arguments) {
         if (this.invoker == null) {
             this.invoker = new ReflectionMethodInvoker<>();
         }
@@ -57,19 +57,19 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Result<ReturnType> invokeWithContext(final Parent instance) {
+    public Attempt<ReturnType, Throwable> invokeWithContext(final Parent instance) {
         final Object[] args = this.parameters().loadFromContext();
         return this.invoke(instance, args);
     }
 
     @Override
-    public Result<ReturnType> invokeWithContext(final Collection<?> arguments) {
+    public Attempt<ReturnType, Throwable> invokeWithContext(final Collection<?> arguments) {
         final Parent instance = this.introspector.applicationContext().get(this.declaredBy().type());
         return this.invoke(instance, arguments);
     }
 
     @Override
-    public Result<ReturnType> invokeWithContext() {
+    public Attempt<ReturnType, Throwable> invokeWithContext() {
         final Object[] args = this.parameters().loadFromContext();
         if (this.isStatic()) {
             return this.invokeStatic(args);
@@ -81,13 +81,13 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Result<ReturnType> invokeStatic(final Collection<?> arguments) {
+    public Attempt<ReturnType, Throwable> invokeStatic(final Collection<?> arguments) {
         if (this.isStatic()) return this.invoke(null, arguments);
-        else return Result.of(new IllegalAccessException("Method is not static"));
+        else return Attempt.of(new IllegalAccessException("Method is not static"));
     }
 
     @Override
-    public Result<ReturnType> invokeStaticWithContext() {
+    public Attempt<ReturnType, Throwable> invokeStaticWithContext() {
         final Object[] args = this.parameters().loadFromContext();
         return this.invokeStatic(args);
     }
@@ -166,7 +166,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Result<ReturnType> getWithContext() {
+    public Attempt<ReturnType, Throwable> getWithContext() {
         return this.invokeWithContext();
     }
 }

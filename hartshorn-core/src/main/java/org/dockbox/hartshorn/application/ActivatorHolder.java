@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
@@ -25,5 +27,5 @@ public interface ActivatorHolder {
 
     boolean hasActivator(Class<? extends Annotation> activator);
 
-    <A> A activator(Class<A> activator);
+    <A> Option<A> activator(Class<A> activator);
 }

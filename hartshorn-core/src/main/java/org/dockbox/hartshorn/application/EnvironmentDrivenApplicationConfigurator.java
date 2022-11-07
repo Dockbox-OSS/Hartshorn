@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 
 /**
@@ -62,13 +60,8 @@ public class EnvironmentDrivenApplicationConfigurator implements ApplicationConf
     protected <T> T primitiveProperty(final ApplicationEnvironment environment, final String property, final Class<T> type, final T defaultValue) {
         return environment.applicationContext()
                 .property(property)
-                .map(value -> {
-                    try {
-                        return (T) TypeUtils.toPrimitive(type, value);
-                    } catch (final TypeConversionException e) {
-                        throw new ApplicationException(e);
-                    }
-                })
-                .or(defaultValue);
+                .map(value -> TypeUtils.toPrimitive(type, value))
+                .map(type::cast)
+                .orElse(defaultValue);
     }
 }

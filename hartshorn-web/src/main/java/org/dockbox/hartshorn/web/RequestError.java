@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.PrintWriter;
 
@@ -32,7 +32,7 @@ public interface RequestError extends ApplicationAwareContext {
 
     int statusCode();
     String message();
-    Result<Throwable> cause();
+    Option<Throwable> cause();
     boolean yieldDefaults();
 
     RequestError message(String message);

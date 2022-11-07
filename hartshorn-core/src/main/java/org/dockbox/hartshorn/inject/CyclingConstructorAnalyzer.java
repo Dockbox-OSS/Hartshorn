@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,26 +31,26 @@ public final class CyclingConstructorAnalyzer {
 
     private static final Map<Class<?>, ConstructorView<?>> cache = new ConcurrentHashMap<>();
 
-    public static <C> Result<ConstructorView<C>> findConstructor(final TypeView<C> type) {
+    public static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type) {
         return findConstructor(type, true);
     }
 
-    private static <C> Result<ConstructorView<C>> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
-        if (type.isAbstract()) return Result.empty();
+    private static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
+        if (type.isAbstract()) return Attempt.empty();
         if (cache.containsKey(type.type())) {
-            return Result.of(cache.get(type.type())).adjustWildcards();
+            return Attempt.of((ConstructorView<C>) cache.get(type.type()));
         }
 
         ConstructorView<C> optimalConstructor;
         final List<? extends ConstructorView<C>> constructors = type.constructors().injectable();
         if (constructors.isEmpty()) {
-            final Result<? extends ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
+            final Option<? extends ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.absent()) {
                 if (type.constructors().bound().isEmpty()) {
-                    return Result.of(new MissingInjectConstructorException(type));
+                    return Attempt.of(new MissingInjectConstructorException(type));
                 }
                 else {
-                    return Result.empty(); // No injectable constructors found, but there are bound constructors
+                    return Attempt.empty(); // No injectable constructors found, but there are bound constructors
                 }
             }
             else optimalConstructor = defaultConstructor.get();
@@ -66,10 +68,10 @@ public final class CyclingConstructorAnalyzer {
 
         if (checkForCycles) {
             final List<TypeView<?>> path = findCyclicPath(optimalConstructor, type);
-            if (!path.isEmpty()) return Result.of(new CyclicComponentException(type, path));
+            if (!path.isEmpty()) return Attempt.of(new CyclicComponentException(type, path));
         }
 
-        return Result.of(optimalConstructor).present(c -> {
+        return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(c -> {
             // Don't store if there may be a cycle in the dependency graph
             if (checkForCycles) cache.put(type.type(), c);
         });
@@ -79,7 +81,7 @@ public final class CyclingConstructorAnalyzer {
         return findConstructor(type, false).map(c -> {
             final List<TypeView<?>> path = findCyclicPath(c, type);
             return finalizeLookup(type, path);
-        }).orElse(ArrayList::new).get();
+        }).orElseGet(ArrayList::new);
     }
 
     private static List<TypeView<?>> finalizeLookup(final TypeView<?> source, final List<TypeView<?>> path) {
@@ -96,7 +98,7 @@ public final class CyclingConstructorAnalyzer {
             if (parameterType.equals(lookForType)) {
                 return List.of(constructor.type());
             }
-            final Result<? extends ConstructorView<?>> parameterConstructor = findConstructor(parameterType, false);
+            final Option<? extends ConstructorView<?>> parameterConstructor = findConstructor(parameterType, false);
             if (parameterConstructor.present()) {
                 final List<TypeView<?>> cyclicPath = findCyclicPath(parameterConstructor.get(), lookForType);
                 if (!cyclicPath.isEmpty()) {

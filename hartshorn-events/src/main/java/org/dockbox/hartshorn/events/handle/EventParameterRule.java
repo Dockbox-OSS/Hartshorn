@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.events.handle;
 
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class EventParameterRule implements ParameterLoaderRule<EventParameterLoaderContext> {
@@ -30,7 +30,7 @@ public class EventParameterRule implements ParameterLoaderRule<EventParameterLoa
     }
 
     @Override
-    public <T> Result<T> load(final ParameterView<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
-        return Result.of((T) context.event());
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
+        return Option.of((T) context.event());
     }
 }

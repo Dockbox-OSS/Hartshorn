@@ -26,11 +26,11 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             super.set(name, value, fromScope);
         }
         else {
-            final Result<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
+            final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 field.get().set(this.instance, value);
             }
@@ -93,7 +93,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             return super.get(name, fromScope);
         }
         else {
-            final Result<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
+            final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 return field.get().get(this.instance);
             }

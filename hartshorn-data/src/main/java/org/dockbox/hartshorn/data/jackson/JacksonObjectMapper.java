@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data.jackson;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,10 +32,12 @@ import org.dockbox.hartshorn.data.DefaultObjectMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
+import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -65,128 +68,145 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Result<T> read(final String content, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final String content, final Class<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readValue(content, type));
+        return Attempt.<T, JsonProcessingException>of(() -> this.configureMapper().readValue(content, type), JsonProcessingException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final Path path, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final Path path, final Class<T> type) {
         this.context.log().debug("Reading content from path " + path + " to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readValue(path.toFile(), type));
+        return Attempt.of(() -> this.configureMapper().readValue(path.toFile(), type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final URL url, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final URL url, final Class<T> type) {
         this.context.log().debug("Reading content from url " + url + " to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readValue(url, type));
+        return Attempt.of(() -> this.configureMapper().readValue(url, type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final InputStream stream, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final InputStream stream, final Class<T> type) {
         this.context.log().debug("Reading content from input stream to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readValue(stream, type));
+        return Attempt.of(() -> this.configureMapper().readValue(stream, type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final String content, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final String content, final GenericType<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.type().getTypeName());
-        return Result.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)));
+        return Attempt.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)), JsonProcessingException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final Path path, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final Path path, final GenericType<T> type) {
         this.context.log().debug("Reading content from path " + path + " to type " + type.type().getTypeName());
-        return Result.of(() -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type)));
+        return Attempt.of(() -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type)), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final URL url, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final URL url, final GenericType<T> type) {
         this.context.log().debug("Reading content from url " + url + " to type " + type.type().getTypeName());
-        return Result.of(() -> this.configureMapper().readValue(url, new GenericTypeReference<>(type)));
+        return Attempt.of(() -> this.configureMapper().readValue(url, new GenericTypeReference<>(type)), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> read(final InputStream stream, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final InputStream stream, final GenericType<T> type) {
         this.context.log().debug("Reading content from input stream to type " + type.type().getTypeName());
-        return Result.of(() -> this.configureMapper().readValue(stream, new GenericTypeReference<>(type)));
+        return Attempt.of(() -> this.configureMapper().readValue(stream, new GenericTypeReference<>(type)), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> update(final T object, final String content, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final String content, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from string value to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(content, type));
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(content, type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> update(final T object, final Path path, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final Path path, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from path " + path + " to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(path.toFile(), type));
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(path.toFile(), type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> update(final T object, final URL url, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final URL url, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from url " + url + " to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(url, type));
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(url, type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<T> update(final T object, final InputStream stream, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final InputStream stream, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from input stream to type " + type.getName());
-        return Result.of(() -> this.configureMapper().readerForUpdating(object).readValue(stream, type));
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(stream, type), IOException.class)
+                .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> Result<Boolean> write(final Path path, final T content) {
-        if (content == null) return Result.of(false);
+    public <T> Attempt<Boolean, ObjectMappingException> write(final Path path, final T content) {
+        if (content == null) return Attempt.of(false);
 
         this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to path " + path);
         if (content instanceof String string) return this.writePlain(path, string);
-        return Result.of(() -> {
+        return Attempt.of(() -> {
             this.writer(content).writeValue(path.toFile(), content);
             return true;
-        }).orElse(() -> false);
+        }, IOException.class)
+                .mapError(ObjectMappingException::new)
+                .orCompute(() -> false);
     }
 
     @Override
-    public <T> Result<Boolean> write(final OutputStream outputStream, final T content) {
-        if (content == null) return Result.of(false);
+    public <T> Attempt<Boolean, ObjectMappingException> write(final OutputStream outputStream, final T content) {
+        if (content == null) return Attempt.of(false);
 
         this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to output stream");
         if (content instanceof String string) return this.writePlain(outputStream, string);
-        return Result.of(() -> {
+        return Attempt.of(() -> {
             this.writer(content).writeValue(outputStream, content);
             return true;
-        }).orElse(() -> false);
+        }, IOException.class)
+                .mapError(ObjectMappingException::new)
+                .orCompute(() -> false);
     }
 
     @Override
-    public <T> Result<String> write(final T content) {
-        if (content == null) return Result.of("");
+    public <T> Attempt<String, ObjectMappingException> write(final T content) {
+        if (content == null) return Attempt.of("");
         this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to string value");
-        return Result.of(() -> this.writer(content).writeValueAsString(content))
+        return Attempt.of(() -> this.writer(content).writeValueAsString(content), IOException.class)
+                .mapError(ObjectMappingException::new)
                 .map(out -> out.replace("\\r", ""));
     }
 
-    protected Result<Boolean> writePlain(final Path path, final String content) {
+    protected Attempt<Boolean, ObjectMappingException> writePlain(final Path path, final String content) {
         try (final FileWriter writer = new FileWriter(path.toFile())) {
             writer.write(content);
             writer.flush();
-            return Result.of(true);
+            return Attempt.of(true);
         }
         catch (final IOException e) {
-            return Result.of(false, e);
+            return Attempt.of(false, new ObjectMappingException(e));
         }
     }
 
-    protected Result<Boolean> writePlain(final OutputStream outputStream, final String content) {
+    protected Attempt<Boolean, ObjectMappingException> writePlain(final OutputStream outputStream, final String content) {
         try (final OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
             writer.write(content);
             writer.flush();
-            return Result.of(true);
+            return Attempt.of(true);
         }
         catch (final IOException e) {
-            return Result.of(false, e);
+            return Attempt.of(false, new ObjectMappingException(e));
         }
     }
 
@@ -232,7 +252,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     private ObjectWriter writer(final Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
         final TypeView<Object> typeView = this.context.environment().introspect(content);
-        final Result<Component> annotated = typeView.annotations().get(Component.class);
+        final Option<Component> annotated = typeView.annotations().get(Component.class);
 
         // Currently, only XML supports changing the root name, if XML is used we can change the
         // root name to be equal to the ID of the component.

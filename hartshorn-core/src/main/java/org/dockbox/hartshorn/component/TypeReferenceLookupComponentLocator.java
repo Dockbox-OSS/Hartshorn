@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class TypeReferenceLookupComponentLocator implements ComponentLocator, ContextCarrier {
 
@@ -55,8 +55,8 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator, Co
     }
 
     @Override
-    public Result<ComponentContainer> container(final Class<?> type) {
-        return Result.of(this.containers()
+    public Option<ComponentContainer> container(final Class<?> type) {
+        return Option.of(this.containers()
                 .stream()
                 .filter(container -> container.type().is(type))
                 .findFirst()

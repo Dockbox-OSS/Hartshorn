@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.registry.Registry;
 import org.dockbox.hartshorn.data.registry.RegistryColumn;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -61,12 +61,12 @@ public class RegistryTests {
         testRegistry
                 .get(TestIdentifier.COBBLESTONE)
                 .first()
-                .present(r -> {
+                .peek(r -> {
                     r.add(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock2");
                     r.add(TestIdentifier.STAIR, "Cobblestone Stair1");
                 });
 
-        final Result<Registry<String>> eCobblestoneRegistry =
+        final Option<Registry<String>> eCobblestoneRegistry =
                 testRegistry.matchingColumns(TestIdentifier.COBBLESTONE).first();
 
         final Registry<String> cobblestoneRegistry = eCobblestoneRegistry.get();

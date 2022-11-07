@@ -16,7 +16,27 @@
 
 package test.org.dockbox.hartshorn;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.annotations.Sample;
 import test.org.dockbox.hartshorn.components.AnnotatedElement;
 import test.org.dockbox.hartshorn.components.BoundUserImpl;
@@ -24,25 +44,6 @@ import test.org.dockbox.hartshorn.components.ImplementationWithTP;
 import test.org.dockbox.hartshorn.components.InterfaceWithTP;
 import test.org.dockbox.hartshorn.components.TestEnumType;
 import test.org.dockbox.hartshorn.components.User;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.TypeConversionException;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.stream.Stream;
-
-import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class ElementContextTests {
@@ -363,13 +364,13 @@ public class ElementContextTests {
 
     @Test
     void testStaticMethodCanInvokeStatic() {
-        final Result<MethodView<ElementContextTests, ?>> test = this.introspector.introspect(this)
+        final Option<MethodView<ElementContextTests, ?>> test = this.introspector.introspect(this)
                 .methods()
                 .named("testStatic");
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertTrue(methodContext.isStatic());
-        final Result<?> result = methodContext.invokeStatic();
+        final Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
 
@@ -377,14 +378,14 @@ public class ElementContextTests {
 
     @Test
     void testNonStaticMethodCannotInvokeStatic() {
-        final Result<MethodView<ElementContextTests, ?>> test = this.introspector.introspect(this)
+        final Option<MethodView<ElementContextTests, ?>> test = this.introspector.introspect(this)
                 .methods()
                 .named("testNonStatic");
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertFalse(methodContext.isStatic());
-        final Result<?> result = methodContext.invokeStatic();
-        Assertions.assertTrue(result.caught());
+        final Attempt<?, ?> result = methodContext.invokeStatic();
+        Assertions.assertTrue(result.errorPresent());
         Assertions.assertTrue(result.error() instanceof IllegalAccessException);
     }
 

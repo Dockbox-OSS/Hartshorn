@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorView} to
@@ -47,21 +47,20 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     @Override
-    public final Result<ObjectContainer<C>> provide(final ApplicationContext context) {
+    public final Option<ObjectContainer<C>> provide(final ApplicationContext context) {
         return this.optimalConstructor(context)
-                .flatMap(ConstructorView::createWithContext)
+                .flatMap(constructor -> constructor.createWithContext().rethrowUnchecked())
                 .map(this.type()::cast)
                 .map(instance -> new ObjectContainer<>(instance, false));
     }
 
-    protected Result<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) {
+    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) {
         final TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
         if (this.optimalConstructor == null) {
             this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(typeView)
-                    .rethrowUnchecked()
-                    .orNull();
+                    .rethrowUnchecked().orNull();
         }
-        return Result.of(this.optimalConstructor);
+        return Option.of(this.optimalConstructor);
     }
 
     public Class<? extends C> type() {

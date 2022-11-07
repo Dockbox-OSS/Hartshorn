@@ -27,11 +27,11 @@ import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,15 +79,12 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public void accept(final CommandSource source, final String command) throws ParsingException {
-        final Result<CommandExecutorContext> context = this.lookupContext(command);
+        final Option<CommandExecutorContext> context = this.lookupContext(command);
         if (context.absent()) throw new ParsingException(this.resources.missingHandler(command));
         else {
-            final Result<CommandContext> commandContext = this.parser.parse(command, source, context.get());
+            final Option<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
                 this.execute(context.get(), commandContext.get());
-            }
-            else if (commandContext.caught()) {
-                commandContext.rethrowUnchecked();
             }
             else {
                 this.context.log().warn("Could not parse command for input " + command + " but yielded no exceptions");
@@ -95,7 +92,7 @@ public class CommandGatewayImpl implements CommandGateway {
         }
     }
 
-    private Result<CommandExecutorContext> lookupContext(final String command) {
+    private Option<CommandExecutorContext> lookupContext(final String command) {
         final String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
         this.context.log().debug("Looking up executor context for " + command + " in " + this.contexts.size() + " contexts");
@@ -114,7 +111,7 @@ public class CommandGatewayImpl implements CommandGateway {
                 }
             }
         }
-        return Result.of(bestContext);
+        return Option.of(bestContext);
     }
 
     protected void execute(final CommandExecutorContext context, final CommandContext commandContext) {
@@ -133,9 +130,9 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public void accept(final CommandContext context) throws ParsingException {
-        final Result<CommandExecutorContext> executor = this.get(context);
-        executor.present(e -> this.execute(e, context))
-                .orThrow(() -> new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size())));
+        final Option<CommandExecutorContext> executor = this.get(context);
+        executor.peek(e -> this.execute(e, context))
+                .orElseThrow(() -> new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size())));
     }
 
     @Override
@@ -148,12 +145,12 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public void register(final CommandExecutorContext context) {
-        final Result<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        final Option<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
         if (container.absent()) throw new InvalidExecutorException("Executor contexts should contain at least one container context");
 
         final List<String> aliases;
         final TypeView<?> typeContext = context.parent();
-        final Result<Command> annotated = typeContext.annotations().get(Command.class);
+        final Option<Command> annotated = typeContext.annotations().get(Command.class);
         if (!typeContext.isVoid() && annotated.present()) {
             aliases = List.of(annotated.get().value());
         }
@@ -172,7 +169,7 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public List<String> suggestions(final CommandSource source, final String command) {
-        final Result<CommandExecutorContext> context = this.lookupContext(command);
+        final Option<CommandExecutorContext> context = this.lookupContext(command);
         final List<String> suggestions = new ArrayList<>();
 
         if (context.present())
@@ -193,11 +190,11 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @Override
-    public Result<CommandExecutorContext> get(final CommandContext context) {
+    public Option<CommandExecutorContext> get(final CommandContext context) {
         for (final CommandExecutorContext executorContext : this.contexts().get(context.alias())) {
-            if (executorContext.accepts(context.command())) return Result.of(executorContext);
+            if (executorContext.accepts(context.command())) return Option.of(executorContext);
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

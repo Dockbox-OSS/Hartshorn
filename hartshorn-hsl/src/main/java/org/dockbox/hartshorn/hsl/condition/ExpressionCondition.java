@@ -62,7 +62,7 @@ public class ExpressionCondition implements Condition {
                 context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
                 return ConditionResult.notMatched(e.getMessage());
             }
-        }).or(ConditionResult.invalidCondition("expression"));
+        }).orElse(ConditionResult.invalidCondition("expression"));
     }
 
     protected ValidateExpressionRuntime createRuntime(final ConditionContext context) {
@@ -72,11 +72,11 @@ public class ExpressionCondition implements Condition {
 
     protected ValidateExpressionRuntime enhance(final ValidateExpressionRuntime runtime, final ConditionContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
-        context.first(ProvidedParameterContext.class).present(parameterContext -> {
+        context.first(ProvidedParameterContext.class).peek(parameterContext -> {
             parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
         });
 
-        context.first(ExpressionConditionContext.class).present(expressionContext -> {
+        context.first(ExpressionConditionContext.class).peek(expressionContext -> {
 
             runtime.customizers(expressionContext.customizers());
             runtime.imports(expressionContext.imports());

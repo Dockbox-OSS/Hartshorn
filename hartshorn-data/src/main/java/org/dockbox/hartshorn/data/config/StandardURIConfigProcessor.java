@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.ResourceLookupStrategy;
 import org.dockbox.hartshorn.data.context.ConfigurationURIContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 import java.io.File;
 import java.net.URI;
@@ -47,11 +48,10 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
                 return;
             }
 
-            final Map<String, Object> cache = context.get(ObjectMapper.class)
+            final Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
                     .fileType(format)
                     .read(uri, Map.class)
-                    .orElse(HashMap::new)
-                    .get();
+                    .orElseGet(HashMap::new), Map.class);
 
             context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
             context.get(PropertyHolder.class).set(cache);

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.persistence.EntityManager;
 
@@ -31,7 +31,7 @@ public interface EntityManagerLookup {
     /**
      * Lookup the entity manager for the given instance.
      * @param target the instance to look up the entity manager for
-     * @return the entity manager, or {@link Result#empty()} if no entity manager could be found
+     * @return the entity manager, or {@link Option#empty()} if no entity manager could be found
      */
-    Result<EntityManager> lookup(Object target);
+    Option<EntityManager> lookup(Object target);
 }

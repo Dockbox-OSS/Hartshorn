@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.inject.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Supplier;
 
@@ -99,8 +99,8 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     public Binder lazySingleton(final Class<T> type) {
         this.lazyContainerSingleton(() -> {
             final Key<T> key = Key.of(type);
-            final Result<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
-            return object.rethrowUnchecked().orNull();
+            final Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
+            return object.orNull();
         });
         return this.binder();
     }

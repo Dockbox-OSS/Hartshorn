@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.Parser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 import java.util.Map;
@@ -140,13 +140,13 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     @Override
-    public <T> Result<T> result() {
+    public <T> Option<T> result() {
         return this.result(GLOBAL_RESULT);
     }
 
     @Override
-    public <T> Result<T> result(final String id) {
-        return Result.of(this.results.get(id))
+    public <T> Option<T> result(final String id) {
+        return Option.of(this.results.get(id))
                 .map(result -> (T) result);
     }
 

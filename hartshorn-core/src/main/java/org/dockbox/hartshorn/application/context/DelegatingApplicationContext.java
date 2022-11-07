@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import java.lang.annotation.Annotation;
+import java.util.Properties;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
@@ -31,11 +35,7 @@ import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.util.Result;
-
-import java.lang.annotation.Annotation;
-import java.util.Properties;
-import java.util.Set;
+import org.dockbox.hartshorn.util.option.Option;
 
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext, HierarchicalComponentProvider {
@@ -79,32 +79,28 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public Result<String> property(final String key) {
-        return Result.of(this.environmentValues.get(key)).map(String::valueOf);
+    public Option<String> property(final String key) {
+        return Option.of(this.environmentValues.get(key)).map(String::valueOf);
     }
 
     @Override
     public Set<Annotation> activators() {
         return this.first(ServiceActivatorContext.class)
                 .map(ServiceActivatorContext::activators)
-                .orElse(Set::of)
-                .get();
+                .orElseGet(Set::of);
     }
 
     @Override
-    public <A> A activator(final Class<A> activator) {
+    public <A> Option<A> activator(final Class<A> activator) {
         return this.first(ServiceActivatorContext.class)
-                .map(c -> c.activator(activator))
-                .orElse(() -> null)
-                .get();
+                .map(c -> c.activator(activator));
     }
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         return this.first(ServiceActivatorContext.class)
                 .map(c -> c.hasActivator(activator))
-                .orElse(() -> false)
-                .get();
+                .orElseGet(() -> false);
     }
 
     @Override

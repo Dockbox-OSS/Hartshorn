@@ -22,9 +22,10 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,20 +43,20 @@ public interface CustomParameterPattern {
      * @param raw The raw argument
      * @param <T> The generic type of the target
      *
-     * @return An instance of {@code T}, wrapped in a {@link Result}, or {@link Result#empty()} if {@code null}
+     * @return An instance of {@code T}, wrapped in a {@link Option}, or {@link Option#empty()} if {@code null}
      */
-    default <T> Result<T> request(final Class<T> type, final CommandSource source, final String raw) {
+    default <T> Attempt<T, ConverterException> request(final Class<T> type, final CommandSource source, final String raw) {
         final ApplicationContext context = source.applicationContext();
         final TypeView<T> typeView = context.environment().introspect(type);
 
-        final Result<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
-        if (preconditionsMatch.caught()) {
+        final Attempt<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
+        if (preconditionsMatch.errorPresent()) {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
-            return Result.of(preconditionsMatch.error());
+            return Attempt.of(preconditionsMatch.error());
         }
-        else if (Boolean.FALSE.equals(preconditionsMatch.or(false))) {
+        else if (Boolean.FALSE.equals(preconditionsMatch.orElse(false))) {
             context.log().debug("Preconditions failed, rejecting raw argument " + raw);
-            return Result.empty();
+            return Attempt.empty();
         }
 
         final List<String> rawArguments = this.splitArguments(raw);
@@ -64,7 +65,7 @@ public interface CustomParameterPattern {
 
         for (final String rawArgument : rawArguments) {
             context.log().debug("Parsing raw argument " + rawArgument);
-            final Result<String> argumentIdentifier = this.parseIdentifier(rawArgument);
+            final Option<String> argumentIdentifier = this.parseIdentifier(rawArgument);
             if (argumentIdentifier.absent()) {
                 context.log().debug("Could not determine argument identifier for raw argument '%s', this is not a error as the value likely needs to be looked up by its type instead.".formatted(rawArgument));
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
@@ -74,14 +75,13 @@ public interface CustomParameterPattern {
             }
             final String typeIdentifier = argumentIdentifier.get();
 
-            final Result<ArgumentConverter<?>> converter = context
+            final Option<ArgumentConverter<?>> converter = context
                     .first(ArgumentConverterContext.class)
                     .flatMap(argumentConverterContext -> argumentConverterContext.converter(typeIdentifier));
 
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
-                return Result.of(new MissingConverterException(context, typeView)
-                );
+                return Attempt.of(new MissingConverterException(context, typeView));
             }
 
             context.log().debug("Found converter for identifier '%s'".formatted(typeIdentifier));
@@ -90,16 +90,19 @@ public interface CustomParameterPattern {
         }
 
         return this.constructor(argumentTypes, arguments, typeView, source)
-                .flatMap(constructor -> constructor.create(arguments.toArray(new Object[0])));
+                .flatMap(constructor -> constructor.create(arguments.toArray(new Object[0])))
+                .attempt(ArgumentMatchingFailedException.class)
+                // Inferred downcast from ArgumentMatchingFailedException to ConverterException
+                .mapError(error -> error);
     }
 
-    <T> Result<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw);
+    <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw);
 
     List<String> splitArguments(String raw);
 
-    Result<String> parseIdentifier(String argument);
+    Attempt<String, ConverterException> parseIdentifier(String argument);
 
-    default <T> Result<ConstructorView<T>> constructor(final List<Class<?>> argumentTypes, final List<Object> arguments, final TypeView<T> type, final CommandSource source) {
+    default <T> Attempt<ConstructorView<T>, ConverterException> constructor(final List<Class<?>> argumentTypes, final List<Object> arguments, final TypeView<T> type, final CommandSource source) {
         for (final ConstructorView<T> constructor : type.constructors().all()) {
             if (constructor.parameters().count() != arguments.size()) continue;
             final List<TypeView<?>> parameters = constructor.parameters().types();
@@ -110,11 +113,11 @@ public interface CustomParameterPattern {
                 final Class<?> argument = argumentTypes.get(i);
 
                 if (argument == null) {
-                    final Result<? extends ArgumentConverter<?>> converter = source.applicationContext()
+                    final Option<? extends ArgumentConverter<?>> converter = source.applicationContext()
                             .first(ArgumentConverterContext.class)
                             .flatMap(context -> context.converter(parameter));
                     if (converter.present()) {
-                        final Result<?> result = converter.get().convert(source, (String) arguments.get(i));
+                        final Option<?> result = converter.get().convert(source, (String) arguments.get(i));
                         if (result.present()) {
                             arguments.set(i, result.get());
                             continue; // Generic type, will be parsed later
@@ -128,9 +131,9 @@ public interface CustomParameterPattern {
             }
             if (passed) {
                 source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
-                return Result.of(constructor);
+                return Attempt.of(constructor);
             }
         }
-        return Result.of(new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs()));
+        return Attempt.of(new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs()));
     }
 }

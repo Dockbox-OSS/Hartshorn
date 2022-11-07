@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
@@ -48,7 +48,7 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      * @return The validation result, or {@code false} if it does not exist.
      */
     public static boolean valid(final ResultCollector collector) {
-        final Result<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
-        return Boolean.TRUE.equals(result.or(false));
+        final Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
+        return Boolean.TRUE.equals(result.orElse(false));
     }
 }

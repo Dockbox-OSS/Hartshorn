@@ -18,36 +18,36 @@ package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.proxy.Proxy;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.persistence.EntityManager;
 
 public class ProxyAttachedEntityManagerLookup implements EntityManagerLookup {
 
     @Override
-    public Result<EntityManager> lookup(final Object target) {
+    public Option<EntityManager> lookup(final Object target) {
         if (target instanceof EntityManagerCarrier carrier) {
-            return Result.of(carrier.manager());
+            return Option.of(carrier.manager());
         }
         else if (target instanceof Context context) {
-            final Result<EntityManager> managerResult = this.fromContext(context);
+            final Option<EntityManager> managerResult = this.fromContext(context);
             if (managerResult.present()) return managerResult;
         }
 
         if (target instanceof Proxy<?> proxy) {
-            return this.fromContext(proxy.manager()).orElse(() -> {
-                final Result<JpaRepository<?, ?>> repository = TypeUtils.adjustWildcards(proxy.manager().delegate(JpaRepository.class), Result.class);
+            return this.fromContext(proxy.manager()).orCompute(() -> {
+                final Option<JpaRepository<?, ?>> repository = TypeUtils.adjustWildcards(proxy.manager().delegate(JpaRepository.class), Option.class);
                 if (repository.present() && repository.get() instanceof EntityManagerJpaRepository<?, ?> jpaRepository) {
                     return jpaRepository.manager();
                 }
                 return null;
             });
         }
-        return Result.empty();
+        return Option.empty();
     }
 
-    private Result<EntityManager> fromContext(final Context context) {
+    private Option<EntityManager> fromContext(final Context context) {
         return context.first(EntityManagerContext.class).map(EntityManagerContext::entityManager);
     }
 }

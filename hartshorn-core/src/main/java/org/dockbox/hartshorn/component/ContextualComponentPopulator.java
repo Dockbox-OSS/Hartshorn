@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import java.util.Collection;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.context.Context;
@@ -27,15 +29,11 @@ import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Collection;
-import java.util.List;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -55,14 +53,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             if (this.applicationContext().environment().isProxy(instance)) {
                 modifiableInstance = this.applicationContext().environment()
                         .manager(instance)
-                        .flatMap((CheckedFunction<ProxyManager<T>, @NonNull Result<T>>) ProxyManager::delegate)
-                        .or(modifiableInstance);
+                        .flatMap(ProxyManager::delegate)
+                        .orElse(modifiableInstance);
             }
             final TypeView<T> typeView = this.applicationContext.environment().introspect(modifiableInstance);
-            if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::fields).or(true)))
+            if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::fields).orElse(true)))
                 this.populateFields(typeView, modifiableInstance);
 
-            if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::executables).or(true)))
+            if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::executables).orElse(true)))
                 this.populateMethods(typeView, modifiableInstance);
         }
         return instance;
@@ -89,14 +87,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         Key<?> fieldKey = Key.of(field.type());
         if (field.annotations().has(Named.class)) fieldKey = fieldKey.name(field.annotations().get(Named.class).get());
 
-        final Result<Enable> enableAnnotation = field.annotations().get(Enable.class);
+        final Option<Enable> enableAnnotation = field.annotations().get(Enable.class);
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
         final Object fieldInstance = this.applicationContext().get(fieldKey, enable);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)
-                .or(false));
+                .orElse(false));
 
         if (required && fieldInstance == null) throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required");
 
@@ -105,7 +103,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     }
 
     private <T> void populateBeanCollectionField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
-        final Result<TypeView<?>> beanType = field.genericType().typeParameters().at(0);
+        final Option<TypeView<?>> beanType = field.genericType().typeParameters().at(0);
         if (beanType.absent()) {
             throw new IllegalStateException("Unable to determine bean type for field " + field.name() + " in " + type.name());
         }
@@ -114,7 +112,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
         final BeanContext beanContext = this.applicationContext().first(BeanContext.class).get();
         final List<?> beans = beanContext.provider().all(beanKey);
-        final Result<?> initialValue = field.get(instance);
+        final Option<?> initialValue = field.get(instance);
         final Collection<?> transform = CollectionUtilities.transform(beans,
                 TypeUtils.adjustWildcards(initialValue.orNull(), Collection.class),
                 TypeUtils.adjustWildcards(field.type(), TypeView.class)
@@ -128,7 +126,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final TypeView<?> type = field.type();
         final org.dockbox.hartshorn.inject.Context annotation = field.annotations().get(org.dockbox.hartshorn.inject.Context.class).get();
 
-        final Result<Context> context;
+        final Option<Context> context;
         if ("".equals(annotation.value())) {
             context = this.applicationContext().first(TypeUtils.adjustWildcards(type.type(), Class.class));
         }
@@ -138,7 +136,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)
-                .or(false));
+                .orElse(false));
         if (required && context.absent()) throw new ComponentRequiredException("Context field " + field.name() + " in " + type.qualifiedName() + " is required");
 
         this.applicationContext().log().debug("Injecting context of type {} into field {}", type, field.name());

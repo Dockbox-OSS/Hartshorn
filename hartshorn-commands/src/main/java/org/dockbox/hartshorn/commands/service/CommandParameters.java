@@ -41,7 +41,7 @@ public class CommandParameters extends ComponentPreProcessor {
             final CustomParameterPattern pattern = context.get(meta.pattern());
             final String parameterKey = meta.value();
             final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
-            context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
+            context.first(ArgumentConverterContext.class).peek(converterContext -> converterContext.register(converter));
         }
     }
 

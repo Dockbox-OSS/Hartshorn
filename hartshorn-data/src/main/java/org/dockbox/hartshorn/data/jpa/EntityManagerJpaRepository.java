@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.hibernate.Transaction;
 
 import java.util.List;
@@ -84,9 +84,9 @@ public abstract class EntityManagerJpaRepository<T, ID> implements JpaRepository
     }
 
     @Override
-    public Result<T> findById(final ID id) {
+    public Option<T> findById(final ID id) {
         final EntityManager session = this.manager();
-        return Result.of(session.find(this.reify(), id));
+        return Option.of(session.find(this.reify(), id));
     }
 
     private void performTransactional(final Consumer<EntityManager> action) {

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -43,11 +44,11 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
         return this._type;
     }
 
-    public Result<Class<T>> asClass() {
+    public Option<Class<T>> asClass() {
         final Type type = this.type();
         if (type instanceof Class<?> clazz)
-            return Result.of((Class<T>) clazz);
-        return Result.empty();
+            return Option.of((Class<T>) clazz);
+        return Option.empty();
     }
 
     @Override

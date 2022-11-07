@@ -27,12 +27,12 @@ import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.ComponentUtilities;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -53,7 +53,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
 
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Result<CacheService> annotation = proxyContext.type().annotations().get(CacheService.class);
+            final Option<CacheService> annotation = proxyContext.type().annotations().get(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }
@@ -73,7 +73,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
                 cache = manager.getOrCreate(finalName, expiration);
             else {
                 cache = manager.get(finalName)
-                        .orThrow(() -> new UnavailableCacheException(finalName));
+                        .orElseThrow(() -> new UnavailableCacheException(finalName));
             }
             return cache;
         };

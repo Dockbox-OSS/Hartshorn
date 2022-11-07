@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.util.Result;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The context provided to a {@link org.dockbox.hartshorn.commands.CommandExecutor} during
@@ -39,7 +40,8 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * @return The argument or flag, or <code>null</code>
      * @throws ClassCastException If the argument or flag is not of type <code>T</code>
      */
-    <T> T get(String key);
+    @Nullable
+    <T> T get(String key, Class<T> type);
 
     /**
      * Checks for the presence of an argument or flag associated with the given <code>key</code>.
@@ -53,40 +55,40 @@ public interface CommandContext extends ParserContext, ContextCarrier {
     /**
      * Gets the argument or flag associated with the given <code>key</code>, if it exists. The
      * value of the argument is cast to type <code>T</code>. If the argument or flag is not of type
-     * <code>T</code>, or does not exist, {@link Result#empty()} is returned instead.
+     * <code>T</code>, or does not exist, {@link Option#empty()} is returned instead.
      *
      * @param key The key of the argument or flag
      * @param <T> The expected type of the argument or flag
      *
-     * @return The argument or flag wrapped in a {@link Result}, or {@link Result#empty()}
+     * @return The argument or flag wrapped in a {@link Option}, or {@link Option#empty()}
      */
-    <T> Result<T> find(String key);
+    <T> Option<T> find(String key, Class<T> type);
 
     /**
      * Gets the first {@link CommandParameter} in the form of an argument associated with the given
      * <code>key</code>, if it exists. If the argument is not of type <code>T</code>, or does not exist,
-     * {@link Result#empty()} is returned instead. The {@link CommandParameter} contains both the
+     * {@link Option#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the argument.
      *
      * @param key The key of the argument
      * @param <T> The expected type of the argument
      *
-     * @return The argument wrapped in a {@link Result}, or {@link Result#empty()}
+     * @return The argument wrapped in a {@link Option}, or {@link Option#empty()}
      */
-    <T> Result<CommandParameter<T>> argument(String key);
+    <T> Option<CommandParameter<T>> argument(String key);
 
     /**
      * Gets the first {@link CommandParameter} in the form of a flag associated with the given
      * <code>key</code>, if it exists. If the flag is not of type <code>T</code>, or does not exist,
-     * {@link Result#empty()} is returned instead. The {@link CommandParameter} contains both the
+     * {@link Option#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the flag.
      *
      * @param key The key of the flag
      * @param <T> The expected type of the flag
      *
-     * @return The flag wrapped in a {@link Result}, or {@link Result#empty()}
+     * @return The flag wrapped in a {@link Option}, or {@link Option#empty()}
      */
-    <T> Result<CommandParameter<T>> flag(String key);
+    <T> Option<CommandParameter<T>> flag(String key);
 
     /**
      * Gets the {@link CommandSource} responsible for executing the command. The source is capable

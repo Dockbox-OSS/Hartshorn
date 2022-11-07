@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -81,7 +81,7 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
     }
 
     @Override
-    public Result<MethodView<T, ?>> named(final String name, final Collection<Class<?>> parameterTypes) {
+    public Option<MethodView<T, ?>> named(final String name, final Collection<Class<?>> parameterTypes) {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
             // so instead we only link it by name and perform the list comparison on request.
@@ -93,10 +93,10 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
         if (this.methods.containsKey(name)) {
             final Collection<MethodView<T, ?>> overloadingMethods = this.methods.get(name);
             for (final MethodView<T, ?> method : overloadingMethods) {
-                if (method.parameters().matches(List.copyOf(parameterTypes))) return Result.of(method);
+                if (method.parameters().matches(List.copyOf(parameterTypes))) return Option.of(method);
             }
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

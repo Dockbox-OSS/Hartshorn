@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 public class ClassPathWalkingException extends ApplicationException {
 
-    public ClassPathWalkingException(String message) {
+    public ClassPathWalkingException(final String message) {
         super(message);
     }
 
-    public ClassPathWalkingException(String message, Throwable cause) {
+    public ClassPathWalkingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

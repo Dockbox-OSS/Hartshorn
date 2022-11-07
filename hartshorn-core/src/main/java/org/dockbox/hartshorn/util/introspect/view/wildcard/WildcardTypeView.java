@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
-import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,8 +166,8 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
-    public Result<TypeView<?>> elementType() {
-        return Result.empty();
+    public Option<TypeView<?>> elementType() {
+        return Option.empty();
     }
 
     @Override

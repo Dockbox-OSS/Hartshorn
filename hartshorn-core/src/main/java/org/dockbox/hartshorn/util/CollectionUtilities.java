@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +27,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public final class CollectionUtilities {
 
@@ -109,17 +110,17 @@ public final class CollectionUtilities {
             throw new UnsupportedOperationException("Cannot transform to an abstract collection type (was not a Set or List), use a concrete type instead, or assign a default (empty) collection instance.");
         }
         else {
-            final Result<? extends ConstructorView<? extends Collection<?>>> fromCollectionConstructor = target.constructors().withParameters(Collection.class);
+            final Option<? extends ConstructorView<? extends Collection<?>>> fromCollectionConstructor = target.constructors().withParameters(Collection.class);
             if (fromCollectionConstructor.present()) {
-                final Result<? extends Collection<?>> createdCollection = fromCollectionConstructor.get().create(collection);
+                final Option<? extends Collection<?>> createdCollection = fromCollectionConstructor.get().create(collection);
                 if (createdCollection.present()) {
                     return TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
                 }
             }
             else {
-                final Result<? extends ConstructorView<? extends Collection<?>>> defaultConstructor = target.constructors().defaultConstructor();
+                final Option<? extends ConstructorView<? extends Collection<?>>> defaultConstructor = target.constructors().defaultConstructor();
                 if (defaultConstructor.present()) {
-                    final Result<? extends Collection<?>> createdCollection = defaultConstructor.get().create();
+                    final Option<? extends Collection<?>> createdCollection = defaultConstructor.get().create();
                     if (createdCollection.present()) {
                         final Collection<E> collectionInstance = TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
                         collectionInstance.addAll(collection);

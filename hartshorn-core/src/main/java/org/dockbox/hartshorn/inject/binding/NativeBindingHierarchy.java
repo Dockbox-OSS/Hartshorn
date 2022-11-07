@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -110,8 +110,8 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public Result<Provider<C>> get(final int priority) {
-        return Result.of(this.bindings.getOrDefault(priority, null));
+    public Option<Provider<C>> get(final int priority) {
+        return Option.of(this.bindings.getOrDefault(priority, null));
     }
 
     @Override

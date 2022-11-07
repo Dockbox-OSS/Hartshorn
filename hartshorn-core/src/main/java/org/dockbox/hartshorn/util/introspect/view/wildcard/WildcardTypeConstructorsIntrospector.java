@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -26,8 +26,8 @@ import java.util.List;
 
 public class WildcardTypeConstructorsIntrospector implements TypeConstructorsIntrospector<Object> {
     @Override
-    public Result<ConstructorView<Object>> defaultConstructor() {
-        return Result.empty();
+    public Option<ConstructorView<Object>> defaultConstructor() {
+        return Option.empty();
     }
 
     @Override
@@ -36,8 +36,8 @@ public class WildcardTypeConstructorsIntrospector implements TypeConstructorsInt
     }
 
     @Override
-    public Result<ConstructorView<Object>> withParameters(final List<Class<?>> parameters) {
-        return Result.empty();
+    public Option<ConstructorView<Object>> withParameters(final List<Class<?>> parameters) {
+        return Option.empty();
     }
 
     @Override

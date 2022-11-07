@@ -30,6 +30,6 @@ public class ClassCondition implements Condition {
                 }
             }
             return ConditionResult.matched();
-        }).or(ConditionResult.invalidCondition("class"));
+        }).orElse(ConditionResult.invalidCondition("class"));
     }
 }

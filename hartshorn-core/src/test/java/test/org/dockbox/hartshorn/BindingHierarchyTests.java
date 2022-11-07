@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn;
 
+import java.util.Map.Entry;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Key;
@@ -23,11 +25,9 @@ import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map.Entry;
 
 import jakarta.inject.Inject;
 
@@ -89,17 +89,17 @@ public class BindingHierarchyTests {
 
         Assertions.assertEquals(3, hierarchy.size());
 
-        final Result<Provider<Contract>> priorityZero = hierarchy.get(0);
+        final Option<Provider<Contract>> priorityZero = hierarchy.get(0);
         Assertions.assertTrue(priorityZero.present());
         Assertions.assertTrue(priorityZero.get() instanceof ContextDrivenProvider);
         Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityZero.get()).type(), ImplementationA.class);
 
-        final Result<Provider<Contract>> priorityOne = hierarchy.get(1);
+        final Option<Provider<Contract>> priorityOne = hierarchy.get(1);
         Assertions.assertTrue(priorityOne.present());
         Assertions.assertTrue(priorityOne.get() instanceof ContextDrivenProvider);
         Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityOne.get()).type(), ImplementationB.class);
 
-        final Result<Provider<Contract>> priorityTwo = hierarchy.get(2);
+        final Option<Provider<Contract>> priorityTwo = hierarchy.get(2);
         Assertions.assertTrue(priorityTwo.present());
         Assertions.assertTrue(priorityTwo.get() instanceof ContextDrivenProvider);
         Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityTwo.get()).type(), ImplementationC.class);
@@ -113,7 +113,7 @@ public class BindingHierarchyTests {
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 
-        final Result<Provider<LocalContract>> provider = hierarchy.get(-1);
+        final Option<Provider<LocalContract>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
         Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
         Assertions.assertEquals(((ContextDrivenProvider<LocalContract>) provider.get()).type(), LocalImpl.class);

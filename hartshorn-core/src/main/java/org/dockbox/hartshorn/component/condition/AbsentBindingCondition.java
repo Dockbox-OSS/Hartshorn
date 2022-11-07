@@ -30,6 +30,6 @@ public class AbsentBindingCondition implements Condition {
                 return ConditionResult.matched();
             }
             else return ConditionResult.notFound("Binding", String.valueOf(key));
-        }).or(ConditionResult.invalidCondition("absent binding"));
+        }).orElse(ConditionResult.invalidCondition("absent binding"));
     }
 }

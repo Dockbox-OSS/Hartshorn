@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -58,13 +58,13 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public Result<Message> message(final String key) {
+    public Option<Message> message(final String key) {
         return this.message(key, this.primaryLanguage());
     }
 
     @Override
-    public Result<Message> message(final String key, final Locale language) {
-        return Result.of(this.messages.get(key))
+    public Option<Message> message(final String key, final Locale language) {
+        return Option.of(this.messages.get(key))
                 .map(message -> message.translate(language).detach());
     }
 

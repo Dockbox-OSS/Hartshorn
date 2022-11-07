@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
@@ -35,7 +35,7 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
 
     Set<T> findAll();
 
-    Result<T> findById(ID id);
+    Option<T> findById(ID id);
 
     void flush();
 }

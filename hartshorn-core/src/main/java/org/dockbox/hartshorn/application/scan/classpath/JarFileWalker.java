@@ -29,7 +29,8 @@ public class JarFileWalker implements FileVisitor<Path> {
     private final ResourceHandler handler;
     private final URLClassLoader classLoader;
 
-    public JarFileWalker(ClassPathScanner classPathScanner, final ResourceHandler handler, final URLClassLoader classLoader) {
+    public JarFileWalker(final ClassPathScanner classPathScanner, final ResourceHandler handler,
+                         final URLClassLoader classLoader) {
         this.classPathScanner = classPathScanner;
         this.handler = handler;
         this.classLoader = classLoader;
@@ -43,7 +44,7 @@ public class JarFileWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
         final String resourceName = file.toString().substring(1);
-        classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
+        this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
         return FileVisitResult.CONTINUE;
     }
 

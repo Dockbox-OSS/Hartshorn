@@ -29,9 +29,9 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -211,7 +211,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(final String type, final String name, final boolean optional) {
-        final Result<ArgumentConverter<?>> converter = this.context
+        final Option<ArgumentConverter<?>> converter = this.context
                 .first(ArgumentConverterContext.class)
                 .flatMap(context -> context.converter(type.toLowerCase()));
         if (converter.present()) {
@@ -305,10 +305,10 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public Result<CommandFlag> flag(final String name) {
+    public Option<CommandFlag> flag(final String name) {
         for (final CommandFlag flag : this.flags()) {
-            if (flag.name().equals(name)) return Result.of(flag);
+            if (flag.name().equals(name)) return Option.of(flag);
         }
-        return Result.empty();
+        return Option.empty();
     }
 }
