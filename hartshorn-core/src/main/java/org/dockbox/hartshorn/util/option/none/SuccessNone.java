@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.util.option.none;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -24,36 +29,31 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.FailableOption;
-import org.dockbox.hartshorn.util.option.Option;
-
-public class SuccessNone<T, E extends Throwable> extends None<T> implements FailableOption<T, E> {
+public class SuccessNone<T, E extends Throwable> extends None<T> implements Attempt<T, E> {
 
     @Override
-    public Option<T> option() {
+    public @NonNull Option<T> option() {
         return Option.empty();
     }
 
     @Override
-    public Option<E> errorOption() {
+    public @NonNull Option<E> errorOption() {
         return Option.empty();
     }
 
     @Override
-    public FailableOption<T, E> peekError(final Consumer<E> consumer) {
+    public @NonNull Attempt<T, E> peekError(final Consumer<E> consumer) {
         return this;
     }
 
     @Override
-    public FailableOption<T, E> onEmptyError(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmptyError(final Runnable runnable) {
         runnable.run();
         return this;
     }
 
     @Override
-    public E error() {
+    public @NonNull E error() {
         throw new NoSuchElementException("No value present");
     }
 
@@ -68,23 +68,23 @@ public class SuccessNone<T, E extends Throwable> extends None<T> implements Fail
     }
 
     @Override
-    public E errorOrElseGet(final Supplier<E> supplier) {
+    public E errorOrElseGet(final @NonNull Supplier<E> supplier) {
         return supplier.get();
     }
 
     @Override
-    public @NonNull FailableOption<T, E> orCompute(final @NonNull Supplier<@Nullable T> supplier) {
-        return FailableOption.of(supplier.get());
+    public @NonNull Attempt<T, E> orCompute(final @NonNull Supplier<@Nullable T> supplier) {
+        return Attempt.of(supplier.get());
     }
 
     @Override
-    public @NonNull FailableOption<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
+    public @NonNull Attempt<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
         return this;
     }
 
     @Override
-    public FailableOption<T, E> orComputeError(final Supplier<E> supplier) {
-        return FailableOption.of(supplier.get());
+    public @NonNull Attempt<T, E> orComputeError(final @NonNull Supplier<E> supplier) {
+        return Attempt.of(supplier.get());
     }
 
     @Override
@@ -98,44 +98,44 @@ public class SuccessNone<T, E extends Throwable> extends None<T> implements Fail
     }
 
     @Override
-    public @NonNull FailableOption<T, E> peek(final Consumer<T> consumer) {
+    public @NonNull Attempt<T, E> peek(final Consumer<T> consumer) {
         return this;
     }
 
     @Override
-    public @NonNull FailableOption<T, E> onEmpty(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmpty(final Runnable runnable) {
         runnable.run();
         return this;
     }
 
     @Override
-    public Optional<E> errorOptional() {
+    public @NonNull Optional<E> errorOptional() {
         return Optional.empty();
     }
 
     @Override
-    public <U extends Throwable> FailableOption<T, U> mapError(final Function<E, U> mapper) {
-        return FailableOption.empty();
+    public <U extends Throwable> @NonNull Attempt<T, U> mapError(final @NonNull Function<E, U> mapper) {
+        return Attempt.empty();
     }
 
     @Override
-    public <U extends Throwable> FailableOption<T, U> flatMapError(final Function<E, FailableOption<T, U>> mapper) {
-        return FailableOption.empty();
+    public <U extends Throwable> @NonNull Attempt<T, U> flatMapError(final @NonNull Function<E, Attempt<T, U>> mapper) {
+        return Attempt.empty();
     }
 
     @Override
-    public FailableOption<T, E> filterError(final Predicate<E> predicate) {
-        return FailableOption.empty();
+    public Attempt<T, E> filterError(final Predicate<E> predicate) {
+        return Attempt.empty();
     }
 
     @Override
-    public @NonNull <U> FailableOption<U, E> map(final @NonNull Function<@NonNull T, @Nullable U> function) {
-        return FailableOption.empty();
+    public @NonNull <U> Attempt<U, E> map(final @NonNull Function<@NonNull T, @Nullable U> function) {
+        return Attempt.empty();
     }
 
     @Override
-    public @NonNull <U> FailableOption<U, E> flatMap(final @NonNull Function<@NonNull T, @NonNull Option<U>> function) {
-        return FailableOption.empty();
+    public @NonNull <U> Attempt<U, E> flatMap(final @NonNull Function<@NonNull T, @NonNull Option<U>> function) {
+        return Attempt.empty();
     }
 
     @Override
@@ -144,12 +144,12 @@ public class SuccessNone<T, E extends Throwable> extends None<T> implements Fail
     }
 
     @Override
-    public FailableOption<T, E> rethrow() throws E {
+    public Attempt<T, E> rethrow() throws E {
         return this;
     }
 
     @Override
-    public FailableOption<T, E> rethrowUnchecked() {
+    public Attempt<T, E> rethrowUnchecked() {
         return this;
     }
 }

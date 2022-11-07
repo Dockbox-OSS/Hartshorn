@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 @FunctionalInterface
 public interface MethodInvoker<T, P> {
-    FailableOption<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args);
+    Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args);
 }

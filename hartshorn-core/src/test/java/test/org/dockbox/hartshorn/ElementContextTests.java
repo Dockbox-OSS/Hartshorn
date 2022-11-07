@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -370,7 +370,7 @@ public class ElementContextTests {
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertTrue(methodContext.isStatic());
-        final FailableOption<?, ?> result = methodContext.invokeStatic();
+        final Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
 
@@ -384,7 +384,7 @@ public class ElementContextTests {
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertFalse(methodContext.isStatic());
-        final FailableOption<?, ?> result = methodContext.invokeStatic();
+        final Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorPresent());
         Assertions.assertTrue(result.error() instanceof IllegalAccessException);
     }

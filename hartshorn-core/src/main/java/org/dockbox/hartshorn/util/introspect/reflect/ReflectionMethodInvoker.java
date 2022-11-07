@@ -17,15 +17,15 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Method;
 
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
-    public FailableOption<T, Throwable> invoke(final MethodView<P, T> method, final P instance, final Object[] args) {
-        final FailableOption<T, Throwable> result = FailableOption.of(() -> {
+    public Attempt<T, Throwable> invoke(final MethodView<P, T> method, final P instance, final Object[] args) {
+        final Attempt<T, Throwable> result = Attempt.of(() -> {
             final Method jlrMethod = method.method();
             // Do not use explicit casting here, as it will cause a ClassCastException if the method
             // returns a primitive type. Instead, use the inferred type from the method view.
@@ -36,7 +36,7 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
         if (result.errorPresent()) {
             Throwable cause = result.error();
             if (result.error().getCause() != null) cause = result.error().getCause();
-            return FailableOption.of(result.orNull(), cause);
+            return Attempt.of(result.orNull(), cause);
         }
         return result;
     }

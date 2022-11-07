@@ -79,7 +79,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return context.applicationEnvironment();
     }
 
-    protected ApplicationContext createNewContext(final ApplicationBuilder<?, ?> builder) {
+    protected ApplicationContext createNewContext(@NotNull final ApplicationBuilder<?, ?> builder) {
         InitializingContext initializingContext = new InitializingContext(null, null, builder);
         final ApplicationEnvironment environment = this.createEnvironment(initializingContext);
 

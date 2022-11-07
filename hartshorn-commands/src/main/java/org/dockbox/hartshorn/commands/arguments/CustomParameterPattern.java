@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
@@ -45,18 +45,18 @@ public interface CustomParameterPattern {
      *
      * @return An instance of {@code T}, wrapped in a {@link Option}, or {@link Option#empty()} if {@code null}
      */
-    default <T> FailableOption<T, ConverterException> request(final Class<T> type, final CommandSource source, final String raw) {
+    default <T> Attempt<T, ConverterException> request(final Class<T> type, final CommandSource source, final String raw) {
         final ApplicationContext context = source.applicationContext();
         final TypeView<T> typeView = context.environment().introspect(type);
 
-        final FailableOption<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
+        final Attempt<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
         if (preconditionsMatch.errorPresent()) {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
-            return FailableOption.of(preconditionsMatch.error());
+            return Attempt.of(preconditionsMatch.error());
         }
         else if (Boolean.FALSE.equals(preconditionsMatch.orElse(false))) {
             context.log().debug("Preconditions failed, rejecting raw argument " + raw);
-            return FailableOption.empty();
+            return Attempt.empty();
         }
 
         final List<String> rawArguments = this.splitArguments(raw);
@@ -81,7 +81,7 @@ public interface CustomParameterPattern {
 
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
-                return FailableOption.of(new MissingConverterException(context, typeView));
+                return Attempt.of(new MissingConverterException(context, typeView));
             }
 
             context.log().debug("Found converter for identifier '%s'".formatted(typeIdentifier));
@@ -91,18 +91,18 @@ public interface CustomParameterPattern {
 
         return this.constructor(argumentTypes, arguments, typeView, source)
                 .flatMap(constructor -> constructor.create(arguments.toArray(new Object[0])))
-                .failable(ArgumentMatchingFailedException.class)
+                .attempt(ArgumentMatchingFailedException.class)
                 // Inferred downcast from ArgumentMatchingFailedException to ConverterException
                 .mapError(error -> error);
     }
 
-    <T> FailableOption<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw);
+    <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw);
 
     List<String> splitArguments(String raw);
 
-    FailableOption<String, ConverterException> parseIdentifier(String argument);
+    Attempt<String, ConverterException> parseIdentifier(String argument);
 
-    default <T> FailableOption<ConstructorView<T>, ConverterException> constructor(final List<Class<?>> argumentTypes, final List<Object> arguments, final TypeView<T> type, final CommandSource source) {
+    default <T> Attempt<ConstructorView<T>, ConverterException> constructor(final List<Class<?>> argumentTypes, final List<Object> arguments, final TypeView<T> type, final CommandSource source) {
         for (final ConstructorView<T> constructor : type.constructors().all()) {
             if (constructor.parameters().count() != arguments.size()) continue;
             final List<TypeView<?>> parameters = constructor.parameters().types();
@@ -131,9 +131,9 @@ public interface CustomParameterPattern {
             }
             if (passed) {
                 source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
-                return FailableOption.of(constructor);
+                return Attempt.of(constructor);
             }
         }
-        return FailableOption.of(new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs()));
+        return Attempt.of(new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs()));
     }
 }

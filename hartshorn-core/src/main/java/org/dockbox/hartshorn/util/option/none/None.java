@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.option.none;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.NoSuchElementException;
@@ -32,8 +32,8 @@ import java.util.stream.Stream;
 public class None<T> implements Option<T> {
 
     @Override
-    public <E extends Throwable> FailableOption<T, E> failable(final Class<E> errorType) {
-        return FailableOption.empty();
+    public <E extends Throwable> Attempt<T, E> attempt(final Class<E> errorType) {
+        return Attempt.empty();
     }
 
     @Override

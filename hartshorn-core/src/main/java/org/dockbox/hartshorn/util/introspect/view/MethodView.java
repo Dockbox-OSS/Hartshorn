@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -26,29 +26,29 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
 
     Method method();
 
-    default FailableOption<ReturnType, Throwable> invoke(final Parent instance, final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invoke(final Parent instance, final Object... arguments) {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
-    FailableOption<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments);
 
-    FailableOption<ReturnType, Throwable> invokeWithContext(Parent instance);
+    Attempt<ReturnType, Throwable> invokeWithContext(Parent instance);
 
-    default FailableOption<ReturnType, Throwable> invokeWithContext(final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invokeWithContext(final Object... arguments) {
         return this.invokeWithContext(Arrays.asList(arguments));
     }
 
-    FailableOption<ReturnType, Throwable> invokeWithContext(Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invokeWithContext(Collection<?> arguments);
 
-    FailableOption<ReturnType, Throwable> invokeWithContext();
+    Attempt<ReturnType, Throwable> invokeWithContext();
 
-    default FailableOption<ReturnType, Throwable> invokeStatic(final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invokeStatic(final Object... arguments) {
         return this.invokeStatic(Arrays.asList(arguments));
     }
 
-    FailableOption<ReturnType, Throwable> invokeStatic(Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments);
 
-    FailableOption<ReturnType, Throwable> invokeStaticWithContext();
+    Attempt<ReturnType, Throwable> invokeStaticWithContext();
 
     TypeView<ReturnType> returnType();
 

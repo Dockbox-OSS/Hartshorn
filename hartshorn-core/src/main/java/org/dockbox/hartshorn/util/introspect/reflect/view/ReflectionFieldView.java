@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierVi
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.AnnotatedElement;
@@ -38,7 +38,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     private final Field field;
     private final Introspector introspector;
 
-    private Function<Object, FailableOption<FieldType, Throwable>> getter;
+    private Function<Object, Attempt<FieldType, Throwable>> getter;
     private BiConsumer<Object, FieldType> setter;
 
     public ReflectionFieldView(final Introspector introspector, final Field field) {
@@ -83,7 +83,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public FailableOption<FieldType, Throwable> get(final Parent instance) {
+    public Attempt<FieldType, Throwable> get(final Parent instance) {
         if (this.getter == null) {
             final Option<Property> property = this.annotations().get(Property.class);
             if (property.present() && !"".equals(property.get().getter())) {
@@ -92,7 +92,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 final MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
                 this.getter = o -> methodContext.invoke(instance).map(this.type()::cast);
             } else {
-                this.getter = o -> FailableOption.of(() -> {
+                this.getter = o -> Attempt.of(() -> {
                     try {
                         return this.type().cast(this.field.get(o));
                     }
@@ -106,7 +106,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public FailableOption<FieldType, Throwable> getStatic() {
+    public Attempt<FieldType, Throwable> getStatic() {
         return this.get(null);
     }
 
@@ -171,7 +171,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public FailableOption<FieldType, Throwable> getWithContext() {
+    public Attempt<FieldType, Throwable> getWithContext() {
         final Parent parent = this.introspector.applicationContext().get(this.declaredBy().type());
         return this.get(parent);
     }

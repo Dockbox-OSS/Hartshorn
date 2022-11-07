@@ -103,10 +103,10 @@ public class ClassPathScanner {
 
                 final File file = new File(url.getFile());
                 if (file.exists()) {
-                    if(file.isDirectory()) {
+                    if (file.isDirectory()) {
                         this.processDirectoryResource(handler, classLoader, file);
                     }
-                    else if(file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+                    else if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
                         this.processJarFileResource(handler, classLoader, url, file);
                     }
                 }
@@ -162,8 +162,10 @@ public class ClassPathScanner {
     }
 
     @NotNull
-    private String resourceToCanonicalName(String resourceName) {
-        return resourceName.substring(0, resourceName.length() - 6).replace('/', '.').replace('\\', '.');
+    private String resourceToCanonicalName(final String resourceName) {
+        return resourceName.substring(0, resourceName.length() - 6)
+                .replace('/', '.')
+                .replace('\\', '.');
     }
 
     public ClassPathScanner filterPrefix(final String prefix) {

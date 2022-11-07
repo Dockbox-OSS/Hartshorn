@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.events;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.util.function.Function;
 
@@ -33,5 +33,5 @@ public interface EventBus {
 
     void post(Event event);
 
-    void addValidationRule(Function<MethodView<?, ?>, FailableOption<Boolean, InvalidEventListenerException>> validator);
+    void addValidationRule(Function<MethodView<?, ?>, Attempt<Boolean, InvalidEventListenerException>> validator);
 }

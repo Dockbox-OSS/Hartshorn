@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntr
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
 
@@ -37,7 +37,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     private final Introspector introspector;
 
     private TypeVariablesIntrospector typeParametersIntrospector;
-    private Function<Object[], FailableOption<T, Throwable>> invoker;
+    private Function<Object[], Attempt<T, Throwable>> invoker;
     private String qualifiedName;
 
     public ReflectionConstructorView(final Introspector introspector, final Constructor<T> constructor) {
@@ -46,9 +46,9 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         this.introspector = introspector;
     }
 
-    protected Function<Object[], FailableOption<T, Throwable>> invoker() {
+    protected Function<Object[], Attempt<T, Throwable>> invoker() {
         if (this.invoker == null) {
-            this.invoker = args -> FailableOption.of(() -> {
+            this.invoker = args -> Attempt.of(() -> {
                 try {
                     return this.constructor.newInstance(args);
                 } catch (final InvocationTargetException e) {
@@ -66,12 +66,12 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public FailableOption<T, Throwable> create(final Collection<?> arguments) {
+    public Attempt<T, Throwable> create(final Collection<?> arguments) {
         return this.invoker().apply(arguments.toArray());
     }
 
     @Override
-    public FailableOption<T, Throwable> createWithContext() {
+    public Attempt<T, Throwable> createWithContext() {
         final Object[] args = this.parameters().loadFromContext();
         return this.create(args);
     }

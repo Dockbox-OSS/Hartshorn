@@ -26,7 +26,7 @@ import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +47,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final FailableOption<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertTrue(result.get());
@@ -68,7 +68,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "@cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final FailableOption<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.errorPresent());
@@ -79,7 +79,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#sphere[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final FailableOption<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.errorPresent());
@@ -101,7 +101,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final FailableOption<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
+        final Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
 
         Assertions.assertTrue(identifier.present());
         Assertions.assertEquals("cuboid", identifier.get());
@@ -112,7 +112,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final FailableOption<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        final Attempt<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
 

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpStatus;
@@ -65,7 +65,7 @@ public class MvcServlet implements WebServlet {
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 
-        final FailableOption<ViewTemplate, Throwable> result = this.method.invokeWithContext(arguments);
+        final Attempt<ViewTemplate, Throwable> result = this.method.invokeWithContext(arguments);
 
         if (result.present()) {
             final ViewTemplate template = result.get();

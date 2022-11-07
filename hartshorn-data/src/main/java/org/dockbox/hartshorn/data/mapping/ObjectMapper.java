@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.mapping;
 
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,44 +31,44 @@ import java.util.Map;
 
 public interface ObjectMapper {
 
-    <T> FailableOption<T, ObjectMappingException> read(String content, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> read(String content, Class<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> read(Path path, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> read(Path path, Class<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> read(URL url, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> read(URL url, Class<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> read(InputStream stream, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> read(InputStream stream, Class<T> type);
 
-    default <T> FailableOption<T, ObjectMappingException> read(final URI uri, final Class<T> type) {
-        return (FailableOption<T, ObjectMappingException>) FailableOption.of(() -> this.read(uri.toURL(), type), IOException.class)
+    default <T> Attempt<T, ObjectMappingException> read(final URI uri, final Class<T> type) {
+        return (Attempt<T, ObjectMappingException>) Attempt.of(() -> this.read(uri.toURL(), type), IOException.class)
                 .mapError(ObjectMappingException::new)
                 .flatMap(o -> o);
     }
 
-    <T> FailableOption<T, ObjectMappingException> read(String content, GenericType<T> type);
+    <T> Attempt<T, ObjectMappingException> read(String content, GenericType<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> read(Path path, GenericType<T> type);
+    <T> Attempt<T, ObjectMappingException> read(Path path, GenericType<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> read(URL url, GenericType<T> type);
+    <T> Attempt<T, ObjectMappingException> read(URL url, GenericType<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> read(InputStream stream, GenericType<T> type);
+    <T> Attempt<T, ObjectMappingException> read(InputStream stream, GenericType<T> type);
 
-    default <T> FailableOption<T, ObjectMappingException> read(final URI uri, final GenericType<T> type) {
-        return (FailableOption<T, ObjectMappingException>) FailableOption.of(() -> this.read(uri.toURL(), type), IOException.class)
+    default <T> Attempt<T, ObjectMappingException> read(final URI uri, final GenericType<T> type) {
+        return (Attempt<T, ObjectMappingException>) Attempt.of(() -> this.read(uri.toURL(), type), IOException.class)
                 .mapError(ObjectMappingException::new)
                 .flatMap(o -> o);
     }
 
-    <T> FailableOption<T, ObjectMappingException> update(T object, String content, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> update(T object, String content, Class<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> update(T object, Path path, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> update(T object, Path path, Class<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> update(T object, URL url, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> update(T object, URL url, Class<T> type);
 
-    <T> FailableOption<T, ObjectMappingException> update(T object, InputStream stream, Class<T> type);
+    <T> Attempt<T, ObjectMappingException> update(T object, InputStream stream, Class<T> type);
 
-    default <T> FailableOption<T, ObjectMappingException> update(final T object, final URI uri, final Class<T> type) {
-        return (FailableOption<T, ObjectMappingException>) FailableOption.of(() -> this.update(object, uri.toURL(), type), IOException.class)
+    default <T> Attempt<T, ObjectMappingException> update(final T object, final URI uri, final Class<T> type) {
+        return (Attempt<T, ObjectMappingException>) Attempt.of(() -> this.update(object, uri.toURL(), type), IOException.class)
                 .mapError(ObjectMappingException::new)
                 .flatMap(o -> o);
     }
@@ -82,14 +82,14 @@ public interface ObjectMapper {
     Map<String, Object> flat(InputStream stream);
 
     default Map<String, Object> flat(final URI uri) {
-        return FailableOption.of(() -> this.flat(uri.toURL()), IOException.class).orElseGet(HashMap::new);
+        return Attempt.of(() -> this.flat(uri.toURL()), IOException.class).orElseGet(HashMap::new);
     }
 
-    <T> FailableOption<Boolean, ObjectMappingException> write(Path path, T content);
+    <T> Attempt<Boolean, ObjectMappingException> write(Path path, T content);
 
-    <T> FailableOption<Boolean, ObjectMappingException> write(OutputStream outputStream, T content);
+    <T> Attempt<Boolean, ObjectMappingException> write(OutputStream outputStream, T content);
 
-    <T> FailableOption<String, ObjectMappingException> write(T content);
+    <T> Attempt<String, ObjectMappingException> write(T content);
 
     ObjectMapper fileType(FileFormat fileFormat);
 

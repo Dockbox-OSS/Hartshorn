@@ -119,7 +119,7 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
         return this.configuration;
     }
 
-    public void applyTo(Binder binder) {
+    public void applyTo(final Binder binder) {
         // Application context
         binder.bind(ComponentProvider.class).singleton(this.applicationContext());
         binder.bind(ExceptionHandler.class).singleton(this.applicationContext());
@@ -153,10 +153,10 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (InitializingContext) obj;
+        final var that = (InitializingContext) obj;
         return Objects.equals(this.environment, that.environment) &&
                 Objects.equals(super.applicationContext(), that.applicationContext()) &&
                 Objects.equals(this.configuration, that.configuration);
@@ -164,15 +164,15 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
 
     @Override
     public int hashCode() {
-        return Objects.hash(environment, this.applicationContext(), configuration);
+        return Objects.hash(this.environment, this.applicationContext(), this.configuration);
     }
 
     @Override
     public String toString() {
         return "InitializingContext[" +
-                "environment=" + environment + ", " +
+                "environment=" + this.environment + ", " +
                 "applicationContext=" + this.applicationContext() + ", " +
-                "configuration=" + configuration + ']';
+                "configuration=" + this.configuration + ']';
     }
 
 }

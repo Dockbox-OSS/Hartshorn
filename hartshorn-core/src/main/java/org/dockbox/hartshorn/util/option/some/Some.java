@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.option.some;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
@@ -38,8 +38,8 @@ public class Some<T> implements Option<T> {
     }
 
     @Override
-    public <E extends Throwable> FailableOption<T, E> failable(final Class<E> errorType) {
-        return FailableOption.of(this.value);
+    public <E extends Throwable> Attempt<T, E> attempt(final Class<E> errorType) {
+        return Attempt.of(this.value);
     }
 
     @Override

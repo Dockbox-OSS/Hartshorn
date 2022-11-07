@@ -21,5 +21,4 @@ import java.nio.file.Path;
 
 record ClassCandidateResource(URLClassLoader classLoader, Path path, String resourceName, boolean isClassResource)
         implements ClassPathResource {
-
 }

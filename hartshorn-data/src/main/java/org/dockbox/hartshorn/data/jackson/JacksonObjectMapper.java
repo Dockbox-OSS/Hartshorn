@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.FileNotFoundException;
@@ -68,96 +68,96 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final String content, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final String content, final Class<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.getName());
-        return FailableOption.<T, JsonProcessingException>of(() -> this.configureMapper().readValue(content, type), JsonProcessingException.class)
+        return Attempt.<T, JsonProcessingException>of(() -> this.configureMapper().readValue(content, type), JsonProcessingException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final Path path, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final Path path, final Class<T> type) {
         this.context.log().debug("Reading content from path " + path + " to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readValue(path.toFile(), type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(path.toFile(), type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final URL url, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final URL url, final Class<T> type) {
         this.context.log().debug("Reading content from url " + url + " to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readValue(url, type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(url, type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final InputStream stream, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final InputStream stream, final Class<T> type) {
         this.context.log().debug("Reading content from input stream to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readValue(stream, type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(stream, type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final String content, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final String content, final GenericType<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.type().getTypeName());
-        return FailableOption.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)), JsonProcessingException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(content, new GenericTypeReference<>(type)), JsonProcessingException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final Path path, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final Path path, final GenericType<T> type) {
         this.context.log().debug("Reading content from path " + path + " to type " + type.type().getTypeName());
-        return FailableOption.of(() -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type)), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type)), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final URL url, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final URL url, final GenericType<T> type) {
         this.context.log().debug("Reading content from url " + url + " to type " + type.type().getTypeName());
-        return FailableOption.of(() -> this.configureMapper().readValue(url, new GenericTypeReference<>(type)), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(url, new GenericTypeReference<>(type)), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> read(final InputStream stream, final GenericType<T> type) {
+    public <T> Attempt<T, ObjectMappingException> read(final InputStream stream, final GenericType<T> type) {
         this.context.log().debug("Reading content from input stream to type " + type.type().getTypeName());
-        return FailableOption.of(() -> this.configureMapper().readValue(stream, new GenericTypeReference<>(type)), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(stream, new GenericTypeReference<>(type)), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> update(final T object, final String content, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final String content, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from string value to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readerForUpdating(object).readValue(content, type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(content, type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> update(final T object, final Path path, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final Path path, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from path " + path + " to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readerForUpdating(object).readValue(path.toFile(), type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(path.toFile(), type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> update(final T object, final URL url, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final URL url, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from url " + url + " to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readerForUpdating(object).readValue(url, type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(url, type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<T, ObjectMappingException> update(final T object, final InputStream stream, final Class<T> type) {
+    public <T> Attempt<T, ObjectMappingException> update(final T object, final InputStream stream, final Class<T> type) {
         this.context.log().debug("Updating object " + object + " with content from input stream to type " + type.getName());
-        return FailableOption.of(() -> this.configureMapper().readerForUpdating(object).readValue(stream, type), IOException.class)
+        return Attempt.of(() -> this.configureMapper().readerForUpdating(object).readValue(stream, type), IOException.class)
                 .mapError(ObjectMappingException::new);
     }
 
     @Override
-    public <T> FailableOption<Boolean, ObjectMappingException> write(final Path path, final T content) {
-        if (content == null) return FailableOption.of(false);
+    public <T> Attempt<Boolean, ObjectMappingException> write(final Path path, final T content) {
+        if (content == null) return Attempt.of(false);
 
         this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to path " + path);
         if (content instanceof String string) return this.writePlain(path, string);
-        return FailableOption.of(() -> {
+        return Attempt.of(() -> {
             this.writer(content).writeValue(path.toFile(), content);
             return true;
         }, IOException.class)
@@ -166,12 +166,12 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> FailableOption<Boolean, ObjectMappingException> write(final OutputStream outputStream, final T content) {
-        if (content == null) return FailableOption.of(false);
+    public <T> Attempt<Boolean, ObjectMappingException> write(final OutputStream outputStream, final T content) {
+        if (content == null) return Attempt.of(false);
 
         this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to output stream");
         if (content instanceof String string) return this.writePlain(outputStream, string);
-        return FailableOption.of(() -> {
+        return Attempt.of(() -> {
             this.writer(content).writeValue(outputStream, content);
             return true;
         }, IOException.class)
@@ -180,33 +180,33 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> FailableOption<String, ObjectMappingException> write(final T content) {
-        if (content == null) return FailableOption.of("");
+    public <T> Attempt<String, ObjectMappingException> write(final T content) {
+        if (content == null) return Attempt.of("");
         this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to string value");
-        return FailableOption.of(() -> this.writer(content).writeValueAsString(content), IOException.class)
+        return Attempt.of(() -> this.writer(content).writeValueAsString(content), IOException.class)
                 .mapError(ObjectMappingException::new)
                 .map(out -> out.replace("\\r", ""));
     }
 
-    protected FailableOption<Boolean, ObjectMappingException> writePlain(final Path path, final String content) {
+    protected Attempt<Boolean, ObjectMappingException> writePlain(final Path path, final String content) {
         try (final FileWriter writer = new FileWriter(path.toFile())) {
             writer.write(content);
             writer.flush();
-            return FailableOption.of(true);
+            return Attempt.of(true);
         }
         catch (final IOException e) {
-            return FailableOption.of(false, new ObjectMappingException(e));
+            return Attempt.of(false, new ObjectMappingException(e));
         }
     }
 
-    protected FailableOption<Boolean, ObjectMappingException> writePlain(final OutputStream outputStream, final String content) {
+    protected Attempt<Boolean, ObjectMappingException> writePlain(final OutputStream outputStream, final String content) {
         try (final OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
             writer.write(content);
             writer.flush();
-            return FailableOption.of(true);
+            return Attempt.of(true);
         }
         catch (final IOException e) {
-            return FailableOption.of(false, new ObjectMappingException(e));
+            return Attempt.of(false, new ObjectMappingException(e));
         }
     }
 

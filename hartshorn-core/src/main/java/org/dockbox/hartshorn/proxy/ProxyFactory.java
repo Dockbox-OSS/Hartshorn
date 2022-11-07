@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -302,14 +302,14 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy will be created
      * with all currently known behaviors.
      *
-     * <p>If the proxy could not be created, {@link FailableOption#empty()} will be returned. If the proxy is
+     * <p>If the proxy could not be created, {@link Attempt#empty()} will be returned. If the proxy is
      * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
-     * throw an {@link ApplicationException}, or use {@link FailableOption#error()}.
+     * throw an {@link ApplicationException}, or use {@link Attempt#error()}.
      *
      * @return A proxy instance
      * @throws ApplicationException If the proxy could not be created
      */
-    FailableOption<T, Throwable> proxy() throws ApplicationException;
+    Attempt<T, Throwable> proxy() throws ApplicationException;
 
     /**
      * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
@@ -317,16 +317,16 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
      * known behaviors.
      *
-     * <p>If the proxy could not be created, {@link FailableOption#empty()} will be returned. If the proxy is
+     * <p>If the proxy could not be created, {@link Attempt#empty()} will be returned. If the proxy is
      * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
-     * throw an {@link ApplicationException}, or use {@link FailableOption#error()}.
+     * throw an {@link ApplicationException}, or use {@link Attempt#error()}.
      *
      * @param constructor The constructor to use
      * @param args The arguments to pass to the constructor
      * @return A proxy instance
      * @throws ApplicationException If the proxy could not be created
      */
-    FailableOption<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
+    Attempt<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.

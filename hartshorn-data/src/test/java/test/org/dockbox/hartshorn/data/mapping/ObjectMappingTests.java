@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.data.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -150,7 +150,7 @@ public class ObjectMappingTests {
         mapper.fileType(fileFormat);
         expected.name("sample");
 
-        final FailableOption<? extends Element, ?> result = mapper.read(content, expected.getClass());
+        final Attempt<? extends Element, ?> result = mapper.read(content, expected.getClass());
 
         if (result.absent()) throw new RuntimeException(result.error().getMessage());
         Assertions.assertTrue(result.present());

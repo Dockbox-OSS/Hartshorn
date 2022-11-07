@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.application.scan.classpath;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.ClassNameReference;
 import org.dockbox.hartshorn.application.scan.TypeReference;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
@@ -45,7 +45,7 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
                 }
             });
         }
-        catch(ClassPathWalkingException e) {
+        catch(final ClassPathWalkingException e) {
             this.environment().handle("Could not scan classpath for types", e);
             return Collections.emptySet();
         }

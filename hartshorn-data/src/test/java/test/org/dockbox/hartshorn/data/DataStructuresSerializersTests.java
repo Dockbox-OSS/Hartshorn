@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.data.registry.Registry;
 import org.dockbox.hartshorn.data.registry.RegistryColumn;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ public class DataStructuresSerializersTests {
         final Option<String> serializedRegistry = objectMapper.write(this.buildTestRegistry());
         Assertions.assertTrue(serializedRegistry.present());
 
-        final FailableOption<Registry<Registry<String>>, ObjectMappingException> registry = objectMapper.read(serializedRegistry.get(), new GenericType<>() {});
+        final Attempt<Registry<Registry<String>>, ObjectMappingException> registry = objectMapper.read(serializedRegistry.get(), new GenericType<>() {});
 
         Assertions.assertDoesNotThrow(registry::rethrow);
         Assertions.assertTrue(registry.present());

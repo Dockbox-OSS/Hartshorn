@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Field;
 
@@ -26,9 +26,9 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
 
     void set(Object instance, Object value);
 
-    FailableOption<FieldType, Throwable> get(Parent instance);
+    Attempt<FieldType, Throwable> get(Parent instance);
 
-    FailableOption<FieldType, Throwable> getStatic();
+    Attempt<FieldType, Throwable> getStatic();
 
     String name();
 

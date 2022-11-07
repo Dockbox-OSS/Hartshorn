@@ -16,6 +16,20 @@
 
 package org.dockbox.hartshorn.util.option;
 
-public interface FailableSupplier<T, E extends Throwable> {
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
+
+import java.util.concurrent.Callable;
+
+/**
+ * A utility functional interface which is similar to {@link Callable} or a {@link CheckedSupplier},
+ * but pre-defines the exception type which may be thrown through a type parameter.
+ *
+ * @param <T> The type of the value
+ * @param <E> The type of the exception
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
+public interface ThrowingSupplier<T, E extends Throwable> {
     T get() throws E;
 }

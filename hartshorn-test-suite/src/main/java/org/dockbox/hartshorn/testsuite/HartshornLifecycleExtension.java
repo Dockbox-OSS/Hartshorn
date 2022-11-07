@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -185,7 +185,7 @@ public class HartshornLifecycleExtension implements
             Option.of(element.getAnnotation(HartshornTest.class))
                     .peek(annotation -> {
                         for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
-                            final ComponentProcessor componentProcessor = FailableOption.of(() -> processor.getConstructor().newInstance(), Throwable.class).rethrowUnchecked().get();
+                            final ComponentProcessor componentProcessor = Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class).rethrowUnchecked().get();
                             if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
                                 finalApplicationBuilder.preProcessor(preProcessor);
                             }
@@ -240,11 +240,11 @@ public class HartshornLifecycleExtension implements
 
                 final Class<?>[] parameters = factoryModifier.getParameterTypes();
                 if (parameters.length == 0) {
-                    applicationBuilder = FailableOption.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class).rethrowUnchecked().orNull();
+                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class).rethrowUnchecked().orNull();
                 }
                 else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
                     final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
-                    applicationBuilder = FailableOption.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class).rethrowUnchecked().orNull();
+                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class).rethrowUnchecked().orNull();
                 }
                 else {
                     throw new InvalidFactoryModifierException("parameters", parameters[0]);

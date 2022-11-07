@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
@@ -31,14 +31,14 @@ public final class CyclingConstructorAnalyzer {
 
     private static final Map<Class<?>, ConstructorView<?>> cache = new ConcurrentHashMap<>();
 
-    public static <C> FailableOption<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type) {
+    public static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type) {
         return findConstructor(type, true);
     }
 
-    private static <C> FailableOption<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
-        if (type.isAbstract()) return FailableOption.empty();
+    private static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
+        if (type.isAbstract()) return Attempt.empty();
         if (cache.containsKey(type.type())) {
-            return FailableOption.of((ConstructorView<C>) cache.get(type.type()));
+            return Attempt.of((ConstructorView<C>) cache.get(type.type()));
         }
 
         ConstructorView<C> optimalConstructor;
@@ -47,10 +47,10 @@ public final class CyclingConstructorAnalyzer {
             final Option<? extends ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.absent()) {
                 if (type.constructors().bound().isEmpty()) {
-                    return FailableOption.of(new MissingInjectConstructorException(type));
+                    return Attempt.of(new MissingInjectConstructorException(type));
                 }
                 else {
-                    return FailableOption.empty(); // No injectable constructors found, but there are bound constructors
+                    return Attempt.empty(); // No injectable constructors found, but there are bound constructors
                 }
             }
             else optimalConstructor = defaultConstructor.get();
@@ -68,10 +68,10 @@ public final class CyclingConstructorAnalyzer {
 
         if (checkForCycles) {
             final List<TypeView<?>> path = findCyclicPath(optimalConstructor, type);
-            if (!path.isEmpty()) return FailableOption.of(new CyclicComponentException(type, path));
+            if (!path.isEmpty()) return Attempt.of(new CyclicComponentException(type, path));
         }
 
-        return FailableOption.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(c -> {
+        return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(c -> {
             // Don't store if there may be a cycle in the dependency graph
             if (checkForCycles) cache.put(type.type(), c);
         });

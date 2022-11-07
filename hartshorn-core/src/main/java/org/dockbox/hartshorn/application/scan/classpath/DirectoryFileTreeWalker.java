@@ -30,8 +30,8 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     private final ResourceHandler handler;
     private final URLClassLoader classLoader;
 
-    public DirectoryFileTreeWalker(ClassPathScanner classPathScanner, final int rootDirNameLength, final ResourceHandler handler,
-            final URLClassLoader classLoader) {
+    public DirectoryFileTreeWalker(final ClassPathScanner classPathScanner, final int rootDirNameLength,
+                                   final ResourceHandler handler, final URLClassLoader classLoader) {
         this.classPathScanner = classPathScanner;
         this.rootDirNameLength = rootDirNameLength;
         this.handler = handler;
@@ -46,7 +46,7 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
         final String resourceName = file.toFile().getCanonicalPath().substring(this.rootDirNameLength + 1);
-        classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
+        this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
         return FileVisitResult.CONTINUE;
     }
 

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -86,7 +86,7 @@ public class ServletHandler {
                 final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), null, this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
 
-                final FailableOption<?, Throwable> result = this.method.invokeWithContext(arguments);
+                final Attempt<?, Throwable> result = this.method.invokeWithContext(arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
@@ -98,7 +98,7 @@ public class ServletHandler {
                         else {
                             res.setContentType(this.httpRequest.produces().value());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
-                            final FailableOption<String, ObjectMappingException> write = this.mapper.write(result.get());
+                            final Attempt<String, ObjectMappingException> write = this.mapper.write(result.get());
                             if (write.present()) {
                                 this.context.log().debug("Printing response body to response writer");
                                 res.getWriter().print(write.get());

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.web.MediaType;
 import org.dockbox.hartshorn.web.annotations.RequestBody;
@@ -38,20 +38,20 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
     }
 
     @Override
-    public <T> FailableOption<T, Exception> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        final FailableOption<String, IOException> body = FailableOption.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())), IOException.class);
+    public <T> Attempt<T, Exception> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        final Attempt<String, IOException> body = Attempt.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())), IOException.class);
         if (parameter.type().is(String.class))
             return body
                     .map(o -> (T) o)
                     .mapError(e -> e);
         final MediaType mediaType = parameter.declaredBy().annotations().get(HttpRequest.class).get().consumes();
-        if (!mediaType.isSerializable()) return FailableOption.empty();
+        if (!mediaType.isSerializable()) return Attempt.empty();
         final FileFormat bodyFormat = mediaType.fileFormat().get();
         final ObjectMapper objectMapper = context.provider().get(ObjectMapper.class).fileType(bodyFormat);
 
         return body
                 .flatMap(b -> objectMapper.read(b, parameter.type().type()))
-                .failable(ObjectMappingException.class)
+                .attempt(ObjectMappingException.class)
                 .mapError(e -> e);
     }
 }

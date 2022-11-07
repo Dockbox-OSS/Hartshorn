@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.util.option.some;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.util.option.FailableOption;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class FailedSome<T, E extends Throwable> extends Some<T> implements FailableOption<T, E> {
+public class FailedSome<T, E extends Throwable> extends Some<T> implements Attempt<T, E> {
 
     private final E error;
 
@@ -40,28 +40,28 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Faila
     }
 
     @Override
-    public Option<T> option() {
+    public @NonNull Option<T> option() {
         return Option.of(this.get());
     }
 
     @Override
-    public Option<E> errorOption() {
+    public @NonNull Option<E> errorOption() {
         return Option.of(this.error);
     }
 
     @Override
-    public FailableOption<T, E> peekError(final Consumer<E> consumer) {
+    public @NonNull Attempt<T, E> peekError(final Consumer<E> consumer) {
         consumer.accept(this.error);
         return this;
     }
 
     @Override
-    public FailableOption<T, E> onEmptyError(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmptyError(final Runnable runnable) {
         return this;
     }
 
     @Override
-    public E error() {
+    public @NonNull E error() {
         return this.error;
     }
 
@@ -76,12 +76,12 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Faila
     }
 
     @Override
-    public E errorOrElseGet(final Supplier<E> supplier) {
+    public E errorOrElseGet(final @NonNull Supplier<E> supplier) {
         return this.error;
     }
 
     @Override
-    public FailableOption<T, E> orComputeError(final Supplier<E> supplier) {
+    public @NonNull Attempt<T, E> orComputeError(final @NonNull Supplier<E> supplier) {
         return this;
     }
 
@@ -96,23 +96,23 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Faila
     }
 
     @Override
-    public Optional<E> errorOptional() {
+    public @NonNull Optional<E> errorOptional() {
         return Optional.of(this.error);
     }
 
     @Override
-    public <U extends Throwable> FailableOption<T, U> mapError(final Function<E, U> mapper) {
+    public <U extends Throwable> @NonNull Attempt<T, U> mapError(final @NonNull Function<E, U> mapper) {
         return new FailedSome<>(this.get(), mapper.apply(this.error));
     }
 
     @Override
-    public <U extends Throwable> FailableOption<T, U> flatMapError(final Function<E, FailableOption<T, U>> mapper) {
+    public <U extends Throwable> @NonNull Attempt<T, U> flatMapError(final @NonNull Function<E, Attempt<T, U>> mapper) {
         return mapper.apply(this.error);
     }
 
     @Override
-    public FailableOption<T, E> filterError(final Predicate<E> predicate) {
-        return predicate.test(this.error) ? this : FailableOption.of(this.get());
+    public Attempt<T, E> filterError(final Predicate<E> predicate) {
+        return predicate.test(this.error) ? this : Attempt.of(this.get());
     }
 
     @Override
@@ -121,37 +121,37 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Faila
     }
 
     @Override
-    public FailableOption<T, E> rethrow() throws E {
+    public Attempt<T, E> rethrow() throws E {
         throw this.error;
     }
 
     @Override
-    public FailableOption<T, E> rethrowUnchecked() {
+    public Attempt<T, E> rethrowUnchecked() {
         return ExceptionHandler.unchecked(this.error);
     }
 
     @Override
-    public @NonNull FailableOption<T, E> onEmpty(final Runnable runnable) {
-        return (FailableOption<T, E>) super.onEmpty(runnable);
+    public @NonNull Attempt<T, E> onEmpty(final Runnable runnable) {
+        return (Attempt<T, E>) super.onEmpty(runnable);
     }
 
     @Override
-    public @NonNull FailableOption<T, E> orCompute(final @NonNull Supplier<@NonNull T> supplier) {
-        return (FailableOption<T, E>) super.orCompute(supplier);
+    public @NonNull Attempt<T, E> orCompute(final @NonNull Supplier<@NonNull T> supplier) {
+        return (Attempt<T, E>) super.orCompute(supplier);
     }
 
     @Override
-    public @NonNull <U> FailableOption<U, E> map(final @NonNull Function<@NonNull T, @Nullable U> function) {
-        return FailableOption.of(function.apply(this.get()));
+    public @NonNull <U> Attempt<U, E> map(final @NonNull Function<@NonNull T, @Nullable U> function) {
+        return Attempt.of(function.apply(this.get()));
     }
 
     @Override
-    public @NonNull FailableOption<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
-        return predicate.test(this.get()) ? this : FailableOption.empty();
+    public @NonNull Attempt<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
+        return predicate.test(this.get()) ? this : Attempt.empty();
     }
 
     @Override
-    public @NonNull FailableOption<T, E> peek(final Consumer<T> consumer) {
-        return (FailableOption<T, E>) super.peek(consumer);
+    public @NonNull Attempt<T, E> peek(final Consumer<T> consumer) {
+        return (Attempt<T, E>) super.peek(consumer);
     }
 }

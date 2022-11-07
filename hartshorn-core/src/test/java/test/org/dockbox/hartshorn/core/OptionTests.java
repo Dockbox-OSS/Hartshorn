@@ -16,21 +16,21 @@
 
 package test.org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.util.option.FailableOption;
-import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 public class OptionTests {
 
     @Test
     void testOfNonNull() {
-        Option<String> option = Option.of("test");
+        final Option<String> option = Option.of("test");
         Assertions.assertTrue(option.present());
         Assertions.assertFalse(option.absent());
         Assertions.assertEquals("test", option.get());
@@ -38,7 +38,7 @@ public class OptionTests {
 
     @Test
     void testOfNull() {
-        Option<String> option = Option.of((String) null);
+        final Option<String> option = Option.of((String) null);
         Assertions.assertFalse(option.present());
         Assertions.assertTrue(option.absent());
         Assertions.assertThrows(NoSuchElementException.class, option::get);
@@ -46,7 +46,7 @@ public class OptionTests {
 
     @Test
     void testOfOptional() {
-        Option<String> option = Option.of(Optional.of("test"));
+        final Option<String> option = Option.of(Optional.of("test"));
         Assertions.assertTrue(option.present());
         Assertions.assertFalse(option.absent());
         Assertions.assertEquals("test", option.get());
@@ -54,7 +54,7 @@ public class OptionTests {
 
     @Test
     void testOfOptionalEmpty() {
-        Option<String> option = Option.of(Optional.empty());
+        final Option<String> option = Option.of(Optional.empty());
         Assertions.assertFalse(option.present());
         Assertions.assertTrue(option.absent());
         Assertions.assertThrows(NoSuchElementException.class, option::get);
@@ -62,7 +62,7 @@ public class OptionTests {
 
     @Test
     void testOfSupplier() {
-        Option<String> option = Option.of(() -> "test");
+        final Option<String> option = Option.of(() -> "test");
         Assertions.assertTrue(option.present());
         Assertions.assertFalse(option.absent());
         Assertions.assertEquals("test", option.get());
@@ -70,7 +70,7 @@ public class OptionTests {
 
     @Test
     void testOfSupplierNull() {
-        Option<String> option = Option.of(() -> null);
+        final Option<String> option = Option.of(() -> null);
         Assertions.assertFalse(option.present());
         Assertions.assertTrue(option.absent());
         Assertions.assertThrows(NoSuchElementException.class, option::get);
@@ -78,7 +78,7 @@ public class OptionTests {
 
     @Test
     void testEmpty() {
-        Option<String> option = Option.empty();
+        final Option<String> option = Option.empty();
         Assertions.assertFalse(option.present());
         Assertions.assertTrue(option.absent());
         Assertions.assertThrows(NoSuchElementException.class, option::get);
@@ -86,191 +86,191 @@ public class OptionTests {
 
     @Test
     void testCallable() {
-        FailableOption<String, Exception> option = FailableOption.<String>of(() -> "test");
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertEquals("test", option.get());
+        final Attempt<String, Exception> attempt = Attempt.<String>of(() -> "test");
+        Assertions.assertTrue(attempt.present());
+        Assertions.assertFalse(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertEquals("test", attempt.get());
     }
 
     @Test
     void testCallableNull() {
-        FailableOption<String, Exception> option = FailableOption.<String>of(() -> null);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        final Attempt<String, Exception> attempt = Attempt.<String>of(() -> null);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
     void testCallableException() {
-        FailableOption<String, Exception> option = FailableOption.<String>of(() -> {
+        final Attempt<String, Exception> attempt = Attempt.<String>of(() -> {
             throw new Exception();
         });
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertTrue(option.errorPresent());
-        Assertions.assertFalse(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertTrue(attempt.errorPresent());
+        Assertions.assertFalse(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableSupplier() {
-        FailableOption<String, NullPointerException> option = FailableOption.of(() -> "test", NullPointerException.class);
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertEquals("test", option.get());
+    void testAttemptSupplier() {
+        final Attempt<String, NullPointerException> attempt = Attempt.of(() -> "test", NullPointerException.class);
+        Assertions.assertTrue(attempt.present());
+        Assertions.assertFalse(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertEquals("test", attempt.get());
     }
 
     @Test
-    void testFailableSupplierNull() {
-        FailableOption<String, NullPointerException> option = FailableOption.of(() -> null, NullPointerException.class);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptSupplierNull() {
+        final Attempt<String, NullPointerException> attempt = Attempt.of(() -> null, NullPointerException.class);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableSupplierException() {
-        FailableOption<String, NullPointerException> option = FailableOption.of(() -> {
+    void testAttemptSupplierException() {
+        final Attempt<String, NullPointerException> attempt = Attempt.of(() -> {
             throw new NullPointerException();
         }, NullPointerException.class);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertTrue(option.errorPresent());
-        Assertions.assertFalse(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertTrue(attempt.errorPresent());
+        Assertions.assertFalse(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableSupplierExceptionOther() {
+    void testAttemptSupplierExceptionOther() {
         final IllegalArgumentException illegalArgumentException = new IllegalArgumentException();
-        final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> FailableOption.of(() -> {
+        final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> Attempt.of(() -> {
             throw illegalArgumentException;
         }, NullPointerException.class));
         Assertions.assertEquals(illegalArgumentException, exception.getCause());
     }
 
     @Test
-    void testFailableEmpty() {
-        FailableOption<String, Exception> option = FailableOption.empty();
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptEmpty() {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableOfNonNull() {
-        FailableOption<String, Exception> option = FailableOption.of("test");
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertEquals("test", option.get());
+    void testAttemptOfNonNull() {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        Assertions.assertTrue(attempt.present());
+        Assertions.assertFalse(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertEquals("test", attempt.get());
     }
 
     @Test
-    void testFailableOfNull() {
-        FailableOption<String, Exception> option = FailableOption.of((String) null);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptOfNull() {
+        final Attempt<String, Exception> attempt = Attempt.of((String) null);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableOfOptional() {
-        FailableOption<String, Exception> option = FailableOption.of(Optional.of("test"));
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertEquals("test", option.get());
+    void testAttemptOfOptional() {
+        final Attempt<String, Exception> attempt = Attempt.of(Optional.of("test"));
+        Assertions.assertTrue(attempt.present());
+        Assertions.assertFalse(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertEquals("test", attempt.get());
     }
 
     @Test
-    void testFailableOfOptionalEmpty() {
-        FailableOption<String, Exception> option = FailableOption.of(Optional.empty());
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptOfOptionalEmpty() {
+        final Attempt<String, Exception> attempt = Attempt.of(Optional.empty());
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableOfNonNullException() {
-        FailableOption<String, IllegalArgumentException> option = FailableOption.of(new IllegalArgumentException());
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertTrue(option.errorPresent());
-        Assertions.assertFalse(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptOfNonNullException() {
+        final Attempt<String, IllegalArgumentException> attempt = Attempt.of(new IllegalArgumentException());
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertTrue(attempt.errorPresent());
+        Assertions.assertFalse(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableOfNullException() {
-        FailableOption<String, IllegalArgumentException> option = FailableOption.of((IllegalArgumentException) null);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptOfNullException() {
+        final Attempt<String, IllegalArgumentException> attempt = Attempt.of((IllegalArgumentException) null);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableOfNonNullAndNonNullException() {
-        FailableOption<String, IllegalArgumentException> option = FailableOption.of("test", new IllegalArgumentException());
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertTrue(option.errorPresent());
-        Assertions.assertFalse(option.errorAbsent());
-        Assertions.assertEquals("test", option.get());
+    void testAttemptOfNonNullAndNonNullException() {
+        final Attempt<String, IllegalArgumentException> attempt = Attempt.of("test", new IllegalArgumentException());
+        Assertions.assertTrue(attempt.present());
+        Assertions.assertFalse(attempt.absent());
+        Assertions.assertTrue(attempt.errorPresent());
+        Assertions.assertFalse(attempt.errorAbsent());
+        Assertions.assertEquals("test", attempt.get());
     }
 
     @Test
-    void testFailableOfNonNullAndNullException() {
-        FailableOption<String, IllegalArgumentException> option = FailableOption.of("test", null);
-        Assertions.assertTrue(option.present());
-        Assertions.assertFalse(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertEquals("test", option.get());
+    void testAttemptOfNonNullAndNullException() {
+        final Attempt<String, IllegalArgumentException> attempt = Attempt.of("test", null);
+        Assertions.assertTrue(attempt.present());
+        Assertions.assertFalse(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertEquals("test", attempt.get());
     }
 
     @Test
-    void testFailableOfNullAndNonNullException() {
-        FailableOption<String, IllegalArgumentException> option = FailableOption.of(null, new IllegalArgumentException());
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertTrue(option.errorPresent());
-        Assertions.assertFalse(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptOfNullAndNonNullException() {
+        final Attempt<String, IllegalArgumentException> attempt = Attempt.of(null, new IllegalArgumentException());
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertTrue(attempt.errorPresent());
+        Assertions.assertFalse(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
-    void testFailableOfNullAndNullException() {
-        FailableOption<String, IllegalArgumentException> option = FailableOption.of(null, (IllegalArgumentException) null);
-        Assertions.assertFalse(option.present());
-        Assertions.assertTrue(option.absent());
-        Assertions.assertFalse(option.errorPresent());
-        Assertions.assertTrue(option.errorAbsent());
-        Assertions.assertThrows(NoSuchElementException.class, option::get);
+    void testAttemptOfNullAndNullException() {
+        final Attempt<String, IllegalArgumentException> attempt = Attempt.of(null, (IllegalArgumentException) null);
+        Assertions.assertFalse(attempt.present());
+        Assertions.assertTrue(attempt.absent());
+        Assertions.assertFalse(attempt.errorPresent());
+        Assertions.assertTrue(attempt.errorAbsent());
+        Assertions.assertThrows(NoSuchElementException.class, attempt::get);
     }
 
     @Test
     void testPeekWhenPresent() {
         final Option<String> option = Option.of("test");
-        AtomicBoolean called = new AtomicBoolean(false);
+        final AtomicBoolean called = new AtomicBoolean(false);
         option.peek(value -> {
             Assertions.assertEquals("test", value);
             called.set(true);
@@ -281,7 +281,7 @@ public class OptionTests {
     @Test
     void testPeekWhenAbsent() {
         final Option<String> option = Option.empty();
-        AtomicBoolean called = new AtomicBoolean(false);
+        final AtomicBoolean called = new AtomicBoolean(false);
         option.peek(value -> {
             Assertions.fail("Should not be called");
             called.set(true);
@@ -292,7 +292,7 @@ public class OptionTests {
     @Test
     void testOnEmptyWhenPresent() {
         final Option<String> option = Option.of("test");
-        AtomicBoolean called = new AtomicBoolean(false);
+        final AtomicBoolean called = new AtomicBoolean(false);
         option.onEmpty(() -> {
             Assertions.fail("Should not be called");
             called.set(true);
@@ -303,7 +303,7 @@ public class OptionTests {
     @Test
     void testOnEmptyWhenAbsent() {
         final Option<String> option = Option.empty();
-        AtomicBoolean called = new AtomicBoolean(false);
+        final AtomicBoolean called = new AtomicBoolean(false);
         option.onEmpty(() -> called.set(true));
         Assertions.assertTrue(called.get());
     }
@@ -473,100 +473,100 @@ public class OptionTests {
     }
 
     @Test
-    void testFailableOptionToOptionWhenPresent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        final Option<String> option = failableOption.option();
+    void testAttemptOptionToOptionWhenPresent() {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        final Option<String> option = attempt.option();
         Assertions.assertTrue(option.present());
         Assertions.assertEquals("test", option.get());
     }
 
     @Test
-    void testFailableOptionToOptionWhenAbsent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        final Option<String> option = failableOption.option();
+    void testAttemptOptionToOptionWhenAbsent() {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        final Option<String> option = attempt.option();
         Assertions.assertTrue(option.absent());
     }
 
     @Test
-    void testFailableOptionToOptionWhenFailed() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of(new Exception());
-        final Option<String> option = failableOption.option();
+    void testAttemptOptionToOptionWhenFailed() {
+        final Attempt<String, Exception> attempt = Attempt.of(new Exception());
+        final Option<String> option = attempt.option();
         Assertions.assertTrue(option.absent());
     }
 
     @Test
-    void testFailableOptionToErrorOptionWhenPresent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        final Option<Exception> errorOption = failableOption.errorOption();
+    void testAttemptOptionToErrorOptionWhenPresent() {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        final Option<Exception> errorOption = attempt.errorOption();
         Assertions.assertTrue(errorOption.absent());
     }
 
     @Test
-    void testFailableOptionToErrorOptionWhenAbsent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        final Option<Exception> errorOption = failableOption.errorOption();
+    void testAttemptOptionToErrorOptionWhenAbsent() {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        final Option<Exception> errorOption = attempt.errorOption();
         Assertions.assertTrue(errorOption.absent());
     }
 
     @Test
-    void testFailableOptionToErrorOptionWhenFailed() {
+    void testAttemptOptionToErrorOptionWhenFailed() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        final Option<Exception> errorOption = failableOption.errorOption();
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        final Option<Exception> errorOption = attempt.errorOption();
         Assertions.assertTrue(errorOption.present());
         Assertions.assertEquals(exception, errorOption.get());
     }
 
     @Test
-    void testFailableOptionToOptionalWhenPresent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        final Optional<Exception> optional = failableOption.errorOptional();
+    void testAttemptOptionToOptionalWhenPresent() {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        final Optional<Exception> optional = attempt.errorOptional();
         Assertions.assertTrue(optional.isEmpty());
     }
 
     @Test
-    void testFailableOptionToOptionalWhenAbsent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        final Optional<Exception> optional = failableOption.errorOptional();
+    void testAttemptOptionToOptionalWhenAbsent() {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        final Optional<Exception> optional = attempt.errorOptional();
         Assertions.assertTrue(optional.isEmpty());
     }
 
     @Test
-    void testFailableOptionToOptionalWhenFailed() {
+    void testAttemptOptionToOptionalWhenFailed() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        final Optional<Exception> optional = failableOption.errorOptional();
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        final Optional<Exception> optional = attempt.errorOptional();
         Assertions.assertTrue(optional.isPresent());
         Assertions.assertEquals(exception, optional.get());
     }
 
     @Test
-    void testFailableOptionToStreamWhenPresent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        final Stream<Exception> stream = failableOption.errorStream();
+    void testAttemptOptionToStreamWhenPresent() {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        final Stream<Exception> stream = attempt.errorStream();
         Assertions.assertEquals(0, stream.count());
     }
 
     @Test
-    void testFailableOptionToStreamWhenAbsent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        final Stream<Exception> stream = failableOption.errorStream();
+    void testAttemptOptionToStreamWhenAbsent() {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        final Stream<Exception> stream = attempt.errorStream();
         Assertions.assertEquals(0, stream.count());
     }
 
     @Test
-    void testFailableOptionToStreamWhenFailed() {
+    void testAttemptOptionToStreamWhenFailed() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertEquals(1, failableOption.errorStream().count());
-        Assertions.assertEquals(exception, failableOption.errorStream().findFirst().orElse(null));
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertEquals(1, attempt.errorStream().count());
+        Assertions.assertEquals(exception, attempt.errorStream().findFirst().orElse(null));
     }
 
     @Test
     void testPeekErrorWhenPresent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        AtomicBoolean called = new AtomicBoolean(false);
-        failableOption.peekError(value -> {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.peekError(value -> {
             Assertions.fail("Should not be called");
             called.set(true);
         });
@@ -575,9 +575,9 @@ public class OptionTests {
 
     @Test
     void testPeekErrorWhenAbsent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        AtomicBoolean called = new AtomicBoolean(false);
-        failableOption.peekError(value -> {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.peekError(value -> {
             Assertions.fail("Should not be called");
             called.set(true);
         });
@@ -587,9 +587,9 @@ public class OptionTests {
     @Test
     void testPeekErrorWhenFailed() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        AtomicBoolean called = new AtomicBoolean(false);
-        failableOption.peekError(value -> {
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.peekError(value -> {
             Assertions.assertEquals(exception, value);
             called.set(true);
         });
@@ -598,26 +598,26 @@ public class OptionTests {
 
     @Test
     void testOnEmptyErrorWhenPresent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        AtomicBoolean called = new AtomicBoolean(false);
-        failableOption.onEmptyError(() -> called.set(true));
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.onEmptyError(() -> called.set(true));
         Assertions.assertTrue(called.get());
     }
 
     @Test
     void testOnEmptyErrorWhenAbsent() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        AtomicBoolean called = new AtomicBoolean(false);
-        failableOption.onEmptyError(() -> called.set(true));
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.onEmptyError(() -> called.set(true));
         Assertions.assertTrue(called.get());
     }
 
     @Test
     void testOnEmptyErrorWhenFailed() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        AtomicBoolean called = new AtomicBoolean(false);
-        failableOption.onEmptyError(() -> {
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.onEmptyError(() -> {
             Assertions.fail("Should not be called");
             called.set(true);
         });
@@ -626,88 +626,88 @@ public class OptionTests {
 
     @Test
     void testErrorOrNullWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        Assertions.assertNull(failableOption.errorOrNull());
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        Assertions.assertNull(attempt.errorOrNull());
     }
 
     @Test
     void testErrorOrNullWithError() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertSame(exception, failableOption.errorOrNull());
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertSame(exception, attempt.errorOrNull());
     }
 
     @Test
     void testErrorOrElseWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
+        final Attempt<String, Exception> attempt = Attempt.of("test");
         final Exception exception = new Exception();
-        Assertions.assertSame(exception, failableOption.errorOrElse(exception));
+        Assertions.assertSame(exception, attempt.errorOrElse(exception));
     }
 
     @Test
     void testErrorOrElseWithError() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertSame(exception, failableOption.errorOrElse(new Exception()));
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertSame(exception, attempt.errorOrElse(new Exception()));
     }
 
     @Test
     void testErrorOrElseGetWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
+        final Attempt<String, Exception> attempt = Attempt.of("test");
         final Exception exception = new Exception();
-        Assertions.assertSame(exception, failableOption.errorOrElseGet(() -> exception));
+        Assertions.assertSame(exception, attempt.errorOrElseGet(() -> exception));
     }
 
     @Test
     void testErrorOrElseGetWithError() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertSame(exception, failableOption.errorOrElseGet(Exception::new));
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertSame(exception, attempt.errorOrElseGet(Exception::new));
     }
 
     @Test
     void testOrComputeErrorWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
+        final Attempt<String, Exception> attempt = Attempt.of("test");
         final Exception exception = new Exception();
-        Assertions.assertSame(exception, failableOption.orComputeError(() -> exception).error());
+        Assertions.assertSame(exception, attempt.orComputeError(() -> exception).error());
     }
 
     @Test
     void testOrComputeErrorWithError() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertSame(exception, failableOption.orComputeError(Exception::new).error());
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertSame(exception, attempt.orComputeError(Exception::new).error());
     }
 
     @Test
     void testMapErrorWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
+        final Attempt<String, Exception> attempt = Attempt.of("test");
         final Exception exception = new Exception();
-        Assertions.assertNull(failableOption.mapError(value -> exception).errorOrNull());
+        Assertions.assertNull(attempt.mapError(value -> exception).errorOrNull());
     }
 
     @Test
     void testMapErrorWithError() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        final FailableOption<String, IllegalArgumentException> mappedOption = failableOption.mapError(IllegalArgumentException::new);
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        final Attempt<String, IllegalArgumentException> mappedOption = attempt.mapError(IllegalArgumentException::new);
         Assertions.assertNotNull(mappedOption.errorOrNull());
         Assertions.assertSame(exception, mappedOption.error().getCause());
     }
 
     @Test
     void testFlatMapErrorWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
+        final Attempt<String, Exception> attempt = Attempt.of("test");
         final Exception exception = new Exception();
-        Assertions.assertNull(failableOption.flatMapError(value -> FailableOption.of(exception)).errorOrNull());
+        Assertions.assertNull(attempt.flatMapError(value -> Attempt.of(exception)).errorOrNull());
     }
 
     @Test
     void testFlatMapErrorWithError() {
         final Exception exception = new Exception();
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        final FailableOption<String, IllegalArgumentException> mappedOption = failableOption.flatMapError(error -> {
-            return FailableOption.of(new IllegalArgumentException(error));
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        final Attempt<String, IllegalArgumentException> mappedOption = attempt.flatMapError(error -> {
+            return Attempt.of(new IllegalArgumentException(error));
         });
         Assertions.assertNotNull(mappedOption.errorOrNull());
         Assertions.assertSame(exception, mappedOption.error().getCause());
@@ -715,8 +715,8 @@ public class OptionTests {
 
     @Test
     void testFilterErrorWithoutError() {
-        final FailableOption<String, Exception> failableOption = FailableOption.of("test");
-        Assertions.assertNull(failableOption.filterError(value -> {
+        final Attempt<String, Exception> attempt = Attempt.of("test");
+        Assertions.assertNull(attempt.filterError(value -> {
             Assertions.fail("Should not be called");
             return true;
         }).errorOrNull());
@@ -725,21 +725,21 @@ public class OptionTests {
     @Test
     void testFilterErrorWithError() {
         final Exception exception = new Exception("test");
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertNotNull(failableOption.filterError(error -> "test".equals(error.getMessage())).errorOrNull());
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertNotNull(attempt.filterError(error -> "test".equals(error.getMessage())).errorOrNull());
     }
 
     @Test
     void testFilterErrorWithErrorAndNotMatching() {
         final Exception exception = new Exception("test");
-        final FailableOption<String, Exception> failableOption = FailableOption.of(exception);
-        Assertions.assertNull(failableOption.filterError(error -> "test2".equals(error.getMessage())).errorOrNull());
+        final Attempt<String, Exception> attempt = Attempt.of(exception);
+        Assertions.assertNull(attempt.filterError(error -> "test2".equals(error.getMessage())).errorOrNull());
     }
 
     @Test
     void testFilterErrorWithEmpty() {
-        final FailableOption<String, Exception> failableOption = FailableOption.empty();
-        Assertions.assertNull(failableOption.filterError(error -> {
+        final Attempt<String, Exception> attempt = Attempt.empty();
+        Assertions.assertNull(attempt.filterError(error -> {
             Assertions.fail("Should not be called");
             return true;
         }).errorOrNull());
