@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.cache.modifiers;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
+import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -40,7 +41,7 @@ public class CacheEvictionMethodPostProcessor extends CacheServicePostProcessor<
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final EvictCache evict = context.annotation(EvictCache.class);
-        return new CacheMethodContextImpl(evict.value(), null);
+        return new CacheMethodContextImpl(evict.value(), Expiration.never());
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.cache.modifiers;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -40,7 +41,7 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final UpdateCache update = context.annotation(UpdateCache.class);
-        return new CacheMethodContextImpl(update.value(), null);
+        return new CacheMethodContextImpl(update.value(), Expiration.never());
     }
 
     @Override

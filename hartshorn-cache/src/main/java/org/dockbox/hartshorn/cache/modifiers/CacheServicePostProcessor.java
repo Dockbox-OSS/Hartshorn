@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
@@ -25,12 +26,11 @@ import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.component.ComponentUtilities;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -69,11 +69,12 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
 
         final Supplier<Cache<?, ?>> cacheSupplier = () -> {
             final Cache<Object, Object> cache;
-            if (expiration != null)
-                cache = manager.getOrCreate(finalName, expiration);
-            else {
+            if (expiration == Expiration.never()) {
                 cache = manager.get(finalName)
                         .orElseThrow(() -> new UnavailableCacheException(finalName));
+            }
+            else {
+                cache = manager.getOrCreate(finalName, expiration);
             }
             return cache;
         };
