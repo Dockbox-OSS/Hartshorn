@@ -24,6 +24,8 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
@@ -43,7 +45,6 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
-        this.log().debug("Located %d service activators".formatted(this.activators().size()));
     }
 
     @Override
@@ -57,17 +58,26 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         this.checkRunning();
 
         final Integer order = processor.order();
+
+        String phase = "unknown";
+        for (final ProcessingPhase processingPhase : ProcessingOrder.PHASES) {
+            if (processingPhase.test(order)) {
+                phase = processingPhase.name();
+                break;
+            }
+        }
+
         final String name = processor.getClass().getSimpleName();
 
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof StandardComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
-            this.log().debug("Added " + name + " for component post-processing at phase " + order);
+            this.log().debug("Added %s for component post-processing during %s phase (order %d)".formatted(name, phase.toLowerCase(), order));
         }
         else if (processor instanceof ComponentPreProcessor preProcessor) {
             this.preProcessors.put(preProcessor.order(), preProcessor);
             this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
-            this.log().debug("Added " + name + " for component pre-processing at phase " + order);
+            this.log().debug("Added %s for component pre-processing during %s phase (order %d)".formatted(name, phase.toLowerCase(), order));
         }
         else {
             this.log().warn("Unsupported component processor type [" + name + "]");

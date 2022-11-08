@@ -38,4 +38,5 @@ public class ProcessingOrder {
      */
     public static final ProcessingPhase MODIFYING = new ProcessingPhase("Modifying", i -> i >= 0, false);
 
+    public static final ProcessingPhase[] PHASES = new ProcessingPhase[] { INITIALIZING, MODIFYING };
 }
