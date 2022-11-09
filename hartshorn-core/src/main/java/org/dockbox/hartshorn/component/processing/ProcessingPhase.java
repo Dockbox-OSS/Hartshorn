@@ -31,6 +31,10 @@ public final class ProcessingPhase implements Predicate<Integer> {
         this.isModifiable = isModifiable;
     }
 
+    public String name() {
+        return this.name;
+    }
+
     @Override
     public boolean test(final Integer integer) {
         return this.predicate.test(integer);
