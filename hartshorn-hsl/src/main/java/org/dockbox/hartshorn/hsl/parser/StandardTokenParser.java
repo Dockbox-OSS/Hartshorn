@@ -34,6 +34,11 @@ public class StandardTokenParser implements TokenParser {
     private final TokenStepValidator validator;
 
     @Inject
+    public StandardTokenParser() {
+        this.validator = new StandardTokenStepValidator(this);
+    }
+
+    @Inject
     public StandardTokenParser(final TokenStepValidator validator) {
         this.validator = validator;
     }
@@ -48,6 +53,30 @@ public class StandardTokenParser implements TokenParser {
     public StandardTokenParser(final List<Token> tokens, final TokenStepValidator validator) {
         this.tokens = tokens;
         this.validator = validator;
+    }
+
+    public StandardTokenParser statementParser(ASTNodeParser<? extends Statement> parser) {
+        if (parser != null) {
+            for(Class<? extends Statement> type : parser.types()) {
+                if (!Statement.class.isAssignableFrom(type)) {
+                    throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Statement");
+                }
+            }
+            this.statementParsers.add(parser);
+        }
+        return this;
+    }
+
+    public StandardTokenParser expressionParser(ExpressionParser<?> parser) {
+        if (parser != null) {
+            for(Class<?> type : parser.types()) {
+                if (!Expression.class.isAssignableFrom(type)) {
+                    throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Expression");
+                }
+            }
+            this.expressionParsers.add(parser);
+        }
+        return this;
     }
 
     @Override
