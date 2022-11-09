@@ -8,13 +8,14 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class VariableDeclarationParser implements ASTNodeParser<VariableStatement> {
 
     @Override
-    public Result<VariableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<VariableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.VAR)) {
             final Token name = validator.expect(TokenType.IDENTIFIER, "variable name");
 
@@ -24,9 +25,9 @@ public class VariableDeclarationParser implements ASTNodeParser<VariableStatemen
             }
 
             validator.expectAfter(TokenType.SEMICOLON, "variable declaration");
-            return Result.of(new VariableStatement(name, initializer));
+            return Option.of(new VariableStatement(name, initializer));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

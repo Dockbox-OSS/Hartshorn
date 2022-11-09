@@ -7,13 +7,14 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class IfStatementParser extends AbstractBodyStatementParser<IfStatement> {
 
     @Override
-    public Result<IfStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<IfStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.IF)) {
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.IF);
             final Expression condition = parser.expression();
@@ -23,9 +24,9 @@ public class IfStatementParser extends AbstractBodyStatementParser<IfStatement> 
             if (parser.match(TokenType.ELSE)) {
                 elseBlock = this.blockStatement("else", condition, parser, validator);
             }
-            return Result.of(new IfStatement(condition, thenBlock, elseBlock));
+            return Option.of(new IfStatement(condition, thenBlock, elseBlock));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

@@ -8,13 +8,14 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
 
     @Override
-    public Result<ReturnStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<ReturnStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.RETURN)) {
             final Token keyword = parser.previous();
             Expression value = null;
@@ -22,9 +23,9 @@ public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
                 value = parser.expression();
             }
             validator.expectAfter(TokenType.SEMICOLON, "return value");
-            return Result.of(new ReturnStatement(keyword, value));
+            return Option.of(new ReturnStatement(keyword, value));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

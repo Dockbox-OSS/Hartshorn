@@ -13,7 +13,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -21,7 +21,7 @@ import java.util.Set;
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
 
     @Override
-    public Result<BodyStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<BodyStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.check(TokenType.FOR)) {
             final Token forToken = parser.advance();
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.FOR);
@@ -29,7 +29,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
             validator.expect(TokenType.VAR);
             final VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
                     .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                    .orThrow(() -> new ScriptEvaluationError("Expected variable statement in for-each loop", Phase.PARSING, forToken));
+                    .orElseThrow(() -> new ScriptEvaluationError("Expected variable statement in for-each loop", Phase.PARSING, forToken));
 
             if (parser.match(TokenType.IN)) {
                 return this.parseForEachStatement(forToken, parser, validator, initializer);
@@ -38,7 +38,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
                 return this.parseForStatement(forToken, parser, validator, initializer);
             }
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
     }
 
     @NotNull
-    private Result<BodyStatement> parseForStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
+    private Option<BodyStatement> parseForStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
         validator.expectAfter(TokenType.SEMICOLON, "for assignment");
 
         final Expression condition = parser.expression();
@@ -57,15 +57,15 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
         validator.expectAfter(TokenType.RIGHT_PAREN, "for increment");
 
         final BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
-        return Result.of(new ForStatement(initializer, condition, increment, loopBody));
+        return Option.of(new ForStatement(initializer, condition, increment, loopBody));
     }
 
     @NotNull
-    private Result<BodyStatement> parseForEachStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
+    private Option<BodyStatement> parseForEachStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
         final Expression collection = parser.expression();
         validator.expectAfter(TokenType.RIGHT_PAREN, "for collection");
 
         final BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
-        return Result.of(new ForEachStatement(initializer, collection, loopBody));
+        return Option.of(new ForEachStatement(initializer, collection, loopBody));
     }
 }

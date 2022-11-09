@@ -7,7 +7,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Set;
 public class ArrayExpressionParser implements ExpressionParser<Expression> {
 
     @Override
-    public Result<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.ARRAY_OPEN)) {
             final Token open = parser.previous();
             final Expression expr = parser.expression();
@@ -24,12 +24,12 @@ public class ArrayExpressionParser implements ExpressionParser<Expression> {
             if (parser.match(TokenType.ARRAY_CLOSE)) {
                 final List<Expression> elements = new ArrayList<>();
                 elements.add(expr);
-                return Result.of(new ArrayLiteralExpression(open, parser.previous(), elements));
+                return Option.of(new ArrayLiteralExpression(open, parser.previous(), elements));
             }
-            else if (parser.match(TokenType.COMMA)) return Result.of(this.arrayLiteralExpression(parser, validator, open, expr));
-            else return Result.of(this.arrayComprehensionExpression(parser, validator, open, expr));
+            else if (parser.match(TokenType.COMMA)) return Option.of(this.arrayLiteralExpression(parser, validator, open, expr));
+            else return Option.of(this.arrayComprehensionExpression(parser, validator, open, expr));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     private ArrayLiteralExpression arrayLiteralExpression(final TokenParser parser, final TokenStepValidator validator, final Token open, final Expression expr) {

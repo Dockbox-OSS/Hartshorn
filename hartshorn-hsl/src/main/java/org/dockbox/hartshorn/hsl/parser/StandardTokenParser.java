@@ -1,5 +1,14 @@
 package org.dockbox.hartshorn.hsl.parser;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -10,17 +19,8 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.TypeUtils;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
@@ -108,7 +108,7 @@ public class StandardTokenParser implements TokenParser {
     @Override
     public Statement statement() {
         for (final ASTNodeParser<? extends Statement> parser : this.statementParsers) {
-            final Result<? extends Statement> statement = parser.parse(this, this.validator);
+            final Option<? extends Statement> statement = parser.parse(this, this.validator);
             if (statement.present()) return statement.get();
         }
 
@@ -130,7 +130,9 @@ public class StandardTokenParser implements TokenParser {
     @Override
     public Expression expression() {
         for (final ASTNodeParser<? extends Expression> parser : this.expressionParsers) {
-            final Result<? extends Expression> expression = parser.parse(this, this.validator);
+            final Option<? extends Expression> expression = parser.parse(this, this.validator)
+                    .attempt(ScriptEvaluationError.class)
+                    .rethrow();
             if (expression.present()) return expression.get();
         }
         throw new ScriptEvaluationError("Expected expression, but found " + this.tokens.get(this.current), Phase.PARSING, this.peek());
@@ -153,11 +155,8 @@ public class StandardTokenParser implements TokenParser {
     }
 
     @Override
-    public <T extends ASTNode> Result<ASTNodeParser<T>> firstCompatibleParser(final Class<T> type) {
-        return this.compatibleParserStream(type)
-                .findFirst()
-                .map(Result::of)
-                .orElseGet(Result::empty);
+    public <T extends ASTNode> Option<ASTNodeParser<T>> firstCompatibleParser(final Class<T> type) {
+        return Option.of(this.compatibleParserStream(type).findFirst());
     }
 
     private <T extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Class<T> type) {

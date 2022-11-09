@@ -12,6 +12,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +27,7 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
     private final Set<String> infixFunctions = new HashSet<>();
 
     @Override
-    public Result<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.check(TokenType.PREFIX, TokenType.INFIX, TokenType.FUN)) {
             final Token functionType = parser.advance();
             final Token functionToken = functionType.type() == TokenType.FUN ? functionType : parser.advance();
@@ -55,13 +56,13 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
 
             if (extensionName != null) {
                 final FunctionStatement function = new FunctionStatement(extensionName, parameters, body);
-                return Result.of(new ExtensionStatement(name, function));
+                return Option.of(new ExtensionStatement(name, function));
             }
             else {
-                return Result.of(new FunctionStatement(name, parameters, body));
+                return Option.of(new FunctionStatement(name, parameters, body));
             }
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     private List<Parameter> functionParameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOrArguments, final Token token) {

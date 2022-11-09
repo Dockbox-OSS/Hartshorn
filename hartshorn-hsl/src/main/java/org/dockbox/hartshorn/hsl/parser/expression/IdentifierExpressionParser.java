@@ -7,14 +7,14 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class IdentifierExpressionParser implements ExpressionParser<Expression> {
 
     @Override
-    public Result<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.IDENTIFIER)) {
             final Token next = parser.peek();
 
@@ -25,11 +25,11 @@ public class IdentifierExpressionParser implements ExpressionParser<Expression> 
                 final Expression index = parser.expression();
 
                 validator.expect(TokenType.ARRAY_CLOSE);
-                return Result.of(new ArrayGetExpression(name, index));
+                return Option.of(new ArrayGetExpression(name, index));
             }
-            return Result.of(new VariableExpression(parser.previous()));
+            return Option.of(new VariableExpression(parser.previous()));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

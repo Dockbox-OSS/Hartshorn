@@ -8,14 +8,14 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class TernaryExpressionParser implements ExpressionParser<Expression> {
 
     @Override
-    public Result<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
         final Expression expression = parser.expression();
 
         if (parser.match(TokenType.QUESTION_MARK)) {
@@ -24,12 +24,12 @@ public class TernaryExpressionParser implements ExpressionParser<Expression> {
             final Token colon = parser.peek();
             if (parser.match(TokenType.COLON)) {
                 final Expression secondExp = parser.expression();
-                return Result.of(new TernaryExpression(expression, question, firstExp, colon, secondExp));
+                return Option.of(new TernaryExpression(expression, question, firstExp, colon, secondExp));
             }
             throw new ScriptEvaluationError("Expected expression after " + TokenType.COLON.representation(), Phase.PARSING, colon);
         }
 
-        return Result.of(expression);
+        return Option.of(expression);
     }
 
     @Override

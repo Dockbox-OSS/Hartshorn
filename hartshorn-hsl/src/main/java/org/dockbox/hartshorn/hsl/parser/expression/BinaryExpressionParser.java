@@ -6,14 +6,14 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class BinaryExpressionParser implements ExpressionParser<Expression> {
 
     @Override
-    public Result<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
         final Expression expression = parser.expression();
         if (parser.match(
                 TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL,
@@ -24,9 +24,9 @@ public class BinaryExpressionParser implements ExpressionParser<Expression> {
                 TokenType.MODULO)) {
             final Token operator = parser.previous();
             final Expression right = parser.expression();
-            return Result.of(new BinaryExpression(expression, parser.previous(), right));
+            return Option.of(new BinaryExpression(expression, parser.previous(), right));
         }
-        return Result.of(expression);
+        return Option.of(expression);
     }
 
     @Override

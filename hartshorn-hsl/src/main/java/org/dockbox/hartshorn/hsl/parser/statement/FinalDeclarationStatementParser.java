@@ -11,6 +11,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -18,7 +19,7 @@ import java.util.Set;
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
     @Override
-    public Result<FinalizableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<FinalizableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.FINAL)) {
             final Token current = parser.peek();
             final FinalizableStatement finalizable = switch (current.type()) {
@@ -40,9 +41,9 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
                 default -> throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(TokenType.FINAL.representation(), current.type()), Phase.PARSING, current);
             };
             finalizable.makeFinal();
-            return Result.of(finalizable);
+            return Option.of(finalizable);
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @NotNull

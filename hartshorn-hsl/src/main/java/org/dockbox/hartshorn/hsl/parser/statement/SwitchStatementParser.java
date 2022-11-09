@@ -13,7 +13,8 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,7 +34,7 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     }
 
     @Override
-    public Result<SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.SWITCH)) {
             final Token switchToken = parser.previous();
             validator.expectAfter(TokenType.LEFT_PAREN, "switch");
@@ -60,16 +61,16 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    final Result<Statement> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if (body.caught()) {
-                        return Result.of(body.error());
+                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    if (body.errorPresent()) {
+                        return Attempt.of(body.error());
                     }
                     cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    final Result<Statement> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if (body.caught()) {
-                        return Result.of(body.error());
+                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    if (body.errorPresent()) {
+                        return Attempt.of(body.error());
                     }
                     defaultBody = new SwitchCase(caseToken, body.get(), null, true);
                 }
@@ -77,9 +78,9 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
 
             validator.expectAfter(TokenType.RIGHT_BRACE, "switch");
 
-            return Result.of(new SwitchStatement(switchToken, expr, cases, defaultBody));
+            return Option.of(new SwitchStatement(switchToken, expr, cases, defaultBody));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override

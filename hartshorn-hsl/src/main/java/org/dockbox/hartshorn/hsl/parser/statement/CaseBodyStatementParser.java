@@ -9,7 +9,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +18,23 @@ import java.util.Set;
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Result<Statement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Attempt<Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.COLON)) {
             final Token colon = parser.previous();
             final List<Statement> statements = new ArrayList<>();
             while (!parser.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
                 statements.add(parser.statement());
             }
-            return Result.of(new BlockStatement(colon, statements));
+            return Attempt.of(new BlockStatement(colon, statements));
         }
         else if (parser.match(TokenType.ARROW)) {
-            return Result.of(parser.expressionStatement());
+            return Attempt.of(parser.expressionStatement());
         }
         else {
-            // TODO: use representation for : and -> instead of hardcoding
-            throw new ScriptEvaluationError("Expected ':' or '->'", Phase.PARSING, parser.peek());
+            return Attempt.of(new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
+                    TokenType.COLON.representation(),
+                    TokenType.ARROW.representation()
+            ), Phase.PARSING, parser.peek()));
         }
     }
 

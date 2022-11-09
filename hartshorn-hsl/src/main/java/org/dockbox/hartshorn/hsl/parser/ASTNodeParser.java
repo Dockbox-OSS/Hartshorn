@@ -1,11 +1,11 @@
 package org.dockbox.hartshorn.hsl.parser;
 
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
-import org.dockbox.hartshorn.util.Result;
-
 import java.util.Set;
 
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.util.option.Option;
+
 public interface ASTNodeParser<T extends ASTNode> {
-    Result<T> parse(TokenParser parser, TokenStepValidator validator);
+    Option<T> parse(TokenParser parser, TokenStepValidator validator);
     Set<Class<? extends T>> types();
 }

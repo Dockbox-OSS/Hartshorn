@@ -5,21 +5,21 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
 public class SuperExpressionParser implements ExpressionParser<SuperExpression> {
 
     @Override
-    public Result<SuperExpression> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<SuperExpression> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(TokenType.SUPER)) {
             final Token keyword = parser.previous();
             validator.expectAfter(TokenType.DOT, TokenType.SUPER);
             final Token method = validator.expect(TokenType.IDENTIFIER, "super class method name");
-            return Result.of(new SuperExpression(keyword, method));
+            return Option.of(new SuperExpression(keyword, method));
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
