@@ -53,8 +53,9 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * an {@link Attempt} containing the nullable result of the {@link Callable} will be returned.
      *
      * @param callable The {@link Callable} to attempt
-     * @return The {@link Attempt} containing the result of the {@link Callable}
      * @param <T> The type of the value
+     *
+     * @return The {@link Attempt} containing the result of the {@link Callable}
      */
     @NonNull
     static <T> Attempt<T, Exception> of(final @NonNull Callable<@Nullable T> callable) {
@@ -77,9 +78,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      *
      * @param supplier The {@link ThrowingSupplier} to attempt
      * @param errorType The {@link Class} of the error to catch
-     * @return The {@link Attempt} containing the result of the {@link ThrowingSupplier}
      * @param <T> The type of the value
      * @param <E> The type of the exception
+     *
+     * @return The {@link Attempt} containing the result of the {@link ThrowingSupplier}
      */
     @NonNull
     static <T, E extends Throwable> Attempt<T, E> of(final @NonNull ThrowingSupplier<@Nullable T, E> supplier,
@@ -88,7 +90,8 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
             final T result = supplier.get();
             if (result == null) return new SuccessNone<>();
             return new SuccessSome<>(result);
-        } catch (final Throwable e) {
+        }
+        catch (final Throwable e) {
             if (errorType.isInstance(e)) {
                 return new FailedNone<>(errorType.cast(e));
             }
@@ -100,9 +103,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * Creates a new {@link Attempt} which does not contain a value or exception. This is equivalent to
      * {@link Option#empty()}.
      *
-     * @return The empty {@link Attempt}
      * @param <T> The type of the value
      * @param <E> The type of the exception
+     *
+     * @return The empty {@link Attempt}
      */
     @NonNull
     static <T, E extends Throwable> Attempt<T, E> empty() {
@@ -113,9 +117,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * Creates a new {@link Attempt} which contains the given value. This is equivalent to {@link Option#of(Object)}.
      *
      * @param value The value to contain
-     * @return The {@link Attempt} containing the given value
      * @param <T> The type of the value
      * @param <E> The type of the exception
+     *
+     * @return The {@link Attempt} containing the given value
      */
     @NonNull
     static <T, E extends Throwable> Attempt<T, E> of(final @Nullable T value) {
@@ -129,9 +134,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * value will be returned. This is equivalent to {@link Option#of(Optional)}.
      *
      * @param optional The {@link Optional} to base the {@link Attempt} on
-     * @return The {@link Attempt} based on the given {@link Optional}
      * @param <T> The type of the value
      * @param <E> The type of the exception
+     *
+     * @return The {@link Attempt} based on the given {@link Optional}
      */
     @NonNull
     static <T, E extends Throwable> Attempt<T, E> of(final @NonNull Optional<T> optional) {
@@ -144,16 +150,18 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * {@link Attempt} will be returned. If the given exception is not null, an {@link Attempt} containing this
      * exception will be returned.
      *
-     * <p>The given {@link Attempt}'s type signature returns the exception type, or a parent of the exception type. This
+     * <p>The given {@link Attempt}'s type signature returns the exception type, or a parent of the exception type.
+     * This
      * is to allow for the creation of {@link Attempt} instances which contain exceptions which are more specific than
      * the {@link Attempt} type signature. For example, if an {@link Attempt} is created with a type signature of
      * {@link FileNotFoundException}, an {@link Attempt} containing an {@link IOException} can be returned.
      *
      * @param throwable The exception to contain
-     * @return The {@link Attempt} containing the given exception
      * @param <T> The type of the value
      * @param <E> The type of the exception
      * @param <R> The type of the exception, or a parent of the exception type
+     *
+     * @return The {@link Attempt} containing the given exception
      */
     @NonNull
     static <T, E extends Throwable, R extends E> Attempt<T, E> of(final @Nullable R throwable) {
@@ -165,20 +173,23 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * Creates a new {@link Attempt} which contains the given value and exception. Based on which of the given value and
      * exception is null, the returned {@link Attempt} will either contain the value, the exception, both, or neither.
      *
-     * <p>The given {@link Attempt}'s type signature returns the exception type, or a parent of the exception type. This
+     * <p>The given {@link Attempt}'s type signature returns the exception type, or a parent of the exception type.
+     * This
      * is to allow for the creation of {@link Attempt} instances which contain exceptions which are more specific than
      * the {@link Attempt} type signature. For example, if an {@link Attempt} is created with a type signature of
      * {@link FileNotFoundException}, an {@link Attempt} containing an {@link IOException} can be returned.
      *
      * @param value The value to contain
      * @param throwable The exception to contain
-     * @return The {@link Attempt} containing the given value and exception
      * @param <T> The type of the value
      * @param <E> The type of the exception
      * @param <R> The type of the exception, or a parent of the exception type
+     *
+     * @return The {@link Attempt} containing the given value and exception
      */
     @NonNull
-    static <T, E extends Throwable, R extends E> Attempt<T, E> of(final @Nullable T value, final @Nullable R throwable) {
+    static <T, E extends Throwable, R extends E> Attempt<T, E> of(final @Nullable T value,
+                                                                  final @Nullable R throwable) {
         if (value != null && throwable != null) return new FailedSome<>(value, throwable);
         if (value == null && throwable == null) return new SuccessNone<>();
         if (value != null) return new SuccessSome<>(value);
@@ -186,8 +197,8 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     }
 
     /**
-     * Returns a {@link Option} instance based on the given {@link Attempt}. If the {@link Attempt} contains a value,
-     * an {@link Option} containing this value will be returned. If the {@link Attempt} contains an exception, an empty
+     * Returns a {@link Option} instance based on the given {@link Attempt}. If the {@link Attempt} contains a value, an
+     * {@link Option} containing this value will be returned. If the {@link Attempt} contains an exception, an empty
      * {@link Option} will be returned, and no exception will be thrown. If the {@link Attempt} does not contain a value
      * or exception, an empty {@link Option} will be returned.
      *
@@ -199,8 +210,8 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     /**
      * Returns an {@link Option} instance based on the given {@link Attempt}. If the {@link Attempt} contains an
      * exception, a {@link Option} containing this exception will be returned. If the {@link Attempt} contains a value,
-     * an empty {@link Option} will be returned, and no exception will be thrown. If the {@link Attempt} does not contain
-     * a value or exception, an empty {@link Option} will be returned.
+     * an empty {@link Option} will be returned, and no exception will be thrown. If the {@link Attempt} does not
+     * contain a value or exception, an empty {@link Option} will be returned.
      *
      * @return The {@link Option} based on the given {@link Attempt}
      */
@@ -208,21 +219,35 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     Option<E> errorOption();
 
     /**
-     * If an exception is present in this {@link Attempt}, the given {@link Consumer} is executed with the exception
-     * as argument. If no exception is present, the given {@link Consumer} is not executed.
+     * If an exception is present in this {@link Attempt}, the given {@link Consumer} is executed with the exception as
+     * argument. If no exception is present, the given {@link Consumer} is not executed.
      *
      * @param consumer the {@link Consumer} to execute.
      *
      * @return the current {@link Attempt} instance.
      */
     @NonNull
-    Attempt<T, E> peekError(Consumer<E> consumer);
+    Attempt<T, E> peekError(Consumer<@NonNull E> consumer);
+
+    /**
+     * If an exception is present in this {@link Attempt} which exactly matches the given exception type, the given
+     * {@link Consumer} is executed with the exception as argument. If no exception is present, or the exception is not
+     * of the given type, the given {@link Consumer} is not executed.
+     *
+     * @param errorType the type of the exception to match.
+     * @param consumer the {@link Consumer} to execute.
+     * @param <S> the type of the exception to match.
+     *
+     * @return the current {@link Attempt} instance.
+     */
+    @NonNull <S extends E> Attempt<T, E> peekError(Class<S> errorType, Consumer<@NonNull S> consumer);
 
     /**
      * If no exception is present in this {@link Attempt}, the given {@link Runnable} is executed. If an exception is
      * present, the given {@link Runnable} is not executed.
      *
      * @param runnable the {@link Runnable} to execute.
+     *
      * @return the current {@link Attempt} instance.
      */
     @NonNull
@@ -241,10 +266,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
 
     /**
      * If an exception is present in this {@link Attempt}, the exception is returned. If no exception is present,
-     * {@link null} is returned. This method is similar to {@link #orNull()}, but instead of returning the value, it
+     * {@code null} is returned. This method is similar to {@link #orNull()}, but instead of returning the value, it
      * returns the exception.
      *
-     * @return the exception contained in this {@link Attempt}, or {@link null} if no exception is present.
+     * @return the exception contained in this {@link Attempt}, or {@code null} if no exception is present.
      */
     @Nullable
     E errorOrNull();
@@ -255,7 +280,9 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * the value, it returns the exception.
      *
      * @param value the default exception to return.
-     * @return the exception contained in this {@link Attempt}, or the given default exception if no exception is present.
+     *
+     * @return the exception contained in this {@link Attempt}, or the given default exception if no exception is
+     *         present.
      */
     @Nullable
     E errorOrElse(@Nullable E value);
@@ -266,7 +293,9 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * but instead of returning the value, it returns the exception.
      *
      * @param supplier the {@link Supplier} to return the default exception.
-     * @return the exception contained in this {@link Attempt}, or the value returned by the given {@link Supplier} if no
+     *
+     * @return the exception contained in this {@link Attempt}, or the value returned by the given {@link Supplier} if
+     *         no
      */
     @Nullable
     E errorOrElseGet(@NonNull Supplier<@Nullable E> supplier);
@@ -277,6 +306,7 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * {@link Attempt} is returned.
      *
      * @param supplier the {@link Supplier} to execute.
+     *
      * @return the current {@link Attempt} instance, or a new {@link Attempt} containing the result of the given
      */
     @NonNull
@@ -310,15 +340,15 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     /**
      * Transforms the exception contained in this {@link Attempt} using the given {@link Function}. The returned
      * {@link Attempt} will always contain the current nullable value. If no exception is present, the given
-     * {@link Function} is not executed. If the given {@link Function} returns {@link null}, the returned {@link Attempt}
-     * will not contain an exception, even if the current {@link Attempt} contains an exception.
+     * {@link Function} is not executed. If the given {@link Function} returns {@code null}, the returned
+     * {@link Attempt} will not contain an exception, even if the current {@link Attempt} contains an exception.
      *
      * @param mapper the {@link Function} to transform the exception.
-     * @return a new {@link Attempt} instance containing the transformed exception.
      * @param <U> the type of the transformed exception.
+     *
+     * @return a new {@link Attempt} instance containing the transformed exception.
      */
-    @NonNull
-    <U extends Throwable> Attempt<T, U> mapError(@NonNull Function<@NonNull E, @Nullable U> mapper);
+    @NonNull <U extends Throwable> Attempt<T, U> mapError(@NonNull Function<@NonNull E, @Nullable U> mapper);
 
     /**
      * Transforms the exception contained in this {@link Attempt} using the given {@link Function}. The returned
@@ -328,11 +358,12 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * {@link Attempt} contains an exception.
      *
      * @param mapper the {@link Function} to transform the exception.
-     * @return a new {@link Attempt} instance containing the transformed exception.
      * @param <U> the type of the transformed exception.
+     *
+     * @return a new {@link Attempt} instance containing the transformed exception.
      */
-    @NonNull
-    <U extends Throwable> Attempt<T, U> flatMapError(@NonNull Function<@NonNull E, @NonNull Attempt<T, U>> mapper);
+    @NonNull <U extends Throwable> Attempt<T, U> flatMapError(
+            @NonNull Function<@NonNull E, @NonNull Attempt<T, U>> mapper);
 
     /**
      * If an exception is present in this {@link Attempt}, the exception is applied to the given {@link Predicate}. If
@@ -341,6 +372,7 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * without an exception. If no exception is present, the current {@link Attempt} is returned.
      *
      * @param predicate the {@link Predicate} to apply to the exception.
+     *
      * @return the current {@link Attempt} instance, or a new {@link Attempt} containing the value of the current
      *         {@link Attempt}, but without an exception.
      */
@@ -368,8 +400,8 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
 
     /**
      * Throws the exception contained in this {@link Attempt} in an unchecked manner. If no exception is present, this
-     * method will only return itself. This method will attempt to throw the exception as is, and will not wrap it in
-     * a checked exception. If the exception is a checked exception, it will still be thrown without being wrapped.
+     * method will only return itself. This method will attempt to throw the exception as is, and will not wrap it in a
+     * checked exception. If the exception is a checked exception, it will still be thrown without being wrapped.
      *
      * @return the current {@link Attempt} instance.
      * @see ExceptionHandler#unchecked(Throwable)
@@ -377,31 +409,31 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     Attempt<T, E> rethrowUnchecked();
 
     /**
-     * @inheritDoc
+     *
      */
     @Override
     @NonNull Attempt<T, E> peek(Consumer<T> consumer);
 
     /**
-     * @inheritDoc
+     *
      */
     @Override
     @NonNull Attempt<T, E> onEmpty(Runnable runnable);
 
     /**
-     * @inheritDoc
+     *
      */
     @Override
     @NonNull Attempt<T, E> orCompute(@NonNull Supplier<@Nullable T> supplier);
 
     /**
-     * @inheritDoc
+     *
      */
     @Override
     @NonNull <U> Attempt<U, E> map(@NonNull Function<@NonNull T, @Nullable U> function);
 
     /**
-     * @inheritDoc
+     *
      */
     @Override
     @NonNull Attempt<T, E> filter(@NonNull Predicate<@NonNull T> predicate);

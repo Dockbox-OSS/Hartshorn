@@ -90,7 +90,12 @@ public class SuccessSome<T, E extends Throwable> extends Some<T> implements Atte
     }
 
     @Override
-    public @NonNull Attempt<T, E> peekError(final Consumer<E> consumer) {
+    public @NonNull Attempt<T, E> peekError(final Consumer<@NonNull E> consumer) {
+        return this;
+    }
+
+    @Override
+    public @NonNull <S extends E> Attempt<T, E> peekError(final Class<S> errorType, final Consumer<@NonNull S> consumer) {
         return this;
     }
 

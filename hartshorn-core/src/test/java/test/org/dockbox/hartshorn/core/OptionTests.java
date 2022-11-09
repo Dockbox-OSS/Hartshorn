@@ -744,4 +744,30 @@ public class OptionTests {
             return true;
         }).errorOrNull());
     }
+
+    @Test
+    void testPeekErrorWithMatchingExactType() {
+        final Attempt<Object, NullPointerException> attempt = Attempt.of(new NullPointerException());
+        final AtomicBoolean called = new AtomicBoolean(false);
+        attempt.peekError(NullPointerException.class, e -> called.set(true));
+        Assertions.assertTrue(called.get());
+    }
+
+    @Test
+    void testPeekErrorWithNonExactType() {
+        final Attempt<Object, RuntimeException> attempt = Attempt.of(new NullPointerException());
+        attempt.peekError(RuntimeException.class, e -> Assertions.fail());
+    }
+
+    @Test
+    void testPeekErrorWithNonMatchingType() {
+        final Attempt<Object, RuntimeException> attempt = Attempt.of(new NullPointerException());
+        attempt.peekError(IllegalArgumentException.class, e -> Assertions.fail());
+    }
+
+    @Test
+    void testPeekErrorWithEmpty() {
+        final Attempt<Object, RuntimeException> attempt = Attempt.empty();
+        attempt.peekError(RuntimeException.class, e -> Assertions.fail());
+    }
 }

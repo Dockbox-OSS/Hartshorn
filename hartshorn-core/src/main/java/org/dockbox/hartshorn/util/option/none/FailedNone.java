@@ -58,8 +58,16 @@ public class FailedNone<T, E extends Throwable> extends None<T> implements Attem
     }
 
     @Override
-    public @NonNull Attempt<T, E> peekError(final Consumer<E> consumer) {
+    public @NonNull Attempt<T, E> peekError(final Consumer<@NonNull E> consumer) {
         consumer.accept(this.error);
+        return this;
+    }
+
+    @Override
+    public @NonNull <S extends E> Attempt<T, E> peekError(final Class<S> errorType, final Consumer<@NonNull S> consumer) {
+        if (this.error.getClass().equals(errorType)) {
+            consumer.accept(errorType.cast(this.error));
+        }
         return this;
     }
 
