@@ -340,6 +340,11 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
+    public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
+        return this.applicationProxier.delegate(type, instance);
+    }
+
+    @Override
     public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
         return this.applicationProxier.factory(type);
     }

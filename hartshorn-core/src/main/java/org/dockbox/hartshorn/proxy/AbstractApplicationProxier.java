@@ -64,10 +64,15 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
 
     @Override
     public <D, T extends D> Option<D> delegate(final TypeView<D> type, final T instance) {
+        return this.delegate(type.type(), instance);
+    }
+
+    @Override
+    public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             final ProxyManager<?> manager = proxy.manager();
-            return manager.delegate(type.type());
+            return manager.delegate(type);
         }
         return Option.empty();
     }
