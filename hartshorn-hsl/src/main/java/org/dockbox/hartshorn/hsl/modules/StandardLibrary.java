@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link StandardRuntime},
+ * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link ScriptRuntime},
  * making them accessible to the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter}, but are
  * not guaranteed to be.
  *
