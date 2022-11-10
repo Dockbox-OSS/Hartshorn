@@ -198,4 +198,16 @@ public class CacheTests {
         Assertions.assertTrue(cache.contains("key"));
         Assertions.assertEquals("value", cache.get("key").get());
     }
+
+    @Test
+    void testNullExpirationIsRejected() {
+        final CacheFactory cacheFactory = this.applicationContext.get(CacheFactory.class);
+        Assertions.assertThrows(NullPointerException.class, () -> cacheFactory.cache(null));
+    }
+
+    @Test
+    void testNeverExpirationIsAccepted() {
+        final CacheFactory cacheFactory = this.applicationContext.get(CacheFactory.class);
+        Assertions.assertDoesNotThrow(() -> cacheFactory.cache(Expiration.never()));
+    }
 }
