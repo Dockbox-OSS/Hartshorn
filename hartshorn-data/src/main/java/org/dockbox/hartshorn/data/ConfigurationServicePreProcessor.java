@@ -85,11 +85,14 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
     private <T> boolean processSource(final String source, final ApplicationContext context, final Key<T> key) {
         String matchedSource = source;
         final Matcher matcher = this.STRATEGY_PATTERN.matcher(matchedSource);
-        ResourceLookupStrategy strategy = new FileSystemLookupStrategy();
+
+        ResourceLookupStrategy strategy = null;
         if (matcher.find()) {
             strategy = this.strategies.getOrDefault(matcher.group(1), strategy);
             matchedSource = matcher.group(2);
         }
+        if (strategy == null) strategy = new FileSystemLookupStrategy();
+
         context.log().debug("Determined strategy " + strategy.getClass().getSimpleName() + " for " + matchedSource + ", declared by " + key.type().getSimpleName());
 
         final Set<URI> config = strategy.lookup(context, matchedSource);

@@ -88,12 +88,12 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
         }
         final CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, finalName, key);
 
-        return this.process(context, proxyContext, cacheContext);
+        return this.process(context, cacheContext);
     }
 
     protected abstract CacheMethodContext context(MethodProxyContext<?> context);
 
-    protected abstract <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
+    protected abstract <T, R> MethodInterceptor<T, R> process(ApplicationContext context, CacheContext cacheContext);
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {

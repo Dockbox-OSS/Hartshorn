@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+@Deprecated(forRemoval = true, since = "22.5")
 public class RegistryColumn<T> extends ArrayList<T> {
 
     public RegistryColumn() {

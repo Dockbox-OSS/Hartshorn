@@ -27,6 +27,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+@Deprecated(forRemoval = true, since = "22.5")
 public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public Registry() {}

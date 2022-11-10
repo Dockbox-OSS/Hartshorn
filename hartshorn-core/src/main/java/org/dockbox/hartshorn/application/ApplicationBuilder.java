@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.component.processing.ActivatorFiltered;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
@@ -107,9 +106,8 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     boolean enableBatchMode();
 
     /**
-     * Adds a service activator to the application. These are later used by the active {@link ApplicationContext} to
-     * indicate which {@link ActivatorFiltered} implementations may be used. Service
-     * activators should always be valid {@link ServiceActivator}s.
+     * Adds a service activator to the application. Service activators should always be valid
+     * {@link ServiceActivator}s.
      *
      * @param annotation The service activator to add.
      * @return The {@link ApplicationBuilder} instance.
@@ -118,9 +116,8 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     Self serviceActivator(Annotation annotation);
 
     /**
-     * Adds service activators to the application. These are later used by the active {@link ApplicationContext} to
-     * indicate which {@link ActivatorFiltered} implementations may be used. Service
-     * activators should always be valid {@link ServiceActivator}s.
+     * Adds service activators to the application. Service activators should always be valid
+     * {@link ServiceActivator}s.
      *
      * @param annotations The service activators to add.
      * @return The {@link ApplicationBuilder} instance.

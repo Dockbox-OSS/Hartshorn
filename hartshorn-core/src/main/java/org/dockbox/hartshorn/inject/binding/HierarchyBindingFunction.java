@@ -107,7 +107,6 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder lazySingleton(final Supplier<T> supplier) {
-        final Key<T> key = this.hierarchy().key();
         this.lazyContainerSingleton(() -> {
             final T instance = supplier.get();
             return new ObjectContainer<>(instance, false);

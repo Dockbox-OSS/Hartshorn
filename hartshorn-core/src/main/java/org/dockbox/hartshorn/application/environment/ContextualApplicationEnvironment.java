@@ -424,7 +424,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> klass) {
-        return this.annotationLookup.annotationHierarchy(klass);
+    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> type) {
+        return this.annotationLookup.annotationHierarchy(type);
     }
 }

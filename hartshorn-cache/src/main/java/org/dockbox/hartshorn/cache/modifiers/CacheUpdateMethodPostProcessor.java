@@ -45,7 +45,7 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
     }
 
     @Override
-    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final CacheContext cacheContext) {
         return interceptorContext -> {
             try {
                 final Object o = interceptorContext.args()[0];

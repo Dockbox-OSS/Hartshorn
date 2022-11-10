@@ -16,12 +16,9 @@
 
 package test.org.dockbox.hartshorn.beans;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.beans.BeanCollector;
 import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.beans.BeanProvider;
 import org.dockbox.hartshorn.beans.BeanReference;
@@ -35,6 +32,10 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.components.BeanAwareComponent;
 
@@ -42,7 +43,7 @@ import test.org.dockbox.hartshorn.components.BeanAwareComponent;
 public class BeanTests {
 
     @ModifyApplication
-    public static ApplicationBuilder<?, ?> builder(ApplicationBuilder<?, ?> builder) {
+    public static ApplicationBuilder<?, ?> builder(final ApplicationBuilder<?, ?> builder) {
         return builder.includeBasePackages(false).argument("--hartshorn:debug=true");
     }
 
@@ -51,7 +52,7 @@ public class BeanTests {
 
     @Test
     void testBeanRegistrationCreatesValidReference() {
-        final BeanContext beanContext = this.applicationContext.first(BeanContext.class).get();
+        final BeanCollector beanContext = this.applicationContext.first(BeanContext.class).get();
         final BeanReference<String> reference = beanContext.register("John Doe", String.class, "names");
 
         Assertions.assertEquals("John Doe", reference.bean());
@@ -61,7 +62,7 @@ public class BeanTests {
 
     @Test
     void testBeanRegistrationCanBeProvided() {
-        final BeanContext beanContext = this.applicationContext.first(BeanContext.class).get();
+        final BeanCollector beanContext = this.applicationContext.first(BeanContext.class).get();
         beanContext.register(String.class, List.of("John", "Jane", "Joe"), "names");
 
         final BeanProvider beanProvider = this.applicationContext.get(BeanProvider.class);
@@ -76,7 +77,7 @@ public class BeanTests {
     @Test
     @TestComponents(BeanAwareComponent.class)
     void testComponentInjectionWithoutExplicitCollection() {
-        final BeanContext beanContext = applicationContext.first(BeanContext.class).get();
+        final BeanCollector beanContext = this.applicationContext.first(BeanContext.class).get();
         beanContext.register("Foo", String.class, "names");
         beanContext.register("Bar", String.class, "names");
 
@@ -92,7 +93,7 @@ public class BeanTests {
     @Test
     @TestComponents(BeanAwareComponent.class)
     void testComponentInjectionWithExplicitCollection() {
-        final BeanContext beanContext = applicationContext.first(BeanContext.class).get();
+        final BeanContext beanContext = this.applicationContext.first(BeanContext.class).get();
         beanContext.register(1, Integer.class, "ages");
         beanContext.register(2, Integer.class, "ages");
 
