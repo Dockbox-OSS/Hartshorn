@@ -10,7 +10,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +34,12 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
                 case FUN -> lookupFinalizableFunction(parser, validator, current);
                 case VAR -> parser.firstCompatibleParser(VariableStatement.class)
                         .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                        .orThrow(() -> new ScriptEvaluationError("Failed to parse variable statement", Phase.PARSING, current));
+                        .orElseThrow(() -> new ScriptEvaluationError("Failed to parse variable statement", Phase.PARSING, current));
                 case CLASS -> null; // Class declaration
                 case NATIVE -> null; // Native function declaration
                 default -> throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(TokenType.FINAL.representation(), current.type()), Phase.PARSING, current);
             };
-            finalizable.makeFinal();
-            return Option.of(finalizable);
+            return Option.of(finalizable).peek(FinalizableStatement::makeFinal);
         }
         return Option.empty();
     }
@@ -50,7 +48,7 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
     private static Function lookupFinalizableFunction(final TokenParser parser, final TokenStepValidator validator, final Token current) {
         return parser.firstCompatibleParser(Function.class)
                 .flatMap(functionParser -> functionParser.parse(parser, validator))
-                .orThrow(() -> new ScriptEvaluationError("Failed to parse function", Phase.PARSING, current));
+                .orElseThrow(() -> new ScriptEvaluationError("Failed to parse function", Phase.PARSING, current));
     }
 
     @Override

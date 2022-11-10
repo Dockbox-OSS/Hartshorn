@@ -24,13 +24,20 @@ import java.util.List;
 
 public class FunctionStatement extends ParametricExecutableStatement implements NamedNode {
 
+    private final Token functionType;
     private final Token name;
 
-    public FunctionStatement(final Token name,
+    public FunctionStatement(final Token functionType,
+                             final Token name,
                              final List<Parameter> params,
                              final BlockStatement body) {
         super(name, params, body);
+        this.functionType = functionType;
         this.name = name;
+    }
+
+    public Token functionType() {
+        return this.functionType;
     }
 
     @Override

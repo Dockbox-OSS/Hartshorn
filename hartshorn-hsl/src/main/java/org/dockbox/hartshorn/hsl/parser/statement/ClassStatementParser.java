@@ -1,9 +1,5 @@
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -18,6 +14,10 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
@@ -51,7 +51,8 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
                     fields.add(field);
                 }
                 else {
-                    throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass().getSimpleName(), Phase.PARSING, parser.peek());
+                    throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass()
+                            .getSimpleName(), Phase.PARSING, parser.peek());
                 }
             }
 
@@ -64,19 +65,23 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
     private Statement classBodyStatement(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.check(TokenType.CONSTRUCTOR)) {
-            return parser.firstCompatibleParser(ConstructorStatement.class)
-                    .flatMap(constructorParser -> constructorParser.parse(parser, validator))
-                    .orElseThrow(() -> new ScriptEvaluationError("Invalid constructor statement", Phase.PARSING, parser.peek()));
+            return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
         }
         else if (parser.check(TokenType.FUN)) {
-            return parser.firstCompatibleParser(FunctionStatement.class)
-                    .flatMap(functionParser -> functionParser.parse(parser, validator))
-                    .orElseThrow(() -> new ScriptEvaluationError("Invalid function statement", Phase.PARSING, parser.peek()));
-        } else {
-            return parser.firstCompatibleParser(FieldStatement.class)
-                    .flatMap(fieldParser -> fieldParser.parse(parser, validator))
-                    .orElseThrow(() -> new ScriptEvaluationError("Expected class body statement", Phase.PARSING, parser.peek()));
+            return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FunctionStatement.class));
         }
+        else {
+            return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FieldStatement.class));
+        }
+    }
+
+    private <T extends Statement> T handleDelegate(final TokenParser parser, final TokenStepValidator validator,
+                                                   final Option<ASTNodeParser<T>> statement) {
+        return statement
+                .flatMap(p -> p.parse(parser, validator))
+                .attempt(ScriptEvaluationError.class)
+                .rethrow()
+                .orNull();
     }
 
     @Override

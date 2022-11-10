@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.parser.Parser;
+import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.option.Option;
@@ -53,7 +53,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private List<Comment> comments;
 
     private Lexer lexer;
-    private Parser parser;
+    private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
 
@@ -102,11 +102,11 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this;
     }
 
-    public Parser parser() {
+    public TokenParser parser() {
         return this.parser;
     }
 
-    public ScriptContext parser(final Parser parser) {
+    public ScriptContext parser(final TokenParser parser) {
         this.parser = parser;
         return this;
     }

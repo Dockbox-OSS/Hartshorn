@@ -8,23 +8,17 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
-
-    private static final int MAX_NUM_OF_ARGUMENTS = 8;
-
-    private final Set<String> prefixFunctions = new HashSet<>();
-    private final Set<String> infixFunctions = new HashSet<>();
 
     @Override
     public Option<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
@@ -33,14 +27,14 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
             final Token functionToken = functionType.type() == TokenType.FUN ? functionType : parser.advance();
             final Token name = validator.expect(TokenType.IDENTIFIER, "function name");
 
-            int expectedNumberOrArguments = MAX_NUM_OF_ARGUMENTS;
+            int expectedNumberOrArguments = Integer.MAX_VALUE;
 
             if (functionType.type() == TokenType.PREFIX) {
-                this.prefixFunctions.add(name.lexeme());
+                this.functionParserContext(parser).addPrefixFunction(name.lexeme());
                 expectedNumberOrArguments = 1;
             }
             else if (functionType.type() == TokenType.INFIX) {
-                this.infixFunctions.add(name.lexeme());
+                this.functionParserContext(parser).addInfixFunction(name.lexeme());
                 expectedNumberOrArguments = 2;
             }
 
@@ -55,14 +49,24 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
             final BlockStatement body = this.blockStatement("function", name, parser, validator);
 
             if (extensionName != null) {
-                final FunctionStatement function = new FunctionStatement(extensionName, parameters, body);
+                final FunctionStatement function = new FunctionStatement(functionType, extensionName, parameters, body);
                 return Option.of(new ExtensionStatement(name, function));
             }
             else {
-                return Option.of(new FunctionStatement(name, parameters, body));
+                return Option.of(new FunctionStatement(functionType, name, parameters, body));
             }
         }
         return Option.empty();
+    }
+
+    private FunctionParserContext functionParserContext(final TokenParser parser) {
+        final Option<FunctionParserContext> context = parser.first(FunctionParserContext.class);
+        // Compute locally, to avoid auto-creation of this context
+        return context.orCompute(() -> {
+            final FunctionParserContext newContext = new FunctionParserContext();
+            parser.add(newContext);
+            return newContext;
+        }).get();
     }
 
     private List<Parameter> functionParameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOrArguments, final Token token) {

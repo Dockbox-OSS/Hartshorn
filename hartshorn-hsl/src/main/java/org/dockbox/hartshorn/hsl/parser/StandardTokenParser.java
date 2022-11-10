@@ -1,19 +1,12 @@
 package org.dockbox.hartshorn.hsl.parser;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -22,42 +15,53 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import jakarta.inject.Inject;
 
-public class StandardTokenParser implements TokenParser {
+public class StandardTokenParser extends DefaultContext implements TokenParser {
 
     private int current = 0;
-    private List<Token> tokens;
+    private final List<Token> tokens;
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
-    private final Set<ExpressionParser<?>> expressionParsers = new ConcurrentSkipListSet<>(new ExpressionParserComparator());
     private final TokenStepValidator validator;
+    private final ExpressionParser expressionParser;
 
     @Inject
     public StandardTokenParser() {
-        this.validator = new StandardTokenStepValidator(this);
+        this(new ArrayList<>());
     }
 
     @Inject
-    public StandardTokenParser(final TokenStepValidator validator) {
-        this.validator = validator;
+    public StandardTokenParser(final ExpressionParser parser, final TokenStepValidator validator) {
+        this(new ArrayList<>(), parser, validator);
     }
 
     @Bound
     public StandardTokenParser(final List<Token> tokens) {
-        this.tokens = tokens;
+        this.expressionParser = new ComplexExpressionParserAdapter();
         this.validator = new StandardTokenStepValidator(this);
+        this.tokens = tokens;
     }
 
     @Bound
-    public StandardTokenParser(final List<Token> tokens, final TokenStepValidator validator) {
+    public StandardTokenParser(final List<Token> tokens, final ExpressionParser parser, final TokenStepValidator validator) {
         this.tokens = tokens;
+        this.expressionParser = parser;
         this.validator = validator;
     }
 
-    public StandardTokenParser statementParser(ASTNodeParser<? extends Statement> parser) {
+    @Override
+    public StandardTokenParser statementParser(final ASTNodeParser<? extends Statement> parser) {
         if (parser != null) {
-            for(Class<? extends Statement> type : parser.types()) {
+            for(final Class<? extends Statement> type : parser.types()) {
                 if (!Statement.class.isAssignableFrom(type)) {
                     throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Statement");
                 }
@@ -67,16 +71,13 @@ public class StandardTokenParser implements TokenParser {
         return this;
     }
 
-    public StandardTokenParser expressionParser(ExpressionParser<?> parser) {
-        if (parser != null) {
-            for(Class<?> type : parser.types()) {
-                if (!Expression.class.isAssignableFrom(type)) {
-                    throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Expression");
-                }
-            }
-            this.expressionParsers.add(parser);
+    @Override
+    public List<Statement> parse() {
+        final List<Statement> statements = new ArrayList<>();
+        while (!this.isAtEnd()) {
+            statements.add(this.statement());
         }
-        return this;
+        return statements;
     }
 
     @Override
@@ -137,7 +138,9 @@ public class StandardTokenParser implements TokenParser {
     @Override
     public Statement statement() {
         for (final ASTNodeParser<? extends Statement> parser : this.statementParsers) {
-            final Option<? extends Statement> statement = parser.parse(this, this.validator);
+            final Option<? extends Statement> statement = parser.parse(this, this.validator)
+                    .attempt(ScriptEvaluationError.class)
+                    .rethrow();
             if (statement.present()) return statement.get();
         }
 
@@ -158,13 +161,10 @@ public class StandardTokenParser implements TokenParser {
 
     @Override
     public Expression expression() {
-        for (final ASTNodeParser<? extends Expression> parser : this.expressionParsers) {
-            final Option<? extends Expression> expression = parser.parse(this, this.validator)
-                    .attempt(ScriptEvaluationError.class)
-                    .rethrow();
-            if (expression.present()) return expression.get();
-        }
-        throw new ScriptEvaluationError("Expected expression, but found " + this.tokens.get(this.current), Phase.PARSING, this.peek());
+        return this.expressionParser.parse(this, this.validator)
+                .attempt(ScriptEvaluationError.class)
+                .rethrow()
+                .orElseThrow(() -> new ScriptEvaluationError("Unsupported expression type", Phase.PARSING, this.peek()));
     }
 
     @Override
@@ -178,42 +178,26 @@ public class StandardTokenParser implements TokenParser {
     }
 
     @Override
-    public <T extends ASTNode> Set<ASTNodeParser<T>> compatibleParsers(final Class<T> type) {
+    public <T extends Statement> Set<ASTNodeParser<T>> compatibleParsers(final Class<T> type) {
         return this.compatibleParserStream(type)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public <T extends ASTNode> Option<ASTNodeParser<T>> firstCompatibleParser(final Class<T> type) {
+    public <T extends Statement> Option<ASTNodeParser<T>> firstCompatibleParser(final Class<T> type) {
         return Option.of(this.compatibleParserStream(type).findFirst());
     }
 
-    private <T extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Class<T> type) {
+    private <T extends Statement> Stream<ASTNodeParser<T>> compatibleParserStream(final Class<T> type) {
         if (Statement.class.isAssignableFrom(type)) {
             return this.compatibleParserStream(this.statementParsers, type);
-        }
-        else if (Expression.class.isAssignableFrom(type)) {
-            return this.compatibleParserStream(this.expressionParsers, type);
         }
         return Stream.empty();
     }
 
-    private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Set<? extends ASTNodeParser<? extends N>> parsers, final Class<T> type) {
+    private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Collection<? extends ASTNodeParser<? extends N>> parsers, final Class<T> type) {
         return parsers.stream()
                 .filter(parser -> parser.types().contains(type))
                 .map(parser -> TypeUtils.adjustWildcards(parser, ASTNodeParser.class));
-    }
-
-    private static class ExpressionParserComparator implements Comparator<ExpressionParser<?>> {
-
-        @Override
-        public int compare(final ExpressionParser<?> current, final ExpressionParser<?> next) {
-            final boolean isCurrentValueExpression = current.isValueExpression();
-            final boolean isNextValueExpression = next.isValueExpression();
-            if (isCurrentValueExpression && isNextValueExpression) return 0;
-            if (isCurrentValueExpression) return -1;
-            else if (isNextValueExpression) return 1;
-            return 0;
-        }
     }
 }

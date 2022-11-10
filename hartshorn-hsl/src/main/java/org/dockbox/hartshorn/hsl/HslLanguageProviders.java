@@ -17,41 +17,28 @@
 package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
-import org.dockbox.hartshorn.inject.Context;
-
-import java.util.Set;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
 public class HslLanguageProviders {
 
-    @Inject
-    @Named(HslStatementBeans.STATEMENT_BEAN)
-    private Set<ASTNodeParser<? extends Statement>> statementParsers;
-
-    @Inject
-    @Named(HslExpressionBeans.EXPRESSION_BEAN)
-    private Set<ExpressionParser<?>> expressionParsers;
-
     @Provider
     private final Class<? extends Lexer> lexer = Lexer.class;
+
+    @Provider
+    private final Class<? extends TokenParser> tokenParser = StandardTokenParser.class;
 
     @Provider
     private final Class<? extends Resolver> resolver = Resolver.class;
@@ -60,15 +47,10 @@ public class HslLanguageProviders {
     private final Class<? extends Interpreter> interpreter = Interpreter.class;
 
     @Provider
-    public ScriptRuntime runtime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
-        return new StandardRuntime(applicationContext, factory);
-    }
+    private final Class<? extends ExpressionParser> expressionParser = ComplexExpressionParserAdapter.class;
 
     @Provider
-    public TokenParser tokenParser(@Context final BeanContext beanContext) {
-        final StandardTokenParser parser = new StandardTokenParser();
-        this.statementParsers.forEach(parser::statementParser);
-        this.expressionParsers.forEach(parser::expressionParser);
-        return parser;
+    public ScriptRuntime runtime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+        return new StandardRuntime(applicationContext, factory);
     }
 }

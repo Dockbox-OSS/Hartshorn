@@ -6,7 +6,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;

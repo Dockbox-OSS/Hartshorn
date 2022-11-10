@@ -17,23 +17,36 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.HslStatementBeans;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
+@Component
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime, ContextCarrier {
+
+    @Inject
+    @Named(HslStatementBeans.STATEMENT_BEAN)
+    private Set<ASTNodeParser<? extends Statement>> statementParsers;
 
     private final ApplicationContext applicationContext;
     private final HslLanguageFactory factory;
@@ -107,7 +120,10 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void parse(final ScriptContext context) {
-        context.parser(this.factory.parser(context.tokens()));
+        final TokenParser parser = this.factory.parser(context.tokens());
+        this.statementParsers.forEach(parser::statementParser);
+
+        context.parser(parser);
         this.customizePhase(Phase.PARSING, context);
         final List<Statement> statements = context.parser().parse();
         context.statements(statements);
