@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,9 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation used to mark annotations as service activators. Service activators indicate a specific
- * {@link Service}, {@link ComponentProcessor}, or {@link ActivatorFiltered} is allowed to become
- * active.
+ * Annotation used to mark annotations as service activators. Service activators indicate whether specific components
+ * processors become active. Additionally, they can be used to filter the activation of components using the
+ * {@link RequiresActivator} annotation.
  *
  * <p>Service activators always need to be annotated with {@link ServiceActivator}. If an annotation
  * is used as activator, but is not annotated with {@link ServiceActivator}, it will be rejected by
