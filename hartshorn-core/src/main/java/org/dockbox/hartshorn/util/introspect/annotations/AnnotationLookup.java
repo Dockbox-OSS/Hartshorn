@@ -83,8 +83,8 @@ public interface AnnotationLookup {
      * annotation, and the last element is the base annotation. As annotations can only extend one
      * other annotation, the last element is always the base annotation.
      *
-     * @param klass The annotation to get the hierarchy of
+     * @param type The annotation to get the hierarchy of
      * @return The linear hierarchy of the given annotation
      */
-    LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> klass);
+    LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type);
 }

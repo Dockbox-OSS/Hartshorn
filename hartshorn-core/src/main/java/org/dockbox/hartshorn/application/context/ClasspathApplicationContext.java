@@ -32,16 +32,10 @@ import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTree
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext, ObserverApplicationContext {
 
-    public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
-
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
-    protected transient Queue<String> prefixQueue;
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
@@ -50,7 +44,6 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     @Override
     protected void prepareInitialization() {
         this.preProcessors = new ConcurrentSetTreeMultiMap<>();
-        this.prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
     }
 
     @Override

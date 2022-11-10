@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.data.config;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.ResourceLookupStrategy;
 import org.dockbox.hartshorn.data.context.ConfigurationURIContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -41,7 +40,7 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
             final URI uri = uriContext.uri();
             final String source = uriContext.source();
 
-            final FileFormat format = this.lookupFileFormat(uri, source, context, uriContext.strategy());
+            final FileFormat format = this.lookupFileFormat(uri, source);
 
             if (format == null) {
                 context.log().error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
@@ -58,7 +57,7 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
         }
     }
 
-    protected FileFormat lookupFileFormat(final URI uri, final String source, final ApplicationContext context, final ResourceLookupStrategy strategy) {
+    protected FileFormat lookupFileFormat(final URI uri, final String source) {
         // If the source has a file extension, use that
         final FileFormats lookup = FileFormats.lookup(source);
         if (lookup != null) {

@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached> {
 
     @Override
-    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final CacheContext cacheContext) {
         final String elementKey = cacheContext.key();
 
         return (interceptorContext) -> {

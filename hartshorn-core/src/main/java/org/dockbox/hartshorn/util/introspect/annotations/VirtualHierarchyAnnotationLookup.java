@@ -90,8 +90,8 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> klass) {
-        Class<? extends Annotation> currentClass = klass;
+    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> type) {
+        Class<? extends Annotation> currentClass = type;
         final LinkedHashSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
         while (currentClass != null) {
             if (!hierarchy.add(currentClass)) {
