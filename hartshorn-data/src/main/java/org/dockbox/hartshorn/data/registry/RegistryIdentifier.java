@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.data.registry;
 
+@Deprecated(forRemoval = true, since = "22.5")
 public interface RegistryIdentifier {
     default boolean same(final Object o) {
         if (this == o) return true;

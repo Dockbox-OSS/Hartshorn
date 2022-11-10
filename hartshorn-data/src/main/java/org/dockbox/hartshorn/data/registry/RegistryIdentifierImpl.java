@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.data.registry;
 
 import java.util.Objects;
 
+@Deprecated(forRemoval = true, since = "22.5")
 public class RegistryIdentifierImpl implements RegistryIdentifier {
 
     private final String key;
