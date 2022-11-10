@@ -22,6 +22,7 @@ import java.util.Objects;
  * Represents a 2D point on a x-, and z-axis. All axis points can be represented as any numeral
  * value.
  */
+@Deprecated(forRemoval = true, since = "22.5")
 public class Vector2N {
 
     private Number x;

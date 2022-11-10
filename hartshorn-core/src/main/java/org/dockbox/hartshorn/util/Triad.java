@@ -28,6 +28,7 @@ import java.util.Objects;
  * @param <B> type of the second value.
  * @param <C> type of the third value.
  */
+@Deprecated(forRemoval = true, since = "22.5")
 public class Triad<A, B, C> {
 
     private final A first;
