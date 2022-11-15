@@ -31,7 +31,7 @@ public enum Phase {
      */
     TOKENIZING,
     /**
-     * Performed by the {@link org.dockbox.hartshorn.hsl.parser.Parser}, to convert
+     * Performed by the {@link org.dockbox.hartshorn.hsl.parser.TokenParser}, to convert
      * the token output of the {@link org.dockbox.hartshorn.hsl.lexer.Lexer} into
      * {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s. This is the second
      * step of the script evaluation process.
@@ -48,7 +48,7 @@ public enum Phase {
     /**
      * Performed by the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter},
      * to execute the {@link org.dockbox.hartshorn.hsl.ast.statement.Statement} output
-     * of the {@link org.dockbox.hartshorn.hsl.parser.Parser}. This is the phase in
+     * of the {@link org.dockbox.hartshorn.hsl.parser.TokenParser}. This is the phase in
      * which the script gets executed, and results are generated. This is the fourth
      * and last step of the script evaluation process.
      */

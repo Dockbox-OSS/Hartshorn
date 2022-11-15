@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
-import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class HslScript extends DefaultApplicationAwareContext {
     }
 
     protected ScriptRuntime createRuntime() {
-        return this.applicationContext().get(StandardRuntime.class);
+        return this.applicationContext().get(ScriptRuntime.class);
     }
 
     protected ScriptRuntime getOrCreateRuntime() {

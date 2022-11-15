@@ -25,27 +25,20 @@ import java.util.List;
 public class ConstructorStatement extends ParametricExecutableStatement {
 
     private final Token keyword;
-    private final Token className;
 
     public ConstructorStatement(final Token keyword,
-                                final Token className,
                                 final List<Parameter> params,
                                 final BlockStatement body) {
         super(keyword, params, body);
         this.keyword = keyword;
-        this.className = className;
     }
 
     public Token keyword() {
         return this.keyword;
     }
 
-    public Token className() {
-        return this.className;
-    }
-
     public Token initializerIdentifier() {
-        return new Token(TokenType.CONSTRUCTOR, "<<init::%s>>".formatted(this.className().lexeme()), this.keyword().line(), this.keyword().column());
+        return new Token(TokenType.CONSTRUCTOR, "<init>", this.keyword().line(), this.keyword().column());
     }
 
     @Override

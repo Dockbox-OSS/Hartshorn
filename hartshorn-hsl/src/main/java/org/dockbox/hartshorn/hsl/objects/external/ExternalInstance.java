@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -32,8 +32,8 @@ import java.util.Map;
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
  * runtime. This instance can be used to access properties of the instance. The instance
- * needs to be made available to the runtime through {@link StandardRuntime#global(String, Object)}
- * or {@link StandardRuntime#global(Map)}, where the instance is made available globally
+ * needs to be made available to the runtime through {@link ScriptRuntime#global(String, Object)}
+ * or {@link ScriptRuntime#global(Map)}, where the instance is made available globally
  * to the runtime.
  *
  * @author Guus Lieben

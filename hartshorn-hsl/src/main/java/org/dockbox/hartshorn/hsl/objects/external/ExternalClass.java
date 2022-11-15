@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
  * used to create a new instance of the class. This requires the class to be imported
- * by the responsible {@link StandardRuntime} through {@link StandardRuntime#imports(Map)}.
+ * by the responsible {@link ScriptRuntime} through {@link ScriptRuntime#imports(Map)}.
  *
  * <pre>{@code
  * AbstractHslRuntime runtime = ...;

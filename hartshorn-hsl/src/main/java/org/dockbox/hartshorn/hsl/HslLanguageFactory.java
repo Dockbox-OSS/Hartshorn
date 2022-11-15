@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.hsl;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.parser.Parser;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -38,7 +38,7 @@ public interface HslLanguageFactory {
     Lexer lexer(String source);
 
     @Factory
-    Parser parser(List<Token> tokens);
+    TokenParser parser(List<Token> tokens);
 
     @Factory
     Resolver resolver(Interpreter interpreter);
