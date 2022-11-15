@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.owasp.dependencycheck.gradle.DependencyCheckPlugin
 import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
 
 buildscript {
@@ -50,6 +51,7 @@ configure<DependencyCheckExtension> {
     // Strict rule, even small vulnerabilities should be handled unless they are suppressed
     failBuildOnCVSS = 1F
     failOnError = true
+    suppressionFiles = listOf("gradle/dependency-check-suppressions.xml")
 }
 
 allprojects {
@@ -152,6 +154,7 @@ allprojects {
             options.compilerArgs.add("-parameters")
             options.encoding = "UTF-8"
         }
+
         withType<Javadoc> {
             isFailOnError = false
             (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
