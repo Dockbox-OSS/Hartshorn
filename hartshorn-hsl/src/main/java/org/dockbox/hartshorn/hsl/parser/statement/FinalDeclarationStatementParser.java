@@ -1,6 +1,20 @@
-package org.dockbox.hartshorn.hsl.parser.statement;
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import java.util.Set;
+package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -16,6 +30,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
@@ -45,7 +61,7 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
     }
 
     @NotNull
-    private static FinalizableStatement delegateParseStatement(TokenParser parser, TokenStepValidator validator, Class<? extends FinalizableStatement> statement, String statementType, Token current) {
+    private static FinalizableStatement delegateParseStatement(final TokenParser parser, final TokenStepValidator validator, final Class<? extends FinalizableStatement> statement, final String statementType, final Token current) {
         return parser.firstCompatibleParser(statement)
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .orElseThrow(() -> new ScriptEvaluationError("Failed to parse %s statement".formatted(statementType), Phase.PARSING, current));
