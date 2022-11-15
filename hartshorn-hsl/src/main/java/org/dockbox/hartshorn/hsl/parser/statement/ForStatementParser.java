@@ -1,5 +1,7 @@
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -16,8 +18,6 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
 
     @Override
@@ -26,7 +26,6 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
             final Token forToken = parser.advance();
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.FOR);
 
-            validator.expect(TokenType.VAR);
             final VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
                     .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                     .orElseThrow(() -> new ScriptEvaluationError("Expected variable statement in for-each loop", Phase.PARSING, forToken));
