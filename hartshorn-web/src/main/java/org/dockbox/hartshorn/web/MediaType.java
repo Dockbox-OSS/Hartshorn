@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.data.FileFormat;
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.util.option.Option;
 
 public enum MediaType {

@@ -19,6 +19,6 @@ apply {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-data")
+    implementation("org.dockbox.hartshorn:hartshorn-jpa")
     implementation(libs.bundles.hibernate)
 }

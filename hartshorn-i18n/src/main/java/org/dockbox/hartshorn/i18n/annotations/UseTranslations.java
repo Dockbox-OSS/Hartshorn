@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.i18n.annotations;
 
-import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.i18n.services.LanguageProviderServicePreProcessor;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
 

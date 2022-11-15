@@ -29,7 +29,7 @@ dependencies {
 
     implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-events")
-    implementation("org.dockbox.hartshorn:hartshorn-data")
+    implementation("org.dockbox.hartshorn:hartshorn-config")
 
     testImplementation(libs.httpclient)
 }

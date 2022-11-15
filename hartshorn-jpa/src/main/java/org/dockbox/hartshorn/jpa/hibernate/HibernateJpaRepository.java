@@ -18,12 +18,12 @@ package org.dockbox.hartshorn.jpa.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.data.jpa.EntityManagerCarrier;
-import org.dockbox.hartshorn.data.jpa.EntityManagerJpaRepository;
-import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerJpaRepository;
+import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;

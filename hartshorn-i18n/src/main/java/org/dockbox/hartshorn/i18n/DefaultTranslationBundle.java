@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.nio.file.Path;
@@ -106,7 +106,7 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public Set<Message> register(final Path source, final Locale locale, final FileFormats fileFormat) {
+    public Set<Message> register(final Path source, final Locale locale, final FileFormat fileFormat) {
         final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
         final Map<String, String> result = objectMapper.flat(source).entrySet()
                 .stream()

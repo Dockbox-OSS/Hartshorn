@@ -20,6 +20,7 @@ apply {
 
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-config")
 
     api(libs.bundles.hibernate)
 

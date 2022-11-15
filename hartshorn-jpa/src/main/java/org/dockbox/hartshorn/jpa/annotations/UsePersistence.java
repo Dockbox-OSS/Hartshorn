@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.jpa.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.annotations.UseSerialization;
+import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.jpa.JpaRepositoryDelegationPostProcessor;
 import org.dockbox.hartshorn.proxy.UseProxying;
 
