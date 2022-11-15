@@ -10,7 +10,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
@@ -62,7 +61,7 @@ public class HslStatementBeans {
 
     @Bean(id = STATEMENT_BEAN)
     public static ASTNodeParser<ClassStatement> classStatementParser() {
-        return new ClassStatementParser();
+        return new ClassStatementParser(new FieldStatementParser());
     }
 
     @Bean(id = STATEMENT_BEAN)
@@ -78,11 +77,6 @@ public class HslStatementBeans {
     @Bean(id = STATEMENT_BEAN)
     public static ASTNodeParser<DoWhileStatement> doWhileStatementParser() {
         return new DoWhileStatementParser();
-    }
-
-    @Bean(id = STATEMENT_BEAN)
-    public static ASTNodeParser<FieldStatement> fieldStatementParser() {
-        return new FieldStatementParser();
     }
 
     @Bean(id = STATEMENT_BEAN)

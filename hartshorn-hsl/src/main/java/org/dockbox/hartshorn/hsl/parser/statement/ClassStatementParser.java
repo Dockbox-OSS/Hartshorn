@@ -1,5 +1,9 @@
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -13,13 +17,20 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import jakarta.inject.Inject;
 
 public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
+
+    private final FieldStatementParser fieldParser;
+
+    @Inject
+    @Bound
+    public ClassStatementParser(FieldStatementParser fieldParser) {
+        this.fieldParser = fieldParser;
+    }
 
     @Override
     public Option<ClassStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
@@ -71,7 +82,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FunctionStatement.class));
         }
         else {
-            return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FieldStatement.class));
+            return handleDelegate(parser, validator, Option.of(fieldParser));
         }
     }
 
