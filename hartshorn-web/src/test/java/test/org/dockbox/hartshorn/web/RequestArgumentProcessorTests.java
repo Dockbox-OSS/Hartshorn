@@ -16,15 +16,8 @@
 
 package test.org.dockbox.hartshorn.web;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
@@ -43,11 +36,18 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 
 @HartshornTest(includeBasePackages = false)
-@UsePersistence
+@UseConfigurations
 public class RequestArgumentProcessorTests {
 
     @Inject

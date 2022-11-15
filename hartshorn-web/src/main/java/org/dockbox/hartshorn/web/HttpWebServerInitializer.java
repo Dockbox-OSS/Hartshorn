@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.data.annotations.Value;
+import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;

@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor {
+public abstract class PhasedProxyCallbackPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
     public final <T> T process(final ApplicationContext context, @Nullable T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {

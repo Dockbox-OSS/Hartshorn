@@ -16,10 +16,10 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
 

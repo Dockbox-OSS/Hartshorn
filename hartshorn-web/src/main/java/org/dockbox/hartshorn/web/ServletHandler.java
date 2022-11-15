@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
+import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;

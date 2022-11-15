@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.data.FileFormat;
-import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
