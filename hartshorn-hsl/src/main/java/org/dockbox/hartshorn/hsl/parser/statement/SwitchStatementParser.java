@@ -1,5 +1,10 @@
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
@@ -15,11 +20,6 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -51,7 +51,7 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                 final Token caseToken = parser.previous();
 
                 if (caseToken.type() == TokenType.CASE) {
-                    final Expression caseExpr = null; // TODO: Reimplement once #primary() is resolved
+                    final Expression caseExpr = parser.expression();
                     if (!(caseExpr instanceof final LiteralExpression literal)) {
                         throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
                     }
