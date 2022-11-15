@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
@@ -41,17 +41,17 @@ import org.dockbox.hartshorn.util.Result;
 public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached> {
 
     @Override
-    protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final CacheContext cacheContext) {
         final String elementKey = cacheContext.key();
 
         return (interceptorContext) -> {
             final Cache<String, Object> cache = cacheContext.cache();
-            final Result<Object> content = cache.get(elementKey);
+            final Option<R> content = cache.get(elementKey).map(interceptorContext::checkedCast);
 
-            return content.orElse(() -> {
+            return content.orElseGet(() -> {
                 context.log().debug("Cache " + cacheContext.cacheName() + " has not been populated yet, or content has expired.");
                 try {
-                    final Object out = interceptorContext.invokeDefault();
+                    final R out = interceptorContext.invokeDefault();
                     cache.putIfAbsent(elementKey, out);
                     return out;
                 }
@@ -59,7 +59,7 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
                     context.handle(e);
                     return null;
                 }
-            }).orNull(); // In case of void returns
+            });
         };
     }
 
@@ -71,7 +71,7 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 

@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 
 public interface ViewModel {
     Map<String, Object> attributes();
     void attribute(String name, Object value);
-    Result<Object> attribute(String name);
+    Option<Object> attribute(String name);
 }

@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Parser type capable of parsing a given command into a new {@link CommandContext} based on the
@@ -35,9 +35,9 @@ public interface CommandParser {
      * @param source The {@link CommandSource} executing the command
      * @param context The {@link CommandExecutorContext} executing and handling the command
      *
-     * @return The {@link CommandContext} if the command was parsed, or {@link Result#empty()}
+     * @return The {@link CommandContext} if the command was parsed, or {@link Option#empty()}
      * @throws ParsingException If the command could not be parsed
      */
-    Result<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
+    Option<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
 
 }

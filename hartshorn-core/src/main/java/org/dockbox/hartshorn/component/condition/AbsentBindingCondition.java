@@ -24,12 +24,12 @@ public class AbsentBindingCondition implements Condition {
     @Override
     public ConditionResult matches(final ConditionContext context) {
         final ProviderContextList listContext = context.applicationContext().first(ProviderContextList.class).orNull();
-        return context.annotatedElementContext().annotation(RequiresAbsentBinding.class).map(condition -> {
+        return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
             final Key<?> key = Key.of(condition.value(), condition.name());
-            if (listContext.containsKey(key)) {
+            if (listContext != null && listContext.containsKey(key)) {
                 return ConditionResult.matched();
             }
             else return ConditionResult.notFound("Binding", String.valueOf(key));
-        }).or(ConditionResult.invalidCondition("absent binding"));
+        }).orElse(ConditionResult.invalidCondition("absent binding"));
     }
 }

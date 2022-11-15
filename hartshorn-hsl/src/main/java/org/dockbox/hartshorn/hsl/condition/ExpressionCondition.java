@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
 /**
  * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
- * is obtained from the {@link org.dockbox.hartshorn.util.reflect.AnnotatedElementContext} provided through the
+ * is obtained from the {@link org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView} provided through the
  * {@link ConditionContext} for the condition.
  *
  * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the active
@@ -49,7 +49,7 @@ public class ExpressionCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElementContext().annotation(RequiresExpression.class).map(condition -> {
+        return context.annotatedElement().annotations().get(RequiresExpression.class).map(condition -> {
             final String expression = condition.value();
             final ValidateExpressionRuntime runtime = this.createRuntime(context);
 
@@ -62,7 +62,7 @@ public class ExpressionCondition implements Condition {
                 context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
                 return ConditionResult.notMatched(e.getMessage());
             }
-        }).or(ConditionResult.invalidCondition("expression"));
+        }).orElse(ConditionResult.invalidCondition("expression"));
     }
 
     protected ValidateExpressionRuntime createRuntime(final ConditionContext context) {
@@ -72,11 +72,11 @@ public class ExpressionCondition implements Condition {
 
     protected ValidateExpressionRuntime enhance(final ValidateExpressionRuntime runtime, final ConditionContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
-        context.first(ProvidedParameterContext.class).present(parameterContext -> {
+        context.first(ProvidedParameterContext.class).peek(parameterContext -> {
             parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
         });
 
-        context.first(ExpressionConditionContext.class).present(expressionContext -> {
+        context.first(ExpressionConditionContext.class).peek(expressionContext -> {
 
             runtime.customizers(expressionContext.customizers());
             runtime.imports(expressionContext.imports());

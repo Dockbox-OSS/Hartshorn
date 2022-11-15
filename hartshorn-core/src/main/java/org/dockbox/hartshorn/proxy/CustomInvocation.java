@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  * @since 22.2
  */
 @FunctionalInterface
-public interface CustomInvocation {
+public interface CustomInvocation<T> {
     /**
      * Invoke the default method with the given arguments.
      *
@@ -35,7 +35,7 @@ public interface CustomInvocation {
      * @return the result of the invocation
      * @throws Exception if the invocation fails
      */
-    Object call(Object... args) throws Exception;
+    T call(Object... args) throws Exception;
 
     /**
      * Converts this invocation to a {@link Callable}. This is useful for the {@link MethodInterceptorContext}
@@ -45,7 +45,7 @@ public interface CustomInvocation {
      * @param args the default arguments to use
      * @return the invocation as a {@link Callable}
      */
-    default Callable<Object> toCallable(final Object... args) {
+    default Callable<T> toCallable(final Object... args) {
         return () -> this.call(args);
     }
 }

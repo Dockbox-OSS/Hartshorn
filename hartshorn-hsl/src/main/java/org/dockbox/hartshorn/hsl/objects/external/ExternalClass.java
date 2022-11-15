@@ -17,17 +17,17 @@
 package org.dockbox.hartshorn.hsl.objects.external;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
  * used to create a new instance of the class. This requires the class to be imported
- * by the responsible {@link StandardRuntime} through {@link StandardRuntime#imports(Map)}.
+ * by the responsible {@link ScriptRuntime} through {@link ScriptRuntime#imports(Map)}.
  *
  * <pre>{@code
  * AbstractHslRuntime runtime = ...;
@@ -49,17 +49,17 @@ import java.util.Map;
  */
 public class ExternalClass<T> implements ClassReference {
 
-    private final TypeContext<T> type;
+    private final TypeView<T> type;
 
-    public ExternalClass(final Class<T> type) {
-        this.type = TypeContext.of(type);
+    public ExternalClass(final TypeView<T> type) {
+        this.type = type;
     }
 
     /**
-     * Gets the {@link TypeContext} represented by this instance.
-     * @return The {@link TypeContext} represented by this instance.
+     * Gets the {@link TypeView} represented by this instance.
+     * @return The {@link TypeView} represented by this instance.
      */
-    public TypeContext<T> type() {
+    public TypeView<T> type() {
         return this.type;
     }
 
@@ -68,9 +68,12 @@ public class ExternalClass<T> implements ClassReference {
         if (instance != null) {
             throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
         }
-        final ConstructorContext<T> executable = ExecutableLookup.executable(this.type.constructors(), arguments);
-        final T objectInstance = executable.createInstance(arguments.toArray()).rethrowUnchecked().orNull();
-        return new ExternalInstance(objectInstance);
+        final ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
+        if (executable != null) {
+            final T objectInstance = executable.create(arguments.toArray()).rethrowUnchecked().orNull();
+            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspect(objectInstance));
+        }
+        throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
     }
 
     @Override
@@ -85,15 +88,14 @@ public class ExternalClass<T> implements ClassReference {
 
     @Override
     public MethodReference method(final String name) {
-        return new ExternalFunction(this.type().type(), name);
+        return new ExternalFunction(this.type(), name);
     }
 
     @Override
     public ClassReference superClass() {
-        final TypeContext<?> parent = this.type().parent();
+        final TypeView<?> parent = this.type().superClass();
         if (parent.isVoid()) return null;
-        final Class<?> parentType = parent.type();
-        return new ExternalClass<>(parentType);
+        return new ExternalClass<>(parent);
     }
 
     @Override

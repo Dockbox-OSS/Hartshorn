@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory> {
 
@@ -38,24 +38,27 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final MethodContext<?, T> method = methodContext.method();
-        final boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        final MethodView<T, ?> method = methodContext.method();
+        final boolean enable = Boolean.TRUE.equals(method.annotations().get(Enable.class).map(Enable::value).orElse(true));
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
-            final Result<? extends ConstructorContext<?>> constructorCandidate = factoryContext.get(method);
+            final Option<? extends ConstructorView<?>> constructorCandidate = factoryContext.get(method);
             if (constructorCandidate.present()) {
-                final ConstructorContext<?> constructor = constructorCandidate.get();
-                return interceptorContext -> this.processInstance(context, (R) constructor.createInstance(interceptorContext.args()).orNull(), enable);
+                final ConstructorView<?> constructor = constructorCandidate.get();
+                return interceptorContext -> {
+                    final Object instance = constructor.create(interceptorContext.args()).orNull();
+                    return this.processInstance(context, interceptorContext.checkedCast(instance), enable);
+                };
             }
             else {
-                final Factory factory = method.annotation(Factory.class).get();
+                final Factory factory = method.annotations().get(Factory.class).get();
                 if (factory.required()) {
                     throw new MissingFactoryConstructorException(processingContext.key(), method);
                 }
@@ -65,7 +68,11 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             }
         }
         else {
-            return interceptorContext -> this.processInstance(context, (R) methodContext.method().invoke(interceptorContext.instance(), interceptorContext.args()).orNull(), enable);
+            return interceptorContext -> {
+                final T instance = interceptorContext.instance();
+                final Object result = methodContext.method().invoke(instance, interceptorContext.args()).orNull();
+                return this.processInstance(context, interceptorContext.checkedCast(result), enable);
+            };
         }
     }
 

@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
@@ -42,15 +42,14 @@ public class BundledTranslationService implements TranslationService {
     }
 
     @Override
-    public Result<Message> get(final String key) {
+    public Option<Message> get(final String key) {
         return this.bundle.message(this.clean(key));
     }
 
     @Override
     public Message getOrCreate(final String key, final String value) {
         return this.bundle.message(this.clean(key))
-                .orElse(() -> this.bundle.register(key, value))
-                .get();
+                .orElseGet(() -> this.bundle.register(key, value));
     }
 
     @Override

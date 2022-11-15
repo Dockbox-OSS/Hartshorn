@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
@@ -63,7 +63,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
 
     private final Map<Method, ?> delegates;
     private final ConcurrentClassMap<Object> typeDelegates;
-    private final Map<Method, MethodInterceptor<T>> interceptors;
+    private final Map<Method, MethodInterceptor<T, ?>> interceptors;
     private final MultiMap<Method, MethodWrapper<T>> wrappers;
     private T delegate;
 
@@ -72,13 +72,13 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     }
 
     public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
-                            final Map<Method, MethodInterceptor<T>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
+                            final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
         super(applicationContext);
 
-        if (applicationContext.environment().manager().isProxy(targetClass)) {
+        if (applicationContext.environment().isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
-        if (proxyClass != null && !applicationContext.environment().manager().isProxy(proxyClass)) {
+        if (proxyClass != null && !applicationContext.environment().isProxy(proxyClass)) {
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
@@ -99,7 +99,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
         if (this.proxy != null) {
             throw new IllegalModificationException("Proxy instance already set.");
         }
-        if (!this.applicationContext().environment().manager().isProxy(proxy)) {
+        if (!this.applicationContext().environment().isProxy(proxy)) {
             throw new IllegalArgumentException("Provided object is not a proxy");
         }
         this.proxy = proxy;
@@ -127,23 +127,23 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     }
 
     @Override
-    public Result<T> delegate() {
-        return Result.of(this.delegate);
+    public Option<T> delegate() {
+        return Option.of(this.delegate);
     }
 
     @Override
-    public Result<T> delegate(final Method method) {
-        return Result.of(this.delegates).map(map -> map.get(method)).map(delegate -> (T) delegate);
+    public Option<T> delegate(final Method method) {
+        return Option.of(this.delegates).map(map -> map.get(method)).map(delegate -> (T) delegate);
     }
 
     @Override
-    public <S> Result<S> delegate(final Class<S> type) {
-        return Result.of(this.typeDelegates).map(map -> map.get(type)).map(type::cast);
+    public <S> Option<S> delegate(final Class<S> type) {
+        return Option.of(this.typeDelegates).map(map -> map.get(type)).map(type::cast);
     }
 
     @Override
-    public Result<MethodInterceptor<T>> interceptor(final Method method) {
-        return Result.of(this.interceptors).map(map -> map.get(method));
+    public Option<MethodInterceptor<T, ?>> interceptor(final Method method) {
+        return Option.of(this.interceptors).map(map -> map.get(method));
     }
 
     @Override

@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.web.mvc.ViewModel;
 
 public class ViewModelParameterRule implements ParameterLoaderRule<MvcParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
-        return parameter.type().childOf(ViewModel.class);
+    public boolean accepts(final ParameterView<?> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
+        return parameter.type().isChildOf(ViewModel.class);
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
-        return Result.of((T) context.viewModel());
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
+        return Option.of((T) context.viewModel());
     }
 }

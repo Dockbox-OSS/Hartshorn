@@ -16,9 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-
-import java.lang.reflect.AnnotatedElement;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 /**
  * Standard service for generating keys for {@link Cache} entries from annotated elements.
@@ -34,7 +32,6 @@ public interface KeyGenerator {
      * Generate a key for the given annotated element.
      * @param element the annotated element
      * @return the generated key
-     * @param <A> the type of annotated element
      */
-    <A extends AnnotatedElement> String generateKey(AnnotatedElementContext<A> element);
+    String generateKey(AnnotatedElementView element);
 }

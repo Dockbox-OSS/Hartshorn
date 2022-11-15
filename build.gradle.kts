@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.owasp.dependencycheck.gradle.DependencyCheckPlugin
 import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
 
 buildscript {
@@ -32,14 +33,14 @@ plugins {
     java
     `java-library`
     id("org.cadixdev.licenser") version "0.6.1"
-    id("org.checkerframework") version "0.6.5"
+    id("org.checkerframework") version "0.6.19"
 }
 
 apply {
     plugin("org.owasp.dependencycheck")
 }
 
-version = "22.4"
+version = "22.5"
 group = "org.dockbox.hartshorn"
 
 java.toolchain {
@@ -50,6 +51,7 @@ configure<DependencyCheckExtension> {
     // Strict rule, even small vulnerabilities should be handled unless they are suppressed
     failBuildOnCVSS = 1F
     failOnError = true
+    suppressionFiles = listOf("gradle/dependency-check-suppressions.xml")
 }
 
 allprojects {
@@ -64,7 +66,15 @@ allprojects {
     license {
         header.set(resources.text.fromFile(rootProject.file("HEADER.txt")))
         ignoreFailures.set(false)
-        include("**/*.java")
+        include(
+                "**/*.java",
+                "**/*.kt",
+                "**/*.groovy",
+                "**/*.scala",
+                "**/*.yml",
+                "**/*.properties",
+                "**/*.toml",
+        )
     }
 
     java {
@@ -110,6 +120,8 @@ allprojects {
         testImplementation(project(":hartshorn-test-suite"))
         testImplementation(rootProject.libs.bundles.test)
         testImplementation(rootProject.libs.bundles.testRuntime)
+
+        checkerFramework("org.checkerframework:checker:3.27.0")
     }
 
     tasks {
@@ -142,6 +154,7 @@ allprojects {
             options.compilerArgs.add("-parameters")
             options.encoding = "UTF-8"
         }
+
         withType<Javadoc> {
             isFailOnError = false
             (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")

@@ -16,19 +16,13 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-
-public class TypeConversionException extends ApplicationException {
+public class TypeConversionException extends ApplicationRuntimeException {
 
     public TypeConversionException(final Class<?> type, final String value) {
-        this(TypeContext.of(type), value);
+        super("Could not convert '" + value + "' to type " + type.getSimpleName());
     }
 
-    public TypeConversionException(final TypeContext<?> type, final String value) {
-        super("Could not convert '" + value + "' to type " + type.name());
-    }
-
-    public TypeConversionException(final TypeContext<?> type, final String value, final Throwable cause) {
-        super("Could not convert '" + value + "' to type " + type.name(), cause);
+    public TypeConversionException(final Class<?> type, final String value, final Throwable cause) {
+        super("Could not convert '" + value + "' to type " + type.getSimpleName(), cause);
     }
 }

@@ -39,11 +39,15 @@ public abstract class AbstractTargetCancellableEvent extends CancellableContextC
         return this.subject;
     }
 
-    public void setCancelled(final boolean cancelled) {
+    @Override
+    public AbstractTargetCancellableEvent cancelled(final boolean cancelled) {
         this.cancelled = cancelled;
+        return this;
     }
 
-    public void setSubject(final Subject subject) {
+    @Override
+    public AbstractTargetCancellableEvent subject(final Subject subject) {
         this.subject = subject;
+        return this;
     }
 }

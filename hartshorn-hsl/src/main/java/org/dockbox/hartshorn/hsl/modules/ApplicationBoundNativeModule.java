@@ -50,4 +50,9 @@ public class ApplicationBoundNativeModule extends AbstractNativeModule {
         }
         return this.instance;
     }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 }

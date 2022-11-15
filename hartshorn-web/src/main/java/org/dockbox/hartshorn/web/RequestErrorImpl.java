@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.PrintWriter;
 
@@ -31,7 +31,7 @@ public class RequestErrorImpl extends DefaultApplicationAwareContext implements 
     private final HttpServletResponse response;
     private final int statusCode;
     private final PrintWriter writer;
-    private final Result<Throwable> cause;
+    private final Option<Throwable> cause;
     private String message;
     private boolean yieldDefaults;
 
@@ -42,7 +42,7 @@ public class RequestErrorImpl extends DefaultApplicationAwareContext implements 
         this.statusCode = statusCode;
         this.writer = writer;
         this.message = message;
-        this.cause = Result.of(cause, cause);
+        this.cause = Option.of(cause);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RequestErrorImpl extends DefaultApplicationAwareContext implements 
     }
 
     @Override
-    public Result<Throwable> cause() {
+    public Option<Throwable> cause() {
         return this.cause;
     }
 

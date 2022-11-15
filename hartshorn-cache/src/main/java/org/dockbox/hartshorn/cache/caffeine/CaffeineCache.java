@@ -21,7 +21,9 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Objects;
 
 /**
  * Caffeine-based {@link Cache} implementation. This implementation is active by
@@ -45,6 +47,7 @@ public class CaffeineCache<K, V> implements Cache<K, V> {
 
     @Bound
     public CaffeineCache(final Expiration expiration) {
+        Objects.requireNonNull(expiration, "Expiration cannot be null, use Expiration.never() instead");
         Caffeine<Object, Object> builder = Caffeine.newBuilder();
         if (expiration.amount() > 0) {
             builder = builder.expireAfterWrite(expiration.toDuration());
@@ -57,8 +60,8 @@ public class CaffeineCache<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public Result<V> get(final K key) {
-        return Result.of(this.cache.getIfPresent(key));
+    public Option<V> get(final K key) {
+        return Option.of(this.cache.getIfPresent(key));
     }
 
     @Override

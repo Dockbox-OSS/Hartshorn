@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.EntityContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 
@@ -34,7 +34,7 @@ public class PersistentTypeService implements LifecycleObserver {
 
     @Override
     public void onStarted(final ApplicationContext applicationContext) {
-        final Collection<TypeContext<?>> entities = applicationContext.environment().types(Entity.class);
+        final Collection<TypeView<?>> entities = applicationContext.environment().types(Entity.class);
         applicationContext.add(new EntityContext(entities));
     }
 }

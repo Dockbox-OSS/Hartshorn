@@ -19,9 +19,12 @@ package org.dockbox.hartshorn.proxy;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.InvocationHandler;
 
@@ -32,7 +35,22 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Result<T> proxy() throws ApplicationException {
+    public Attempt<T, Throwable> proxy() throws ApplicationException {
+        return this.createProxy(interceptor -> this.type().isInterface()
+                ? this.interfaceProxy(interceptor)
+                : this.concreteOrAbstractProxy(interceptor));
+    }
+
+    @Override
+    public Attempt<T, Throwable> proxy(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+        if (args.length != constructor.parameters().count()) {
+            throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
+        }
+        if (this.type().isInterface()) return this.proxy(); // Cannot invoke constructor on interface
+        else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
+    }
+
+    protected Attempt<T, Throwable> createProxy(final CheckedFunction<StandardMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
 
         this.contextContainer().contexts().forEach(manager::add);
@@ -40,26 +58,32 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
 
         final StandardMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationContext());
 
-        final Result<T> proxy = this.type().isInterface()
-                ? this.interfaceProxy(interceptor)
-                : this.concreteOrAbstractProxy(interceptor);
+        final Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
 
-        proxy.present(manager::proxy);
+        proxy.peek(manager::proxy);
         return proxy;
     }
 
     protected InvocationHandler invocationHandler(final StandardMethodInterceptor<T> interceptor) {
-        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method), null, args);
+        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationContext()), null, args);
     }
 
     protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(StandardMethodInterceptor<T> interceptor);
 
-    protected Result<T> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor) throws ApplicationException {
+        return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
+    }
+
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor, final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+        return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
+    }
+
+    protected Attempt<T, Throwable> createClassProxy(final StandardMethodInterceptor<T> interceptor, final CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
         final ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
-            final T proxy = enhancer.create();
+            final T proxy = instantiate.apply(enhancer);
             if (this.typeDelegate() != null) this.restoreFields(this.typeDelegate(), proxy);
-            return Result.of(proxy);
+            return Attempt.of(proxy);
         }
         catch (final RuntimeException e) {
             throw new ApplicationException(e);
@@ -73,29 +97,30 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return CollectionUtilities.merge(standardInterfaces, this.interfaces().toArray(new Class[0]));
     }
 
-    protected Result<T> interfaceProxy(final StandardMethodInterceptor<T> interceptor) {
-        final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
+    protected Attempt<T, Throwable> interfaceProxy(final StandardMethodInterceptor<T> interceptor) {
+        final Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 this.proxyInterfaces(true),
                 this.invocationHandler(interceptor));
-        return Result.of(proxy);
+        return Attempt.of(this.type().cast(proxy));
     }
 
     protected void restoreFields(final T existing, final T proxy) {
-        final TypeContext<T> typeContext = this.applicationContext().environment().manager().isProxy(existing)
-                ? TypeContext.of(this.type())
-                : TypeContext.of(this.typeDelegate());
-        for (final FieldContext<?> field : typeContext.fields()) {
+        final TypeView<T> typeView = this.applicationContext().environment().isProxy(existing)
+                ? this.applicationContext().environment().introspect(this.type())
+                : this.applicationContext().environment().introspect(this.typeDelegate());
+
+        for (final FieldView<T, ?> field : typeView.fields().all()) {
             if (field.isStatic()) continue;
             field.set(proxy, field.get(existing).orNull());
         }
     }
 
     protected ClassLoader defaultClassLoader() {
-        return Result.of(Thread.currentThread()::getContextClassLoader)
-                .orElse(JDKInterfaceProxyFactory.class::getClassLoader)
-                .orElse(ClassLoader::getSystemClassLoader)
-                .orElse(this.type()::getClassLoader)
+        return Option.of(Thread.currentThread()::getContextClassLoader)
+                .orCompute(JDKInterfaceProxyFactory.class::getClassLoader)
+                .orCompute(ClassLoader::getSystemClassLoader)
+                .orCompute(this.type()::getClassLoader)
                 .orNull();
     }
 }

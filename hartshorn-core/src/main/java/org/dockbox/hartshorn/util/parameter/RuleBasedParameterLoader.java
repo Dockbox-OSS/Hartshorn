@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.util.parameter;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Result;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C>{
 
@@ -41,15 +40,31 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     }
 
     @Override
+    public Object loadArgument(final C context, final int index, final Object... args) {
+        final Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
+        if (parameterCandidate.present()) {
+            final ParameterView<?> parameter = parameterCandidate.get();
+            for (final ParameterLoaderRule<C> rule : this.rules()) {
+                if (rule.accepts(parameter, index, context, args)) {
+                    final Option<?> argument = rule.load(parameter, index, context, args);
+                    if (argument.present()) return argument.get();
+                }
+            }
+            return this.loadDefault(parameter, index, context, args);
+        }
+        return null;
+    }
+
+    @Override
     public List<Object> loadArguments(final C context, final Object... args) {
         final List<Object> arguments = new ArrayList<>();
-        final LinkedList<ParameterContext<?>> parameters = context.executable().parameters();
+        final List<ParameterView<?>> parameters = context.executable().parameters().all();
         parameters:
         for (int i = 0; i < parameters.size(); i++) {
-            final ParameterContext<?> parameter = parameters.get(i);
+            final ParameterView<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
                 if (rule.accepts(parameter, i, context, args)) {
-                    final Result<Object> argument = rule.load((ParameterContext<Object>) parameter, i, context, args);
+                    final Option<?> argument = rule.load(parameter, i, context, args);
                     arguments.add(argument.orNull());
                     continue parameters;
                 }
@@ -59,7 +74,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         return Collections.unmodifiableList(arguments);
     }
 
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final C context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final C context, final Object... args) {
         return parameter.type().defaultOrNull();
     }
 }

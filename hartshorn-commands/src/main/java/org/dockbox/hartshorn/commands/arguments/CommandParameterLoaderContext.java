@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class CommandParameterLoaderContext extends ParameterLoaderContext {
 
     private final CommandContext commandContext;
     private final MethodCommandExecutorContext<?> executorContext;
 
-    public CommandParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final CommandContext commandContext,
+    public CommandParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final CommandContext commandContext,
                                          final MethodCommandExecutorContext<?> executorContext) {
         super(method, type, instance, applicationContext);
         this.commandContext = commandContext;

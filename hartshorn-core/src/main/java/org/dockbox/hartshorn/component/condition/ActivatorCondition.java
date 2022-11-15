@@ -22,13 +22,13 @@ public class ActivatorCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElementContext().annotation(RequiresActivator.class).map(condition -> {
+        return context.annotatedElement().annotations().get(RequiresActivator.class).map(condition -> {
             for (final Class<? extends Annotation> activator : condition.value()) {
                 if (!context.applicationContext().hasActivator(activator)) {
                     return ConditionResult.notFound("Activator", activator.getName());
                 }
             }
             return ConditionResult.matched();
-        }).or(ConditionResult.invalidCondition("activator"));
+        }).orElse(ConditionResult.invalidCondition("activator"));
     }
 }

@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,20 +44,22 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final MethodContext<?, T> method = methodContext.method();
-        final TypeContext<T> parent = method.parent();
-        return parent.childOf(JpaRepository.class);
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        final MethodView<T, ?> method = methodContext.method();
+        final TypeView<T> parent = method.declaredBy();
+        return parent.isChildOf(JpaRepository.class);
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final MethodContext<?, T> method = methodContext.method();
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        final MethodView<T, ?> method = methodContext.method();
         final QueryFunction function = context.get(QueryFunction.class);
-        final boolean modifying = method.annotation(EntityModifier.class).present();
-        final boolean transactional = method.annotation(Transactional.class).present();
-        final Query query = method.annotation(Query.class).get();
-        final TypeContext<?> entityType = this.entityType(method, query);
+
+        final ElementAnnotationsIntrospector annotations = method.annotations();
+        final boolean modifying = annotations.has(EntityModifier.class);
+        final boolean transactional = annotations.has(Transactional.class);
+        final Query query = annotations.get(Query.class).get();
+        final TypeView<?> entityType = this.entityType(context, method, query);
 
         return interceptorContext -> {
             final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) interceptorContext.instance();
@@ -64,7 +67,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
 
             final QueryContext queryContext = new QueryContext(query, interceptorContext.args(), method, entityType, context, repository, modifying);
 
-            return function.execute(queryContext);
+            return interceptorContext.checkedCast(function.execute(queryContext));
         };
     }
 
@@ -73,22 +76,22 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
         return ProcessingOrder.LATE;
     }
 
-    protected TypeContext<?> entityType(final MethodContext<?, ?> context, final Query query) {
-        final TypeContext<?> queryEntityType = TypeContext.of(query.entityType());
+    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context, final Query query) {
+        final TypeView<?> queryEntityType = applicationContext.environment().introspect(query.entityType());
         if (!queryEntityType.isVoid()) return queryEntityType;
 
-        final TypeContext<?> returnType = context.genericReturnType();
+        final TypeView<?> returnType = context.genericReturnType();
         if (returnType.isVoid()) {
-            final List<TypeContext<?>> parameters = context.parent().typeParameters(JpaRepository.class);
+            final List<TypeView<?>> parameters = context.declaredBy().typeParameters().from(JpaRepository.class);
             return parameters.get(0);
         }
 
-        if (returnType.childOf(Collection.class)) {
-            final List<TypeContext<?>> typeParameters = returnType.typeParameters();
+        if (returnType.isChildOf(Collection.class)) {
+            final List<TypeView<?>> typeParameters = returnType.typeParameters().all();
             if (typeParameters.isEmpty()) {
                 if (query.type() == QueryType.NATIVE)
-                    throw new UndeterminedEntityTypeException(context);
-                else return TypeContext.VOID;
+                    throw new UndeterminedEntityTypeException(context.qualifiedName());
+                else return applicationContext.environment().introspect(Void.class);
             }
             return typeParameters.get(0);
         }

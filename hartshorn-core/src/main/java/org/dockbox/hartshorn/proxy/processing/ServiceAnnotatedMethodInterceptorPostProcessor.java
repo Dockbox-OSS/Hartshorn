@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -29,14 +29,15 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends ServiceMethodInterceptorPostProcessor {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return !key.type().methods(this.annotation()).isEmpty();
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().methods().annotatedWith(this.annotation()).isEmpty()) return instance;
+        return super.process(context, instance, container, processingContext);
     }
 
     public abstract Class<M> annotation();
 
     @Override
-    protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
-        return type.methods(this.annotation());
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final TypeView<T> type) {
+        return type.methods().annotatedWith(this.annotation());
     }
 }

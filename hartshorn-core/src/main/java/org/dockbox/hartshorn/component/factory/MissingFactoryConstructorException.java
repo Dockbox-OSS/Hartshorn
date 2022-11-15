@@ -18,13 +18,13 @@ package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class MissingFactoryConstructorException extends ApplicationRuntimeException {
 
-    public MissingFactoryConstructorException(final Key<?> key, final MethodContext<?, ?> method) {
+    public MissingFactoryConstructorException(final Key<?> key, final MethodView<?, ?> method) {
         super("No matching bound constructor found for %s with parameters: %s"
-                .formatted(key, method.parameterTypes().stream().map(TypeContext::type).toList()));
+                .formatted(key, method.parameters().types().stream().map(TypeView::name).toList()));
     }
 }

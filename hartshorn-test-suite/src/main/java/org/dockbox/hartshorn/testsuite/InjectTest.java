@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.util.reflect.Extends;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.dockbox.hartshorn.context.Context;
 import org.junit.jupiter.api.Test;
 

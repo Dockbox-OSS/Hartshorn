@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright 2019-2022 the original author or authors.
  *
@@ -18,11 +20,25 @@ apply {
     from("${project.rootDir}/gradle/publications.gradle.kts")
 }
 
+plugins {
+    kotlin("jvm") version "1.7.10"
+    scala
+    groovy
+}
+
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
+}
+
 dependencies {
     api(libs.bundles.jakarta)
     api(libs.javassist)
     api(libs.cglib)
 
-    implementation(libs.reflections)
     implementation(libs.logback)
+
+    testImplementation(libs.scala)
+    testImplementation(libs.groovy)
 }

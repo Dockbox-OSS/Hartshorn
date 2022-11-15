@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 public class PersistenceProviders {
 
     @Provider("jpa_query")
-    public ParameterLoader jpaParameterLoader() {
+    public ParameterLoader<?> jpaParameterLoader() {
         return new JpaParameterLoader();
     }
 

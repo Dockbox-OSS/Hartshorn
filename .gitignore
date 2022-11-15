@@ -1,21 +1,28 @@
 # Generic build outputs
 build
 subject
+lib
+out
+hartshorn-assembly/publications
+*/generated
+
 # Project specifics
 .gradle/
 .idea/
 *.iml
 *.hprof
 dependency-reduced-pom.xml
+
 # Generated directories
 servers
 hartshorn-assembly/distributions
+
 # Test resources
 module/src/test/resources/storage.db-journal
 */.mixin.out
 */testRuns
 */logs
 *.log
+
+# Miscellaneous
 .jpb
-hartshorn-assembly/publications
-*/generated

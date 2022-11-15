@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Collector to optionally save return values/results which have been calculated inside
@@ -43,21 +43,21 @@ public interface ResultCollector {
     void addResult(String id, Object value);
 
     /**
-     * Gets the global result from the stack. If no global result exists {@link Result#empty()}
+     * Gets the global result from the stack. If no global result exists {@link Option#empty()}
      * is returned.
-     * @return The result value, or {@link Result#empty()}.
+     * @return The result value, or {@link Option#empty()}.
      * @param <T> The type of the result.
      */
-    <T> Result<T> result();
+    <T> Option<T> result();
 
     /**
      * Gets a result with the given ID. If no result with the given ID exists
-     * {@link Result#empty()} is returned.
+     * {@link Option#empty()} is returned.
      * @param id The ID of the result.
-     * @return The result value, or {@link Result#empty()}.
+     * @return The result value, or {@link Option#empty()}.
      * @param <T> The type of the result.
      */
-    <T> Result<T> result(String id);
+    <T> Option<T> result(String id);
 
     /**
      * Removes all stored results from the collector instance. If no results exist

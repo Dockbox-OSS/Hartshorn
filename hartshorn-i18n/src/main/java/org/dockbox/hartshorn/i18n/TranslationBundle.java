@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.nio.file.Path;
 import java.util.Locale;
@@ -33,9 +33,9 @@ public interface TranslationBundle {
 
     Set<Message> messages();
 
-    Result<Message> message(String key);
+    Option<Message> message(String key);
 
-    Result<Message> message(String key, Locale language);
+    Option<Message> message(String key, Locale language);
 
     TranslationBundle merge(TranslationBundle bundle);
 

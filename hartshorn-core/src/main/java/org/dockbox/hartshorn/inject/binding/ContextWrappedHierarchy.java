@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Iterator;
 import java.util.List;
@@ -92,7 +92,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public Result<Provider<C>> get(final int priority) {
+    public Option<Provider<C>> get(final int priority) {
         return this.real().get(priority);
     }
 

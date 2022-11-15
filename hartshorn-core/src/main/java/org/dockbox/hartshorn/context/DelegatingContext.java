@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -40,12 +40,12 @@ public interface DelegatingContext<D extends Context> extends Context {
     }
 
     @Override
-    default Result<Context> first(final String name) {
+    default Option<Context> first(final String name) {
         return this.get().first(name);
     }
 
     @Override
-    default <N extends Context> Result<N> first(final String name, final Class<N> context) {
+    default <N extends Context> Option<N> first(final String name, final Class<N> context) {
         return this.get().first(name, context);
     }
 

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
@@ -73,7 +73,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
         if (initializeMvcComponents) {
             final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
             for (final RequestHandlerContext context : mvcControllerContext.requestHandlerContexts()) {
-                final MvcServlet servlet = this.webServletFactory.mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
+                final MvcServlet servlet = this.webServletFactory.mvc((MethodView<?, ViewTemplate>) context.method());
                 final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
                 servlets.put(context.pathSpec(), adapter);
             }

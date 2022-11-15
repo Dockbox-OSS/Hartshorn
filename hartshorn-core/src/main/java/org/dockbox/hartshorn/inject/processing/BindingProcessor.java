@@ -23,18 +23,17 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.MetaProvider;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.proxy.ModifiableProxyManager;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.ObtainableElement;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.reflect.TypedElementContext;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -54,47 +53,43 @@ public class BindingProcessor {
             for (final ProviderContext provider : elements.get(phase)) {
 
                 final Key<?> key = provider.key();
-                final AnnotatedElementContext<?> element = provider.element();
+                final AnnotatedElementView element = provider.element();
 
                 applicationContext.log().debug("Processing provider context of " + element.qualifiedName() + " for " + key + " in phase " + phase);
 
-                if (element instanceof MethodContext) {
-                    this.process(key, (MethodContext<?, ?>) element, applicationContext, context);
+                if (element instanceof MethodView<?,?> methodView) {
+                    this.process(key, methodView, applicationContext);
                 }
-                else if (element instanceof FieldContext) {
-                    this.process(key, (FieldContext<?>) element, applicationContext, context);
+                else if (element instanceof FieldView<?,?> fieldView) {
+                    this.process(key, fieldView, applicationContext);
                 }
             }
         }
     }
 
-    private <R, E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void process(final Key<R> key, final E element, final ApplicationContext applicationContext) throws ApplicationException {
-        final ProviderContextList providerContext = applicationContext.first(ProviderContextList.class).orNull();
-        this.process(key, element, applicationContext, providerContext);
-    }
-
-    private <R, E extends AnnotatedElementContext<?> & ObtainableElement<?> & TypedElementContext<?>> void process(final Key<R> key, final E element, final ApplicationContext applicationContext, final ProviderContextList context) throws ApplicationException {
-        final MetaProvider metaProvider = applicationContext.get(MetaProvider.class);
+    private <R, E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> void process(final Key<R> key, final E element,
+                                                                                                      final ApplicationContext applicationContext) throws ApplicationException {
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
-        final Provider annotation = element.annotation(Provider.class).get();
+        final Provider annotation = element.annotations().get(Provider.class).get();
 
-        final boolean singleton = metaProvider.singleton(key.type()) || element.annotation(Singleton.class).present();
+        final boolean singleton = applicationContext.environment().singleton(key.type()) || element.annotations().has(Singleton.class);
 
         if (conditionMatcher.match(element)) {
-            if (element.type().is(Class.class))
-                this.processClassBinding(applicationContext, (ObtainableElement<Class<R>>) element, key, singleton, annotation, context);
-            else if ((element.type().is(TypeContext.class)))
-                this.processTypeBinding(applicationContext, (ObtainableElement<TypeContext<R>>) element, key, singleton, annotation, context);
-            else
-                this.processInstanceBinding(applicationContext, (ObtainableElement<R>) element, key, singleton, annotation);
+            if (element.type().is(Class.class)) {
+                this.processClassBinding(applicationContext, TypeUtils.adjustWildcards(element, ObtainableView.class), key, singleton, annotation);
+            }
+            else {
+                applicationContext.log().debug("Processing instance binding for " + element.type().name());
+                this.processInstanceBinding(applicationContext, TypeUtils.adjustWildcards(element, ObtainableView.class), key, singleton, annotation);
+            }
         }
     }
 
     private <R> void processInstanceBinding(
-            final ApplicationContext context, final ObtainableElement<R> element, final Key<R> key, final boolean singleton, final Provider annotation
+            final ApplicationContext context, final ObtainableView<R> element, final Key<R> key, final boolean singleton, final Provider annotation
     ) {
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
-        final Supplier<R> supplier = () -> element.obtain(context).rethrowUnchecked().orNull();
+        final Supplier<R> supplier = () -> element.getWithContext().rethrowUnchecked().orNull();
 
         if (singleton) {
             if (annotation.lazy()) function.lazySingleton(supplier);
@@ -103,50 +98,30 @@ public class BindingProcessor {
         else function.to(supplier);
     }
 
-    private <R, C extends Class<R>> void processClassBinding(
-            final ApplicationContext context, final ObtainableElement<C> element, final Key<R> key, boolean singleton, final Provider annotation,
-            final ProviderContextList providerContextList) throws ApplicationException {
+    private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final ObtainableView<C> element,
+                                                             final Key<R> key, boolean singleton, final Provider annotation) throws ApplicationException {
+        final C targetType = element.getWithContext()
+                .rethrowUnchecked()
+                .orElseThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));
 
-        final C targetType = element.obtain(context).rethrowUnchecked().orNull();
-        final MetaProvider metaProvider = context.get(MetaProvider.class);
-        final TypeContext<R> typeContext = TypeContext.of(targetType);
+        context.log().debug("Processing class binding for %s -> %s".formatted(key.type().getSimpleName(), targetType.getSimpleName()));
 
-        singleton = singleton || typeContext.annotation(Singleton.class).present() || metaProvider.singleton(typeContext);
+        singleton = singleton || context.environment().singleton(targetType);
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
 
         if (singleton) {
-            final boolean lazy = annotation.lazy() || context.get(ComponentLocator.class).container(typeContext).map(ComponentContainer::lazy).or(false);
+            final boolean lazy = annotation.lazy() || Boolean.TRUE.equals(context.get(ComponentLocator.class)
+                    .container(targetType)
+                    .map(ComponentContainer::lazy)
+                    .orElse(false)
+            );
             if (lazy) function.lazySingleton(() -> context.get(targetType));
             else {
-                final Proxy<R> proxy = (Proxy<R>) context.environment().manager().factory(targetType)
+                final Proxy<R> proxy = TypeUtils.adjustWildcards(context.environment().factory(targetType)
                         .proxy()
                         .rethrowUnchecked()
-                        .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above."));
+                        .orElseThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above.")), Proxy.class);
                 this.proxiesToInitialize.add(new LateSingletonContext<>(targetType, proxy));
-            }
-        }
-        else function.to(targetType);
-    }
-
-    private <R, C extends TypeContext<R>> void processTypeBinding(
-            final ApplicationContext context, final ObtainableElement<C> element, final Key<R> key, boolean singleton, final Provider annotation,
-            final ProviderContextList providerContextList) throws ApplicationException {
-
-        final C targetType = element.obtain(context).rethrowUnchecked().orNull();
-        final MetaProvider metaProvider = context.get(MetaProvider.class);
-
-        singleton = singleton || targetType.annotation(Singleton.class).present() || metaProvider.singleton(targetType);
-        final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
-
-        if (singleton) {
-            final boolean lazy = annotation.lazy() || context.get(ComponentLocator.class).container(targetType).map(ComponentContainer::lazy).or(false);
-            if (lazy) function.lazySingleton(() -> context.get(targetType));
-            else {
-                final Proxy<R> proxy = (Proxy<R>) context.environment().manager().factory(targetType)
-                        .proxy()
-                        .rethrowUnchecked()
-                        .orThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.name() + ", any errors may be displayed above."));
-                this.proxiesToInitialize.add(new LateSingletonContext<>(targetType.type(), proxy));
             }
         }
         else function.to(targetType);
@@ -159,8 +134,9 @@ public class BindingProcessor {
             this.proxiesToInitialize.remove(proxyContext);
 
             final Object instance = applicationContext.get(proxyContext.targetType);
-            if (proxyContext.proxy.manager() instanceof ModifiableProxyManager modifiableProxyManager) {
-                modifiableProxyManager.delegate(instance);
+            if (proxyContext.proxy.manager() instanceof ModifiableProxyManager) {
+                final ModifiableProxyManager<Object, ?> proxyManager = TypeUtils.adjustWildcards(proxyContext.proxy.manager(), ModifiableProxyManager.class);
+                proxyManager.delegate(instance);
             }
             else {
                 throw new ComponentInitializationException("Cannot lazily initialize singletons for non-modifiable proxy " + proxyContext.proxy);
@@ -168,13 +144,6 @@ public class BindingProcessor {
         }
     }
 
-    private static class LateSingletonContext<T> {
-        private final Class<T> targetType;
-        private final Proxy<T> proxy;
-
-        public LateSingletonContext(final Class<T> targetType, final Proxy<T> proxy) {
-            this.targetType = targetType;
-            this.proxy = proxy;
-        }
+    private record LateSingletonContext<T>(Class<T> targetType, Proxy<T> proxy) {
     }
 }

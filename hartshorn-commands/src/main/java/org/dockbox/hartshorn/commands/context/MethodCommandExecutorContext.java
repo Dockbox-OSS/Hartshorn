@@ -33,18 +33,17 @@ import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -55,7 +54,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
 public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {
 
-    private final MethodContext<?, T> method;
+    private final MethodView<T, ?> method;
+    private final TypeView<T> type;
     private final Key<T> key;
     private final List<String> parentAliases;
     private final Command command;
@@ -64,17 +64,18 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key) {
+    public MethodCommandExecutorContext(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key) {
         super(context);
-        final Result<Command> annotated = method.annotation(Command.class);
+        final Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
         this.method = method;
         this.key = key;
         this.command = annotated.get();
+        this.type = context.environment().introspect(key.type());
 
-        final Result<Command> annotation = key.type().annotation(Command.class);
+        final Option<Command> annotation = this.type.annotations().get(Command.class);
         final Command parent;
         if (annotation.present()) {
             parent = annotation.get();
@@ -96,7 +97,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
     }
 
-    protected MethodContext<?, T> method() {
+    protected MethodView<T, ?> method() {
         return this.method;
     }
 
@@ -125,9 +126,9 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     public Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = new HashMap<>();
-            final LinkedList<ParameterContext<?>> parameters = this.method().parameters();
+            final List<ParameterView<?>> parameters = this.method().parameters().all();
             for (int i = 0; i < parameters.size(); i++) {
-                final ParameterContext<?> parameter = parameters.get(i);
+                final ParameterView<?> parameter = parameters.get(i);
                 this.parameters.put(parameter.name(), new CommandParameterContext(parameter, i));
             }
 
@@ -137,7 +138,9 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     @Override
     public CommandExecutor executor() {
-        final ConditionMatcher conditionMatcher = applicationContext().get(ConditionMatcher.class);
+        final ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
+        final TypeView<T> typeView = this.applicationContext().environment().introspect(this.key().type());
+
         return (ctx) -> {
             final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
             if (before.cancelled()) {
@@ -148,12 +151,13 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             }
 
             final T instance = this.applicationContext().get(this.key());
-            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.key().type(), null, this.applicationContext(), ctx, this);
+            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), typeView, null, this.applicationContext(), ctx, this);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
 
             if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {
                 this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-                this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
+                this.method().invoke(instance, arguments.toArray())
+                        .peekError(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
                 new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
             }
             else {
@@ -192,12 +196,12 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     @Override
-    public TypeContext<?> parent() {
-        return this.key.type();
+    public TypeView<?> parent() {
+        return this.type;
     }
 
     @Override
-    public AnnotatedElementContext<Method> element() {
+    public AnnotatedElementView element() {
         return this.method();
     }
 
@@ -235,7 +239,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     private CommandDefinitionContext definition() {
-        final Result<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        final Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
         if (definition.absent()) throw new DefinitionContextLostException();
         return definition.get();
     }

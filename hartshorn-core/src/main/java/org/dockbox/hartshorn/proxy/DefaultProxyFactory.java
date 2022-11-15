@@ -18,12 +18,14 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -55,7 +57,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         private int counter = 0;
 
         @Override
-        public String get(final TypeContext<?> type) {
+        public String get(final TypeView<?> type) {
             return this.get(type.type());
         }
 
@@ -70,9 +72,11 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         }
     };
 
+    private static final String GROOVY_TRAIT = "groovy.transform.Trait";
+
     // Delegates and interceptors
     private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
-    private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
+    private final Map<Method, MethodInterceptor<T, ?>> interceptors = new ConcurrentHashMap<>();
     private final MultiMap<Method, MethodWrapper<T>> wrappers = new ConcurrentSetMultiMap<>();
     private final ConcurrentClassMap<Object> typeDelegates = new ConcurrentClassMap<>();
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
@@ -89,6 +93,17 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     public DefaultProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
         this.type = type;
         this.applicationContext = applicationContext;
+        this.validate();
+    }
+
+    protected void validate() {
+        if (this.isGroovyTrait(this.type))
+            throw new IllegalArgumentException("Cannot create proxy for Groovy trait " + this.type.getName());
+    }
+
+    protected boolean isGroovyTrait(final Class<?> type) {
+        final TypeView<?> groovyTraitType = this.applicationContext().environment().introspect(GROOVY_TRAIT);
+        return !groovyTraitType.isVoid() && groovyTraitType.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTraitType.type());
     }
 
     protected void updateState() {
@@ -161,7 +176,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> delegate(final MethodContext<?, T> method, final T delegate) {
+    public DefaultProxyFactory<T> delegate(final MethodView<T, ?> method, final T delegate) {
         return this.delegate(method.method(), delegate);
     }
 
@@ -171,7 +186,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
-        if (!TypeContext.of(delegate).childOf(method.getDeclaringClass())) {
+        final TypeView<T> delegateType = this.applicationContext().environment().introspect(delegate);
+        if (!delegateType.isChildOf(method.getDeclaringClass())) {
             throw new IllegalArgumentException("Delegate must implement- or be of type " + method.getDeclaringClass().getName());
         }
         this.delegates.put(method, delegate);
@@ -179,15 +195,16 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final MethodContext<?, T> method, final MethodInterceptor<T> interceptor) {
+    public <R> DefaultProxyFactory<T> intercept(final MethodView<T, R> method, final MethodInterceptor<T, R> interceptor) {
         return this.intercept(method.method(), interceptor);
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final Method method, final MethodInterceptor<T> interceptor) {
-        final MethodInterceptor<T> methodInterceptor;
+    public DefaultProxyFactory<T> intercept(final Method method, final MethodInterceptor<T, ?> interceptor) {
+        final MethodInterceptor<T, ?> methodInterceptor;
         if (this.interceptors.containsKey(method)) {
-            methodInterceptor = this.interceptors.get(method).andThen(interceptor);
+            methodInterceptor = this.interceptors.get(method)
+                    .andThen(TypeUtils.adjustWildcards(interceptor, MethodInterceptor.class));
         }
         else {
             methodInterceptor = interceptor;
@@ -198,7 +215,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final MethodContext<?, T> method, final MethodWrapper<T> wrapper) {
+    public DefaultProxyFactory<T> intercept(final MethodView<T, ?> method, final MethodWrapper<T> wrapper) {
         return this.intercept(method.method(), wrapper);
     }
 
@@ -253,7 +270,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public Map<Method, MethodInterceptor<T>> interceptors() {
+    public Map<Method, MethodInterceptor<T, ?>> interceptors() {
         return this.interceptors;
     }
 

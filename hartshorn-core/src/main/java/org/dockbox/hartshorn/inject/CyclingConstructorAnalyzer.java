@@ -16,41 +16,41 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.ConstructorContext;
-import org.dockbox.hartshorn.util.reflect.CyclicComponentException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class CyclingConstructorAnalyzer<T> {
+public final class CyclingConstructorAnalyzer {
 
-    private static final Map<TypeContext<?>, ConstructorContext<?>> cache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, ConstructorView<?>> cache = new ConcurrentHashMap<>();
 
-    public static <C> Result<ConstructorContext<C>> findConstructor(final TypeContext<C> type) {
+    public static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type) {
         return findConstructor(type, true);
     }
 
-    private static <C> Result<ConstructorContext<C>> findConstructor(final TypeContext<C> type, final boolean checkForCycles) {
-        if (type.isAbstract()) return Result.empty();
-        if (cache.containsKey(type)) {
-            return Result.of(cache.get(type))
-                    .map(c -> (ConstructorContext<C>) c);
+    private static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
+        if (type.isAbstract()) return Attempt.empty();
+        if (cache.containsKey(type.type())) {
+            return Attempt.of((ConstructorView<C>) cache.get(type.type()));
         }
 
-        ConstructorContext<C> optimalConstructor = null;
-        final List<? extends ConstructorContext<C>> constructors = type.injectConstructors();
+        ConstructorView<C> optimalConstructor;
+        final List<? extends ConstructorView<C>> constructors = type.constructors().injectable();
         if (constructors.isEmpty()) {
-            final Result<? extends ConstructorContext<C>> defaultConstructor = type.defaultConstructor();
+            final Option<? extends ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.absent()) {
-                if (type.boundConstructors().isEmpty()) {
-                    return Result.of(new MissingInjectConstructorException(type));
+                if (type.constructors().bound().isEmpty()) {
+                    return Attempt.of(new MissingInjectConstructorException(type));
                 }
                 else {
-                    return Result.empty(); // No injectable constructors found, but there are bound constructors
+                    return Attempt.empty(); // No injectable constructors found, but there are bound constructors
                 }
             }
             else optimalConstructor = defaultConstructor.get();
@@ -59,53 +59,48 @@ public final class CyclingConstructorAnalyzer<T> {
             // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
             // can be satiated at once.
             optimalConstructor = constructors.get(0);
-            for (final ConstructorContext<C> constructor : constructors) {
-                if (optimalConstructor.parameterCount() < constructor.parameterCount()) {
+            for (final ConstructorView<C> constructor : constructors) {
+                if (optimalConstructor.parameters().count() < constructor.parameters().count()) {
                     optimalConstructor = constructor;
                 }
             }
         }
 
-        if (optimalConstructor != null && checkForCycles) {
-            final List<TypeContext<?>> path = findCyclicPath(optimalConstructor, type);
-            if (!path.isEmpty()) return Result.of(new CyclicComponentException(type, path));
+        if (checkForCycles) {
+            final List<TypeView<?>> path = findCyclicPath(optimalConstructor, type);
+            if (!path.isEmpty()) return Attempt.of(new CyclicComponentException(type, path));
         }
 
-        return Result.of(optimalConstructor).present(c -> {
+        return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(c -> {
             // Don't store if there may be a cycle in the dependency graph
-            if (checkForCycles) cache.put(type, c);
+            if (checkForCycles) cache.put(type.type(), c);
         });
     }
 
-    public static List<TypeContext<?>> findCyclicPath(final TypeContext<?> type) {
+    public static List<TypeView<?>> findCyclicPath(final TypeView<?> type) {
         return findConstructor(type, false).map(c -> {
-            final List<TypeContext<?>> path = findCyclicPath(c, type);
+            final List<TypeView<?>> path = findCyclicPath(c, type);
             return finalizeLookup(type, path);
-        }).orElse(ArrayList::new).get();
+        }).orElseGet(ArrayList::new);
     }
 
-    public static List<TypeContext<?>> findCyclicPath(final ConstructorContext<?> constructor) {
-        final List<TypeContext<?>> path = findCyclicPath(constructor, constructor.type());
-        return finalizeLookup(constructor.type(), path);
-    }
-
-    private static List<TypeContext<?>> finalizeLookup(final TypeContext<?> source, final List<TypeContext<?>> path) {
+    private static List<TypeView<?>> finalizeLookup(final TypeView<?> source, final List<TypeView<?>> path) {
         if (path.isEmpty()) return path;
         path.add(0, source);
         path.add(source);
         return path;
     }
 
-    private static List<TypeContext<?>> findCyclicPath(final ConstructorContext<?> constructor, final TypeContext<?> lookForType) {
-        final List<TypeContext<?>> path = new ArrayList<>();
-        if (constructor.parameterCount() == 0) return path;
-        for (final TypeContext<?> parameterType : constructor.parameterTypes()) {
+    private static List<TypeView<?>> findCyclicPath(final ConstructorView<?> constructor, final TypeView<?> lookForType) {
+        final List<TypeView<?>> path = new ArrayList<>();
+        if (constructor.parameters().count() == 0) return path;
+        for (final TypeView<?> parameterType : constructor.parameters().types()) {
             if (parameterType.equals(lookForType)) {
                 return List.of(constructor.type());
             }
-            final Result<? extends ConstructorContext<?>> parameterConstructor = findConstructor(parameterType, false);
+            final Option<? extends ConstructorView<?>> parameterConstructor = findConstructor(parameterType, false);
             if (parameterConstructor.present()) {
-                final List<TypeContext<?>> cyclicPath = findCyclicPath(parameterConstructor.get(), lookForType);
+                final List<TypeView<?>> cyclicPath = findCyclicPath(parameterConstructor.get(), lookForType);
                 if (!cyclicPath.isEmpty()) {
                     if (!(cyclicPath.size() == 1 && cyclicPath.get(0).equals(parameterType))) {
                         path.add(parameterType);

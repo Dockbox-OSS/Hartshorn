@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.cache.modifiers;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -40,27 +41,27 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final UpdateCache update = context.annotation(UpdateCache.class);
-        return new CacheMethodContextImpl(update.value(), null);
+        return new CacheMethodContextImpl(update.value(), Expiration.never());
     }
 
     @Override
-    protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+    protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final CacheContext cacheContext) {
         return interceptorContext -> {
             try {
                 final Object o = interceptorContext.args()[0];
                 cacheContext.manager().get(cacheContext.cacheName())
-                        .present(cache -> cache.put(cacheContext.key(), o));
+                        .peek(cache -> cache.put(cacheContext.key(), o));
                 return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);
-                return methodContext.method().returnType().defaultOrNull();
+                return interceptorContext.method().returnType().defaultOrNull();
             }
         };
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        return methodContext.method().parameters().size() == 1;
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        return methodContext.method().parameters().count() == 1;
     }
 
     @Override

@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.util.parameter;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public interface ParameterLoaderRule<C extends ParameterLoaderContext> {
-    boolean accepts(ParameterContext<?> parameter, int index, C context, Object... args);
-    <T> Result<T> load(ParameterContext<T> parameter, int index, C context, Object... args);
+    boolean accepts(ParameterView<?> parameter, int index, C context, Object... args);
+    <T> Option<T> load(ParameterView<T> parameter, int index, C context, Object... args);
 }

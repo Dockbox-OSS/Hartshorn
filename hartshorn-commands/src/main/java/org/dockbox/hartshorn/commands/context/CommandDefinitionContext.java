@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
@@ -51,7 +50,7 @@ public interface CommandDefinitionContext extends Context {
      *
      * @return The parent/owner.
      */
-    TypeContext<?> parent();
+    Class<?> parent();
 
     /**
      * Gets all elements/arguments of a command, excluding flags. The typically represents the parsed
@@ -74,10 +73,10 @@ public interface CommandDefinitionContext extends Context {
      *
      * @param name The name of the flag.
      *
-     * @return The flag definition, or {@link Result#empty()}
+     * @return The flag definition, or {@link Option#empty()}
      * @see CommandFlag#value()
      */
-    Result<CommandFlag> flag(String name);
+    Option<CommandFlag> flag(String name);
 
     /**
      * Checks if a provided raw command matches the contained definition. This typically validates the given

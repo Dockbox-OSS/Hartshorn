@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -100,12 +99,12 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
      * Gets the {@link Provider} at the given priority, if it exists.
      *
      * @param priority The priority of the potential provider.
-     * @return The provider if it exists, or {@link Result#empty()}
+     * @return The provider if it exists, or {@link Option#empty()}
      */
-    Result<Provider<C>> get(int priority);
+    Option<Provider<C>> get(int priority);
 
     /**
-     * Gets the {@link Key} of the current hierarchy, containing a {@link TypeContext}
+     * Gets the {@link Key} of the current hierarchy, containing a {@link Class}
      * of type {@code C}, and a potential {@link jakarta.inject.Named} instance.
      *
      * @return The key of the current hierarchy.

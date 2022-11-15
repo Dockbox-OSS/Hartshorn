@@ -20,11 +20,12 @@ import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.data.mapping.ObjectMappingException;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
@@ -40,7 +41,7 @@ public class ServletHandler {
 
     private final HttpWebServer starter;
     private final HttpMethod httpMethod;
-    private final MethodContext<?, ?> methodContext;
+    private final MethodView<?, ?> method;
     private final HttpRequest httpRequest;
 
     @Inject
@@ -53,12 +54,12 @@ public class ServletHandler {
     private boolean addHeader = true;
 
     @Bound
-    public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
+    public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodView<?, ?> method) {
         this.starter = starter;
         this.httpMethod = httpMethod;
-        this.methodContext = methodContext;
-        this.httpRequest = methodContext.annotation(HttpRequest.class)
-                .orThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(methodContext.qualifiedName())));
+        this.method = method;
+        this.httpRequest = method.annotations().get(HttpRequest.class)
+                .orElseThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(method.qualifiedName())));
     }
 
     public ObjectMapper mapper() {
@@ -82,14 +83,14 @@ public class ServletHandler {
                 if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
                 final ParameterLoader<HttpRequestParameterLoaderContext> loader = this.starter.loader();
-                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.methodContext, this.methodContext.parent(), null, this.context, req, res);
+                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), null, this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
 
-                final Result<?> result = this.methodContext.invoke(this.context, arguments);
+                final Attempt<?, Throwable> result = this.method.invokeWithContext(arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
-                        if (String.class.equals(result.type())) {
+                        if (String.class.equals(result.map(Object::getClass).orNull())) {
                             res.setContentType(MediaType.TEXT_PLAIN.value());
                             this.context.log().debug("Returning plain body for request %s".formatted(request));
                             res.getWriter().print(result.get());
@@ -97,14 +98,14 @@ public class ServletHandler {
                         else {
                             res.setContentType(this.httpRequest.produces().value());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
-                            final Result<String> write = this.mapper.write(result.get());
+                            final Attempt<String, ObjectMappingException> write = this.mapper.write(result.get());
                             if (write.present()) {
                                 this.context.log().debug("Printing response body to response writer");
                                 res.getWriter().print(write.get());
                             }
                             else {
                                 res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                                if (write.caught()) this.context.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
+                                if (write.errorPresent()) this.context.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
                                 else this.context.log().warn("Could not process response for request %s for session %s".formatted(request, sessionId));
                             }
                         }
@@ -116,7 +117,7 @@ public class ServletHandler {
                     }
                 }
                 else {
-                    if (result.caught()) throw new ApplicationException(result.error());
+                    if (result.errorPresent()) throw new ApplicationException(result.error());
                     else {
                         res.setStatus(HttpStatus.NO_CONTENT.value());
                     }

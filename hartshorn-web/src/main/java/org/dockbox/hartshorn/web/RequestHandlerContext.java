@@ -18,25 +18,25 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.web.annotations.PathSpec;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
 public class RequestHandlerContext extends DefaultApplicationAwareContext {
 
-    private final MethodContext<?, ?> methodContext;
+    private final MethodView<?, ?> methodContext;
     private final HttpRequest httpRequest;
     private final String pathSpec;
 
-    public RequestHandlerContext(final ApplicationContext applicationContext, final MethodContext<?, ?> methodContext) {
+    public RequestHandlerContext(final ApplicationContext applicationContext, final MethodView<?, ?> methodContext) {
         super(applicationContext);
         this.methodContext = methodContext;
-        final Result<HttpRequest> request = methodContext.annotation(HttpRequest.class);
+        final Option<HttpRequest> request = methodContext.annotations().get(HttpRequest.class);
         if (request.absent()) throw new IllegalArgumentException(methodContext.qualifiedName() + " is not annotated with @Request or an extension of it.");
         this.httpRequest = request.get();
 
-        final Result<PathSpec> annotation = methodContext.parent().annotation(PathSpec.class);
+        final Option<PathSpec> annotation = methodContext.declaredBy().annotations().get(PathSpec.class);
         String spec = this.httpRequest().value();
         spec = spec.startsWith("/") ? spec : '/' + spec;
 
@@ -49,7 +49,7 @@ public class RequestHandlerContext extends DefaultApplicationAwareContext {
         this.pathSpec = spec.startsWith("/") ? spec : '/' + spec;
     }
 
-    public MethodContext<?, ?> methodContext() {
+    public MethodView<?, ?> method() {
         return this.methodContext;
     }
 

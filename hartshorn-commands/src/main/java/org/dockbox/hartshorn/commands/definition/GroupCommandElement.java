@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 import java.util.List;
@@ -52,8 +52,8 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     }
 
     @Override
-    public Result<List<CommandElement<?>>> parse(final CommandSource source, final String argument) {
-        return Result.of(this.elements);
+    public Option<List<CommandElement<?>>> parse(final CommandSource source, final String argument) {
+        return Option.of(this.elements);
     }
 
     @Override

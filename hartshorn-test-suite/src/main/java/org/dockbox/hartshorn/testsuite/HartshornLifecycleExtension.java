@@ -16,22 +16,20 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.Activator;
-import org.dockbox.hartshorn.application.ApplicationFactory;
-import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
-import org.dockbox.hartshorn.application.ServiceImpl;
-import org.dockbox.hartshorn.application.StandardApplicationFactory;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
+import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.ComponentLocatorImpl;
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.AccessModifier;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementModifier;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -47,18 +45,16 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 
-@Activator
 public class HartshornLifecycleExtension implements
         ParameterResolver,
         BeforeAllCallback, AfterAllCallback,
@@ -105,10 +101,14 @@ public class HartshornLifecycleExtension implements
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(testClass, testComponentSources);
-        final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationFactory, testClass).orNull();
+        final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
+        elements.add(testClass);
+
+        final ApplicationBuilder<?, ?> applicationBuilder = this.prepareFactory(testClass, elements);
+        final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationBuilder, testClass).orNull();
+
         if (applicationContext == null) {
-            if (applicationContext == null) throw new IllegalStateException("Could not create application context");
+            throw new IllegalStateException("Could not create application context");
         }
 
         applicationContext.bind(HartshornLifecycleExtension.class).singleton(this);
@@ -133,7 +133,8 @@ public class HartshornLifecycleExtension implements
         final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) return false;
 
-        return MethodContext.of(testMethod.get()).annotation(Inject.class).present();
+        final MethodView<?, ?> method = this.applicationContext.environment().introspect(testMethod.get());
+        return method.annotations().has(Inject.class);
     }
 
     @Override
@@ -143,7 +144,11 @@ public class HartshornLifecycleExtension implements
         final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
 
-        return this.applicationContext.get(parameterContext.getParameter().getType());
+        final ParameterLoader<ParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
+        final MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
+        final ParameterLoaderContext parameterLoaderContext = new ParameterLoaderContext(executable, executable.declaredBy(), extensionContext.getTestInstance().orElse(null), this.applicationContext);
+
+        return parameterLoader.loadArgument(parameterLoaderContext, parameterContext.getIndex());
     }
 
     protected void populateTestInstance(final Object instance, final ApplicationContext applicationContext) {
@@ -151,102 +156,106 @@ public class HartshornLifecycleExtension implements
         populator.populate(instance);
     }
 
-    public static Result<ApplicationContext> createTestContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
-        TypeContext<?> applicationActivator = TypeContext.of(activator);
+    public static Option<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, Class<?> activator) {
+        Class<?> next = activator;
+        final Set<Annotation> serviceActivators = new HashSet<>();
+        while (next != null) {
+            Arrays.stream(next.getAnnotations())
+                    .filter(annotation -> annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+                    .forEach(serviceActivators::add);
 
-        if (applicationActivator.annotation(Activator.class).absent()) {
-            applicationActivator = TypeContext.of(HartshornLifecycleExtension.class);
-            final Set<Annotation> serviceActivators = TypeContext.of(activator).annotations().stream()
-                    .filter(annotation -> TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present())
-                    .collect(Collectors.toSet());
-
-            applicationFactory.serviceActivators(serviceActivators);
+            next = next.getSuperclass();
         }
+        applicationBuilder.serviceActivators(serviceActivators);
 
-        final ApplicationContext context = applicationFactory.activator(applicationActivator).create();
-        return Result.of(context);
+        final ApplicationContext context = applicationBuilder.create();
+        return Option.of(context);
     }
 
-    private ApplicationFactory<?, ?> prepareFactory(final Class<?> testClass, final AnnotatedElement... testComponentSources) {
-        ApplicationFactory<?, ?> applicationFactory = new StandardApplicationFactory()
+    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final List<AnnotatedElement> testComponentSources) {
+        ApplicationBuilder<?, ?> applicationBuilder = new StandardApplicationBuilder()
                 .loadDefaults()
-                .applicationFSProvider(ctx -> new JUnitFSProvider())
-                .componentLocator(ctx -> this.getComponentLocator(ctx, testComponentSources));
-
-        final TypeContext<VirtualServiceActivator> virtualActivator = TypeContext.of(VirtualServiceActivator.class);
-        final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
-        elements.add(testClass);
-
-        final AnnotatedElementModifier<Class<VirtualServiceActivator>> modifier = AnnotatedElementModifier.of(virtualActivator);
-        modifier.clear();
-
-        final ServiceActivatorImpl serviceActivator = new ServiceActivatorImpl();
-        modifier.add(serviceActivator);
+                .enableBanner(false)
+                .applicationFSProvider(ctx -> new JUnitFSProvider());
 
         final List<String> arguments = new ArrayList<>();
-        elements.stream().map(e -> {
-            if (e instanceof Class<?> clazz) {
-                return TypeContext.of(clazz);
-            }
-            else if (e instanceof Method method) {
-                return MethodContext.of(method);
-            }
-            return null;
-        }).filter(Objects::nonNull).forEach(context -> {
-            context.annotation(HartshornTest.class)
-                    .present(annotation -> serviceActivator.addProcessors(annotation.processors()));
-            context.annotation(TestProperties.class)
-                    .present(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
-        });
+        final ApplicationBuilder<?, ?> finalApplicationBuilder = applicationBuilder;
 
-        applicationFactory
-                .arguments(arguments.toArray(new String[0]))
-                .serviceActivator(new VirtualServiceActivator.Impl());
+        for (final AnnotatedElement element : testComponentSources) {
+            Option.of(element.getAnnotation(HartshornTest.class))
+                    .peek(annotation -> {
+                        for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
+                            final ComponentProcessor componentProcessor = Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class).rethrowUnchecked().get();
+                            if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
+                                finalApplicationBuilder.preProcessor(preProcessor);
+                            }
+                            else if (componentProcessor instanceof ComponentPostProcessor postProcessor) {
+                                finalApplicationBuilder.postProcessor(postProcessor);
+                            }
+                        }
 
-        final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(testClass).methods(HartshornFactory.class);
-        for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
-            if (!factoryModifier.has(AccessModifier.STATIC)) {
-                throw new IllegalStateException("Expected " + factoryModifier.qualifiedName() + " to be static.");
-            }
-            if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
+                        finalApplicationBuilder
+                                .scanPackages(annotation.scanPackages())
+                                .includeBasePackages(annotation.includeBasePackages());
 
-                final Method jlrMethod = factoryModifier.method();
-                if (!jlrMethod.canAccess(null)) jlrMethod.setAccessible(true);
+                        if (annotation.mainClass() != Void.class) {
+                            finalApplicationBuilder.mainClass(annotation.mainClass());
+                        }
+                    });
 
-                final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
-                if (parameters.isEmpty()) {
-                    applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
-                }
-                else if (parameters.get(0).childOf(ApplicationFactory.class)) {
-                    applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
-                }
-                else {
-                    throw new InvalidFactoryModifierException("parameters", parameters.get(0));
-                }
-                jlrMethod.setAccessible(false);
+            if (applicationBuilder.mainClass() == null) {
+                applicationBuilder.mainClass(testClass);
             }
-            else {
-                throw new InvalidFactoryModifierException("return type", factoryModifier.returnType());
-            }
+
+            Option.of(element.getAnnotation(TestProperties.class))
+                    .peek(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         }
 
-        return applicationFactory;
-    }
-
-    private ComponentLocator getComponentLocator(final InitializingContext context, final AnnotatedElement... testComponentSources) {
-        final ComponentLocator componentLocator = new ComponentLocatorImpl(context);
-        ((ModifiableActivatorHolder) context.applicationContext()).addActivator(new ServiceImpl());
+        applicationBuilder.arguments(arguments.toArray(new String[0]))
+                // Properties below are sensible defaults for testing, but can be enabled/disabled by modifying the application builder in a @ModifyApplication
+                // method if needed.
+                .enableBatchMode(true) // Enable batch mode, to make use of additional caching
+                .enableBanner(false); // Disable banner for tests
 
         for (final AnnotatedElement testComponentSource : testComponentSources) {
             if (testComponentSource == null) continue;
             if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
                 final TestComponents testComponents = testComponentSource.getAnnotation(TestComponents.class);
                 for (final Class<?> component : testComponents.value()) {
-                    componentLocator.register(component);
+                    applicationBuilder.standaloneComponent(component);
                 }
             }
         }
 
-        return componentLocator;
+        final List<Method> methods = Arrays.stream(testClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(ModifyApplication.class))
+                .toList();
+
+        for (final Method factoryModifier : methods) {
+            if (!Modifier.isStatic(factoryModifier.getModifiers())) {
+                throw new IllegalStateException("Expected " + factoryModifier.getName() + " to be static.");
+            }
+            if (ApplicationBuilder.class.isAssignableFrom(factoryModifier.getReturnType())) {
+                if (!factoryModifier.canAccess(null)) factoryModifier.setAccessible(true);
+
+                final Class<?>[] parameters = factoryModifier.getParameterTypes();
+                if (parameters.length == 0) {
+                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class).rethrowUnchecked().orNull();
+                }
+                else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
+                    final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
+                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class).rethrowUnchecked().orNull();
+                }
+                else {
+                    throw new InvalidFactoryModifierException("parameters", parameters[0]);
+                }
+                factoryModifier.setAccessible(false);
+            }
+            else {
+                throw new InvalidFactoryModifierException("return type", factoryModifier.getReturnType());
+            }
+        }
+
+        return applicationBuilder;
     }
 }

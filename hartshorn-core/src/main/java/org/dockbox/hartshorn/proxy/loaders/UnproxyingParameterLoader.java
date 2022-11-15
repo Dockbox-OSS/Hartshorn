@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.proxy.loaders;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
 public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ParameterLoaderContext> {
@@ -28,7 +28,7 @@ public class UnproxyingParameterLoader extends RuleBasedParameterLoader<Paramete
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         return (T) args[index];
     }
 }

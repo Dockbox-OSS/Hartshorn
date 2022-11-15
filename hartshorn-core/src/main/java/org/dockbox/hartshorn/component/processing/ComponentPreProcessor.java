@@ -16,11 +16,9 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.inject.Key;
 
 /**
  * A component pre-processor is responsible for pre-processing a component. This can be used to
@@ -42,39 +40,22 @@ import org.dockbox.hartshorn.inject.Key;
  * @author Guus Lieben
  * @since 22.1
  */
-public non-sealed interface ComponentPreProcessor extends ComponentProcessor {
+public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 
     @Override
-    default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        throw new UnsupportedOperationException("Component pre-processor does not support instance processing, use modifies(ApplicationContext, Key) instead.");
+    public <T> T process(final ComponentProcessingContext<T> processingContext) {
+        this.process(processingContext.applicationContext(), processingContext);
+        return processingContext.instance();
     }
-
-    @Override
-    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        throw new UnsupportedOperationException("Component pre-processor does not support instance processing, use process(ApplicationContext, Key) instead.");
-    }
-
-    /**
-     * Determines whether the component pre-processor modifies the component. As component instances will
-     * not exist yet, this method does not expect the <code>instance</code> to be specified.
-     *
-     * @param context The application context.
-     * @param key The type context of the component.
-     * @return <code>true</code> if the component pre-processor modifies the component, <code>false</code>
-     * otherwise.
-     * @see ComponentProcessor#modifies(ApplicationContext, Key, Object, ComponentProcessingContext)
-     * @see ComponentProcessor#preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)
-     */
-    boolean modifies(ApplicationContext context, Key<?> key);
 
     /**
      * Processes a given component. As component instances will not exist yet, this method does not expect
      * the <code>instance</code> to be specified.
      *
      * @param context The application context.
-     * @param key The type context of the component.
+     * @param processingContext The type context of the component.
      * @param <T> The type of the component.
-     * @see ComponentProcessor#process(ApplicationContext, Key, Object)
+     * @see ComponentProcessor#process(ComponentProcessingContext)
      */
-    <T> void process(ApplicationContext context, Key<T> key);
+    public abstract <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext);
 }

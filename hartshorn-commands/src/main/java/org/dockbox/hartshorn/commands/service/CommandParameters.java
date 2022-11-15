@@ -16,37 +16,33 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
- * for each type found. Requires the use of a {@link ApplicationManager} and
- * presence of {@link UseBootstrap}.
+ * for each type found.
  */
-public class CommandParameters implements ComponentPreProcessor {
+public class CommandParameters extends ComponentPreProcessor {
 
     @Override
-    public boolean modifies(final ApplicationContext context, final Key<?> key) {
-        return key.type().annotation(Parameter.class).present();
-    }
-
-    @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        final Parameter meta = key.type().annotation(Parameter.class).get();
-        final CustomParameterPattern pattern = context.get(meta.pattern());
-        final String parameterKey = meta.value();
-        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(key.type(), pattern, parameterKey);
-        context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        final ElementAnnotationsIntrospector annotationsIntrospector = processingContext.type().annotations();
+        if (annotationsIntrospector.has(Parameter.class)) {
+            final Parameter meta = annotationsIntrospector.get(Parameter.class).get();
+            final CustomParameterPattern pattern = context.get(meta.pattern());
+            final String parameterKey = meta.value();
+            final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
+            context.first(ArgumentConverterContext.class).peek(converterContext -> converterContext.register(converter));
+        }
     }
 
     @Override

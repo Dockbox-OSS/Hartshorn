@@ -29,8 +29,8 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,10 +56,10 @@ public class CommandParserImpl implements CommandParser {
     private CommandResources resources;
 
     @Override
-    public Result<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {
+    public Option<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {
         final ApplicationContext applicationContext = context.applicationContext();
-        final Result<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
-        if (container.absent()) return Result.empty();
+        final Option<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        if (container.absent()) return Option.empty();
 
         final CommandDefinitionContext containerContext = container.get();
         final List<CommandElement<?>> elements = containerContext.elements();
@@ -79,7 +79,7 @@ public class CommandParserImpl implements CommandParser {
 
         if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(this.resources.tooManyArguments());
 
-        return Result.of(new CommandContextImpl(command,
+        return Option.of(new CommandContextImpl(command,
                 parsedElements,
                 parsedFlags,
                 source,
@@ -103,7 +103,7 @@ public class CommandParserImpl implements CommandParser {
             final String token = String.join(" ", elementTokens).trim();
             tokens.removeAll(elementTokens);
 
-            final Result<?> value = element.parse(source, token);
+            final Option<?> value = element.parse(source, token);
             parameters.addAll(this.parameter(value, token, "argument", element.name(), element, source));
 
             if (size == -1) {
@@ -121,7 +121,7 @@ public class CommandParserImpl implements CommandParser {
             final String flag = matcher.group().trim();
             final String nameUntrimmed = flag.split(" ")[0];
             final String name = StringUtilities.trimWith('-', nameUntrimmed);
-            final Result<CommandFlag> commandFlag = context.flag(name);
+            final Option<CommandFlag> commandFlag = context.flag(name);
             if (commandFlag.absent()) throw new ParsingException(this.resources.unknownFlag(name));
 
             final CommandFlag contextFlag = commandFlag.get();
@@ -135,7 +135,7 @@ public class CommandParserImpl implements CommandParser {
 
                     final String token = String.join(" ", tokens.subList(i, end)).trim();
 
-                    final Result<?> value = ((CommandElement<?>) contextFlag).parse(source, token);
+                    final Option<?> value = ((CommandElement<?>) contextFlag).parse(source, token);
                     flags.addAll(this.parameter(value, token, "flag", name, contextFlag, source));
                     command = command.replace(flag, "");
                 }
@@ -148,10 +148,10 @@ public class CommandParserImpl implements CommandParser {
         return command.trim();
     }
 
-    private Collection<CommandParameter<?>> parameter(final Result<?> value, final String token, final String elementType, final String elementName, final CommandPartial partial, final CommandSource source) throws ParsingException {
+    private Collection<CommandParameter<?>> parameter(final Option<?> value, final String token, final String elementType, final String elementName, final CommandPartial partial, final CommandSource source) throws ParsingException {
         if (value.absent()) {
             final Message resource = this.resources.couldNotParse(elementType, elementName);
-            throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
+            throw new ParsingException(resource);
         }
         else {
             if (partial instanceof GroupCommandElement) {

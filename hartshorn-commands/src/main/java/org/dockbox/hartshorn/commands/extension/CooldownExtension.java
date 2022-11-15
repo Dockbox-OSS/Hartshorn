@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.Identifiable;
-import org.dockbox.hartshorn.util.Triad;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
@@ -44,7 +43,7 @@ public class CooldownExtension implements CommandExecutorExtension {
     @Inject
     private CommandResources resources;
 
-    private final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
+    private final Map<Object, CooldownEntry> activeCooldowns = new ConcurrentHashMap<>();
 
     @Override
     public ExtensionResult execute(final CommandContext context, final CommandExecutorContext executorContext) {
@@ -57,7 +56,7 @@ public class CooldownExtension implements CommandExecutorExtension {
             return ExtensionResult.reject(this.resources.cooldownActive());
         }
         else {
-            final Cooldown cooldown = executorContext.element().annotation(Cooldown.class).get();
+            final Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
             this.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
@@ -65,7 +64,7 @@ public class CooldownExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(final CommandExecutorContext context) {
-        return context.element().annotation(Cooldown.class).present();
+        return context.element().annotations().has(Cooldown.class);
     }
 
     /**
@@ -78,7 +77,7 @@ public class CooldownExtension implements CommandExecutorExtension {
      */
     protected void cooldown(final Object o, final long duration, final TemporalUnit timeUnit) {
         if (this.inCooldown(o)) return;
-        this.activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
+        this.activeCooldowns.put(o, new CooldownEntry(LocalDateTime.now(), duration, timeUnit));
     }
 
     /**
@@ -91,10 +90,10 @@ public class CooldownExtension implements CommandExecutorExtension {
     protected boolean inCooldown(final Object o) {
         if (this.activeCooldowns.containsKey(o)) {
             final LocalDateTime now = LocalDateTime.now();
-            final Triad<LocalDateTime, Long, TemporalUnit> cooldown = this.activeCooldowns.get(o);
-            final LocalDateTime timeCooledDown = cooldown.first();
-            final Long duration = cooldown.second();
-            final TemporalUnit timeUnit = cooldown.third();
+            final CooldownEntry cooldown = this.activeCooldowns.get(o);
+            final LocalDateTime timeCooledDown = cooldown.startTime();
+            final long duration = cooldown.duration();
+            final TemporalUnit timeUnit = cooldown.timeUnit();
 
             final LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
 
@@ -102,5 +101,8 @@ public class CooldownExtension implements CommandExecutorExtension {
 
         }
         else return false;
+    }
+
+    private record CooldownEntry(LocalDateTime startTime, long duration, TemporalUnit timeUnit) {
     }
 }

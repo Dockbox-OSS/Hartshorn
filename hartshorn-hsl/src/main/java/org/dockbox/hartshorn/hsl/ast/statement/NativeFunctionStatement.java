@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.List;
 
@@ -28,10 +28,10 @@ public class NativeFunctionStatement extends Function implements NamedNode {
 
     private final Token name;
     private final Token moduleName;
-    private final MethodContext<?, ?> method;
+    private final MethodView<?, ?> method;
     private final List<Parameter> params;
 
-    public NativeFunctionStatement(final Token name, final Token moduleName, final MethodContext<?, ?> method, final List<Parameter> params) {
+    public NativeFunctionStatement(final Token name, final Token moduleName, final MethodView<?, ?> method, final List<Parameter> params) {
         super(name);
         this.name = name;
         this.moduleName = moduleName;
@@ -52,7 +52,7 @@ public class NativeFunctionStatement extends Function implements NamedNode {
         return this.params;
     }
 
-    public MethodContext<?, ?> method() {
+    public MethodView<?, ?> method() {
         return this.method;
     }
 

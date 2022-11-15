@@ -17,19 +17,17 @@
 package org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
-import org.dockbox.hartshorn.proxy.StandardProxyLookup;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
-
-import javassist.util.proxy.ProxyFactory;
 
 public class JavassistApplicationProxier extends AbstractApplicationProxier {
 
     public JavassistApplicationProxier() {
-        this.registerProxyLookup((StandardProxyLookup) ProxyFactory::isProxyClass);
+        this.registerProxyLookup(new JavassistProxyLookup());
     }
 
     @Override
     public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return new JavassistProxyFactory<>(type, this.applicationManager().applicationContext());
+        return new JavassistProxyFactory<>(type, this.environment().applicationContext());
     }
+
 }

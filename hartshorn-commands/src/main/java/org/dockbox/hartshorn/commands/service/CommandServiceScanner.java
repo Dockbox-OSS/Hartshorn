@@ -19,19 +19,19 @@ package org.dockbox.hartshorn.commands.service;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.component.processing.ServicePreProcessor;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 
-public class CommandServiceScanner implements ServicePreProcessor {
-
-    @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
-        return !key.type().methods(Command.class).isEmpty();
-    }
+public class CommandServiceScanner extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        final CommandGateway gateway = context.get(CommandGateway.class);
-        gateway.register(key);
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        if (!processingContext.type()
+                .methods()
+                .annotatedWith(Command.class)
+                .isEmpty()) {
+            final CommandGateway gateway = context.get(CommandGateway.class);
+            gateway.register(processingContext.key());
+        }
     }
 }

@@ -16,20 +16,23 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public class ServletResponseParameterRule implements ParameterLoaderRule<HttpRequestParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        return TypeContext.of(context.response()).childOf(parameter.type());
+    public boolean accepts(final ParameterView<?> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        final TypeView<HttpServletRequest> typeView = context.applicationContext().environment().introspect(context.request());
+        return typeView.isChildOf(parameter.type().type());
     }
 
     @Override
-    public <T> Result<T> load(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
-        return Result.of((T) context.response());
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        return Option.of((T) context.response());
     }
 }

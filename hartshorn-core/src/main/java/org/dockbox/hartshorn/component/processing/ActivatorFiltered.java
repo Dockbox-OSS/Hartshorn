@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+
 import java.lang.annotation.Annotation;
 
 /**
@@ -28,6 +30,8 @@ import java.lang.annotation.Annotation;
  * @since 22.1
  * @see ComponentPreProcessor
  * @see ComponentPostProcessor
+ * @deprecated Use {@link RequiresActivator} instead
  */
+@Deprecated(forRemoval = true, since = "22.5")
 public interface ActivatorFiltered<A extends Annotation> {
 }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a semi-persistent mapping between keys of type {@link K} and values
@@ -43,11 +43,11 @@ public interface Cache<K, V> {
 
     /**
      * Provides the stored values of the cache. If the cache is not
-     * populated, this will return {@link Result#empty()}.
+     * populated, this will return {@link Option#empty()}.
      *
-     * @return The content of the cache, or {@link Result#empty()}
+     * @return The content of the cache, or {@link Option#empty()}
      */
-    Result<V> get(K key);
+    Option<V> get(K key);
 
     /**
      * Returns {@code true} if the cache contains the given key. If the cache is not

@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ActivatorHolder;
+import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.inject.binding.ApplicationBinder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import java.io.Closeable;
  * environment, including components, global contexts, and properties. It also provides the ability
  * to log messages and exceptions in a standardized way.
  *
- * <p>The primary context is created by the {@link org.dockbox.hartshorn.application.ApplicationFactory}
+ * <p>The primary context is created by the {@link ApplicationBuilder}
  * and is accessible through any {@link org.dockbox.hartshorn.context.ContextCarrier} that is attached
  * to the application. If the context supports component injection, it can also be accessed through
  * any form of injection.
@@ -52,7 +52,6 @@ public interface ApplicationContext extends
         HierarchicalComponentProvider,
         ApplicationPropertyHolder,
         ApplicationAwareContext,
-        ApplicationBinder,
         ApplicationLogger,
         ExceptionHandler,
         ActivatorHolder,
@@ -70,17 +69,16 @@ public interface ApplicationContext extends
     void add(ComponentProcessor processor);
 
     /**
-     * Gets the active {@link ApplicationEnvironment} for the application. This allows the application
-     * to access the environment in which it is running, providing access to the application's
-     * {@link org.dockbox.hartshorn.application.scan.PrefixContext} and all of its metadata.
+     * Gets the active {@link ApplicationEnvironment} for the application.
      *
      * @return The active {@link ApplicationEnvironment} for the application.
+     * @see ApplicationEnvironment
      */
     ApplicationEnvironment environment();
 
     @Override
     default Logger log() {
-        return this.environment().manager().log();
+        return this.environment().log();
     }
 
     /**

@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,10 +59,10 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @param key The key to use during lookup
      *
-     * @return The converter if it exists, or {@link Result#empty()}
+     * @return The converter if it exists, or {@link Option#empty()}
      */
-    public Result<ArgumentConverter<?>> converter(final String key) {
-        return Result.of(this.converterMap.get(key.toLowerCase()));
+    public Option<ArgumentConverter<?>> converter(final String key) {
+        return Option.of(this.converterMap.get(key.toLowerCase()));
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
-    public boolean hasConverter(final TypeContext<?> type) {
+    public boolean hasConverter(final TypeView<?> type) {
         return this.converter(type).present();
     }
 
@@ -83,11 +83,11 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @param type The type the converter should convert into.
      * @param <T> The type parameter of the type
      *
-     * @return The converter if it exists, or {@link Result#empty()}
+     * @return The converter if it exists, or {@link Option#empty()}
      */
-    public <T> Result<ArgumentConverter<T>> converter(final TypeContext<T> type) {
-        return Result.of(this.converterMap.values().stream()
-                .filter(converter -> type.childOf(converter.type()))
+    public <T> Option<ArgumentConverter<T>> converter(final TypeView<T> type) {
+        return Option.of(this.converterMap.values().stream()
+                .filter(converter -> type.isChildOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }

@@ -17,35 +17,34 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Locale;
 import java.util.function.Function;
 
 public class ComponentUtilities {
 
-    public static String id(final ApplicationContext context, final TypeContext<?> type) {
+    public static String id(final ApplicationContext context, final Class<?> type) {
         return id(context, type, false);
     }
 
-    public static String id(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting) {
+    public static String id(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting) {
         return format(context, type, ignoreExisting, '-', ComponentContainer::id).toLowerCase(Locale.ROOT);
     }
 
-    public static String name(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting) {
+    public static String name(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting) {
         return format(context, type, ignoreExisting, ' ', ComponentContainer::name);
     }
 
-    protected static String format(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
-        final Result<ComponentContainer> container = context.get(ComponentLocator.class).container(type);
+    protected static String format(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
+        final Option<ComponentContainer> container = context.get(ComponentLocator.class).container(type);
         if (!ignoreExisting && container.present()) {
             final String name = attribute.apply(container.get());
             if (!"".equals(name)) return name;
         }
 
-        String raw = type.name();
+        String raw = type.getSimpleName();
         if (raw.endsWith("Service")) {
             raw = raw.substring(0, raw.length() - 7);
         }

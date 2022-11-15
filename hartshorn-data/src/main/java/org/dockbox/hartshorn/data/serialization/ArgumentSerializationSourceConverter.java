@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.serialization;
 
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.reflect.AnnotatedElementContext;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -36,7 +36,7 @@ import java.nio.file.Path;
 public class ArgumentSerializationSourceConverter implements SerializationSourceConverter {
 
     @Override
-    public InputStream inputStream(final AnnotatedElementContext<?> context, final Object... args) throws ApplicationException {
+    public InputStream inputStream(final AnnotatedElementView context, final Object... args) throws ApplicationException {
         if (args.length != 1) {
             return null;
         }
@@ -71,7 +71,7 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
     }
 
     @Override
-    public OutputStream outputStream(final AnnotatedElementContext<?> context, final Object... args) throws ApplicationException {
+    public OutputStream outputStream(final AnnotatedElementView context, final Object... args) throws ApplicationException {
         if (args.length != 1) {
             return null;
         }

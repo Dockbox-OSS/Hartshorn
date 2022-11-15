@@ -26,6 +26,7 @@ public class TestStatement extends BodyStatement implements NamedNode {
 
     public TestStatement(final Token name, final BlockStatement body) {
         super(name, body);
+        if (name.literal() == null) throw new IllegalArgumentException("Test name cannot be null");
         this.name = name;
     }
 

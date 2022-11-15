@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.data.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
-import org.dockbox.hartshorn.util.reflect.Property;
+import org.dockbox.hartshorn.util.Property;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

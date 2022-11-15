@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.data.serialization;
 
+import java.io.OutputStream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-
-import java.io.OutputStream;
-import java.util.List;
+import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class SerializerMethodPostProcessor extends AbstractSerializerPostProcessor<Serialize> {
 
@@ -36,10 +35,10 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
-        final MethodContext<?, T> method = methodContext.method();
-        final Serialize serialize = method.annotation(Serialize.class).get();
+        final MethodView<T, ?> method = methodContext.method();
+        final Serialize serialize = method.annotations().get(Serialize.class).get();
         final ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
         final boolean returnsStringOrWrapper = this.returnsStringOrWrapper(method);
 
@@ -47,19 +46,21 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
             final Object[] arguments = interceptorContext.args();
 
             try (final OutputStream outputStream = converter.outputStream(method, arguments)) {
-                final Result<?> result;
+                final Option<?> result;
 
                 if (outputStream == null && returnsStringOrWrapper) result = mapper.write(arguments[0]);
                 else result = mapper.write(outputStream, arguments[0]);
 
-                return this.wrapSerializationResult(method, result);
+                return interceptorContext.checkedCast(this.wrapSerializationResult(method, result));
             }
         };
     }
 
-    private boolean returnsStringOrWrapper(final MethodContext<?, ?> method) {
+    private boolean returnsStringOrWrapper(final MethodView<?, ?> method) {
         if (method.returnType().is(String.class)) return true;
-        final List<TypeContext<?>> typeParameters = method.genericReturnType().typeParameters();
-        return typeParameters.size() == 1 && typeParameters.get(0).is(String.class);
+        final TypeParametersIntrospector typeParameters = method.genericReturnType().typeParameters();
+        return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.at(0)
+                .map(t -> t.is(String.class))
+                .orElse(false));
     }
 }

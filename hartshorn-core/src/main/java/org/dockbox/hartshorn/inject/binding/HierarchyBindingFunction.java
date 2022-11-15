@@ -23,8 +23,7 @@ import org.dockbox.hartshorn.inject.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Supplier;
 
@@ -72,11 +71,6 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder to(final Class<? extends T> type) {
-        return this.to(TypeContext.of(type));
-    }
-
-    @Override
-    public Binder to(final TypeContext<? extends T> type) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
@@ -103,22 +97,16 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder lazySingleton(final Class<T> type) {
-        return this.lazySingleton(TypeContext.of(type));
-    }
-
-    @Override
-    public Binder lazySingleton(final TypeContext<T> type) {
         this.lazyContainerSingleton(() -> {
             final Key<T> key = Key.of(type);
-            final Result<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
-            return object.rethrowUnchecked().orNull();
+            final Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
+            return object.orNull();
         });
         return this.binder();
     }
 
     @Override
     public Binder lazySingleton(final Supplier<T> supplier) {
-        final Key<T> key = this.hierarchy().key();
         this.lazyContainerSingleton(() -> {
             final T instance = supplier.get();
             return new ObjectContainer<>(instance, false);

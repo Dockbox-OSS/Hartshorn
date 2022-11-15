@@ -17,60 +17,68 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
-import org.dockbox.hartshorn.application.environment.ApplicationManager;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractApplicationProxier implements ApplicationProxier, ApplicationManaged {
 
-    private ApplicationManager applicationManager;
+    private ApplicationEnvironment environment;
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public AbstractApplicationProxier() {
         this.registerProxyLookup(new NativeProxyLookup());
     }
 
-    public ApplicationManager applicationManager() {
-        return this.applicationManager;
+    public ApplicationEnvironment environment() {
+        return this.environment;
     }
 
-    @Override
-    public void applicationManager(final ApplicationManager applicationManager) {
-        if (this.applicationManager == null) this.applicationManager = applicationManager;
+    public void environment(final ApplicationEnvironment environment) {
+        if (this.environment == null) this.environment = environment;
         else throw new IllegalModificationException("Application manager has already been configured");
     }
 
     @Override
-    public <T> Result<TypeContext<T>> real(final T instance) {
-        if (instance instanceof Proxy proxy) {
-            return Result.of(TypeContext.of(proxy.manager().targetClass()));
+    public <T> Option<Class<T>> real(final T instance) {
+        if (instance instanceof Proxy) {
+            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+            return Option.of(proxy.manager().targetClass());
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
-    public <T> Result<ProxyManager<T>> manager(final T instance) {
-        if (instance instanceof Proxy proxy) {
-            return Result.of(proxy.manager());
+    public <T> Option<ProxyManager<T>> manager(final T instance) {
+        if (instance instanceof Proxy) {
+            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+            return Option.of(proxy.manager());
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
-    public <D, T extends D> Result<D> delegate(final TypeContext<D> type, final T instance) {
-        if (instance instanceof Proxy proxy) {
+    public <D, T extends D> Option<D> delegate(final TypeView<D> type, final T instance) {
+        return this.delegate(type.type(), instance);
+    }
+
+    @Override
+    public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
+        if (instance instanceof Proxy) {
+            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             final ProxyManager<?> manager = proxy.manager();
-            return manager.delegate(type.type());
+            return manager.delegate(type);
         }
-        return Result.empty();
+        return Option.empty();
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final TypeContext<T> type) {
+    public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
         return this.factory(type.type());
     }
 
@@ -79,7 +87,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
         for (final ProxyLookup lookup : this.proxyLookups) {
             if (lookup.isProxy(instance)) return lookup.unproxy(instance);
         }
-        return instance != null ? (Class<T>) instance.getClass() : null;
+        return instance != null ? TypeUtils.adjustWildcards(instance.getClass(), Class.class) : null;
     }
 
     @Override

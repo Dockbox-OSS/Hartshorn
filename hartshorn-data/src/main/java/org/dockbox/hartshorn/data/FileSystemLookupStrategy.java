@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.io.File;
 import java.net.URI;
@@ -28,7 +27,8 @@ import java.util.stream.Collectors;
 
 /**
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
- * the {@link TypeContext owner}, typically this will be similar to {@code /config/{owner-id}/}.
+ * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
+ *
  * <p>This strategy does not require the name to be present, as it is the default strategy used in
  * {@link ConfigurationServicePreProcessor}.
  */
@@ -41,7 +41,7 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
     @Override
     public Set<URI> lookup(final ApplicationContext context, final String path) {
-        final File resolved = context.environment().manager().applicationPath().resolve(path).toFile();
+        final File resolved = context.environment().applicationPath().resolve(path).toFile();
         if (resolved.exists()) return Collections.singleton(resolved.toURI());
 
         final File parent = resolved.getParentFile();
@@ -57,6 +57,6 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
     @Override
     public URI baseUrl(final ApplicationContext context) {
-        return context.environment().manager().applicationPath().toUri();
+        return context.environment().applicationPath().toUri();
     }
 }

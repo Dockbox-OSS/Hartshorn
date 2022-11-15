@@ -25,19 +25,19 @@ import org.dockbox.hartshorn.proxy.Provided;
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         return interceptorContext -> {
             final Provided annotation = methodContext.annotation(Provided.class);
             final String name = annotation.value();
 
             Key<?> key = Key.of(methodContext.method().returnType());
             if (!name.isEmpty()) key = key.name(name);
-            return (R) context.get(key);
+            return interceptorContext.checkedCast(context.get(key));
         };
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 

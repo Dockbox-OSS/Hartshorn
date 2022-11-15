@@ -16,12 +16,7 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 import org.dockbox.hartshorn.inject.Provider;
 
 /**
@@ -37,75 +32,17 @@ import org.dockbox.hartshorn.inject.Provider;
 public sealed interface ComponentProcessor extends OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 
     /**
-     * Processes a given component. The given <code>instance</code> may be null, if the component could not
-     * be created through regular {@link Provider providers}. The given {@link Key} will always be valid, and
-     * will always contain a valid {@link TypeContext}. If the instance is present, the {@link TypeContext}
-     * will represent either the type of the component, or a parent of the type of the component.
+     * Processes a given component context. The given context should contain the application context, the component type and key, and
+     * an optional component instance. The instance may be null if the component is not yet created, or if the component could not be
+     * created through regular {@link Provider providers}. The component {@link Key} will always be valid, and will contain a valid
+     * {@link Class}. The {@link org.dockbox.hartshorn.util.introspect.view.TypeView} of the context will always be valid, and will
+     * always use the type providing the most amount of context. If the component instance is present, the type of that instance will
+     * be used. If the component instance is not present, the type of the {@link Key} is used instead.
      *
-     * <p>The provided {@link ApplicationContext} will always be valid. This is the context which is
-     * responsible for the creation of the component.
-     *
-     * @param context The application context.
-     * @param key The key of the component.
-     * @param instance The instance of the component.
+     * @param processingContext The context of the component being processed. This contains the application context and introspection details.
+     * @return The processed component instance.
      * @param <T> The type of the component.
-     *
-     * @return The processed component.
      */
-    <T> T process(ApplicationContext context, Key<T> key, @Nullable T instance);
-
-    /**
-     * Processes a given component with additional context. The given <code>instance</code> may be null, if the
-     * component could not be created through regular {@link Provider providers}. The given {@link Key} will
-     * always be valid, and will always contain a valid {@link TypeContext}. If the instance is present, the
-     * {@link TypeContext} will represent either the type of the component, or a parent of the type of the
-     * component.
-     *
-     * <p>The provided {@link ApplicationContext} will always be valid. This is the context which is
-     * responsible for the creation of the component.
-     *
-     * @param context The application context.
-     * @param key The key of the component.
-     * @param instance The instance of the component.
-     * @param processingContext The processing context.
-     * @param <T> The type of the component.
-     *
-     * @return The processed component.
-     */
-    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return this.process(context, key, instance);
-    }
-
-    /**
-     * Determines whether the component processor should be called for the given component. By default,
-     * the processor will only process components that are known to the application's {@link ComponentLocator}
-     * through the active {@link ComponentContainer} of the component.
-     *
-     * @param context The application context.
-     * @param key The key of the component.
-     * @param instance The instance of the component.
-     * @param <T> The type of the component.
-     * @return True if the processor should be called, false otherwise.
-     */
-    default <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return processingContext.get(Key.of(ComponentContainer.class)) != null && this.modifies(context, key, instance, processingContext);
-    }
-
-    /**
-     * Determines whether the component processor should be called for the given component. This method
-     * will only be called if the preconditions of {@link #preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)}
-     * are met, assuming the {@link #preconditions(ApplicationContext, Key, Object, ComponentProcessingContext)} are not modified
-     * by the implementing class.
-     *
-     * @param <T> The type of the component.
-     * @param context The application context.
-     * @param key The key of the component.
-     * @param instance The instance of the component.
-     * @param processingContext The processing context.
-     *
-     * @return <code>true</code> if the component processor modifies the component, <code>false</code>
-     *         otherwise.
-     */
-    <T> boolean modifies(ApplicationContext context, Key<T> key, @Nullable T instance, final ComponentProcessingContext processingContext);
+    <T> T process(final ComponentProcessingContext<T> processingContext);
 
 }

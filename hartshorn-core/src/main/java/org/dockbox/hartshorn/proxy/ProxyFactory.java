@@ -19,10 +19,11 @@ package org.dockbox.hartshorn.proxy;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -78,17 +79,17 @@ import java.util.Set;
  * <pre>{@code
  * public class UserMethodExecutionLogger implements MethodWrapper<User> {
  *     @Override
- *     public void acceptBefore(final MethodContext<?, User> method, final User instance, final Object[] args) {
+ *     public void acceptBefore(final MethodView<?, User> method, final User instance, final Object[] args) {
  *         System.out.println("Before method!");
  *     }
  *
  *     @Override
- *     public void acceptAfter(final MethodContext<?, User> method, final User instance, final Object[] args) {
+ *     public void acceptAfter(final MethodView<?, User> method, final User instance, final Object[] args) {
  *         System.out.println("After method!");
  *     }
  *
  *     @Override
- *     public void acceptError(final MethodContext<?, User> method, final User instance, final Object[] args, final Throwable error) {
+ *     public void acceptError(final MethodView<?, User> method, final User instance, final Object[] args, final Throwable error) {
  *         System.out.println("Method caused an exception: " + error.getMessage());
  *     }
  * }
@@ -127,7 +128,7 @@ import java.util.Set;
  * }
  * }</pre>
  * <pre>{@code
- * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(TypeContext.of(User.class));
+ * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(new UserImpl());
  * final User user = factory.proxy().get();
  * user.greeting(); // Returns 'Hello implementation!'
@@ -150,7 +151,7 @@ import java.util.Set;
  * }
  * }</pre>
  * <pre>{@code
- * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(TypeContext.of(User.class));
+ * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(ContextCarrier.class, new ContextCarrierImpl());
  * final User user = factory.proxy().get();
  * user.applicationContext(); // Returns a valid application context
@@ -175,7 +176,7 @@ import java.util.Set;
  * }
  * }</pre>
  * <pre>{@code
- * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(TypeContext.of(User.class));
+ * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(Returner.class, new ReturnerImpl());
  * final User user = factory.proxy().get();
  * user.self(); // Returns the user proxy object instead of the ReturnerImpl instance
@@ -230,7 +231,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param delegate The delegate instance
      * @return This factory
      */
-    F delegate(MethodContext<?, T> method, T delegate);
+    F delegate(MethodView<T, ?> method, T delegate);
 
     /**
      * Delegates the given method to the given delegate instance. This targets a backing implementation,
@@ -250,7 +251,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interceptor The interceptor to use
      * @return This factory
      */
-    F intercept(MethodContext<?, T> method, MethodInterceptor<T> interceptor);
+    <R> F intercept(MethodView<T, R> method, MethodInterceptor<T, R> interceptor);
 
     /**
      * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
@@ -260,7 +261,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interceptor The interceptor to use
      * @return This factory
      */
-    F intercept(Method method, MethodInterceptor<T> interceptor);
+    F intercept(Method method, MethodInterceptor<T, ?> interceptor);
 
     /**
      * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
@@ -271,7 +272,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @return This factory
      * @see MethodWrapper
      */
-    F intercept(MethodContext<?, T> method, MethodWrapper<T> wrapper);
+    F intercept(MethodView<T, ?> method, MethodWrapper<T> wrapper);
 
     /**
      * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
@@ -301,14 +302,31 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy will be created
      * with all currently known behaviors.
      *
-     * <p>If the proxy could not be created, {@link Result#empty()} will be returned. If the proxy is
+     * <p>If the proxy could not be created, {@link Attempt#empty()} will be returned. If the proxy is
      * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
-     * throw an {@link ApplicationException}, or use {@link Result#error()}.
+     * throw an {@link ApplicationException}, or use {@link Attempt#error()}.
      *
      * @return A proxy instance
      * @throws ApplicationException If the proxy could not be created
      */
-    Result<T> proxy() throws ApplicationException;
+    Attempt<T, Throwable> proxy() throws ApplicationException;
+
+    /**
+     * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
+     * invokes the given {@link ConstructorView} to create the proxy instance. This also creates a new
+     * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
+     * known behaviors.
+     *
+     * <p>If the proxy could not be created, {@link Attempt#empty()} will be returned. If the proxy is
+     * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
+     * throw an {@link ApplicationException}, or use {@link Attempt#error()}.
+     *
+     * @param constructor The constructor to use
+     * @param args The arguments to pass to the constructor
+     * @return A proxy instance
+     * @throws ApplicationException If the proxy could not be created
+     */
+    Attempt<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.
@@ -339,7 +357,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      *
      * @return All known interceptors, or an empty map
      */
-    Map<Method, MethodInterceptor<T>> interceptors();
+    Map<Method, MethodInterceptor<T, ?>> interceptors();
 
     /**
      * Gets all known wrappers. This will return an empty map if no wrappers were set. If there are

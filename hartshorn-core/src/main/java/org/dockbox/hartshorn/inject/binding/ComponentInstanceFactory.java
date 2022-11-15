@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.ObjectContainer;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 @FunctionalInterface
 public interface ComponentInstanceFactory {
-    <T> Result<ObjectContainer<T>> instantiate(Key<T> key);
+    <T> Option<ObjectContainer<T>> instantiate(Key<T> key);
 }

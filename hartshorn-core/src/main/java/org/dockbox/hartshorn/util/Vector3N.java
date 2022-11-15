@@ -22,6 +22,7 @@ import java.util.Objects;
  * Represents a 3D point on an x-, y-, and z-axis. All axis points can be represented as any numeral
  * value.
  */
+@Deprecated(forRemoval = true, since = "22.5")
 public class Vector3N extends Vector2N {
 
     private Number y;

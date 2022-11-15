@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,14 +29,14 @@ import java.util.List;
 public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
-    private final TypeContext<T> type;
+    private final Class<T> type;
     private final int size;
 
-    protected DefaultArgumentConverter(final TypeContext<T> type, final String... keys) {
+    protected DefaultArgumentConverter(final Class<T> type, final String... keys) {
         this(type, 1, keys);
     }
 
-    protected DefaultArgumentConverter(final TypeContext<T> type, final int size, final String... keys) {
+    protected DefaultArgumentConverter(final Class<T> type, final int size, final String... keys) {
         if (0 == keys.length)
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
         this.keys = keys;
@@ -45,7 +44,7 @@ public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T
         this.size = size;
     }
 
-    public TypeContext<T> type() {
+    public Class<T> type() {
         return this.type;
     }
 

@@ -22,11 +22,9 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.service.PropertyAwareComponentPostProcessor;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.NotPrimitiveException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Looks up and populates fields annotated with {@link Value}.
@@ -34,24 +32,18 @@ import org.dockbox.hartshorn.util.reflect.TypeContext;
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
-        return !key.type().fields(Value.class).isEmpty();
-    }
-
-    @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        TypeContext<?> instanceType = key.type();
-        if (instance != null) instanceType = TypeContext.unproxy(context, instance);
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) return instance;
 
         final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
         this.verifyPropertiesAvailable(context, propertyHolder);
 
-        for (final FieldContext<?> field : instanceType.fields(Value.class)) {
+        for (final FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Value.class)) {
             try {
-                final Value annotation = field.annotation(Value.class).get();
+                final Value annotation = field.annotations().get(Value.class).get();
 
                 final String valueKey = annotation.value();
-                final Result<?> property = propertyHolder.get(valueKey, field.genericType().type());
+                final Option<?> property = propertyHolder.get(valueKey, field.genericType().type());
 
                 if (property.absent()) {
                     context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
@@ -62,7 +54,7 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
                 field.set(instance, property.get());
             }
             catch (final NotPrimitiveException e) {
-                context.log().warn("Could not prepare value field {} in {}", field.name(), instanceType.name());
+                context.log().warn("Could not prepare value field {} in {}", field.name(), processingContext.type().name());
                 context.handle(e);
             }
         }

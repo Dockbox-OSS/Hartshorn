@@ -16,20 +16,29 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
-import net.sf.cglib.proxy.Enhancer;
-
+import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
-import org.dockbox.hartshorn.proxy.StandardProxyLookup;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxier;
 
+/**
+ * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
+ *             It is recommended to use Javassist instead, through the
+ *             {@link JavassistApplicationProxier}.
+ */
+@Deprecated(since = "22.5")
 public class CglibApplicationProxier extends AbstractApplicationProxier {
 
-    public CglibApplicationProxier() {
-        this.registerProxyLookup((StandardProxyLookup) Enhancer::isEnhanced);
+    public CglibApplicationProxier(final ApplicationLogger logger) {
+        this.registerProxyLookup(new CglibProxyLookup());
+        logger.log().warn("""
+                You are using CGLib, which is not actively maintained and may cause issues with Java 9+.
+                This may cause unexpected behavior or significant errors during the application runtime.
+                It is recommended to use the Javassist proxier instead.""");
     }
 
     @Override
     public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return new CglibProxyFactory<>(type, this.applicationManager().applicationContext());
+        return new CglibProxyFactory<>(type, this.environment().applicationContext());
     }
 }

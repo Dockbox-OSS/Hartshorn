@@ -18,11 +18,10 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class MissingConverterException extends ApplicationRuntimeException {
-    public MissingConverterException(final ApplicationContext context, final TypeContext<?> type) {
+public class MissingConverterException extends ConverterException {
+    public MissingConverterException(final ApplicationContext context, final TypeView<?> type) {
         super(context.get(CommandParameterResources.class)
                 .missingConverter(type.qualifiedName())
                 .string());

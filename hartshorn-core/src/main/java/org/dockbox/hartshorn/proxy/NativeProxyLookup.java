@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.AnnotationInvocationHandler;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.annotations.PolymorphicAnnotationInvocationHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -32,18 +34,21 @@ import java.lang.reflect.Proxy;
 public class NativeProxyLookup implements ProxyLookup {
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
-        final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-        if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
-            return (Class<T>) annotationInvocationHandler.annotation().annotationType();
+    public <T> Class<T> unproxy(final @NonNull T instance) {
+        // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
+        if (Proxy.isProxyClass(instance.getClass())) {
+            final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+            if (invocationHandler instanceof PolymorphicAnnotationInvocationHandler annotationInvocationHandler) {
+                return TypeUtils.adjustWildcards(annotationInvocationHandler.annotation().annotationType(), Class.class);
+            }
         }
-        else if (instance instanceof Annotation annotation) {
-            return (Class<T>) annotation.annotationType();
+        if (instance instanceof Annotation annotation) {
+            return TypeUtils.adjustWildcards(annotation.annotationType(), Class.class);
         }
-        else if (instance instanceof org.dockbox.hartshorn.proxy.Proxy proxy) {
-            return (Class<T>) proxy.manager().targetClass();
+        else if (instance instanceof org.dockbox.hartshorn.proxy.Proxy<?> proxy) {
+            return TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
         }
-        return instance != null ? (Class<T>) instance.getClass() : null;
+        return TypeUtils.adjustWildcards(instance.getClass(), Class.class);
     }
 
     @Override
@@ -53,6 +58,6 @@ public class NativeProxyLookup implements ProxyLookup {
 
     @Override
     public boolean isProxy(final Class<?> candidate) {
-        return Proxy.isProxyClass(candidate) || org.dockbox.hartshorn.proxy.Proxy.class.isAssignableFrom(candidate);
+        return Proxy.isProxyClass(candidate) || (org.dockbox.hartshorn.proxy.Proxy.class.isAssignableFrom(candidate) && !org.dockbox.hartshorn.proxy.Proxy.class.equals(candidate));
     }
 }

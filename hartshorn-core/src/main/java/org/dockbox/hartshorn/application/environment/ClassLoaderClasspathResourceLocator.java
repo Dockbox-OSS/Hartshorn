@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.reflect.Resources;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.Resources;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,15 +40,15 @@ import java.util.stream.Collectors;
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
-    private final ApplicationContext applicationContext;
+    private final ApplicationEnvironment environment;
 
-    public ClassLoaderClasspathResourceLocator(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public ClassLoaderClasspathResourceLocator(final ApplicationEnvironment environment) {
+        this.environment = environment;
     }
 
     @Override
-    public Result<Path> resource(final String name) {
-        return Result.of(() -> Resources.getResourceAsFile(name)).map(File::toPath);
+    public Attempt<Path, IOException> resource(final String name) {
+        return Attempt.of(() -> Resources.getResourceAsFile(name), IOException.class).map(File::toPath);
     }
 
     @Override
@@ -76,10 +76,12 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     @Override
     public URI classpathUri() {
         try {
-            return Hartshorn.class.getClassLoader().getResource("").toURI();
+            final URL resource = Hartshorn.class.getClassLoader().getResource("");
+            if (resource == null) return null;
+            return resource.toURI();
         }
         catch (final URISyntaxException e) {
-            this.applicationContext.handle("Could not look up classpath base", e);
+            this.environment.handle("Could not look up classpath base", e);
             return null;
         }
     }

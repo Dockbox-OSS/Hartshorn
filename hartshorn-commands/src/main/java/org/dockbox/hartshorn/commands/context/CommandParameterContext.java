@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
  * Type used to store a {@link java.lang.reflect.Method}'s parameter and the index of said
@@ -24,15 +24,15 @@ import org.dockbox.hartshorn.util.reflect.ParameterContext;
  */
 public class CommandParameterContext {
 
-    private final ParameterContext<?> parameter;
+    private final ParameterView<?> parameter;
     private final int index;
 
-    public CommandParameterContext(final ParameterContext<?> parameter, final int index) {
+    public CommandParameterContext(final ParameterView<?> parameter, final int index) {
         this.parameter = parameter;
         this.index = index;
     }
 
-    public ParameterContext<?> parameter() {
+    public ParameterView<?> parameter() {
         return this.parameter;
     }
 
@@ -48,7 +48,7 @@ public class CommandParameterContext {
      * @return <code>true</code> if the provided type is equal or a supertype, else <code>false</code>
      */
     public boolean is(final Class<?> type) {
-        return this.parameter().type().childOf(type);
+        return this.parameter().type().isChildOf(type);
     }
 
 }

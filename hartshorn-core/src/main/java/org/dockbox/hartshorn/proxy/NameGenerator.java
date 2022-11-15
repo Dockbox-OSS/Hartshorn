@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * The name generator is responsible for generating the name of the proxy class. The name is generated
@@ -32,7 +32,7 @@ public interface NameGenerator {
      * @param type The type context.
      * @return The name of the proxy class.
      */
-    String get(TypeContext<?> type);
+    String get(TypeView<?> type);
 
     /**
      * Gets the name of the proxy class based on the type class.

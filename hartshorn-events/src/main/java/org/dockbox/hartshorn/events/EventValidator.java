@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.lifecycle.ApplicationState.Started;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public class EventValidator implements LifecycleObserver {
             }.with(applicationContext).post();
         }
 
-        final List<TypeContext<? extends Event>> allEvents = applicationContext.environment().children(Event.class)
+        final List<TypeView<? extends Event>> allEvents = applicationContext.environment().children(Event.class)
                 .stream()
                 .filter(type -> !type.isAbstract())
                 // Anonymous classes indicate the event carries type parameters when posted (e.g. EngineChangedState<State>)
@@ -51,20 +51,22 @@ public class EventValidator implements LifecycleObserver {
                 // definitions.
                 .filter(type -> !type.isAnonymous())
                 .toList();
-        final List<TypeContext<? extends Event>> postedEvents = new ArrayList<>();
+        final List<TypeView<? extends Event>> postedEvents = new ArrayList<>();
 
-        for (final TypeContext<?> bridge : applicationContext.environment().types(Posting.class)) {
-            final Posting posting = bridge.annotation(Posting.class).get();
-            postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).toList());
+        for (final TypeView<?> bridge : applicationContext.environment().types(Posting.class)) {
+            final Posting posting = bridge.annotations().get(Posting.class).get();
+            postedEvents.addAll(Arrays.stream(posting.value())
+                    .map(applicationContext.environment()::introspect)
+                    .toList());
         }
 
-        final Set<TypeContext<? extends Event>> difference = CollectionUtilities.difference(allEvents, postedEvents);
+        final Set<TypeView<? extends Event>> difference = CollectionUtilities.difference(allEvents, postedEvents);
 
         if (!difference.isEmpty()) {
             final StringBuilder message = new StringBuilder(difference.size() + " events are not handled by any event bridge!");
 
             if (!applicationContext.environment().isCI()) {
-                for (final TypeContext<? extends Event> event : difference) {
+                for (final TypeView<? extends Event> event : difference) {
                     message.append("\n\t- ").append(event.name());
                 }
             }

@@ -17,20 +17,22 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
 
 public class ComponentContainerImpl implements ComponentContainer {
 
     private final Component annotation;
-    private final TypeContext<?> component;
+    private final Class<?> component;
+    private final TypeView<?> introspectedComponent;
     private final ApplicationContext context;
 
-    public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
-        final Result<Component> annotated = component.annotation(Component.class);
-        if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
+    public ComponentContainerImpl(final ApplicationContext context, final Class<?> component) {
+        this.introspectedComponent = context.environment().introspect(component);
+        final Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
+        if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
 
         this.component = component;
         this.annotation = annotated.get();
@@ -41,7 +43,7 @@ public class ComponentContainerImpl implements ComponentContainer {
         return this.annotation;
     }
 
-    public TypeContext<?> component() {
+    public Class<?> component() {
         return this.component;
     }
 
@@ -64,13 +66,8 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public TypeContext<?> type() {
-        return this.component;
-    }
-
-    @Override
-    public TypeContext<?> owner() {
-        return TypeContext.VOID;
+    public TypeView<?> type() {
+        return this.introspectedComponent;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class WebServletImpl implements WebServlet {
     @Bound
     public WebServletImpl(final HttpWebServer starter, final RequestHandlerContext context) {
         this.handler = context.applicationContext().get(ServletFactory.class)
-                .servletHandler(starter, context.httpRequest().method(), context.methodContext());
+                .servletHandler(starter, context.httpRequest().method(), context.method());
     }
 
     public ServletHandler handler() {

@@ -17,52 +17,33 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.ModifiableActivatorHolder;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
-public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
-
-    public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
+public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext, ObserverApplicationContext {
 
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
-    protected transient Queue<String> prefixQueue;
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
-        this.environment().annotationsWith(context.configuration().activator(), ServiceActivator.class).forEach(this::addActivator);
-        this.log().debug("Located %d service activators".formatted(this.activators().size()));
     }
 
     @Override
     protected void prepareInitialization() {
         this.preProcessors = new ConcurrentSetTreeMultiMap<>();
-        this.prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
-    }
-
-    @Override
-    public void addActivator(final Annotation annotation) {
-        this.checkRunning();
-        if (this.activatorHolder() instanceof ModifiableActivatorHolder modifiable) {
-            modifiable.addActivator(annotation);
-            return;
-        }
-        throw new IllegalModificationException("Activator holder is not modifiable");
     }
 
     @Override
@@ -70,56 +51,51 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         this.checkRunning();
 
         final Integer order = processor.order();
-        final String name = TypeContext.of(processor).name();
+
+        String phase = "unknown";
+        for (final ProcessingPhase processingPhase : ProcessingOrder.PHASES) {
+            if (processingPhase.test(order)) {
+                phase = processingPhase.name();
+                break;
+            }
+        }
+
+        final String name = processor.getClass().getSimpleName();
 
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof StandardComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
-            this.log().debug("Added " + name + " for component post-processing at phase " + order);
+            this.log().debug("Added %s for component post-processing during %s phase (order %d)".formatted(name, phase.toLowerCase(), order));
         }
         else if (processor instanceof ComponentPreProcessor preProcessor) {
             this.preProcessors.put(preProcessor.order(), preProcessor);
             this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
-            this.log().debug("Added " + name + " for component pre-processing at phase " + order);
+            this.log().debug("Added %s for component pre-processing during %s phase (order %d)".formatted(name, phase.toLowerCase(), order));
         }
         else {
             this.log().warn("Unsupported component processor type [" + name + "]");
         }
     }
 
-    protected void processPrefixQueue() {
-        this.checkRunning();
-        String next;
-        while ((next = this.prefixQueue.poll()) != null) {
-            this.processPrefix(next);
-        }
-    }
-
-    protected void processPrefix(final String prefix) {
-        this.checkRunning();
-        this.locator().register(prefix);
-    }
-
     @Override
-    public void process() {
+    public void loadContext() {
         this.checkRunning();
-        this.processPrefixQueue();
         final Collection<ComponentContainer> containers = this.locator().containers();
-        this.log().debug("Located %d components from classpath".formatted(containers.size()));
-        this.process(containers);
+        this.log().debug("Located %d components".formatted(containers.size()));
+        this.processComponents(containers);
         this.isRunning = true;
     }
 
-    protected void process(final Collection<ComponentContainer> containers) {
+    protected void processComponents(final Collection<ComponentContainer> containers) {
         this.checkRunning();
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
+            this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
             for (final ComponentContainer container : containers) {
-                final TypeContext<?> service = container.type();
+                final TypeView<?> service = container.type();
                 final Key<?> key = Key.of(service);
-                if (serviceProcessor.modifies(this, key)) {
-                    this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), TypeContext.of(serviceProcessor).name()));
-                    serviceProcessor.process(this, key);
-                }
+                final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+                this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+                serviceProcessor.process(context);
             }
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
                 exiting.exit(this);
@@ -128,17 +104,16 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     }
 
     @Override
-    public void bind(final String prefix) {
-        this.checkRunning();
-        for (final String scannedPrefix : this.environment().prefixContext().prefixes()) {
-            if (prefix.startsWith(scannedPrefix)) return;
-            if (scannedPrefix.startsWith(prefix)) {
-                // If a previously scanned prefix is a prefix of the current prefix, it is more specific and should be ignored,
-                // as this prefix will include the specific prefix.
-                this.environment().prefixContext().prefixes().remove(scannedPrefix);
+    public void componentAdded(final ComponentContainer container) {
+        for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
+            this.log().debug("Processing standalone component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+            final TypeView<?> service = container.type();
+            final Key<?> key = Key.of(service);
+            final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+            serviceProcessor.process(context);
+            if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
+                exiting.exit(this);
             }
         }
-        this.environment().prefix(prefix);
-        this.prefixQueue.add(prefix);
     }
 }

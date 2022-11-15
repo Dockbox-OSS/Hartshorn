@@ -17,30 +17,17 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 
 public interface ComponentLocator {
 
-    void register(String prefix);
-
-    default void register(final Class<?> type) {
-        this.register(TypeContext.of(type));
-    }
-
-    void register(TypeContext<?> type);
-
     Collection<ComponentContainer> containers();
 
     Collection<ComponentContainer> containers(ComponentType functional);
 
-    default Result<ComponentContainer> container(final Class<?> type) {
-        return this.container(TypeContext.of(type));
-    }
-
-    Result<ComponentContainer> container(TypeContext<?> type);
+    Option<ComponentContainer> container(final Class<?> type);
 
     <T> void validate(Key<T> key);
 }

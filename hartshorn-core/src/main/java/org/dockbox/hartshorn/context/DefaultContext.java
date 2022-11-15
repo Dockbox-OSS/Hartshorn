@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.Result;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
@@ -56,23 +55,23 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public Result<Context> first(final String name) {
-        return Result.of(this.namedContexts.get(name).stream().findFirst());
+    public Option<Context> first(final String name) {
+        return Option.of(this.namedContexts.get(name).stream().findFirst());
     }
 
     @Override
-    public <N extends Context> Result<N> first(final String name, final Class<N> context) {
-        return Result.of(this.namedContexts.get(name).stream()
-                        .filter(c -> TypeContext.of(c).childOf(context))
+    public <N extends Context> Option<N> first(final String name, final Class<N> context) {
+        return Option.of(this.namedContexts.get(name).stream()
+                        .filter(c -> context.isAssignableFrom(c.getClass()))
                         .findFirst())
-                .map(c -> (N) c);
+                .map(context::cast);
     }
 
     @Override
     public <C extends Context> List<C> all(final Class<C> context) {
         return this.contexts.stream()
                 .filter(c -> c.getClass().equals(context))
-                .map(c -> (C) c)
+                .map(context::cast)
                 .toList();
     }
 
@@ -84,31 +83,31 @@ public abstract class DefaultContext implements Context {
     @Override
     public <N extends Context> List<N> all(final String name, final Class<N> context) {
         return this.namedContexts.get(name).stream()
-                .filter(c -> TypeContext.of(c).childOf(context))
-                .map(c -> (N) c)
+                .filter(c -> context.isAssignableFrom(c.getClass()))
+                .map(context::cast)
                 .toList();
     }
 
 
     @Override
-    public <C extends Context> Result<C> first(final Class<C> context) {
-        return Result.of(this.contexts.stream()
-                        .filter(c -> TypeContext.of(c).childOf(context))
-                        .map(c -> (C) c)
-                        .findFirst());
+    public <C extends Context> Option<C> first(final Class<C> context) {
+        return Option.of(this.contexts.stream()
+                .filter(c -> context.isAssignableFrom(c.getClass()))
+                .map(context::cast)
+                .findFirst());
     }
 
     @Override
-    public <C extends Context> Result<C> first(final Class<C> context, final String name) {
-        return Result.of(this.namedContexts.get(name).stream()
-                        .filter(c -> TypeContext.of(c).childOf(context))
-                        .map(c -> (C) c)
-                        .findFirst());
+    public <C extends Context> Option<C> first(final Class<C> context, final String name) {
+        return Option.of(this.namedContexts.get(name).stream()
+                .filter(c -> context.isAssignableFrom(c.getClass()))
+                .map(context::cast)
+                .findFirst());
     }
 
     @Override
-    public <C extends Context> Result<C> first(final Key<C> key) {
-        if (key.name() == null) return this.first(key.type().type());
-        else return this.first(key.type().type(), key.name().value());
+    public <C extends Context> Option<C> first(final Key<C> key) {
+        if (key.name() == null) return this.first(key.type());
+        else return this.first(key.type(), key.name().value());
     }
 }

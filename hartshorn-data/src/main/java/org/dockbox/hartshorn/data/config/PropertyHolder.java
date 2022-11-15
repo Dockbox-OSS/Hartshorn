@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.data.config;
 
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.Properties;
@@ -26,19 +26,19 @@ public interface PropertyHolder {
 
     boolean has(String key);
 
-    default <T> Result<T> update(final T object, final String key) {
+    default <T> Option<T> update(final T object, final String key) {
         return this.update(object, key, (Class<T>) null);
     }
 
-    <T> Result<T> update(T object, String key, Class<T> type);
+    <T> Option<T> update(T object, String key, Class<T> type);
 
-    <T> Result<T> update(T object, String key, GenericType<T> type);
+    <T> Option<T> update(T object, String key, GenericType<T> type);
 
-    <T> Result<T> get(String key, Class<T> type);
+    <T> Option<T> get(String key, Class<T> type);
 
-    <T> Result<T> get(String key, GenericType<T> type);
+    <T> Option<T> get(String key, GenericType<T> type);
 
-    default <T> Result<T> get(final String key) {
+    default <T> Option<T> get(final String key) {
         return this.get(key, (Class<T>) null);
     }
 

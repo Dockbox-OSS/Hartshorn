@@ -17,10 +17,11 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+
+import java.util.function.Consumer;
 
 /**
- * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
+ * Application starter for Hartshorn applications. This takes a single type
  * which provides application metadata, and a set of command line arguments.
  *
  * @author Guus Lieben
@@ -31,33 +32,38 @@ public final class HartshornApplication {
     private HartshornApplication() {}
 
     /**
-     * Creates a new application context for the given application type, arguments, and modifiers. This initializes the
+     * Creates a new application context for the given main class, arguments, and modifiers. This initializes the
      * required environment and starts the application.
      *
-     * @param activator The application type annotated with {@link Activator}
+     * @param mainClass The main class
      * @param args The application arguments
      * @return The application context
      */
-    public static ApplicationContext create(final Class<?> activator, final String... args) {
-        return new StandardApplicationFactory()
+    public static ApplicationContext create(final Class<?> mainClass, final String... args) {
+        return new StandardApplicationBuilder()
                 .loadDefaults()
-                .activator(TypeContext.of(activator))
+                .mainClass(mainClass)
                 .arguments(args)
                 .create();
     }
 
-    /**
-     * Creates a new application context using the provided arguments and modifiers. This is a convenience method
-     * which deduces the activator type from the current thread's stacktrace.
-     *
-     * @param args The arguments to use when bootstrapping
-     * @return The application context
-     */
-    public static ApplicationContext create(final String... args) {
-        return new StandardApplicationFactory()
+    public static ApplicationContext create(final Class<?> mainClass, final Consumer<ApplicationBuilder<?, ApplicationContext>> modifier) {
+        final ApplicationBuilder<?, ApplicationContext> builder = new StandardApplicationBuilder()
                 .loadDefaults()
-                .deduceActivator()
-                .arguments(args)
-                .create();
+                .mainClass(mainClass);
+        modifier.accept(builder);
+        return builder.create();
+    }
+
+    public static ApplicationContext create(final String... args) {
+        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        final StackTraceElement element = stackTrace[2];
+        try {
+            final Class<?> mainClass = Class.forName(element.getClassName());
+            return create(mainClass, args);
+        }
+        catch (final ClassNotFoundException e) {
+            throw new IllegalStateException("Could not deduce main class", e);
+        }
     }
 }

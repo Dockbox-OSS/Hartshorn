@@ -16,20 +16,24 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.lang.reflect.Method;
 
 public class MethodInvokable implements Invokable {
 
     private final Method method;
+    private final ApplicationContext applicationContext;
 
-    public MethodInvokable(final Method method) {
+    public MethodInvokable(final Method method, final ApplicationContext applicationContext) {
         this.method = method;
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public Object invoke(final Object obj, final Object... args) throws Exception {
+        if (this.method == null) return null;
         return this.method.invoke(obj, args);
     }
 
@@ -65,11 +69,11 @@ public class MethodInvokable implements Invokable {
 
     @Override
     public String getQualifiedName() {
-        return this.toMethodContext().qualifiedName();
+        return this.toIntrospector().qualifiedName();
     }
 
-    public MethodContext<?, ?> toMethodContext() {
-        return MethodContext.of(this.method);
+    public MethodView<?, ?> toIntrospector() {
+        return this.applicationContext.environment().introspect(this.method);
     }
 
     public Method toMethod() {

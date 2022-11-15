@@ -18,48 +18,53 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.InvalidComponentException;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.Context;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
-import org.dockbox.hartshorn.util.reflect.FieldContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
-import org.dockbox.hartshorn.util.reflect.TypedElementContext;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentContextInjectionPreProcessor extends ComponentPreValidator {
+public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final Key<T> key) {
-        final TypeContext<T> type = key.type();
-        for (final FieldContext<?> field : type.fields(Context.class))
-            this.validate(field, key);
+    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+        for (final FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Context.class))
+            this.validate(field, processingContext);
 
-        final List<ExecutableElementContext<?, ?>> constructors = type.injectConstructors().stream()
-                .map(c -> (ExecutableElementContext<?, ?>) c)
+        final List<ExecutableElementView<T>> constructors = processingContext.type().constructors().injectable()
+                .stream().map(c -> (ExecutableElementView<T>) c)
                 .collect(Collectors.toList());
 
-        final List<ExecutableElementContext<?, ?>> methods = type.methods().stream()
-                .map(m -> (ExecutableElementContext<?, ?>) m)
+        final List<ExecutableElementView<T>> methods = processingContext.type().methods().all().stream()
+                .map(m -> (ExecutableElementView<T>) m)
                 .collect(Collectors.toList());
 
-        final Collection<ExecutableElementContext<?, ?>> executables = CollectionUtilities.merge(constructors, methods);
+        final Collection<ExecutableElementView<T>> executables = CollectionUtilities.merge(constructors, methods);
 
-        for (final ExecutableElementContext<?, ?> executable : executables)
-            for (final ParameterContext<?> parameter : executable.parameters(Context.class))
-                this.validate(parameter, key);
+        for (final ExecutableElementView<T> executable : executables)
+            for (final ParameterView<?> parameter : executable.parameters().annotedWith(Context.class))
+                this.validate(parameter, processingContext);
     }
 
-    private void validate(final TypedElementContext<?> context, final Key<?> parent) {
-        if (!context.type().childOf(org.dockbox.hartshorn.context.Context.class))
+    private void validate(final GenericTypeView<?> context, final ComponentProcessingContext<?> parent) {
+        if (!context.type().isChildOf(org.dockbox.hartshorn.context.Context.class))
             throw new InvalidComponentException("%s is annotated with %s but does not extend %s".formatted(
                     context.qualifiedName(),
                     Context.class.getSimpleName(),
                     org.dockbox.hartshorn.context.Context.class.getSimpleName())
             );
+    }
+
+    @Override
+    public final Integer order() {
+        return ProcessingOrder.FIRST;
     }
 }

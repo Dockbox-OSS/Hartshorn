@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,8 +26,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public final class CollectionUtilities {
+
+    private static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = ofEntries(
+            Tuple.of(Collection.class, ArrayList::new),
+            Tuple.of(List.class, ArrayList::new),
+            Tuple.of(Set.class, HashSet::new)
+    );
 
     /**
      * Constructs a new unique map from a given set of {@link Entry entries}. If no entries are
@@ -65,9 +77,9 @@ public final class CollectionUtilities {
     }
 
     public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
-        final T[] merged = (T[]) Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length, arrayOne.getClass());
+        final Object[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length, arrayOne.getClass());
         System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);
-        return merged;
+        return TypeUtils.adjustWildcards(merged, Object.class);
     }
 
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
@@ -79,4 +91,44 @@ public final class CollectionUtilities {
         return Set.copyOf(CollectionUtilities.merge(differenceInOne, differenceInTwo));
     }
 
+    public static <E, T extends Collection<E>> T transform(final Collection<E> collection, final Collection<E> initialCollection, final TypeView<? extends Collection<?>> target) {
+        if (initialCollection != null) {
+            initialCollection.addAll(collection);
+            if (!target.isParentOf(initialCollection.getClass())) {
+                throw new IllegalArgumentException("Initial collection is not of the same type as the target collection");
+            }
+            return TypeUtils.adjustWildcards(initialCollection, Collection.class);
+        }
+        else if (target.isAbstract()) {
+            for (final Entry<Class<?>, Supplier<Collection<?>>> entry : COLLECTION_DEFAULTS.entrySet()) {
+                if (target.is(entry.getKey())) {
+                    final Collection<E> collectionInstance = TypeUtils.adjustWildcards(entry.getValue().get(), Collection.class);
+                    collectionInstance.addAll(collection);
+                    return TypeUtils.adjustWildcards(collectionInstance, Collection.class);
+                }
+            }
+            throw new UnsupportedOperationException("Cannot transform to an abstract collection type (was not a Set or List), use a concrete type instead, or assign a default (empty) collection instance.");
+        }
+        else {
+            final Option<? extends ConstructorView<? extends Collection<?>>> fromCollectionConstructor = target.constructors().withParameters(Collection.class);
+            if (fromCollectionConstructor.present()) {
+                final Option<? extends Collection<?>> createdCollection = fromCollectionConstructor.get().create(collection);
+                if (createdCollection.present()) {
+                    return TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
+                }
+            }
+            else {
+                final Option<? extends ConstructorView<? extends Collection<?>>> defaultConstructor = target.constructors().defaultConstructor();
+                if (defaultConstructor.present()) {
+                    final Option<? extends Collection<?>> createdCollection = defaultConstructor.get().create();
+                    if (createdCollection.present()) {
+                        final Collection<E> collectionInstance = TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
+                        collectionInstance.addAll(collection);
+                        return TypeUtils.adjustWildcards(collectionInstance, Collection.class);
+                    }
+                }
+            }
+            throw new IllegalArgumentException("Collection type " + target.name() + " does not have a constructor that accepts a Collection, or a default constructor. Can't transform collection to this type.");
+        }
+    }
 }

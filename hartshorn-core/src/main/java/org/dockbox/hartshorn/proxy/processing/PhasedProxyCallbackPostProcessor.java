@@ -17,36 +17,33 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodWrapper;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        throw new UnsupportedOperationException("Processing service methods without a context is not supported");
-    }
-
-    @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable T instance, final ComponentProcessingContext processingContext) {
-        final Collection<MethodContext<?, T>> methods = this.modifiableMethods(context, key, instance);
+    public final <T> T process(final ApplicationContext context, @Nullable T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
+        final Key<T> key = processingContext.key();
+        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 
         final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
 
-        instance = this.processProxy(context, key, instance, processingContext, factory);
+        instance = this.processProxy(context, instance, processingContext, factory);
 
-        for (final MethodContext<?, T> method : methods) {
+        for (final MethodView<T, ?> method : methods) {
             final ProxyCallback<T> before = this.doBefore(context, method, key, instance);
             final ProxyCallback<T> after = this.doAfter(context, method, key, instance);
             final ProxyCallback<T> afterThrowing = this.doAfterThrowing(context, method, key, instance);
@@ -60,22 +57,26 @@ public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> ext
         return instance;
     }
 
-    protected <T> T processProxy(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext, final ProxyFactory<T, ?> proxyFactory) {
+    protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T, ?> proxyFactory) {
         // Left for subclasses to override if necessary
         return instance;
     }
 
-    protected <T> Collection<MethodContext<?, T>> modifiableMethods(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        return key.type().methods().stream()
-                .filter(method -> this.wraps(context, method, key, instance))
-                .collect(Collectors.toList());
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        final TypeView<T> typeView = instance == null
+                ? context.environment().introspect(key.type())
+                : context.environment().introspect(instance);
+
+        return typeView.methods().all()
+                .stream().filter(method -> this.wraps(context, method, key, instance))
+                .toList();
     }
 
-    public abstract <T> boolean wraps(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> boolean wraps(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
 
-    public abstract <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
 
-    public abstract <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
 
-    public abstract <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
 }

@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
+import java.sql.Driver;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
@@ -28,16 +34,12 @@ import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.data.remote.DataSourceList;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-import java.sql.Driver;
-import java.util.Collection;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -157,7 +159,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
 
         return this.applicationContext()
                 .property("hartshorn.data.hibernate.dialect")
-                .orThrow(() -> new ApplicationException("No default dialect was configured"));
+                .orElseThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 
     protected boolean isInvalidConnection() {
@@ -185,20 +187,23 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver.getCanonicalName(), dialect));
 
         final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
-        this.hibernateConfiguration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto").or("update"));
+        this.hibernateConfiguration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto")
+                .orElse("update"));
         this.hibernateConfiguration.setProperty("hibernate.connection.driver_class", driver.getCanonicalName());
         this.hibernateConfiguration.setProperty("hibernate.dialect", dialect);
 
-        Result<EntityContext> context = this.applicationContext().first(EntityContext.class);
-        if (context.absent()) {
-            final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
+        final List<EntityContext> entityContexts = new ArrayList<>(this.applicationContext().all(EntityContext.class));
+        if (entityContexts.isEmpty()) {
+            final Collection<TypeView<?>> entities = this.applicationContext.environment().types(Entity.class);
             final EntityContext entityContext = new EntityContext(entities);
             this.applicationContext.add(entityContext);
-            context = Result.of(entityContext);
+            entityContexts.add(entityContext);
         }
 
-        final Collection<TypeContext<?>> entities = context.get().entities();
-        for (final TypeContext<?> entity : entities) {
+        final Collection<TypeView<?>> entities = entityContexts.stream()
+                .flatMap(context -> context.entities().stream())
+                .collect(Collectors.toSet());
+        for (final TypeView<?> entity : entities) {
             this.hibernateConfiguration.addAnnotatedClass(entity.type());
         }
 

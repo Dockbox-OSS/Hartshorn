@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 
@@ -42,7 +42,7 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     }
 
     @Override
-    public Result<T> parse(final CommandSource source, final String argument) {
+    public Option<T> parse(final CommandSource source, final String argument) {
         return this.element.parse(source, argument);
     }
 

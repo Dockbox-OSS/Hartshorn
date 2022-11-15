@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.data.config.PropertyHolder;
 import org.dockbox.hartshorn.data.config.URIConfigProcessor;
 import org.dockbox.hartshorn.data.context.ConfigurationURIContextList;
 
-public abstract class PropertyAwareComponentPostProcessor implements ComponentPostProcessor {
+public abstract class PropertyAwareComponentPostProcessor extends ComponentPostProcessor {
 
     protected void verifyPropertiesAvailable(final ApplicationContext context, final PropertyHolder propertyHolder) {
         if (propertyHolder.properties().isEmpty()) {

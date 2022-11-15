@@ -21,5 +21,8 @@ import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import java.util.List;
 
 public abstract class ParameterLoader<C extends ParameterLoaderContext> {
+
+    public abstract Object loadArgument(C context, int index, Object... args);
+
     public abstract List<Object> loadArguments(C context, Object... args);
 }

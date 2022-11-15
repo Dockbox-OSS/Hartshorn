@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -39,5 +40,12 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * @author Guus Lieben
  * @since 22.1
  */
-public non-sealed interface ComponentPostProcessor extends ComponentProcessor {
+public abstract non-sealed class ComponentPostProcessor implements ComponentProcessor {
+
+    @Override
+    public final <T> T process(final ComponentProcessingContext<T> processingContext) {
+        return this.process(processingContext.applicationContext(), processingContext.instance(), processingContext);
+    }
+
+    public abstract <T> T process(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext);
 }

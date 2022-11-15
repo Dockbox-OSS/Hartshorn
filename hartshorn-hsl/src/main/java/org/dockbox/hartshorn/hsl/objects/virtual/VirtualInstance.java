@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
@@ -41,7 +42,7 @@ public class VirtualInstance implements InstanceReference {
     private final VirtualClass virtualClass;
     private final Map<String, Object> fields = new HashMap<>();
 
-    public VirtualInstance(final VirtualClass virtualClass) {
+    public VirtualInstance(final @NonNull VirtualClass virtualClass) {
         this.virtualClass = virtualClass;
     }
 
@@ -86,6 +87,7 @@ public class VirtualInstance implements InstanceReference {
         return this.virtualClass.name() + " instance";
     }
 
+    @NonNull
     @Override
     public VirtualClass type() {
         return this.virtualClass;

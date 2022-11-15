@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.util.parameter;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 import java.lang.annotation.Annotation;
 
@@ -26,7 +26,7 @@ public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C exten
     protected abstract Class<A> annotation();
 
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final C context, final Object... args) {
-        return parameter.annotation(this.annotation()).present();
+    public boolean accepts(final ParameterView<?> parameter, final int index, final C context, final Object... args) {
+        return parameter.annotations().has(this.annotation());
     }
 }

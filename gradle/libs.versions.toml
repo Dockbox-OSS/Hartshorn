@@ -39,6 +39,7 @@ caffeine = "3.1.1"
 cglib = "3.3.0"
 derby = "10.16.1.1"
 freemarker = "2.3.31"
+groovy = "4.0.2"
 hamcrest = "2.2"
 hibernate = "6.1.2.Final"
 httpclient = "4.5.13"
@@ -56,8 +57,8 @@ mockito-inline = "4.7.0"
 mssql = "11.2.0.jre17"
 mysql = "8.0.30"
 postgresql = "42.5.0"
-reflections = "0.10.2"
-slf4j = "2.0.0"
+scala = "2.13.8"
+slf4j = "1.7.36"
 test-containers = "1.17.3"
 woodstox = "4.4.1"
 
@@ -98,6 +99,7 @@ cglib = { module = "cglib:cglib", version.ref = "cglib" }
 derby = { module = "org.apache.derby:derby", version.ref = "derby" }
 derby-tools = { module = "org.apache.derby:derbytools", version.ref = "derby" }
 freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
+groovy = { module = "org.apache.groovy:groovy-all", version.ref = "groovy" }
 hamcrest = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest" }
 hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
 httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpclient" }
@@ -108,7 +110,7 @@ mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito
 mssql = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssql" }
 mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+scala = { module = "org.scala-lang:scala-library", version.ref = "scala" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 woodstox = { module = "org.codehaus.woodstox:woodstox-core-asl", version.ref = "woodstox" }
 

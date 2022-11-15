@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.Result;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,13 +60,15 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    public <T> T get(final String key) {
+    public <T> T get(final String key, final Class<T> type) {
         return CollectionUtilities.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
                 .filter(arg -> arg.trimmedKey().equals(key))
+                .filter(arg -> type.isInstance(arg.value()))
                 .findFirst()
-                .map(arg -> (T) arg.value())
+                .map(CommandParameter::value)
+                .map(type::cast)
                 .orElse(null);
     }
 
@@ -88,24 +91,24 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    public <T> Result<T> find(final String key) {
-        return Result.of(() -> this.get(key));
+    public <T> Option<T> find(final String key, final Class<T> type) {
+        return Option.of(() -> this.get(key, type));
     }
 
     @Override
-    public <T> Result<CommandParameter<T>> argument(final String key) {
-        return Result.of(this.args.stream()
+    public <T> Option<CommandParameter<T>> argument(final String key) {
+        return Option.of(this.args.stream()
                 .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
-        ).map(arg -> (CommandParameter<T>) arg);
+        ).map(arg -> TypeUtils.adjustWildcards(arg, CommandParameter.class));
     }
 
     @Override
-    public <T> Result<CommandParameter<T>> flag(final String key) {
-        return Result.of(this.flags.stream()
+    public <T> Option<CommandParameter<T>> flag(final String key) {
+        return Option.of(this.flags.stream()
                 .filter(flag -> flag.trimmedKey().equals(key))
                 .findFirst()
-        ).map(flag -> (CommandParameter<T>) flag);
+        ).map(flag -> TypeUtils.adjustWildcards(flag, CommandParameter.class));
     }
 
     @Override

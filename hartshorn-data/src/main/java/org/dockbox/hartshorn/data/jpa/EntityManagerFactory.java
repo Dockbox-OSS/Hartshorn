@@ -17,10 +17,13 @@
 package org.dockbox.hartshorn.data.jpa;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.remote.DataSourceConfiguration;
 
 @Service
+@RequiresActivator(UsePersistence.class)
 public interface EntityManagerFactory {
 
     @Factory

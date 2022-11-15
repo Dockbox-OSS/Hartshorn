@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
@@ -25,14 +26,13 @@ import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.util.Result;
 import org.dockbox.hartshorn.component.ComponentUtilities;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
+import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -47,18 +47,18 @@ import java.util.function.Supplier;
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> proxyContext, final ComponentProcessingContext<T> processingContext) {
         final CacheMethodContext cacheMethodContext = this.context(proxyContext);
         final CacheManager manager = context.get(CacheManager.class);
 
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Result<CacheService> annotation = proxyContext.type().annotation(CacheService.class);
+            final Option<CacheService> annotation = proxyContext.type().annotations().get(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }
             else {
-                name = ComponentUtilities.id(context, proxyContext.type());
+                name = ComponentUtilities.id(context, proxyContext.type().type());
             }
         }
 
@@ -69,11 +69,12 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
 
         final Supplier<Cache<?, ?>> cacheSupplier = () -> {
             final Cache<Object, Object> cache;
-            if (expiration != null)
-                cache = manager.getOrCreate(finalName, expiration);
-            else {
+            if (expiration == Expiration.never()) {
                 cache = manager.get(finalName)
-                        .orThrow(() -> new UnavailableCacheException(finalName));
+                        .orElseThrow(() -> new UnavailableCacheException(finalName));
+            }
+            else {
+                cache = manager.getOrCreate(finalName, expiration);
             }
             return cache;
         };
@@ -87,15 +88,15 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
         }
         final CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, finalName, key);
 
-        return this.process(context, proxyContext, cacheContext);
+        return this.process(context, cacheContext);
     }
 
     protected abstract CacheMethodContext context(MethodProxyContext<?> context);
 
-    protected abstract <T, R> MethodInterceptor<T> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
+    protected abstract <T, R> MethodInterceptor<T, R> process(ApplicationContext context, CacheContext cacheContext);
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         return true;
     }
 }
