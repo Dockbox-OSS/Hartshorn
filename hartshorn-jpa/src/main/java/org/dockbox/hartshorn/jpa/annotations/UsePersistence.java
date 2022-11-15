@@ -31,8 +31,4 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @ServiceActivator(processors = JpaRepositoryDelegationPostProcessor.class)
 public @interface UsePersistence {
-    // TODO: Create hartshorn-config
-    // TODO: Create hartshorn-jpa-liquibase
-    // TODO: Create hartshorn-jpa-hibernate
-    // TODO: Create hartshorn-jpa-hikari
 }
