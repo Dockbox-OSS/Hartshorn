@@ -1,8 +1,12 @@
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -12,8 +16,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
@@ -32,16 +34,21 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
                     }
                 }
                 case FUN -> lookupFinalizableFunction(parser, validator, current);
-                case VAR -> parser.firstCompatibleParser(VariableStatement.class)
-                        .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                        .orElseThrow(() -> new ScriptEvaluationError("Failed to parse variable statement", Phase.PARSING, current));
-                case CLASS -> null; // Class declaration
-                case NATIVE -> null; // Native function declaration
+                case VAR -> delegateParseStatement(parser, validator, VariableStatement.class, "variable", current);
+                case CLASS -> delegateParseStatement(parser, validator, ClassStatement.class, "class", current);
+                case NATIVE -> delegateParseStatement(parser, validator, NativeFunctionStatement.class, "native function", current);
                 default -> throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(TokenType.FINAL.representation(), current.type()), Phase.PARSING, current);
             };
             return Option.of(finalizable).peek(FinalizableStatement::makeFinal);
         }
         return Option.empty();
+    }
+
+    @NotNull
+    private static FinalizableStatement delegateParseStatement(TokenParser parser, TokenStepValidator validator, Class<? extends FinalizableStatement> statement, String statementType, Token current) {
+        return parser.firstCompatibleParser(statement)
+                .flatMap(nodeParser -> nodeParser.parse(parser, validator))
+                .orElseThrow(() -> new ScriptEvaluationError("Failed to parse %s statement".formatted(statementType), Phase.PARSING, current));
     }
 
     @NotNull
