@@ -83,7 +83,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private T typeDelegate;
 
     // Proxy data
-    private final ProxyContextContainer contextContainer = new ProxyContextContainer();
+    private final ProxyContextContainer contextContainer = new ProxyContextContainer(this::updateState);
     private final Class<T> type;
     private final ApplicationContext applicationContext;
 

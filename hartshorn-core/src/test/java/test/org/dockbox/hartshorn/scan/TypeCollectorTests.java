@@ -39,7 +39,7 @@ import test.org.dockbox.hartshorn.scan.types.ScanEnum;
 import test.org.dockbox.hartshorn.scan.types.ScanInterface;
 import test.org.dockbox.hartshorn.scan.types.ScanRecord;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class TypeCollectorTests {
 
     @InjectTest
