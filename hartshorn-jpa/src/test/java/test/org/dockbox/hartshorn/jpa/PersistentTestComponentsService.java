@@ -37,7 +37,8 @@ public class PersistentTestComponentsService implements LifecycleObserver {
         final List<TypeView<?>> entities = Stream.of(
                 User.class,
                 Address.class,
-                JpaUser.class
+                JpaUser.class,
+                UserWithNamedQuery.class
         ).map(applicationContext.environment()::introspect).collect(Collectors.toList());
         applicationContext.add(new EntityContext(entities));
     }
