@@ -17,40 +17,43 @@
 package org.dockbox.hartshorn.jpa.query;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.jpa.JpaParameterLoaderContext;
 import org.dockbox.hartshorn.jpa.JpaRepository;
-import org.dockbox.hartshorn.jpa.annotations.Query;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import jakarta.persistence.EntityManager;
 
-public class QueryContext {
+public abstract class AbstractQueryContext<A> extends DefaultContext {
 
     private ParameterLoader<JpaParameterLoaderContext> parameterLoader;
 
-    private final Query annotation;
+    private final A annotation;
     private final Object[] args;
     private final MethodView<?, ?> method;
     private final TypeView<?> entityType;
 
     private final ApplicationContext applicationContext;
     private final JpaRepository<?, ?> repository;
-    private final boolean modifiesEntity;
 
-    public QueryContext(
-            final Query annotation, final Object[] args, final MethodView<?, ?> method,
+    public AbstractQueryContext(
+            final A annotation, final Object[] args, final MethodView<?, ?> method,
             final TypeView<?> entityType, final ApplicationContext applicationContext,
-            final JpaRepository<?, ?> repository, final boolean modifiesEntity) {
+            final JpaRepository<?, ?> repository) {
         this.annotation = annotation;
         this.args = args;
         this.method = method;
         this.entityType = entityType;
         this.applicationContext = applicationContext;
         this.repository = repository;
-        this.modifiesEntity = modifiesEntity;
+    }
+
+    public A annotation() {
+        return this.annotation;
     }
 
     public ApplicationContext applicationContext() {
@@ -61,17 +64,17 @@ public class QueryContext {
         return this.repository;
     }
 
-    public boolean modifiesEntity() {
-        return this.modifiesEntity;
+    public MethodView<?, ?> method() {
+        return this.method;
     }
 
-    public boolean automaticClear() {
-        return this.annotation.automaticClear();
+    public TypeView<?> entityType() {
+        return this.entityType;
     }
 
-    public boolean automaticFlush() {
-        return this.annotation.automaticFlush();
-    }
+    public abstract boolean automaticClear();
+
+    public abstract boolean automaticFlush();
 
     public jakarta.persistence.Query query(final EntityManager entityManager) {
         final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
@@ -80,23 +83,11 @@ public class QueryContext {
         return persistenceQuery;
     }
 
-    protected jakarta.persistence.Query persistenceQuery(final EntityManager entityManager, final Query query) throws IllegalArgumentException {
-        return switch (query.type()) {
-            case JPQL -> {
-                if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createQuery(query.value());
-                else yield entityManager.createQuery(query.value(), this.entityType.type());
-            }
-            case NATIVE -> {
-                if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createNativeQuery(query.value());
-                else yield entityManager.createNativeQuery(query.value(), this.entityType.type());
-            }
-            default -> throw new UnsupportedQueryTypeException(query.type());
-        };
-    }
+    protected abstract jakarta.persistence.Query persistenceQuery(final EntityManager entityManager, final A query) throws IllegalArgumentException;
 
     protected ParameterLoader<JpaParameterLoaderContext> parameterLoader() {
         if (this.parameterLoader == null) {
-            this.parameterLoader = this.applicationContext().get(Key.of(ParameterLoader.class, "jpa_query"));
+            this.parameterLoader = TypeUtils.adjustWildcards(this.applicationContext().get(Key.of(ParameterLoader.class, "jpa_query")), ParameterLoader.class);
         }
         return this.parameterLoader;
     }

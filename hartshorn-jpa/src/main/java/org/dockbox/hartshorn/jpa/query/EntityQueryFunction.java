@@ -27,19 +27,19 @@ import jakarta.persistence.Query;
 public class EntityQueryFunction implements QueryFunction {
 
     @Override
-    public Object execute(final QueryContext context) {
+    public Object execute(final AbstractQueryContext<?> context) {
         return this.executeQuery(context, session -> {
             final Query query = context.query(session);
             return this.processQueryResult(context, query);
         });
     }
 
-    private Object processQueryResult(final QueryContext context, final Query query) {
-        if (context.modifiesEntity()) return query.executeUpdate();
+    private Object processQueryResult(final AbstractQueryContext<?> context, final Query query) {
+        if (context.entityType().isVoid()) return query.executeUpdate();
         else return query.getResultList();
     }
 
-    private Object executeQuery(final QueryContext context, final Function<EntityManager, Object> action) {
+    private Object executeQuery(final AbstractQueryContext<?> context, final Function<EntityManager, Object> action) {
         final Option<EntityManager> entityManager = context.applicationContext().get(EntityManagerLookup.class)
                 .lookup(context.repository());
 

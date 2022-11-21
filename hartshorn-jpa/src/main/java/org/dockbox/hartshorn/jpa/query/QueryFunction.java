@@ -20,5 +20,5 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 @FunctionalInterface
 public interface QueryFunction {
-    Object execute(QueryContext context) throws ApplicationException;
+    Object execute(AbstractQueryContext<?> context) throws ApplicationException;
 }
