@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
-import org.dockbox.hartshorn.jpa.query.EntityQueryFunction;
-import org.dockbox.hartshorn.jpa.query.QueryFunction;
+import org.dockbox.hartshorn.jpa.query.EntityQueryExecutor;
+import org.dockbox.hartshorn.jpa.query.QueryExecutor;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.jpa.transaction.TransactionManager;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -55,7 +55,7 @@ public class HibernateProviders {
     }
 
     @Provider
-    public QueryFunction queryFunction() {
-        return new EntityQueryFunction();
+    public QueryExecutor queryFunction() {
+        return new EntityQueryExecutor();
     }
 }

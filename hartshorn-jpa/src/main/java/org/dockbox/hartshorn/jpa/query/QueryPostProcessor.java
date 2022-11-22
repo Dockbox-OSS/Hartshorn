@@ -20,13 +20,13 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.NamedQuery;
 import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.annotations.Query.QueryType;
-import org.dockbox.hartshorn.jpa.annotations.Transactional;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.proxy.MethodInterceptorContext;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -34,91 +34,66 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.function.BiFunction;
+import java.util.Collections;
 import java.util.stream.Collectors;
+
+import jakarta.persistence.EntityManager;
 
 public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
 
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final TypeView<T> type) {
-        return type.methods().all().stream()
-                .filter(m -> m.annotations().hasAny(Query.class, NamedQuery.class))
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(
+            final ComponentProcessingContext<T> processingContext) {
+        final JpaQueryContextCreator contextCreator = processingContext.applicationContext()
+                .get(JpaQueryContextCreator.class);
+
+        if (contextCreator == null) return Collections.emptyList();
+
+        return processingContext.type().methods().declared().stream()
+                .filter(m -> contextCreator.supports(processingContext, m))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        final MethodView<T, ?> method = methodContext.method();
-        final TypeView<T> parent = method.declaredBy();
-        if (parent.isChildOf(JpaRepository.class)) {
-            final boolean hasQuery = method.annotations().has(Query.class);
-            return hasQuery || method.annotations().has(NamedQuery.class);
-        }
-        return false;
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext,
+                                     final ComponentProcessingContext<T> processingContext) {
+        // Already filtered by #modifiableMethods
+        return true;
     }
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context,
+                                                  final MethodProxyContext<T> methodContext,
+                                                  final ComponentProcessingContext<T> processingContext) {
         final MethodView<T, ?> method = methodContext.method();
-        final QueryFunction function = context.get(QueryFunction.class);
+        final QueryExecutor function = context.get(QueryExecutor.class);
 
-        final ElementAnnotationsIntrospector annotations = method.annotations();
-        final boolean transactional = annotations.has(Transactional.class);
-
-        final BiFunction<MethodInterceptorContext<T, R>, JpaRepository<?, ?>,
-                AbstractQueryContext<?>> queryContextFunction = this.createQueryFunction(context, method, annotations);
+        final TypeView<?> entityType = this.tryDetermineEntityType(context, method);
+        final JpaQueryContextCreator contextCreator = context.get(JpaQueryContextCreator.class);
 
         return interceptorContext -> {
-            final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) interceptorContext.instance();
-            final AbstractQueryContext<?> queryContext = queryContextFunction.apply(interceptorContext, repository);
+            final T persistenceCapable = interceptorContext.instance();
+            final JpaQueryContext jpaQueryContext = contextCreator.create(context, interceptorContext, entityType, persistenceCapable)
+                    .orElseThrow(() -> new IllegalStateException("No JPA query context found for method " + method));
 
-            if (queryContext.automaticFlush() && !transactional) repository.flush();
-            final Object result = function.execute(queryContext);
+            final EntityManager entityManager = jpaQueryContext.entityManager();
+            if (jpaQueryContext.automaticFlush() && entityManager.getTransaction().isActive())
+                entityManager.flush();
+
+            final Object result = function.execute(jpaQueryContext);
             return interceptorContext.checkedCast(result);
         };
     }
 
     @NonNull
-    private <T, R> BiFunction<MethodInterceptorContext<T, R>, JpaRepository<?, ?>, AbstractQueryContext<?>> createQueryFunction(
-            final ApplicationContext context, final MethodView<T, ?> method,
-            final ElementAnnotationsIntrospector annotations) {
+    private TypeView<?> tryDetermineEntityType(final ApplicationContext context, final MethodView<?, ?> method) {
+        final ElementAnnotationsIntrospector annotations = method.annotations();
         if (annotations.has(NamedQuery.class))
-            return this.namedQueryContextFunction(context, method, annotations);
+            return this.entityType(context, method, annotations.get(NamedQuery.class).get());
         else if (annotations.has(Query.class))
-            return this.unnamedQueryContextFunction(context, method, annotations);
+            return this.entityType(context, method, annotations.get(Query.class).get());
         else
-            throw new IllegalStateException("No applicable query annotation found on method " + method);
-    }
-
-    @NonNull
-    private <T, R> BiFunction<MethodInterceptorContext<T, R>, JpaRepository<?, ?>, AbstractQueryContext<?>> unnamedQueryContextFunction(
-            final ApplicationContext context, final MethodView<T, ?> method,
-            final ElementAnnotationsIntrospector annotations) {
-
-        final BiFunction<MethodInterceptorContext<T, R>, JpaRepository<?, ?>, AbstractQueryContext<?>> queryContextFunction;
-        final Query query = annotations.get(Query.class).get();
-        final TypeView<?> entityType = this.entityType(context, method, query);
-
-        queryContextFunction = (interceptorContext, repository) -> {
-            return new UnnamedQueryContext(query, interceptorContext.args(), method, entityType, context, repository);
-        };
-        return queryContextFunction;
-    }
-
-    @NonNull
-    private <T, R> BiFunction<MethodInterceptorContext<T, R>, JpaRepository<?, ?>, AbstractQueryContext<?>> namedQueryContextFunction(
-            final ApplicationContext context, final MethodView<T, ?> method,
-            final ElementAnnotationsIntrospector annotations) {
-
-        final BiFunction<MethodInterceptorContext<T, R>, JpaRepository<?, ?>, AbstractQueryContext<?>> queryContextFunction;
-        final NamedQuery namedQuery = annotations.get(NamedQuery.class).get();
-        final TypeView<?> entityType = this.entityType(context, method, namedQuery);
-
-        queryContextFunction = (interceptorContext, repository) -> {
-            return new NamedQueryContext(namedQuery, interceptorContext.args(), method, entityType, context, repository);
-        };
-        return queryContextFunction;
+            return this.entityType(context, method, (Class<?>) null);
     }
 
     @Override
@@ -126,7 +101,8 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
         return ProcessingOrder.LATE;
     }
 
-    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context, final Query query) {
+    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context,
+                                     final Query query) {
         final TypeView<?> typeView = this.entityType(applicationContext, context, query.entityType());
         if (typeView == null) {
             if (query.type() == QueryType.NATIVE)
@@ -136,29 +112,15 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
         return typeView;
     }
 
-    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context, final NamedQuery query) {
+    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context,
+                                     final NamedQuery query) {
         final TypeView<?> typeView = this.entityType(applicationContext, context, query.entityType());
         if (typeView == null) return applicationContext.environment().introspect(Void.class);
         return typeView;
     }
 
-    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context, final Class<?> entityType) {
-        final TypeView<?> queryEntityType = applicationContext.environment().introspect(entityType);
-        if (!queryEntityType.isVoid()) return queryEntityType;
-
-        final TypeView<?> returnType = context.genericReturnType();
-        if (returnType.isVoid()) {
-            final List<TypeView<?>> parameters = context.declaredBy().typeParameters().from(JpaRepository.class);
-            return parameters.get(0);
-        }
-
-        if (returnType.isChildOf(Collection.class)) {
-            final List<TypeView<?>> typeParameters = returnType.typeParameters().all();
-            if (typeParameters.isEmpty()) {
-                return null;
-            }
-            return typeParameters.get(0);
-        }
-        else return returnType;
+    protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context,
+                                     final Class<?> entityType) {
+        return applicationContext.get(EntityTypeLookup.class).entityType(applicationContext, context, entityType);
     }
 }

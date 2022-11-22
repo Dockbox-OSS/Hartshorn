@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.query;
+package org.dockbox.hartshorn.jpa.query.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.jpa.JpaParameterLoaderContext;
-import org.dockbox.hartshorn.jpa.JpaRepository;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -28,62 +28,68 @@ import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import jakarta.persistence.EntityManager;
 
-public abstract class AbstractQueryContext<A> extends DefaultContext {
+public abstract class AbstractJpaQueryContext extends DefaultContext implements JpaQueryContext {
 
     private ParameterLoader<JpaParameterLoaderContext> parameterLoader;
 
-    private final A annotation;
     private final Object[] args;
     private final MethodView<?, ?> method;
     private final TypeView<?> entityType;
 
     private final ApplicationContext applicationContext;
-    private final JpaRepository<?, ?> repository;
+    private final Object persistenceCapable;
 
-    public AbstractQueryContext(
-            final A annotation, final Object[] args, final MethodView<?, ?> method,
+    public AbstractJpaQueryContext(
+            final Object[] args, final MethodView<?, ?> method,
             final TypeView<?> entityType, final ApplicationContext applicationContext,
-            final JpaRepository<?, ?> repository) {
-        this.annotation = annotation;
+            final Object persistenceCapable) {
         this.args = args;
         this.method = method;
         this.entityType = entityType;
         this.applicationContext = applicationContext;
-        this.repository = repository;
+        this.persistenceCapable = persistenceCapable;
     }
 
-    public A annotation() {
-        return this.annotation;
-    }
-
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }
 
-    public JpaRepository<?, ?> repository() {
-        return this.repository;
+    @Override
+    public Object persistenceCapable() {
+        return this.persistenceCapable;
     }
 
+    @Override
     public MethodView<?, ?> method() {
         return this.method;
     }
 
+    @Override
     public TypeView<?> entityType() {
         return this.entityType;
     }
 
-    public abstract boolean automaticClear();
+    @Override
+    public EntityManager entityManager() {
+        return this.applicationContext().get(EntityManagerLookup.class)
+                .lookup(this.persistenceCapable())
+                .orElseThrow(() -> new UnsupportedOperationException("Unsupported persistence capable type: " + this.persistenceCapable().getClass()));
+    }
 
-    public abstract boolean automaticFlush();
-
-    public jakarta.persistence.Query query(final EntityManager entityManager) {
-        final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
+    @Override
+    public jakarta.persistence.Query query() {
+        final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(this.entityManager());
         final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
         return persistenceQuery;
     }
 
-    protected abstract jakarta.persistence.Query persistenceQuery(final EntityManager entityManager, final A query) throws IllegalArgumentException;
+    protected abstract jakarta.persistence.Query persistenceQuery(final EntityManager entityManager) throws IllegalArgumentException;
+
+    protected TypeView<?> queryResultType() {
+        return this.method().genericReturnType();
+    }
 
     protected ParameterLoader<JpaParameterLoaderContext> parameterLoader() {
         if (this.parameterLoader == null) {

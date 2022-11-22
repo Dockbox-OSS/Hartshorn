@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.annotations;
+package org.dockbox.hartshorn.jpa.query;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.jpa.query.QueryPostProcessor;
-import org.dockbox.hartshorn.jpa.query.context.NamedQueryComponentPreProcessor;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@UseProxying
-@Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(processors = {
-        QueryPostProcessor.class,
-        NamedQueryComponentPreProcessor.class,
-})
-public @interface UseQuerying {
+@FunctionalInterface
+public interface QueryExecutor {
+    Object execute(JpaQueryContext context) throws ApplicationException;
 }

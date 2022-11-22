@@ -22,8 +22,10 @@ import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
+import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManager;
 
+@Singleton
 public class ProxyAttachedEntityManagerLookup implements EntityManagerLookup {
 
     @Override

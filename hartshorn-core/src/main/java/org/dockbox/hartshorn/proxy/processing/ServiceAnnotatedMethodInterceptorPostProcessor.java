@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -37,7 +36,7 @@ public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends A
     public abstract Class<M> annotation();
 
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final TypeView<T> type) {
-        return type.methods().annotatedWith(this.annotation());
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ComponentProcessingContext<T> processingContext) {
+        return processingContext.type().methods().annotatedWith(this.annotation());
     }
 }

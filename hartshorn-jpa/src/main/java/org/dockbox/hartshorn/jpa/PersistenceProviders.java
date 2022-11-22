@@ -21,8 +21,17 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
+import org.dockbox.hartshorn.jpa.entitymanager.JpaEntityTypeLookup;
 import org.dockbox.hartshorn.jpa.entitymanager.ProxyAttachedEntityManagerLookup;
+import org.dockbox.hartshorn.jpa.query.context.AggregateJpaQueryContextCreator;
+import org.dockbox.hartshorn.jpa.query.context.ImplicitNamedJpaQueryContextCreator;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
+import org.dockbox.hartshorn.jpa.query.context.NamedJpaQueryContextCreator;
+import org.dockbox.hartshorn.jpa.query.context.UnnamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+
+import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UsePersistence.class)
@@ -36,5 +45,20 @@ public class PersistenceProviders {
     @Provider
     public EntityManagerLookup entityManagerLookup() {
         return new ProxyAttachedEntityManagerLookup();
+    }
+
+    @Provider(phase = -128)
+    public EntityTypeLookup entityTypeLookup() {
+        return new JpaEntityTypeLookup();
+    }
+
+    @Provider
+    @Singleton
+    public JpaQueryContextCreator queryContextFactory(final EntityTypeLookup entityTypeLookup) {
+        final AggregateJpaQueryContextCreator contextFactory = new AggregateJpaQueryContextCreator();
+        contextFactory.register(0, new ImplicitNamedJpaQueryContextCreator(entityTypeLookup));
+        contextFactory.register(25, new UnnamedJpaQueryContextCreator());
+        contextFactory.register(50, new NamedJpaQueryContextCreator());
+        return contextFactory;
     }
 }

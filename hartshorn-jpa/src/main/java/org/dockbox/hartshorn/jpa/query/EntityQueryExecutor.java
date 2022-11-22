@@ -16,9 +16,21 @@
 
 package org.dockbox.hartshorn.jpa.query;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
 
-@FunctionalInterface
-public interface QueryFunction {
-    Object execute(AbstractQueryContext<?> context) throws ApplicationException;
+import jakarta.persistence.Query;
+
+public class EntityQueryExecutor implements QueryExecutor {
+
+    @Override
+    public Object execute(final JpaQueryContext context) {
+        final Query query = context.query();
+
+        final Object result;
+        if (context.entityType().isVoid()) result = query.executeUpdate();
+        else result = query.getResultList();
+
+        if (context.automaticClear()) context.entityManager().clear();
+        return result;
+    }
 }
