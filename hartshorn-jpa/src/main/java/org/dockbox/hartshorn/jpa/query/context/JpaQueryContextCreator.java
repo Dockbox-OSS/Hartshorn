@@ -9,9 +9,6 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public interface JpaQueryContextCreator {
 
-    // TODO:
-    // - ImplicitNamedQueryContextConfigurator
-
     <T> Option<JpaQueryContext> create(
             final ApplicationContext applicationContext,
             final MethodInterceptorContext<T, ?> interceptorContext,

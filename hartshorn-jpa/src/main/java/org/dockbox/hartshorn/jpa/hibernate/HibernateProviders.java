@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.query.EntityQueryExecutor;
+import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
 import org.dockbox.hartshorn.jpa.query.QueryExecutor;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.jpa.transaction.TransactionManager;
@@ -52,6 +53,11 @@ public class HibernateProviders {
     @Provider
     public Class<? extends TransactionManager> transactionManager() {
         return HibernateTransactionManager.class;
+    }
+
+    @Provider
+    public Class<? extends NamedQueryRegistry> namedQueryRegistry() {
+        return HibernateNamedQueryRegistry.class;
     }
 
     @Provider

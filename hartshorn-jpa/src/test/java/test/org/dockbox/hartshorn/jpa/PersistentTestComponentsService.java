@@ -43,10 +43,6 @@ public class PersistentTestComponentsService implements LifecycleObserver {
         ).map(applicationContext.environment()::introspect).collect(Collectors.toList());
         applicationContext.add(new EntityContext(entities));
 
-        // TODO: Actually register these as well :) in a separate service..
-        //        Query q = this.em.createQuery("SELECT a FROM Book b JOIN b.authors a WHERE b.title LIKE :title GROUP BY a");
-        //        this.em.getEntityManagerFactory().addNamedQuery("selectAuthorOfBook", q);
-
         final ApplicationNamedQueriesContext queriesContext = applicationContext.first(ApplicationNamedQueriesContext.class).get();
         entities.forEach(queriesContext::process);
     }

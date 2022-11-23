@@ -25,6 +25,10 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.InvalidConnectionException;
+import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
+import org.dockbox.hartshorn.jpa.query.QueryRegistryFactory;
+import org.dockbox.hartshorn.jpa.query.context.application.ApplicationNamedQueriesContext;
+import org.dockbox.hartshorn.jpa.query.context.application.ComponentNamedQueryContext;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -39,11 +43,14 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 @Component
 public class HibernateEntityManagerCarrier implements EntityManagerCarrier, ContextCarrier {
@@ -145,10 +152,37 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
             try {
                 this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
                 this.factory = this.hibernateConfiguration.buildSessionFactory();
+                this.factoryPostConstruct();
             }
             catch (final Throwable e) {
                 throw new ApplicationException(e);
             }
+        }
+    }
+
+    private void factoryPostConstruct() {
+        final ApplicationNamedQueriesContext queriesContext = this.applicationContext().first(ApplicationNamedQueriesContext.class).get();
+        final Map<String, ComponentNamedQueryContext> queries = queriesContext.namedQueries();
+        if (queries.isEmpty()) return;
+
+        final QueryRegistryFactory registryFactory = this.applicationContext().get(QueryRegistryFactory.class);
+        final NamedQueryRegistry registry = registryFactory.create(this.factory);
+
+        try (final EntityManager entityManager = this.manager()) {
+            queries.forEach((name, context) -> {
+                if (registry.has(name)) {
+                    // If an entity is already registered with the same name, skip it, this is valid behaviour
+                    if (context.isEntityDeclaration()) return;
+                    // If a query is already registered with the same name, but not by an entity, yield a warning, but
+                    // proceed with the registration
+                    this.applicationContext().log().warn("A query with the name %s is already registered, overwriting it".formatted(name));
+                }
+
+                final Query query = context.nativeQuery()
+                        ? entityManager.createNativeQuery(context.query())
+                        : entityManager.createQuery(context.query());
+                registry.register(name, query);
+            });
         }
     }
 
@@ -203,6 +237,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         final Collection<TypeView<?>> entities = entityContexts.stream()
                 .flatMap(context -> context.entities().stream())
                 .collect(Collectors.toSet());
+
         for (final TypeView<?> entity : entities) {
             this.hibernateConfiguration.addAnnotatedClass(entity.type());
         }

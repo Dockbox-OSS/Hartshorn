@@ -3,6 +3,8 @@ package org.dockbox.hartshorn.jpa.query.context.application;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import jakarta.persistence.Entity;
+
 public class ComponentNamedQueryContext extends DefaultContext {
 
     private final String name;
@@ -53,5 +55,9 @@ public class ComponentNamedQueryContext extends DefaultContext {
     public ComponentNamedQueryContext automaticClear(final boolean automaticClear) {
         this.automaticClear = automaticClear;
         return this;
+    }
+
+    public boolean isEntityDeclaration() {
+        return this.declaredBy.annotations().has(Entity.class);
     }
 }
