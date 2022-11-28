@@ -55,6 +55,15 @@ import jakarta.persistence.Query;
 @Component
 public class HibernateEntityManagerCarrier implements EntityManagerCarrier, ContextCarrier {
 
+    private static final String HB_USERNAME = "hibernate.connection.username";
+    private static final String HB_PASSWORD = "hibernate.connection.password";
+    private static final String HB_URL = "hibernate.connection.url";
+    private static final String HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
+    private static final String HB_DRIVER_CLASS = "hibernate.connection.driver_class";
+    private static final String HB_DIALECT = "hibernate.dialect";
+
+    private static final String HH_HIBERNATE_DIALECT = "hartshorn.data.hibernate.dialect";
+
     private final Configuration hibernateConfiguration = new Configuration();
 
     private SessionFactory factory;
@@ -168,6 +177,8 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         final QueryRegistryFactory registryFactory = this.applicationContext().get(QueryRegistryFactory.class);
         final NamedQueryRegistry registry = registryFactory.create(this.factory);
 
+        // Safe to auto-close as this will be invoked before the carrier is exposed to external components. It is
+        // preferred to close the EM as soon as possible here, as it is not needed again until a component requests it.
         try (final EntityManager entityManager = this.manager()) {
             queries.forEach((name, context) -> {
                 if (registry.has(name)) {
@@ -192,7 +203,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         }
 
         return this.applicationContext()
-                .property("hartshorn.data.hibernate.dialect")
+                .property(HH_HIBERNATE_DIALECT)
                 .orElseThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 
@@ -210,10 +221,10 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
     protected void prepareProperties() throws ApplicationException {
         if (StringUtilities.notEmpty(this.configuration.username()) || StringUtilities.notEmpty(this.configuration.password())) {
             this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
-            this.hibernateConfiguration.setProperty("hibernate.connection.username", this.configuration.username());
-            this.hibernateConfiguration.setProperty("hibernate.connection.password", this.configuration.password());
+            this.hibernateConfiguration.setProperty(HB_USERNAME, this.configuration.username());
+            this.hibernateConfiguration.setProperty(HB_PASSWORD, this.configuration.password());
         }
-        this.hibernateConfiguration.setProperty("hibernate.connection.url", this.configuration.url());
+        this.hibernateConfiguration.setProperty(HB_URL, this.configuration.url());
 
         final Class<? extends Driver> driver = this.configuration.driver();
         final String dialect = this.dialect();
@@ -221,10 +232,10 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver.getCanonicalName(), dialect));
 
         final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
-        this.hibernateConfiguration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto")
+        this.hibernateConfiguration.setProperty(HBM2DDL_AUTO, (String) propertyHolder.get(HBM2DDL_AUTO)
                 .orElse("update"));
-        this.hibernateConfiguration.setProperty("hibernate.connection.driver_class", driver.getCanonicalName());
-        this.hibernateConfiguration.setProperty("hibernate.dialect", dialect);
+        this.hibernateConfiguration.setProperty(HB_DRIVER_CLASS, driver.getCanonicalName());
+        this.hibernateConfiguration.setProperty(HB_DIALECT, dialect);
 
         final List<EntityContext> entityContexts = new ArrayList<>(this.applicationContext().all(EntityContext.class));
         if (entityContexts.isEmpty()) {
