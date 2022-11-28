@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -50,6 +47,9 @@ import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTree
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 
@@ -276,5 +276,10 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     public <T> Option<ObjectContainer<T>> raw(final Key<T> key) {
         return new ContextDrivenProvider<>(key.type()).provide(this.applicationContext());
+    }
+
+    @Override
+    public MultiMap<Integer, ComponentPostProcessor> processors() {
+        return this.postProcessors;
     }
 }

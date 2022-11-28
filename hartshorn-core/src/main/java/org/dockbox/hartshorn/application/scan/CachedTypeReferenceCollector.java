@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application.scan;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+
 import java.util.Set;
 
 public class CachedTypeReferenceCollector implements TypeReferenceCollector {
@@ -33,5 +35,10 @@ public class CachedTypeReferenceCollector implements TypeReferenceCollector {
             this.cache = this.collector.collect();
         }
         return this.cache;
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        this.collector.report(collector);
     }
 }

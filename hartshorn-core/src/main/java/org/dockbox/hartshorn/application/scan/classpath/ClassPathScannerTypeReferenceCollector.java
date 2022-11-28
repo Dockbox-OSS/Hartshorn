@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.application.scan.classpath;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.ClassNameReference;
 import org.dockbox.hartshorn.application.scan.TypeReference;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -52,5 +53,10 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
 
         this.environment().log().debug("Located {} classes in package {} in {} seconds", typeReferences.size(), this.packageName(), (classpathScanner.scanTime() / 1000.0));
         return typeReferences;
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("package").write(this.packageName());
     }
 }

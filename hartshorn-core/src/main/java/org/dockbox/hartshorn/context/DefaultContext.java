@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.context;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
@@ -65,6 +65,11 @@ public abstract class DefaultContext implements Context {
                         .filter(c -> context.isAssignableFrom(c.getClass()))
                         .findFirst())
                 .map(context::cast);
+    }
+
+    @Override
+    public List<Context> all() {
+        return List.copyOf(this.contexts);
     }
 
     @Override

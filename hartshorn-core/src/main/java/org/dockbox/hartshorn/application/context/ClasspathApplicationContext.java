@@ -86,6 +86,11 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         this.isRunning = true;
     }
 
+    @Override
+    public MultiMap<Integer, ComponentPreProcessor> processors() {
+        return this.preProcessors;
+    }
+
     protected void processComponents(final Collection<ComponentContainer> containers) {
         this.checkRunning();
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {

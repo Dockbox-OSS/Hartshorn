@@ -18,13 +18,26 @@ package org.dockbox.hartshorn.reporting.application;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.application.lifecycle.Observer;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.NamedContext;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.collect.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
-public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration> {
+public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
 
@@ -35,33 +48,99 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     }
 
     @Override
-    public void report(final DiagnosticsReportCollector collector) {
+    public void report(final DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
             collector.property("version").write(Hartshorn.VERSION);
         }
-
         if (this.configuration.includeJarLocation()) {
-
+            reportJarLocation(collector);
         }
         if (this.configuration.includeApplicationProperties()) {
-            final Properties properties = this.applicationContext.properties();
-            final DiagnosticsReporter reporter = new PropertiesReporter(properties);
-            collector.property("properties").write(reporter);
+            this.reportApplicationProperties(collector);
         }
         if (this.configuration.includeServiceActivators()) {
-
-
+            this.reportServiceActivators(collector);
         }
         if (this.configuration.includeObservers()) {
-
+            this.reportObservers(collector);
         }
         if (this.configuration.includeContexts()) {
-
+            this.reportContexts(collector);
         }
+    }
+
+    private static void reportJarLocation(final DiagnosticsPropertyCollector collector) {
+        String jarLocation;
+        try {
+            jarLocation = Hartshorn.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+        } catch (final Exception e) {
+            jarLocation = "Unknown";
+        }
+        collector.property("jar").write(jarLocation);
+    }
+
+    private void reportApplicationProperties(final DiagnosticsPropertyCollector collector) {
+        final Properties properties = this.applicationContext.properties();
+        final DiagnosticsReporter reporter = new PropertiesReporter(properties);
+        collector.property("properties").write(reporter);
+    }
+
+    private void reportServiceActivators(final DiagnosticsPropertyCollector collector) {
+        final String[] activators = this.applicationContext.activators().stream()
+                .map(a -> a.annotationType().getCanonicalName())
+                .toArray(String[]::new);
+        collector.property("activators").write(activators);
+    }
+
+    private void reportObservers(final DiagnosticsPropertyCollector collector) {
+        final ApplicationEnvironment environment = this.applicationContext.environment();
+        if (environment instanceof ObservableApplicationEnvironment observable) {
+            final Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
+                            .collect(Collectors.groupingBy(Observer::getClass));
+
+            collector.property("observers").write(c -> {
+                for (final Class<? extends Observer> observerType : observers.keySet()) {
+                    c.property(observerType.getSimpleName()).write(observers.get(observerType).size());
+                }
+            });
+        }
+    }
+
+    private void reportContexts(final DiagnosticsPropertyCollector collector) {
+        final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference = new AtomicReference<>();
+
+        final BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
+            contextsCollector.property("type").write(context.getClass().getCanonicalName());
+            if (context instanceof Reportable reportable) {
+                contextsCollector.property("data").write(reportable::report);
+            }
+
+            if (context instanceof NamedContext namedContext) contextsCollector.property("name").write(namedContext.name());
+            if (!context.all().isEmpty()) {
+                final DiagnosticsReporter[] childReporters = childReporters(reporterReference, context);
+                contextsCollector.property("children").write(childReporters);
+            }
+        };
+        reporterReference.set(reporter);
+
+        final DiagnosticsReporter[] reporters = childReporters(reporterReference, this.applicationContext);
+        collector.property("contexts").write(reporters);
+    }
+
+    @NotNull
+    private static DiagnosticsReporter[] childReporters(final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, final Context context) {
+        return context.all().stream()
+                .map(c -> (DiagnosticsReporter) (contextsController -> reporterReference.get().accept(contextsController, c)))
+                .toArray(DiagnosticsReporter[]::new);
     }
 
     @Override
     public ApplicationReportingConfiguration configuration() {
         return this.configuration;
+    }
+
+    @Override
+    public String category() {
+        return "application";
     }
 }

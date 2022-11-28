@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.application.scan;
 
+import org.dockbox.hartshorn.reporting.Reportable;
+
 import java.util.Set;
 
-public interface TypeReferenceCollector {
+public interface TypeReferenceCollector extends Reportable {
     Set<TypeReference> collect();
 }

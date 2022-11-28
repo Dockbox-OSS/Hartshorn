@@ -24,9 +24,10 @@ public class SystemReportingConfiguration {
     private boolean includeOsDiagnostics = true;
     private boolean includeJvmFlags = true;
     private boolean includeDeviceName = true;
+    private boolean includeProcessId = true;
+
     private boolean includeResponsibleServiceOrUser = true;
     private boolean includeMemoryUsage = true;
-    private boolean includeProcessorUsage = true;
 
     public boolean includeUptime() {
         return this.includeUptime;
@@ -82,6 +83,15 @@ public class SystemReportingConfiguration {
         return this;
     }
 
+    public boolean includeProcessId() {
+        return this.includeProcessId;
+    }
+
+    public SystemReportingConfiguration includeProcessId(final boolean includeProcessId) {
+        this.includeProcessId = includeProcessId;
+        return this;
+    }
+
     public boolean includeResponsibleServiceOrUser() {
         return this.includeResponsibleServiceOrUser;
     }
@@ -97,15 +107,6 @@ public class SystemReportingConfiguration {
 
     public SystemReportingConfiguration includeMemoryUsage(final boolean includeMemoryUsage) {
         this.includeMemoryUsage = includeMemoryUsage;
-        return this;
-    }
-
-    public boolean includeProcessorUsage() {
-        return this.includeProcessorUsage;
-    }
-
-    public SystemReportingConfiguration includeProcessorUsage(final boolean includeProcessorUsage) {
-        this.includeProcessorUsage = includeProcessorUsage;
         return this;
     }
 }

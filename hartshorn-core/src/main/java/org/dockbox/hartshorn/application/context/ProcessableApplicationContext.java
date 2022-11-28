@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+
 public interface ProcessableApplicationContext extends ApplicationContext {
     void loadContext();
+
+    MultiMap<Integer, ComponentPreProcessor> processors();
 }

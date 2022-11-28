@@ -16,122 +16,124 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
+import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWriter {
 
     private boolean closed = false;
     private final String name;
     private final StandardDiagnosticsReportCollector collector;
+    private final GroupNode group;
 
-    public StandardDiagnosticsPropertyWriter(final String name, final StandardDiagnosticsReportCollector collector) {
+    public StandardDiagnosticsPropertyWriter(final String name, final StandardDiagnosticsReportCollector collector, final GroupNode group) {
         this.name = name;
         this.collector = collector;
+        this.group = group;
     }
 
     @Override
     public DiagnosticsReportCollector write(final String value) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(SimpleNode.of(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final int value) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(SimpleNode.of(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final long value) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(SimpleNode.of(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final float value) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(SimpleNode.of(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final double value) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(SimpleNode.of(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final boolean value) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(SimpleNode.of(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final DiagnosticsReporter reporter) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        final GroupNode group = GroupNode.of(this.name);
+        reporter.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
+        return this.exit(group);
     }
 
     @Override
     public DiagnosticsReportCollector write(final String[] values) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final int[] values) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final long[] values) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final float[] values) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final double[] values) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final boolean[] values) {
         this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final DiagnosticsReporter[] reporters) {
-        this.checkClosed();
-        // TODO: Implement
-        return this.exit();
+        final List<Node<?>> nodes = new ArrayList<>();
+        for (final DiagnosticsReporter reporter : reporters) {
+            final GroupNode group = GroupNode.of(this.name);
+            reporter.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
+            nodes.add(group);
+        }
+        final ArrayNode<?> arrayNode = ArrayNode.of(this.name, nodes);
+        return this.exit(arrayNode);
     }
-    
+
     private void checkClosed() {
         if (this.closed) throw new IllegalStateException("Property writer is closed");
     }
     
-    private DiagnosticsReportCollector exit() {
+    private DiagnosticsReportCollector exit(final Node<?> node) {
+        this.group.add(node);
         this.closed = true;
         return this.collector;
     }

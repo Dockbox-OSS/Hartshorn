@@ -71,6 +71,12 @@ public interface Context {
     <N extends Context> Option<N> first(String name, Class<N> context);
 
     /**
+     * Returns all contexts stored in the current context.
+     * @return All contexts stored in the current context.
+     */
+    List<Context> all();
+
+    /**
      * Returns all contexts of the given type. If no contexts of the given type exist, an empty {@link List} will be
      * returned.
      *

@@ -90,4 +90,6 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
     default <S extends T> TypeView<S> adjustWildcards() {
         return (TypeView<S>) this;
     }
+
+    PackageView packageInfo();
 }

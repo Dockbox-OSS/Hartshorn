@@ -20,4 +20,5 @@ apply {
 
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
+    api(libs.bundles.jackson)
 }

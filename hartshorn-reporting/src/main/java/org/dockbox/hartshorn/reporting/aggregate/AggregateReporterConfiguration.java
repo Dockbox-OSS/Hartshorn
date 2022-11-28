@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.reporting.aggregate;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AggregateReporterConfiguration {
 
-    private final Set<DiagnosticsReporter> reporters = ConcurrentHashMap.newKeySet();
+    private final Set<CategorizedDiagnosticsReporter> reporters = ConcurrentHashMap.newKeySet();
 
-    public void add(final DiagnosticsReporter reporter) {
+    public void add(final CategorizedDiagnosticsReporter reporter) {
         this.reporters.add(reporter);
     }
 
-    public Set<DiagnosticsReporter> reporters() {
+    public Set<CategorizedDiagnosticsReporter> reporters() {
         return this.reporters;
     }
 }

@@ -16,5 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+
 public interface StandardComponentProvider extends HierarchicalComponentProvider, ProcessableComponentProvider, ComponentProvider {
+
+    MultiMap<Integer, ComponentPostProcessor> processors();
+
 }

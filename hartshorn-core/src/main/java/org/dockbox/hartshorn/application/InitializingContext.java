@@ -33,13 +33,15 @@ import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyLookup;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.slf4j.Logger;
 
 import java.util.Objects;
 
-public final class InitializingContext extends DefaultApplicationAwareContext {
+public final class InitializingContext extends DefaultApplicationAwareContext implements Reportable {
 
     private final ApplicationEnvironment environment;
     private final ApplicationBuilder<?, ?> configuration;
@@ -175,4 +177,8 @@ public final class InitializingContext extends DefaultApplicationAwareContext {
                 "configuration=" + this.configuration + ']';
     }
 
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        this.configuration.report(collector);
+    }
 }

@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsI
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -350,5 +351,10 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public int modifiers() {
         return this.type.getModifiers();
+    }
+
+    @Override
+    public PackageView packageInfo() {
+        return new ReflectionPackageView(this.type.getPackage());
     }
 }

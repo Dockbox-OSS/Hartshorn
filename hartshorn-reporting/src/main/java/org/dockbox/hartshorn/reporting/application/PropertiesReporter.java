@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.reporting.application;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.collect.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -31,7 +31,7 @@ public class PropertiesReporter implements DiagnosticsReporter {
     }
 
     @Override
-    public void report(final DiagnosticsReportCollector collector) {
+    public void report(final DiagnosticsPropertyCollector collector) {
         for (final Entry<Object, Object> entry : this.properties.entrySet()) {
             collector.property(String.valueOf(entry.getKey())).write(String.valueOf(entry.getValue()));
         }

@@ -16,11 +16,26 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
+import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
+
+    private final DiagnosticsReport report = new DiagnosticsReport();
+
+    public DiagnosticsReport report() {
+        return this.report;
+    }
 
     @Override
     public DiagnosticsPropertyWriter property(final String name) {
-        return new StandardDiagnosticsPropertyWriter(this.normalize(name), this);
+        return new StandardDiagnosticsPropertyWriter(this.normalize(name), this, this.report().root());
+    }
+
+    @Override
+    public void visit(final CategorizedDiagnosticsReporter reporter) {
+        this.property(reporter.category()).write(reporter);
     }
 
     private String normalize(final String name) {

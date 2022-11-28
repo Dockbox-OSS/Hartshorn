@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.ref.ReferenceQueue;
+
 /**
  * The {@link ApplicationProxier} is responsible for creating proxies of components. It is used by the
  * {@link ApplicationContext} to create proxies of components, as well as allowing {@link ComponentPostProcessor}s
@@ -30,6 +32,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * @since 21.9
  */
 public interface ApplicationProxier extends ProxyLookup {
+
+
+    ReferenceQueue<Proxy<?>> managedProxies();
 
     /**
      * Gets the real type of the given proxy instance. If the given instance is not a proxy, the returned

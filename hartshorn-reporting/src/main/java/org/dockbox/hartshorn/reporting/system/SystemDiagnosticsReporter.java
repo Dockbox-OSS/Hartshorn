@@ -16,20 +16,54 @@
 
 package org.dockbox.hartshorn.reporting.system;
 
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.collect.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
-public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration> {
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+
+public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     private final SystemReportingConfiguration configuration = new SystemReportingConfiguration();
 
     @Override
-    public void report(final DiagnosticsReportCollector collector) {
-        // TODO: Implement
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        if (this.configuration.includeUptime()) {
+            collector.property("uptime").write(runtimeMXBean.getUptime());
+        }
+        if (this.configuration.includeJavaDiagnostics()) {
+            collector.property("java").write(new JavaDiagnosticsReporter());
+        }
+        if (this.configuration.includeJvmDiagnostics()) {
+            collector.property("jvm").write(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
+        }
+        if (this.configuration.includeOsDiagnostics()) {
+            collector.property("os").write(new OSDiagnosticsReporter());
+        }
+        if (this.configuration.includeDeviceName()) {
+            collector.property("device").write(runtimeMXBean.getName().split("@")[1]);
+        }
+        if (this.configuration.includeProcessId()) {
+            collector.property("pid").write(runtimeMXBean.getPid());
+        }
+        if (this.configuration.includeResponsibleServiceOrUser()) {
+            final String user = System.getProperty("user.name");
+            collector.property("user").write(user);
+        }
+        if (this.configuration.includeMemoryUsage()) {
+            collector.property("memory").write(new MemoryUsageDiagnosticsReporter());
+        }
     }
 
     @Override
     public SystemReportingConfiguration configuration() {
         return this.configuration;
+    }
+
+    @Override
+    public String category() {
+        return "system";
     }
 }

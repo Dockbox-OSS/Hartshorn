@@ -16,7 +16,43 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.application.environment.banner.Banner;
+import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
+import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.application.lifecycle.Observer;
+import org.dockbox.hartshorn.application.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.context.ModifiableContextCarrier;
+import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.annotation.Annotation;
+import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -35,40 +71,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
-import org.dockbox.hartshorn.application.environment.banner.Banner;
-import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
-import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.application.scan.ClassReferenceLoadException;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Singleton;
 
@@ -322,6 +324,11 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
                 .orElse(false));
 
         this.setDebugActive(debug);
+    }
+
+    @Override
+    public ReferenceQueue<Proxy<?>> managedProxies() {
+        return this.applicationProxier.managedProxies();
     }
 
     @Override

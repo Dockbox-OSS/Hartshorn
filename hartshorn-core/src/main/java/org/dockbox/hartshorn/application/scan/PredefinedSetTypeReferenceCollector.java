@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application.scan;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,5 +45,13 @@ public class PredefinedSetTypeReferenceCollector implements TypeReferenceCollect
         return new PredefinedSetTypeReferenceCollector(Stream.of(references)
                 .map(ClassReference::new)
                 .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final String[] typeNames = this.references.stream()
+                .map(TypeReference::qualifiedName)
+                .toArray(String[]::new);
+        collector.property("references").write(typeNames);
     }
 }

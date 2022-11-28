@@ -25,9 +25,12 @@ import org.dockbox.hartshorn.proxy.DefaultProxyFactory;
 import org.dockbox.hartshorn.proxy.Invokable;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.MethodInvokable;
+import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.proxy.StandardMethodInterceptor;
 import org.dockbox.hartshorn.proxy.javassist.JavassistProxyFactory;
+
+import java.util.function.Consumer;
 
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
@@ -39,8 +42,8 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
     private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> DefaultProxyFactory.NAME_GENERATOR.get(prefix);
 
-    public CglibProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
-        super(type, applicationContext);
+    public CglibProxyFactory(final Class<T> type, final ApplicationContext applicationContext, final Consumer<Proxy<?>> registrationFunction) {
+        super(type, applicationContext, registrationFunction);
     }
 
     @Override

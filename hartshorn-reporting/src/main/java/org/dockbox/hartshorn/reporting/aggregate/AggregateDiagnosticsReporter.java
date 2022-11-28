@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.reporting.aggregate;
 
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.collect.DiagnosticsReportCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
 import java.util.Set;
 
@@ -27,20 +27,17 @@ public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     private final AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
 
     @Override
-    public void report(final DiagnosticsReportCollector collector) {
-        final Set<DiagnosticsReporter> reporters = this.configuration().reporters();
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final Set<CategorizedDiagnosticsReporter> reporters = this.configuration().reporters();
 
-        // Write reporters first, so these are always known even if a delegated reporter
-        // fails while reporting.
-        final String[] reporterNames = reporters.stream()
-                .map(Object::getClass)
-                .map(Class::getCanonicalName)
-                .toArray(String[]::new);
-        collector.property("reporters").write(reporterNames);
+        collector.property("reporters").write(c -> {
+            for (final CategorizedDiagnosticsReporter reporter : reporters) {
+                c.property(reporter.category()).write(reporter.getClass().getCanonicalName());
+            }
+        });
 
-        for (final DiagnosticsReporter reporter : reporters) {
-            // TODO: Better names for reporters (make them identifiable/categorizable?)
-            collector.property(reporter.getClass().getSimpleName().toLowerCase()).write(reporter);
+        for (final CategorizedDiagnosticsReporter reporter : reporters) {
+            collector.property(reporter.category()).write(reporter);
         }
     }
 

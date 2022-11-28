@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.beans;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
@@ -30,7 +33,7 @@ import java.util.stream.Collectors;
 import jakarta.inject.Inject;
 
 @AutoCreating
-public class BeanContext extends DefaultApplicationAwareContext implements BeanCollector {
+public class BeanContext extends DefaultApplicationAwareContext implements BeanCollector, Reportable {
 
     private final List<BeanReference<?>> beans = new CopyOnWriteArrayList<>();
 
@@ -65,5 +68,15 @@ public class BeanContext extends DefaultApplicationAwareContext implements BeanC
     @Override
     public void unregister(final BeanReference<?> beanReference) {
         this.beans.remove(beanReference);
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final DiagnosticsReporter[] reporters = this.beans.stream().map(beanReference -> (DiagnosticsReporter) c -> {
+            c.property("type").write(beanReference.type().qualifiedName());
+            c.property("id").write(beanReference.id());
+            c.property("instance").write(beanReference.bean().toString());
+        }).toArray(DiagnosticsReporter[]::new);
+        collector.property("beans").write(reporters);
     }
 }

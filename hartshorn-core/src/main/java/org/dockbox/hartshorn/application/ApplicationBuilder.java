@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
 import java.lang.annotation.Annotation;
@@ -48,7 +49,7 @@ import java.util.function.Function;
  * @author Guus Lieben
  * @since 21.9
  */
-public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C extends ApplicationContext> {
+public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C extends ApplicationContext> extends Reportable {
 
     /**
      * Sets the main class to use. Depending on the type of application environment, this may require the
