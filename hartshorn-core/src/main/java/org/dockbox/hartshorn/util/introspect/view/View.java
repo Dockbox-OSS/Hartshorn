@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.Named;
 
-public interface View extends Named {
+public interface View extends Named, Reportable {
 
     String qualifiedName();
 

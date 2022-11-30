@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
@@ -194,5 +195,11 @@ public class WildcardTypeView implements TypeView<Object> {
     @Override
     public PackageView packageInfo() {
         return new WildcardPackageView();
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write("*");
+        collector.property("wildcard").write(true);
     }
 }

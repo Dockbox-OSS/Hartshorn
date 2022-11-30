@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -92,5 +93,11 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     @Override
     protected AnnotatedElement annotatedElement() {
         return this.parameter;
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write(this.name());
+        collector.property("type").write(this.genericType());
     }
 }

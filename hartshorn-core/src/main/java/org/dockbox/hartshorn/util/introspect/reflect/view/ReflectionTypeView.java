@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Tristate;
@@ -326,7 +328,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T defaultOrNull() {
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
@@ -356,5 +357,16 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public PackageView packageInfo() {
         return new ReflectionPackageView(this.type.getPackage());
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write(this.name());
+        collector.property("package").write(this.packageInfo().name());
+
+        final TypeParametersIntrospector typeParameters = this.typeParameters();
+        if (typeParameters.count() > 0) {
+            collector.property("typeParameters").write(typeParameters.all().toArray(Reportable[]::new));
+        }
     }
 }

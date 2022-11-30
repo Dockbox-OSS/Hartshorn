@@ -16,6 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-public interface PackageView {
+public interface PackageView extends View {
     String name();
 }

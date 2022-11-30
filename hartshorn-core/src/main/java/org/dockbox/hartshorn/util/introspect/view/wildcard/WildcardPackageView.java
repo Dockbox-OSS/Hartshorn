@@ -16,11 +16,22 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
 public class WildcardPackageView implements PackageView {
     @Override
     public String name() {
         return "";
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        // No-op, only report in WildcardTypeView
+    }
+
+    @Override
+    public String qualifiedName() {
+        return null;
     }
 }

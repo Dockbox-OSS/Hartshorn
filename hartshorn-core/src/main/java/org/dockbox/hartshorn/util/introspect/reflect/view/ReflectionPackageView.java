@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
 public class ReflectionPackageView implements PackageView {
@@ -29,5 +30,15 @@ public class ReflectionPackageView implements PackageView {
     @Override
     public String name() {
         return this.pkg.getName();
+    }
+
+    @Override
+    public String qualifiedName() {
+        return this.name();
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write(this.name());
     }
 }
