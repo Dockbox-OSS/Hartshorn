@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentProcessorReportingConfiguration>, CategorizedDiagnosticsReporter {
-    
+
     private final ComponentProcessorReportingConfiguration configuration = new ComponentProcessorReportingConfiguration();
     private final ApplicationContext applicationContext;
 
@@ -55,44 +55,47 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
         }
     }
 
-    private void reportPreProcessors(final DiagnosticsPropertyCollector collector, final ProcessableApplicationContext processableApplicationContext) {
+    private void reportPreProcessors(final DiagnosticsPropertyCollector collector,
+                                     final ProcessableApplicationContext processableApplicationContext) {
         final MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.processors();
-        collector.property("pre").write(processorCollector -> {
-            for (final Integer phase : processors.keySet()) {
-                final String[] processorNames = processors.get(phase).stream()
-                        .map(Object::getClass)
-                        .map(Class::getCanonicalName)
-                        .toArray(String[]::new);
-                processorCollector.property(String.valueOf(phase)).write(processorNames);
-            }
-        });
+        final Reportable[] reporters = processors.allValues().stream()
+                .map(processor -> (Reportable) processorCollector -> {
+                    processorCollector.property("name").write(processor.getClass().getCanonicalName());
+                    processorCollector.property("order").write(processor.order());
+                }).toArray(Reportable[]::new);
+
+        collector.property("pre").write(reporters);
     }
 
-    private void reportPostProcessors(final DiagnosticsPropertyCollector collector, final StandardComponentProvider standardComponentProvider) {
+    private void reportPostProcessors(final DiagnosticsPropertyCollector collector,
+                                      final StandardComponentProvider standardComponentProvider) {
         final MultiMap<Integer, ComponentPostProcessor> processors = standardComponentProvider.processors();
         collector.property("post").write(phaseCollector -> {
-            final Map<String, List<Integer>> phases = processors.keySet().stream().collect(Collectors.groupingBy(order -> {
-                for (final ProcessingPhase processingPhase : ProcessingOrder.PHASES) {
-                    if (processingPhase.test(order)) {
-                        return processingPhase.name();
-                    }
-                }
-                return "unknown";
-            }));
-            for (final String phase : phases.keySet()) {
-                final DiagnosticsReporter[] reporters = phases.get(phase).stream()
+            final Map<ProcessingPhase, List<Integer>> processorsByPhase = processors.keySet().stream()
+                    .collect(Collectors.groupingBy(order -> {
+                        for (final ProcessingPhase processingPhase : ProcessingOrder.PHASES) {
+                            if (processingPhase.test(order)) {
+                                return processingPhase;
+                            }
+                        }
+                        throw new IllegalStateException("No phase found for order " + order);
+                    }));
+
+            for (final ProcessingPhase phase : ProcessingOrder.PHASES) {
+                final Reportable[] reporters = processorsByPhase.get(phase).stream()
                         .flatMap(order -> processors.get(order).stream())
-                        .map(processor -> (DiagnosticsReporter) processorCollector -> {
+                        .map(processor -> (Reportable) processorCollector -> {
                             processorCollector.property("name").write(processor.getClass().getCanonicalName());
                             processorCollector.property("order").write(processor.order());
-                        }).toArray(DiagnosticsReporter[]::new);
+                        }).toArray(Reportable[]::new);
 
-                phaseCollector.property(phase.toLowerCase()).write(reporters);
+                phaseCollector.property(phase.name().toLowerCase()).write(reporters);
             }
         });
     }
 
-    private void reportProcessors(final DiagnosticsPropertyCollector collector, final String type, final MultiMap<Integer, ? extends ComponentProcessor> processors) {
+    private void reportProcessors(final DiagnosticsPropertyCollector collector, final String type,
+                                  final MultiMap<Integer, ? extends ComponentProcessor> processors) {
 
 
     }

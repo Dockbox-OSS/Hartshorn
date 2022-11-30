@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.reporting.system;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 
-public class JavaDiagnosticsReporter implements DiagnosticsReporter {
+public class JavaDiagnosticsReporter implements Reportable {
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {

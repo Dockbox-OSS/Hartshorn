@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.util.Collections;
@@ -43,11 +42,11 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final DiagnosticsReporter[] reporters = this.collectors.stream()
-                .map(referenceCollector -> (DiagnosticsReporter) trcCollector -> {
+        final Reportable[] reporters = this.collectors.stream()
+                .map(referenceCollector -> (Reportable) trcCollector -> {
                     trcCollector.property("type").write(referenceCollector.getClass().getName());
-                       referenceCollector.report(trcCollector);
-                }).toArray(DiagnosticsReporter[]::new);
+                    referenceCollector.report(trcCollector);
+                }).toArray(Reportable[]::new);
         collector.property("collectors").write(reporters);
     }
 }

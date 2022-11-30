@@ -26,8 +26,8 @@ public class ComponentReportingConfiguration {
     private final EnumMap<ComponentAttribute, Boolean> attributes = new EnumMap<>(ComponentAttribute.class);
 
     public ComponentReportingConfiguration() {
-        for (final ComponentAttribute attribute : ComponentAttribute.values())
-            this.attributes.put(attribute, true);
+        // Package is included by type definition, so we don't need to include it by default
+        this.attributes.put(ComponentAttribute.STEREOTYPE, true);
     }
 
     public ComponentAttribute groupBy() {

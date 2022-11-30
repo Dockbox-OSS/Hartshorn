@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting;
+package org.dockbox.hartshorn.reporting.collect;
 
-public interface DiagnosticsReportCollector extends DiagnosticsPropertyCollector {
+import org.dockbox.hartshorn.reporting.DiagnosticsReport;
+import org.dockbox.hartshorn.reporting.GroupNode;
 
-    void visit(CategorizedDiagnosticsReporter reporter);
+public class NodeDiagnosticsReport implements DiagnosticsReport {
 
-    DiagnosticsReport report();
+    private final GroupNode root = GroupNode.of("root");
 
-    DiagnosticsReport report(Reportable reportable);
+    @Override
+    public GroupNode root() {
+        return this.root;
+    }
 }

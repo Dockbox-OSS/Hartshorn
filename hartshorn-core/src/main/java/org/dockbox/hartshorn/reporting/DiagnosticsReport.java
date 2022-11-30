@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.reporting;
 
-public interface DiagnosticsReportCollector extends DiagnosticsPropertyCollector {
+public interface DiagnosticsReport {
 
-    void visit(CategorizedDiagnosticsReporter reporter);
+    Node<?> root();
 
-    DiagnosticsReport report();
+    default <T> T serialize(final ReportSerializer<T> serializer) throws ReportSerializationException {
+        return serializer.serialize(this);
+    }
 
-    DiagnosticsReport report(Reportable reportable);
 }

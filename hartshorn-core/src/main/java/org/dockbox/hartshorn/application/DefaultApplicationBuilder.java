@@ -405,8 +405,21 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
+
         collector.property("prefixes").write(this.prefixes.toArray(String[]::new));
-        collector.property("standaloneComponents").write(this.standaloneComponents.stream().map(Class::getCanonicalName).toArray(String[]::new));
+        collector.property("standaloneComponents").write(this.standaloneComponents.stream()
+                .map(Class::getCanonicalName)
+                .toArray(String[]::new));
+
+        collector.property("mainClass").write(this.mainClass.getName());
+        collector.property("includeBasePackages").write(this.includeBasePackages);
+        collector.property("basePackages").write(this.includeBasePackages
+                ? new String[] { this.mainClass.getPackageName() }
+                : new String[0]);
+
+        collector.property("enableBanner").write(this.enableBanner);
+        collector.property("enableBatchMode").write(this.enableBatchMode);
+
         this.reportInitializer(this.applicationConfigurator, "applicationConfigurator", collector);
         this.reportInitializer(this.applicationProxier, "applicationProxier", collector);
         this.reportInitializer(this.applicationFSProvider, "applicationFSProvider", collector);

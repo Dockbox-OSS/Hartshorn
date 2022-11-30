@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.reporting;
 
-public interface ConfigurableDiagnosticsReporter<C> extends DiagnosticsReporter {
+public interface ConfigurableDiagnosticsReporter<C> extends Reportable {
 
     C configuration();
 

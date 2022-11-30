@@ -31,6 +31,7 @@ public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporte
     public void report(final DiagnosticsPropertyCollector collector) {
         final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         if (this.configuration.includeUptime()) {
+            // TODO: Convert to human readable format
             collector.property("uptime").write(runtimeMXBean.getUptime());
         }
         if (this.configuration.includeJavaDiagnostics()) {

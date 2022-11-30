@@ -16,11 +16,15 @@
 
 package org.dockbox.hartshorn.reporting;
 
-public interface DiagnosticsReportCollector extends DiagnosticsPropertyCollector {
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
-    void visit(CategorizedDiagnosticsReporter reporter);
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    DiagnosticsReport report();
-
-    DiagnosticsReport report(Reportable reportable);
+@ServiceActivator
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface UseReporting {
 }

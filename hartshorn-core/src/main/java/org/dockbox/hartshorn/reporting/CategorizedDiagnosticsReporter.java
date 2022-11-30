@@ -16,6 +16,6 @@
 
 package org.dockbox.hartshorn.reporting;
 
-public interface CategorizedDiagnosticsReporter extends DiagnosticsReporter {
+public interface CategorizedDiagnosticsReporter extends Reportable {
     String category();
 }

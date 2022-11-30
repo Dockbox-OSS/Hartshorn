@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironm
 import org.dockbox.hartshorn.application.lifecycle.Observer;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.NamedContext;
-import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +80,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
 
     private void reportApplicationProperties(final DiagnosticsPropertyCollector collector) {
         final Properties properties = this.applicationContext.properties();
-        final DiagnosticsReporter reporter = new PropertiesReporter(properties);
+        final Reportable reporter = new PropertiesReporter(properties);
         collector.property("properties").write(reporter);
     }
 
@@ -112,26 +111,26 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         final BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
             contextsCollector.property("type").write(context.getClass().getCanonicalName());
             if (context instanceof Reportable reportable) {
-                contextsCollector.property("data").write(reportable::report);
+                contextsCollector.property("data").write(reportable);
             }
 
             if (context instanceof NamedContext namedContext) contextsCollector.property("name").write(namedContext.name());
             if (!context.all().isEmpty()) {
-                final DiagnosticsReporter[] childReporters = childReporters(reporterReference, context);
+                final Reportable[] childReporters = childReporters(reporterReference, context);
                 contextsCollector.property("children").write(childReporters);
             }
         };
         reporterReference.set(reporter);
 
-        final DiagnosticsReporter[] reporters = childReporters(reporterReference, this.applicationContext);
+        final Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
         collector.property("contexts").write(reporters);
     }
 
     @NotNull
-    private static DiagnosticsReporter[] childReporters(final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, final Context context) {
+    private static Reportable[] childReporters(final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, final Context context) {
         return context.all().stream()
-                .map(c -> (DiagnosticsReporter) (contextsController -> reporterReference.get().accept(contextsController, c)))
-                .toArray(DiagnosticsReporter[]::new);
+                .map(c -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, c)))
+                .toArray(Reportable[]::new);
     }
 
     @Override

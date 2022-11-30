@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.util.Map.Entry;
 import java.util.Properties;
 
-public class PropertiesReporter implements DiagnosticsReporter {
+public class PropertiesReporter implements Reportable {
 
     private final Properties properties;
 

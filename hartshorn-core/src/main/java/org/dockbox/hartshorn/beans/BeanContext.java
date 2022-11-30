@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -72,11 +71,11 @@ public class BeanContext extends DefaultApplicationAwareContext implements BeanC
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final DiagnosticsReporter[] reporters = this.beans.stream().map(beanReference -> (DiagnosticsReporter) c -> {
-            c.property("type").write(beanReference.type().qualifiedName());
+        final Reportable[] reporters = this.beans.stream().map(beanReference -> (Reportable) c -> {
+            c.property("type").write(beanReference.type());
             c.property("id").write(beanReference.id());
             c.property("instance").write(beanReference.bean().toString());
-        }).toArray(DiagnosticsReporter[]::new);
+        }).toArray(Reportable[]::new);
         collector.property("beans").write(reporters);
     }
 }

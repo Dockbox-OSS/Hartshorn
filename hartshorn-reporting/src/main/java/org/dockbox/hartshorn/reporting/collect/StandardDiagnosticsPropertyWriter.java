@@ -16,9 +16,13 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
+import org.dockbox.hartshorn.reporting.ArrayNode;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.GroupNode;
+import org.dockbox.hartshorn.reporting.Node;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.SimpleNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,55 +77,55 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     }
 
     @Override
-    public DiagnosticsReportCollector write(final DiagnosticsReporter reporter) {
+    public DiagnosticsReportCollector write(final Reportable reportable) {
         this.checkClosed();
         final GroupNode group = GroupNode.of(this.name);
-        reporter.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
+        reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
         return this.exit(group);
     }
 
     @Override
-    public DiagnosticsReportCollector write(final String[] values) {
+    public DiagnosticsReportCollector write(final String... values) {
         this.checkClosed();
         return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final int[] values) {
+    public DiagnosticsReportCollector write(final int... values) {
         this.checkClosed();
         return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final long[] values) {
+    public DiagnosticsReportCollector write(final long... values) {
         this.checkClosed();
         return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final float[] values) {
+    public DiagnosticsReportCollector write(final float... values) {
         this.checkClosed();
         return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final double[] values) {
+    public DiagnosticsReportCollector write(final double... values) {
         this.checkClosed();
         return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final boolean[] values) {
+    public DiagnosticsReportCollector write(final boolean... values) {
         this.checkClosed();
         return this.exit(ArrayNode.of(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final DiagnosticsReporter[] reporters) {
+    public DiagnosticsReportCollector write(final Reportable... reportables) {
         final List<Node<?>> nodes = new ArrayList<>();
-        for (final DiagnosticsReporter reporter : reporters) {
+        for (final Reportable reportable : reportables) {
             final GroupNode group = GroupNode.of(this.name);
-            reporter.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
+            reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
             nodes.add(group);
         }
         final ArrayNode<?> arrayNode = ArrayNode.of(this.name, nodes);

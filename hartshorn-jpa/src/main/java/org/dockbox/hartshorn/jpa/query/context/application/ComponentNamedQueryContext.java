@@ -84,7 +84,7 @@ public class ComponentNamedQueryContext extends DefaultContext implements Report
         collector.property("name").write(this.name);
         collector.property("native").write(this.nativeQuery);
         collector.property("query").write(this.query);
-        collector.property("declaredBy").write(this.declaredBy.qualifiedName());
+        collector.property("declaredBy").write(this.declaredBy);
         collector.property("automaticFlush").write(this.automaticFlush);
         collector.property("automaticClear").write(this.automaticClear);
     }

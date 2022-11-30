@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.reporting.system;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-public class JVMDiagnosticsReporter implements DiagnosticsReporter {
+public class JVMDiagnosticsReporter implements Reportable {
 
     private final boolean includeJvmFlags;
 

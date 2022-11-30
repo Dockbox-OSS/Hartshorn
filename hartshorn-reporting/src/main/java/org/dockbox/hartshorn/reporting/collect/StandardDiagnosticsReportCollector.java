@@ -17,14 +17,22 @@
 package org.dockbox.hartshorn.reporting.collect;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
+import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
 
-    private final DiagnosticsReport report = new DiagnosticsReport();
+    private final NodeDiagnosticsReport report = new NodeDiagnosticsReport();
 
-    public DiagnosticsReport report() {
+    public NodeDiagnosticsReport report() {
+        return this.report;
+    }
+
+    @Override
+    public DiagnosticsReport report(final Reportable reportable) {
+        reportable.report(this);
         return this.report;
     }
 

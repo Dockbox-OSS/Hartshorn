@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -43,7 +43,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
-    
+
     private final ComponentReportingConfiguration configuration = new ComponentReportingConfiguration();
     private final ApplicationContext applicationContext;
 
@@ -56,7 +56,7 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
         final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
 
         if (this.configuration.groupBy() == ComponentAttribute.NONE) {
-            final DiagnosticsReporter[] reporters = this.diagnosticsReporters(componentLocator.containers());
+            final Reportable[] reporters = this.diagnosticsReporters(componentLocator.containers());
             collector.property("all").write(reporters);
         }
         else {
@@ -74,55 +74,53 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     }
 
     @NotNull
-    private DiagnosticsReporter[] diagnosticsReporters(final Collection<ComponentContainer> containers) {
+    private Reportable[] diagnosticsReporters(final Collection<ComponentContainer> containers) {
         return containers.stream()
-                .map(container -> {
-                    return (DiagnosticsReporter) componentCollector -> {
-                        componentCollector.property("type").write(container.type().qualifiedName());
-                        componentCollector.property("id").write(container.id());
-                        componentCollector.property("name").write(container.name());
-                        componentCollector.property("singleton").write(container.singleton());
-                        componentCollector.property("lazy").write(container.lazy());
+                .map(container -> (Reportable) componentCollector -> {
+                    componentCollector.property("type").write(container.type());
+                    componentCollector.property("id").write(container.id());
+                    componentCollector.property("name").write(container.name());
+                    componentCollector.property("singleton").write(container.singleton());
+                    componentCollector.property("lazy").write(container.lazy());
 
-                        final String componentType = StringUtilities.capitalize(container.componentType().name().toLowerCase());
-                        componentCollector.property("componentType").write(componentType);
-                        componentCollector.property("permitsProxying").write(container.permitsProxying());
-                        componentCollector.property("permitsProcessing").write(container.permitsProcessing());
+                    final String componentType = StringUtilities.capitalize(container.componentType().name().toLowerCase());
+                    componentCollector.property("componentType").write(componentType);
+                    componentCollector.property("permitsProxying").write(container.permitsProxying());
+                    componentCollector.property("permitsProcessing").write(container.permitsProcessing());
 
-                        if (this.configuration.includeDependencies()) {
-                            componentCollector.property("dependencies").write(dependencyCollector -> {
-                                dependencyCollector.property("inject").write(injectCollector -> reportAnnotatedField(container, Inject.class, injectCollector));
-                                dependencyCollector.property("context").write(requiredCollector -> reportAnnotatedField(container, Context.class, requiredCollector));
-                            });
-                        }
+                    if (this.configuration.includeDependencies()) {
+                        componentCollector.property("dependencies").write(dependencyCollector -> {
+                            dependencyCollector.property("inject").write(injectCollector -> reportAnnotatedField(container, Inject.class, injectCollector));
+                            dependencyCollector.property("context").write(requiredCollector -> reportAnnotatedField(container, Context.class, requiredCollector));
+                        });
+                    }
 
-                        if (this.configuration.includeRequiredConditions()) {
-                            final DiagnosticsReporter[] reporters = container.type().annotations().all(RequiresCondition.class).stream()
-                                    .map(requiresCondition -> (DiagnosticsReporter) conditionCollector -> {
-                                        conditionCollector.property("type").write(requiresCondition.annotationType().getCanonicalName());
-                                        conditionCollector.property("condition").write(requiresCondition.condition().getCanonicalName());
-                                        conditionCollector.property("failOnNoMatch").write(requiresCondition.failOnNoMatch());
-                                    }).toArray(DiagnosticsReporter[]::new);
-                            componentCollector.property("conditions").write(reporters);
-                        }
+                    if (this.configuration.includeRequiredConditions()) {
+                        final Reportable[] reporters = container.type().annotations().all(RequiresCondition.class).stream()
+                                .map(requiresCondition -> (Reportable) conditionCollector -> {
+                                    conditionCollector.property("type").write(requiresCondition.annotationType().getCanonicalName());
+                                    conditionCollector.property("condition").write(requiresCondition.condition().getCanonicalName());
+                                    conditionCollector.property("failOnNoMatch").write(requiresCondition.failOnNoMatch());
+                                }).toArray(Reportable[]::new);
+                        componentCollector.property("conditions").write(reporters);
+                    }
 
-                        for (final Entry<ComponentAttribute, Boolean> entry : this.configuration.attributes().entrySet()) {
-                            if (entry.getValue()) {
-                                switch (entry.getKey()) {
-                                    case STEREOTYPE -> componentCollector.property("package").write(container.type().packageInfo().name());
-                                    case PACKAGE -> componentCollector.property("stereotype").write(this.stereotype(container).getCanonicalName());
-                                }
+                    for (final Entry<ComponentAttribute, Boolean> entry : this.configuration.attributes().entrySet()) {
+                        if (entry.getValue()) {
+                            switch (entry.getKey()) {
+                                case STEREOTYPE -> componentCollector.property("stereotype").write(this.stereotype(container).getCanonicalName());
+                                case PACKAGE -> componentCollector.property("package").write(container.type().packageInfo());
                             }
                         }
-                    };
-                }).toArray(DiagnosticsReporter[]::new);
+                    }
+                }).toArray(Reportable[]::new);
     }
 
     private static void reportAnnotatedField(final ComponentContainer container, final Class<? extends Annotation> annotation, final DiagnosticsPropertyCollector injectCollector) {
         final List<? extends FieldView<?, ?>> injectFields = container.type().fields().annotatedWith(annotation);
         for (final FieldView<?, ?> injectField : injectFields) {
             injectCollector.property(injectField.name()).write(fieldCollector -> {
-                fieldCollector.property("type").write(injectField.type().qualifiedName());
+                fieldCollector.property("type").write(injectField.type());
                 fieldCollector.property("required").write(injectField.annotations().get(Required.class).map(Required::value).orElse(false));
                 if (injectField.annotations().has(Named.class)) {
                     fieldCollector.property("name").write(injectField.annotations().get(Named.class).get().value());

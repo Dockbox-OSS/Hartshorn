@@ -16,11 +16,8 @@
 
 package org.dockbox.hartshorn.reporting;
 
-public interface DiagnosticsReportCollector extends DiagnosticsPropertyCollector {
+public interface ReportSerializer<T> {
 
-    void visit(CategorizedDiagnosticsReporter reporter);
+    T serialize(DiagnosticsReport report) throws ReportSerializationException;
 
-    DiagnosticsReport report();
-
-    DiagnosticsReport report(Reportable reportable);
 }

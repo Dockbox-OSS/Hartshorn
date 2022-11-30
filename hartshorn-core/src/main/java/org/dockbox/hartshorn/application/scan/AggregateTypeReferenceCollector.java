@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,9 +43,6 @@ public class AggregateTypeReferenceCollector implements TypeReferenceCollector{
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final DiagnosticsReporter[] reporters = this.collectors.stream()
-                .map(referenceCollector -> (DiagnosticsReporter) referenceCollector::report)
-                .toArray(DiagnosticsReporter[]::new);
-        collector.property("collectors").write(reporters);
+        collector.property("collectors").write(this.collectors.toArray(Reportable[]::new));
     }
 }

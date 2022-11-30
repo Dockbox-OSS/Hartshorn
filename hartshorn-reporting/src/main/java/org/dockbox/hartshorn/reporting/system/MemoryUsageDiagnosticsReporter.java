@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.reporting.system;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.DiagnosticsReporter;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.function.Function;
 
-public class MemoryUsageDiagnosticsReporter implements DiagnosticsReporter {
+public class MemoryUsageDiagnosticsReporter implements Reportable {
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
@@ -32,21 +33,42 @@ public class MemoryUsageDiagnosticsReporter implements DiagnosticsReporter {
         final long max = runtime.maxMemory();
         final long used = total - free;
 
-        collector.property("total").write(humanReadableByteCountSI(total));
-        collector.property("free").write(humanReadableByteCountSI(free));
-        collector.property("max").write(humanReadableByteCountSI(max));
-        collector.property("used").write(humanReadableByteCountSI(used));
+        final Function<Long, Reportable> byteReporter = bytes -> totalCollector -> {
+            totalCollector.property("bytes").write(bytes);
+            totalCollector.property("si").write(humanReadableByteCountSI(bytes));
+            totalCollector.property("iec").write(humanReadableByteCountIEC(bytes));
+        };
+
+        collector.property("total").write(byteReporter.apply(total));
+        collector.property("free").write(byteReporter.apply(free));
+        collector.property("max").write(byteReporter.apply(max));
+        collector.property("used").write(byteReporter.apply(used));
     }
 
     public static String humanReadableByteCountSI(long bytes) {
         if (-1000 < bytes && bytes < 1000) {
             return bytes + " B";
         }
-        final CharacterIterator ci = new StringCharacterIterator("kMGTPE");
+        final CharacterIterator iterator = new StringCharacterIterator("kMGTPE");
         while (bytes <= -999_950 || bytes >= 999_950) {
             bytes /= 1000;
-            ci.next();
+            iterator.next();
         }
-        return String.format("%.1f %cB", bytes / 1000.0, ci.current());
+        return String.format("%.1f %cB", bytes / 1000.0, iterator.current());
+    }
+
+    public static String humanReadableByteCountIEC(final long bytes) {
+        final long absoluteBytes = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+        if (absoluteBytes < 1024) {
+            return bytes + " B";
+        }
+        long value = absoluteBytes;
+        final CharacterIterator iterator = new StringCharacterIterator("KMGTPE");
+        for (int i = 40; i >= 0 && absoluteBytes > 0xfffccccccccccccL >> i; i -= 10) {
+            value >>= 10;
+            iterator.next();
+        }
+        value *= Long.signum(bytes);
+        return String.format("%.1f %ciB", value / 1024.0, iterator.current());
     }
 }

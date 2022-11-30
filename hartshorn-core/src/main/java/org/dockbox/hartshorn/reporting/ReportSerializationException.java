@@ -16,11 +16,19 @@
 
 package org.dockbox.hartshorn.reporting;
 
-public interface DiagnosticsReportCollector extends DiagnosticsPropertyCollector {
+import org.dockbox.hartshorn.util.ApplicationException;
 
-    void visit(CategorizedDiagnosticsReporter reporter);
+public class ReportSerializationException extends ApplicationException {
 
-    DiagnosticsReport report();
+    public ReportSerializationException(final String message) {
+        super(message);
+    }
 
-    DiagnosticsReport report(Reportable reportable);
+    public ReportSerializationException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public ReportSerializationException(final Throwable cause) {
+        super(cause);
+    }
 }

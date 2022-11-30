@@ -32,20 +32,20 @@ public interface DiagnosticsPropertyWriter {
 
     DiagnosticsReportCollector write(boolean value);
 
-    DiagnosticsReportCollector write(DiagnosticsReporter reporter);
+    DiagnosticsReportCollector write(Reportable reportable);
 
-    DiagnosticsReportCollector write(String[] values);
+    DiagnosticsReportCollector write(String... values);
 
-    DiagnosticsReportCollector write(int[] values);
+    DiagnosticsReportCollector write(int... values);
 
-    DiagnosticsReportCollector write(long[] values);
+    DiagnosticsReportCollector write(long... values);
 
-    DiagnosticsReportCollector write(float[] values);
+    DiagnosticsReportCollector write(float... values);
 
-    DiagnosticsReportCollector write(double[] values);
+    DiagnosticsReportCollector write(double... values);
 
-    DiagnosticsReportCollector write(boolean[] values);
+    DiagnosticsReportCollector write(boolean... values);
 
-    DiagnosticsReportCollector write(DiagnosticsReporter[] reporters);
+    DiagnosticsReportCollector write(Reportable... reportables);
 
 }

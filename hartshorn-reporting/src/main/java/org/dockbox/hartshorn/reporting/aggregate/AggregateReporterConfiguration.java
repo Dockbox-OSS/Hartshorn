@@ -18,12 +18,12 @@ package org.dockbox.hartshorn.reporting.aggregate;
 
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AggregateReporterConfiguration {
 
-    private final Set<CategorizedDiagnosticsReporter> reporters = ConcurrentHashMap.newKeySet();
+    private final Set<CategorizedDiagnosticsReporter> reporters = new LinkedHashSet<>();
 
     public void add(final CategorizedDiagnosticsReporter reporter) {
         this.reporters.add(reporter);
