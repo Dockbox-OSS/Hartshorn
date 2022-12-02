@@ -23,27 +23,16 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 public abstract class AbstractApplicationProxier implements ApplicationProxier, ApplicationManaged {
-
-    private final ReferenceQueue<Proxy<?>> managedProxies = new ReferenceQueue<>();
-    public final Consumer<Proxy<?>> MANAGED_PROXY_REGISTRY = proxy -> new WeakReference<>(proxy, this.managedProxies).enqueue();
 
     private ApplicationEnvironment environment;
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public AbstractApplicationProxier() {
         this.registerProxyLookup(new NativeProxyLookup());
-    }
-
-    @Override
-    public ReferenceQueue<Proxy<?>> managedProxies() {
-        return this.managedProxies;
     }
 
     @Override

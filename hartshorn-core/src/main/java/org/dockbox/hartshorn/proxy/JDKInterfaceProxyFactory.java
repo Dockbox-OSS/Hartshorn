@@ -27,23 +27,18 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.InvocationHandler;
-import java.util.function.Consumer;
 
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
 
-    private final Consumer<Proxy<?>> registrationFunction;
-
-    protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationContext applicationContext, final Consumer<Proxy<?>> registrationFunction) {
+    protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
         super(type, applicationContext);
-        this.registrationFunction = registrationFunction;
     }
 
     @Override
     public Attempt<T, Throwable> proxy() throws ApplicationException {
         return this.createProxy(interceptor -> this.type().isInterface()
                         ? this.interfaceProxy(interceptor)
-                        : this.concreteOrAbstractProxy(interceptor))
-                .peek(proxy -> this.registrationFunction.accept((Proxy<?>) proxy));
+                        : this.concreteOrAbstractProxy(interceptor));
     }
 
     @Override

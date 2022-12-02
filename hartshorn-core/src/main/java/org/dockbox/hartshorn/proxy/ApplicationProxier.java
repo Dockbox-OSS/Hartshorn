@@ -34,8 +34,6 @@ import java.lang.ref.ReferenceQueue;
 public interface ApplicationProxier extends ProxyLookup {
 
 
-    ReferenceQueue<Proxy<?>> managedProxies();
-
     /**
      * Gets the real type of the given proxy instance. If the given instance is not a proxy, the returned
      * type is the same as the given type. This method is used to determine the type of a proxy, without

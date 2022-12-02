@@ -39,6 +39,6 @@ public class CglibApplicationProxier extends AbstractApplicationProxier {
 
     @Override
     public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return new CglibProxyFactory<>(type, this.environment().applicationContext(), this.MANAGED_PROXY_REGISTRY);
+        return new CglibProxyFactory<>(type, this.environment().applicationContext());
     }
 }

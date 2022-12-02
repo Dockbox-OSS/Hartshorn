@@ -16,14 +16,6 @@
 
 package test.org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
@@ -51,6 +43,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.proxy.types.ConcreteProxyTarget;

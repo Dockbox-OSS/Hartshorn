@@ -327,11 +327,6 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public ReferenceQueue<Proxy<?>> managedProxies() {
-        return this.applicationProxier.managedProxies();
-    }
-
-    @Override
     public <T> Option<Class<T>> real(final T instance) {
         return this.applicationProxier.real(instance);
     }
