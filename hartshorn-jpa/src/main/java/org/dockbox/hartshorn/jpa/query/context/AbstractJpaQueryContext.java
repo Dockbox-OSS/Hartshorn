@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.jpa.JpaParameterLoaderContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
+import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
+import org.dockbox.hartshorn.jpa.query.QueryConstructor;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -79,13 +81,15 @@ public abstract class AbstractJpaQueryContext extends DefaultContext implements 
 
     @Override
     public jakarta.persistence.Query query() {
-        final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(this.entityManager());
+        final EntityManager entityManager = this.entityManager();
+        final QueryConstructor queryConstructor = this.queryConstructor(entityManager);
+        final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(queryConstructor, entityManager);
         final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
         return persistenceQuery;
     }
 
-    protected abstract jakarta.persistence.Query persistenceQuery(final EntityManager entityManager) throws IllegalArgumentException;
+    protected abstract jakarta.persistence.Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException;
 
     protected TypeView<?> queryResultType() {
         return this.method().genericReturnType();
@@ -96,5 +100,9 @@ public abstract class AbstractJpaQueryContext extends DefaultContext implements 
             this.parameterLoader = TypeUtils.adjustWildcards(this.applicationContext().get(Key.of(ParameterLoader.class, "jpa_query")), ParameterLoader.class);
         }
         return this.parameterLoader;
+    }
+
+    private QueryConstructor queryConstructor(final EntityManager entityManager) {
+        return this.applicationContext().get(QueryComponentFactory.class).constructor(entityManager);
     }
 }

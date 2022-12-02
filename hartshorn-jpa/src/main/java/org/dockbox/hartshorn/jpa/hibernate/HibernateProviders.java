@@ -26,9 +26,12 @@ import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.query.EntityQueryExecutor;
 import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
 import org.dockbox.hartshorn.jpa.query.QueryExecutor;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.jpa.transaction.TransactionManager;
 import org.dockbox.hartshorn.util.TypeUtils;
+
+import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UsePersistence.class)
@@ -63,5 +66,11 @@ public class HibernateProviders {
     @Provider
     public QueryExecutor queryFunction() {
         return new EntityQueryExecutor();
+    }
+
+    @Provider
+    @Singleton
+    public QueryExecuteTypeLookup queryTypeLookup() {
+        return new HibernateQueryExecuteTypeLookup();
     }
 }

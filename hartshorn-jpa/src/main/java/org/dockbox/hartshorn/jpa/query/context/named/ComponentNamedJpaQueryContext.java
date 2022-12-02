@@ -1,6 +1,10 @@
-package org.dockbox.hartshorn.jpa.query.context;
+package org.dockbox.hartshorn.jpa.query.context.named;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.jpa.query.QueryConstructor;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteType;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
+import org.dockbox.hartshorn.jpa.query.context.AbstractJpaQueryContext;
 import org.dockbox.hartshorn.jpa.query.context.application.ComponentNamedQueryContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -23,13 +27,8 @@ public class ComponentNamedJpaQueryContext extends AbstractJpaQueryContext {
     }
 
     @Override
-    protected Query persistenceQuery(final EntityManager entityManager) throws IllegalArgumentException {
-        final TypeView<?> resultType = this.queryResultType();
-
-        if (resultType.isVoid() || this.context.nativeQuery())
-            return entityManager.createNamedQuery(this.context.name());
-        else
-            return entityManager.createNamedQuery(this.context.name(), resultType.type());
+    protected Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException {
+        return queryConstructor.createNamedQuery(this.context.name(), this);
     }
 
     @Override
@@ -40,5 +39,16 @@ public class ComponentNamedJpaQueryContext extends AbstractJpaQueryContext {
     @Override
     public boolean automaticFlush() {
         return this.context.automaticFlush();
+    }
+
+    @Override
+    public QueryExecuteType queryType() {
+        final QueryExecuteTypeLookup queryExecuteTypeLookup = this.applicationContext().get(QueryExecuteTypeLookup.class);
+        if (this.context.nativeQuery()) {
+            return queryExecuteTypeLookup.lookup(this.query());
+        }
+        else {
+            return queryExecuteTypeLookup.lookup(this.context.query());
+        }
     }
 }

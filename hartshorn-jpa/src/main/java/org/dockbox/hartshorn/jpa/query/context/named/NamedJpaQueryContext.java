@@ -1,7 +1,11 @@
-package org.dockbox.hartshorn.jpa.query.context;
+package org.dockbox.hartshorn.jpa.query.context.named;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.jpa.annotations.NamedQuery;
+import org.dockbox.hartshorn.jpa.query.QueryConstructor;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteType;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
+import org.dockbox.hartshorn.jpa.query.context.AbstractJpaQueryContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -33,13 +37,12 @@ public class NamedJpaQueryContext extends AbstractJpaQueryContext {
     }
 
     @Override
-    protected Query persistenceQuery(final EntityManager entityManager) throws IllegalArgumentException {
-        final TypeView<?> resultType = this.queryResultType();
-        // TODO: ApplicationQueryContext to check if native or JPQL
-        //        return entityManager.createNamedQuery(this.annotation.value());
-        if (resultType.isVoid())
-            return entityManager.createNamedQuery(this.annotation.value());
-        else
-            return entityManager.createNamedQuery(this.annotation.value(), resultType.type());
+    public QueryExecuteType queryType() {
+        return this.applicationContext().get(QueryExecuteTypeLookup.class).lookup(this.query());
+    }
+
+    @Override
+    protected Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException {
+        return queryConstructor.createNamedQuery(this.annotation.value(), this);
     }
 }

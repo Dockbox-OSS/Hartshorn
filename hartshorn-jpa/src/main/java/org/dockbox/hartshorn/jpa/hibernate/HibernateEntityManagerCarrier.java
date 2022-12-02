@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.jpa.entitymanager.EntityContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.InvalidConnectionException;
 import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
-import org.dockbox.hartshorn.jpa.query.QueryRegistryFactory;
+import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
 import org.dockbox.hartshorn.jpa.query.context.application.ApplicationNamedQueriesContext;
 import org.dockbox.hartshorn.jpa.query.context.application.ComponentNamedQueryContext;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
@@ -174,7 +174,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         final Map<String, ComponentNamedQueryContext> queries = queriesContext.namedQueries();
         if (queries.isEmpty()) return;
 
-        final QueryRegistryFactory registryFactory = this.applicationContext().get(QueryRegistryFactory.class);
+        final QueryComponentFactory registryFactory = this.applicationContext().get(QueryComponentFactory.class);
         final NamedQueryRegistry registry = registryFactory.create(this.factory);
 
         // Safe to auto-close as this will be invoked before the carrier is exposed to external components. It is

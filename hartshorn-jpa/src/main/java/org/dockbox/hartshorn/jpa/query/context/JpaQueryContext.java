@@ -1,6 +1,7 @@
 package org.dockbox.hartshorn.jpa.query.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteType;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -26,4 +27,5 @@ public interface JpaQueryContext {
 
     Query query();
 
+    QueryExecuteType queryType();
 }

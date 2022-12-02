@@ -27,8 +27,10 @@ public class EntityQueryExecutor implements QueryExecutor {
         final Query query = context.query();
 
         final Object result;
-        if (context.entityType().isVoid()) result = query.executeUpdate();
-        else result = query.getResultList();
+        // TODO: Also update other usages of .isVoid() to use queryType() instead
+        final QueryExecuteType queryExecuteType = context.queryType();
+        if (queryExecuteType == QueryExecuteType.SELECT) result = query.getResultList();
+        else  result = query.executeUpdate();
 
         if (context.automaticClear()) context.entityManager().clear();
         return result;

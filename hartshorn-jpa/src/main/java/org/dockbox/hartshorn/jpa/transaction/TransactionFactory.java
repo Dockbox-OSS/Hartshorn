@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.jpa.transaction;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
+import org.dockbox.hartshorn.jpa.annotations.UseTransactionManagement;
 
 import jakarta.persistence.EntityManager;
 
 @Service
-@RequiresActivator(UsePersistence.class)
+@RequiresActivator(UseTransactionManagement.class)
 public interface TransactionFactory {
     @Factory
     TransactionManager manager(EntityManager entityManager);

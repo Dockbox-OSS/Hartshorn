@@ -1,9 +1,13 @@
-package org.dockbox.hartshorn.jpa.query.context;
+package org.dockbox.hartshorn.jpa.query.context.unnamed;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.annotations.Query.QueryType;
+import org.dockbox.hartshorn.jpa.query.QueryConstructor;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteType;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
 import org.dockbox.hartshorn.jpa.query.UnsupportedQueryTypeException;
+import org.dockbox.hartshorn.jpa.query.context.AbstractJpaQueryContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -32,20 +36,18 @@ public class UnnamedJpaQueryContext extends AbstractJpaQueryContext {
         return this.annotation.automaticFlush();
     }
 
-    protected jakarta.persistence.Query persistenceQuery(final EntityManager entityManager) throws IllegalArgumentException {
+    @Override
+    public QueryExecuteType queryType() {
+        return this.applicationContext().get(QueryExecuteTypeLookup.class).lookup(this.annotation.value());
+    }
+
+    protected jakarta.persistence.Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException {
         final String query = this.annotation.value();
         final QueryType queryType = this.annotation.type();
-        final TypeView<?> resultType = this.queryResultType();
 
         return switch (queryType) {
-            case JPQL -> {
-                if (resultType.isVoid()) yield entityManager.createQuery(query);
-                else yield entityManager.createQuery(query, resultType.type());
-            }
-            case NATIVE -> {
-                if (resultType.isVoid()) yield entityManager.createNativeQuery(query);
-                else yield entityManager.createNativeQuery(query, resultType.type());
-            }
+            case JPQL -> queryConstructor.createJpqlQuery(query, this);
+            case NATIVE -> queryConstructor.createNativeQuery(query, this);
             default -> throw new UnsupportedQueryTypeException(queryType);
         };
     }

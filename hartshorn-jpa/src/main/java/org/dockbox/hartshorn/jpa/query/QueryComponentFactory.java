@@ -10,11 +10,14 @@ import jakarta.persistence.EntityManagerFactory;
 
 @Service
 @RequiresActivator(UseQuerying.class)
-public interface QueryRegistryFactory {
+public interface QueryComponentFactory {
 
     @Factory
     NamedQueryRegistry create(EntityManager entityManager);
 
     @Factory
     NamedQueryRegistry create(EntityManagerFactory entityManagerFactory);
+
+    @Factory
+    QueryConstructor constructor(EntityManager entityManager);
 }

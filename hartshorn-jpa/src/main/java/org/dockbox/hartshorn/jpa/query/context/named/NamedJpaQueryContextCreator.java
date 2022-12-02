@@ -1,8 +1,10 @@
-package org.dockbox.hartshorn.jpa.query.context;
+package org.dockbox.hartshorn.jpa.query.context.named;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.jpa.annotations.NamedQuery;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
+import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
 import org.dockbox.hartshorn.proxy.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

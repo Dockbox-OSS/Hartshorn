@@ -89,15 +89,6 @@ public class QueryRepositoryTests {
     }
 
     @Test
-    void testUpdateNonEntityModifier() {
-        this.applicationContext.get(DataSourceList.class).add("users", connection());
-        final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
-        final JpaUser user = new JpaUser("JUnit", 21);
-        repository.save(user);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> repository.nonModifierEntityUpdate(user.id(), 22));
-    }
-
-    @Test
     void testUpdateEntity() {
         this.applicationContext.get(DataSourceList.class).add("users", connection());
         final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);

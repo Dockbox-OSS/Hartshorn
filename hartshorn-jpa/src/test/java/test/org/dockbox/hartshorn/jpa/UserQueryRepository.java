@@ -19,7 +19,6 @@ package test.org.dockbox.hartshorn.jpa;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.DataSource;
-import org.dockbox.hartshorn.jpa.annotations.EntityModifier;
 import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.annotations.Transactional;
 
@@ -33,19 +32,12 @@ public interface UserQueryRepository extends JpaRepository<JpaUser, Long> {
     List<JpaUser> findAdults();
 
     @Transactional
-    @EntityModifier
     @Query("delete from JpaUser u")
     void deleteAll();
 
-    @EntityModifier
     @Query("update JpaUser u set u.age = :age where u.id = :id")
     int nonTransactionalEntityUpdate(long id, int age);
 
-    @Transactional
-    @Query("update JpaUser u set u.age = :age where u.id = :id")
-    int nonModifierEntityUpdate(long id, int age);
-
-    @EntityModifier
     @Transactional
     @Query("update JpaUser u set u.age = :age where u.id = :id")
     int entityUpdate(long id, int age);
