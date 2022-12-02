@@ -44,6 +44,8 @@ import jakarta.inject.Named;
 
 public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
 
+    public static final String COMPONENTS_CATEGORY = "components";
+
     private final ComponentReportingConfiguration configuration = new ComponentReportingConfiguration();
     private final ApplicationContext applicationContext;
 
@@ -141,6 +143,6 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
 
     @Override
     public String category() {
-        return "components";
+        return COMPONENTS_CATEGORY;
     }
 }

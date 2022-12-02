@@ -21,7 +21,7 @@ import java.util.List;
 
 public class GroupNode extends SimpleNode<List<Node<?>>> {
 
-    private GroupNode(final String name) {
+    public GroupNode(final String name) {
         super(name, new ArrayList<>());
     }
 
@@ -29,12 +29,20 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
         this.value().add(value);
     }
 
+    public boolean has(final String name) {
+        return this.value().stream()
+                .anyMatch(node -> node.name().equals(name));
+    }
+
+    public Node<?> get(final String name) {
+        return this.value().stream()
+                .filter(node -> node.name().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     @Override
     public <R> R accept(final NodeVisitor<R> visitor) {
         return visitor.visit(this);
-    }
-
-    public static GroupNode of(final String name) {
-        return new GroupNode(name);
     }
 }

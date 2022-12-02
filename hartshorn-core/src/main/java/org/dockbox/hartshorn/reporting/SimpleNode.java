@@ -21,7 +21,7 @@ public class SimpleNode<T> implements Node<T> {
     private final String name;
     private final T value;
 
-    protected SimpleNode(final String name, final T value) {
+    public SimpleNode(final String name, final T value) {
         this.name = name;
         this.value = value;
     }
@@ -36,9 +36,5 @@ public class SimpleNode<T> implements Node<T> {
 
     public <R> R accept(final NodeVisitor<R> visitor) {
         return visitor.visit(this);
-    }
-
-    public static SimpleNode<?> of(final String name, final Object value) {
-        return new SimpleNode<>(name, value);
     }
 }

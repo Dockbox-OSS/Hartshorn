@@ -25,12 +25,14 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class TypeUtils {
 
@@ -201,5 +203,57 @@ public class TypeUtils {
             return TypeUtils.adjustWildcards(defaultConstructor.get().create().rethrowUnchecked().get(), Object.class);
         }
         return null;
+    }
+
+    public static Stream<Integer> stream(final int[] array) {
+        return Arrays.stream(array).boxed();
+    }
+
+    public static Stream<Long> stream(final long[] array) {
+        return Arrays.stream(array).boxed();
+    }
+
+    public static Stream<Double> stream(final double[] array) {
+        return Arrays.stream(array).boxed();
+    }
+
+    public static Stream<Float> stream(final float[] array) {
+        final Float[] boxed = new Float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            boxed[i] = array[i];
+        }
+        return Arrays.stream(boxed);
+    }
+
+    public static Stream<Short> stream(final short[] array) {
+        final Short[] boxed = new Short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            boxed[i] = array[i];
+        }
+        return Arrays.stream(boxed);
+    }
+
+    public static Stream<Byte> stream(final byte[] array) {
+        final Byte[] boxed = new Byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            boxed[i] = array[i];
+        }
+        return Arrays.stream(boxed);
+    }
+
+    public static Stream<Character> stream(final char[] array) {
+        final Character[] boxed = new Character[array.length];
+        for (int i = 0; i < array.length; i++) {
+            boxed[i] = array[i];
+        }
+        return Arrays.stream(boxed);
+    }
+
+    public static Stream<Boolean> stream(final boolean[] array) {
+        final Boolean[] boxed = new Boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            boxed[i] = array[i];
+        }
+        return Arrays.stream(boxed);
     }
 }

@@ -21,20 +21,17 @@ import java.util.List;
 
 public class ArrayNode<T> extends SimpleNode<List<T>> {
 
-    private ArrayNode(final String name, final List<T> value) {
+    public ArrayNode(final String name, final List<T> value) {
         super(name, value);
+    }
+
+    @SafeVarargs
+    public ArrayNode(final String name, final T... value) {
+        super(name, Arrays.asList(value));
     }
 
     @Override
     public <R> R accept(final NodeVisitor<R> visitor) {
         return visitor.visit(this);
-    }
-
-    public static <T> ArrayNode<T> of(final String name, final T[] value) {
-        return new ArrayNode<>(name, Arrays.asList(value));
-    }
-
-    public static <T> ArrayNode<T> of(final String name, final List<T> value) {
-        return new ArrayNode<>(name, value);
     }
 }

@@ -38,8 +38,9 @@ import java.util.stream.Collectors;
 
 public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
 
-    private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
+    public static final String APPLICATION_CATEGORY = "application";
 
+    private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
     private final ApplicationContext applicationContext;
 
     public ApplicationDiagnosticsReporter(final ApplicationContext applicationContext) {
@@ -140,6 +141,6 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
 
     @Override
     public String category() {
-        return "application";
+        return APPLICATION_CATEGORY;
     }
 }

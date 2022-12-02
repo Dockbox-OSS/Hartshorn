@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.reporting.GroupNode;
 import org.dockbox.hartshorn.reporting.Node;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.SimpleNode;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,43 +44,43 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     @Override
     public DiagnosticsReportCollector write(final String value) {
         this.checkClosed();
-        return this.exit(SimpleNode.of(this.name, value));
+        return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final int value) {
         this.checkClosed();
-        return this.exit(SimpleNode.of(this.name, value));
+        return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final long value) {
         this.checkClosed();
-        return this.exit(SimpleNode.of(this.name, value));
+        return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final float value) {
         this.checkClosed();
-        return this.exit(SimpleNode.of(this.name, value));
+        return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final double value) {
         this.checkClosed();
-        return this.exit(SimpleNode.of(this.name, value));
+        return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final boolean value) {
         this.checkClosed();
-        return this.exit(SimpleNode.of(this.name, value));
+        return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
     public DiagnosticsReportCollector write(final Reportable reportable) {
         this.checkClosed();
-        final GroupNode group = GroupNode.of(this.name);
+        final GroupNode group = new GroupNode(this.name);
         reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
         return this.exit(group);
     }
@@ -87,49 +88,48 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     @Override
     public DiagnosticsReportCollector write(final String... values) {
         this.checkClosed();
-        return this.exit(ArrayNode.of(this.name, values));
+        return this.exit(new ArrayNode<>(this.name, values));
     }
 
     @Override
     public DiagnosticsReportCollector write(final int... values) {
         this.checkClosed();
-        return this.exit(ArrayNode.of(this.name, values));
+        return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
     public DiagnosticsReportCollector write(final long... values) {
         this.checkClosed();
-        return this.exit(ArrayNode.of(this.name, values));
+        return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
     public DiagnosticsReportCollector write(final float... values) {
         this.checkClosed();
-        return this.exit(ArrayNode.of(this.name, values));
+        return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
     public DiagnosticsReportCollector write(final double... values) {
         this.checkClosed();
-        return this.exit(ArrayNode.of(this.name, values));
+        return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
     public DiagnosticsReportCollector write(final boolean... values) {
         this.checkClosed();
-        return this.exit(ArrayNode.of(this.name, values));
+        return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
     public DiagnosticsReportCollector write(final Reportable... reportables) {
         final List<Node<?>> nodes = new ArrayList<>();
         for (final Reportable reportable : reportables) {
-            final GroupNode group = GroupNode.of(this.name);
+            final GroupNode group = new GroupNode(this.name);
             reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
             nodes.add(group);
         }
-        final ArrayNode<?> arrayNode = ArrayNode.of(this.name, nodes);
-        return this.exit(arrayNode);
+        return this.exit(new ArrayNode<>(this.name, nodes));
     }
 
     private void checkClosed() {

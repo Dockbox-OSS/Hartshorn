@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 
 public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentProcessorReportingConfiguration>, CategorizedDiagnosticsReporter {
 
+    public static final String COMPONENT_PROCESSORS_CATEGORY = "componentProcessors";
+
     private final ComponentProcessorReportingConfiguration configuration = new ComponentProcessorReportingConfiguration();
     private final ApplicationContext applicationContext;
 
@@ -107,6 +109,6 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
 
     @Override
     public String category() {
-        return "componentProcessors";
+        return COMPONENT_PROCESSORS_CATEGORY;
     }
 }

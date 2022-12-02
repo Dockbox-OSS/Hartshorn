@@ -25,6 +25,8 @@ import java.lang.management.RuntimeMXBean;
 
 public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>, CategorizedDiagnosticsReporter {
 
+    public static final String SYSTEM_CATEGORY = "system";
+
     private final SystemReportingConfiguration configuration = new SystemReportingConfiguration();
 
     @Override
@@ -65,6 +67,6 @@ public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporte
 
     @Override
     public String category() {
-        return "system";
+        return SYSTEM_CATEGORY;
     }
 }

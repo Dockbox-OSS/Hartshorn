@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.reporting.GroupNode;
 
 public class NodeDiagnosticsReport implements DiagnosticsReport {
 
-    private final GroupNode root = GroupNode.of("root");
+    private final GroupNode root = new GroupNode("root");
 
     @Override
     public GroupNode root() {
