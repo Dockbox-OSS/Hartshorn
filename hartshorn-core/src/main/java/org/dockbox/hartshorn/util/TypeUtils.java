@@ -111,90 +111,93 @@ public class TypeUtils {
         return adjustWildcards(instance, annotationType);
     }
 
-    public static <T> T checkWrapping(final Object obj, final TypeView<T> type) {
-        if (type.isInstance(obj)) return type.cast(obj);
-        if (obj instanceof Collection<?> collection) return checkCollectionWrapping(type, collection);
-        else if (obj == null) return checkNullWrapping(type);
-        else return checkSingleValueWrapping(type, obj);
+    public static <T> T checkWrapping(final Object objectToTransform, final TypeView<T> targetType) {
+        if (targetType.isInstance(objectToTransform)) return targetType.cast(objectToTransform);
+        if (objectToTransform instanceof Collection<?> collection) return checkCollectionWrapping(collection, targetType);
+        else if (objectToTransform == null) return createAdjustedEmptyWrapper(targetType);
+        else return checkSingleValueWrapping(objectToTransform, targetType);
     }
 
-    private static <T> T checkSingleValueWrapping(final TypeView<T> type, Object obj) {
-        final Object value = unwrapSingleValue(obj);
-        if (value == null) return checkNullWrapping(type);
-        if (type.is(Optional.class)) {
+    private static <T> T checkSingleValueWrapping(final Object objectToTransform, final TypeView<T> targetType) {
+        final Object value = unwrapSingleValue(objectToTransform);
+        if (value == null) return createAdjustedEmptyWrapper(targetType);
+        if (targetType.is(Optional.class)) {
             return TypeUtils.adjustWildcards(Optional.of(value), Object.class);
         }
-        else if (type.is(Option.class)) {
+        else if (targetType.is(Option.class)) {
             return TypeUtils.adjustWildcards(Option.of(value), Object.class);
         }
-        else if (type.is(Attempt.class)) {
+        else if (targetType.is(Attempt.class)) {
             return TypeUtils.adjustWildcards(Attempt.of(value), Object.class);
         }
-        else if (type.isChildOf(Collection.class)) {
-            final Option<? extends ConstructorView<?>> defaultConstructor = type.constructors().defaultConstructor();
-            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + type.name() + ", no default constructor");
+        else if (targetType.isChildOf(Collection.class)) {
+            final Option<? extends ConstructorView<?>> defaultConstructor = targetType.constructors().defaultConstructor();
+            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
             final Attempt<?, Throwable> attempt = defaultConstructor.get().create();
             final Collection<Object> collection = TypeUtils.adjustWildcards(attempt.rethrowUnchecked().get(), Object.class);
             collection.add(value);
             return TypeUtils.adjustWildcards(collection, Object.class);
         }
-        throw new IllegalArgumentException("Cannot convert " + obj.getClass().getName() + " to " + type.name());
+        throw new IllegalArgumentException("Cannot convert " + objectToTransform.getClass().getName() + " to " + targetType.name());
     }
 
-    private static Object unwrapSingleValue(final Object obj) {
-        if (obj instanceof Optional<?> optional) {
+    private static Object unwrapSingleValue(final Object objectToUnwrap) {
+        if (objectToUnwrap instanceof Optional<?> optional) {
             return optional.orElse(null);
         }
-        else if (obj instanceof Attempt<?, ?> attempt) {
+        else if (objectToUnwrap instanceof Attempt<?, ?> attempt) {
             return attempt.orNull();
         }
-        else if (obj instanceof Option<?> option) {
+        else if (objectToUnwrap instanceof Option<?> option) {
             return option.orNull();
         }
-        else return obj;
+        else return objectToUnwrap;
     }
 
-    private static <T> T checkCollectionWrapping(final TypeView<T> type, final Collection<?> collection) {
-        if (type.isChildOf(Collection.class)) {
-            final Collection<?> transformed = CollectionUtilities.transform(collection, null, adjustWildcards(type, TypeView.class));
+    private static <T> T checkCollectionWrapping(final Collection<?> collectionToTransform, final TypeView<T> targetType) {
+        if (collectionToTransform.isEmpty()) {
+            return createAdjustedEmptyWrapper(targetType);
+        }
+        else if (targetType.isChildOf(Collection.class)) {
+            final Collection<?> transformed = CollectionUtilities.transform(collectionToTransform, null, adjustWildcards(targetType, TypeView.class));
             return TypeUtils.adjustWildcards(transformed, Object.class);
         }
-        else if (type.is(Optional.class)) {
-            if (collection.size() > 1) throw new IllegalArgumentException("Cannot convert collection to optional, collection size is greater than 1");
-            return TypeUtils.adjustWildcards(collection.stream().findFirst(), Object.class);
+        else if (targetType.is(Optional.class)) {
+            if (collectionToTransform.size() > 1) throw new IllegalArgumentException("Cannot convert collection to optional, collection size is greater than 1");
+            return TypeUtils.adjustWildcards(collectionToTransform.stream().findFirst(), Object.class);
         }
-        else if (type.is(Option.class)) {
-            if (collection.size() > 1) throw new IllegalArgumentException("Cannot convert collection to option, collection size is greater than 1");
-            return TypeUtils.adjustWildcards(Option.of(collection.stream().findFirst()), Object.class);
+        else if (targetType.is(Option.class)) {
+            if (collectionToTransform.size() > 1) throw new IllegalArgumentException("Cannot convert collection to option, collection size is greater than 1");
+            return TypeUtils.adjustWildcards(Option.of(collectionToTransform.stream().findFirst()), Object.class);
         }
-        else if (type.is(Attempt.class)) {
+        else if (targetType.is(Attempt.class)) {
             Attempt<?, ?> attempt;
-            if (collection.size() > 1) attempt = Attempt.of(new IllegalArgumentException("Cannot convert collection to attempt, collection size is greater than 1"));
-            attempt = Attempt.of(collection.stream().findFirst());
+            if (collectionToTransform.size() > 1) attempt = Attempt.of(new IllegalArgumentException("Cannot convert collection to attempt, collection size is greater than 1"));
+            attempt = Attempt.of(collectionToTransform.stream().findFirst());
             return TypeUtils.adjustWildcards(attempt, Object.class);
         }
         else {
-            if (collection.size() > 1) throw new IllegalArgumentException("Cannot convert collection to single value, collection size is greater than 1");
-            final Object first = collection.iterator().next();
+            if (collectionToTransform.size() > 1) throw new IllegalArgumentException("Cannot convert collection to single value, collection size is greater than 1");
+            final Object first = collectionToTransform.iterator().next();
             if (first == null) return null;
-            if (type.isInstance(first)) return TypeUtils.adjustWildcards(first, Object.class);
+            if (targetType.isInstance(first)) return TypeUtils.adjustWildcards(first, Object.class);
         }
-        throw new IllegalArgumentException("Cannot convert collection to " + type.name());
+        throw new IllegalArgumentException("Cannot convert collection to " + targetType.name());
     }
 
-    private static <T> T checkNullWrapping(final TypeView<T> type) {
-        if (type.is(Optional.class)) {
+    private static <T> T createAdjustedEmptyWrapper(final TypeView<T> targetType) {
+        if (targetType.is(Optional.class)) {
             return TypeUtils.adjustWildcards(Optional.empty(), Object.class);
         }
-        else if (type.is(Option.class)) {
+        else if (targetType.is(Option.class)) {
             return TypeUtils.adjustWildcards(Option.empty(), Object.class);
         }
-        else if (type.is(Attempt.class)) {
+        else if (targetType.is(Attempt.class)) {
             return TypeUtils.adjustWildcards(Attempt.empty(), Object.class);
         }
-        else if (type.isChildOf(Collection.class)) {
-            final Option<? extends ConstructorView<?>> defaultConstructor = type.constructors().defaultConstructor();
-            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + type.name() + ", no default constructor");
+        else if (targetType.isChildOf(Collection.class)) {
+            final Option<? extends ConstructorView<?>> defaultConstructor = targetType.constructors().defaultConstructor();
+            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
             return TypeUtils.adjustWildcards(defaultConstructor.get().create().rethrowUnchecked().get(), Object.class);
         }
         return null;

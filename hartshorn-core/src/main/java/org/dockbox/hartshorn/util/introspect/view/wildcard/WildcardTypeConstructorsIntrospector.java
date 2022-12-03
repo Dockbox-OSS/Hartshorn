@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class WildcardTypeConstructorsIntrospector implements TypeConstructorsIntrospector<Object> {
+
     @Override
     public Option<ConstructorView<Object>> defaultConstructor() {
         return Option.empty();
