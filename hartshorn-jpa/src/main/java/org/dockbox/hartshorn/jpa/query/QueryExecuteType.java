@@ -4,5 +4,6 @@ public enum QueryExecuteType {
     SELECT,
     UPDATE,
     DELETE,
-    INSERT
+    INSERT,
+    NATIVE,
 }

@@ -17,22 +17,37 @@
 package org.dockbox.hartshorn.jpa.query;
 
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.persistence.Query;
 
 public class EntityQueryExecutor implements QueryExecutor {
+
+    private final QueryResultTransformer queryResultTransformer;
+
+    public EntityQueryExecutor(final QueryResultTransformer queryResultTransformer) {
+        this.queryResultTransformer = queryResultTransformer;
+    }
 
     @Override
     public Object execute(final JpaQueryContext context) {
         final Query query = context.query();
 
         final Object result;
-        // TODO: Also update other usages of .isVoid() to use queryType() instead
         final QueryExecuteType queryExecuteType = context.queryType();
-        if (queryExecuteType == QueryExecuteType.SELECT) result = query.getResultList();
-        else  result = query.executeUpdate();
+
+        final TypeView<?> resultType = context.queryResultType();
+        final Query transformedQuery = this.queryResultTransformer.transform(query, resultType);
+
+        if (queryExecuteType == QueryExecuteType.SELECT) result = transformedQuery.getResultList();
+        else if (queryExecuteType == QueryExecuteType.NATIVE) {
+            if (context.entityType().isVoid()) result = transformedQuery.executeUpdate();
+            else result = transformedQuery.getResultList();
+        }
+        else result = transformedQuery.executeUpdate();
 
         if (context.automaticClear()) context.entityManager().clear();
+
         return result;
     }
 }

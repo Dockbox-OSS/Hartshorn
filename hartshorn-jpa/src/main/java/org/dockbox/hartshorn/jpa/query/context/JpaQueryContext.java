@@ -28,4 +28,6 @@ public interface JpaQueryContext {
     Query query();
 
     QueryExecuteType queryType();
+
+    TypeView<?> queryResultType();
 }

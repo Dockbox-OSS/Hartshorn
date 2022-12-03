@@ -6,6 +6,13 @@ import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
 import org.hibernate.grammars.hql.HqlParser;
 import org.hibernate.grammars.hql.HqlParser.StatementContext;
 import org.hibernate.query.hql.internal.HqlParseTreeBuilder;
+import org.hibernate.query.sql.internal.NativeQueryImpl;
+import org.hibernate.query.sqm.internal.QuerySqmImpl;
+import org.hibernate.query.sqm.tree.SqmStatement;
+import org.hibernate.query.sqm.tree.delete.SqmDeleteStatement;
+import org.hibernate.query.sqm.tree.insert.SqmInsertStatement;
+import org.hibernate.query.sqm.tree.select.SqmSelectStatement;
+import org.hibernate.query.sqm.tree.update.SqmUpdateStatement;
 
 import jakarta.persistence.Query;
 
@@ -34,7 +41,25 @@ public class HibernateQueryExecuteTypeLookup implements QueryExecuteTypeLookup {
 
     @Override
     public QueryExecuteType lookup(final Query query) {
-        // TODO: Implement
-        return null;
+        if (query instanceof QuerySqmImpl<?> sqm) {
+            final SqmStatement<?> sqmStatement = sqm.getSqmStatement();
+            if (sqmStatement instanceof SqmSelectStatement<?>) {
+                return QueryExecuteType.SELECT;
+            }
+            else if (sqmStatement instanceof SqmUpdateStatement<?>){
+                return QueryExecuteType.UPDATE;
+            }
+            else if (sqmStatement instanceof SqmDeleteStatement<?>) {
+                return QueryExecuteType.DELETE;
+            }
+            else if (sqmStatement instanceof SqmInsertStatement<?>) {
+                return QueryExecuteType.INSERT;
+            }
+            else throw new IllegalArgumentException("Unexpected SQM statement type: " + sqmStatement.getClass().getName());
+        }
+        else if (query instanceof NativeQueryImpl<?>) {
+            return QueryExecuteType.NATIVE;
+        }
+        else throw new IllegalArgumentException("Unexpected query type: " + query.getClass().getName());
     }
 }

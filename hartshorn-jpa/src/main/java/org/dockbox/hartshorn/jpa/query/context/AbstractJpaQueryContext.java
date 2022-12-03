@@ -91,7 +91,8 @@ public abstract class AbstractJpaQueryContext extends DefaultContext implements 
 
     protected abstract jakarta.persistence.Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException;
 
-    protected TypeView<?> queryResultType() {
+    @Override
+    public TypeView<?> queryResultType() {
         return this.method().genericReturnType();
     }
 

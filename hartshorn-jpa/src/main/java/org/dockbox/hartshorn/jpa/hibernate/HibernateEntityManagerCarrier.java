@@ -182,7 +182,8 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         try (final EntityManager entityManager = this.manager()) {
             queries.forEach((name, context) -> {
                 if (registry.has(name)) {
-                    // If an entity is already registered with the same name, skip it, this is valid behaviour
+                    // If an entity is already registered with the same name, skip it, this is valid behaviour as this
+                    // is usually handled by the backing JPA implementation.
                     if (context.isEntityDeclaration()) return;
                     // If a query is already registered with the same name, but not by an entity, yield a warning, but
                     // proceed with the registration

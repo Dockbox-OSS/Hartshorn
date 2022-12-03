@@ -44,11 +44,6 @@ public class ComponentNamedJpaQueryContext extends AbstractJpaQueryContext {
     @Override
     public QueryExecuteType queryType() {
         final QueryExecuteTypeLookup queryExecuteTypeLookup = this.applicationContext().get(QueryExecuteTypeLookup.class);
-        if (this.context.nativeQuery()) {
-            return queryExecuteTypeLookup.lookup(this.query());
-        }
-        else {
-            return queryExecuteTypeLookup.lookup(this.context.query());
-        }
+        return queryExecuteTypeLookup.lookup(this.query());
     }
 }
