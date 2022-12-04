@@ -22,6 +22,9 @@ import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
 
     private final NodeDiagnosticsReport report = new NodeDiagnosticsReport();
@@ -32,6 +35,8 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public DiagnosticsReport report(final Reportable reportable) {
+        this.property("timestamp").write(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+
         reportable.report(this);
         return this.report;
     }
