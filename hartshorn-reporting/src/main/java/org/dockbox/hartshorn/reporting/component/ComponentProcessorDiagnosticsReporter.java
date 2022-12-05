@@ -96,12 +96,6 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
         });
     }
 
-    private void reportProcessors(final DiagnosticsPropertyCollector collector, final String type,
-                                  final MultiMap<Integer, ? extends ComponentProcessor> processors) {
-
-
-    }
-
     @Override
     public ComponentProcessorReportingConfiguration configuration() {
         return this.configuration;
