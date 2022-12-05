@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
@@ -39,22 +39,22 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UsePersistence.class)
 public class PersistenceProviders {
 
-    @Provider("jpa_query")
+    @Binds("jpa_query")
     public ParameterLoader<?> jpaParameterLoader() {
         return new JpaParameterLoader();
     }
 
-    @Provider
+    @Binds
     public EntityManagerLookup entityManagerLookup() {
         return new ProxyAttachedEntityManagerLookup();
     }
 
-    @Provider(phase = -128)
+    @Binds(phase = -128)
     public EntityTypeLookup entityTypeLookup() {
         return new JpaEntityTypeLookup();
     }
 
-    @Provider
+    @Binds
     @Singleton
     public JpaQueryContextCreator queryContextFactory(final EntityTypeLookup entityTypeLookup) {
         final AggregateJpaQueryContextCreator contextFactory = new AggregateJpaQueryContextCreator();
@@ -64,7 +64,7 @@ public class PersistenceProviders {
         return contextFactory;
     }
 
-    @Provider
+    @Binds
     public Class<? extends QueryConstructor> queryConstructor() {
         return EntityManagerQueryConstructor.class;
     }

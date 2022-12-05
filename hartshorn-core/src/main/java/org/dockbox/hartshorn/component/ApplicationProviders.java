@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.slf4j.Logger;
 
 /**
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 @LogExclude
 public class ApplicationProviders {
 
-    @Provider
+    @Binds
     public Logger logger(final ApplicationContext context) {
         return context.log();
     }

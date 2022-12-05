@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
@@ -36,8 +36,8 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final List<MethodView<T, ?>> methods = processingContext.type().methods().annotatedWith(Provider.class);
-        final List<FieldView<T, ?>> fields = processingContext.type().fields().annotatedWith(Provider.class);
+        final List<MethodView<T, ?>> methods = processingContext.type().methods().annotatedWith(Binds.class);
+        final List<FieldView<T, ?>> fields = processingContext.type().fields().annotatedWith(Binds.class);
 
         if (methods.isEmpty() && fields.isEmpty()) return;
 
@@ -54,8 +54,8 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
 
     private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> void register(final ProviderContextList context, final E element) {
         final Key<?> key = this.key(element);
-        final Provider provider = element.annotations().get(Provider.class).get();
-        final ProviderContext providerContext = new ProviderContext(key, element, provider);
+        final Binds binding = element.annotations().get(Binds.class).get();
+        final ProviderContext providerContext = new ProviderContext(key, element, binding);
         context.add(providerContext);
     }
 
@@ -73,7 +73,7 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
     }
 
     private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> Key<?> key(final E element) {
-        final Provider annotation = element.annotations().get(Provider.class).get();
+        final Binds annotation = element.annotations().get(Binds.class).get();
         if (element.type().is(Class.class) || element.type().is(TypeView.class)) {
             final TypeView<?> view = element.genericType().typeParameters().at(0).get();
             return Key.of(view.type(), annotation.value());

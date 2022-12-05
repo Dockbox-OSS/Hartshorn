@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
@@ -31,34 +31,26 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseCommands.class)
 public class CommandProviders {
 
+    @Binds
+    public Class<? extends CommandListener> listener = CommandListenerImpl.class;
+
+    @Binds
+    @Singleton
+    public Class<? extends SystemSubject> systemSubject = ApplicationSystemSubject.class;
+
+    @Binds
+    @Singleton
+    public Class<? extends CommandGateway> commandGateway = CommandGatewayImpl.class;
+
+    @Binds
+    public Class<? extends CommandParser> commandParser = CommandParserImpl.class;
+
     @Bean
     public static CooldownExtension cooldownExtension() {
         return new CooldownExtension();
     }
 
-    @Provider
-    public Class<? extends CommandListener> listener() {
-        return CommandListenerImpl.class;
-    }
-
-    @Provider
-    @Singleton
-    public Class<? extends SystemSubject> systemSubject() {
-        return ApplicationSystemSubject.class;
-    }
-
-    @Provider
-    @Singleton
-    public Class<? extends CommandGateway> commandGateway() {
-        return CommandGatewayImpl.class;
-    }
-
-    @Provider
-    public Class<? extends CommandParser> commandParser() {
-        return CommandParserImpl.class;
-    }
-
-    @Provider("command_loader")
+    @Binds("command_loader")
     public ParameterLoader<?> parameterLoader() {
         return new CommandParameterLoader();
     }

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 /**
  * Default providers for cache components. This implementation is active by
@@ -37,17 +37,15 @@ public class CacheProviders {
      * active by default when {@link UseCaching} is used.
      * @return {@link CacheManagerImpl}
      */
-    @Provider
-    public Class<? extends CacheManager> cacheManager() {
-        return CacheManagerImpl.class;
-    }
+    @Binds
+    public Class<? extends CacheManager> cacheManager = CacheManagerImpl.class;
 
     /**
      * The default binding for {@link KeyGenerator}. This implementation is
      * active by default when {@link UseCaching} is used.
      * @return {@link HashCodeKeyGenerator}
      */
-    @Provider
+    @Binds
     public KeyGenerator keyGenerator() {
         return new HashCodeKeyGenerator();
     }

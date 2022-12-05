@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.conditions;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.condition.RequiresProperty;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 @Service
 public class ConditionalProviders {
@@ -28,7 +28,7 @@ public class ConditionalProviders {
      * Passes as long as {@code java.lang.String} is on the classpath. As this is
      * part of the standard library, it should always be available.
      */
-    @Provider("a")
+    @Binds("a")
     @RequiresClass("java.lang.String")
     public String a() {
         return "a";
@@ -38,7 +38,7 @@ public class ConditionalProviders {
      * Fails when {@code java.gnal.String} is not on the classpath. As this is
      * an intentional typo, it should never be available.
      */
-    @Provider("b")
+    @Binds("b")
     @RequiresClass("java.gnal.String")
     public String b() {
         return "b";
@@ -48,7 +48,7 @@ public class ConditionalProviders {
      * Passes as long as {@code property.c} is present as a property, no matter
      * what its value is.
      */
-    @Provider("c")
+    @Binds("c")
     @RequiresProperty(name = "property.c")
     public String c() {
         return "c";
@@ -59,7 +59,7 @@ public class ConditionalProviders {
      * value is equal to {@code d}. This is handled by {@link ConditionTests},
      * so the property is <b>present</b>.
      */
-    @Provider("d")
+    @Binds("d")
     @RequiresProperty(name = "property.d", withValue = "d")
     public String d() {
         return "d";
@@ -70,7 +70,7 @@ public class ConditionalProviders {
      * value is equal to {@code e}. This is handled by {@link ConditionTests},
      * so the property is <b>absent</b>.
      */
-    @Provider("e")
+    @Binds("e")
     @RequiresProperty(name = "property.e", withValue = "e")
     public String e() {
         return "e";
@@ -80,7 +80,7 @@ public class ConditionalProviders {
      * Passes if there is no property named {@code property.l}. This is handled
      * by {@link ConditionTests}, so the property is <b>absent</b>.
      */
-    @Provider("f")
+    @Binds("f")
     @RequiresProperty(name = "property.f", matchIfMissing = true)
     public String f() {
         return "f";

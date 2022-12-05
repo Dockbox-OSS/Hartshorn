@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 
 import jakarta.inject.Named;
@@ -25,28 +25,28 @@ import jakarta.inject.Singleton;
 @Service
 public class SampleProviderService {
 
-    @Provider
+    @Binds
     public ProvidedInterface get() {
         return () -> "Provision";
     }
 
-    @Provider("named")
+    @Binds("named")
     public ProvidedInterface named() {
         return () -> "NamedProvision";
     }
 
-    @Provider("parameter")
+    @Binds("parameter")
     public ProvidedInterface withParameter(final SampleField field) {
         return () -> "ParameterProvision";
     }
 
-    @Provider("namedParameter")
+    @Binds("namedParameter")
     public ProvidedInterface withNamedField(@Named("named") final SampleField field) {
         return () -> "NamedParameterProvision";
     }
 
     @Singleton
-    @Provider("singleton")
+    @Binds("singleton")
     public ProvidedInterface singleton() {
         return () -> "SingletonProvision";
     }

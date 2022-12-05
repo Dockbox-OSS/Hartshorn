@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
@@ -70,7 +70,7 @@ public class BindingProcessor {
     private <R, E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> void process(final Key<R> key, final E element,
                                                                                                       final ApplicationContext applicationContext) throws ApplicationException {
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
-        final Provider annotation = element.annotations().get(Provider.class).get();
+        final Binds annotation = element.annotations().get(Binds.class).get();
 
         final boolean singleton = applicationContext.environment().singleton(key.type()) || element.annotations().has(Singleton.class);
 
@@ -86,7 +86,7 @@ public class BindingProcessor {
     }
 
     private <R> void processInstanceBinding(
-            final ApplicationContext context, final ObtainableView<R> element, final Key<R> key, final boolean singleton, final Provider annotation
+            final ApplicationContext context, final ObtainableView<R> element, final Key<R> key, final boolean singleton, final Binds annotation
     ) {
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
         final Supplier<R> supplier = () -> element.getWithContext().rethrowUnchecked().orNull();
@@ -99,7 +99,7 @@ public class BindingProcessor {
     }
 
     private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final ObtainableView<C> element,
-                                                             final Key<R> key, boolean singleton, final Provider annotation) throws ApplicationException {
+                                                             final Key<R> key, boolean singleton, final Binds annotation) throws ApplicationException {
         final C targetType = element.getWithContext()
                 .rethrowUnchecked()
                 .orElseThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));

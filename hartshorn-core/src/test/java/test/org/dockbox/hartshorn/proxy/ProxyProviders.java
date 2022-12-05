@@ -17,12 +17,12 @@
 package test.org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 @Service
 public class ProxyProviders {
 
-    @Provider
+    @Binds
     public InterfaceProxy proxy() {
         return new ConcreteProxy();
     }

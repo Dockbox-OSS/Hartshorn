@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.config;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.ConfigurationObjectPostProcessor;
@@ -41,12 +41,12 @@ public class ConfigurationProviders {
      *
      * @return {@link StandardPropertyHolder}
      */
-    @Provider(phase = ProcessingOrder.EARLY)
+    @Binds(phase = ProcessingOrder.EARLY)
     public Class<? extends PropertyHolder> propertyHolder() {
         return StandardPropertyHolder.class;
     }
 
-    @Provider(phase = ProcessingOrder.EARLY)
+    @Binds(phase = ProcessingOrder.EARLY)
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

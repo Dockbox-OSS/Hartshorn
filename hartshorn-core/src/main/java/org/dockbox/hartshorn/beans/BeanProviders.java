@@ -18,14 +18,12 @@ package org.dockbox.hartshorn.beans;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 @Service
 @RequiresActivator(UseBeanScanning.class)
 public class BeanProviders {
 
-    @Provider
-    public Class<? extends BeanProvider> beanProvider() {
-        return ContextBeanProvider.class;
-    }
+    @Binds
+    public Class<? extends BeanProvider> beanProvider = ContextBeanProvider.class;
 }

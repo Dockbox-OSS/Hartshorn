@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 import jakarta.inject.Singleton;
 
@@ -28,7 +28,7 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseCaching.class)
 public class TestCacheProviders {
 
-    @Provider(priority = 0)
+    @Binds(priority = 0)
     @Singleton
     public Class<? extends CacheManager> cacheManager = JUnitCacheManager.class;
 

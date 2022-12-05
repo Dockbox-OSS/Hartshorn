@@ -17,12 +17,12 @@
 package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 @Service
 public class SampleProviders {
 
-    @Provider("meta")
+    @Binds("meta")
     public SampleInterface sampleInterface = new SampleMetaAnnotatedImplementation();
 
 }

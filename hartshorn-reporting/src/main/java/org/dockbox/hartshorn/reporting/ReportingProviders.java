@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.reporting;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
 @RequiresActivator(UseReporting.class)
 public class ReportingProviders {
 
-    @Provider
+    @Binds
     public Reportable applicationReportable(final ApplicationContext applicationContext) {
         final ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> reporter = new AggregateDiagnosticsReporter();
         reporter.configuration().add(new SystemDiagnosticsReporter());
@@ -43,12 +43,12 @@ public class ReportingProviders {
         return reporter;
     }
 
-    @Provider
+    @Binds
     public DiagnosticsPropertyCollector diagnosticsPropertyCollector() {
         return new StandardDiagnosticsReportCollector();
     }
 
-    @Provider
+    @Binds
     public DiagnosticsReportCollector diagnosticsReportCollector() {
         return new StandardDiagnosticsReportCollector();
     }

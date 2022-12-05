@@ -17,14 +17,14 @@
 package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 @Service
 public class PersonProviders {
 
-    @Provider
+    @Binds
     public Class<? extends Person> person = PersonImpl.class;
 
-    @Provider
+    @Binds
     public Class<? extends User> user = BoundUserImpl.class;
 }
