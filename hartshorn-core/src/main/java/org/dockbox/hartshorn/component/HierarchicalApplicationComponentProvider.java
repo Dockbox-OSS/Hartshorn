@@ -42,6 +42,7 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -72,75 +73,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         this.factory = this::raw;
     }
 
-    @Override
-    public <T> T get(final Key<T> key) {
-        return this.get(key, true);
-    }
-
-    @Override
-    public <T> T get(final Key<T> key, final boolean enable) {
-        if (this.singletonCache.contains(key)) {
-            return this.singletonCache.get(key);
-        }
-
-        this.locator.validate(key);
-
-        final ObjectContainer<T> objectContainer = this.create(key)
-                .orElseGet(() -> new ObjectContainer<>(null, false));
-
-        T instance = objectContainer.instance();
-
-        // If the object is already processed at this point, it means that the object container was
-        // reused, so we don't need to process it again. Note that this is not the same as the object
-        // being a singleton, which is handled by the singleton cache. It is however possible that the
-        // reuse of the object container is due to it being a singleton, but we do not know that for
-        // sure.
-        if (objectContainer.processed()) {
-            return instance;
-        }
-
-        Class<? extends T> type = key.type();
-        if (instance != null) {
-            type = (Class<T>) instance.getClass();
-        }
-
-        final Option<ComponentContainer> container = this.locator.container(type);
-        if (container.present()) {
-            // Will only mark the object container as processed if the component container permits
-            // processing.
-            instance = this.process(key, objectContainer, container.get());
-        }
-        else {
-            final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
-            if (typeView.annotations().has(Component.class)) {
-                throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
-            }
-
-            if (instance != null) {
-                final TypeView<Object> instanceType = this.applicationContext().environment().introspect(instance);
-                for (final FieldView<?, ?> field : instanceType.fields().annotatedWith(Inject.class)) {
-                    this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), instanceType.name(), instanceType.name());
-                }
-            }
-
-            objectContainer.processed(true);
-        }
-
-        this.storeSingletons(key, instance);
-
-        // Inject properties if applicable
-        if (enable) {
-            try {
-                instance = this.postConstructor.doPostConstruct(instance);
-            }
-            catch (final ApplicationException e) {
-                ExceptionHandler.unchecked(e);
-            }
-        }
-
-        return instance;
-    }
-
     private <T> Option<ObjectContainer<T>> create(final Key<T> key) {
         return this.provide(key).orComputeFlat(() -> this.raw(key));
     }
@@ -158,10 +90,11 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     @Override
     public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
-        final BindingHierarchy<T> hierarchy = (BindingHierarchy<T>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this.applicationContext()));
+        final BindingHierarchy<?> hierarchy = this.hierarchies.computeIfAbsent(key, k -> new NativeBindingHierarchy<>(k, this.applicationContext()));
+        final BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (hierarchy instanceof ContextWrappedHierarchy) return hierarchy;
-        else return new ContextWrappedHierarchy<>(hierarchy, this.applicationContext(), updated -> this.hierarchies.put(key, updated));
+        if (adjustedHierarchy instanceof ContextWrappedHierarchy) return adjustedHierarchy;
+        else return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key, updated));
     }
 
     public <T> Option<ObjectContainer<T>> provide(final Key<T> key) {
@@ -184,11 +117,9 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
         objectContainer.processed(true);
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
-        // See ServiceOrder#PHASE_1
         processingContext = this.process(ProcessingOrder.INITIALIZING, processingContext);
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
-        // See ServiceOrder#PHASE_2
         processingContext = this.process(ProcessingOrder.MODIFYING, processingContext);
 
         return processingContext.instance();
@@ -225,28 +156,34 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                     if (processingContext.phase() != phase) {
                         throw new IllegalPhaseModificationException(postProcessor, phase, processingContext.phase());
                     }
-
-                    if (instance != modified) {
-
-                        checkForIllegalModification:
-                        if (!phase.modifiable()) {
-                            if (modified instanceof Proxy) {
-                                final Proxy<T> proxy = (Proxy<T>) modified;
-                                final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
-
-                                if (delegateMatches)
-                                    break checkForIllegalModification;
-                            }
-                            throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
-                        }
-
-                        processingContext.instance(modified);
-                    }
+                    checkForModification(phase, processingContext, key, instance, priority, postProcessor, modified);
                 }
             }
         }
         this.storeSingletons(key, processingContext.instance());
         return processingContext;
+    }
+
+    private static <T> void checkForModification(final ProcessingPhase phase,
+                                      final ModifiableComponentProcessingContext<T> processingContext, final Key<T> key,
+                                      final T instance, final Integer priority,
+                                      final ComponentPostProcessor postProcessor, final T modified) {
+        if (instance != modified) {
+
+            checkForIllegalModification:
+            if (!phase.modifiable()) {
+                if (modified instanceof Proxy) {
+                    final Proxy<T> proxy = TypeUtils.adjustWildcards(modified, Proxy.class);
+                    final boolean delegateMatches = proxy.manager().delegate().orNull() == instance;
+
+                    if (delegateMatches)
+                        break checkForIllegalModification;
+                }
+                throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
+            }
+
+            processingContext.instance(modified);
+        }
     }
 
     protected <T> void storeSingletons(final Key<T> key, final T instance) {
@@ -271,7 +208,8 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
     public void postProcessor(final ComponentPostProcessor postProcessor) {
         this.postProcessors.put(postProcessor.order(), postProcessor);
-        this.singletonCache.put(Key.of((Class<ComponentPostProcessor>) postProcessor.getClass()), postProcessor);
+        final Key<ComponentPostProcessor> of = TypeUtils.adjustWildcards(Key.of(postProcessor.getClass()), Key.class);
+        this.singletonCache.put(of, postProcessor);
     }
 
     public <T> Option<ObjectContainer<T>> raw(final Key<T> key) {
@@ -281,5 +219,82 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     @Override
     public MultiMap<Integer, ComponentPostProcessor> processors() {
         return this.postProcessors;
+    }
+
+    @Override
+    public <T> T get(final ComponentKey<T> componentKey) {
+        if (this.singletonCache.contains(componentKey.key())) {
+            return this.singletonCache.get(componentKey.key());
+        }
+
+        this.locator.validate(componentKey.key());
+
+        final ObjectContainer<T> objectContainer = this.create(componentKey.key())
+                .orElseGet(() -> new ObjectContainer<>(null, false));
+
+        T instance = objectContainer.instance();
+
+        // If the object is already processed at this point, it means that the object container was
+        // reused, so we don't need to process it again. Note that this is not the same as the object
+        // being a singleton, which is handled by the singleton cache. It is however possible that the
+        // reuse of the object container is due to it being a singleton, but we do not know that for
+        // sure.
+        if (objectContainer.processed()) {
+            return instance;
+        }
+
+        Class<? extends T> type = componentKey.type();
+        if (instance != null) {
+            type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
+        }
+
+        final Option<ComponentContainer> container = this.locator.container(type);
+
+        if (container.present()) instance = this.getManagedComponent(componentKey, objectContainer, container);
+        else instance = this.getUnmanagedComponent(objectContainer, instance, type);
+
+        return this.finishComponentRequest(componentKey, instance);
+    }
+
+    private <T> T finishComponentRequest(final ComponentKey<T> componentKey, T instance) {
+        this.storeSingletons(componentKey.key(), instance);
+
+        // Inject properties if applicable
+        if (componentKey.enable()) {
+            try {
+                instance = this.postConstructor.doPostConstruct(instance);
+            }
+            catch (final ApplicationException e) {
+                ExceptionHandler.unchecked(e);
+            }
+        }
+
+        return instance;
+    }
+
+    private <T> T getManagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer,
+                                      final Option<ComponentContainer> container) {
+        // Will only mark the object container as processed if the component container permits
+        // processing.
+        return this.process(componentKey.key(), objectContainer, container.get());
+    }
+
+    private <T> T getUnmanagedComponent(final ObjectContainer<T> objectContainer, final T instance,
+                                        final Class<? extends T> type) {
+        final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
+        if (typeView.annotations().has(Component.class)) {
+            throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
+        }
+
+        if (instance != null) {
+            final TypeView<Object> instanceType = this.applicationContext().environment().introspect(instance);
+            for (final FieldView<?, ?> field : instanceType.fields().annotatedWith(Inject.class)) {
+                this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), instanceType.name(), instanceType.name());
+            }
+        }
+
+        objectContainer.processed(true);
+
+        return instance;
     }
 }

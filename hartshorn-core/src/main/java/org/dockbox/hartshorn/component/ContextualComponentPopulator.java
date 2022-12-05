@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.context.Context;
@@ -34,6 +31,9 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
+import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -90,7 +90,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final Option<Enable> enableAnnotation = field.annotations().get(Enable.class);
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
-        final Object fieldInstance = this.applicationContext().get(fieldKey, enable);
+        final ComponentKey<?> componentKey = ComponentKey.builder(fieldKey).enable(enable).build();
+        final Object fieldInstance = this.applicationContext().get(componentKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)
