@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Constructor;
@@ -31,6 +32,8 @@ public interface ConstructorView<T> extends ExecutableElementView<T> {
     }
 
     Attempt<T, Throwable> create(Collection<?> arguments);
+
+    Attempt<T, Throwable> createWithContext(Scope scope);
 
     Attempt<T, Throwable> createWithContext();
 

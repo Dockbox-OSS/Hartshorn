@@ -23,6 +23,6 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * API contract. Should be fixed somehow to keep this in mind... (e.g. in BeanServicePreProcessor)
  * @param <T>
  */
-public interface ObtainableView<T> extends View {
+public interface ObtainableView<T> extends AnnotatedElementView {
     Attempt<T, Throwable> getWithContext();
 }
