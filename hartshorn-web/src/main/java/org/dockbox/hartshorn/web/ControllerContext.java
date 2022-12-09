@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultContext;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@AutoCreating
+@InstallIfAbsent
 public class ControllerContext extends DefaultContext {
 
     private final Set<RequestHandlerContext> requestHandlerContexts = ConcurrentHashMap.newKeySet();

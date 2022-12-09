@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 
 import java.util.Set;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 
-@AutoCreating
+@InstallIfAbsent
 public class CommandExtensionContext extends DefaultApplicationAwareContext {
 
     private final Set<CommandExecutorExtension> extensions = ConcurrentHashMap.newKeySet();

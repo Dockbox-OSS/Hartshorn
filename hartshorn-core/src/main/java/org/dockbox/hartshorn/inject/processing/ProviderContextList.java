@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-@AutoCreating
+@InstallIfAbsent
 public class ProviderContextList extends DefaultContext implements Reportable {
 
     private final MultiMap<Integer, ProviderContext> elements = MultiMap.<Integer, ProviderContext>builder()
