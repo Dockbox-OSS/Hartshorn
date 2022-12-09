@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * The above example will create a factory method for the {@code CustomType} type. The
+ * <p>The above example will create a factory method for the {@code CustomType} type. The
  * implementation of this type can be configured through the active {@link ApplicationContext}.
  *
  * <pre>{@code
@@ -53,6 +53,11 @@ import java.lang.annotation.Target;
  *     }
  * }
  * }</pre>
+ *
+ * <p>Factory methods do not natively support {@link org.dockbox.hartshorn.component.Scope scopes},
+ * as the hierarchy of the component to be provided is determined during initialization, and scopes
+ * are only defined as context at that point. If you wish to use scopes, you should use post-construct
+ * actions to configure a scope-provided component.
  *
  * @author Guus Lieben
  * @since 21.9
