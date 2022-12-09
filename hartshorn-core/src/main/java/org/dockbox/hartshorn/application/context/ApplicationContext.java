@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
@@ -55,6 +56,7 @@ public interface ApplicationContext extends
         ApplicationLogger,
         ExceptionHandler,
         ActivatorHolder,
+        Scope,
         Closeable {
 
     /**
@@ -89,4 +91,9 @@ public interface ApplicationContext extends
      * @return {@code true} if the context is closed, {@code false} otherwise.
      */
     boolean isClosed();
+
+    @Override
+    default Class<? extends Scope> installableScopeType() {
+        return ApplicationContext.class;
+    }
 }
