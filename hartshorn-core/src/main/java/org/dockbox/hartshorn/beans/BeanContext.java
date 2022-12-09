@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.beans;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 
-@AutoCreating
+@InstallIfAbsent
 public class BeanContext extends DefaultApplicationAwareContext implements BeanCollector, Reportable {
 
     private final List<BeanReference<?>> beans = new CopyOnWriteArrayList<>();

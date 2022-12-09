@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentPostConstructorImpl;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
-import org.dockbox.hartshorn.component.HierarchicalApplicationComponentProvider;
+import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
 import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -107,7 +107,7 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected ComponentInitializer<ComponentLocator> componentLocator = ComponentInitializer.of(ctx -> new TypeReferenceLookupComponentLocator(ctx.applicationContext()));
     protected ComponentInitializer<ComponentPostConstructor> componentPostConstructor = ComponentInitializer.of(ComponentPostConstructorImpl::new);
     protected ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.environment()));
-    protected ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(HierarchicalApplicationComponentProvider::new);
+    protected ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(ScopeAwareComponentProvider::new);
     protected ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
     protected ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
     protected ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
