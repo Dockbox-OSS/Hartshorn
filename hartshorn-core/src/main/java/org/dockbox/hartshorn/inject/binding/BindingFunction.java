@@ -16,9 +16,14 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.inject.Provider;
+
 import java.util.function.Supplier;
 
 public interface BindingFunction<T> {
+
+    BindingFunction<T> installTo(Class<? extends Scope> scope);
 
     BindingFunction<T> priority(int priority);
 
@@ -39,6 +44,8 @@ public interface BindingFunction<T> {
      * @return The binder
      */
     Binder to(Supplier<T> supplier);
+
+    Binder to(Provider<T> provider);
 
     /**
      * Binds to the given instance, this will always return the same instance

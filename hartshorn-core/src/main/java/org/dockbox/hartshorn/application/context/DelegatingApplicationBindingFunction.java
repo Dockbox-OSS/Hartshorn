@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 
 import java.util.function.Supplier;
@@ -28,6 +31,11 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     public DelegatingApplicationBindingFunction(final ApplicationContext applicationContext, final BindingFunction<T> delegate) {
         this.applicationContext = applicationContext;
         this.delegate = delegate;
+    }
+
+    @Override
+    public BindingFunction<T> installTo(final Class<? extends Scope> scope) {
+        return this.delegate.installTo(scope);
     }
 
     @Override
@@ -45,6 +53,11 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     public ApplicationContext to(final Supplier<T> supplier) {
         this.delegate.to(supplier);
         return this.applicationContext;
+    }
+
+    @Override
+    public Binder to(final Provider<T> provider) {
+        return this.delegate.to(provider);
     }
 
     @Override
