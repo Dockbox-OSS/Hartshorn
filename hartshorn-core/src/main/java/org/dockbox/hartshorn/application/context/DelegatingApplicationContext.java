@@ -134,6 +134,14 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
+    public <C> Binder bind(final BindingHierarchy<C> hierarchy) {
+        if (this.componentProvider instanceof StandardComponentProvider provider) {
+            return provider.bind(hierarchy);
+        }
+        throw new UnsupportedOperationException("This application does not support binding hierarchies");
+    }
+
+    @Override
     public ApplicationEnvironment environment() {
         return this.first(InitializingContext.class)
                 .map(InitializingContext::environment)
