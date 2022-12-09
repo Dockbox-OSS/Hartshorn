@@ -18,11 +18,11 @@ package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -45,7 +45,7 @@ public class EventBusImpl implements EventBus {
     protected final Set<Function<MethodView<?, ?>, Attempt<Boolean, InvalidEventListenerException>>> validators = ConcurrentHashMap.newKeySet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
-    protected final Map<Key<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();
+    protected final Map<ComponentKey<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();
 
     /** The internal registry of handlers for each event. */
     protected final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
@@ -84,7 +84,7 @@ public class EventBusImpl implements EventBus {
      * @param key The key of the listener
      */
     @Override
-    public void subscribe(final Key<?> key) {
+    public void subscribe(final ComponentKey<?> key) {
         if (this.listenerToInvokers.containsKey(key)) {
             this.context.log().debug(key + " is already subscribed, skipping duplicate registration");
             return; // Already subscribed
@@ -107,7 +107,7 @@ public class EventBusImpl implements EventBus {
      * @param key The instance of the listener
      */
     @Override
-    public void unsubscribe(final Key<?> key) {
+    public void unsubscribe(final ComponentKey<?> key) {
         final Set<EventWrapper> invokers = this.listenerToInvokers.remove(key);
         if (null == invokers || invokers.isEmpty()) {
             return; // Not registered
@@ -119,7 +119,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public void post(final Event event, final Key<?> target) {
+    public void post(final Event event, final ComponentKey<?> target) {
         if (event.first(ApplicationContext.class).absent()) {
             this.context.log().debug("Event " + event.getClass().getSimpleName() + " was not enhanced with the active application context, adding it before handling event");
             event.add(this.context);
@@ -145,7 +145,7 @@ public class EventBusImpl implements EventBus {
      *
      * @return The invokers
      */
-    protected <T> Set<EventWrapper> invokers(final Key<T> key) {
+    protected <T> Set<EventWrapper> invokers(final ComponentKey<T> key) {
         final Set<EventWrapper> result = new HashSet<>();
         final TypeView<T> typeView = this.context.environment().introspect(key.type());
         for (final MethodView<T, ?> method : typeView.methods().annotatedWith(Listener.class)) {

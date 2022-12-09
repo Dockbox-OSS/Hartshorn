@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
@@ -111,7 +111,7 @@ public class ConfigurationManagerTests {
                     fs: "This is a value"
                     """);
 
-        final ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, Key.of(DemoFSConfiguration.class), null);
+        final ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, ComponentKey.of(DemoFSConfiguration.class), null);
         new ConfigurationServicePreProcessor().process(this.applicationContext, processingContext);
 
         final DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);

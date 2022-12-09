@@ -16,17 +16,12 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.option.Option;
+// Marker interface for scoped contexts.
+// TODO: Documentation
+public interface Scope {
 
-import java.util.Collection;
+    Scope DEFAULT_SCOPE = () -> Scope.class;
 
-public interface ComponentLocator {
+    Class<? extends Scope> installableScopeType();
 
-    Collection<ComponentContainer> containers();
-
-    Collection<ComponentContainer> containers(ComponentType functional);
-
-    Option<ComponentContainer> container(final Class<?> type);
-
-    <T> void validate(ComponentKey<T> key);
 }

@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A provider is a class that can provide an instance of a {@link Key} binding. The provider is
- * not always responsible for creating the instance, but it can be used to create the instance
- * if it is not available.
+ * A provider is a class that can provide an instance of a {@link ComponentKey} binding. The
+ * provider is not always responsible for creating the instance, but it can be used to create
+ * the instance if it is not available.
  *
  * @param <T> The type instance to provide.
  * @author Guus Lieben
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface Provider<T> {
 
     /**
-     * Provides an instance of the {@link Key} binding. The {@link ApplicationContext} can be used
+     * Provides an instance of the {@link ComponentKey} binding. The {@link ApplicationContext} can be used
      * to retrieve required dependencies for the instance. The context should not be used to enable
      * the instance, or populate fields of the instance.
      *

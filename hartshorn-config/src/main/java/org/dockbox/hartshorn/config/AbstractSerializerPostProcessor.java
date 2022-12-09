@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.SerializationSource;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -30,7 +30,7 @@ import java.util.Optional;
 
 public abstract class AbstractSerializerPostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
-    private static final Key<SerializationSourceConverter> CONVERTER_KEY = Key.of(SerializationSourceConverter.class);
+    private static final ComponentKey<SerializationSourceConverter> CONVERTER_KEY = ComponentKey.of(SerializationSourceConverter.class);
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {

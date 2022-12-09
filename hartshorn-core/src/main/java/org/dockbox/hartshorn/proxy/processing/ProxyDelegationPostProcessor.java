@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.proxy.processing;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
 public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponentPostProcessor {
@@ -32,7 +32,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
     public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
         if (!processingContext.type().isChildOf(this.parentTarget())) return instance;
 
-        final ProxyFactory<P, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+        final ProxyFactory<P, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());

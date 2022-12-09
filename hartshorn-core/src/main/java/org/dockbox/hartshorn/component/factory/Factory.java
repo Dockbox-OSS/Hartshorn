@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -63,8 +63,8 @@ public @interface Factory {
 
     /**
      * If the binding of a factory method is based on a named dependency, this method returns the
-     * name of the {@link Key} to use.
-     * @return The name of the {@link Key} to use.
+     * name of the {@link ComponentKey} to use.
+     * @return The name of the {@link ComponentKey} to use.
      */
     String value() default "";
 

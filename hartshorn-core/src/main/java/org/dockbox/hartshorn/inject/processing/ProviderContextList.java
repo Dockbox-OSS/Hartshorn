@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -46,13 +46,13 @@ public class ProviderContextList extends DefaultContext implements Reportable {
         return this.elements;
     }
 
-    public Collection<ProviderContext> get(final Key<?> key) {
+    public Collection<ProviderContext> get(final ComponentKey<?> key) {
         return this.elements.allValues().stream()
                 .filter(context -> context.key().equals(key))
                 .toList();
     }
 
-    public boolean containsKey(final Key<?> key) {
+    public boolean containsKey(final ComponentKey<?> key) {
         return this.elements.allValues().stream()
                 .anyMatch(context -> context.key().equals(key));
     }
@@ -63,7 +63,7 @@ public class ProviderContextList extends DefaultContext implements Reportable {
             c.property("key").write(keyCollector -> {
                 keyCollector.property("type").write(context.key().type().getCanonicalName());
                 if (context.key().name() != null) {
-                    keyCollector.property("name").write(context.key().name().value());
+                    keyCollector.property("name").write(context.key().name());
                 }
             });
             c.property("phase").write(context.provider().phase());

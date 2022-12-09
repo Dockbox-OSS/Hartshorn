@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 
@@ -25,11 +25,11 @@ import java.util.function.Function;
 
 public interface EventBus {
 
-    void subscribe(Key<?> object);
+    void subscribe(ComponentKey<?> object);
 
-    void unsubscribe(Key<?> object);
+    void unsubscribe(ComponentKey<?> object);
 
-    void post(Event event, Key<?> target);
+    void post(Event event, ComponentKey<?> target);
 
     void post(Event event);
 

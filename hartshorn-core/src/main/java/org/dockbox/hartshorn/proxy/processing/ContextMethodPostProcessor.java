@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.proxy.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.Provided;
 
@@ -30,8 +30,8 @@ public class ContextMethodPostProcessor extends ServiceAnnotatedMethodIntercepto
             final Provided annotation = methodContext.annotation(Provided.class);
             final String name = annotation.value();
 
-            Key<?> key = Key.of(methodContext.method().returnType());
-            if (!name.isEmpty()) key = key.name(name);
+            ComponentKey<?> key = ComponentKey.of(methodContext.method().returnType());
+            if (!name.isEmpty()) key = key.mut().name(name).build();
             return interceptorContext.checkedCast(context.get(key));
         };
     }

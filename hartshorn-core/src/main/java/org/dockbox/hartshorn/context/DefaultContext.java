@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
@@ -111,8 +111,8 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Option<C> first(final Key<C> key) {
+    public <C extends Context> Option<C> first(final ComponentKey<C> key) {
         if (key.name() == null) return this.first(key.type());
-        else return this.first(key.type(), key.name().value());
+        else return this.first(key.type(), key.name());
     }
 }

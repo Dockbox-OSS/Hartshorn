@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
@@ -30,20 +30,20 @@ import java.util.function.Function;
 
 public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
 
-    protected final Key<T> key;
-    private final Map<Key<?>, Object> data;
+    protected final ComponentKey<T> key;
+    private final Map<ComponentKey<?>, Object> data;
 
     protected ProcessingPhase phase;
     protected T instance;
 
-    public ComponentProcessingContext(final ApplicationContext applicationContext, final Key<T> key, final T instance) {
+    public ComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key, final T instance) {
         super(applicationContext);
         this.key = key;
         this.instance = instance;
         this.data = new ConcurrentHashMap<>();
     }
 
-    public Key<T> key() {
+    public ComponentKey<T> key() {
         return this.key;
     }
 
@@ -75,23 +75,23 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         return this.data.isEmpty();
     }
 
-    public boolean containsKey(final Key<?> key) {
+    public boolean containsKey(final ComponentKey<?> key) {
         return this.data.containsKey(key);
     }
 
-    public boolean containsValue(final Key<?> value) {
+    public boolean containsValue(final ComponentKey<?> value) {
         return this.data.containsValue(value);
     }
 
-    public <R> R get(final Key<R> key) {
+    public <R> R get(final ComponentKey<R> key) {
         return key.type().cast(this.data.get(key));
     }
 
-    public <R> R put(final Key<R> key, final R value) {
+    public <R> R put(final ComponentKey<R> key, final R value) {
         return key.type().cast(this.data.put(key, value));
     }
 
-    public <R> R remove(final Key<R> key) {
+    public <R> R remove(final ComponentKey<R> key) {
         return key.type().cast(this.data.remove(key));
     }
 
@@ -99,7 +99,7 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         this.data.clear();
     }
 
-    public Set<Key<?>> keySet() {
+    public Set<ComponentKey<?>> keySet() {
         return this.data.keySet();
     }
 
@@ -107,27 +107,27 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         return this.data.values();
     }
 
-    public Set<Entry<Key<?>, Object>> entrySet() {
+    public Set<Entry<ComponentKey<?>, Object>> entrySet() {
         return this.data.entrySet();
     }
 
-    public <R> R getOrDefault(final Key<R> key, final R defaultValue) {
+    public <R> R getOrDefault(final ComponentKey<R> key, final R defaultValue) {
         return key.type().cast(this.data.getOrDefault(key, defaultValue));
     }
 
-    public <R> R putIfAbsent(final Key<R> key, final R value) {
+    public <R> R putIfAbsent(final ComponentKey<R> key, final R value) {
         return key.type().cast(this.data.putIfAbsent(key, value));
     }
 
-    public <R> boolean remove(final Key<R> key, final R value) {
+    public <R> boolean remove(final ComponentKey<R> key, final R value) {
         return this.data.remove(key, value);
     }
 
-    public <R> boolean replace(final Key<R> key, final R oldValue, final R newValue) {
+    public <R> boolean replace(final ComponentKey<R> key, final R oldValue, final R newValue) {
         return this.data.replace(key, oldValue, newValue);
     }
 
-    public <R> R computeIfAbsent(final Key<R> key, final Function<? super Key<R>, R> mappingFunction) {
-        return key.type().cast(this.data.computeIfAbsent(key, (Function<? super Key<?>, ?>) mappingFunction));
+    public <R> R computeIfAbsent(final ComponentKey<R> key, final Function<? super ComponentKey<R>, R> mappingFunction) {
+        return key.type().cast(this.data.computeIfAbsent(key, (Function<? super ComponentKey<?>, ?>) mappingFunction));
     }
 }

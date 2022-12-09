@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -53,7 +53,7 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
     }
 
     private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> void register(final ProviderContextList context, final E element) {
-        final Key<?> key = this.key(element);
+        final ComponentKey<?> key = this.key(element);
         final Binds binding = element.annotations().get(Binds.class).get();
         final ProviderContext providerContext = new ProviderContext(key, element, binding);
         context.add(providerContext);
@@ -72,14 +72,14 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
         }
     }
 
-    private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> Key<?> key(final E element) {
+    private <E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> ComponentKey<?> key(final E element) {
         final Binds annotation = element.annotations().get(Binds.class).get();
         if (element.type().is(Class.class) || element.type().is(TypeView.class)) {
             final TypeView<?> view = element.genericType().typeParameters().at(0).get();
-            return Key.of(view.type(), annotation.value());
+            return ComponentKey.of(view.type(), annotation.value());
         }
         else {
-            return Key.of(element.type().type(), annotation.value());
+            return ComponentKey.of(element.type().type(), annotation.value());
         }
     }
 

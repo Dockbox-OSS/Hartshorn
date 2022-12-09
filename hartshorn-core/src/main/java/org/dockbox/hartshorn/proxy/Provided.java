@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.proxy.processing.ContextMethodPostProcessor;
 
 import java.lang.annotation.ElementType;
@@ -28,8 +28,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to indicate a method will return a provided object. The underlying method should not be
  * called, but the provided object should be returned instead. The provided object is obtained from the active
- * {@link ApplicationContext}. The return type of the method is used to determine the {@link Key} of the provided
- * object.
+ * {@link ApplicationContext}. The return type of the method is used to determine the {@link ComponentKey} of
+ * the provided object.
  *
  * <p>Example:
  * <pre>{@code
@@ -48,7 +48,8 @@ import java.lang.annotation.Target;
 public @interface Provided {
 
     /**
-     * The name of the provided object, used to modify the {@link Key} of the provided object.
+     * The name of the provided object, used to modify the {@link ComponentKey} of
+     * the provided object.
      *
      * @return The name of the provided object.
      */

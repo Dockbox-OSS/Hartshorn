@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
@@ -36,12 +35,12 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     @Override
     protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Named named = parameter.annotations().get(Named.class).orNull();
-        final Key<T> key = Key.of(parameter.type(), named);
+        final ComponentKey<T> key = ComponentKey.builder(parameter.type().type()).name(named).build();
         final boolean enable = Boolean.TRUE.equals(parameter.annotations().get(Enable.class)
                 .map(Enable::value)
                 .orElse(true));
 
-        final ComponentKey<T> componentKey = ComponentKey.builder(key).enable(enable).build();
+        final ComponentKey<T> componentKey = key.mut().enable(enable).build();
         final T out = context.provider().get(componentKey);
 
         final boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)

@@ -26,13 +26,13 @@ import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -56,7 +56,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     private final MethodView<T, ?> method;
     private final TypeView<T> type;
-    private final Key<T> key;
+    private final ComponentKey<T> key;
     private final List<String> parentAliases;
     private final Command command;
     private final boolean isChild;
@@ -64,7 +64,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key) {
+    public MethodCommandExecutorContext(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key) {
         super(context);
         final Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {
@@ -94,14 +94,14 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.parentAliases.addAll(List.of(parent.value()));
         }
         this.parameters = this.parameters();
-        this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
+        this.parameterLoader = context.get(ComponentKey.builder(ParameterLoader.class).name("command_loader").build());
     }
 
     protected MethodView<T, ?> method() {
         return this.method;
     }
 
-    protected Key<T> key() {
+    protected ComponentKey<T> key() {
         return this.key;
     }
 

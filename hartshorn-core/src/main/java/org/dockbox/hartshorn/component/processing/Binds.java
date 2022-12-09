@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the
- * method, combined with the {@link #value()} form the {@link Key} of
+ * method, combined with the {@link #value()} form the {@link ComponentKey} of
  * the binding.
  *
  * <p>The use of provider methods require the presence of {@link UseServiceProvision} on the activator

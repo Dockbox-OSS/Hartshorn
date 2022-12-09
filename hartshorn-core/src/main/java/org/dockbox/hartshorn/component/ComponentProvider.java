@@ -17,19 +17,16 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
 
 import jakarta.inject.Named;
 
 /**
  * A component provider is a class that is capable of providing components. Components are identified using
- * {@link Key keys}. Components can be either managed or unmanaged. Managed components are typically bound to an active
+ * {@link ComponentKey keys}. Components can be either managed or unmanaged. Managed components are typically bound to an active
  * {@link ApplicationContext} and are therefore available to all components in the application. Unmanaged components are
  * typically not explicitly registered, and are treated as injectable beans.
  */
 public interface ComponentProvider {
-
-    <T> T get(final ComponentKey<T> key);
 
     /**
      * Returns the component for the given key.
@@ -37,10 +34,7 @@ public interface ComponentProvider {
      * @param <T> The type of the component to return.
      * @return The component for the given key.
      */
-    default <T> T get(final Key<T> key) {
-        final ComponentKey<T> componentKey = ComponentKey.builder(key).build();
-        return this.get(componentKey);
-    }
+    <T> T get(final ComponentKey<T> key);
 
     /**
      * Returns the component for the given type and name metadata. If <code>named</code> is null, the given
@@ -62,7 +56,7 @@ public interface ComponentProvider {
      * @return The component for the given type.
      */
     default <T> T get(final Class<T> type) {
-        final ComponentKey<T> key = ComponentKey.builder(type).build();
+        final ComponentKey<T> key = ComponentKey.of(type);
         return this.get(key);
     }
 }

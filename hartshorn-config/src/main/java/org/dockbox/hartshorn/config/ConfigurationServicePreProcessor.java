@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.Configuration;
@@ -24,7 +25,6 @@ import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.resource.ClassPathResourceLookupStrategy;
 import org.dockbox.hartshorn.config.resource.MissingSourceException;
 import org.dockbox.hartshorn.config.resource.ResourceLookupStrategy;
-import org.dockbox.hartshorn.inject.Key;
 
 import java.net.URI;
 import java.util.Map;
@@ -83,7 +83,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
         }
     }
 
-    private <T> boolean processSource(final String source, final ApplicationContext context, final Key<T> key) {
+    private <T> boolean processSource(final String source, final ApplicationContext context, final ComponentKey<T> key) {
         String matchedSource = source;
         final Matcher matcher = this.STRATEGY_PATTERN.matcher(matchedSource);
 

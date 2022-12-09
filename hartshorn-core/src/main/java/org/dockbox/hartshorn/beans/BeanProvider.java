@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 
 import java.util.List;
 
@@ -25,11 +25,11 @@ public interface BeanProvider {
 
     <T> T first(Class<T> type, String id);
 
-    <T> T first(Key<T> key);
+    <T> T first(ComponentKey<T> key);
 
     <T> List<T> all(Class<T> type);
 
     <T> List<T> all(Class<T> type, String id);
 
-    <T> List<T> all(Key<T> key);
+    <T> List<T> all(ComponentKey<T> key);
 }

@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TypeReferenceLookupComponentLocator implements ComponentLocator, ContextCarrier {
 
@@ -64,7 +63,7 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator, Co
     }
 
     @Override
-    public <T> void validate(final Key<T> key) {
+    public <T> void validate(final ComponentKey<T> key) {
         final Introspector introspector = this.applicationContext().environment();
         final TypeView<T> contract = introspector.introspect(key.type());
 

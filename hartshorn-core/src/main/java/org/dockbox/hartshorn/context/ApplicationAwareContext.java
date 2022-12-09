@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.option.Option;
 
 public interface ApplicationAwareContext extends Context, ContextCarrier {
@@ -57,5 +57,5 @@ public interface ApplicationAwareContext extends Context, ContextCarrier {
      * @return The first context of the given type and name.
      */
     @Override
-    <C extends Context> Option<C> first(Key<C> context);
+    <C extends Context> Option<C> first(ComponentKey<C> context);
 }

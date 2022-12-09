@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.AfterEach;
@@ -48,14 +48,14 @@ public class EventBusTests {
     @Test
     @TestComponents(BasicEventListener.class)
     public void testTypesCanSubscribe() {
-        this.bus.subscribe(Key.of(BasicEventListener.class));
-        Assertions.assertTrue(this.bus.invokers().containsKey(Key.of(BasicEventListener.class)));
+        this.bus.subscribe(ComponentKey.of(BasicEventListener.class));
+        Assertions.assertTrue(this.bus.invokers().containsKey(ComponentKey.of(BasicEventListener.class)));
     }
 
     @Test
     @TestComponents(BasicEventListener.class)
     public void testNonStaticMethodsCanListen() {
-        this.bus.subscribe(Key.of(BasicEventListener.class));
+        this.bus.subscribe(ComponentKey.of(BasicEventListener.class));
         this.bus.post(new SampleEvent());
         Assertions.assertTrue(BasicEventListener.fired);
     }
@@ -63,7 +63,7 @@ public class EventBusTests {
     @Test
     @TestComponents(StaticEventListener.class)
     public void testStaticMethodsCanListen() {
-        this.bus.subscribe(Key.of(StaticEventListener.class));
+        this.bus.subscribe(ComponentKey.of(StaticEventListener.class));
         this.bus.post(new SampleEvent());
         Assertions.assertTrue(StaticEventListener.fired);
     }
@@ -71,7 +71,7 @@ public class EventBusTests {
     @Test
     @TestComponents(PriorityEventListener.class)
     public void testEventsArePostedInCorrectPriorityOrder() {
-        this.bus.subscribe(Key.of(PriorityEventListener.class));
+        this.bus.subscribe(ComponentKey.of(PriorityEventListener.class));
         this.bus.post(new SampleEvent());
         Assertions.assertEquals(Priority.LAST, PriorityEventListener.last());
     }
@@ -79,7 +79,7 @@ public class EventBusTests {
     @Test
     @TestComponents(GenericEventListener.class)
     void testGenericEventsAreFiltered() {
-        this.bus.subscribe(Key.of(GenericEventListener.class));
+        this.bus.subscribe(ComponentKey.of(GenericEventListener.class));
         final Event event = new GenericEvent<>("String") {
         };
         Assertions.assertDoesNotThrow(() -> this.bus.post(event));
@@ -90,7 +90,7 @@ public class EventBusTests {
     void testGenericWildcardsArePosted() {
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects.clear();
-        this.bus.subscribe(Key.of(GenericEventListener.class));
+        this.bus.subscribe(ComponentKey.of(GenericEventListener.class));
         final Event stringEvent = new GenericEvent<>("String") {
         };
         final Event integerEvent = new GenericEvent<>(1) {
@@ -106,7 +106,7 @@ public class EventBusTests {
     @Test
     @TestComponents(ConditionalEventListener.class)
     void testConditionEventIsNotFiredIfMismatch() {
-        this.bus.subscribe(Key.of(ConditionalEventListener.class));
+        this.bus.subscribe(ComponentKey.of(ConditionalEventListener.class));
 
         final Event nullNameEvent = new SampleNamedEvent(null);
         this.bus.post(nullNameEvent);
@@ -116,7 +116,7 @@ public class EventBusTests {
     @Test
     @TestComponents(ConditionalEventListener.class)
     void testConditionEventIsFiredIfMatch() {
-        this.bus.subscribe(Key.of(ConditionalEventListener.class));
+        this.bus.subscribe(ComponentKey.of(ConditionalEventListener.class));
 
         final Event nameEvent = new SampleNamedEvent("name");
         this.bus.post(nameEvent);

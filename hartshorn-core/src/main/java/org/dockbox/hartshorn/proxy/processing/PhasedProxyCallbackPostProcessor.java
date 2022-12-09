@@ -19,26 +19,25 @@ package org.dockbox.hartshorn.proxy.processing;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodWrapper;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 public abstract class PhasedProxyCallbackPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
     public final <T> T process(final ApplicationContext context, @Nullable T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
-        final Key<T> key = processingContext.key();
+        final ComponentKey<T> key = processingContext.key();
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 
-        final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+        final ProxyFactory<T, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         instance = this.processProxy(context, instance, processingContext, factory);
@@ -62,7 +61,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
         return instance;
     }
 
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ApplicationContext context, final ComponentKey<T> key, @Nullable final T instance) {
         final TypeView<T> typeView = instance == null
                 ? context.environment().introspect(key.type())
                 : context.environment().introspect(instance);
@@ -72,11 +71,11 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
                 .toList();
     }
 
-    public abstract <T> boolean wraps(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> boolean wraps(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
 
-    public abstract <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
 
-    public abstract <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
 
-    public abstract <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
 }

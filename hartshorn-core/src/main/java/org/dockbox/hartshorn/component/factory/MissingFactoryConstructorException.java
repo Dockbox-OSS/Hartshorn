@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class MissingFactoryConstructorException extends ApplicationRuntimeException {
 
-    public MissingFactoryConstructorException(final Key<?> key, final MethodView<?, ?> method) {
+    public MissingFactoryConstructorException(final ComponentKey<?> key, final MethodView<?, ?> method) {
         super("No matching bound constructor found for %s with parameters: %s"
                 .formatted(key, method.parameters().types().stream().map(TypeView::name).toList()));
     }

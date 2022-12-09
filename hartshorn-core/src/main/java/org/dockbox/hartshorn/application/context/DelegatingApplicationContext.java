@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.option.Option;
@@ -125,7 +125,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public <C> BindingFunction<C> bind(final Key<C> key) {
+    public <C> BindingFunction<C> bind(final ComponentKey<C> key) {
         if (this.componentProvider instanceof StandardComponentProvider provider) {
             final BindingFunction<C> function = provider.bind(key);
             return new DelegatingApplicationBindingFunction<>(this, function);
@@ -141,7 +141,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
+    public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
         if (this.componentProvider instanceof StandardComponentProvider provider) {
             return provider.hierarchy(key);
         }
