@@ -37,8 +37,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     @Override
     public Attempt<T, Throwable> proxy() throws ApplicationException {
         return this.createProxy(interceptor -> this.type().isInterface()
-                ? this.interfaceProxy(interceptor)
-                : this.concreteOrAbstractProxy(interceptor));
+                        ? this.interfaceProxy(interceptor)
+                        : this.concreteOrAbstractProxy(interceptor));
     }
 
     @Override

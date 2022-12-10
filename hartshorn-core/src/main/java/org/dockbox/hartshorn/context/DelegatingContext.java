@@ -50,6 +50,11 @@ public interface DelegatingContext<D extends Context> extends Context {
     }
 
     @Override
+    default List<Context> all() {
+        return this.get().all();
+    }
+
+    @Override
     default <C extends Context> List<C> all(final Class<C> context) {
         return this.get().all(context);
     }

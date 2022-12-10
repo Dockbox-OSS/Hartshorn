@@ -16,13 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
@@ -30,6 +25,13 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
 
@@ -105,5 +107,12 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
             this.typeParametersIntrospector = new ReflectionTypeVariablesIntrospector(this.introspector, List.of(this.constructor.getTypeParameters()));
         }
         return this.typeParametersIntrospector;
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("type").write(this.type());
+        collector.property("elementType").write("constructor");
+        collector.property("parameters").write(this.parameters().all().toArray(Reportable[]::new));
     }
 }

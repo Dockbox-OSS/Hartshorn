@@ -41,6 +41,8 @@ import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxier;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 
@@ -55,12 +57,18 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
 
         private final Initializer<T> defaultInitializer;
         private Initializer<T> initializer;
+        private boolean initialized;
 
         private ComponentInitializer(final Initializer<T> defaultInitializer) {
             this.defaultInitializer = defaultInitializer.cached();
         }
 
+        public boolean initialized() {
+            return this.initialized;
+        }
+
         public T initialize(final InitializingContext context) {
+            this.initialized = true;
             return this.initializer().initialize(context);
         }
 
@@ -393,6 +401,49 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     @Override
     public ConditionMatcher conditionMatcher(final InitializingContext context) {
         return this.conditionMatcher.initialize(context);
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+
+        collector.property("prefixes").write(this.prefixes.toArray(String[]::new));
+        collector.property("standaloneComponents").write(this.standaloneComponents.stream()
+                .map(Class::getCanonicalName)
+                .toArray(String[]::new));
+
+        collector.property("mainClass").write(this.mainClass.getName());
+        collector.property("includeBasePackages").write(this.includeBasePackages);
+        collector.property("basePackages").write(this.includeBasePackages
+                ? new String[] { this.mainClass.getPackageName() }
+                : new String[0]);
+
+        collector.property("enableBanner").write(this.enableBanner);
+        collector.property("enableBatchMode").write(this.enableBatchMode);
+
+        this.reportInitializer(this.applicationConfigurator, "applicationConfigurator", collector);
+        this.reportInitializer(this.applicationProxier, "applicationProxier", collector);
+        this.reportInitializer(this.applicationFSProvider, "applicationFSProvider", collector);
+        this.reportInitializer(this.exceptionHandler, "exceptionHandler", collector);
+        this.reportInitializer(this.argumentParser, "argumentParser", collector);
+        this.reportInitializer(this.applicationLogger, "applicationLogger", collector);
+        this.reportInitializer(this.applicationEnvironment, "applicationEnvironment", collector);
+        this.reportInitializer(this.componentLocator, "componentLocator", collector);
+        this.reportInitializer(this.componentPostConstructor, "componentPostConstructor", collector);
+        this.reportInitializer(this.resourceLocator, "resourceLocator", collector);
+        this.reportInitializer(this.componentProvider, "componentProvider", collector);
+        this.reportInitializer(this.componentPopulator, "componentPopulator", collector);
+        this.reportInitializer(this.conditionMatcher, "conditionMatcher", collector);
+        this.reportInitializer(this.annotationLookup, "annotationLookup", collector);
+    }
+
+    private void reportInitializer(final ComponentInitializer<?> initializer, final String name, final DiagnosticsPropertyCollector collector) {
+        final DiagnosticsPropertyWriter property = collector.property(name);
+        if (initializer.initialized()) {
+            property.write(initializer.initialize(null).getClass().getCanonicalName());
+        }
+        else {
+            property.write("not initialized");
+        }
     }
 
 }

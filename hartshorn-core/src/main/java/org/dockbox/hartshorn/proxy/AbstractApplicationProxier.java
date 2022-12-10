@@ -35,10 +35,12 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
         this.registerProxyLookup(new NativeProxyLookup());
     }
 
+    @Override
     public ApplicationEnvironment environment() {
         return this.environment;
     }
 
+    @Override
     public void environment(final ApplicationEnvironment environment) {
         if (this.environment == null) this.environment = environment;
         else throw new IllegalModificationException("Application manager has already been configured");

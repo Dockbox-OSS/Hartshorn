@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
@@ -26,15 +28,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ServiceActivatorContext extends DefaultContext {
+public class ServiceActivatorContext extends DefaultContext implements Reportable {
 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
-    public ServiceActivatorContext(final ApplicationContext applicationContext, final Set<Annotation> serviceActivators) {
+    public ServiceActivatorContext(final ApplicationContext applicationContext,
+                                   final Set<Annotation> serviceActivators) {
         this.applicationContext = applicationContext;
         for (final Annotation serviceActivator : serviceActivators) {
-            if (!applicationContext.environment().introspect(serviceActivator).annotations().has(ServiceActivator.class)) {
+            if (!applicationContext.environment().introspect(serviceActivator).annotations()
+                    .has(ServiceActivator.class)) {
                 throw new IllegalArgumentException("Annotation " + serviceActivator + " is not a valid service activator");
             }
             this.activators.put(serviceActivator.annotationType(), serviceActivator);
@@ -46,7 +50,8 @@ public class ServiceActivatorContext extends DefaultContext {
     }
 
     public boolean hasActivator(final Class<? extends Annotation> activator) {
-        final TypeView<? extends Annotation> activatorView = this.applicationContext.environment().introspect(activator);
+        final TypeView<? extends Annotation> activatorView = this.applicationContext.environment()
+                .introspect(activator);
         if (!activatorView.annotations().has(ServiceActivator.class))
             throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
@@ -59,5 +64,13 @@ public class ServiceActivatorContext extends DefaultContext {
             return activator.cast(annotation);
         }
         return null;
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final String[] activators = this.activators().stream()
+                .map(a -> a.annotationType().getCanonicalName())
+                .toArray(String[]::new);
+        collector.property("activators").write(activators);
     }
 }

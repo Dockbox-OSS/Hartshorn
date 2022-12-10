@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.Property;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -179,5 +180,13 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     @Override
     public int modifiers() {
         return this.field.getModifiers();
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write(this.name());
+        collector.property("elementType").write("field");
+        collector.property("type").write(this.genericType());
+        collector.property("declaredBy").write(this.declaredBy());
     }
 }

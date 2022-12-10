@@ -17,11 +17,13 @@
 package org.dockbox.hartshorn.jpa.entitymanager;
 
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 
-public class EntityContext extends DefaultContext {
+public class EntityContext extends DefaultContext implements Reportable {
 
     private final Collection<TypeView<?>> entities;
 
@@ -31,5 +33,13 @@ public class EntityContext extends DefaultContext {
 
     public Collection<TypeView<?>> entities() {
         return this.entities;
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("entities").write(this.entities.stream()
+                .map(TypeView::qualifiedName)
+                .toArray(String[]::new)
+        );
     }
 }

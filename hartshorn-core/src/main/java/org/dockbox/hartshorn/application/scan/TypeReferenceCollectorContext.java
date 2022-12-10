@@ -17,12 +17,14 @@
 package org.dockbox.hartshorn.application.scan;
 
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TypeReferenceCollectorContext extends DefaultContext {
+public class TypeReferenceCollectorContext extends DefaultContext implements Reportable {
 
     private final Set<TypeReferenceCollector> collectors = ConcurrentHashMap.newKeySet();
 
@@ -36,5 +38,15 @@ public class TypeReferenceCollectorContext extends DefaultContext {
 
     public Set<TypeReferenceCollector> collectors() {
         return Collections.unmodifiableSet(this.collectors);
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final Reportable[] reporters = this.collectors.stream()
+                .map(referenceCollector -> (Reportable) trcCollector -> {
+                    trcCollector.property("type").write(referenceCollector.getClass().getName());
+                    referenceCollector.report(trcCollector);
+                }).toArray(Reportable[]::new);
+        collector.property("collectors").write(reporters);
     }
 }

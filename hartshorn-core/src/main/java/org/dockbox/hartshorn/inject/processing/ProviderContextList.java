@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Collection;
@@ -26,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 @AutoCreating
-public class ProviderContextList extends DefaultContext {
+public class ProviderContextList extends DefaultContext implements Reportable {
 
     private final MultiMap<Integer, ProviderContext> elements = MultiMap.<Integer, ProviderContext>builder()
             .collectionSupplier(ConcurrentHashMap::newKeySet)
@@ -52,5 +55,25 @@ public class ProviderContextList extends DefaultContext {
     public boolean containsKey(final Key<?> key) {
         return this.elements.allValues().stream()
                 .anyMatch(context -> context.key().equals(key));
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        final Reportable[] reporters = this.elements.allValues().stream().map(context -> (Reportable) c -> {
+            c.property("key").write(keyCollector -> {
+                keyCollector.property("type").write(context.key().type().getCanonicalName());
+                if (context.key().name() != null) {
+                    keyCollector.property("name").write(context.key().name().value());
+                }
+            });
+            c.property("phase").write(context.provider().phase());
+            c.property("lazy").write(context.provider().lazy());
+            c.property("priority").write(context.provider().priority());
+            if (StringUtilities.notEmpty(context.provider().value())) {
+                c.property("name").write(context.provider().value());
+            }
+            c.property("element").write(context.element());
+        }).toArray(Reportable[]::new);
+        collector.property("providers").write(reporters);
     }
 }

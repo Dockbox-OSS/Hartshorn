@@ -17,11 +17,13 @@
 package org.dockbox.hartshorn.jpa.query.context.application;
 
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.persistence.Entity;
 
-public class ComponentNamedQueryContext extends DefaultContext {
+public class ComponentNamedQueryContext extends DefaultContext implements Reportable {
 
     private final String name;
     private final boolean nativeQuery;
@@ -75,5 +77,15 @@ public class ComponentNamedQueryContext extends DefaultContext {
 
     public boolean isEntityDeclaration() {
         return this.declaredBy.annotations().has(Entity.class);
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write(this.name);
+        collector.property("native").write(this.nativeQuery);
+        collector.property("query").write(this.query);
+        collector.property("declaredBy").write(this.declaredBy);
+        collector.property("automaticFlush").write(this.automaticFlush);
+        collector.property("automaticClear").write(this.automaticClear);
     }
 }

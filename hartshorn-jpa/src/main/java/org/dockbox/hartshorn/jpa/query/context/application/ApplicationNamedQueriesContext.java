@@ -18,18 +18,21 @@ package org.dockbox.hartshorn.jpa.query.context.application;
 
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 
 @AutoCreating
-public class ApplicationNamedQueriesContext extends DefaultContext {
+public class ApplicationNamedQueriesContext extends DefaultContext implements Reportable {
 
     private final Map<String, ComponentNamedQueryContext> namedQueries = new ConcurrentHashMap<>();
 
@@ -60,6 +63,13 @@ public class ApplicationNamedQueriesContext extends DefaultContext {
         for (final NamedNativeQuery namedNativeQuery : annotations.all(NamedNativeQuery.class)) {
             final ComponentNamedQueryContext queryContext = new ComponentNamedQueryContext(namedNativeQuery.name(), true, namedNativeQuery.query(), type);
             this.add(queryContext);
+        }
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        for (final Entry<String, ComponentNamedQueryContext> entry : this.namedQueries.entrySet()) {
+            collector.property(entry.getKey()).write(c -> entry.getValue().report(c));
         }
     }
 }

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
@@ -115,7 +117,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
             final int split = shortSig.lastIndexOf(')') + 1;
             j.add(shortSig.substring(split)).add(this.method().getName() + shortSig.substring(0, split));
             final String k = j.toString();
-            this.qualifiedName = this.declaredBy().name() + '#' + k.substring(k.indexOf(' ') + 1);
+            this.qualifiedName = this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
         }
         return this.qualifiedName;
     }
@@ -168,5 +170,14 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     @Override
     public Attempt<ReturnType, Throwable> getWithContext() {
         return this.invokeWithContext();
+    }
+
+    @Override
+    public void report(final DiagnosticsPropertyCollector collector) {
+        collector.property("name").write(this.name());
+        collector.property("elementType").write("method");
+        collector.property("returnType").write(this.genericReturnType());
+        collector.property("parameters").write(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("declaredBy").write(this.declaredBy());
     }
 }

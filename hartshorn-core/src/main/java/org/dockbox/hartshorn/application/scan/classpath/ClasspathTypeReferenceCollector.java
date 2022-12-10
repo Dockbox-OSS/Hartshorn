@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.application.scan.classpath;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.TypeReference;
 import org.dockbox.hartshorn.application.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCollector {
 
@@ -66,4 +67,15 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
 
     protected abstract Set<TypeReference> createCache();
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof final ClasspathTypeReferenceCollector that)) return false;
+        return this.packageName.equals(that.packageName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.packageName);
+    }
 }
