@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import org.owasp.dependencycheck.gradle.DependencyCheckPlugin
 import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
 
 buildscript {
@@ -33,7 +32,6 @@ plugins {
     java
     `java-library`
     id("org.cadixdev.licenser") version "0.6.1"
-    id("org.checkerframework") version "0.6.19"
 }
 
 apply {
@@ -59,7 +57,6 @@ allprojects {
         plugin("java")
         plugin("java-library")
         plugin("maven-publish")
-        plugin("org.checkerframework")
         plugin("org.cadixdev.licenser")
     }
 
@@ -116,12 +113,14 @@ allprojects {
         // This is not required in child projects, only in this block.
         implementation(rootProject.libs.slf4j)
         implementation(rootProject.libs.bundles.jakarta)
+        // Only require qualifiers to be present, we don't use CF to actually run analysis on the code
+        // and we don't want to force users to use CF.
+        implementation(rootProject.libs.bundles.checkerQual)
 
         testImplementation(project(":hartshorn-test-suite"))
         testImplementation(rootProject.libs.bundles.test)
         testImplementation(rootProject.libs.bundles.testRuntime)
 
-        checkerFramework("org.checkerframework:checker:3.27.0")
     }
 
     tasks {

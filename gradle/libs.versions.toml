@@ -37,6 +37,7 @@
 #
 caffeine = "3.1.1"
 cglib = "3.3.0"
+checker = "3.28.0"
 derby = "10.16.1.1"
 freemarker = "2.3.31"
 groovy = "4.0.2"
@@ -113,12 +114,16 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 scala = { module = "org.scala-lang:scala-library", version.ref = "scala" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 woodstox = { module = "org.codehaus.woodstox:woodstox-core-asl", version.ref = "woodstox" }
+checker-qual = { module = "org.checkerframework:checker-qual", version.ref = "checker" }
 
 [bundles]
 #
 # Bundles in alphabetical order.
 # Dependencies per bundle should also be in alphabetical order.
 #
+checkerQual = [
+    "checker-qual",
+]
 databaseDrivers = [
     "derby",
     "derby-tools",
