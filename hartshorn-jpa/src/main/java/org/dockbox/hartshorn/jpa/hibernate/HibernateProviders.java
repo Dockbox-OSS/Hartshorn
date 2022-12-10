@@ -23,11 +23,16 @@ import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
-import org.dockbox.hartshorn.jpa.query.EntityQueryFunction;
-import org.dockbox.hartshorn.jpa.query.QueryFunction;
+import org.dockbox.hartshorn.jpa.query.EntityQueryExecutor;
+import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
+import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
+import org.dockbox.hartshorn.jpa.query.QueryExecutor;
+import org.dockbox.hartshorn.jpa.query.QueryResultTransformer;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.jpa.transaction.TransactionManager;
 import org.dockbox.hartshorn.util.TypeUtils;
+
+import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UsePersistence.class)
@@ -55,7 +60,24 @@ public class HibernateProviders {
     }
 
     @Provider
-    public QueryFunction queryFunction() {
-        return new EntityQueryFunction();
+    public Class<? extends NamedQueryRegistry> namedQueryRegistry() {
+        return HibernateNamedQueryRegistry.class;
+    }
+
+    @Provider
+    public QueryExecutor queryFunction(final QueryResultTransformer queryResultTransformer) {
+        return new EntityQueryExecutor(queryResultTransformer);
+    }
+
+    @Provider
+    @Singleton
+    public QueryExecuteTypeLookup queryTypeLookup() {
+        return new HibernateQueryExecuteTypeLookup();
+    }
+
+    @Provider
+    @Singleton
+    public QueryResultTransformer queryResultTransformer() {
+        return new HibernateQueryResultTransformer();
     }
 }

@@ -19,15 +19,20 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 @AutoCreating
 public class ProviderContextList extends DefaultContext {
 
-    private final MultiMap<Integer, ProviderContext> elements = new ConcurrentSetMultiMap<>();
+    private final MultiMap<Integer, ProviderContext> elements = MultiMap.<Integer, ProviderContext>builder()
+            .collectionSupplier(ConcurrentHashMap::newKeySet)
+            .mapSupplier(ConcurrentSkipListMap::new)
+            .makeConcurrent(true)
+            .build();
 
     public void add(final ProviderContext context) {
         final int phase = context.provider().phase();

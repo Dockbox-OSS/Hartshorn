@@ -35,6 +35,7 @@
 #
 # Versions in alphabetical order.
 #
+antlr = "4.10.1"
 caffeine = "3.1.1"
 cglib = "3.3.0"
 checker = "3.28.0"
@@ -42,7 +43,7 @@ derby = "10.16.1.1"
 freemarker = "2.3.31"
 groovy = "4.0.2"
 hamcrest = "2.2"
-hibernate = "6.1.2.Final"
+hibernate = "6.1.5.Final"
 httpclient = "4.5.13"
 jackson = "2.13.3"
 jakarta-annotations = "2.1.1"
@@ -95,6 +96,7 @@ test-containers-mssqlserver = { module = "org.testcontainers:mssqlserver", versi
 #
 # Libraries in alphabetical order
 #
+antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 cglib = { module = "cglib:cglib", version.ref = "cglib" }
 derby = { module = "org.apache.derby:derby", version.ref = "derby" }
@@ -139,6 +141,7 @@ databaseTestContainers = [
     "test-containers-postgresql",
 ]
 hibernate = [
+    "antlr",
     "hibernate-core",
     "woodstox",
 ]

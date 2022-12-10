@@ -25,6 +25,10 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.InvalidConnectionException;
+import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
+import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
+import org.dockbox.hartshorn.jpa.query.context.application.ApplicationNamedQueriesContext;
+import org.dockbox.hartshorn.jpa.query.context.application.ComponentNamedQueryContext;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -39,14 +43,26 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 @Component
 public class HibernateEntityManagerCarrier implements EntityManagerCarrier, ContextCarrier {
+
+    private static final String HB_USERNAME = "hibernate.connection.username";
+    private static final String HB_PASSWORD = "hibernate.connection.password";
+    private static final String HB_URL = "hibernate.connection.url";
+    private static final String HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
+    private static final String HB_DRIVER_CLASS = "hibernate.connection.driver_class";
+    private static final String HB_DIALECT = "hibernate.dialect";
+
+    private static final String HH_HIBERNATE_DIALECT = "hartshorn.data.hibernate.dialect";
 
     private final Configuration hibernateConfiguration = new Configuration();
 
@@ -145,10 +161,40 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
             try {
                 this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
                 this.factory = this.hibernateConfiguration.buildSessionFactory();
+                this.factoryPostConstruct();
             }
             catch (final Throwable e) {
                 throw new ApplicationException(e);
             }
+        }
+    }
+
+    private void factoryPostConstruct() {
+        final ApplicationNamedQueriesContext queriesContext = this.applicationContext().first(ApplicationNamedQueriesContext.class).get();
+        final Map<String, ComponentNamedQueryContext> queries = queriesContext.namedQueries();
+        if (queries.isEmpty()) return;
+
+        final QueryComponentFactory registryFactory = this.applicationContext().get(QueryComponentFactory.class);
+        final NamedQueryRegistry registry = registryFactory.create(this.factory);
+
+        // Safe to auto-close as this will be invoked before the carrier is exposed to external components. It is
+        // preferred to close the EM as soon as possible here, as it is not needed again until a component requests it.
+        try (final EntityManager entityManager = this.manager()) {
+            queries.forEach((name, context) -> {
+                if (registry.has(name)) {
+                    // If an entity is already registered with the same name, skip it, this is valid behaviour as this
+                    // is usually handled by the backing JPA implementation.
+                    if (context.isEntityDeclaration()) return;
+                    // If a query is already registered with the same name, but not by an entity, yield a warning, but
+                    // proceed with the registration
+                    this.applicationContext().log().warn("A query with the name %s is already registered, overwriting it".formatted(name));
+                }
+
+                final Query query = context.nativeQuery()
+                        ? entityManager.createNativeQuery(context.query())
+                        : entityManager.createQuery(context.query());
+                registry.register(name, query);
+            });
         }
     }
 
@@ -158,7 +204,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         }
 
         return this.applicationContext()
-                .property("hartshorn.data.hibernate.dialect")
+                .property(HH_HIBERNATE_DIALECT)
                 .orElseThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 
@@ -176,10 +222,10 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
     protected void prepareProperties() throws ApplicationException {
         if (StringUtilities.notEmpty(this.configuration.username()) || StringUtilities.notEmpty(this.configuration.password())) {
             this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
-            this.hibernateConfiguration.setProperty("hibernate.connection.username", this.configuration.username());
-            this.hibernateConfiguration.setProperty("hibernate.connection.password", this.configuration.password());
+            this.hibernateConfiguration.setProperty(HB_USERNAME, this.configuration.username());
+            this.hibernateConfiguration.setProperty(HB_PASSWORD, this.configuration.password());
         }
-        this.hibernateConfiguration.setProperty("hibernate.connection.url", this.configuration.url());
+        this.hibernateConfiguration.setProperty(HB_URL, this.configuration.url());
 
         final Class<? extends Driver> driver = this.configuration.driver();
         final String dialect = this.dialect();
@@ -187,10 +233,10 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver.getCanonicalName(), dialect));
 
         final PropertyHolder propertyHolder = this.applicationContext().get(PropertyHolder.class);
-        this.hibernateConfiguration.setProperty("hibernate.hbm2ddl.auto", (String) propertyHolder.get("hibernate.hbm2ddl.auto")
+        this.hibernateConfiguration.setProperty(HBM2DDL_AUTO, (String) propertyHolder.get(HBM2DDL_AUTO)
                 .orElse("update"));
-        this.hibernateConfiguration.setProperty("hibernate.connection.driver_class", driver.getCanonicalName());
-        this.hibernateConfiguration.setProperty("hibernate.dialect", dialect);
+        this.hibernateConfiguration.setProperty(HB_DRIVER_CLASS, driver.getCanonicalName());
+        this.hibernateConfiguration.setProperty(HB_DIALECT, dialect);
 
         final List<EntityContext> entityContexts = new ArrayList<>(this.applicationContext().all(EntityContext.class));
         if (entityContexts.isEmpty()) {
@@ -203,6 +249,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         final Collection<TypeView<?>> entities = entityContexts.stream()
                 .flatMap(context -> context.entities().stream())
                 .collect(Collectors.toSet());
+
         for (final TypeView<?> entity : entities) {
             this.hibernateConfiguration.addAnnotatedClass(entity.type());
         }

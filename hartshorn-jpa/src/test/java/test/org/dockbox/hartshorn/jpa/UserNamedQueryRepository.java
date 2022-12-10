@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.transaction;
+package test.org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.jpa.annotations.UseTransactionManagement;
+import org.dockbox.hartshorn.jpa.JpaRepository;
+import org.dockbox.hartshorn.jpa.annotations.DataSource;
 
-import jakarta.persistence.EntityManager;
-
-@Service
-@RequiresActivator(UseTransactionManagement.class)
-public interface TransactionFactory {
-    @Factory
-    TransactionManager manager(EntityManager entityManager);
+@Service(lazy = true)
+@DataSource("users")
+public interface UserNamedQueryRepository extends JpaRepository<UserWithNamedQuery, Long> {
+    UserWithNamedQuery findWaldo();
 }

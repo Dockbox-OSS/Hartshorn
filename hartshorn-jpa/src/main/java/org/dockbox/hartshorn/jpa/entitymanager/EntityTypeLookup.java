@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.transaction;
+package org.dockbox.hartshorn.jpa.entitymanager;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.jpa.annotations.UseTransactionManagement;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import jakarta.persistence.EntityManager;
+public interface EntityTypeLookup {
 
-@Service
-@RequiresActivator(UseTransactionManagement.class)
-public interface TransactionFactory {
-    @Factory
-    TransactionManager manager(EntityManager entityManager);
+    TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context, final Class<?> guessedType);
+
 }

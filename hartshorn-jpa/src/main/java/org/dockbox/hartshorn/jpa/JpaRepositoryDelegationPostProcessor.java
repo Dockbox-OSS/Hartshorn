@@ -45,7 +45,8 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
                 .get(DataSource.class)
                 .map(DataSource::value)
                 .map(dataSourceList::get)
-                .orElseGet(dataSourceList::defaultConnection);
+                .orCompute(dataSourceList::defaultConnection)
+                .orElseThrow(() -> new IllegalStateException("No data source found for repository " + repositoryType.type().getName()));
 
         return context.get(JpaRepositoryFactory.class).repository(type, sourceConfiguration);
     }

@@ -16,31 +16,38 @@
 
 package org.dockbox.hartshorn.jpa.annotations;
 
-import org.dockbox.hartshorn.jpa.JpaRepository;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates the annotated method will perform a modification to the entity (table).
- * Typically, this is used to update or delete an entity. This is also required for
- * {@link Query} methods, but not for default methods of {@link JpaRepository}.
+ * Indicates the annotated method will perform a query targeting the entity target of
+ * the repository this method is declared on. The method may return a result, depending
+ * on the query.
  *
- * <p><pre>{@code
- * @Service
- * public interface EntityRepository extends JpaRepository<Entity, Long> {
- *    @Query("delete from Entity e where e.id = :id")
- *    @EntityModifier
- *    void delete(int id);
- * }
- * }</pre>
+ * <p>Queries may be executed in a transaction, if the repository is transactional or the
+ * method is annotated with {@link Transactional}.
+ *
+ * <p>By default, queries will be parsed according to the definition of the named query
+ * in the entity class.
+ *
+ * <p>By default the entity type is derived from the named query, and is checked against
+ * the method return type.
  *
  * @author Guus Lieben
  * @since 21.9
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface EntityModifier {
+public @interface NamedQuery {
+    String value();
+    boolean automaticClear() default false;
+    boolean automaticFlush() default true;
+    Class<?> entityType() default Void.class;
+
+    enum QueryType {
+        JPQL,
+        NATIVE,
+    }
 }

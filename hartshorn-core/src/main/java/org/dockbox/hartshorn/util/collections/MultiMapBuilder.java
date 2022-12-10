@@ -49,16 +49,16 @@ public class MultiMapBuilder<K, V> {
     }
 
     public MultiMap<K, V> build() {
-        if (mapSupplier == null) throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");
-        if (collectionSupplier == null) throw new IllegalArgumentException("Cannot build new MultiMap without configuring Collection<V> supplier.");
-        if (makeSynchronized && makeConcurrent) throw new IllegalArgumentException("Cannot build new MultiMap with both synchronized and concurrent capabilities.");
+        if (this.mapSupplier == null) throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");
+        if (this.collectionSupplier == null) throw new IllegalArgumentException("Cannot build new MultiMap without configuring Collection<V> supplier.");
+        if (this.makeSynchronized && this.makeConcurrent) throw new IllegalArgumentException("Cannot build new MultiMap with both synchronized and concurrent capabilities.");
 
-        final Map<K, Collection<V>> baseMap = mapSupplier.get();
-        if (makeSynchronized) {
+        final Map<K, Collection<V>> baseMap = this.mapSupplier.get();
+        if (this.makeSynchronized) {
             return new SynchronizedMultiMap<>() {
                 @Override
                 protected Collection<V> createEmptyCollection() {
-                    return collectionSupplier.get();
+                    return MultiMapBuilder.this.collectionSupplier.get();
                 }
 
                 @Override
@@ -66,14 +66,14 @@ public class MultiMapBuilder<K, V> {
                     return baseMap;
                 }
             };
-        } else if (makeConcurrent) {
+        } else if (this.makeConcurrent) {
             if (!(baseMap instanceof ConcurrentMap)) {
                 throw new IllegalArgumentException("Cannot build new ConcurrentMultiMap with base map that is not a ConcurrentMap.");
             }
             return new StandardMultiMap<>() {
                 @Override
                 protected Collection<V> createEmptyCollection() {
-                    return collectionSupplier.get();
+                    return MultiMapBuilder.this.collectionSupplier.get();
                 }
 
                 @Override
@@ -85,7 +85,7 @@ public class MultiMapBuilder<K, V> {
             return new StandardMultiMap<>() {
                 @Override
                 protected Collection<V> createEmptyCollection() {
-                    return collectionSupplier.get();
+                    return MultiMapBuilder.this.collectionSupplier.get();
                 }
 
                 @Override

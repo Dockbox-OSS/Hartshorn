@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityContext;
+import org.dockbox.hartshorn.jpa.query.context.application.ApplicationNamedQueriesContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
@@ -37,8 +38,12 @@ public class PersistentTestComponentsService implements LifecycleObserver {
         final List<TypeView<?>> entities = Stream.of(
                 User.class,
                 Address.class,
-                JpaUser.class
+                JpaUser.class,
+                UserWithNamedQuery.class
         ).map(applicationContext.environment()::introspect).collect(Collectors.toList());
         applicationContext.add(new EntityContext(entities));
+
+        final ApplicationNamedQueriesContext queriesContext = applicationContext.first(ApplicationNamedQueriesContext.class).get();
+        entities.forEach(queriesContext::process);
     }
 }

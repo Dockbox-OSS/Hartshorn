@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.transaction;
+package org.dockbox.hartshorn.jpa.query;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.jpa.annotations.UseTransactionManagement;
+import jakarta.persistence.Query;
 
-import jakarta.persistence.EntityManager;
+public interface NamedQueryRegistry {
 
-@Service
-@RequiresActivator(UseTransactionManagement.class)
-public interface TransactionFactory {
-    @Factory
-    TransactionManager manager(EntityManager entityManager);
+    boolean has(String name);
+
+    void register(String name, Query query);
+
 }

@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
 
@@ -34,7 +33,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
-        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
+        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
         final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
         if (factory == null) return instance;
@@ -56,7 +55,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
         return instance;
     }
 
-    protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(TypeView<T> type);
+    protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext);
 
     public abstract <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 

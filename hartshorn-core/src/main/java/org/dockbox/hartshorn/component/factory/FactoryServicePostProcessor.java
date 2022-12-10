@@ -53,7 +53,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             if (constructorCandidate.present()) {
                 final ConstructorView<?> constructor = constructorCandidate.get();
                 return interceptorContext -> {
-                    final Object instance = constructor.create(interceptorContext.args()).orNull();
+                    final Object instance = constructor.create(interceptorContext.args()).rethrow().orNull();
                     return this.processInstance(context, interceptorContext.checkedCast(instance), enable);
                 };
             }
