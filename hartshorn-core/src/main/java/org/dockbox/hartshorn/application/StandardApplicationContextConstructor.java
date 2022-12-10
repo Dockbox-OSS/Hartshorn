@@ -190,7 +190,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
                 .map(prefix -> new ClassPathScannerTypeReferenceCollector(environment, prefix))
                 .forEach(collectorContext::register);
 
-        collectorContext.register(PredefinedSetTypeReferenceCollector.of(builder.standaloneComponents()));
+        if (!builder.standaloneComponents().isEmpty()) {
+            collectorContext.register(PredefinedSetTypeReferenceCollector.of(builder.standaloneComponents()));
+        }
     }
 
     protected void process(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {

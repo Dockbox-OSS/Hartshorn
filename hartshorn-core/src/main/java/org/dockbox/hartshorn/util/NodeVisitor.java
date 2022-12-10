@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.collect;
+package org.dockbox.hartshorn.util;
 
-public class SimpleNode<T> implements Node<T> {
+public interface NodeVisitor<T> {
+    T visit(Node<?> node);
 
-    private final String name;
-    private final T value;
+    T visit(GroupNode node);
 
-    public SimpleNode(final String name, final T value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    public String name() {
-        return this.name;
-    }
-
-    public T value() {
-        return this.value;
-    }
-
-    public <R> R accept(final NodeVisitor<R> visitor) {
-        return visitor.visit(this);
-    }
+    T visit(ArrayNode<?> node);
 }

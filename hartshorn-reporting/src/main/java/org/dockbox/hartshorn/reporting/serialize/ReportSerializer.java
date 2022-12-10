@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.reporting.serialize;
 
-import org.dockbox.hartshorn.reporting.collect.DiagnosticsReport;
+import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 
 public interface ReportSerializer<T> {
 

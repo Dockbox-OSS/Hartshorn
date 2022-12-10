@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.reporting.collect;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
-import org.dockbox.hartshorn.reporting.GroupNode;
+import org.dockbox.hartshorn.util.GroupNode;
 
 public class NodeDiagnosticsReport implements DiagnosticsReport {
 

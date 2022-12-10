@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting;
+package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.reporting.collect.DiagnosticsReportCollector;
+public class SimpleNode<T> implements Node<T> {
 
-public interface DiagnosticsReporter {
+    private final String name;
+    private final T value;
 
-    void report(DiagnosticsReportCollector collector);
+    public SimpleNode(final String name, final T value) {
+        this.name = name;
+        this.value = value;
+    }
 
+    public String name() {
+        return this.name;
+    }
+
+    public T value() {
+        return this.value;
+    }
+
+    public <R> R accept(final NodeVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

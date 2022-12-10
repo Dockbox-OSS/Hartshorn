@@ -29,6 +29,7 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     private final NodeDiagnosticsReport report = new NodeDiagnosticsReport();
 
+    @Override
     public NodeDiagnosticsReport report() {
         return this.report;
     }

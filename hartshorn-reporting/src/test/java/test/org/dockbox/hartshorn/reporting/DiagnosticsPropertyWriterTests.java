@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.reporting.ArrayNode;
+import org.dockbox.hartshorn.util.ArrayNode;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
-import org.dockbox.hartshorn.reporting.GroupNode;
-import org.dockbox.hartshorn.reporting.Node;
-import org.dockbox.hartshorn.reporting.SimpleNode;
+import org.dockbox.hartshorn.util.GroupNode;
+import org.dockbox.hartshorn.util.Node;
+import org.dockbox.hartshorn.util.SimpleNode;
 import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsPropertyWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

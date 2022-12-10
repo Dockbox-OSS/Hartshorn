@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.collect;
+package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.reporting.serialize.ReportSerializer;
+public interface Node<T> {
 
-public class DiagnosticsReport {
+    String name();
 
-    private final GroupNode root = GroupNode.of("root");
+    T value();
 
-    public GroupNode root() {
-        return this.root;
-    }
-
-    public <T> T serialize(final ReportSerializer<T> serializer) {
-        return serializer.serialize(this);
-    }
+    <R> R accept(NodeVisitor<R> visitor);
 }

@@ -20,10 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.dockbox.hartshorn.reporting.ArrayNode;
-import org.dockbox.hartshorn.reporting.GroupNode;
-import org.dockbox.hartshorn.reporting.Node;
-import org.dockbox.hartshorn.reporting.NodeVisitor;
+import org.dockbox.hartshorn.util.ArrayNode;
+import org.dockbox.hartshorn.util.GroupNode;
+import org.dockbox.hartshorn.util.Node;
+import org.dockbox.hartshorn.util.NodeVisitor;
 
 import java.util.ArrayList;
 import java.util.List;

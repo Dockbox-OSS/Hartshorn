@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.reporting;
 
+import org.dockbox.hartshorn.util.Node;
+
 public interface DiagnosticsReport {
 
     Node<?> root();

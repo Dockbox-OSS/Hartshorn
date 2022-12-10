@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.collect;
+package org.dockbox.hartshorn.util;
 
 import java.util.ArrayList;
 import java.util.List;

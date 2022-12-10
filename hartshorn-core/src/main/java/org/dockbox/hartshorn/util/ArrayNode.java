@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.collect;
+package org.dockbox.hartshorn.util;
 
-public interface Node<T> {
+import java.util.Arrays;
+import java.util.List;
 
-    String name();
+public class ArrayNode<T> extends SimpleNode<List<T>> {
 
-    T value();
+    public ArrayNode(final String name, final List<T> value) {
+        super(name, value);
+    }
 
-    <R> R accept(NodeVisitor<R> visitor);
+    @SafeVarargs
+    public ArrayNode(final String name, final T... value) {
+        super(name, Arrays.asList(value));
+    }
+
+    @Override
+    public <R> R accept(final NodeVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

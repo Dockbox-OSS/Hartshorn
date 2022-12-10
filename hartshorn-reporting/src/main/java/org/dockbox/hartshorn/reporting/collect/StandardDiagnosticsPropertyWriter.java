@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
-import org.dockbox.hartshorn.reporting.ArrayNode;
+import org.dockbox.hartshorn.util.ArrayNode;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
-import org.dockbox.hartshorn.reporting.GroupNode;
-import org.dockbox.hartshorn.reporting.Node;
+import org.dockbox.hartshorn.util.GroupNode;
+import org.dockbox.hartshorn.util.Node;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.SimpleNode;
+import org.dockbox.hartshorn.util.SimpleNode;
 import org.dockbox.hartshorn.util.TypeUtils;
 
 import java.util.ArrayList;
