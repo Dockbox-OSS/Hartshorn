@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -31,11 +31,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import jakarta.inject.Named;
-
 /**
- * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link Key} to
- * identify the binding hierarchy, and stores the bindings in a {@link TreeMap}.
+ * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link ComponentKey}
+ * to identify the binding hierarchy, and stores the bindings in a {@link TreeMap}.
  *
  * @param <C> The type of type to provide.
  * @author Guus Lieben
@@ -44,19 +42,21 @@ import jakarta.inject.Named;
  */
 public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
-    private final Key<C> key;
+    private final ComponentKey<C> key;
     private final ApplicationContext applicationContext;
     private final TreeMap<Integer, Provider<C>> bindings = new TreeMap<>(Collections.reverseOrder());
 
-    public NativeBindingHierarchy(final Key<C> key, final ApplicationContext applicationContext) {
+    public NativeBindingHierarchy(final ComponentKey<C> key, final ApplicationContext applicationContext) {
         this.key = key;
         this.applicationContext = applicationContext;
     }
 
-    public Key<C> key() {
+    @Override
+    public ComponentKey<C> key() {
         return this.key;
     }
 
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }
@@ -117,10 +117,10 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public String toString() {
         final String contract = this.key().type().getSimpleName();
-        final Named named = this.key().name();
+        final String keyName = this.key().name();
         String name = "";
-        if (named != null) {
-            name = "::" + named.value();
+        if (keyName != null) {
+            name = "::" + keyName;
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.

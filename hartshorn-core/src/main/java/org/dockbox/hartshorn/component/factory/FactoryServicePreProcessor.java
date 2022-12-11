@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.processing.BindingProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -42,31 +42,36 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
 
         final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
-        methods:
         for (final MethodView<T, ?> method : factoryMethods) {
             final Factory annotation = method.annotations().get(Factory.class).get();
-            Key<?> returnKey = Key.of(method.returnType());
-            if (!"".equals(annotation.value())) returnKey = returnKey.name(annotation.value());
+            ComponentKey<?> componentKey = ComponentKey.of(method.returnType());
+            if (!"".equals(annotation.value())) componentKey = componentKey.mut().name(annotation.value()).build();
 
-            final List<Class<?>> methodParameters = method.parameters().types().stream()
-                    .map(TypeView::type)
-                    .collect(Collectors.toList());
+            if (!lookupMatchingConstructor(context, factoryContext, (MethodView<Object, ?>) method, componentKey)) {
+                if (annotation.required()) throw new MissingFactoryConstructorException(componentKey, method);
+            }
+        }
+    }
 
-            for (final Provider<?> provider : context.hierarchy(returnKey).providers()) {
-                if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
-                    final TypeView<?> typeContext = context.environment().introspect(contextDrivenProvider.type());
+    private static boolean lookupMatchingConstructor(final ApplicationContext context, final FactoryContext factoryContext,
+                                                     final MethodView<Object, ?> method, final ComponentKey<?> componentKey) {
+        final List<Class<?>> methodParameters = method.parameters().types().stream()
+                .map(TypeView::type)
+                .collect(Collectors.toList());
 
-                    for (final ConstructorView<?> constructor : typeContext.constructors().bound()) {
-                        if (constructor.parameters().matches(methodParameters)) {
-                            factoryContext.register((MethodView<Object, ?>) method, (ConstructorView<Object>) constructor);
-                            continue methods;
-                        }
+        for (final Provider<?> provider : context.hierarchy(componentKey).providers()) {
+            if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
+                final TypeView<?> typeContext = context.environment().introspect(contextDrivenProvider.type());
+
+                for (final ConstructorView<?> constructor : typeContext.constructors().bound()) {
+                    if (constructor.parameters().matches(methodParameters)) {
+                        factoryContext.register(method, (ConstructorView<Object>) constructor);
+                        return true;
                     }
                 }
             }
-
-            if (annotation.required()) throw new MissingFactoryConstructorException(returnKey, method);
         }
+        return false;
     }
 
     @Override

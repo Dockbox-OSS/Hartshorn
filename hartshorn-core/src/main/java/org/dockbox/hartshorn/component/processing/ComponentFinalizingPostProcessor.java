@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.component.processing;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -33,10 +33,10 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.get(Key.of(ComponentContainer.class)).permitsProxying()) {
+        if (processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying()) {
             T finalizingInstance = instance;
-            if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
-                final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+            if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
+                final ProxyFactory<T, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
                 try {
                     final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
                     final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();

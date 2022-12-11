@@ -17,11 +17,11 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -38,16 +38,14 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.components.SampleProviders;
 import test.org.dockbox.hartshorn.boot.EmptyService;
-import test.org.dockbox.hartshorn.components.PassThroughFactory;
-import test.org.dockbox.hartshorn.components.SampleFactoryService;
 import test.org.dockbox.hartshorn.components.CircularConstructorA;
 import test.org.dockbox.hartshorn.components.CircularConstructorB;
 import test.org.dockbox.hartshorn.components.CircularDependencyA;
 import test.org.dockbox.hartshorn.components.CircularDependencyB;
 import test.org.dockbox.hartshorn.components.ComponentType;
 import test.org.dockbox.hartshorn.components.ContextInjectedType;
+import test.org.dockbox.hartshorn.components.FieldProviderService;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleA;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleB;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleC;
@@ -56,9 +54,20 @@ import test.org.dockbox.hartshorn.components.NonComponentType;
 import test.org.dockbox.hartshorn.components.NonProcessableType;
 import test.org.dockbox.hartshorn.components.NonProcessableTypeProcessor;
 import test.org.dockbox.hartshorn.components.NonProxyComponentType;
+import test.org.dockbox.hartshorn.components.PassThroughFactory;
 import test.org.dockbox.hartshorn.components.Person;
 import test.org.dockbox.hartshorn.components.PersonProviders;
+import test.org.dockbox.hartshorn.components.PopulatedType;
+import test.org.dockbox.hartshorn.components.ProvidedInterface;
 import test.org.dockbox.hartshorn.components.SampleContext;
+import test.org.dockbox.hartshorn.components.SampleFactoryService;
+import test.org.dockbox.hartshorn.components.SampleField;
+import test.org.dockbox.hartshorn.components.SampleFieldImplementation;
+import test.org.dockbox.hartshorn.components.SampleImplementation;
+import test.org.dockbox.hartshorn.components.SampleInterface;
+import test.org.dockbox.hartshorn.components.SampleMetaAnnotatedImplementation;
+import test.org.dockbox.hartshorn.components.SampleProviderService;
+import test.org.dockbox.hartshorn.components.SampleProviders;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponent;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithAbsentBinding;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithNonRequiredAbsentBinding;
@@ -68,15 +77,6 @@ import test.org.dockbox.hartshorn.components.User;
 import test.org.dockbox.hartshorn.proxy.AbstractProxy;
 import test.org.dockbox.hartshorn.proxy.DemoProxyDelegationPostProcessor;
 import test.org.dockbox.hartshorn.proxy.ProxyProviders;
-import test.org.dockbox.hartshorn.components.FieldProviderService;
-import test.org.dockbox.hartshorn.components.PopulatedType;
-import test.org.dockbox.hartshorn.components.ProvidedInterface;
-import test.org.dockbox.hartshorn.components.SampleField;
-import test.org.dockbox.hartshorn.components.SampleFieldImplementation;
-import test.org.dockbox.hartshorn.components.SampleImplementation;
-import test.org.dockbox.hartshorn.components.SampleInterface;
-import test.org.dockbox.hartshorn.components.SampleMetaAnnotatedImplementation;
-import test.org.dockbox.hartshorn.components.SampleProviderService;
 
 @HartshornTest(includeBasePackages = false)
 @UseServiceProvision
@@ -130,7 +130,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingWithMetaCanBeProvided() {
-        final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        final ComponentKey<SampleInterface> key = ComponentKey.of(SampleInterface.class, "demo");
         this.applicationContext.bind(key).to(SampleImplementation.class);
         final SampleInterface provided = this.applicationContext.get(key);
         Assertions.assertNotNull(provided);
@@ -155,7 +155,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() {
-        final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        final ComponentKey<SampleInterface> key = ComponentKey.of(SampleInterface.class, "demo");
         this.applicationContext.bind(key).singleton(new SampleImplementation());
         final SampleInterface provided = this.applicationContext.get(key);
         Assertions.assertNotNull(provided);
@@ -180,7 +180,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingWithMetaCanBeProvided() {
-        final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        final ComponentKey<SampleInterface> key = ComponentKey.of(SampleInterface.class, "demo");
         this.applicationContext.bind(key).to(SampleImplementation::new);
         final SampleInterface provided = this.applicationContext.get(key);
         Assertions.assertNotNull(provided);
@@ -199,7 +199,7 @@ public class ApplicationContextTests {
         final SampleInterface sample = this.applicationContext.get(SampleInterface.class);
         Assertions.assertNull(sample); // Non-component, so null
 
-        final SampleInterface provided = this.applicationContext.get(Key.of(SampleInterface.class, "meta"));
+        final SampleInterface provided = this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -243,12 +243,12 @@ public class ApplicationContextTests {
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {
         if (field) {
             if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
-            else this.applicationContext.bind(Key.of(SampleField.class, fieldMeta)).to(SampleFieldImplementation.class);
+            else this.applicationContext.bind(ComponentKey.of(SampleField.class, fieldMeta)).to(SampleFieldImplementation.class);
         }
 
         final ProvidedInterface provided;
         if (meta == null) provided = this.applicationContext.get(ProvidedInterface.class);
-        else provided = this.applicationContext.get(Key.of(ProvidedInterface.class, meta));
+        else provided = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
         Assertions.assertNotNull(provided);
 
         final String actual = provided.name();
@@ -258,7 +258,7 @@ public class ApplicationContextTests {
         if (singleton) {
             final ProvidedInterface second;
             if (meta == null) second = this.applicationContext.get(ProvidedInterface.class);
-            else second = this.applicationContext.get(Key.of(ProvidedInterface.class, meta));
+            else second = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
@@ -267,7 +267,7 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(FieldProviderService.class)
     void testFieldProviders() {
-        final ProvidedInterface field = this.applicationContext.get(Key.of(ProvidedInterface.class, "field"));
+        final ProvidedInterface field = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, "field"));
         Assertions.assertNotNull(field);
         Assertions.assertEquals("Field", field.name());
     }
@@ -275,10 +275,10 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(FieldProviderService.class)
     void testSingletonFieldProviders() {
-        final ProvidedInterface field = this.applicationContext.get(Key.of(ProvidedInterface.class, "singletonField"));
+        final ProvidedInterface field = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, "singletonField"));
         Assertions.assertNotNull(field);
 
-        final ProvidedInterface field2 = this.applicationContext.get(Key.of(ProvidedInterface.class, "singletonField"));
+        final ProvidedInterface field2 = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, "singletonField"));
         Assertions.assertNotNull(field2);
 
         Assertions.assertSame(field, field2);
@@ -444,7 +444,7 @@ public class ApplicationContextTests {
 
     @Test
     void testStringProvision() {
-        final Key<String> key = Key.of(String.class, "license");
+        final ComponentKey<String> key = ComponentKey.of(String.class, "license");
         this.applicationContext.bind(key).singleton("MIT");
         final String license = this.applicationContext.get(key);
         Assertions.assertEquals("MIT", license);

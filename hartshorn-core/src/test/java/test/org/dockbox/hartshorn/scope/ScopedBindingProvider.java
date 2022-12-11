@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package test.org.dockbox.hartshorn.scope;
 
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.InstallTo;
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Binds;
 
-public interface ProcessableComponentProvider extends ComponentProvider {
-    void postProcessor(ComponentPostProcessor postProcessor);
+@Service
+public class ScopedBindingProvider {
+
+    @Binds
+    @InstallTo(SampleScope.class)
+    public String bind() {
+        return "test";
+    }
+
+    public static class SampleScope implements Scope {
+
+        @Override
+        public Class<? extends Scope> installableScopeType() {
+            return SampleScope.class;
+        }
+    }
 }

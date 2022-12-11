@@ -16,26 +16,26 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import java.lang.annotation.Annotation;
-import java.util.Properties;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.annotation.Annotation;
+import java.util.Properties;
+import java.util.Set;
 
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext, HierarchicalComponentProvider {
@@ -119,20 +119,23 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public <T> T get(final Key<T> key) {
+    public <T> T get(final ComponentKey<T> key) {
         return this.componentProvider.get(key);
     }
 
     @Override
-    public <T> T get(final Key<T> key, final boolean enable) {
-        return this.componentProvider.get(key, enable);
+    public <C> BindingFunction<C> bind(final ComponentKey<C> key) {
+        if (this.componentProvider instanceof Binder binder) {
+            final BindingFunction<C> function = binder.bind(key);
+            return new DelegatingApplicationBindingFunction<>(this, function);
+        }
+        throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
 
     @Override
-    public <C> BindingFunction<C> bind(final Key<C> key) {
-        if (this.componentProvider instanceof StandardComponentProvider provider) {
-            final BindingFunction<C> function = provider.bind(key);
-            return new DelegatingApplicationBindingFunction<>(this, function);
+    public <C> Binder bind(final BindingHierarchy<C> hierarchy) {
+        if (this.componentProvider instanceof Binder binder) {
+            return binder.bind(hierarchy);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
@@ -145,8 +148,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
-        if (this.componentProvider instanceof StandardComponentProvider provider) {
+    public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
+        if (this.componentProvider instanceof HierarchicalComponentProvider provider) {
             return provider.hierarchy(key);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");

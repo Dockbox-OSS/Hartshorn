@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 
 public interface Binder {
 
-    <C> BindingFunction<C> bind(Key<C> key);
-
     default <C> BindingFunction<C> bind(final Class<C> type) {
-        return this.bind(Key.of(type));
+        return this.bind(ComponentKey.of(type));
     }
+
+    <C> BindingFunction<C> bind(ComponentKey<C> key);
+
+    <C> Binder bind(BindingHierarchy<C> hierarchy);
 }

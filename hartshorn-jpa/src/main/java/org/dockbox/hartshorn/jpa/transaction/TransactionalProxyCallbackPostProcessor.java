@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.jpa.transaction;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.DataSource;
 import org.dockbox.hartshorn.jpa.annotations.Transactional;
@@ -69,12 +69,12 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     }
 
     @Override
-    public <T> boolean wraps(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance) {
+    public <T> boolean wraps(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance) {
         return method.annotations().has(Transactional.class);
     }
 
     @Override
-    public <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance) {
+    public <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance) {
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
         final EntityManagerLookup lookup = context.get(EntityManagerLookup.class);
 
@@ -93,12 +93,12 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     }
 
     @Override
-    public <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance) {
+    public <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance) {
         return this.performAndFlush(context, method, Transactional::commitOnSuccess, TransactionManager::commitTransaction);
     }
 
     @Override
-    public <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key, @Nullable final T instance) {
+    public <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance) {
         return this.performAndFlush(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
     }
 

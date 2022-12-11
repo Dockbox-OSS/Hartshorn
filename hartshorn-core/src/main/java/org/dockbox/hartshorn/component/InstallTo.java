@@ -16,17 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.option.Option;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Collection;
-
-public interface ComponentLocator {
-
-    Collection<ComponentContainer> containers();
-
-    Collection<ComponentContainer> containers(ComponentType functional);
-
-    Option<ComponentContainer> container(final Class<?> type);
-
-    <T> void validate(ComponentKey<T> key);
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.FIELD })
+public @interface InstallTo {
+    Class<? extends Scope> value();
 }

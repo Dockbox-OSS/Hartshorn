@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.config;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.config.resource.ResourceLookupStrategy;
-import org.dockbox.hartshorn.inject.Key;
 
 import java.net.URI;
 
 public class ConfigurationURIContext {
 
     private final URI uri;
-    private final Key<?> key;
+    private final ComponentKey<?> key;
     private final String source;
     private final ResourceLookupStrategy strategy;
 
-    public ConfigurationURIContext(final URI uri, final Key<?> key, final String source, final ResourceLookupStrategy strategy) {
+    public ConfigurationURIContext(final URI uri, final ComponentKey<?> key, final String source, final ResourceLookupStrategy strategy) {
         this.uri = uri;
         this.key = key;
         this.source = source;
@@ -39,7 +39,7 @@ public class ConfigurationURIContext {
         return this.uri;
     }
 
-    public Key<?> key() {
+    public ComponentKey<?> key() {
         return this.key;
     }
 

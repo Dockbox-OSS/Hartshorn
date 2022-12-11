@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -31,7 +31,7 @@ import jakarta.inject.Inject;
 /**
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.
  */
-@AutoCreating
+@InstallIfAbsent
 public final class ArgumentConverterContext extends DefaultContext {
 
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();

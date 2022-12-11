@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.processing.ProviderContextList;
 
 public class AbsentBindingCondition implements Condition {
@@ -25,7 +25,7 @@ public class AbsentBindingCondition implements Condition {
     public ConditionResult matches(final ConditionContext context) {
         final ProviderContextList listContext = context.applicationContext().first(ProviderContextList.class).orNull();
         return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
-            final Key<?> key = Key.of(condition.value(), condition.name());
+            final ComponentKey<?> key = ComponentKey.of(condition.value(), condition.name());
             if (listContext != null && listContext.containsKey(key)) {
                 return ConditionResult.matched();
             }

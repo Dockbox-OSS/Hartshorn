@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -36,6 +37,8 @@ public interface ExecutableParametersIntrospector {
     Option<ParameterView<?>> at(int index);
 
     int count();
+
+    Object[] loadFromContext(final Scope scope);
 
     Object[] loadFromContext();
 

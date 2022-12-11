@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -104,11 +104,11 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
     Option<Provider<C>> get(int priority);
 
     /**
-     * Gets the {@link Key} of the current hierarchy, containing a {@link Class}
+     * Gets the {@link ComponentKey} of the current hierarchy, containing a {@link Class}
      * of type {@code C}, and a potential {@link jakarta.inject.Named} instance.
      *
      * @return The key of the current hierarchy.
-     * @see Key
+     * @see ComponentKey
      */
-    Key<C> key();
+    ComponentKey<C> key();
 }

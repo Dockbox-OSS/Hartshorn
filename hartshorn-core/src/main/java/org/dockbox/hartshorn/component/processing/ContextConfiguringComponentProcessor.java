@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.TypeUtils;
 
@@ -34,7 +34,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance,
                          final ComponentProcessingContext<T> processingContext) {
-        final C componentContext = processingContext.first(Key.of(this.contextType))
+        final C componentContext = processingContext.first(ComponentKey.of(this.contextType))
                 .orCompute(() -> this.createContext(context, processingContext)).orNull();
 
         if (componentContext != null) {
@@ -45,7 +45,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
             contextInstance.add(componentContext);
         }
         else {
-            final Key<ProxyFactory<T, ?>> factoryKey = TypeUtils.adjustWildcards(Key.of(ProxyFactory.class), Key.class);
+            final ComponentKey<ProxyFactory<T, ?>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
             if (processingContext.containsKey(factoryKey)) {
                 final ProxyFactory<T, ?> proxyFactory = processingContext.get(factoryKey);
                 proxyFactory.contextContainer().add(componentContext);

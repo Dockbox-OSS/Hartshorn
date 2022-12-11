@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.jpa.annotations;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 
@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * Represents the key of a data source for a {@link JpaRepository}. The key is used to identify the
- * data source in the {@link DataSourceList}, and is <b>not</b> a representation of a {@link Key}.
+ * data source in the {@link DataSourceList}, and is <b>not</b> a representation of a {@link ComponentKey}.
  *
  * <p>A sample usage may look like the following snippet:
  * <pre>{@code

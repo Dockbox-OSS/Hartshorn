@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.events.handle;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.events.EventExecutionFilterContext;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -61,7 +61,7 @@ public class EventHandler {
         if (invoker instanceof EventWrapperImpl) this.invalidateCache(this.invokers.remove(invoker));
     }
 
-    public void post(final Event event, final Key<?> target) {
+    public void post(final Event event, final ComponentKey<?> target) {
         EventWrapperImpl<?>[] cache = this.computedInvokerCache;
         if (null == cache) {
             synchronized (this) {
@@ -73,17 +73,18 @@ public class EventHandler {
 
         final EventExecutionFilterContext filterContext = event.applicationContext().first(EventExecutionFilterContext.class).get();
 
-        invokersCache:
         for (final EventWrapperImpl<?> invoker : cache) {
             // Target is null if no specific target should be checked
             // If the target is present we only want to invoke when the listener matches our target
             if (null == target || invoker.listenerType().equals(target)) {
+                boolean invoke = true;
                 for (final EventExecutionFilter executionFilter : filterContext.filters()) {
                     if (!executionFilter.accept(event, invoker, target)) {
-                        continue invokersCache;
+                        invoke = false;
+                        break;
                     }
                 }
-                invoker.invoke(event);
+                if (invoke) invoker.invoke(event);
             }
         }
     }

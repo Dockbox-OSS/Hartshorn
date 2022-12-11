@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 
 public interface SingletonCache {
 
-    <T> void put(Key<T> key, T instance);
+    <T> void put(ComponentKey<T> key, T instance);
 
-    <T> T get(Key<T> key);
+    <T> T get(ComponentKey<T> key);
 
-    <T> void remove(Key<T> key);
+    <T> void remove(ComponentKey<T> key);
 
-    <T> boolean contains(Key<T> key);
+    <T> boolean contains(ComponentKey<T> key);
 
     <T> void clear();
 

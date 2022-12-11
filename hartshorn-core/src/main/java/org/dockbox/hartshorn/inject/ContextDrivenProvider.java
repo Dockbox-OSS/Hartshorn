@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -39,17 +40,17 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class ContextDrivenProvider<C> implements Provider<C> {
 
-    private final Class<? extends C> context;
+    private final ComponentKey<? extends C> context;
     private ConstructorView<? extends C> optimalConstructor;
 
-    public ContextDrivenProvider(final Class<? extends C> type) {
+    public ContextDrivenProvider(final ComponentKey<? extends C> type) {
         this.context = type;
     }
 
     @Override
     public final Option<ObjectContainer<C>> provide(final ApplicationContext context) {
         return this.optimalConstructor(context)
-                .flatMap(constructor -> constructor.createWithContext().rethrowUnchecked())
+                .flatMap(constructor -> constructor.createWithContext(this.context.scope()).rethrowUnchecked())
                 .map(this.type()::cast)
                 .map(instance -> new ObjectContainer<>(instance, false));
     }
@@ -64,6 +65,6 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     public Class<? extends C> type() {
-        return this.context;
+        return this.context.type();
     }
 }

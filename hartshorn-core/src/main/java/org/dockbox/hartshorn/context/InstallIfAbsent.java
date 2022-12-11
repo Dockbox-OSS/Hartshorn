@@ -16,20 +16,25 @@
 
 package org.dockbox.hartshorn.context;
 
+import org.dockbox.hartshorn.component.ComponentKey;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates a {@link Context} type should be
- * automatically created when it is looked up. Subtypes of {@link DefaultContext}
- * honor this behavior by default, other implementations may differ.
+ * Indicates whether a {@link Context} type should be automatically created when
+ * it is absent while it is looked up through {@link Context#first(ComponentKey)}.
+ *
+ * <p>Implementations of {@link ApplicationAwareContext} will use this annotation to
+ * determine whether a context should be created when a child context is looked up.
+ * Other implementations may choose to ignore this annotation.
  *
  * @author Guus Lieben
  * @since 21.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface AutoCreating {
+public @interface InstallIfAbsent {
 }

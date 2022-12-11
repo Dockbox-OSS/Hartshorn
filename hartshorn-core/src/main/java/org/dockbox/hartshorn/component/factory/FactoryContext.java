@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * of associated constructors for {@link Factory} methods. If no constructor
  * exists for a given method, an exception will be thrown by this context.
  */
-@AutoCreating
+@InstallIfAbsent
 public class FactoryContext extends DefaultContext {
 
     private final Map<MethodView<?, ?>, ConstructorView<?>> bounds = new ConcurrentHashMap<>();

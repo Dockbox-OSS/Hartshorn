@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
-    public ModifiableComponentProcessingContext(final ApplicationContext applicationContext, final Key<T> key, final T instance) {
+    public ModifiableComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key, final T instance) {
         super(applicationContext, key, instance);
     }
 

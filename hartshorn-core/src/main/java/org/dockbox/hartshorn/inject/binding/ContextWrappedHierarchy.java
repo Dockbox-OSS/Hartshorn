@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -97,7 +97,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public Key<C> key() {
+    public ComponentKey<C> key() {
         return this.real().key();
     }
 

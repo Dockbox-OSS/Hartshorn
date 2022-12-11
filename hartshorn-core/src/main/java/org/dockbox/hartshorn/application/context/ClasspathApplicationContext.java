@@ -18,7 +18,8 @@ package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.StandardComponentProvider;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
@@ -26,7 +27,6 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ProcessingPhase;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -62,7 +62,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
         final String name = processor.getClass().getSimpleName();
 
-        if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof StandardComponentProvider provider) {
+        if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof PostProcessingComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
             this.log().debug("Added %s for component post-processing during %s phase (order %d)".formatted(name, phase.toLowerCase(), order));
@@ -97,7 +97,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
             this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
             for (final ComponentContainer container : containers) {
                 final TypeView<?> service = container.type();
-                final Key<?> key = Key.of(service);
+                final ComponentKey<?> key = ComponentKey.of(service.type());
                 final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
                 this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
                 serviceProcessor.process(context);
@@ -113,7 +113,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
             this.log().debug("Processing standalone component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
             final TypeView<?> service = container.type();
-            final Key<?> key = Key.of(service);
+            final ComponentKey<?> key = ComponentKey.of(service.type());
             final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
             serviceProcessor.process(context);
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {

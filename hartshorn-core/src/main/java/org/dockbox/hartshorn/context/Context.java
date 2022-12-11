@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
@@ -131,6 +131,6 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type and name.
      */
-    <C extends Context> Option<C> first(Key<C> context);
+    <C extends Context> Option<C> first(ComponentKey<C> context);
 
 }

@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
@@ -29,21 +31,23 @@ public class ParameterLoaderContext extends DefaultContext implements ContextCar
     private final Object instance;
     private final ApplicationContext applicationContext;
     private final ComponentProvider provider;
+    private final Scope scope;
 
     public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext) {
-        this.executable = executable;
-        this.type = type;
-        this.instance = instance;
-        this.applicationContext = applicationContext;
-        this.provider = applicationContext;
+        this(executable, type, instance, applicationContext, applicationContext);
     }
 
-    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider) {
+    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final Scope scope) {
+        this(executable, type, instance, applicationContext, applicationContext, scope);
+    }
+
+    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider, final Scope scope) {
         this.executable = executable;
         this.type = type;
         this.instance = instance;
         this.applicationContext = applicationContext;
         this.provider = provider;
+        this.scope = scope;
     }
 
     @Override
@@ -64,6 +68,15 @@ public class ParameterLoaderContext extends DefaultContext implements ContextCar
     }
 
     public ComponentProvider provider() {
-        return this.provider;
+        if (this.scope == this.provider) return this.provider;
+        return new ComponentProvider() {
+            @Override
+            public <T> T get(final ComponentKey<T> key) {
+                final ParameterLoaderContext self = ParameterLoaderContext.this;
+                // Explicit scopes get priority, otherwise use our local scope
+                if (key.scope() == Scope.DEFAULT_SCOPE) return self.provider.get(key.mut().scope(self.scope).build());
+                return self.provider.get(key);
+            }
+        };
     }
 }

@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.proxy.processing;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -35,7 +35,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
-        final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+        final ProxyFactory<T, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         for (final MethodView<T, ?> method : methods) {

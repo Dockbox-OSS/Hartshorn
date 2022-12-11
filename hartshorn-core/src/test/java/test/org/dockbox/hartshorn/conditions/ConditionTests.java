@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.conditions;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ActivatorCondition;
 import org.dockbox.hartshorn.component.condition.ClassCondition;
 import org.dockbox.hartshorn.component.condition.Condition;
@@ -26,10 +27,9 @@ import org.dockbox.hartshorn.component.condition.ConditionResult;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.condition.RequiresCondition;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.testsuite.TestProperties;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -41,7 +41,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
@@ -81,7 +80,7 @@ public class ConditionTests {
     @MethodSource("properties")
     @TestComponents(ConditionalProviders.class)
     void testPropertyConditions(final String name, final boolean present) {
-        final Key<String> key = Key.of(String.class, name);
+        final ComponentKey<String> key = ComponentKey.builder(String.class).name(name).build();
         final BindingHierarchy<String> hierarchy = this.applicationContext.hierarchy(key);
         Assertions.assertEquals(present ? 1 : 0, hierarchy.size());
 

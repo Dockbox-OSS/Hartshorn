@@ -16,17 +16,19 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.component.ComponentKey;
+
 import java.util.function.Supplier;
 
 public class ProviderContext<T> {
 
-    private final Key<T> key;
+    private final ComponentKey<T> key;
     private final boolean singleton;
     private final int priority;
     private final Supplier<T> provider;
     private final boolean lazy;
 
-    public ProviderContext(final Key<T> key, final boolean singleton, final int priority, final Supplier<T> provider, final boolean lazy) {
+    public ProviderContext(final ComponentKey<T> key, final boolean singleton, final int priority, final Supplier<T> provider, final boolean lazy) {
         this.key = key;
         this.singleton = singleton;
         this.priority = priority;
@@ -34,7 +36,7 @@ public class ProviderContext<T> {
         this.lazy = lazy;
     }
 
-    public Key<T> key() {
+    public ComponentKey<T> key() {
         return this.key;
     }
 

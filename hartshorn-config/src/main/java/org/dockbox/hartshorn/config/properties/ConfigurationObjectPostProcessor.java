@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.config.properties;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -40,7 +40,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
         return instance;
     }
 
-    private <T> T createOrUpdate(final Key<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder, final ApplicationContext applicationContext) {
+    private <T> T createOrUpdate(final ComponentKey<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder, final ApplicationContext applicationContext) {
         final Option<T> configuration;
         final Class<T> type = instance == null
                 ? key.type()

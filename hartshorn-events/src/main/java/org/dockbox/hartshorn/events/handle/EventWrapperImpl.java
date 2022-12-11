@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.events.handle;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -57,7 +57,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     private final ParameterLoader<EventParameterLoaderContext> parameterLoader;
     private final TypeView<? extends Event> eventType;
     private final List<TypeView<?>> eventParameters;
-    private final Key<T> listenerType;
+    private final ComponentKey<T> listenerType;
     private final ApplicationContext context;
     private final MethodView<T, ?> method;
     private final int priority;
@@ -65,7 +65,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
 
     private EventWrapperImpl(
             final ParameterLoader<EventParameterLoaderContext> parameterLoader,
-            final Key<T> key,
+            final ComponentKey<T> key,
             final TypeView<? extends Event> eventType,
             final MethodView<T, ?> method,
             final int priority,
@@ -97,7 +97,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         return this.eventParameters;
     }
 
-    public Key<T> listenerType() {
+    public ComponentKey<T> listenerType() {
         return this.listenerType;
     }
 
@@ -130,9 +130,9 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      *
      * @return The list of {@link EventWrapperImpl}s
      */
-    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final Key<T> key, final MethodView<T, ?> method, final int priority) {
+    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final ComponentKey<T> key, final MethodView<T, ?> method, final int priority) {
         final List<EventWrapperImpl<T>> invokeWrappers = new CopyOnWriteArrayList<>();
-        final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(Key.of(ParameterLoader.class, "event_loader"));
+        final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(ComponentKey.of(ParameterLoader.class, "event_loader"));
         for (final TypeView<?> param : method.parameters().types()) {
             if (param.isChildOf(Event.class)) {
                 invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, key, (TypeView<? extends Event>) param, method, priority, context));

@@ -16,15 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -34,6 +30,9 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
+import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -84,13 +83,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     }
 
     private <T> void populateObjectField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
-        Key<?> fieldKey = Key.of(field.type());
-        if (field.annotations().has(Named.class)) fieldKey = fieldKey.name(field.annotations().get(Named.class).get());
+        ComponentKey<?> fieldKey = ComponentKey.of(field.type().type());
+        if (field.annotations().has(Named.class)) fieldKey = fieldKey.mut().name(field.annotations().get(Named.class).get()).build();
 
         final Option<Enable> enableAnnotation = field.annotations().get(Enable.class);
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
-        final Object fieldInstance = this.applicationContext().get(fieldKey, enable);
+        final ComponentKey<?> componentKey = fieldKey.mut().enable(enable).build();
+        final Object fieldInstance = this.applicationContext().get(componentKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)
@@ -107,8 +107,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         if (beanType.absent()) {
             throw new IllegalStateException("Unable to determine bean type for field " + field.name() + " in " + type.name());
         }
-        Key<?> beanKey = Key.of(beanType.get());
-        if (field.annotations().has(Named.class)) beanKey = beanKey.name(field.annotations().get(Named.class).get());
+        ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
+        if (field.annotations().has(Named.class)) beanKey = beanKey.mut().name(field.annotations().get(Named.class).get()).build();
 
         final BeanContext beanContext = this.applicationContext().first(BeanContext.class).get();
         final List<?> beans = beanContext.provider().all(beanKey);

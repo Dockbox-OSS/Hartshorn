@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.DefaultContext;
@@ -147,7 +147,7 @@ public class ContextTests {
         }
     }
 
-    @AutoCreating
+    @InstallIfAbsent
     static class AutoCreatingContext extends DefaultContext {
     }
 

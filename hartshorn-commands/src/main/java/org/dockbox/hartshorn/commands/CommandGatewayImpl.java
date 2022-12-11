@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -136,7 +136,7 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @Override
-    public <T> void register(final Key<T> key) {
+    public <T> void register(final ComponentKey<T> key) {
         final TypeView<T> typeView = this.context.environment().introspect(key.type());
         for (final MethodView<T, ?> method : typeView.methods().annotatedWith(Command.class)) {
             this.register(method, key);
@@ -202,7 +202,7 @@ public class CommandGatewayImpl implements CommandGateway {
         this.extensions.add(extension);
     }
 
-    private <T> void register(final MethodView<T, ?> method, final Key<T> key) {
+    private <T> void register(final MethodView<T, ?> method, final ComponentKey<T> key) {
         this.register(new MethodCommandExecutorContext<>(this.context, method, key));
     }
 }

@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -59,8 +59,8 @@ public class ContextBeanProvider implements BeanProvider {
     }
 
     @Override
-    public <T> T first(final Key<T> key) {
-        if (key.name() != null) return this.first(key.type(), key.name().value());
+    public <T> T first(final ComponentKey<T> key) {
+        if (key.name() != null) return this.first(key.type(), key.name());
         return this.first(key.type());
     }
 
@@ -83,8 +83,8 @@ public class ContextBeanProvider implements BeanProvider {
     }
 
     @Override
-    public <T> List<T> all(final Key<T> key) {
-        if (key.name() != null) return this.all(key.type(), key.name().value());
+    public <T> List<T> all(final ComponentKey<T> key) {
+        if (key.name() != null) return this.all(key.type(), key.name());
         else return this.all(key.type());
     }
 

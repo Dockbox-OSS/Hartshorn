@@ -16,32 +16,32 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentHashSingletonCache implements SingletonCache {
 
-    private final Map<Key<?>, Object> cache = new ConcurrentHashMap<>();
+    private final Map<ComponentKey<?>, Object> cache = new ConcurrentHashMap<>();
 
     @Override
-    public <T> void put(final Key<T> key, final T instance) {
+    public <T> void put(final ComponentKey<T> key, final T instance) {
         this.cache.put(key, instance);
     }
 
     @Override
-    public <T> T get(final Key<T> key) {
+    public <T> T get(final ComponentKey<T> key) {
         return key.type().cast(this.cache.get(key));
     }
 
     @Override
-    public <T> void remove(final Key<T> key) {
+    public <T> void remove(final ComponentKey<T> key) {
         this.cache.remove(key);
     }
 
     @Override
-    public <T> boolean contains(final Key<T> key) {
+    public <T> boolean contains(final ComponentKey<T> key) {
         return this.cache.containsKey(key);
     }
 

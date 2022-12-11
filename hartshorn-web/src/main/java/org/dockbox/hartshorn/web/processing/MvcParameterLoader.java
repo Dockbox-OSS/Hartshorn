@@ -37,6 +37,6 @@ public class MvcParameterLoader extends RuleBasedParameterLoader<MvcParameterLoa
 
     @Override
     protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
-        return context.provider().get(parameter.type());
+        return context.provider().get(parameter.type().type());
     }
 }

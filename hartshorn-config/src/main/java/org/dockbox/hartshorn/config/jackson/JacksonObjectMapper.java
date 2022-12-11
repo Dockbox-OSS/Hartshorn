@@ -28,12 +28,12 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.config.DefaultObjectMapper;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 import org.dockbox.hartshorn.config.ObjectMappingException;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -288,7 +288,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     protected MapperBuilder<?, ?> mapper(final FileFormat fileFormat) {
-        final JacksonDataMapper dataMapper = this.context.get(Key.of(JacksonDataMapper.class, fileFormat.extension()));
+        final JacksonDataMapper dataMapper = this.context.get(ComponentKey.of(JacksonDataMapper.class, fileFormat.extension()));
         // Do not throw an exception here as subclasses may wish to extend functionality
         return dataMapper == null ? null : dataMapper.get();
     }

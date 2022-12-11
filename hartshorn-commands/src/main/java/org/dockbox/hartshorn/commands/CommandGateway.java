@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public interface CommandGateway {
      *
      * @param key The key containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
-    <T> void register(Key<T> key);
+    <T> void register(ComponentKey<T> key);
 
     /**
      * Registers the given {@link CommandExecutorContext} to handle the associated command(s).

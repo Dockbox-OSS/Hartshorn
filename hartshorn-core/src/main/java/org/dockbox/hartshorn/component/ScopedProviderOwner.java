@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web;
+package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.context.InstallIfAbsent;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+public interface ScopedProviderOwner extends PostProcessingComponentProvider {
 
-@InstallIfAbsent
-public class MvcControllerContext extends DefaultContext {
+    ComponentLocator componentLocator();
 
-    private final Set<RequestHandlerContext> requestHandlerContexts = ConcurrentHashMap.newKeySet();
+    ComponentInstanceFactory instanceFactory();
 
-    public Set<RequestHandlerContext> requestHandlerContexts() {
-        return this.requestHandlerContexts;
-    }
+    HierarchicalComponentProvider applicationProvider();
 
-    public void add(final RequestHandlerContext context) {
-        this.requestHandlerContexts.add(context);
-    }
 }

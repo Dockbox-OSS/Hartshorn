@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.context.AutoCreating;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultContext;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@AutoCreating
+@InstallIfAbsent
 public class ConfigurationURIContextList extends DefaultContext {
 
     private final Set<ConfigurationURIContext> contexts = ConcurrentHashMap.newKeySet();

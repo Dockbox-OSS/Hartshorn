@@ -17,10 +17,14 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
-public interface StandardComponentProvider extends HierarchicalComponentProvider, ProcessableComponentProvider, ComponentProvider {
+public interface PostProcessingComponentProvider extends ContextCarrier {
 
-    MultiMap<Integer, ComponentPostProcessor> processors();
+    ComponentPostConstructor postConstructor();
 
+    void postProcessor(ComponentPostProcessor postProcessor);
+
+    MultiMap<Integer, ComponentPostProcessor> postProcessors();
 }

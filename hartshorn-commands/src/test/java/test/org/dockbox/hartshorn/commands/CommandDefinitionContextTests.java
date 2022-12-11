@@ -16,9 +16,6 @@
 
 package test.org.dockbox.hartshorn.commands;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandGatewayImpl;
@@ -30,12 +27,15 @@ import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.commands.types.CommandValueEnum;
@@ -49,7 +49,7 @@ public class CommandDefinitionContextTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    private final Key<SampleCommand> typeContext = Key.of(SampleCommand.class);
+    private final ComponentKey<SampleCommand> typeContext = ComponentKey.of(SampleCommand.class);
 
     @Test
     @TestComponents(SampleCommand.class)
@@ -64,7 +64,7 @@ public class CommandDefinitionContextTests {
     void testExtensionCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
-        gateway.register(Key.of(SampleCommandExtension.class));
+        gateway.register(ComponentKey.of(SampleCommandExtension.class));
         Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo second ThisIsMyName"));
     }
 

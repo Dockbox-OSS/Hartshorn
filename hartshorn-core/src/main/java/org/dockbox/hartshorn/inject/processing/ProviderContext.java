@@ -16,23 +16,23 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 public class ProviderContext {
 
-    private final Key<?> key;
+    private final ComponentKey<?> key;
     private final AnnotatedElementView element;
     private final Binds binding;
 
-    public ProviderContext(final Key<?> key, final AnnotatedElementView element, final Binds binding) {
+    public ProviderContext(final ComponentKey<?> key, final AnnotatedElementView element, final Binds binding) {
         this.key = key;
         this.element = element;
         this.binding = binding;
     }
 
-    public Key<?> key() {
+    public ComponentKey<?> key() {
         return this.key;
     }
 

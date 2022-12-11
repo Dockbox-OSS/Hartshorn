@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
@@ -96,10 +97,15 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     }
 
     @Override
-    public Object[] loadFromContext() {
+    public Object[] loadFromContext(final Scope scope) {
         final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
-        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(this.executable, null, null, this.introspector.applicationContext());
+        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(this.executable, null, null, this.introspector.applicationContext(), scope);
         return parameterLoader.loadArguments(loaderContext).toArray();
+    }
+
+    @Override
+    public Object[] loadFromContext() {
+        return this.loadFromContext(this.introspector.applicationContext());
     }
 
     @Override

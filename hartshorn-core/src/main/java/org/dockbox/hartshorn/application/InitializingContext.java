@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
-import org.dockbox.hartshorn.component.StandardComponentProvider;
+import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -147,8 +147,8 @@ public final class InitializingContext extends DefaultApplicationAwareContext im
         binder.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator());
 
         // Standalone components - special behavior
-        if (this.componentProvider() instanceof StandardComponentProvider provider)
-            binder.bind(StandardComponentProvider.class).singleton(provider);
+        if (this.componentProvider() instanceof PostProcessingComponentProvider provider)
+            binder.bind(PostProcessingComponentProvider.class).singleton(provider);
 
         // Dynamic components
         binder.bind(Logger.class).to(this.applicationContext()::log);
