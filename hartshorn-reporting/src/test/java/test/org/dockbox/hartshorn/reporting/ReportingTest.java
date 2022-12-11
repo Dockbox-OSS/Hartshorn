@@ -26,6 +26,8 @@ import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer.JsonReportSerializer;
+import org.dockbox.hartshorn.util.Node;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @UseBeanScanning
@@ -34,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public class ReportingTest {
 
     @Test
-    void testSystemReporter() throws ReportSerializationException {
+    void testSystemReporterCreatesNonNullReport() {
         // Given
         final ApplicationContext applicationContext = HartshornApplication.create(ReportingTest.class);
         final Reportable configurable = applicationContext.get(Reportable.class);
@@ -42,10 +44,25 @@ public class ReportingTest {
 
         // When
         final DiagnosticsReport report = collector.report(configurable);
-        final String json = report.serialize(new JsonReportSerializer());
+        final Node<?> root = report.root();
 
         // Then
-        System.out.println(json);
-        // TODO: Validate contents of report
+        Assertions.assertNotNull(root);
+    }
+
+    @Test
+    void testSystemReporterCreatesNonNullReportWithCustomReportable() throws ReportSerializationException {
+        // Given
+        final ApplicationContext applicationContext = HartshornApplication.create(ReportingTest.class);
+        final Reportable configurable = applicationContext.get(Reportable.class);
+        final DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
+
+        // When
+        final DiagnosticsReport report = collector.report(configurable);
+        final String serialized = report.serialize(new JsonReportSerializer());
+
+        // Then
+        Assertions.assertNotNull(serialized);
+        Assertions.assertFalse(serialized.isEmpty());
     }
 }
