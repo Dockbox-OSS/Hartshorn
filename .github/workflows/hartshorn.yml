@@ -43,7 +43,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, windows-latest, macos-latest]
-        java: [17]
+        java: [17, 18, 19]
     name: Unit tests
     runs-on: "${{ matrix.os }}"
     steps:
