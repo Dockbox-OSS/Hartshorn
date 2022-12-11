@@ -41,8 +41,9 @@ apply {
 version = "22.5"
 group = "org.dockbox.hartshorn"
 
-java.toolchain {
-    this.languageVersion.set(JavaLanguageVersion.of(17))
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_19
 }
 
 configure<DependencyCheckExtension> {
