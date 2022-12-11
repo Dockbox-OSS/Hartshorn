@@ -19,10 +19,9 @@ package org.dockbox.hartshorn.reporting.component;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.component.ComponentProvider;
-import org.dockbox.hartshorn.component.StandardComponentProvider;
+import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
@@ -52,8 +51,8 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
             this.reportPreProcessors(collector, processableApplicationContext);
         }
         final ComponentProvider componentProvider = this.applicationContext.get(ComponentProvider.class);
-        if (componentProvider instanceof StandardComponentProvider standardComponentProvider) {
-            this.reportPostProcessors(collector, standardComponentProvider);
+        if (componentProvider instanceof PostProcessingComponentProvider provider) {
+            this.reportPostProcessors(collector, provider);
         }
     }
 
@@ -70,8 +69,8 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
     }
 
     private void reportPostProcessors(final DiagnosticsPropertyCollector collector,
-                                      final StandardComponentProvider standardComponentProvider) {
-        final MultiMap<Integer, ComponentPostProcessor> processors = standardComponentProvider.processors();
+                                      final PostProcessingComponentProvider standardComponentProvider) {
+        final MultiMap<Integer, ComponentPostProcessor> processors = standardComponentProvider.postProcessors();
         collector.property("post").write(phaseCollector -> {
             final Map<ProcessingPhase, List<Integer>> processorsByPhase = processors.keySet().stream()
                     .collect(Collectors.groupingBy(order -> {

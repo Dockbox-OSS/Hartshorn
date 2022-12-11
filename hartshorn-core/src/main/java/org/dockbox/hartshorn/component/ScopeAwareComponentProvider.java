@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class ScopeAwareComponentProvider extends DefaultContext implements StandardComponentProvider, ContextCarrier, ScopedProviderOwner {
+public class ScopeAwareComponentProvider extends DefaultContext implements HierarchicalComponentProvider, ComponentProvider, ContextCarrier, ScopedProviderOwner {
 
     private final transient ApplicationContext applicationContext;
     private final transient ComponentLocator locator;

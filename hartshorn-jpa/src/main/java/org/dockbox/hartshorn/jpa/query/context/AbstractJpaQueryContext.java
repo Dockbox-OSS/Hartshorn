@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.jpa.query.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.jpa.JpaParameterLoaderContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
@@ -98,7 +98,7 @@ public abstract class AbstractJpaQueryContext extends DefaultContext implements 
 
     protected ParameterLoader<JpaParameterLoaderContext> parameterLoader() {
         if (this.parameterLoader == null) {
-            this.parameterLoader = TypeUtils.adjustWildcards(this.applicationContext().get(Key.of(ParameterLoader.class, "jpa_query")), ParameterLoader.class);
+            this.parameterLoader = TypeUtils.adjustWildcards(this.applicationContext().get(ComponentKey.of(ParameterLoader.class, "jpa_query")), ParameterLoader.class);
         }
         return this.parameterLoader;
     }

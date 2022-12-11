@@ -199,11 +199,6 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
     }
 
     @Override
-    public MultiMap<Integer, ComponentPostProcessor> processors() {
-        return this.postProcessors;
-    }
-
-    @Override
     public <T> T get(final ComponentKey<T> componentKey) {
         if (componentKey.type() == ApplicationContext.class && StringUtilities.empty(componentKey.name())) {
             return TypeUtils.adjustWildcards(this.applicationContext(), Object.class);

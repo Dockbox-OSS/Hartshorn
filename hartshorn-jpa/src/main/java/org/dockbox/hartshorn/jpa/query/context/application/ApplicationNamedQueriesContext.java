@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.jpa.query.context.application;
 
-import org.dockbox.hartshorn.context.AutoCreating;
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 
-@AutoCreating
+@InstallIfAbsent
 public class ApplicationNamedQueriesContext extends DefaultContext implements Reportable {
 
     private final Map<String, ComponentNamedQueryContext> namedQueries = new ConcurrentHashMap<>();

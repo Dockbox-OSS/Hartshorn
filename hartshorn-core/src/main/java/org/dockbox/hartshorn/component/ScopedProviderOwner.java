@@ -16,20 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 
-public interface ScopedProviderOwner extends ContextCarrier {
+public interface ScopedProviderOwner extends PostProcessingComponentProvider {
 
     ComponentLocator componentLocator();
 
     ComponentInstanceFactory instanceFactory();
-
-    ComponentPostConstructor postConstructor();
-
-    MultiMap<Integer, ComponentPostProcessor> postProcessors();
 
     HierarchicalComponentProvider applicationProvider();
 

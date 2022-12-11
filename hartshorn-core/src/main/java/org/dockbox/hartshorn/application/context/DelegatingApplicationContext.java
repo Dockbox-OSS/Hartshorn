@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.StandardComponentProvider;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -126,8 +125,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public <C> BindingFunction<C> bind(final ComponentKey<C> key) {
-        if (this.componentProvider instanceof StandardComponentProvider provider) {
-            final BindingFunction<C> function = provider.bind(key);
+        if (this.componentProvider instanceof Binder binder) {
+            final BindingFunction<C> function = binder.bind(key);
             return new DelegatingApplicationBindingFunction<>(this, function);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
@@ -135,8 +134,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public <C> Binder bind(final BindingHierarchy<C> hierarchy) {
-        if (this.componentProvider instanceof StandardComponentProvider provider) {
-            return provider.bind(hierarchy);
+        if (this.componentProvider instanceof Binder binder) {
+            return binder.bind(hierarchy);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
@@ -150,7 +149,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
-        if (this.componentProvider instanceof StandardComponentProvider provider) {
+        if (this.componentProvider instanceof HierarchicalComponentProvider provider) {
             return provider.hierarchy(key);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
