@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.jpa.hibernate;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
@@ -39,43 +39,43 @@ import jakarta.inject.Singleton;
 @RequiresClass("org.hibernate.Hibernate")
 public class HibernateProviders {
 
-    @Provider(priority = 0)
+    @Binds(priority = 0)
     public Class<? extends DataSourceList> dataSourceList() {
         return HibernateDataSourceList.class;
     }
 
-    @Provider
+    @Binds
     public Class<? extends JpaRepository<?, ?>> jpaRepository() {
         return TypeUtils.adjustWildcards(HibernateJpaRepository.class, Class.class);
     }
 
-    @Provider
+    @Binds
     public Class<? extends EntityManagerCarrier> entityManagerCarrier() {
         return HibernateEntityManagerCarrier.class;
     }
 
-    @Provider
+    @Binds
     public Class<? extends TransactionManager> transactionManager() {
         return HibernateTransactionManager.class;
     }
 
-    @Provider
+    @Binds
     public Class<? extends NamedQueryRegistry> namedQueryRegistry() {
         return HibernateNamedQueryRegistry.class;
     }
 
-    @Provider
+    @Binds
     public QueryExecutor queryFunction(final QueryResultTransformer queryResultTransformer) {
         return new EntityQueryExecutor(queryResultTransformer);
     }
 
-    @Provider
+    @Binds
     @Singleton
     public QueryExecuteTypeLookup queryTypeLookup() {
         return new HibernateQueryExecuteTypeLookup();
     }
 
-    @Provider
+    @Binds
     @Singleton
     public QueryResultTransformer queryResultTransformer() {
         return new HibernateQueryResultTransformer();

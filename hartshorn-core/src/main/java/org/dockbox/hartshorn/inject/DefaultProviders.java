@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ConcreteContextCarrier;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -30,7 +30,7 @@ import jakarta.inject.Singleton;
 @RequiresActivator({ UseBootstrap.class, UseServiceProvision.class })
 public class DefaultProviders {
 
-    @Provider
+    @Binds
     @Singleton
     public Class<? extends ContextCarrier> contextCarrier() {
         return ConcreteContextCarrier.class;

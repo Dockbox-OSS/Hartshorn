@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
@@ -37,10 +37,8 @@ public class DataSourceProviders {
      * The default data source list. This is typically overridden by an ORM-specific
      * implementation.
      */
-    @Provider
-    public Class<? extends DataSourceList> dataSourceList() {
-        return StandardDataSourceList.class;
-    }
+    @Binds
+    public Class<? extends DataSourceList> dataSourceList = StandardDataSourceList.class;
 
     /**
      * The default data source configuration. This is automatically selected when no
@@ -49,7 +47,7 @@ public class DataSourceProviders {
      * @param sourceList The data source list implementation
      * @return The default data source configuration
      */
-    @Provider
+    @Binds
     public DataSourceConfiguration defaultConnection(final DataSourceList sourceList) {
         return sourceList.defaultConnection();
     }

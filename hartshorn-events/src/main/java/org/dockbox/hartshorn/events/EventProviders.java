@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.beans.Bean;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.events.handle.ConditionMatcherEventExecutionFilter;
 import org.dockbox.hartshorn.events.handle.EventExecutionFilter;
@@ -33,12 +33,10 @@ import jakarta.inject.Singleton;
 public class EventProviders {
 
     @Singleton
-    @Provider
-    public Class<? extends EventBus> eventBus() {
-        return EventBusImpl.class;
-    }
+    @Binds
+    public Class<? extends EventBus> eventBus = EventBusImpl.class;
 
-    @Provider("event_loader")
+    @Binds("event_loader")
     public ParameterLoader<?> eventParameterLoader() {
         return new EventParameterLoader();
     }

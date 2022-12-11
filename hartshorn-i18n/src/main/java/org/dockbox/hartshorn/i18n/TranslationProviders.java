@@ -18,19 +18,19 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 
 @Service
 @RequiresActivator(UseTranslations.class)
 public class TranslationProviders {
 
-    @Provider
+    @Binds
     public TranslationService translationService() {
         return new BundledTranslationService();
     }
 
-    @Provider
+    @Binds
     public TranslationBundle translationBundle() {
         return new DefaultTranslationBundle();
     }

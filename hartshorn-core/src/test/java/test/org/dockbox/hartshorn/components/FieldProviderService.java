@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 
 import jakarta.inject.Singleton;
@@ -24,10 +24,10 @@ import jakarta.inject.Singleton;
 @Service
 public class FieldProviderService {
 
-    @Provider("field")
+    @Binds("field")
     private final ProvidedInterface field = () -> "Field";
 
     @Singleton
-    @Provider("singletonField")
+    @Binds("singletonField")
     private final ProvidedInterface singletonField = () -> "Field";
 }

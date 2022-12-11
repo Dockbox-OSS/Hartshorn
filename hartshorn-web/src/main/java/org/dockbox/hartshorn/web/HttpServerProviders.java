@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.processing.HttpServletParameterLoader;
@@ -30,27 +30,21 @@ import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 @RequiresActivator(UseHttpServer.class)
 public abstract class HttpServerProviders {
 
-    @Provider
+    @Binds
     public ErrorServlet errorServlet() {
         return new ErrorServletImpl();
     }
 
-    @Provider
-    public Class<? extends WebServlet> webServlet() {
-        return WebServletImpl.class;
-    }
+    @Binds
+    public Class<? extends WebServlet> webServlet = WebServletImpl.class;
 
-    @Provider
-    public Class<WebServletImpl> webServletImpl() {
-        return WebServletImpl.class;
-    }
+    @Binds
+    public Class<WebServletImpl> webServletImpl = WebServletImpl.class;
 
-    @Provider
-    public Class<ServletHandler> servletHandler() {
-        return ServletHandler.class;
-    }
+    @Binds
+    public Class<ServletHandler> servletHandler = ServletHandler.class;
 
-    @Provider("http_webserver")
+    @Binds("http_webserver")
     public ParameterLoader<?> parameterLoader() {
         return new HttpServletParameterLoader();
     }

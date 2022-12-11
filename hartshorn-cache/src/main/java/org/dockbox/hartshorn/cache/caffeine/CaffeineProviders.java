@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 /**
  * The provider configuration for Caffeine caches.
@@ -38,8 +38,6 @@ public class CaffeineProviders {
      * to support both injected and bound provision.
      * @return {@link CaffeineCache}
      */
-    @Provider
-    public Class<? extends Cache> cache() {
-        return CaffeineCache.class;
-    }
+    @Binds
+    public Class<? extends Cache> cache = CaffeineCache.class;
 }

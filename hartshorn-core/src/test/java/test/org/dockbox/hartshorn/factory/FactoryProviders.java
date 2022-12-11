@@ -17,15 +17,15 @@
 package test.org.dockbox.hartshorn.factory;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 @Service
 public class FactoryProviders {
 
-    @Provider(priority = 1)
+    @Binds(priority = 1)
     public Class<? extends FactoryProvided> highPriority = HighPriorityFactoryBound.class;
 
-    @Provider
+    @Binds
     public Class<? extends FactoryProvided> lowPriority = LowPriorityFactoryBound.class;
 
 

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
@@ -34,22 +34,22 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
 @RequiresActivator(UseExpressionValidation.class)
 public class HslLanguageProviders {
 
-    @Provider
+    @Binds
     private final Class<? extends Lexer> lexer = Lexer.class;
 
-    @Provider
+    @Binds
     private final Class<? extends TokenParser> tokenParser = StandardTokenParser.class;
 
-    @Provider
+    @Binds
     private final Class<? extends Resolver> resolver = Resolver.class;
 
-    @Provider
+    @Binds
     private final Class<? extends Interpreter> interpreter = Interpreter.class;
 
-    @Provider
+    @Binds
     private final Class<? extends ExpressionParser> expressionParser = ComplexExpressionParserAdapter.class;
 
-    @Provider
+    @Binds
     public ScriptRuntime runtime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
         return new StandardRuntime(applicationContext, factory);
     }

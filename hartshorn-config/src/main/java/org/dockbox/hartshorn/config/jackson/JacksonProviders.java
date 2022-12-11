@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
@@ -46,42 +46,42 @@ public class JacksonProviders {
 
     private static final int DATA_MAPPER_PHASE = ProcessingOrder.EARLY - 64;
 
-    @Provider(value = "properties", phase = DATA_MAPPER_PHASE)
+    @Binds(value = "properties", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")
     public JacksonDataMapper properties() {
         return new JavaPropsDataMapper();
     }
 
-    @Provider(value = "json", phase = DATA_MAPPER_PHASE)
+    @Binds(value = "json", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.databind.json.JsonMapper")
     public JacksonDataMapper json() {
         return new JsonDataMapper();
     }
 
-    @Provider(value = "toml", phase = DATA_MAPPER_PHASE)
+    @Binds(value = "toml", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.toml.TomlMapper")
     public JacksonDataMapper toml() {
         return new TomlDataMapper();
     }
 
-    @Provider(value = "xml", phase = DATA_MAPPER_PHASE)
+    @Binds(value = "xml", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.xml.XmlMapper")
     public JacksonDataMapper xml() {
         return new XmlDataMapper();
     }
 
-    @Provider(value = "yml", phase = DATA_MAPPER_PHASE)
+    @Binds(value = "yml", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
     public JacksonDataMapper yml() {
         return new YamlDataMapper();
     }
 
-    @Provider(phase = DATA_MAPPER_PHASE + 32)
+    @Binds(phase = DATA_MAPPER_PHASE + 32)
     public ObjectMapper objectMapper() {
         return new JacksonObjectMapper();
     }
 
-    @Provider(phase = DATA_MAPPER_PHASE + 16) // Before ObjectMapper
+    @Binds(phase = DATA_MAPPER_PHASE + 16) // Before ObjectMapper
     public JacksonObjectMapperConfigurator mapperConfigurator(final Introspector introspector) {
         final Function<JsonInclusionRule, Include> rules = (rule) -> switch (rule) {
             case SKIP_EMPTY -> Include.NON_EMPTY;

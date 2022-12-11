@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 import jakarta.inject.Singleton;
 
@@ -28,7 +28,7 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseCommands.class)
 public class TestCommandProviders {
 
-    @Provider(priority = 0)
+    @Binds(priority = 0)
     @Singleton
     public Class<? extends SystemSubject> systemSubject = JUnitSystemSubject.class;
 
