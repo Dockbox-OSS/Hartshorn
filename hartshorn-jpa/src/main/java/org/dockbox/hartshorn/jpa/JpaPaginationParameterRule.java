@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.jpa.query.Pagination;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
@@ -27,15 +28,18 @@ public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParame
 
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
-        return parameter.type().isChildOf(Pagination.class);
+        return parameter.type().is(Pagination.class);
     }
 
     @Override
     public <T> Option<T> load(final ParameterView<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
         final Query query = context.query();
+        if (query.getMaxResults() != Integer.MAX_VALUE) {
+            throw new IllegalStateException("Pagination already set, did you define multiple Pagination parameters?");
+        }
         final Pagination pagination = (Pagination) args[index];
         if (pagination.max() != null) query.setMaxResults(pagination.max());
         if (pagination.start() != null) query.setFirstResult(pagination.start());
-        return Option.of(() -> (T) args[index]);
+        return Option.of(() -> TypeUtils.adjustWildcards(args[index], Object.class));
     }
 }

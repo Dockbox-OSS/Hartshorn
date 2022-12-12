@@ -23,7 +23,7 @@ public final class Pagination {
     private Pagination() {
     }
 
-    public static Pagination Nacreate() {
+    public static Pagination create() {
         return new Pagination();
     }
 
