@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.jpa.annotations;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.jpa.JpaRepositoryDelegationPostProcessor;
+import org.dockbox.hartshorn.jpa.query.QueryExecutionContextPostProcessor;
 import org.dockbox.hartshorn.proxy.UseProxying;
 
 import java.lang.annotation.Retention;
@@ -29,6 +30,9 @@ import java.lang.annotation.RetentionPolicy;
 @UseTransactionManagement
 @UseQuerying
 @Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(processors = JpaRepositoryDelegationPostProcessor.class)
+@ServiceActivator(processors = {
+        JpaRepositoryDelegationPostProcessor.class,
+        QueryExecutionContextPostProcessor.class,
+})
 public @interface UsePersistence {
 }
