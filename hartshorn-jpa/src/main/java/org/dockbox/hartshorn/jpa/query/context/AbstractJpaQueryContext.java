@@ -17,18 +17,23 @@
 package org.dockbox.hartshorn.jpa.query.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.jpa.JpaParameterLoaderContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
 import org.dockbox.hartshorn.jpa.query.QueryConstructor;
+import org.dockbox.hartshorn.jpa.query.QueryExecutionContext;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Query;
 
 public abstract class AbstractJpaQueryContext extends DefaultContext implements JpaQueryContext {
 
@@ -84,9 +89,29 @@ public abstract class AbstractJpaQueryContext extends DefaultContext implements 
         final EntityManager entityManager = this.entityManager();
         final QueryConstructor queryConstructor = this.queryConstructor(entityManager);
         final jakarta.persistence.Query persistenceQuery = this.persistenceQuery(queryConstructor, entityManager);
+
+        this.modifyQueryFromContext(persistenceQuery);
+
+        // Process parameters to modify query
         final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
+
         return persistenceQuery;
+    }
+
+    protected void modifyQueryFromContext(final Query persistenceQuery) {
+        final ApplicationEnvironment environment = this.applicationContext().environment();
+        if (environment.isProxy(this.persistenceCapable)) {
+            environment.manager(this.persistenceCapable).peek(manager -> {
+                manager.first(QueryExecutionContext.class).peek(queryExecutionContext -> {
+                    final LockModeType lockMode = queryExecutionContext.lockMode(this.method);
+                    if (lockMode != null) persistenceQuery.setLockMode(lockMode);
+
+                    final FlushModeType flushMode = queryExecutionContext.flushMode(this.method);
+                    if (flushMode != null) persistenceQuery.setFlushMode(flushMode);
+                });
+            });
+        }
     }
 
     protected abstract jakarta.persistence.Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException;
