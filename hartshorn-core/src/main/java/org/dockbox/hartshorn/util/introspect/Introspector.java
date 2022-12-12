@@ -56,4 +56,6 @@ public interface Introspector {
     ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement);
 
     ApplicationContext applicationContext();
+
+    IntrospectionEnvironment environment();
 }

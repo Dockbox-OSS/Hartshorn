@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
@@ -50,6 +51,7 @@ public class ReflectionIntrospector implements Introspector {
     private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
     private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
     private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
+    private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
 
     private final ApplicationContext applicationContext;
 
@@ -139,5 +141,10 @@ public class ReflectionIntrospector implements Introspector {
     @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
+    }
+
+    @Override
+    public IntrospectionEnvironment environment() {
+        return this.environment;
     }
 }
