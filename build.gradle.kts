@@ -15,6 +15,8 @@
  */
 
 import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 buildscript {
     repositories {
@@ -70,6 +72,11 @@ allprojects {
 
     license {
         header.set(resources.text.fromFile(rootProject.file("HEADER.txt")))
+        
+        ignoreFailures.set(false)
+        properties {
+            set("year", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))
+        }
 
         // CI will verify the license headers, but not update them. To ensure
         // invalid/missing headers are clearly visible, we fail the build if
