@@ -32,6 +32,8 @@ plugins {
     id("java-library")
     id("java-test-fixtures")
 
+    id("jacoco")
+
     // Custom plugins, can be found in the gradle/plugins directory
     id("org.dockbox.hartshorn.gradle.javadoc")
 
@@ -65,6 +67,7 @@ configure<DependencyCheckExtension> {
 allprojects {
     apply {
         plugin("java")
+        plugin("jacoco")
         plugin("java-library")
         plugin("maven-publish")
         plugin("org.cadixdev.licenser")
@@ -181,7 +184,11 @@ allprojects {
             into(file(destinationFolder))
         }
 
-        // Configure existing tasks
+        build {
+            dependsOn(updateLicenses)
+            finalizedBy(findByName("copyArtifacts"), clean)
+        }
+
         test {
             useJUnitPlatform()
 
@@ -190,11 +197,40 @@ allprojects {
             // less than two workers available, we don't run in parallel.
             val maxWorkerCount = gradle.startParameter.maxWorkerCount
             maxParallelForks = if (maxWorkerCount < 2) 1 else maxWorkerCount / 2
+
+            // Automatically generate test reports. This is not always required, but it's nice to
+            // have, and makes CI integration easier.
+            finalizedBy(jacocoTestReport)
         }
 
-        build {
-            dependsOn(updateLicenses)
-            finalizedBy(findByName("copyArtifacts"), clean)
+        jacocoTestReport {
+            reports {
+                // CSV is not required for users or CI, so it can be disabled
+                csv.required.set(false);
+                // XML is required for the CI integration, so it must be enabled
+                xml.required.set(true);
+                // HTML is not strictly required, but it's nice to have for developers, so
+                // it can be enabled.
+                html.required.set(true);
+            }
+        }
+
+        jacocoTestCoverageVerification {
+            dependsOn(jacocoTestReport)
+            violationRules {
+                rule {
+                    limit {
+                        // Checklist when updating:
+                        // - Update .github/workflows/hartshorn.yml
+                        //   - Task `coverage`
+                        //     - min-coverage-overall
+                        //     - min-coverage-changed-files
+                        // - Update CONTRIBUTING.md
+                        //   - Testing > General > Target coverage
+                        minimum = "0.6".toBigDecimal()
+                    }
+                }
+            }
         }
 
         withType<JavaCompile> {
@@ -207,9 +243,12 @@ allprojects {
 
         withType<Javadoc> {
             isFailOnError = false
-            (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
-            (options as StandardJavadocDocletOptions).addStringOption("encoding", "UTF-8")
-            (options as StandardJavadocDocletOptions).addStringOption("charSet", "UTF-8")
+            options {
+                this as StandardJavadocDocletOptions
+                addStringOption("Xdoclint:none", "-quiet")
+                addStringOption("encoding", "UTF-8")
+                addStringOption("charSet", "UTF-8")
+            }
         }
 
         withType<Jar> {
