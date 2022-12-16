@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.processing;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -44,7 +44,7 @@ public class ContextConfiguringComponentProcessorTests {
         Assertions.assertTrue(applicationContext.environment().isProxy(emptyComponent));
 
         final Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        final Option<SimpleContext> context = component.manager().first(ComponentKey.of(SimpleContext.class));
+        final Option<SimpleContext> context = component.manager().first(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }
@@ -57,7 +57,7 @@ public class ContextConfiguringComponentProcessorTests {
         Assertions.assertNotNull(contextComponent);
         Assertions.assertFalse(applicationContext.environment().isProxy(contextComponent));
 
-        final Option<SimpleContext> context = contextComponent.first(ComponentKey.of(SimpleContext.class));
+        final Option<SimpleContext> context = contextComponent.first(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }

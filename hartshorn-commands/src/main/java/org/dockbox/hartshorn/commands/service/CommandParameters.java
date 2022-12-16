@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
 /**
@@ -36,12 +37,18 @@ public class CommandParameters extends ComponentPreProcessor {
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
         final ElementAnnotationsIntrospector annotationsIntrospector = processingContext.type().annotations();
+
         if (annotationsIntrospector.has(Parameter.class)) {
             final Parameter meta = annotationsIntrospector.get(Parameter.class).get();
             final CustomParameterPattern pattern = context.get(meta.pattern());
             final String parameterKey = meta.value();
             final ArgumentConverter<?> converter = new DynamicPatternConverter<>(processingContext.type().type(), pattern, parameterKey);
-            context.first(ArgumentConverterContext.class).peek(converterContext -> converterContext.register(converter));
+
+            final ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
+                    .fallback(ArgumentConverterContext::new)
+                    .build();
+            context.first(argumentConverterContextKey)
+                    .peek(converterContext -> converterContext.register(converter));
         }
     }
 

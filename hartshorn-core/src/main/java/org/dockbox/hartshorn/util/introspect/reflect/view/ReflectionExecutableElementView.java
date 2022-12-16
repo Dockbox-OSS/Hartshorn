@@ -40,7 +40,9 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     public ReflectionExecutableElementView(final Introspector introspector, final Executable executable) {
         super(introspector);
         if (!executable.trySetAccessible()) {
-            introspector.applicationContext().log().debug("Unable to set executable {} accessible", executable);
+            if (executable.getDeclaringClass() != Object.class) {
+                introspector.applicationContext().log().debug("Unable to set executable {} accessible", executable);
+            }
         }
         this.introspector = introspector;
         this.executable = executable;

@@ -20,11 +20,13 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -126,13 +128,11 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final TypeView<?> type = field.type();
         final org.dockbox.hartshorn.inject.Context annotation = field.annotations().get(org.dockbox.hartshorn.inject.Context.class).get();
 
-        final Option<Context> context;
-        if ("".equals(annotation.value())) {
-            context = this.applicationContext().first(TypeUtils.adjustWildcards(type.type(), Class.class));
+        ContextKey<Context> contextKey = ContextKey.of(TypeUtils.adjustWildcards(type.type(), Class.class));
+        if (StringUtilities.notEmpty(annotation.value())) {
+            contextKey = contextKey.mutable().name(annotation.value()).build();
         }
-        else {
-            context = this.applicationContext().first(annotation.value(), TypeUtils.adjustWildcards(type.type(), Class.class));
-        }
+        final Option<Context> context = this.applicationContext().first(contextKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)

@@ -36,8 +36,8 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     private ApplicationEnvironment environment;
 
     public LoggingExceptionHandler stacktraces(final boolean stacktraces) {
-        findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabling" : "Disabling");
         this.stacktraces = stacktraces;
+        this.findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabled" : "Disabled");
         return this;
     }
 
@@ -63,7 +63,7 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     @Override
     public void handle(String message, final Throwable throwable) {
         if (null != throwable) {
-            final Logger log = findLogger();
+            final Logger log = this.findLogger();
 
             String location = "";
             if (0 < throwable.getStackTrace().length) {

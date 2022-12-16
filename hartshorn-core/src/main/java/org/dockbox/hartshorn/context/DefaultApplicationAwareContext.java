@@ -17,12 +17,7 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Function;
 
 public abstract class DefaultApplicationAwareContext extends DefaultContext implements ApplicationAwareContext {
 
@@ -38,48 +33,7 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
     }
 
     @Override
-    public <C extends Context> Option<C> first(final Class<C> context) {
-        return this.first(context, applicationContext -> {
-            final TypeView<C> typeView = this.applicationContext().environment().introspect(context);
-            if (typeView.annotations().has(InstallIfAbsent.class)) {
-                this.applicationContext().log().debug("Context with type " + context.getSimpleName() + " does not exist in current context (" + this.getClass().getSimpleName() + "), but is marked to be automatically created");
-                return this.applicationContext().get(context);
-            }
-            else return null;
-        });
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context, final String name) {
-        return this.first(context, name, applicationContext -> {
-            final TypeView<C> typeView = this.applicationContext().environment().introspect(context);
-            if (typeView.annotations().has(InstallIfAbsent.class)) {
-                this.applicationContext().log().debug("Context with type " + context.getSimpleName() + " and name '" + name + "' does not exist in current context (" + this.getClass().getSimpleName() + "), but is marked to be automatically created");
-                return this.applicationContext().get(context);
-            }
-            else return null;
-        });
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context, final Function<ApplicationContext, C> fallback) {
-        return super.first(context).orCompute(() -> this.applyFallback(fallback));
-    }
-
-    @NotNull
-    private <C extends Context> C applyFallback(final Function<ApplicationContext, C> fallback) {
-        final C created = fallback.apply(this.applicationContext());
-        if (created != null) this.add(created);
-        return created;
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context, final String name, final Function<ApplicationContext, C> fallback) {
-        return super.first(context, name).orCompute(() -> this.applyFallback(fallback));
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final ComponentKey<C> context, final Function<ApplicationContext, C> fallback) {
-        return super.first(context).orCompute(() -> this.applyFallback(fallback));
+    public <C extends Context> Option<C> first(final ContextKey<C> key) {
+        return super.first(key).orCompute(() -> key.fallback().apply(this.applicationContext));
     }
 }

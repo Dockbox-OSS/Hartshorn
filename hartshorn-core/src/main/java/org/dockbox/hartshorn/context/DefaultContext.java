@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
  * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
@@ -33,86 +34,72 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class DefaultContext implements Context {
 
-    protected final transient Set<Context> contexts = ConcurrentHashMap.newKeySet();
-    protected final transient MultiMap<String, Context> namedContexts = new ConcurrentSetMultiMap<>();
+    private transient Set<Context> unnamedContexts;
+    private transient MultiMap<String, Context> namedContexts;
 
-    @Override
-    public <C extends Context> void add(final C context) {
-        if (context instanceof NamedContext named) this.add(named);
-        if (context != null) this.contexts.add(context);
+    protected Set<Context> unnamedContexts() {
+        if (this.unnamedContexts == null) {
+            this.unnamedContexts = ConcurrentHashMap.newKeySet();
+        }
+        return this.unnamedContexts;
+    }
+
+    protected MultiMap<String, Context> namedContexts() {
+        if (this.namedContexts == null) {
+            this.namedContexts = new SynchronizedHashSetMultiMap<>();
+        }
+        return this.namedContexts;
     }
 
     @Override
-    public <N extends NamedContext> void add(final N context) {
-        if (context != null && StringUtilities.notEmpty(context.name()))
-            this.namedContexts.put(context.name(), context);
+    public <C extends Context> void add(final C context) {
+        if (context instanceof NamedContext named && StringUtilities.notEmpty(named.name())) {
+            this.namedContexts().put(named.name(), context);
+        }
+        else if (context != null) {
+            this.unnamedContexts().add(context);
+        }
     }
 
     @Override
     public <C extends Context> void add(final String name, final C context) {
-        if (context != null && StringUtilities.notEmpty(name))
-            this.namedContexts.put(name, context);
-    }
-
-    @Override
-    public Option<Context> first(final String name) {
-        return Option.of(this.namedContexts.get(name).stream().findFirst());
-    }
-
-    @Override
-    public <N extends Context> Option<N> first(final String name, final Class<N> context) {
-        return Option.of(this.namedContexts.get(name).stream()
-                        .filter(c -> context.isAssignableFrom(c.getClass()))
-                        .findFirst())
-                .map(context::cast);
+        if (context instanceof NamedContext named && !named.name().equals(name)) {
+            // TODO, do we want to throw an exception here?
+            throw new IllegalArgumentException("Context name does not match the provided name");
+        }
+        else if (context != null) {
+            this.namedContexts().put(name, context);
+        }
     }
 
     @Override
     public List<Context> all() {
-        return List.copyOf(this.contexts);
+        final List<Context> contexts = new ArrayList<>();
+        if (this.unnamedContexts != null) contexts.addAll(this.unnamedContexts);
+        if (this.namedContexts != null) contexts.addAll(this.namedContexts.allValues());
+        return Collections.unmodifiableList(contexts);
     }
 
     @Override
-    public <C extends Context> List<C> all(final Class<C> context) {
-        return this.contexts.stream()
-                .filter(c -> c.getClass().equals(context))
-                .map(context::cast)
-                .toList();
+    public <C extends Context> Option<C> first(final ContextKey<C> key) {
+        return Option.of(this.stream(key).findFirst())
+                .orCompute(() -> key.requiresApplicationContext()
+                        ? null
+                        : key.create(null)
+                );
     }
 
     @Override
-    public List<Context> all(final String name) {
-        return List.copyOf(this.namedContexts.get(name));
+    public <C extends Context> List<C> all(final ContextKey<C> key) {
+        return this.stream(key).toList();
     }
 
-    @Override
-    public <N extends Context> List<N> all(final String name, final Class<N> context) {
-        return this.namedContexts.get(name).stream()
-                .filter(c -> context.isAssignableFrom(c.getClass()))
-                .map(context::cast)
-                .toList();
-    }
+    protected <C extends Context> Stream<C> stream(final ContextKey<C> key) {
+        final Stream<Context> contexts = StringUtilities.empty(key.name())
+                ? this.unnamedContexts().stream()
+                : this.namedContexts().get(key.name()).stream();
 
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context) {
-        return Option.of(this.contexts.stream()
-                .filter(c -> context.isAssignableFrom(c.getClass()))
-                .map(context::cast)
-                .findFirst());
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context, final String name) {
-        return Option.of(this.namedContexts.get(name).stream()
-                .filter(c -> context.isAssignableFrom(c.getClass()))
-                .map(context::cast)
-                .findFirst());
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final ComponentKey<C> key) {
-        if (key.name() == null) return this.first(key.type());
-        else return this.first(key.type(), key.name());
+        return contexts.filter(key.type()::isInstance)
+                .map(key.type()::cast);
     }
 }

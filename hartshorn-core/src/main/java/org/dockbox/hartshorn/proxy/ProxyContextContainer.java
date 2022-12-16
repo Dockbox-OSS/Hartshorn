@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.context.NamedContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Set;
@@ -32,21 +31,16 @@ public class ProxyContextContainer extends DefaultContext {
     }
 
     public Set<Context> contexts() {
-        return super.contexts;
+        return super.unnamedContexts();
     }
 
+    // Change access level to public
     public MultiMap<String, Context> namedContexts() {
-        return super.namedContexts;
+        return super.namedContexts();
     }
 
     @Override
     public <C extends Context> void add(final C context) {
-        super.add(context);
-        this.onModify.run();
-    }
-
-    @Override
-    public <N extends NamedContext> void add(final N context) {
         super.add(context);
         this.onModify.run();
     }

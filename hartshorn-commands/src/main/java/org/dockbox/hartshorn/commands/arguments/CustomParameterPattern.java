@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -75,8 +76,11 @@ public interface CustomParameterPattern {
             }
             final String typeIdentifier = argumentIdentifier.get();
 
+            final ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
+                    .fallback(ArgumentConverterContext::new)
+                    .build();
             final Option<ArgumentConverter<?>> converter = context
-                    .first(ArgumentConverterContext.class)
+                    .first(argumentConverterContextKey)
                     .flatMap(argumentConverterContext -> argumentConverterContext.converter(typeIdentifier));
 
             if (converter.absent()) {
@@ -113,9 +117,14 @@ public interface CustomParameterPattern {
                 final Class<?> argument = argumentTypes.get(i);
 
                 if (argument == null) {
+                    final ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
+                            .fallback(ArgumentConverterContext::new)
+                            .build();
+
                     final Option<? extends ArgumentConverter<?>> converter = source.applicationContext()
-                            .first(ArgumentConverterContext.class)
+                            .first(argumentConverterContextKey)
                             .flatMap(context -> context.converter(parameter));
+
                     if (converter.present()) {
                         final Option<?> result = converter.get().convert(source, (String) arguments.get(i));
                         if (result.present()) {
