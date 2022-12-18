@@ -42,7 +42,8 @@ import jakarta.persistence.EntityManager;
 @Testcontainers(disabledWithoutDocker = true)
 public class TransactionalServiceTests {
 
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
+    @Container
+    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
 
     @InjectTest
     @TestComponents(TransactionalService.class)
