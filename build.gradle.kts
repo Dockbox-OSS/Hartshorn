@@ -40,7 +40,6 @@ plugins {
     // Required for CI and to automatically update license headers on build
     id("org.cadixdev.licenser") version "0.6.1"
     id("jacoco-report-aggregation")
-    id("jvm-test-suite")
 }
 
 apply {
