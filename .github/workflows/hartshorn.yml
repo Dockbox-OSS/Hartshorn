@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
+      - name: Set up source JDK
         uses: actions/setup-java@v1
         with:
           java-version: 17
@@ -22,13 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
+      - name: Set up source JDK
         uses: actions/setup-java@v1
         with:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: "Build (Java ${{ matrix.java }})"
+      - name: "Build (source JDK)"
         run: ./gradlew build -x test
   buildTarget:
     needs: [buildSource]
@@ -58,13 +58,13 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
+      - name: Set up source JDK
         uses: actions/setup-java@v1
         with:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: "Unit testing (OS: ${{ matrix.os }}, Java: 17)"
+      - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
         run: ./gradlew test
   testTarget:
     needs: [testSource, buildTarget]
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
+      - name: Set up source JDK
         uses: actions/setup-java@v1
         with:
           java-version: 17
