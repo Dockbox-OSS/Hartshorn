@@ -53,7 +53,7 @@ Pull Requests always follow the [Pull Request Template](https://github.com/Dockb
 ### Testing
 #### General
 - Tests cover relevant use-cases
-- The target coverage for all tests is 60%
+- The target coverage for all tests is 80%
 - Tests are performed using the source JDK version. CI will test against all supported JDK versions
 
 #### Unit Testing

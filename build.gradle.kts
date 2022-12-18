@@ -238,7 +238,7 @@ allprojects {
                         //     - min-coverage-changed-files
                         // - Update CONTRIBUTING.md
                         //   - Testing > General > Target coverage
-                        minimum = "0.6".toBigDecimal()
+                        minimum = "0.8".toBigDecimal()
                     }
                 }
             }
