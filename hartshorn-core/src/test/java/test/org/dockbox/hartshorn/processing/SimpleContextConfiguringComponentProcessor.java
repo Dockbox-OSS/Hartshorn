@@ -27,6 +27,11 @@ public class SimpleContextConfiguringComponentProcessor extends ContextConfiguri
     }
 
     @Override
+    protected boolean supports(final ComponentProcessingContext<?> processingContext) {
+        return true;
+    }
+
+    @Override
     protected <T> void configure(final ApplicationContext context, final SimpleContext componentContext,
                                  final ComponentProcessingContext<T> processingContext) {
         componentContext.value("Foo");

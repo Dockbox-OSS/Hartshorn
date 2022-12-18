@@ -19,7 +19,6 @@ package test.org.dockbox.hartshorn.jpa;
 import com.mysql.cj.jdbc.Driver;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
@@ -41,7 +40,6 @@ import jakarta.persistence.TransactionRequiredException;
 
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
-@UseConfigurations
 @HartshornTest(includeBasePackages = false)
 @TestComponents({UserQueryRepository.class, PersistentTestComponentsService.class})
 public class QueryRepositoryTests {

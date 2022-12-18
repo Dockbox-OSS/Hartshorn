@@ -33,11 +33,11 @@ import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
@@ -52,7 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -272,6 +271,11 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
+    }
+
+    @Override
+    public IntrospectionEnvironment environment() {
+        return this.introspector().environment();
     }
 
     @Override

@@ -28,7 +28,12 @@ public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoa
     @Override
     protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
         final Object value = args[index];
-        context.query().setParameter(parameter.name(), value);
+        if (context.applicationContext().environment().environment().parameterNamesAvailable()) {
+            context.query().setParameter(parameter.name(), value);
+        }
+        else {
+            context.query().setParameter(index + 1, value);
+        }
         return super.loadDefault(parameter, index, context, args);
     }
 }

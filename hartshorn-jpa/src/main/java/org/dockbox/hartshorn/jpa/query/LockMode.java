@@ -16,32 +16,16 @@
 
 package org.dockbox.hartshorn.jpa.query;
 
-public final class Pagination {
-    private Integer start;
-    private Integer max;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private Pagination() {
-    }
+import jakarta.persistence.LockModeType;
 
-    public static Pagination create() {
-        return new Pagination();
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface LockMode {
 
-    public Integer start() {
-        return this.start;
-    }
-
-    public Pagination start(final Integer start) {
-        this.start = start;
-        return this;
-    }
-
-    public Integer max() {
-        return this.max;
-    }
-
-    public Pagination max(final Integer max) {
-        this.max = max;
-        return this;
-    }
+    LockModeType value();
 }

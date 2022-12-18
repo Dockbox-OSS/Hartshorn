@@ -22,7 +22,6 @@ import com.mysql.cj.jdbc.Driver;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
-import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.JpaRepositoryFactory;
@@ -72,7 +71,6 @@ import jakarta.persistence.EntityManager;
 @HartshornTest(includeBasePackages = false)
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
-@UseConfigurations
 @TestComponents({UserJpaRepository.class, PersistentTestComponentsService.class})
 class SqlServiceTest {
 

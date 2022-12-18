@@ -14,34 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.query;
+package org.dockbox.hartshorn.util.introspect;
 
-public final class Pagination {
-    private Integer start;
-    private Integer max;
+public interface IntrospectionEnvironment {
 
-    private Pagination() {
-    }
+    boolean parameterNamesAvailable();
 
-    public static Pagination create() {
-        return new Pagination();
-    }
-
-    public Integer start() {
-        return this.start;
-    }
-
-    public Pagination start(final Integer start) {
-        this.start = start;
-        return this;
-    }
-
-    public Integer max() {
-        return this.max;
-    }
-
-    public Pagination max(final Integer max) {
-        this.max = max;
-        return this;
-    }
 }
