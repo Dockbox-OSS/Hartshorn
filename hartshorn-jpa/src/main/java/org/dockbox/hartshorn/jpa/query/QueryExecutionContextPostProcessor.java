@@ -33,6 +33,15 @@ public class QueryExecutionContextPostProcessor extends ContextConfiguringCompon
     }
 
     @Override
+    protected boolean supports(final ComponentProcessingContext<?> processingContext) {
+        final TypeMethodsIntrospector<?> introspector = processingContext.type().methods();
+        if (introspector.annotatedWith(LockMode.class).isEmpty()) {
+            return false;
+        }
+        return !introspector.annotatedWith(FlushMode.class).isEmpty();
+    }
+
+    @Override
     protected <T> void configure(final ApplicationContext context, final QueryExecutionContext componentContext,
                                  final ComponentProcessingContext<T> processingContext) {
 

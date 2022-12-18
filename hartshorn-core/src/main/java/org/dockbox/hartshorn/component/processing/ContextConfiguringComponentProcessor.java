@@ -34,26 +34,29 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance,
                          final ComponentProcessingContext<T> processingContext) {
-        final C componentContext = processingContext.first(ComponentKey.of(this.contextType))
-                .orCompute(() -> this.createContext(context, processingContext)).orNull();
+        if (this.supports(processingContext)) {
+            final C componentContext = processingContext.first(ComponentKey.of(this.contextType))
+                    .orCompute(() -> this.createContext(context, processingContext)).orNull();
 
-        if (componentContext != null) {
-            this.configure(context, componentContext, processingContext);
-        }
+            if (componentContext != null) {
+                this.configure(context, componentContext, processingContext);
+            }
 
-        if (instance instanceof Context contextInstance) {
-            contextInstance.add(componentContext);
-        }
-        else {
-            final ComponentKey<ProxyFactory<T, ?>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
-            if (processingContext.containsKey(factoryKey)) {
-                final ProxyFactory<T, ?> proxyFactory = processingContext.get(factoryKey);
-                proxyFactory.contextContainer().add(componentContext);
+            if (instance instanceof Context contextInstance) {
+                contextInstance.add(componentContext);
+            }
+            else {
+                final ComponentKey<ProxyFactory<T, ?>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
+                if (processingContext.containsKey(factoryKey)) {
+                    final ProxyFactory<T, ?> proxyFactory = processingContext.get(factoryKey);
+                    proxyFactory.contextContainer().add(componentContext);
+                }
             }
         }
-
         return instance;
     }
+
+    protected abstract boolean supports(final ComponentProcessingContext<?> processingContext);
 
     protected abstract <T> void configure(final ApplicationContext context, final C componentContext,
                                           final ComponentProcessingContext<T> processingContext);
