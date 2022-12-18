@@ -1,0 +1,77 @@
+<profile version="1.0">
+  <option name="myName" value="Project Default" />
+  <inspection_tool class="AnonymousClassComplexity" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="m_limit" value="3" />
+  </inspection_tool>
+  <inspection_tool class="AssignmentToLambdaParameter" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="AutoCloseableResource" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="METHOD_MATCHER_CONFIG" value="java.util.Formatter,format,java.io.Writer,append,com.google.common.base.Preconditions,checkNotNull,org.hibernate.Session,close,java.io.PrintWriter,printf,java.io.PrintStream,printf,org.dockbox.hartshorn.proxy.StandardMethodInterceptor,applicationContext,org.dockbox.hartshorn.application.HartshornApplication,create,org.dockbox.hartshorn.context.ContextCarrier,applicationContext,org.dockbox.hartshorn.component.ComponentLocatorImpl,applicationContext,org.dockbox.hartshorn.core.boot.ComponentProvisionTests,applicationContext,org.dockbox.hartshorn.events.handle.EventWrapperImpl,context,org.dockbox.hartshorn.data.jpa.EntityManagerFactory,entityManagerCarrier,org.dockbox.hartshorn.util.introspect.Introspector,applicationContext,org.dockbox.hartshorn.jpa.query.context.AbstractJpaQueryContext,applicationContext" />
+  </inspection_tool>
+  <inspection_tool class="BindingAnnotationWithoutInject" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="ClassCanBeRecord" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+  <inspection_tool class="ClassReferencesSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="CloneReturnsClassType" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="ConstantConditions" enabled="false" level="WARNING" enabled_by_default="false">
+    <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
+    <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+  </inspection_tool>
+  <inspection_tool class="FieldCanBeLocal" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="EXCLUDE_ANNOS">
+      <value>
+        <list size="2">
+          <item index="0" class="java.lang.String" itemvalue="org.dockbox.selene.api.annotations.entity.Accessor" />
+          <item index="1" class="java.lang.String" itemvalue="org.dockbox.selene.api.entity.annotations.Accessor" />
+        </list>
+      </value>
+    </option>
+    <option name="IGNORE_FIELDS_USED_IN_MULTIPLE_METHODS" value="true" />
+  </inspection_tool>
+  <inspection_tool class="IgnoreResultOfCall" enabled="false" level="WARNING" enabled_by_default="false">
+    <option name="m_reportAllNonLibraryCalls" value="false" />
+    <option name="callCheckString" value="java.io.File,.*,java.io.InputStream,read|skip|available|markSupported,java.io.Reader,read|skip|ready|markSupported,java.lang.AbstractStringBuilder,capacity|codePointAt|codePointBefore|codePointCount|indexOf|lastIndexOf|offsetByCodePoints|substring|subSequence,java.lang.Boolean,.*,java.lang.Byte,.*,java.lang.Character,.*,java.lang.Double,.*,java.lang.Float,.*,java.lang.Integer,.*,java.lang.Long,.*,java.lang.Math,.*,java.lang.Object,equals|hashCode|toString,java.lang.Short,.*,java.lang.StrictMath,.*,java.lang.String,.*,java.lang.Thread,interrupted,java.math.BigDecimal,.*,java.math.BigInteger,.*,java.net.InetAddress,.*,java.net.URI,.*,java.nio.channels.AsynchronousChannelGroup,.*,java.util.Arrays,.*,java.util.Collections,(?!addAll).*,java.util.List,of,java.util.Map,of|ofEntries|entry,java.util.Set,of,java.util.UUID,.*,java.util.concurrent.CountDownLatch,await|getCount,java.util.concurrent.ExecutorService,awaitTermination|isShutdown|isTerminated,java.util.concurrent.ForkJoinPool,awaitQuiescence,java.util.concurrent.Semaphore,tryAcquire|availablePermits|isFair|hasQueuedThreads|getQueueLength|getQueuedThreads,java.util.concurrent.locks.Condition,await|awaitNanos|awaitUntil,java.util.concurrent.locks.Lock,tryLock|newCondition,java.util.regex.Matcher,pattern|toMatchResult|start|end|group|groupCount|matches|find|lookingAt|quoteReplacement|replaceAll|replaceFirst|regionStart|regionEnd|hasTransparentBounds|hasAnchoringBounds|hitEnd|requireEnd,java.util.regex.Pattern,.*,java.util.stream.BaseStream,.*,java.util.stream.DoubleStream,.*,java.util.stream.IntStream,.*,java.util.stream.LongStream,.*,java.util.stream.Stream,.*" />
+  </inspection_tool>
+  <inspection_tool class="InstanceofThis" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="LiteralAsArgToStringEquals" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="LocalCanBeFinal" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="REPORT_VARIABLES" value="true" />
+    <option name="REPORT_PARAMETERS" value="true" />
+  </inspection_tool>
+  <inspection_tool class="MismatchedCollectionQueryUpdate" enabled="false" level="WARNING" enabled_by_default="false">
+    <option name="queryNames">
+      <value />
+    </option>
+    <option name="updateNames">
+      <value />
+    </option>
+    <option name="ignoredClasses">
+      <value />
+    </option>
+  </inspection_tool>
+  <inspection_tool class="MissortedModifiers" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="m_requireAnnotationsFirst" value="true" />
+  </inspection_tool>
+  <inspection_tool class="NonPublicClone" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="RegExpRedundantEscape" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="SizeReplaceableByIsEmpty" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="SystemOutErr" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="ThreadDumpStack" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="ThrowablePrintStackTrace" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="TypeMayBeWeakened" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="useRighthandTypeAsWeakestTypeInAssignments" value="true" />
+    <option name="useParameterizedTypeForCollectionMethods" value="true" />
+    <option name="doNotWeakenToJavaLangObject" value="true" />
+    <option name="onlyWeakentoInterface" value="true" />
+    <stopClasses>java.lang.Class,org.dockbox.selene.api.objects.targets.PermissionHolder,org.dockbox.selene.api.objects.item.maps.CustomMap,org.dockbox.selene.api.entities.Entity,java.lang.String,org.dockbox.selene.minecraft.item.maps.CustomMap,org.dockbox.selene.api.i18n.MessageReceiver,org.dockbox.selene.minecraft.players.Player,com.intellectualcrafters.plot.object.PlotPlayer,org.spongepowered.api.util.rotation.Rotation,org.spongepowered.api.entity.living.player.User,org.dockbox.selene.api.events.parents.Cancellable,org.dockbox.selene.api.i18n.PermissionHolder,org.dockbox.selene.server.minecraft.players.Player,org.dockbox.selene.commands.source.CommandSource,org.dockbox.selene.server.minecraft.entities.ArmorStandInventory,net.dv8tion.jda.api.entities.TextChannel,org.dockbox.selene.server.minecraft.entities.Entity,org.dockbox.selene.server.minecraft.item.maps.CustomMap,org.dockbox.selene.domain.registry.Registry,org.dockbox.hartshorn.commands.source.CommandSource,org.dockbox.hartshorn.commands.context.CommandContext,org.dockbox.hartshorn.server.minecraft.entities.Entity,org.dockbox.hartshorn.server.minecraft.players.Player,org.dockbox.hartshorn.api.i18n.MessageReceiver,java.util.List,org.spongepowered.api.world.server.storage.ServerWorldProperties,org.spongepowered.api.event.network.ServerSideConnectionEvent.Auth,org.dockbox.hartshorn.server.minecraft.item.Item,org.dockbox.hartshorn.blockregistry.VariantIdentifier,org.dockbox.hartshorn.api.events.GenericEvent,org.dockbox.hartshorn.di.annotations.inject.Named,org.dockbox.hartshorn.regions.MembershipRegion,java.util.Set,org.dockbox.hartshorn.beans.BeanContext,org.dockbox.hartshorn.util.reflect.TypeContext,org.dockbox.hartshorn.application.environment.ApplicationManager,org.dockbox.hartshorn.util.introspect.view.MethodView,org.dockbox.hartshorn.util.introspect.view.TypeView,org.dockbox.hartshorn.context.ApplicationAwareContext</stopClasses>
+  </inspection_tool>
+  <inspection_tool class="UnnecessaryContinue" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="UnnecessaryDefault" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="UnqualifiedFieldAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="UnqualifiedMethodAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="UnusedAssignment" enabled="false" level="WARNING" enabled_by_default="false">
+    <option name="REPORT_PREFIX_EXPRESSIONS" value="false" />
+    <option name="REPORT_POSTFIX_EXPRESSIONS" value="true" />
+    <option name="REPORT_REDUNDANT_INITIALIZER" value="true" />
+  </inspection_tool>
+  <inspection_tool class="UnusedReturnValue" enabled="false" level="WARNING" enabled_by_default="false" />
+</profile>
