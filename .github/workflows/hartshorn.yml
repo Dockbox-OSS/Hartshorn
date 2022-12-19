@@ -95,7 +95,6 @@ jobs:
           "commands",
           "config",
           "core",
-          "data",
           "events",
           "hsl",
           "i18n",
