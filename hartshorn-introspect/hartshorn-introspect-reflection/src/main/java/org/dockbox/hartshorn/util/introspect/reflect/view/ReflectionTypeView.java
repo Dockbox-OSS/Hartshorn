@@ -338,7 +338,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
 
     @Override
     public PackageView packageInfo() {
-        return new ReflectionPackageView(this.type.getPackage());
+        return new ReflectionPackageView(this.introspector, this.type.getPackage());
     }
 
     @Override

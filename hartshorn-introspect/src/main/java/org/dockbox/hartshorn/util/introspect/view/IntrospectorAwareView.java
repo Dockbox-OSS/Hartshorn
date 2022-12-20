@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.util.introspect.view;
 
-public class TypeConversionException extends ApplicationRuntimeException {
+import org.dockbox.hartshorn.util.introspect.Introspector;
 
-    public TypeConversionException(String message) {
-        super(message);
-    }
+public interface IntrospectorAwareView {
 
-    public TypeConversionException(final Class<?> type, final String value) {
-        super("Could not convert '" + value + "' to type " + type.getSimpleName());
-    }
-
-    public TypeConversionException(final Class<?> type, final String value, final Throwable cause) {
-        super("Could not convert '" + value + "' to type " + type.getSimpleName(), cause);
-    }
+    Introspector introspector();
 }

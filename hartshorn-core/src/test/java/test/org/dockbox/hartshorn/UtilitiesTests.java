@@ -16,23 +16,42 @@
 
 package test.org.dockbox.hartshorn;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-
+import org.dockbox.hartshorn.application.HartshornApplication;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tuple;
+import org.dockbox.hartshorn.util.TypeConversionException;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class UtilitiesTests {
 
@@ -40,6 +59,18 @@ public class UtilitiesTests {
     private static final int hour = 60 * minute;
     private static final int day = 24 * hour;
     private static final int week = 7 * day;
+
+    private static ApplicationContext applicationContext;
+
+    @BeforeAll
+    public static void setup() {
+        applicationContext = HartshornApplication.create();
+    }
+
+    @AfterAll
+    public static void tearDown() throws IOException {
+        applicationContext.close();
+    }
 
     private static Stream<Arguments> capitalizeValues() {
         return Stream.of(
@@ -74,10 +105,10 @@ public class UtilitiesTests {
     public static Stream<Arguments> stringFormats() {
         return Stream.of(
                 Arguments.of("Hello world!", "Hello world!", new Object[0]),
-                Arguments.of("Hello %s!", "Hello %s!", new Object[] {"world"}),
-                Arguments.of("Hello {0}!", "Hello world!", new Object[] {"world"}),
-                Arguments.of("{0} {1}!", "Hello world!", new Object[] {"Hello", "world"}),
-                Arguments.of("{0} {0}!", "Hello Hello!", new Object[] {"Hello", "world"})
+                Arguments.of("Hello %s!", "Hello %s!", new Object[]{ "world" }),
+                Arguments.of("Hello {0}!", "Hello world!", new Object[]{ "world" }),
+                Arguments.of("{0} {1}!", "Hello world!", new Object[]{ "Hello", "world" }),
+                Arguments.of("{0} {0}!", "Hello Hello!", new Object[]{ "Hello", "world" })
         );
     }
 
@@ -145,7 +176,7 @@ public class UtilitiesTests {
     @Test
     void testSplitCapitals() {
         final String input = "ThisIsAString";
-        final String[] expected = new String[] { "This", "Is", "A", "String" };
+        final String[] expected = new String[]{ "This", "Is", "A", "String" };
         final String[] actual = StringUtilities.splitCapitals(input);
         Assertions.assertArrayEquals(expected, actual);
     }
@@ -162,5 +193,190 @@ public class UtilitiesTests {
     void testMapFormat(final String format, final String expected, final Map<String, String> replacements) {
         final String actual = StringUtilities.format(format, replacements);
         Assertions.assertEquals(expected, actual);
+    }
+
+    public static Stream<Arguments> stringsToPrimitives() {
+        return Stream.of(
+                Arguments.of("1", int.class, 1),
+                Arguments.of("1", long.class, 1L),
+                Arguments.of("1", short.class, (short) 1),
+                Arguments.of("1", byte.class, (byte) 1),
+                Arguments.of("1", float.class, 1f),
+                Arguments.of("1", double.class, 1d),
+                Arguments.of("true", boolean.class, true),
+                Arguments.of("1", char.class, '1'),
+                Arguments.of("ONE", TestEnum.class, TestEnum.ONE),
+                Arguments.of("TWO", TestEnum.class, TestEnum.TWO),
+                Arguments.of("THREE", TestEnum.class, TestEnum.THREE)
+        );
+    }
+
+    public static Stream<Arguments> invalidStringsToPrimitives() {
+        return Stream.of(
+                Arguments.of("one", int.class),
+                Arguments.of("one", long.class),
+                Arguments.of("one", short.class),
+                Arguments.of("one", byte.class),
+                Arguments.of("one", float.class),
+                Arguments.of("one", double.class),
+                Arguments.of("yes", boolean.class),
+                Arguments.of("too long", char.class),
+                Arguments.of("FOUR", TestEnum.class)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringsToPrimitives")
+    <T> void testToPrimitive(final String input, final Class<T> type, T expected) {
+        final T actual = TypeUtils.toPrimitive(type, input);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testToPrimitiveDoesNotAcceptObjects() {
+        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(Object.class, "value"));
+        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(String.class, "value"));
+        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(List.class, "value"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidStringsToPrimitives")
+    <T> void testToPrimitiveThrowsOnInvalidInput(final String input, final Class<T> type) {
+        Assertions.assertThrows(TypeConversionException.class, () -> TypeUtils.toPrimitive(type, input));
+    }
+
+    @Test
+    void testValidWildcardAdjustment() {
+        final List<?> list = Arrays.asList("one", "two", "three");
+        final List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.adjustWildcards(list, List.class));
+        Assertions.assertNotNull(adjusted);
+        Assertions.assertSame(list, adjusted);
+    }
+
+    @Test
+    void testInvalidWildcardAdjustment() {
+        final List<?> list = Arrays.asList("one", "two", "three");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TypeUtils.adjustWildcards(list, Set.class));
+    }
+
+    @Test
+    void testWildcardAdjustmentDoesNotAdjustChild() {
+        final List<?> list = Arrays.asList("one", "two", "three");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TypeUtils.adjustWildcards(list, ArrayList.class));
+    }
+
+    @Test
+    void testWildcardAdjustmentDoesAdjustParent() {
+        final List<?> list = Arrays.asList("one", "two", "three");
+        final List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.adjustWildcards(list, Collection.class));
+        Assertions.assertNotNull(adjusted);
+        Assertions.assertSame(list, adjusted);
+    }
+
+    @Test
+    void testAnnotationCreatesEmptyAnnotation() {
+        TestAnnotation annotation = TypeUtils.annotation(TestAnnotation.class);
+        Assertions.assertNotNull(annotation);
+    }
+
+    @Test
+    void testAnnotationCreatesAnnotationWithValues() {
+        TestAnnotationWithValue annotation = TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
+        Assertions.assertNotNull(annotation);
+        Assertions.assertEquals("test", annotation.value());
+    }
+
+    @Test
+    void testAnnotationValidatesValues() {
+        Assertions.assertThrows(IllegalStateException.class, () -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
+    }
+
+    private static Stream<Arguments> validConversionsFromNull() {
+        return Stream.of(
+                Arguments.of(null, Optional.class, (Predicate<Object>) o -> o instanceof Optional<?> optional && optional.isEmpty()),
+                Arguments.of(null, Option.class, (Predicate<Object>) o -> o instanceof Option<?> option && option.absent()),
+                Arguments.of(null, Attempt.class, (Predicate<Object>) o -> o instanceof Attempt<?, ?> attempt && attempt.absent() && attempt.errorAbsent()),
+                Arguments.of(null, CopyOnWriteArrayList.class, (Predicate<Object>) o -> o instanceof CopyOnWriteArrayList<?> collection && collection.isEmpty()),
+                Arguments.of(null, ArrayList.class, (Predicate<Object>) o -> o instanceof ArrayList<?> collection && collection.isEmpty()),
+                Arguments.of(null, Object.class, (Predicate<Object>) Objects::isNull)
+        );
+    }
+
+    private static Stream<Arguments> validConversionsFromSingleValue() {
+        final String object = "test";
+        return Stream.of(
+                wrapperValueConversions(object),
+                defaultCollectionConversions(object),
+                Stream.of(Arguments.of(object, Object.class, (Predicate<Object>) o -> o instanceof String string && string.equals(object)))
+        ).flatMap(Function.identity());
+    }
+
+    private static Stream<Arguments> validConversionsFromCollection() {
+        final String object = "test";
+        final Set<Collection<String>> collectionsToConvert = new HashSet<>();
+        for (Supplier<Collection<?>> value : CollectionUtilities.COLLECTION_DEFAULTS.values()) {
+            final Collection<String> collection = TypeUtils.adjustWildcards(value.get(), Collection.class);
+            collection.add(object);
+            collectionsToConvert.add(collection);
+        }
+
+        return collectionsToConvert.stream()
+                .flatMap(collectionToConvert -> Stream.concat(
+                        wrapperValueConversions(collectionToConvert),
+                        defaultCollectionConversions(collectionToConvert)
+                ));
+    }
+
+    private static Stream<Arguments> wrapperValueConversions(final Object object) {
+        return Stream.of(
+                Arguments.of(object, Optional.class, (Predicate<Object>) o -> o instanceof Optional<?> optional && optional.isPresent() && optional.get().equals("test")),
+                Arguments.of(object, Option.class, (Predicate<Object>) o -> o instanceof Option<?> option && option.present() && option.get().equals("test")),
+                Arguments.of(object, Attempt.class, (Predicate<Object>) o -> o instanceof Attempt<?, ?> attempt && attempt.present() && attempt.errorAbsent() && attempt.get().equals("test")),
+                Arguments.of(object, CopyOnWriteArrayList.class, (Predicate<Object>) o -> o instanceof CopyOnWriteArrayList<?> collection && collection.size() == 1 && collection.contains("test")),
+                Arguments.of(object, ArrayList.class, (Predicate<Object>) o -> o instanceof ArrayList<?> collection && collection.size() == 1 && collection.contains("test")),
+                Arguments.of(object, String.class, (Predicate<Object>) o -> o instanceof String string && string.equals("test"))
+        );
+    }
+
+    private static Stream<Arguments> defaultCollectionConversions(final Object object) {
+        return CollectionUtilities.COLLECTION_DEFAULTS.keySet().stream().map(type -> {
+            Predicate<Object> isInstance = type::isInstance;
+            Predicate<Object> containsObject = o -> {
+                Collection<?> collection = (Collection<?>) o;
+                return collection.size() == 1 && collection.contains("test");
+            };
+            return Arguments.of(object, type, isInstance.and(containsObject));
+        });
+    }
+
+    public static Stream<Arguments> conversionValues() {
+        return Stream.of(
+                validConversionsFromNull(),
+                validConversionsFromSingleValue(),
+                validConversionsFromCollection()
+        ).flatMap(Function.identity());
+    }
+
+    @ParameterizedTest
+    @MethodSource("conversionValues")
+    void checkWrappingAcceptsValidConversions(Object objectToTransform, Class<?> targetType, Predicate<Object> validator) {
+        ReflectionIntrospector introspector = new ReflectionIntrospector(applicationContext);
+        TypeView<?> type = introspector.introspect(targetType);
+        Object wrapped = TypeUtils.checkWrapping(objectToTransform, type);
+        Assertions.assertTrue(validator.test(wrapped));
+    }
+
+    private @interface TestAnnotation {
+    }
+
+    private @interface TestAnnotationWithValue {
+        String value();
+    }
+
+
+    private enum TestEnum {
+        ONE,
+        TWO,
+        THREE
     }
 }
