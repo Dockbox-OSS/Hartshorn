@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
