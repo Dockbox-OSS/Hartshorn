@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("java-gradle-plugin")
+    id("org.cadixdev.licenser") version "0.6.1"
 }
 
 group = "org.dockbox.hartshorn"
@@ -8,6 +9,11 @@ group = "org.dockbox.hartshorn"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+license {
+    header.set(resources.text.fromFile(rootProject.file("../../HEADER.txt")))
+    ignoreFailures.set(false)
 }
 
 repositories {
