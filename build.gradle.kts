@@ -29,8 +29,8 @@ buildscript {
 }
 
 plugins {
-    java
-    `java-library`
+    id("java")
+    id("java-library")
 
     // Custom plugins, can be found in the gradle/plugins directory
     id("org.dockbox.hartshorn.gradle.javadoc")
