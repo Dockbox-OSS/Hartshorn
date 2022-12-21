@@ -75,15 +75,6 @@ allprojects {
         // invalid/missing headers are clearly visible, we fail the build if
         // headers are invalid.
         ignoreFailures.set(false)
-        include(
-                "**/*.java",
-                "**/*.kt",
-                "**/*.groovy",
-                "**/*.scala",
-                "**/*.yml",
-                "**/*.properties",
-                "**/*.toml",
-        )
     }
 
     java {
