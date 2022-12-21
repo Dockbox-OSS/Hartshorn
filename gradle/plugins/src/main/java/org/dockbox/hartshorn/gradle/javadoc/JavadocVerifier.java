@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
 public class JavadocVerifier {
 
     public static void verify(final Path path) throws IOException {
+        Set<JavadocFault> faults = collectFaults(path);
+        processFaults(faults);
+    }
+
+    public static Set<JavadocFault> collectFaults(final Path path) throws IOException {
         final SourceRoot sourceRoot = new SourceRoot(path);
 
         final Set<JavadocFault> faults = new HashSet<>();
@@ -29,7 +34,7 @@ public class JavadocVerifier {
             return Result.DONT_SAVE;
         });
 
-        processFaults(faults);
+        return faults;
     }
 
     private static void processFaults(final Set<JavadocFault> faults) {
