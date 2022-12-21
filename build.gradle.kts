@@ -102,6 +102,13 @@ allprojects {
         }
         all {
             resolutionStrategy {
+                // Commonly used libraries that may be included in multiple
+                // projects, but should be kept in sync across all projects.
+                setForcedModules(
+                        rootProject.libs.slf4j,
+                        rootProject.libs.checkerQual,
+                )
+
                 dependencySubstitution {
                     rootDir.listFiles()?.forEach { file ->
                         // Allows for local development of Hartshorn modules. Instead of having to publish
