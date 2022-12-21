@@ -23,21 +23,41 @@ includeBuild("gradle/plugins")
 includeAll(rootDir, "")
 configureChildren(rootProject)
 
+/**
+ * Include all subprojects in the given directory. This method will recursively
+ * search for all subdirectories containing a file with the same name as the directory,
+ * appended with ".gradle.kts". If such a file is found, it will be included as a subproject.
+ *
+ * This only includes the projects, it is expected that [configureChildren] is called
+ * to configure the subprojects.
+ *
+ * @see configureChildren
+ */
 fun includeAll(dir: File, prefix: String) {
-    dir.listFiles()?.forEach {
-        if (it.isDirectory && File(it, "${it.name}.gradle.kts").exists()) {
-            include("${prefix}:${it.name}")
+    dir.listFiles()?.forEach { file ->
+        if (file.isDirectory && File(file, "${file.name}.gradle.kts").exists()) {
+            include("${prefix}:${file.name}")
             // Include all nested projects
-            includeAll(it, ":${it.name}")
+            includeAll(file, ":${file.name}")
         }
     }
 }
 
+/**
+ * Configure all children of the given project. The [includeAll] method will include
+ * all subprojects, but this method will configure them.
+ *
+ * This method follows the rule where each project is expected to have a file with the
+ * same name as the project, appended with ".gradle.kts". As a result, the
+ * [ProjectDescriptor.getBuildFileName] is replaced with the name of the project.
+ *
+ * @see includeAll
+ */
 fun configureChildren(project: ProjectDescriptor) {
     if (project.children.isNotEmpty()) {
-        project.children.forEach {
-            it.buildFileName = "${it.name}.gradle.kts"
-            configureChildren(it)
+        project.children.forEach { child ->
+            child.buildFileName = "${child.name}.gradle.kts"
+            configureChildren(child)
         }
     }
 }
