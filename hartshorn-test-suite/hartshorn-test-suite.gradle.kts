@@ -21,5 +21,5 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.bundles.test)
 
-    runtimeOnly(libs.bundles.testRuntime)
+    runtimeOnly(libs.junitJupiterEngine)
 }

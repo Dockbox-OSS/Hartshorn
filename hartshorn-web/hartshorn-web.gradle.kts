@@ -23,7 +23,7 @@ apply {
 }
 
 dependencies {
-    api(libs.bundles.servlet)
+    api(libs.jakartaServlet)
     api(libs.bundles.jetty)
     api(libs.freemarker)
 

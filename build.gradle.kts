@@ -116,13 +116,14 @@ allprojects {
         // This is not required in child projects, only in this block.
         implementation(rootProject.libs.slf4j)
         implementation(rootProject.libs.bundles.jakarta)
+
         // Only require qualifiers to be present, we don't use CF to actually run analysis on the code
         // and we don't want to force users to use CF.
-        implementation(rootProject.libs.bundles.checkerQual)
+        implementation(rootProject.libs.checkerQual)
 
         testImplementation(project(":hartshorn-test-suite"))
         testImplementation(rootProject.libs.bundles.test)
-        testImplementation(rootProject.libs.bundles.testRuntime)
+        testImplementation(rootProject.libs.junitJupiterEngine)
 
     }
 
