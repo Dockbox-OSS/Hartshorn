@@ -15,7 +15,10 @@
  */
 
 rootProject.name = "Hartshorn"
+
 gradle.startParameter.isContinueOnFailure = true
+
+includeBuild("gradle/plugins")
 
 includeAll(rootDir, "")
 configureChildren(rootProject)
