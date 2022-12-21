@@ -19,9 +19,6 @@ import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
     }
     dependencies {
         classpath("org.owasp:dependency-check-gradle:7.4.1")
