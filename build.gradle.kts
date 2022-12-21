@@ -31,6 +31,7 @@ buildscript {
 plugins {
     java
     `java-library`
+    id("org.dockbox.hartshorn.gradle.javadoc")
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
@@ -59,6 +60,7 @@ allprojects {
         plugin("java-library")
         plugin("maven-publish")
         plugin("org.cadixdev.licenser")
+        plugin("org.dockbox.hartshorn.gradle.javadoc")
     }
 
     license {
