@@ -19,9 +19,6 @@ import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
     }
     dependencies {
         classpath("org.owasp:dependency-check-gradle:7.4.1")
@@ -29,9 +26,13 @@ buildscript {
 }
 
 plugins {
-    java
-    `java-library`
+    id("java")
+    id("java-library")
+
+    // Custom plugins, can be found in the gradle/plugins directory
     id("org.dockbox.hartshorn.gradle.javadoc")
+
+    // Required for CI and to automatically update license headers on build
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
@@ -43,7 +44,11 @@ version = "22.5"
 group = "org.dockbox.hartshorn"
 
 java {
+    // Development is only performed using the latest LTS Java version.
     sourceCompatibility = JavaVersion.VERSION_17
+
+    // Targeting the latest non-incubating Java version, to ensure compatibility
+    // with the latest Java version.
     targetCompatibility = JavaVersion.VERSION_19
 }
 
@@ -65,16 +70,11 @@ allprojects {
 
     license {
         header.set(resources.text.fromFile(rootProject.file("HEADER.txt")))
+
+        // CI will verify the license headers, but not update them. To ensure
+        // invalid/missing headers are clearly visible, we fail the build if
+        // headers are invalid.
         ignoreFailures.set(false)
-        include(
-                "**/*.java",
-                "**/*.kt",
-                "**/*.groovy",
-                "**/*.scala",
-                "**/*.yml",
-                "**/*.properties",
-                "**/*.toml",
-        )
     }
 
     java {
@@ -95,15 +95,34 @@ allprojects {
 
     configurations {
         testImplementation {
+            // Ensure that all standard dependencies are included in the test
+            // classpath, so we don't need to explicitly add them to the test
+            // classpath.
             extendsFrom(configurations.implementation.get())
         }
         all {
-            exclude(group = "junit", module = "junit")
-            resolutionStrategy.dependencySubstitution {
-                rootDir.listFiles()?.forEach {
-                    if (it.isDirectory && File(it, "${it.name}.gradle.kts").exists()) {
-                        substitute(module("org.dockbox.hartshorn:${it.name}"))
-                            .using(project(":${it.name}"))
+            resolutionStrategy {
+                // Commonly used libraries that may be included in multiple
+                // projects, but should be kept in sync across all projects.
+                setForcedModules(
+                        rootProject.libs.slf4j,
+                        rootProject.libs.checkerQual,
+                )
+
+                dependencySubstitution {
+                    rootDir.listFiles()?.forEach { file ->
+                        // Allows for local development of Hartshorn modules. Instead of having to publish
+                        // the module to a local Maven repository, we simply substitute the dependency with
+                        // the local module.
+                        //
+                        // In practice, this means that if you have a dependency on "org.dockbox.hartshorn:hartshorn-core"
+                        // in your build.gradle.kts file, and you have a local module named "hartshorn-core" in the
+                        // root directory of the project, the dependency will be substituted with project(":hartshorn-core").
+                        if (file.isDirectory && File(file, "${file.name}.gradle.kts").exists()) {
+                            val module = module("${group}:${file.name}")
+                            val project = project(":${file.name}")
+                            substitute(module).using(project)
+                        }
                     }
                 }
             }
@@ -116,18 +135,23 @@ allprojects {
         // This is not required in child projects, only in this block.
         implementation(rootProject.libs.slf4j)
         implementation(rootProject.libs.bundles.jakarta)
+
         // Only require qualifiers to be present, we don't use CF to actually run analysis on the code
         // and we don't want to force users to use CF.
-        implementation(rootProject.libs.bundles.checkerQual)
+        implementation(rootProject.libs.checkerQual)
 
         testImplementation(project(":hartshorn-test-suite"))
         testImplementation(rootProject.libs.bundles.test)
-        testImplementation(rootProject.libs.bundles.testRuntime)
+        testImplementation(rootProject.libs.junitJupiterEngine)
 
     }
 
     tasks {
-        // Register custom tasks
+        // Instead of using the default `libs` output directories, meaning that the output of each
+        // module is placed in a separate directory, we use a single output directory for all modules.
+        //
+        // This is done to ensure that the output of all modules is placed in the same directory, and
+        // can easily be accessed for further local development.
         register<Copy>("copyArtifacts") {
             doLast {
                 val version = project.version
@@ -143,16 +167,23 @@ allprojects {
         // Configure existing tasks
         test {
             useJUnitPlatform()
+
+            // When possible, run tests in parallel. This automatically limits to use only half
+            // of the available workers, so we can still run other tasks in parallel. If there are
+            // less than two workers available, we don't run in parallel.
             val maxWorkerCount = gradle.startParameter.maxWorkerCount
             maxParallelForks = if (maxWorkerCount < 2) 1 else maxWorkerCount / 2
         }
+
         build {
             dependsOn(updateLicenses)
             finalizedBy(findByName("copyArtifacts"), clean)
         }
 
-        // Target existing tasks by type
         withType<JavaCompile> {
+            // Ensure parameter names are kept in the compiled bytecode. This is required for
+            // some reflection actions to work optimally. While this is not required for
+            // Hartshorn to function, it is recommended to keep this enabled.
             options.compilerArgs.add("-parameters")
             options.encoding = "UTF-8"
         }
