@@ -297,7 +297,7 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
-        final BindingHierarchy<?> hierarchy = this.hierarchies.computeIfAbsent(key.view(), k -> {
+        final BindingHierarchy<?> hierarchy = this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
             // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
             // the application context. This is useful for components that are not explicitly scoped,
             // but are still accessed through a scope.

@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -23,9 +27,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A proxy implementation of {@link Annotation} which allows for the creation of
@@ -148,11 +149,9 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
         for (final Class<? extends Annotation> klass : hierarchy) {
             try {
                 final Method klassMethod = klass.getMethod(name);
-                if (klassMethod != null) {
-                    this.checkAliasType(proxyMethod, klassMethod);
-                    final Object defaultValue = klassMethod.getDefaultValue();
-                    if (defaultValue != null) return Option.of(defaultValue);
-                }
+                this.checkAliasType(proxyMethod, klassMethod);
+                final Object defaultValue = klassMethod.getDefaultValue();
+                if (defaultValue != null) return Option.of(defaultValue);
             } catch (final NoSuchMethodException ignored) {
                 // Do not break yet, we might find it in a super class
             }
@@ -202,7 +201,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
             return out;
         }
         catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new ApplicationRuntimeException(e);
         }
     }
 }

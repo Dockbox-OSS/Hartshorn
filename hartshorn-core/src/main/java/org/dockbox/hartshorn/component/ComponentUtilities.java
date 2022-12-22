@@ -23,7 +23,10 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Locale;
 import java.util.function.Function;
 
-public class ComponentUtilities {
+public final class ComponentUtilities {
+
+    private ComponentUtilities() {
+    }
 
     public static String id(final ApplicationContext context, final Class<?> type) {
         return id(context, type, false);
@@ -41,7 +44,7 @@ public class ComponentUtilities {
         final Option<ComponentContainer> container = context.get(ComponentLocator.class).container(type);
         if (!ignoreExisting && container.present()) {
             final String name = attribute.apply(container.get());
-            if (!"".equals(name)) return name;
+            if (StringUtilities.notEmpty(name)) return name;
         }
 
         String raw = type.getSimpleName();
@@ -49,6 +52,6 @@ public class ComponentUtilities {
             raw = raw.substring(0, raw.length() - 7);
         }
         final String[] parts = StringUtilities.splitCapitals(raw);
-        return StringUtilities.capitalize(String.join(delimiter + "", parts));
+        return StringUtilities.capitalize(String.join(String.valueOf(delimiter), parts));
     }
 }
