@@ -32,6 +32,7 @@ plugins {
     id("java-library")
     id("java-test-fixtures")
 
+    // Required for test coverage reports and CI integration
     id("jacoco")
 
     // Custom plugins, can be found in the gradle/plugins directory
