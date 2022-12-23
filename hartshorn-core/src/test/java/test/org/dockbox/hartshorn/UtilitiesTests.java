@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -147,6 +148,63 @@ public class UtilitiesTests {
     }
 
     @Test
+    void testIsNotEmptyStringFalseIfNull() {
+        Assertions.assertFalse(StringUtilities.notEmpty(null));
+    }
+
+    @Test
+    void testIsNotEmptyStringFalseIfEmpty() {
+        Assertions.assertFalse(StringUtilities.notEmpty(""));
+    }
+
+    @Test
+    void testIsNotEmptyStringTrueIfContent() {
+        Assertions.assertTrue(StringUtilities.notEmpty("value"));
+    }
+
+    @Test
+    void testStripReplacesAllSpaces() {
+        final String stripped = StringUtilities.strip(" val ue  ");
+        Assertions.assertNotNull(stripped);
+        Assertions.assertEquals("value", stripped);
+    }
+
+    @Test
+    void testStripReplacesAllTabs() {
+        final String stripped = StringUtilities.strip("\tval\tue\t\t");
+        Assertions.assertNotNull(stripped);
+        Assertions.assertEquals("value", stripped);
+    }
+
+    @Test
+    void testStripReplacesAllNewLines() {
+        final String stripped = StringUtilities.strip("\nval\nue\n\n");
+        Assertions.assertNotNull(stripped);
+        Assertions.assertEquals("value", stripped);
+    }
+
+    @Test
+    void testStripReplacesAllCarriageReturns() {
+        final String stripped = StringUtilities.strip("\rval\rue\r\r");
+        Assertions.assertNotNull(stripped);
+        Assertions.assertEquals("value", stripped);
+    }
+
+    @Test
+    void testTrimWithSpaces() {
+        final String trimmed = StringUtilities.trimWith(' ', " value  ");
+        Assertions.assertNotNull(trimmed);
+        Assertions.assertEquals("value", trimmed);
+    }
+
+    @Test
+    void testTrimWithRegExCharacter() {
+        final String trimmed = StringUtilities.trimWith('$', "$value$$");
+        Assertions.assertNotNull(trimmed);
+        Assertions.assertEquals("value", trimmed);
+    }
+
+    @Test
     void testCollectionMerge() {
         final Collection<Integer> col1 = Arrays.asList(1, 2, 3);
         final Collection<Integer> col2 = Arrays.asList(4, 5, 6);
@@ -227,7 +285,7 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("stringsToPrimitives")
-    <T> void testToPrimitive(final String input, final Class<T> type, T expected) {
+    <T> void testToPrimitive(final String input, final Class<T> type, final T expected) {
         final T actual = TypeUtils.toPrimitive(type, input);
         Assertions.assertEquals(expected, actual);
     }
@@ -275,13 +333,13 @@ public class UtilitiesTests {
 
     @Test
     void testAnnotationCreatesEmptyAnnotation() {
-        TestAnnotation annotation = TypeUtils.annotation(TestAnnotation.class);
+        final TestAnnotation annotation = TypeUtils.annotation(TestAnnotation.class);
         Assertions.assertNotNull(annotation);
     }
 
     @Test
     void testAnnotationCreatesAnnotationWithValues() {
-        TestAnnotationWithValue annotation = TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
+        final TestAnnotationWithValue annotation = TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
         Assertions.assertNotNull(annotation);
         Assertions.assertEquals("test", annotation.value());
     }
@@ -313,8 +371,8 @@ public class UtilitiesTests {
 
     private static Stream<Arguments> validConversionsFromCollection() {
         final String object = "test";
-        final Set<Collection<String>> collectionsToConvert = new HashSet<>();
-        for (Supplier<Collection<?>> value : CollectionUtilities.COLLECTION_DEFAULTS.values()) {
+        final Collection<Collection<String>> collectionsToConvert = new HashSet<>();
+        for (final Supplier<Collection<?>> value : CollectionUtilities.COLLECTION_DEFAULTS.values()) {
             final Collection<String> collection = TypeUtils.adjustWildcards(value.get(), Collection.class);
             collection.add(object);
             collectionsToConvert.add(collection);
@@ -334,15 +392,15 @@ public class UtilitiesTests {
                 Arguments.of(object, Attempt.class, (Predicate<Object>) o -> o instanceof Attempt<?, ?> attempt && attempt.present() && attempt.errorAbsent() && attempt.get().equals("test")),
                 Arguments.of(object, CopyOnWriteArrayList.class, (Predicate<Object>) o -> o instanceof CopyOnWriteArrayList<?> collection && collection.size() == 1 && collection.contains("test")),
                 Arguments.of(object, ArrayList.class, (Predicate<Object>) o -> o instanceof ArrayList<?> collection && collection.size() == 1 && collection.contains("test")),
-                Arguments.of(object, String.class, (Predicate<Object>) o -> o instanceof String string && string.equals("test"))
+                Arguments.of(object, String.class, (Predicate<Object>) o -> o instanceof String string && "test".equals(string))
         );
     }
 
     private static Stream<Arguments> defaultCollectionConversions(final Object object) {
         return CollectionUtilities.COLLECTION_DEFAULTS.keySet().stream().map(type -> {
-            Predicate<Object> isInstance = type::isInstance;
-            Predicate<Object> containsObject = o -> {
-                Collection<?> collection = (Collection<?>) o;
+            final Predicate<Object> isInstance = type::isInstance;
+            final Predicate<Object> containsObject = o -> {
+                final Collection<?> collection = (Collection<?>) o;
                 return collection.size() == 1 && collection.contains("test");
             };
             return Arguments.of(object, type, isInstance.and(containsObject));
@@ -359,10 +417,10 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("conversionValues")
-    void checkWrappingAcceptsValidConversions(Object objectToTransform, Class<?> targetType, Predicate<Object> validator) {
-        ReflectionIntrospector introspector = new ReflectionIntrospector(applicationContext);
-        TypeView<?> type = introspector.introspect(targetType);
-        Object wrapped = TypeUtils.checkWrapping(objectToTransform, type);
+    void checkWrappingAcceptsValidConversions(final Object objectToTransform, final Class<?> targetType, final Predicate<Object> validator) {
+        final Introspector introspector = new ReflectionIntrospector(applicationContext);
+        final TypeView<?> type = introspector.introspect(targetType);
+        final Object wrapped = TypeUtils.checkWrapping(objectToTransform, type);
         Assertions.assertTrue(validator.test(wrapped));
     }
 
@@ -372,7 +430,6 @@ public class UtilitiesTests {
     private @interface TestAnnotationWithValue {
         String value();
     }
-
 
     private enum TestEnum {
         ONE,

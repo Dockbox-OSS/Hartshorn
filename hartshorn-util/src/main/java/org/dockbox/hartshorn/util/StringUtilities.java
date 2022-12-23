@@ -57,18 +57,18 @@ public final class StringUtilities {
         return StringUtilities.empty(value) ? null : value;
     }
 
-    public static String strip(final String s) {
-        return s.replaceAll("[\n\r ]+", "").trim();
+    public static String strip(final String value) {
+        return value.replaceAll("[\n\r\t ]+", "").trim();
     }
 
-    public static Option<Duration> durationOf(final String in) {
+    public static Option<Duration> durationOf(final String value) {
         // First, if just digits, return the number in seconds.
 
-        if (StringUtilities.minorTimeString.matcher(in).matches()) {
-            return Option.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
+        if (StringUtilities.minorTimeString.matcher(value).matches()) {
+            return Option.of(Duration.ofSeconds(Long.parseUnsignedLong(value)));
         }
 
-        final Matcher m = StringUtilities.timeString.matcher(in);
+        final Matcher m = StringUtilities.timeString.matcher(value);
         if (m.matches()) {
             long time = StringUtilities.durationAmount(m.group(2), StringUtilities.secondsInWeek);
             time += StringUtilities.durationAmount(m.group(4), StringUtilities.secondsInDay);
@@ -83,30 +83,30 @@ public final class StringUtilities {
         return Option.empty();
     }
 
-    private static long durationAmount(@Nullable final String g, final int multiplier) {
-        if (null != g && !g.isEmpty()) {
-            return multiplier * Long.parseUnsignedLong(g);
+    private static long durationAmount(@Nullable final String value, final int multiplier) {
+        if (null != value && !value.isEmpty()) {
+            return multiplier * Long.parseUnsignedLong(value);
         }
 
         return 0;
     }
 
-    public static String[] splitCapitals(final String s) {
-        return s.split("(?=\\p{Lu})");
+    public static String[] splitCapitals(final String value) {
+        return value.split("(?=\\p{Lu})");
     }
 
-    public static String trimWith(final char c, final String s) {
-        int len = s.length();
-        int st = 0;
-        final char[] val = s.toCharArray();
+    public static String trimWith(final char trimCharacter, final String value) {
+        int length = value.length();
+        int currentIndex = 0;
+        final char[] characters = value.toCharArray();
 
-        while ((st < len) && (val[st] <= c)) {
-            st++;
+        while ((currentIndex < length) && (characters[currentIndex] <= trimCharacter)) {
+            currentIndex++;
         }
-        while ((st < len) && (val[len - 1] <= c)) {
-            len--;
+        while ((currentIndex < length) && (characters[length - 1] <= trimCharacter)) {
+            length--;
         }
-        return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
+        return ((currentIndex > 0) || (length < value.length())) ? value.substring(currentIndex, length) : value;
     }
 
     public static String format(final String format, final Object... args) {
