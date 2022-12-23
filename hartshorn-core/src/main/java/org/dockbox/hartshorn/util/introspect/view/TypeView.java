@@ -40,6 +40,8 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 
     boolean isInterface();
 
+    boolean isRecord();
+
     boolean isAbstract();
 
     boolean isFinal();
