@@ -73,6 +73,11 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
+    public boolean isRecord() {
+        return false;
+    }
+
+    @Override
     public boolean isAbstract() {
         return false;
     }

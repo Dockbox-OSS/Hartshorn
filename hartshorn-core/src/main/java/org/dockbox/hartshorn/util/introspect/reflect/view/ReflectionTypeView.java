@@ -155,6 +155,11 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
+    public boolean isRecord() {
+        return this.type.isRecord();
+    }
+
+    @Override
     public boolean isAbstract() {
         return this.isInterface() || Modifier.isAbstract(this.type.getModifiers());
     }
