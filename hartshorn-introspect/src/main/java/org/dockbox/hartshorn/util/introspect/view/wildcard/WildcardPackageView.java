@@ -32,6 +32,6 @@ public class WildcardPackageView implements PackageView {
 
     @Override
     public String qualifiedName() {
-        return null;
+        return "";
     }
 }
