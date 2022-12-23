@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+@SuppressWarnings("unused")
 public abstract class ParentTestType {
 
     private final String parentField = "parentField";
