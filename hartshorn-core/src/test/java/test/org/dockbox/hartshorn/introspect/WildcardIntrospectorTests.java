@@ -160,6 +160,7 @@ public class WildcardIntrospectorTests {
         Assertions.assertFalse(view.isEnum());
         Assertions.assertFalse(view.isAnnotation());
         Assertions.assertFalse(view.isInterface());
+        Assertions.assertFalse(view.isRecord());
     }
 
     @Test
