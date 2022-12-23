@@ -2,6 +2,20 @@ name: Hartshorn
 
 on: pull_request
 
+# ┌───────────────┐     ┌──────────────┐     ┌───────────────┐
+# │ License check │  →  │   Build all  │  →  │   Build all   │
+# └───────────────┘     │ (JDK source) │     │  (JDK target) │
+#                       └──────────────┘     └───────────────┘
+#                               ↓                    ↓
+#                       ┌──────────────┐     ┌───────────────┐
+#                       │   Test all   │  →  │    Test all   │
+#                       │ (JDK source) │     │  (JDK target) │
+#                       └──────────────┘     └───────────────┘
+#                               ↓
+#                      ┌─────────────────┐
+#                      │ Module coverage │
+#                      │   (JDK source)  │
+#                      └─────────────────┘
 jobs:
   license:
     name: License check
