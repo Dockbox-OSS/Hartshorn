@@ -467,4 +467,72 @@ public class ReflectTests {
         Assertions.assertTrue(second.is(String.class));
         Assertions.assertFalse(second.isWildcard());
     }
+
+    @Test
+    void concreteClassIsCorrectlyIdentified() {
+        final TypeView<ConcreteClass> type = this.introspector.introspect(ConcreteClass.class);
+        Assertions.assertFalse(type.isAbstract());
+        Assertions.assertFalse(type.isInterface());
+        Assertions.assertFalse(type.isRecord());
+        Assertions.assertFalse(type.isEnum());
+        Assertions.assertFalse(type.isAnnotation());
+    }
+
+    @Test
+    void abstractClassIsCorrectlyIdentified() {
+        final TypeView<AbstractClass> type = this.introspector.introspect(AbstractClass.class);
+        Assertions.assertTrue(type.isAbstract());
+        Assertions.assertFalse(type.isInterface());
+        Assertions.assertFalse(type.isRecord());
+        Assertions.assertFalse(type.isEnum());
+        Assertions.assertFalse(type.isAnnotation());
+    }
+
+    @Test
+    void interfaceIsCorrectlyIdentified() {
+        final TypeView<Interface> type = this.introspector.introspect(Interface.class);
+        Assertions.assertTrue(type.isAbstract());
+        Assertions.assertTrue(type.isInterface());
+        Assertions.assertFalse(type.isRecord());
+        Assertions.assertFalse(type.isEnum());
+        Assertions.assertFalse(type.isAnnotation());
+    }
+
+    @Test
+    void recordIsCorrectlyIdentified() {
+        final TypeView<RecordType> type = this.introspector.introspect(RecordType.class);
+        Assertions.assertFalse(type.isAbstract());
+        Assertions.assertFalse(type.isInterface());
+        Assertions.assertTrue(type.isRecord());
+        Assertions.assertFalse(type.isEnum());
+        Assertions.assertFalse(type.isAnnotation());
+    }
+
+    @Test
+    void enumIsCorrectlyIdentified() {
+        final TypeView<EnumType> type = this.introspector.introspect(EnumType.class);
+        Assertions.assertFalse(type.isAbstract());
+        Assertions.assertFalse(type.isInterface());
+        Assertions.assertFalse(type.isRecord());
+        Assertions.assertTrue(type.isEnum());
+        Assertions.assertFalse(type.isAnnotation());
+    }
+
+    @Test
+    void annotationIsCorrectlyIdentified() {
+        final TypeView<AnnotationType> type = this.introspector.introspect(AnnotationType.class);
+        Assertions.assertTrue(type.isAbstract());
+        Assertions.assertTrue(type.isInterface());
+        Assertions.assertFalse(type.isRecord());
+        Assertions.assertFalse(type.isEnum());
+        Assertions.assertTrue(type.isAnnotation());
+    }
+
+    private static class ConcreteClass {}
+    private abstract static class AbstractClass {}
+    private interface Interface {}
+    private record RecordType() {}
+    private enum EnumType {}
+    private @interface AnnotationType {}
+
 }
