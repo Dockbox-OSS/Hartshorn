@@ -103,20 +103,6 @@ jobs:
     needs: [testSource]
     strategy:
       fail-fast: false
-      matrix:
-        module: [
-          "cache",
-          "commands",
-          "config",
-          "core",
-          "events",
-          "hsl",
-          "i18n",
-          "jpa",
-          "reporting",
-          "test-suite",
-          "web",
-        ]
     name: Code coverage
     runs-on: ubuntu-latest
     steps:
@@ -128,16 +114,16 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Run tests
-        run: ./gradlew :hartshorn-${{ matrix.module }}:test
+        run: ./gradlew test
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
         with:
-          title: "Code coverage: ${{ matrix.module }}"
+          title: Code coverage
           update-comment: true
-          paths: ${{ github.workspace }}/hartshorn-${{ matrix.module }}/build/reports/jacoco/test/jacocoTestReport.xml
+          paths: ${{ github.workspace }}/hartshorn-cache/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-commands/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-config/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-core/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-events/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-hsl/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-i18n/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-jpa/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-reporting/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hartshorn-web/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80
       - name: Verify coverage report
-        run: ./gradlew :hartshorn-${{ matrix.module }}:jacocoTestCoverageVerification
+        run: ./gradlew jacocoTestCoverageVerification

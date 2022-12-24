@@ -219,14 +219,6 @@ allprojects {
             }
         }
 
-        jacocoTestReport {
-            reports {
-                csv.required.set(false)
-                xml.required.set(true)
-                html.required.set(true)
-            }
-        }
-
         jacocoTestCoverageVerification {
             dependsOn(jacocoTestReport)
             violationRules {
