@@ -32,6 +32,11 @@ public abstract class ContextCarrierEvent extends DefaultApplicationAwareContext
     }
 
     @Override
+    protected boolean permitNullableApplicationContext() {
+        return true;
+    }
+
+    @Override
     public ApplicationContext applicationContext() {
         if (this.context == null) {
             throw new EventNotEnhancedException(this);

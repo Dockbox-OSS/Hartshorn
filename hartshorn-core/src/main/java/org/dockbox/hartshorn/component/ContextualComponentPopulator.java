@@ -112,7 +112,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
         if (field.annotations().has(Named.class)) beanKey = beanKey.mut().name(field.annotations().get(Named.class).get()).build();
 
-        final BeanContext beanContext = this.applicationContext().first(BeanContext.class).get();
+        final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);
         final Option<?> initialValue = field.get(instance);
         final Collection<?> transform = CollectionUtilities.transform(beans,
@@ -128,11 +128,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final TypeView<?> type = field.type();
         final org.dockbox.hartshorn.inject.Context annotation = field.annotations().get(org.dockbox.hartshorn.inject.Context.class).get();
 
-        ContextKey<Context> contextKey = ContextKey.of(TypeUtils.adjustWildcards(type.type(), Class.class));
+        if (!type.isChildOf(Context.class)) {
+            throw new IllegalStateException("Field " + field.name() + " in " + field.declaredBy().name() + " is annotated with @Context but is not a Context");
+        }
+        ContextKey<? extends Context> contextKey = ContextKey.of((TypeView<? extends Context>) type);
         if (StringUtilities.notEmpty(annotation.value())) {
             contextKey = contextKey.mutable().name(annotation.value()).build();
         }
-        final Option<Context> context = this.applicationContext().first(contextKey);
+        final Option<? extends Context> context = this.applicationContext().first(contextKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)

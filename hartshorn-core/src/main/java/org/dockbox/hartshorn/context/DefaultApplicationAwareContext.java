@@ -23,8 +23,26 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
 
     private final ApplicationContext applicationContext;
 
-    public DefaultApplicationAwareContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @SuppressWarnings({ "OverridableMethodCallDuringObjectConstruction", "InstanceofThis" })
+    protected DefaultApplicationAwareContext(final ApplicationContext applicationContext) {
+        if (applicationContext != null) {
+            this.applicationContext = applicationContext;
+        }
+        else {
+            if (this instanceof ApplicationContext self) {
+                this.applicationContext = self;
+            }
+            else if (!this.permitNullableApplicationContext()) {
+                throw new IllegalStateException("No application context available");
+            }
+            else {
+                this.applicationContext = null;
+            }
+        }
+    }
+
+    protected boolean permitNullableApplicationContext() {
+        return false;
     }
 
     @Override
@@ -34,6 +52,6 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
 
     @Override
     public <C extends Context> Option<C> first(final ContextKey<C> key) {
-        return super.first(key).orCompute(() -> key.fallback().apply(this.applicationContext));
+        return super.first(key).orCompute(() -> key.create(this.applicationContext));
     }
 }

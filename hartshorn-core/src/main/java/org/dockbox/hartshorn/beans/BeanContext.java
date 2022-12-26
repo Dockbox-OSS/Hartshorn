@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.beans;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
@@ -33,6 +34,10 @@ import jakarta.inject.Inject;
 
 @InstallIfAbsent
 public class BeanContext extends DefaultApplicationAwareContext implements BeanCollector, Reportable {
+
+    public static final ContextKey<BeanContext> CONTEXT_KEY = ContextKey.builder(BeanContext.class)
+            .fallback(BeanContext::new)
+            .build();
 
     private final List<BeanReference<?>> beans = new CopyOnWriteArrayList<>();
 

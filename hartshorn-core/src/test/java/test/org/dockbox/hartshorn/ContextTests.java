@@ -153,7 +153,7 @@ public class ContextTests {
         Assertions.assertTrue(first.present());
     }
 
-    static class TestContext extends DefaultApplicationAwareContext {
+    public static class TestContext extends DefaultApplicationAwareContext {
         public TestContext(final ApplicationContext applicationContext) {
             super(applicationContext);
         }
@@ -161,10 +161,10 @@ public class ContextTests {
     }
 
     @InstallIfAbsent
-    static class AutoCreatingContext extends DefaultContext {
+    public static class AutoCreatingContext extends DefaultContext {
     }
 
-    static class NamedTestContext extends DefaultNamedContext {
+    public static class NamedTestContext extends DefaultNamedContext {
 
         static final String NAME = "JUnitContext";
 

@@ -52,6 +52,11 @@ public final class InitializingContext extends DefaultApplicationAwareContext im
         this.configuration = Objects.requireNonNull(builder);
     }
 
+    @Override
+    protected boolean permitNullableApplicationContext() {
+        return true;
+    }
+
     public ApplicationEnvironment environment() {
         return Objects.requireNonNull(this.environment, "Application environment has not been initialized yet");
     }

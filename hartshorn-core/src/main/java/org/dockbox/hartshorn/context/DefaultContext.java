@@ -64,8 +64,10 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> void add(final String name, final C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
-            // TODO, do we want to throw an exception here?
-            throw new IllegalArgumentException("Context name does not match the provided name");
+            throw new IllegalArgumentException(("Context name does not match the provided name. " +
+                    "Context name: %s, provided name: %s. Either use only the name of the context, " +
+                    "or encapsulate the context so the appropriate name is used."
+            ).formatted(named.name(), name));
         }
         else if (context != null) {
             this.namedContexts().put(name, context);

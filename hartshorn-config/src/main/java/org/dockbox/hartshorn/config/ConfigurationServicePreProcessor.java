@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.resource.ClassPathResourceLookupStrategy;
 import org.dockbox.hartshorn.config.resource.MissingSourceException;
 import org.dockbox.hartshorn.config.resource.ResourceLookupStrategy;
-import org.dockbox.hartshorn.context.ContextKey;
 
 import java.net.URI;
 import java.util.Map;
@@ -106,10 +105,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
             context.log().warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
         }
 
-        final ContextKey<ConfigurationURIContextList> URIContextKey = ContextKey.builder(ConfigurationURIContextList.class)
-                .fallback(ConfigurationURIContextList::new)
-                .build();
-        final ConfigurationURIContextList uriContextList = context.first(URIContextKey).get();
+        final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
         for (final URI uri : config) {
             final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, matchedSource, strategy);
             uriContextList.add(uriContext);
