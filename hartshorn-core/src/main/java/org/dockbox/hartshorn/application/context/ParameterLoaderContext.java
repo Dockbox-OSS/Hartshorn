@@ -74,7 +74,7 @@ public class ParameterLoaderContext extends DefaultContext implements ContextCar
             public <T> T get(final ComponentKey<T> key) {
                 final ParameterLoaderContext self = ParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
-                if (key.scope() == Scope.DEFAULT_SCOPE) return self.provider.get(key.mut().scope(self.scope).build());
+                if (key.scope() == Scope.DEFAULT_SCOPE) return self.provider.get(key.mutable().scope(self.scope).build());
                 return self.provider.get(key);
             }
         };

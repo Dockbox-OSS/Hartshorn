@@ -86,12 +86,12 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private <T> void populateObjectField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
         ComponentKey<?> fieldKey = ComponentKey.of(field.type().type());
-        if (field.annotations().has(Named.class)) fieldKey = fieldKey.mut().name(field.annotations().get(Named.class).get()).build();
+        if (field.annotations().has(Named.class)) fieldKey = fieldKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
         final Option<Enable> enableAnnotation = field.annotations().get(Enable.class);
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
-        final ComponentKey<?> componentKey = fieldKey.mut().enable(enable).build();
+        final ComponentKey<?> componentKey = fieldKey.mutable().enable(enable).build();
         final Object fieldInstance = this.applicationContext().get(componentKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
@@ -110,7 +110,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             throw new IllegalStateException("Unable to determine bean type for field " + field.name() + " in " + type.name());
         }
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
-        if (field.annotations().has(Named.class)) beanKey = beanKey.mut().name(field.annotations().get(Named.class).get()).build();
+        if (field.annotations().has(Named.class)) beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
         final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);

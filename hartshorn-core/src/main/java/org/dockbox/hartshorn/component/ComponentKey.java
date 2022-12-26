@@ -45,7 +45,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         return ComponentKey.builder(key).name(name).build();
     }
 
-    public Builder<T> mut() {
+    public Builder<T> mutable() {
         return new Builder<>(this);
     }
 
