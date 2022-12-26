@@ -208,7 +208,7 @@ public final class ContextKey<T extends Context> {
      */
     public static class Builder<T extends Context> {
 
-        private Class<T> type;
+        private final Class<T> type;
         private String name;
         private Function<ApplicationContext, T> fallback;
         private boolean requiresApplicationContext;
