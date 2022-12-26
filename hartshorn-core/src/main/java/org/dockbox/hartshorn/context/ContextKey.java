@@ -19,8 +19,10 @@ package org.dockbox.hartshorn.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -193,6 +195,26 @@ public final class ContextKey<T extends Context> {
      */
     public static <T extends Context> Builder<T> builder(final TypeView<T> type) {
         return new Builder<>(type.type());
+    }
+
+    @Override
+    public String toString() {
+        final String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
+        return "ContextKey<%s%s>%s".formatted(this.type.getSimpleName(), nameSuffix,
+                this.requiresApplicationContext() ? " (requires ApplicationContext)" : "");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final ContextKey<?> that = (ContextKey<?>) o;
+        return this.requiresApplicationContext == that.requiresApplicationContext && this.type.equals(that.type) && Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.type, this.name, this.requiresApplicationContext);
     }
 
     /**
