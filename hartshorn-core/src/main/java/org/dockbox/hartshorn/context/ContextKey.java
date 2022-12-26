@@ -63,10 +63,9 @@ public final class ContextKey<T extends Context> {
     }
 
     /**
-     * Gets the name of the context represented by this key. This may be either null or an empty
-     * string if no name was specified. If the context represented by this key is a {@link NamedContext},
-     * it is not ensured that the name of the context is equal to the name of the key. This is only
-     * a recommendation.
+     * Gets the name of the context represented by this key. This is null if no name was defined. If
+     * the context represented by this key is a {@link NamedContext}, it is not ensured that the
+     * name of the context is equal to the name of the key. This is only a recommendation.
      *
      * @return The name of the context represented by this key.
      */
@@ -266,7 +265,7 @@ public final class ContextKey<T extends Context> {
          * @return This builder.
          */
         public Builder<T> name(final String name) {
-            this.name = name;
+            this.name = StringUtilities.nullIfEmpty(name);
             return this;
         }
 

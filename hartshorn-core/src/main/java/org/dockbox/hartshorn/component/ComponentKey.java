@@ -99,8 +99,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         }
 
         public Builder<T> name(final String name) {
-            if (StringUtilities.empty(name)) this.name = null;
-            else this.name = name;
+            this.name = StringUtilities.nullIfEmpty(name);
             return this;
         }
 
