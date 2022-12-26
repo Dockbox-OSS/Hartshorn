@@ -89,8 +89,12 @@ public final class ContextKey<T extends Context> {
      * will be created using the provided application context.
      *
      * <p>If no fallback function is present, this will create or retrieve an instance of the context
-     * from the application context. The intermediate {@link ComponentKey} used for the request will
-     * be scoped to the {@link Scope#DEFAULT_SCOPE default scope}.
+     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
+     * intermediate {@link ComponentKey} used for the request will be scoped to the
+     * {@link Scope#DEFAULT_SCOPE default scope}.
+     *
+     * <p>If the given {@link ApplicationContext} is not null, the created context value will be added
+     * to the application context automatically.
      *
      * @param context The application context to use to create the context value.
      * @return The newly created context value.
@@ -105,8 +109,12 @@ public final class ContextKey<T extends Context> {
      * will be created using the provided application context.
      *
      * <p>If no fallback function is present, this will create or retrieve an instance of the context
-     * from the application context. The intermediate {@link ComponentKey} used for the request will
-     * be scoped to the given {@link Scope scope}.
+     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
+     * intermediate {@link ComponentKey} used for the request will be scoped to the given
+     * {@link Scope scope}.
+     *
+     * <p>If the given {@link ApplicationContext} and the created context value are not null, the
+     * created context value will be added to the application context automatically.
      *
      * @param context The application context to use to create the context value.
      * @param scope The scope to use for the intermediate {@link ComponentKey}.
@@ -117,13 +125,15 @@ public final class ContextKey<T extends Context> {
         if (this.fallback != null) {
             contextInstance = this.fallback.apply(context);
         }
-        else if (context.environment().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
+        else if (context != null && context.environment().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
             contextInstance = context.get(this.componentKey(scope));
         }
         else {
-            throw new IllegalStateException("No supplier or fallback defined for context " + this.type.getSimpleName());
+            throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
         }
-        context.add(contextInstance);
+
+        if (context != null && contextInstance != null) context.add(contextInstance);
+
         return contextInstance;
     }
 
