@@ -49,6 +49,14 @@ public final class StringUtilities {
         return null != value && !value.isEmpty();
     }
 
+    public static String emptyIfNull(final String value) {
+        return null == value ? "" : value;
+    }
+
+    public static String nullIfEmpty(final String value) {
+        return StringUtilities.empty(value) ? null : value;
+    }
+
     public static String strip(final String s) {
         return s.replaceAll("[\n\r ]+", "").trim();
     }

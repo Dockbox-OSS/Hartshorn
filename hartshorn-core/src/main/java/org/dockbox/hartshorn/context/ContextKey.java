@@ -1,0 +1,318 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.context;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link Context}
+ * instance. The key is used to identify the value, and can be used to create a new value if none
+ * exists.
+ *
+ * <p>Context keys do not have to be unique, but it is recommended to re-use the same unique key to
+ * retrieve the same value. This is not enforced, but can be useful to avoid unexpected behavior when
+ * using default values.
+ *
+ * @param <T> The type of the value.
+ *
+ * @author Guus Lieben
+ * @since 23.1
+ */
+public final class ContextKey<T extends Context> {
+
+    private final Class<T> type;
+    private final String name;
+    private final Function<ApplicationContext, T> fallback;
+    private final boolean requiresApplicationContext;
+
+    private ContextKey(final Builder<T> builder) {
+        this.type = builder.type;
+        this.name = builder.name;
+        this.fallback = builder.fallback;
+        this.requiresApplicationContext = builder.requiresApplicationContext;
+    }
+
+    /**
+     * Gets the type of the context represented by this key.
+     * @return The type of the context represented by this key.
+     */
+    public Class<T> type() {
+        return this.type;
+    }
+
+    /**
+     * Gets the name of the context represented by this key. This is null if no name was defined. If
+     * the context represented by this key is a {@link NamedContext}, it is not ensured that the
+     * name of the context is equal to the name of the key. This is only a recommendation.
+     *
+     * @return The name of the context represented by this key.
+     */
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Indicates whether the fallback function of this key requires a {@link ApplicationContext} to
+     * be present. If there is no explicit fallback function, this will always return true.
+     *
+     * @return {@code true} if the fallback function of this key requires a {@link ApplicationContext}.
+     */
+    public boolean requiresApplicationContext() {
+        return this.fallback == null || this.requiresApplicationContext;
+    }
+
+    /**
+     * Creates a new context value for this key. If a fallback function is present, it will be used
+     * to create the value. If no fallback function is present, a new instance of the context type
+     * will be created using the provided application context.
+     *
+     * <p>If no fallback function is present, this will create or retrieve an instance of the context
+     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
+     * intermediate {@link ComponentKey} used for the request will be scoped to the
+     * {@link Scope#DEFAULT_SCOPE default scope}.
+     *
+     * @param context The application context to use to create the context value.
+     * @return The newly created context value.
+     */
+    public T create(final ApplicationContext context) {
+        return this.create(context, Scope.DEFAULT_SCOPE);
+    }
+
+    /**
+     * Creates a new context value for this key. If a fallback function is present, it will be used
+     * to create the value. If no fallback function is present, a new instance of the context type
+     * will be created using the provided application context.
+     *
+     * <p>If no fallback function is present, this will create or retrieve an instance of the context
+     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
+     * intermediate {@link ComponentKey} used for the request will be scoped to the given
+     * {@link Scope scope}.
+     *
+     * @param context The application context to use to create the context value.
+     * @param scope The scope to use for the intermediate {@link ComponentKey}.
+     * @return The newly created context value.
+     */
+    public T create(final ApplicationContext context, final Scope scope) {
+        final T contextInstance;
+        if (this.fallback != null) {
+            contextInstance = this.fallback.apply(context);
+        }
+        else if (context != null && context.environment().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
+            contextInstance = context.get(this.componentKey(scope));
+        }
+        else {
+            throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
+        }
+
+        return contextInstance;
+    }
+
+    /**
+     * Creates a new {@link ComponentKey} for the context type of this key. The component key
+     * will be scoped to the given {@link Scope scope}.
+     *
+     * @param scope The scope to use for the {@link ComponentKey}.
+     * @return The newly created {@link ComponentKey}.
+     */
+    public ComponentKey<T> componentKey(final Scope scope) {
+        final ComponentKey.Builder<T> builder = ComponentKey.builder(this.type).scope(scope);
+        if (this.name != null) builder.name(this.name);
+        return builder.build();
+    }
+
+    /**
+     * Creates a new (mutable) {@link Builder key builder} which is populated with the values
+     * of this key. This will allow for the creation of a new key based on the values of this key.
+     * The builder can be used to modify the values of the new key, but will never modify the values
+     * of this key.
+     *
+     * @return A new (mutable) {@link Builder key builder} which is populated with the values of this key.
+     */
+    public Builder<T> mutable() {
+        return new Builder<>(this);
+    }
+
+    /**
+     * Creates a new {@link ContextKey key} which is bound to the given type.
+     *
+     * @param type The type of the context represented by the key.
+     * @return A new {@link ContextKey key} which is bound to the given type.
+     * @param <T> The type of the context represented by the key.
+     */
+    public static <T extends Context> ContextKey<T> of(final Class<T> type) {
+        return builder(type).build();
+    }
+
+    /**
+     * Creates a new {@link ContextKey key} which is bound to the given type.
+     *
+     * @param type The type of the context represented by the key.
+     * @return A new {@link ContextKey key} which is bound to the given type.
+     * @param <T> The type of the context represented by the key.
+     */
+    public static <T extends Context> ContextKey<T> of(final TypeView<T> type) {
+        return builder(type).build();
+    }
+
+    /**
+     * Creates a new {@link Builder key builder} which is bound to the given type and name.
+     *
+     * @param type The type of the context represented by the key.
+     * @return A new {@link Builder key builder} which is bound to the given type and name.
+     * @param <T> The type of the context represented by the key.
+     */
+    public static <T extends Context> Builder<T> builder(final Class<T> type) {
+        return new Builder<>(type);
+    }
+
+    /**
+     * Creates a new {@link Builder key builder} which is bound to the given type and name.
+     *
+     * @param type The type of the context represented by the key.
+     * @return A new {@link Builder key builder} which is bound to the given type and name.
+     * @param <T> The type of the context represented by the key.
+     */
+    public static <T extends Context> Builder<T> builder(final TypeView<T> type) {
+        return new Builder<>(type.type());
+    }
+
+    @Override
+    public String toString() {
+        final String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
+        return "ContextKey<%s%s>%s".formatted(this.type.getSimpleName(), nameSuffix,
+                this.requiresApplicationContext() ? " (requires ApplicationContext)" : "");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final ContextKey<?> that = (ContextKey<?>) o;
+        return this.requiresApplicationContext == that.requiresApplicationContext && this.type.equals(that.type) && Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.type, this.name, this.requiresApplicationContext);
+    }
+
+    /**
+     * A mutable builder for {@link ContextKey keys}.
+     *
+     * @param <T> The type of the context represented by the key.
+     * @see ContextKey#mutable()
+     * @see ContextKey#builder(Class)
+     * @see ContextKey#builder(TypeView)
+     *
+     * @author Guus Lieben
+     * @since 23.1
+     */
+    public static class Builder<T extends Context> {
+
+        private final Class<T> type;
+        private String name;
+        private Function<ApplicationContext, T> fallback;
+        private boolean requiresApplicationContext;
+
+        /**
+         * Creates a new (mutable) {@link Builder key builder} which is populated with the values
+         * of the given key. This will allow for the creation of a new key based on the values of
+         * the given key. The builder can be used to modify the values of the new key, but will
+         * never modify the values of the given key.
+         *
+         * @param key The key to copy the values from.
+         */
+        public Builder(final ContextKey<T> key) {
+            this.type = key.type();
+            this.name = key.name();
+            this.fallback = key.fallback;
+        }
+
+        /**
+         * Creates a new (mutable) {@link Builder key builder} which is bound to the given type.
+         *
+         * @param type The type of the context represented by the key.
+         */
+        public Builder(final Class<T> type) {
+            this.type = type;
+        }
+
+        /**
+         * Sets the name of the context represented by the key. This may be empty or {@code null}
+         * if the context is not named.
+         *
+         * @param name The name of the context represented by the key.
+         * @return This builder.
+         */
+        public Builder<T> name(final String name) {
+            this.name = StringUtilities.nullIfEmpty(name);
+            return this;
+        }
+
+        /**
+         * Sets the fallback function to use to create the context value. This function can be
+         * used to create the context value if it did not exist in a context on which the key
+         * is used. This supplier will indicate that the context key will not require an
+         * {@link ApplicationContext} to be provided when creating the context value.
+         *
+         * @param fallback The fallback function to use to create the context value.
+         * @return This builder.
+         *
+         * @see ContextKey#create(ApplicationContext)
+         * @see ContextKey#create(ApplicationContext, Scope)
+         */
+        public Builder<T> fallback(final Supplier<T> fallback) {
+            this.fallback = applicationContext -> fallback.get();
+            this.requiresApplicationContext = false;
+            return this;
+        }
+
+        /**
+         * Sets the fallback function to use to create the context value. This function can be
+         * used to create the context value if it did not exist in a context on which the key
+         * is used.
+         *
+         * @param fallback The fallback function to use to create the context value.
+         * @return This builder.
+         *
+         * @see ContextKey#create(ApplicationContext)
+         * @see ContextKey#create(ApplicationContext, Scope)
+         */
+        public Builder<T> fallback(final Function<ApplicationContext, T> fallback) {
+            this.fallback = fallback;
+            this.requiresApplicationContext = true;
+            return this;
+        }
+
+        /**
+         * Creates a new {@link ContextKey key} based on the values of this builder.
+         *
+         * @return A new {@link ContextKey key} based on the values of this builder.
+         */
+        public ContextKey<T> build() {
+            return new ContextKey<>(this);
+        }
+    }
+}

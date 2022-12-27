@@ -52,7 +52,7 @@ public class BeanTests {
 
     @Test
     void testBeanRegistrationCreatesValidReference() {
-        final BeanCollector beanContext = this.applicationContext.first(BeanContext.class).get();
+        final BeanCollector beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
         final BeanReference<String> reference = beanContext.register("John Doe", String.class, "names");
 
         Assertions.assertEquals("John Doe", reference.bean());
@@ -62,7 +62,7 @@ public class BeanTests {
 
     @Test
     void testBeanRegistrationCanBeProvided() {
-        final BeanCollector beanContext = this.applicationContext.first(BeanContext.class).get();
+        final BeanCollector beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
         beanContext.register(String.class, List.of("John", "Jane", "Joe"), "names");
 
         final BeanProvider beanProvider = this.applicationContext.get(BeanProvider.class);
@@ -77,7 +77,7 @@ public class BeanTests {
     @Test
     @TestComponents(BeanAwareComponent.class)
     void testComponentInjectionWithoutExplicitCollection() {
-        final BeanCollector beanContext = this.applicationContext.first(BeanContext.class).get();
+        final BeanCollector beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
         beanContext.register("Foo", String.class, "names");
         beanContext.register("Bar", String.class, "names");
 
@@ -93,7 +93,7 @@ public class BeanTests {
     @Test
     @TestComponents(BeanAwareComponent.class)
     void testComponentInjectionWithExplicitCollection() {
-        final BeanContext beanContext = this.applicationContext.first(BeanContext.class).get();
+        final BeanContext beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
         beanContext.register(1, Integer.class, "ages");
         beanContext.register(2, Integer.class, "ages");
 
@@ -110,7 +110,7 @@ public class BeanTests {
     @InjectTest
     @TestComponents(BeanService.class)
     void testApplicationHasBeanContext(final ApplicationContext applicationContext) {
-        final Option<BeanContext> beanContext = applicationContext.first(BeanContext.class);
+        final Option<BeanContext> beanContext = applicationContext.first(BeanContext.CONTEXT_KEY);
         Assertions.assertTrue(beanContext.present());
 
         final BeanProvider provider = beanContext.get().provider();

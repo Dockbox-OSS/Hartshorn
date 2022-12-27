@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -211,9 +212,14 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(final String type, final String name, final boolean optional) {
+        final ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
+                .fallback(ArgumentConverterContext::new)
+                .build();
+
         final Option<ArgumentConverter<?>> converter = this.context
-                .first(ArgumentConverterContext.class)
+                .first(argumentConverterContextKey)
                 .flatMap(context -> context.converter(type.toLowerCase()));
+
         if (converter.present()) {
             this.context.log().debug("Found converter for element type " + type);
             return new CommandElementImpl<>(converter.get(), name, optional, converter.get().size());

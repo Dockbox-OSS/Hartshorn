@@ -45,7 +45,7 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
         for (final MethodView<T, ?> method : factoryMethods) {
             final Factory annotation = method.annotations().get(Factory.class).get();
             ComponentKey<?> componentKey = ComponentKey.of(method.returnType());
-            if (!"".equals(annotation.value())) componentKey = componentKey.mut().name(annotation.value()).build();
+            if (!"".equals(annotation.value())) componentKey = componentKey.mutable().name(annotation.value()).build();
 
             if (!lookupMatchingConstructor(context, factoryContext, (MethodView<Object, ?>) method, componentKey)) {
                 if (annotation.required()) throw new MissingFactoryConstructorException(componentKey, method);

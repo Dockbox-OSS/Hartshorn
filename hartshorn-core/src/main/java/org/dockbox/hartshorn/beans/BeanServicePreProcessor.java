@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.beans;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
@@ -36,11 +34,14 @@ import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.List;
+
 public class BeanServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final BeanContext beanContext = context.first(BeanContext.class).get();
+        final BeanContext beanContext = context.first(BeanContext.CONTEXT_KEY).get();
+
         try {
             final TypeView<T> type = processingContext.type();
             final List<FieldView<T, ?>> fields = type.fields().annotatedWith(Bean.class);
@@ -93,7 +94,7 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
     @Override
     public void exit(final ApplicationContext context) {
         final ApplicationEnvironment environment = context.environment();
-        final BeanContext beanContext = context.first(BeanContext.class).get();
+        final BeanContext beanContext = context.first(BeanContext.CONTEXT_KEY).get();
         if (environment instanceof ObservableApplicationEnvironment observable) {
             for (final BeanObserver observer : observable.observers(BeanObserver.class))
                 observer.onBeansCollected(context, beanContext);

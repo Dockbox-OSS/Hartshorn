@@ -24,7 +24,7 @@ public abstract class PropertyAwareComponentPostProcessor extends ComponentPostP
 
     protected void verifyPropertiesAvailable(final ApplicationContext context, final PropertyHolder propertyHolder) {
         if (propertyHolder.properties().isEmpty()) {
-            final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.class).get();
+            final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
             final URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
             configProcessor.process(context, uriContextList.uris());
         }

@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.component.processing.ModifiableComponentProcessingC
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
@@ -76,7 +77,11 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
             throw new IllegalArgumentException("Cannot bind to a different scope");
         }
         final BindingHierarchy<C> hierarchy = this.hierarchy(key);
-        final Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().first(ScopeModuleContext.class, ScopeModuleContext::new);
+
+        final ContextKey<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
+                .fallback(ScopeModuleContext::new)
+                .build();
+        final Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().first(scopeModuleContextKey);
 
         if (scopeModuleContext.absent() && !(this.scope instanceof ApplicationContext)) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");

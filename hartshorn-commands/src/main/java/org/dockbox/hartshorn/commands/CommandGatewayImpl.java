@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -69,7 +70,10 @@ public class CommandGatewayImpl implements CommandGateway {
     @PostConstruct
     public void enable() {
         if (this.extensions.isEmpty()) {
-            final CommandExtensionContext extensionContext = this.context.first(CommandExtensionContext.class).get();
+            final ContextKey<CommandExtensionContext> commandExtensionContextKey = ContextKey.builder(CommandExtensionContext.class)
+                    .fallback(CommandExtensionContext::new)
+                    .build();
+            final CommandExtensionContext extensionContext = this.context.first(commandExtensionContextKey).get();
             for (final CommandExecutorExtension extension : extensionContext.extensions()) {
                 this.context.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
                 this.add(extension);

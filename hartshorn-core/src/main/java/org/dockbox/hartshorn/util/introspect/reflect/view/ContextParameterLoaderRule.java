@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -40,10 +41,11 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
         final ApplicationContext applicationContext = context.applicationContext();
         final String name = parameter.annotations().get(Context.class).map(Context::value).orNull();
 
-        TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
-        final Option<? extends org.dockbox.hartshorn.context.Context> out = StringUtilities.empty(name)
-                ? applicationContext.first(type.type())
-                : applicationContext.first(type.type(), name);
+        final TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
+        ContextKey<? extends org.dockbox.hartshorn.context.Context> key = ContextKey.of(type.type());
+        if (StringUtilities.notEmpty(name)) key = key.mutable().name(name).build();
+
+        final Option<? extends org.dockbox.hartshorn.context.Context> out = applicationContext.first(key);
 
         final boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
                 .map(Required::value)

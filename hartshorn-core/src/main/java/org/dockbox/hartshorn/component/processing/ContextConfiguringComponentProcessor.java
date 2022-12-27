@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.TypeUtils;
 
@@ -27,15 +28,16 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
 
     private final Class<C> contextType;
 
-    public ContextConfiguringComponentProcessor(final Class<C> contextType) {
+    protected ContextConfiguringComponentProcessor(final Class<C> contextType) {
         this.contextType = contextType;
     }
 
     @Override
     public <T> T process(final ApplicationContext context, @Nullable final T instance,
                          final ComponentProcessingContext<T> processingContext) {
+
         if (this.supports(processingContext)) {
-            final C componentContext = processingContext.first(ComponentKey.of(this.contextType))
+            final C componentContext = processingContext.first(ContextKey.of(this.contextType))
                     .orCompute(() -> this.createContext(context, processingContext)).orNull();
 
             if (componentContext != null) {

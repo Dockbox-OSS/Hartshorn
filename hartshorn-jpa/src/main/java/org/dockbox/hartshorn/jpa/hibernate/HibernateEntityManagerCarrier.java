@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
@@ -238,7 +239,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this.hibernateConfiguration.setProperty(HB_DRIVER_CLASS, driver.getCanonicalName());
         this.hibernateConfiguration.setProperty(HB_DIALECT, dialect);
 
-        final List<EntityContext> entityContexts = new ArrayList<>(this.applicationContext().all(EntityContext.class));
+        final List<EntityContext> entityContexts = new ArrayList<>(this.applicationContext().all(ContextKey.of(EntityContext.class)));
         if (entityContexts.isEmpty()) {
             final Collection<TypeView<?>> entities = this.applicationContext.environment().types(Entity.class);
             final EntityContext entityContext = new EntityContext(entities);

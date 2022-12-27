@@ -40,7 +40,7 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
                 .map(Enable::value)
                 .orElse(true));
 
-        final ComponentKey<T> componentKey = key.mut().enable(enable).build();
+        final ComponentKey<T> componentKey = key.mutable().enable(enable).build();
         final T out = context.provider().get(componentKey);
 
         final boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)

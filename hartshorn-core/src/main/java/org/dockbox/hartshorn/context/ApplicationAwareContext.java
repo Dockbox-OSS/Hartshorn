@@ -17,75 +17,11 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.function.Function;
-
+/**
+ * A {@link Context} which is aware of the {@link ApplicationContext} it is
+ * contained within. This is only a marker interface, and does not provide any
+ * additional functionality.
+ */
 public interface ApplicationAwareContext extends Context, ContextCarrier {
-
-    /**
-     * Returns the first context of the given type. If it doesn't exist, but the context is annotated with
-     * {@link InstallIfAbsent}, it will be created using the provided
-     * {@link ApplicationContext}.
-     *
-     * @param context The type of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type.
-     */
-    @Override
-    <C extends Context> Option<C> first(Class<C> context);
-
-    /**
-     * Returns the first context of the given type and name. If it doesn't exist, but the context is annotated with
-     * {@link InstallIfAbsent}, it will be created using the provided
-     * {@link ApplicationContext}.
-     *
-     * @param context The type of the context.
-     * @param name The name of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type and name.
-     */
-    @Override
-    <C extends Context> Option<C> first(Class<C> context, String name);
-
-    /**
-     * Returns the first context of the given type and name, which are represented by the given key. If it doesn't exist,
-     * but the context is annotated with {@link InstallIfAbsent}, it will be
-     * created using the provided {@link ApplicationContext}.
-     *
-     * @param context The key of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type and name.
-     */
-    @Override
-    <C extends Context> Option<C> first(ComponentKey<C> context);
-
-    /**
-     * Returns the first context of the given type.
-     *
-     * @param context The type of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type.
-     */
-    <C extends Context> Option<C> first(Class<C> context, Function<ApplicationContext, C> fallback);
-
-    /**
-     * Returns the first context of the given type and name.
-     *
-     * @param context The type of the context.
-     * @param name The name of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type and name.
-     */
-    <C extends Context> Option<C> first(Class<C> context, String name, Function<ApplicationContext, C> fallback);
-
-    /**
-     * Returns the first context of the given type and name, which are represented by the given key.
-     *
-     * @param context The key of the context.
-     * @param <C> The type of the context.
-     * @return The first context of the given type and name.
-     */
-    <C extends Context> Option<C> first(ComponentKey<C> context, Function<ApplicationContext, C> fallback);
 }

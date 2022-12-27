@@ -31,7 +31,7 @@ public class ContextMethodPostProcessor extends ServiceAnnotatedMethodIntercepto
             final String name = annotation.value();
 
             ComponentKey<?> key = ComponentKey.of(methodContext.method().returnType());
-            if (!name.isEmpty()) key = key.mut().name(name).build();
+            if (!name.isEmpty()) key = key.mutable().name(name).build();
             return interceptorContext.checkedCast(context.get(key));
         };
     }

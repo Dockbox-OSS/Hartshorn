@@ -16,19 +16,20 @@
 
 package test.org.dockbox.hartshorn;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import jakarta.inject.Inject;
 
@@ -45,7 +46,8 @@ public class ContextTests {
 
         context.add(child);
 
-        final Option<TestContext> first = context.first(TestContext.class);
+        final ContextKey<TestContext> key = ContextKey.of(TestContext.class);
+        final Option<TestContext> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -57,7 +59,8 @@ public class ContextTests {
 
         context.add(child);
 
-        final List<TestContext> all = context.all(TestContext.class);
+        final ContextKey<TestContext> key = ContextKey.of(TestContext.class);
+        final List<TestContext> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -69,7 +72,8 @@ public class ContextTests {
 
         context.add(named);
 
-        final Option<Context> first = context.first(NamedTestContext.NAME);
+        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final Option<Context> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -81,7 +85,8 @@ public class ContextTests {
 
         context.add(named);
 
-        final Option<NamedTestContext> first = context.first(NamedTestContext.NAME, NamedTestContext.class);
+        final ContextKey<NamedTestContext> key = ContextKey.builder(NamedTestContext.class).name(NamedTestContext.NAME).build();
+        final Option<NamedTestContext> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -93,7 +98,8 @@ public class ContextTests {
 
         context.add(NamedTestContext.NAME, child);
 
-        final Option<Context> first = context.first(NamedTestContext.NAME);
+        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final Option<Context> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -105,7 +111,8 @@ public class ContextTests {
 
         context.add(named);
 
-        final List<Context> all = context.all(NamedTestContext.NAME);
+        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final List<Context> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -117,7 +124,8 @@ public class ContextTests {
 
         context.add(named);
 
-        final List<NamedTestContext> all = context.all(NamedTestContext.NAME, NamedTestContext.class);
+        final ContextKey<NamedTestContext> key = ContextKey.builder(NamedTestContext.class).name(NamedTestContext.NAME).build();
+        final List<NamedTestContext> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -129,7 +137,8 @@ public class ContextTests {
 
         context.add(NamedTestContext.NAME, child);
 
-        final List<Context> all = context.all(NamedTestContext.NAME);
+        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final List<Context> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -137,21 +146,25 @@ public class ContextTests {
     @Test
     void testAutoCreatingContext() {
         final ApplicationAwareContext context = new TestContext(this.applicationContext);
-        final Option<AutoCreatingContext> first = context.first(AutoCreatingContext.class);
+        final ContextKey<AutoCreatingContext> key = ContextKey.builder(AutoCreatingContext.class)
+                .fallback(AutoCreatingContext::new)
+                .build();
+        final Option<AutoCreatingContext> first = context.first(key);
         Assertions.assertTrue(first.present());
     }
 
-    static class TestContext extends DefaultApplicationAwareContext {
+    public static class TestContext extends DefaultApplicationAwareContext {
         public TestContext(final ApplicationContext applicationContext) {
             super(applicationContext);
         }
+
     }
 
     @InstallIfAbsent
-    static class AutoCreatingContext extends DefaultContext {
+    public static class AutoCreatingContext extends DefaultContext {
     }
 
-    static class NamedTestContext extends DefaultNamedContext {
+    public static class NamedTestContext extends DefaultNamedContext {
 
         static final String NAME = "JUnitContext";
 

@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 import java.util.List;
 
@@ -38,11 +40,19 @@ public class CommandBeanListener implements BeanObserver {
     public void onBeansCollected(final ApplicationContext applicationContext, final BeanContext beanContext) {
         final BeanProvider provider = beanContext.provider();
 
-        final List<ArgumentConverter> argumentConverters = provider.all(ArgumentConverter.class);
-        final ArgumentConverterContext converterContext = applicationContext.first(ArgumentConverterContext.class).get();
+        final List<ArgumentConverter<?>> argumentConverters = TypeUtils.adjustWildcards(provider.all(ArgumentConverter.class), List.class);
+        final ContextKey<ArgumentConverterContext> converterContextContextKey = ContextKey.builder(ArgumentConverterContext.class)
+                .fallback(ArgumentConverterContext::new)
+                .build();
+
+        final ArgumentConverterContext converterContext = applicationContext.first(converterContextContextKey).get();
         argumentConverters.forEach(converterContext::register);
 
-        final CommandExtensionContext extensionContext = applicationContext.first(CommandExtensionContext.class).get(); // This will fail, as bindings aren't available here yet..
+        final ContextKey<CommandExtensionContext> commandExtensionContextKey = ContextKey.builder(CommandExtensionContext.class)
+                .fallback(CommandExtensionContext::new)
+                .build();
+        final CommandExtensionContext extensionContext = applicationContext.first(commandExtensionContextKey).get();
+
         for (final CommandExecutorExtension extension : provider.all(CommandExecutorExtension.class)) {
             applicationContext.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
             extensionContext.add(extension);

@@ -39,7 +39,7 @@ public class ConditionMatcherEventExecutionFilter extends DefaultContext impleme
     }
 
     private Context[] matcherContexts(final Event event, final EventWrapper wrapper) {
-        final Set<Context> contexts = new HashSet<>(this.contexts);
+        final Set<Context> contexts = new HashSet<>(this.unnamedContexts());
         if (this.first(ProvidedParameterContext.class).absent()) {
             if (wrapper.method().parameters().count() != 1) {
                 throw new IllegalArgumentException("Method " + wrapper.method() + " has " + wrapper.method().parameters().count() + " parameters, but only one is allowed");

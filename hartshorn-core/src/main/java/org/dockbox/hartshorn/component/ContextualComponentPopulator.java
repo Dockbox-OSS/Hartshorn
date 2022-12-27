@@ -20,11 +20,13 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -84,12 +86,12 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private <T> void populateObjectField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
         ComponentKey<?> fieldKey = ComponentKey.of(field.type().type());
-        if (field.annotations().has(Named.class)) fieldKey = fieldKey.mut().name(field.annotations().get(Named.class).get()).build();
+        if (field.annotations().has(Named.class)) fieldKey = fieldKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
         final Option<Enable> enableAnnotation = field.annotations().get(Enable.class);
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
-        final ComponentKey<?> componentKey = fieldKey.mut().enable(enable).build();
+        final ComponentKey<?> componentKey = fieldKey.mutable().enable(enable).build();
         final Object fieldInstance = this.applicationContext().get(componentKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
@@ -108,9 +110,9 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             throw new IllegalStateException("Unable to determine bean type for field " + field.name() + " in " + type.name());
         }
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
-        if (field.annotations().has(Named.class)) beanKey = beanKey.mut().name(field.annotations().get(Named.class).get()).build();
+        if (field.annotations().has(Named.class)) beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
-        final BeanContext beanContext = this.applicationContext().first(BeanContext.class).get();
+        final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);
         final Option<?> initialValue = field.get(instance);
         final Collection<?> transform = CollectionUtilities.transform(beans,
@@ -126,13 +128,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final TypeView<?> type = field.type();
         final org.dockbox.hartshorn.inject.Context annotation = field.annotations().get(org.dockbox.hartshorn.inject.Context.class).get();
 
-        final Option<Context> context;
-        if ("".equals(annotation.value())) {
-            context = this.applicationContext().first(TypeUtils.adjustWildcards(type.type(), Class.class));
+        if (!type.isChildOf(Context.class)) {
+            throw new IllegalStateException("Field " + field.name() + " in " + field.declaredBy().name() + " is annotated with @Context but is not a Context");
         }
-        else {
-            context = this.applicationContext().first(annotation.value(), TypeUtils.adjustWildcards(type.type(), Class.class));
+        ContextKey<? extends Context> contextKey = ContextKey.of((TypeView<? extends Context>) type);
+        if (StringUtilities.notEmpty(annotation.value())) {
+            contextKey = contextKey.mutable().name(annotation.value()).build();
         }
+        final Option<? extends Context> context = this.applicationContext().first(contextKey);
 
         final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
                 .map(Required::value)
