@@ -85,10 +85,12 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> Option<C> first(final ContextKey<C> key) {
         return Option.of(this.stream(key).findFirst())
-                .orCompute(() -> key.requiresApplicationContext()
-                        ? null
-                        : key.create(null)
-                );
+                .orCompute(() -> {
+                    if (key.requiresApplicationContext()) return null;
+                    final C context = key.create(null);
+                    this.add(context);
+                    return context;
+                });
     }
 
     @Override

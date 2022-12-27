@@ -52,6 +52,10 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
 
     @Override
     public <C extends Context> Option<C> first(final ContextKey<C> key) {
-        return super.first(key).orCompute(() -> key.create(this.applicationContext));
+        return super.first(key).orCompute(() -> {
+            final C context = key.create(this.applicationContext);
+            this.add(context);
+            return context;
+        });
     }
 }

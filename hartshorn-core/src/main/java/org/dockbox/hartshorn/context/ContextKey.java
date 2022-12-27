@@ -93,9 +93,6 @@ public final class ContextKey<T extends Context> {
      * intermediate {@link ComponentKey} used for the request will be scoped to the
      * {@link Scope#DEFAULT_SCOPE default scope}.
      *
-     * <p>If the given {@link ApplicationContext} is not null, the created context value will be added
-     * to the application context automatically.
-     *
      * @param context The application context to use to create the context value.
      * @return The newly created context value.
      */
@@ -113,9 +110,6 @@ public final class ContextKey<T extends Context> {
      * intermediate {@link ComponentKey} used for the request will be scoped to the given
      * {@link Scope scope}.
      *
-     * <p>If the given {@link ApplicationContext} and the created context value are not null, the
-     * created context value will be added to the application context automatically.
-     *
      * @param context The application context to use to create the context value.
      * @param scope The scope to use for the intermediate {@link ComponentKey}.
      * @return The newly created context value.
@@ -131,8 +125,6 @@ public final class ContextKey<T extends Context> {
         else {
             throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
         }
-
-        if (context != null && contextInstance != null) context.add(contextInstance);
 
         return contextInstance;
     }

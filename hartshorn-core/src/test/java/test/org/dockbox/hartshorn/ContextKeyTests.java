@@ -20,8 +20,6 @@ import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -96,46 +94,4 @@ public class ContextKeyTests {
         Assertions.assertNull(key.name());
         Assertions.assertEquals("mutable", mutableKey.name());
     }
-
-    @Test
-    void testContextRegistersContextAutomaticallyIfFunctionFallbackNonNull() {
-        final ContextKey<TestContext> key = ContextKey.builder(TestContext.class)
-                .fallback(applicationContext -> new TestContext() {})
-                .build();
-
-        final ApplicationContext applicationContext = HartshornApplication.create();
-        final TestContext context = key.create(applicationContext);
-
-        Assertions.assertNotNull(context);
-        Assertions.assertTrue(applicationContext.all().contains(context));
-
-        final Option<TestContext> option = applicationContext.first(key);
-        Assertions.assertTrue(option.present());
-        Assertions.assertSame(context, option.get());
-    }
-
-    @Test
-    void testContextRegistersContextAutomaticallyIfSupplierFallbackNonNull() {
-        final ContextKey<TestContext> key = ContextKey.builder(TestContext.class)
-                .fallback(() -> new TestContext() {})
-                .build();
-
-        final ApplicationContext applicationContext = HartshornApplication.create();
-        final TestContext context = key.create(applicationContext);
-
-        Assertions.assertNotNull(context);
-        Assertions.assertTrue(applicationContext.all().contains(context));
-
-        final Option<TestContext> option = applicationContext.first(key);
-        Assertions.assertTrue(option.present());
-        Assertions.assertSame(context, option.get());
-    }
-
-    /**
-     * This test ensures that the {@link ContextKey} is able to create a new instance without
-     * accidentally matching a pre-existing {@link Context} instance in the application context
-     * (like the {@link org.dockbox.hartshorn.beans.BeanContext} or
-     * {@link org.dockbox.hartshorn.application.ServiceActivatorContext}.
-     */
-    private static class TestContext extends DefaultContext {}
 }
