@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.Resources;
+import org.dockbox.hartshorn.util.resources.Resources;
 import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.io.File;

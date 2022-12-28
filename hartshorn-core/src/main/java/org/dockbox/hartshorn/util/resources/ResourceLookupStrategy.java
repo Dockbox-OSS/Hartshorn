@@ -14,33 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 import java.net.URI;
+import java.util.Set;
 
-public class ConfigurationURIContext {
+/**
+ * Defines how a resource is looked up when using
+ */
+public interface ResourceLookupStrategy {
 
-    private final URI uri;
-    private final ComponentKey<?> key;
-    private final String source;
+    String name();
 
-    public ConfigurationURIContext(final URI uri, final ComponentKey<?> key, final String source) {
-        this.uri = uri;
-        this.key = key;
-        this.source = source;
-    }
+    Set<URI> lookup(ApplicationContext context, String path);
 
-    public URI uri() {
-        return this.uri;
-    }
-
-    public ComponentKey<?> key() {
-        return this.key;
-    }
-
-    public String source() {
-        return this.source;
-    }
+    URI baseUrl(ApplicationContext context);
 }
