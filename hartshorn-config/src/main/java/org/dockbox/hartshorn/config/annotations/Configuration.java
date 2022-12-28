@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.config.annotations;
 import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.config.resource.ClassPathResourceLookupStrategy;
-import org.dockbox.hartshorn.config.resource.ResourceLookupStrategy;
+import org.dockbox.hartshorn.util.resources.ClassPathResourceLookupStrategy;
+import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

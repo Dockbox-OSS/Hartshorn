@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.resource;
+package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 

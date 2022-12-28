@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.resource.ResourceLookupStrategy;
 
 import java.io.File;
 import java.net.URI;
@@ -31,13 +30,15 @@ import java.util.stream.Collectors;
  * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
  *
  * <p>This strategy does not require the name to be present, as it is the default strategy used in
- * {@link ConfigurationServicePreProcessor}.
+ * {@link Resources#getResourceURIs(ApplicationContext, String, ResourceLookupStrategy...)}.
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
+    public static final String NAME = "fs";
+
     @Override
     public String name() {
-        return "fs";
+        return NAME;
     }
 
     @Override

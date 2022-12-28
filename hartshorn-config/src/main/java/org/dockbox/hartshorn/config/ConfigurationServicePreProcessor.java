@@ -22,16 +22,16 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.config.resource.ClassPathResourceLookupStrategy;
-import org.dockbox.hartshorn.config.resource.MissingSourceException;
-import org.dockbox.hartshorn.config.resource.ResourceLookupStrategy;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.resources.FallbackResourceLookup;
+import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
+import org.dockbox.hartshorn.util.resources.MissingSourceException;
+import org.dockbox.hartshorn.util.resources.ResourceLookup;
+import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
+import org.dockbox.hartshorn.util.resources.ResourceLookupStrategyContext;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
@@ -42,26 +42,6 @@ import java.util.regex.Pattern;
  * defaults to {@link FileSystemLookupStrategy}.
  */
 public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
-
-    private final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
-    private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
-
-    public ConfigurationServicePreProcessor() {
-        this.registerDefaultStrategies();
-    }
-
-    /**
-     * Registers the default strategies for this pre-processor. Protected to allow subclasses to
-     * override the default strategies.
-     */
-    protected void registerDefaultStrategies() {
-        this.addStrategy(new ClassPathResourceLookupStrategy());
-        this.addStrategy(new FileSystemLookupStrategy());
-    }
-
-    public void addStrategy(final ResourceLookupStrategy strategy) {
-        this.strategies.put(strategy.name(), strategy);
-    }
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -84,19 +64,15 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
     }
 
     private <T> boolean processSource(final String source, final ApplicationContext context, final ComponentKey<T> key) {
-        String matchedSource = source;
-        final Matcher matcher = this.STRATEGY_PATTERN.matcher(matchedSource);
-
-        ResourceLookupStrategy strategy = null;
-        if (matcher.find()) {
-            strategy = this.strategies.getOrDefault(matcher.group(1), strategy);
-            matchedSource = matcher.group(2);
+        final Option<ResourceLookupStrategyContext> strategyContext = context.first(ResourceLookupStrategyContext.class);
+        if (strategyContext.absent()) {
+            context.log().warn("No resource lookup strategies present, cannot look up resource for " + key.type().getSimpleName());
+            return false;
         }
-        if (strategy == null) strategy = new FileSystemLookupStrategy();
 
-        context.log().debug("Determined strategy " + strategy.getClass().getSimpleName() + " for " + matchedSource + ", declared by " + key.type().getSimpleName());
+        final ResourceLookup resourceLookup = new FallbackResourceLookup(context, new FileSystemLookupStrategy());;
+        final Set<URI> config = resourceLookup.lookup(source);
 
-        final Set<URI> config = strategy.lookup(context, matchedSource);
         if (config.isEmpty()) {
             context.log().warn("No configuration file found for " + key.type().getSimpleName());
             return false;
@@ -107,7 +83,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
         final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
         for (final URI uri : config) {
-            final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, matchedSource, strategy);
+            final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
             uriContextList.add(uriContext);
         }
 

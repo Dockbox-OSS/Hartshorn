@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -72,15 +74,21 @@ public final class Resources {
     }
 
     public static Set<File> getResourcesAsFiles(final String resource) throws IOException {
-        return getResourceURLs(resource).stream()
-                .map(url -> new File(url.getFile()))
-                .collect(Collectors.toUnmodifiableSet());
+        return getResourcesAsFiles(getClassLoader(), resource);
     }
 
     public static Set<File> getResourcesAsFiles(final ClassLoader loader, final String resource) throws IOException {
         return getResourceURLs(loader, resource).stream()
                 .map(url -> new File(url.getFile()))
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public static Set<URI> getResourceURIs(final ApplicationContext applicationContext, final String resource, final ResourceLookupStrategy... strategies) {
+        final Set<URI> uris = new HashSet<>();
+        for (final ResourceLookupStrategy strategy : strategies) {
+            uris.addAll(strategy.lookup(applicationContext, resource));
+        }
+        return Collections.unmodifiableSet(uris);
     }
 
     private static ClassLoader getClassLoader() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.resource;
+package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -31,8 +31,10 @@ import java.util.stream.Collectors;
  */
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
+    public static final String NAME = "classpath";
+
     public String name() {
-        return "classpath";
+        return NAME;
     }
 
     @Override

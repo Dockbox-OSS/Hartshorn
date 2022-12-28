@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.resource;
-
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+package org.dockbox.hartshorn.util.resources;
 
 import java.net.URI;
 import java.util.Set;
 
-/**
- * Defines how a {@link Configuration#value() resource} is looked up while processing types annotated with
- * {@link Configuration}.
- */
-public interface ResourceLookupStrategy {
-    String name();
+public interface ResourceLookup {
 
-    Set<URI> lookup(ApplicationContext context, String path);
+    Set<URI> lookup(String path);
 
-    URI baseUrl(ApplicationContext context);
+    void addLookupStrategy(ResourceLookupStrategy strategy);
+
+    void removeLookupStrategy(ResourceLookupStrategy strategy);
+
+    Set<ResourceLookupStrategy> strategies();
+
 }
