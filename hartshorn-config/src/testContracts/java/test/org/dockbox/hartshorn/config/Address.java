@@ -14,10 +14,32 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+public class Address {
+
+    private String street;
+    private String city;
+    private int number;
+
+    public Address(final String city, final String street, final int number) {
+        this.street = street;
+        this.city = city;
+        this.number = number;
+    }
+
+    public Address() {
+    }
+
+    public String street() {
+        return this.street;
+    }
+
+    public String city() {
+        return this.city;
+    }
+
+    public int number() {
+        return this.number;
+    }
 }

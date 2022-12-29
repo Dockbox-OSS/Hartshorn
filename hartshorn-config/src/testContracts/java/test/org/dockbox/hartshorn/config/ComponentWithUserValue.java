@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.config.annotations.Value;
+
+@Component
+public class ComponentWithUserValue {
+
+    @Value("user")
+    private User user;
+
+    public User user() {
+        return this.user;
+    }
 }

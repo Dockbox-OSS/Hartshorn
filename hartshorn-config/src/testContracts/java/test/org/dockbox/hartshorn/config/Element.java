@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+public interface Element {
+
+    Element name(String name);
+
+    String name();
+
 }

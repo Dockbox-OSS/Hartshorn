@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.config.annotations.Value;
+
+@Service(singleton = false)
+public class ValueTyped {
+
+    @Value("demo")
+    private String string;
+
+    @Value("nested.demo")
+    private String nestedString;
+
+    public String string() {
+        return this.string;
+    }
+
+    public String nestedString() {
+        return this.nestedString;
+    }
 }

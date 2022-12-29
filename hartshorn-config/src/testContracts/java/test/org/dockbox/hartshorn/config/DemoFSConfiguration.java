@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.Value;
+
+@Component
+@Configuration("junit.yml")
+public class DemoFSConfiguration {
+
+    @Value("junit.fs")
+    private String fileSystemValue;
+
+    public String fileSystemValue() {
+        return this.fileSystemValue;
+    }
 }

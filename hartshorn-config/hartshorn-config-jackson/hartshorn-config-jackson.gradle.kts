@@ -1,3 +1,5 @@
+import org.dockbox.hartshorn.gradle.testcontract.ProjectType
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -18,7 +20,11 @@ apply {
     from("${project.rootDir}/gradle/publications.gradle.kts")
 }
 
+ext.set("projectType", ProjectType.CONTRACT_IMPLEMENTATION)
+
 dependencies {
+    implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-config")
+
     implementation(libs.bundles.jackson)
 }

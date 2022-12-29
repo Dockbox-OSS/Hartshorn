@@ -14,10 +14,5 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
-
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+package test.org.dockbox.tc;public class DemoTests {
 }

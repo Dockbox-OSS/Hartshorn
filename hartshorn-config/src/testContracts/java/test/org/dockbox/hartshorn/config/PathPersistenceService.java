@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.config.annotations.Deserialize;
+import org.dockbox.hartshorn.config.annotations.FileSource;
+import org.dockbox.hartshorn.config.annotations.Serialize;
+
+import java.nio.file.Path;
+
+@Service
+public interface PathPersistenceService {
+
+    @Serialize
+    @FileSource("test")
+    boolean writeToPath(PersistentElement element, Path path);
+
+    @Deserialize
+    @FileSource("test")
+    PersistentElement readFromPath(Path path);
+
 }

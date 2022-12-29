@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config.mapping;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import java.util.List;
+
+public class ModifierElement {
+
+    private List<String> names;
+
+    public ModifierElement(final List<String> names) {
+        this.names = names;
+    }
+
+    public ModifierElement() {
+    }
+
+    public List<String> names() {
+        return this.names;
+    }
+
+    public ModifierElement names(final List<String> names) {
+        this.names = names;
+        return this;
+    }
 }

@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
+
+@ConfigurationObject(prefix = "user")
+public class SampleConfigurationObject {
+
+    private String name;
+    private int age;
+
+    public String name() {
+        return this.name;
+    }
+
+    public int age() {
+        return this.age;
+    }
 }

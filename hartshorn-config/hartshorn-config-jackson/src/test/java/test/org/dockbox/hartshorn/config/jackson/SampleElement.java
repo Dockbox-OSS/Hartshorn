@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config.jackson;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
+import org.dockbox.hartshorn.util.Property;
+
+public class SampleElement {
+
+    @Property(name = "firstName")
+    private String name;
+
+    private String other;
+
 }
