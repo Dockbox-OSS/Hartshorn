@@ -26,3 +26,4 @@ module/src/test/resources/storage.db-journal
 
 # Miscellaneous
 .jpb
+**/.DS_Store

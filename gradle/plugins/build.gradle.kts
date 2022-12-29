@@ -69,5 +69,9 @@ gradlePlugin {
             id = "org.dockbox.hartshorn.gradle.javadoc"
             implementationClass = "org.dockbox.hartshorn.gradle.javadoc.JavadocVerifierPlugin"
         }
+        create("testContractPlugin") {
+            id = "org.dockbox.hartshorn.gradle.testcontract"
+            implementationClass = "org.dockbox.hartshorn.gradle.testcontract.TestContractPlugin"
+        }
     }
 }
