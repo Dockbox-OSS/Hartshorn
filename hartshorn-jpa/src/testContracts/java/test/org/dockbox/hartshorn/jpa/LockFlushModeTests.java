@@ -41,10 +41,13 @@ import jakarta.inject.Inject;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
+import test.org.dockbox.hartshorn.jpa.entity.EntityCollectorLifecycleObserver;
+import test.org.dockbox.hartshorn.jpa.entity.User;
+import test.org.dockbox.hartshorn.jpa.repository.LockFlushModeUserJpaRepository;
 
 @HartshornTest(includeBasePackages = false)
 @TestComponents({
-        PersistentTestComponentsService.class,
+        EntityCollectorLifecycleObserver.class,
         LockFlushModeUserJpaRepository.class,
 })
 @UsePersistence
@@ -53,7 +56,7 @@ public class LockFlushModeTests {
 
     @Container
     private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
-            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
+            .withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
 
     @Inject
     private UnnamedJpaQueryContextCreator contextCreator;
@@ -63,7 +66,7 @@ public class LockFlushModeTests {
 
     @BeforeEach
     void prepareDataSource() {
-        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
+        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
         this.applicationContext.get(DataSourceList.class).add("users", configuration);
     }
 

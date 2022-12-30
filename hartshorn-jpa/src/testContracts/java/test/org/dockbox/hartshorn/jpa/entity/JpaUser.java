@@ -14,29 +14,37 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
-
-import java.util.Objects;
+package test.org.dockbox.hartshorn.jpa.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.NamedQuery;
 
-@Entity(name = "queryUsers")
-@NamedQuery(name = "UserWithNamedQuery.findWaldo", query = "SELECT u FROM queryUsers u WHERE u.name = 'Waldo'")
-public class UserWithNamedQuery {
+/**
+ * A simple JPA compatible user type with an auto-generated {@link #id()}.
+ */
+@Entity
+public class JpaUser {
 
     @Id
     @GeneratedValue
     private long id;
-    private String name;
 
-    public UserWithNamedQuery() {
+    private String name;
+    private int age;
+
+    public JpaUser() {
     }
 
-    public UserWithNamedQuery(final String name) {
+    public JpaUser(final String name, final int age) {
         this.name = name;
+        this.age = age;
+    }
+
+    public JpaUser(final long id, final String name, final int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
     }
 
     public long id() {
@@ -47,20 +55,7 @@ public class UserWithNamedQuery {
         return this.name;
     }
 
-    public UserWithNamedQuery name(final String name) {
-        this.name = name;
-        return this;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final UserWithNamedQuery that)) return false;
-        return Objects.equals(this.name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name);
+    public int age() {
+        return this.age;
     }
 }

@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
+package test.org.dockbox.hartshorn.jpa.repository;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.jpa.JpaRepository;
+import org.dockbox.hartshorn.jpa.annotations.DataSource;
 
-@Service
-public class TestContractProviders {
+import test.org.dockbox.hartshorn.jpa.entity.UserWithNamedQuery;
 
-    public static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
-
-    @Binds
-    public DataSourceConfigurationList configurationList() {
-        return new StandardDataSourceConfigurationList();
-    }
-
-    @Binds
-    public LazyJdbcRepositoryInitializer lazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
-        return new StandardLazyJdbcRepositoryInitializer(applicationContext);
-    }
+@Service(lazy = true)
+@DataSource("users")
+public interface UserNamedQueryRepository extends JpaRepository<UserWithNamedQuery, Long> {
+    UserWithNamedQuery findWaldo();
 }

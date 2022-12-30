@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.hibernate;
+package test.org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 
-import test.org.dockbox.hartshorn.jpa.DataSourceConfigurationList;
-import test.org.dockbox.hartshorn.jpa.LazyJdbcRepositoryInitializer;
-import test.org.dockbox.hartshorn.jpa.StandardDataSourceConfigurationList;
-
+/**
+ * Service which serves as a standard entrypoint for test extensions. This service is not
+ * included by default, and should only be referenced directly in test extensions.
+ */
 @Service
-public class TestExtensionProviders {
+public class JpaTestContractProviders {
 
-    @Binds(priority = 1)
-    public DataSourceConfigurationList configurationList(final StandardDataSourceConfigurationList dataSourceConfigurationList) {
-        return new HibernateDataSourceConfigurationList(dataSourceConfigurationList);
+    public static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
+
+    @Binds
+    public DataSourceConfigurationLoader configurationList() {
+        return new StandardDataSourceConfigurationLoader();
     }
 
-    @Binds(priority = 1)
-    public LazyJdbcRepositoryInitializer lazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
-        return new HibernateLazyJdbcRepositoryInitializer(applicationContext);
+    @Binds
+    public LazyJdbcRepositoryConfigurationInitializer lazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
+        return new StandardLazyJdbcRepositoryConfigurationInitializer(applicationContext);
     }
 }

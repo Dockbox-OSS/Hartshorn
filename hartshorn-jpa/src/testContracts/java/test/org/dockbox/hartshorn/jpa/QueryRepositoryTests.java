@@ -34,20 +34,23 @@ import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.TransactionRequiredException;
+import test.org.dockbox.hartshorn.jpa.entity.JpaUser;
+import test.org.dockbox.hartshorn.jpa.entity.EntityCollectorLifecycleObserver;
+import test.org.dockbox.hartshorn.jpa.repository.UserQueryRepository;
 
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
 @HartshornTest(includeBasePackages = false)
-@TestComponents({UserQueryRepository.class, PersistentTestComponentsService.class})
+@TestComponents({ UserQueryRepository.class, EntityCollectorLifecycleObserver.class})
 public class QueryRepositoryTests {
 
     @Inject
     private ApplicationContext applicationContext;
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
-            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
+            .withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
 
     protected DataSourceConfiguration connection() {
-        return this.applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
+        return this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
     }
 
     @Test

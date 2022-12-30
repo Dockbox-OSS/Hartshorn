@@ -24,7 +24,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.nio.file.Path;
 
-public interface DataSourceConfigurationList {
+public interface DataSourceConfigurationLoader {
 
     DataSourceConfiguration derby(Path localPath);
 

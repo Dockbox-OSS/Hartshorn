@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
+package test.org.dockbox.hartshorn.jpa.repository;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.jpa.JpaRepository;
@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.jpa.query.LockMode;
 
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
+import test.org.dockbox.hartshorn.jpa.entity.User;
 
 @Service(lazy = true)
 @DataSource("users")

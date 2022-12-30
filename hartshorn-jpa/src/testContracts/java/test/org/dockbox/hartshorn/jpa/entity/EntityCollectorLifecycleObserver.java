@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
+package test.org.dockbox.hartshorn.jpa.entity;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiresActivator(UsePersistence.class)
-public class PersistentTestComponentsService implements LifecycleObserver {
+public class EntityCollectorLifecycleObserver implements LifecycleObserver {
 
     @Override
     public void onStarted(final ApplicationContext applicationContext) {

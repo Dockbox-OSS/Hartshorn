@@ -14,14 +14,33 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
+package test.org.dockbox.hartshorn.jpa.repository;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.DataSource;
+import org.dockbox.hartshorn.jpa.annotations.Query;
+import org.dockbox.hartshorn.jpa.annotations.Transactional;
+
+import java.util.List;
+
+import test.org.dockbox.hartshorn.jpa.entity.JpaUser;
 
 @Service(lazy = true)
 @DataSource("users")
-public interface UserNamedQueryRepository extends JpaRepository<UserWithNamedQuery, Long> {
-    UserWithNamedQuery findWaldo();
+public interface UserQueryRepository extends JpaRepository<JpaUser, Long> {
+
+    @Query("select u from JpaUser u where u.age >= 18")
+    List<JpaUser> findAdults();
+
+    @Transactional
+    @Query("delete from JpaUser u")
+    void deleteAll();
+
+    @Query("update JpaUser u set u.age = :age where u.id = :id")
+    int nonTransactionalEntityUpdate(long id, int age);
+
+    @Transactional
+    @Query("update JpaUser u set u.age = :age where u.id = :id")
+    int entityUpdate(long id, int age);
 }

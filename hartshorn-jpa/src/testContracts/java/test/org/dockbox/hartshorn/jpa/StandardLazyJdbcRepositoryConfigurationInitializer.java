@@ -22,11 +22,11 @@ import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.jpa.remote.RefreshableDataSourceList;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
-public class StandardLazyJdbcRepositoryInitializer implements LazyJdbcRepositoryInitializer {
+public class StandardLazyJdbcRepositoryConfigurationInitializer implements LazyJdbcRepositoryConfigurationInitializer {
 
     private final ApplicationContext applicationContext;
 
-    public StandardLazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
+    public StandardLazyJdbcRepositoryConfigurationInitializer(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -42,7 +42,7 @@ public class StandardLazyJdbcRepositoryInitializer implements LazyJdbcRepository
         propertyHolder.set("hartshorn.data.sources.default.username", container.getUsername());
         propertyHolder.set("hartshorn.data.sources.default.password", container.getPassword());
 
-        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(container.getHost(), container.getMappedPort(mappedPort), TestContractProviders.DEFAULT_DATABASE);
+        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(container.getHost(), container.getMappedPort(mappedPort), JpaTestContractProviders.DEFAULT_DATABASE);
         propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
     }
 

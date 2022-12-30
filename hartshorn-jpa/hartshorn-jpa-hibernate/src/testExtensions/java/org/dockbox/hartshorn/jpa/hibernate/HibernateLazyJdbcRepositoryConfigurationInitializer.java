@@ -23,11 +23,11 @@ import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
-import test.org.dockbox.hartshorn.jpa.StandardLazyJdbcRepositoryInitializer;
+import test.org.dockbox.hartshorn.jpa.StandardLazyJdbcRepositoryConfigurationInitializer;
 
-public class HibernateLazyJdbcRepositoryInitializer extends StandardLazyJdbcRepositoryInitializer {
+public class HibernateLazyJdbcRepositoryConfigurationInitializer extends StandardLazyJdbcRepositoryConfigurationInitializer {
 
-    public HibernateLazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
+    public HibernateLazyJdbcRepositoryConfigurationInitializer(final ApplicationContext applicationContext) {
         super(applicationContext);
     }
 

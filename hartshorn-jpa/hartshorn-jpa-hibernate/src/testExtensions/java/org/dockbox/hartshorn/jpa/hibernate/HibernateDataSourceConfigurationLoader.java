@@ -30,14 +30,14 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.nio.file.Path;
 
-import test.org.dockbox.hartshorn.jpa.DataSourceConfigurationList;
-import test.org.dockbox.hartshorn.jpa.StandardDataSourceConfigurationList;
+import test.org.dockbox.hartshorn.jpa.DataSourceConfigurationLoader;
+import test.org.dockbox.hartshorn.jpa.StandardDataSourceConfigurationLoader;
 
-public class HibernateDataSourceConfigurationList implements DataSourceConfigurationList {
+public class HibernateDataSourceConfigurationLoader implements DataSourceConfigurationLoader {
 
-    private final StandardDataSourceConfigurationList delegate;
+    private final StandardDataSourceConfigurationLoader delegate;
 
-    public HibernateDataSourceConfigurationList(final StandardDataSourceConfigurationList delegate) {
+    public HibernateDataSourceConfigurationLoader(final StandardDataSourceConfigurationLoader delegate) {
         this.delegate = delegate;
     }
 

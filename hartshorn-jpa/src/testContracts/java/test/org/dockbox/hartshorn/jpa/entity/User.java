@@ -14,37 +14,29 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
+package test.org.dockbox.hartshorn.jpa.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
-/**
- * A simple JPA compatible user type with an auto-generated {@link #id()}.
- */
-@Entity
-public class JpaUser {
+@Entity(name = "users")
+public class User {
 
     @Id
     @GeneratedValue
     private long id;
-
     private String name;
-    private int age;
 
-    public JpaUser() {
+    @Transient // Exclude from JPA, but not from object mapping
+    private Address address;
+
+    public User() {
     }
 
-    public JpaUser(final String name, final int age) {
+    public User(final String name) {
         this.name = name;
-        this.age = age;
-    }
-
-    public JpaUser(final long id, final String name, final int age) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
     }
 
     public long id() {
@@ -55,7 +47,12 @@ public class JpaUser {
         return this.name;
     }
 
-    public int age() {
-        return this.age;
+    public Address address() {
+        return this.address;
+    }
+
+    public User name(final String name) {
+        this.name = name;
+        return this;
     }
 }

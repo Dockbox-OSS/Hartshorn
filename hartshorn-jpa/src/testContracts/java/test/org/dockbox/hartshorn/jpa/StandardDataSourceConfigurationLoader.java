@@ -29,7 +29,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.nio.file.Path;
 
-public class StandardDataSourceConfigurationList implements DataSourceConfigurationList {
+public class StandardDataSourceConfigurationLoader implements DataSourceConfigurationLoader {
 
     @Override
     public DataSourceConfiguration derby(final Path localPath) {
@@ -73,7 +73,7 @@ public class StandardDataSourceConfigurationList implements DataSourceConfigurat
                 type,
                 "localhost",
                 container.getMappedPort(defaultPort),
-                TestContractProviders.DEFAULT_DATABASE
+                JpaTestContractProviders.DEFAULT_DATABASE
         );
 
         return new DataSourceConfiguration(url, container.getUsername(), container.getPassword(), driver);

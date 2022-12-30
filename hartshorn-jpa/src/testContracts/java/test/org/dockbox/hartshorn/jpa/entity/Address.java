@@ -14,45 +14,37 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.jpa;
+package test.org.dockbox.hartshorn.jpa.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
 
-@Entity(name = "users")
-public class User {
+@Entity
+public class Address {
 
+    private String street;
+    private String city;
     @Id
-    @GeneratedValue
-    private long id;
-    private String name;
+    private int number;
 
-    @Transient // Exclude from JPA, but not from object mapping
-    private Address address;
-
-    public User() {
+    public Address(final String city, final String street, final int number) {
+        this.street = street;
+        this.city = city;
+        this.number = number;
     }
 
-    public User(final String name) {
-        this.name = name;
+    public Address() {
     }
 
-    public long id() {
-        return this.id;
+    public String street() {
+        return this.street;
     }
 
-    public String name() {
-        return this.name;
+    public String city() {
+        return this.city;
     }
 
-    public Address address() {
-        return this.address;
-    }
-
-    public User name(final String name) {
-        this.name = name;
-        return this;
+    public int number() {
+        return this.number;
     }
 }

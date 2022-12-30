@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.jpa;
 
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
-public interface LazyJdbcRepositoryInitializer {
+public interface LazyJdbcRepositoryConfigurationInitializer {
 
     void initialize(JdbcDatabaseContainer<?> container, int mappedPort);
 

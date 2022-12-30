@@ -50,11 +50,14 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import test.org.dockbox.hartshorn.jpa.entity.EntityCollectorLifecycleObserver;
+import test.org.dockbox.hartshorn.jpa.entity.User;
+import test.org.dockbox.hartshorn.jpa.repository.UserJpaRepository;
 
 @HartshornTest(includeBasePackages = false)
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
-@TestComponents({UserJpaRepository.class, PersistentTestComponentsService.class})
+@TestComponents({ UserJpaRepository.class, EntityCollectorLifecycleObserver.class})
 @TestInstance(Lifecycle.PER_CLASS)
 class JpaRepositoryTests {
 
@@ -63,9 +66,9 @@ class JpaRepositoryTests {
 
 
     // will be shared between test methods
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
-    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
-    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
+    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
+    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
     @Container private static final MSSQLServerContainer<?> mssqlServer = new MSSQLServerContainer<>(MSSQLServerContainer.IMAGE).acceptLicense();
 
     public static Stream<Arguments> containers() {
@@ -78,7 +81,7 @@ class JpaRepositoryTests {
     }
 
     public Stream<Arguments> dialects() {
-        final DataSourceConfigurationList configurationList = this.applicationContext.get(DataSourceConfigurationList.class);
+        final DataSourceConfigurationLoader configurationList = this.applicationContext.get(DataSourceConfigurationLoader.class);
         return Stream.of(
                 Arguments.of(configurationList.mysql(mySql)),
                 Arguments.of(configurationList.postgresql(postgreSql)),
@@ -167,7 +170,7 @@ class JpaRepositoryTests {
         final JpaRepository<User, ?> repository = factory.repository(User.class);
         Assertions.assertTrue(repository instanceof EntityManagerCarrier);
 
-        this.applicationContext.get(LazyJdbcRepositoryInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);
+        this.applicationContext.get(LazyJdbcRepositoryConfigurationInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);
 
         final ComponentPostConstructor componentPostConstructor = this.applicationContext.get(ComponentPostConstructor.class);
         componentPostConstructor.doPostConstruct(repository);
@@ -184,7 +187,7 @@ class JpaRepositoryTests {
         // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
         if (!mySql.isRunning()) mySql.start();
 
-        this.applicationContext.get(LazyJdbcRepositoryInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);
+        this.applicationContext.get(LazyJdbcRepositoryConfigurationInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);
 
         final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
         final JpaRepository<?, ?> delegate = this.applicationContext.environment()

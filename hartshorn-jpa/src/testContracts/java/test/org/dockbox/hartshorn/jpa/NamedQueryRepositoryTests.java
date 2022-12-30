@@ -29,21 +29,24 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.jpa.entity.EntityCollectorLifecycleObserver;
+import test.org.dockbox.hartshorn.jpa.entity.UserWithNamedQuery;
+import test.org.dockbox.hartshorn.jpa.repository.UserNamedQueryRepository;
 
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
 @HartshornTest(includeBasePackages = false)
-@TestComponents({ UserNamedQueryRepository.class, PersistentTestComponentsService.class})
+@TestComponents({ UserNamedQueryRepository.class, EntityCollectorLifecycleObserver.class})
 public class NamedQueryRepositoryTests {
 
     @Inject
     private ApplicationContext applicationContext;
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
-            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
+            .withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
 
     @Test
     void testRepositoryAttachesEntityLevelQuery() {
-        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
+        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
         this.applicationContext.get(DataSourceList.class).add("users", configuration);
 
         final UserNamedQueryRepository repository = this.applicationContext.get(UserNamedQueryRepository.class);
