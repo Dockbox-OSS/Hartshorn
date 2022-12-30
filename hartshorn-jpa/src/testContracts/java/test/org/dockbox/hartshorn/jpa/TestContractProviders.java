@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 
@@ -27,5 +28,10 @@ public class TestContractProviders {
     @Binds
     public DataSourceConfigurationList configurationList() {
         return new StandardDataSourceConfigurationList();
+    }
+
+    @Binds
+    public LazyJdbcRepositoryInitializer lazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
+        return new StandardLazyJdbcRepositoryInitializer(applicationContext);
     }
 }

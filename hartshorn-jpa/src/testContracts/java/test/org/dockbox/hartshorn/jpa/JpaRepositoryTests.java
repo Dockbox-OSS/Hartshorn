@@ -16,11 +16,8 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
-import com.mysql.cj.jdbc.Driver;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
-import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.JpaRepositoryFactory;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
@@ -28,12 +25,10 @@ import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
-import org.dockbox.hartshorn.jpa.remote.RefreshableDataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
-import org.hibernate.dialect.MySQL8Dialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -61,7 +56,7 @@ import jakarta.persistence.EntityManager;
 @UsePersistence
 @TestComponents({UserJpaRepository.class, PersistentTestComponentsService.class})
 @TestInstance(Lifecycle.PER_CLASS)
-class SqlServiceTest {
+class JpaRepositoryTests {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -164,7 +159,7 @@ class SqlServiceTest {
     }
 
     @Test
-    void hibernateRepositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException, IOException {
+    void repositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException, IOException {
         // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
         if (!mySql.isRunning()) mySql.start();
 
@@ -172,23 +167,7 @@ class SqlServiceTest {
         final JpaRepository<User, ?> repository = factory.repository(User.class);
         Assertions.assertTrue(repository instanceof EntityManagerCarrier);
 
-        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
-
-        // Data API specific
-        propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
-        propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
-
-        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), TestContractProviders.DEFAULT_DATABASE);
-        propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
-
-        // Hibernate specific
-        propertyHolder.set("hartshorn.data.sources.default.dialect", MySQL8Dialect.class.getCanonicalName());
-        propertyHolder.set("hartshorn.data.sources.default.driver", Driver.class.getCanonicalName());
-
-        final DataSourceList dataSourceList = this.applicationContext.get(DataSourceList.class);
-        if (dataSourceList instanceof RefreshableDataSourceList refreshable) {
-            refreshable.refresh();
-        }
+        this.applicationContext.get(LazyJdbcRepositoryInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);
 
         final ComponentPostConstructor componentPostConstructor = this.applicationContext.get(ComponentPostConstructor.class);
         componentPostConstructor.doPostConstruct(repository);
@@ -205,23 +184,7 @@ class SqlServiceTest {
         // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
         if (!mySql.isRunning()) mySql.start();
 
-        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
-
-        // Data API specific
-        propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
-        propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
-
-        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), TestContractProviders.DEFAULT_DATABASE);
-        propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
-
-        // Hibernate specific
-        propertyHolder.set("hartshorn.data.sources.default.dialect", MySQL8Dialect.class.getCanonicalName());
-        propertyHolder.set("hartshorn.data.sources.default.driver", Driver.class.getCanonicalName());
-
-        final DataSourceList dataSourceList = this.applicationContext.get(DataSourceList.class);
-        if (dataSourceList instanceof RefreshableDataSourceList refreshable) {
-            refreshable.refresh();
-        }
+        this.applicationContext.get(LazyJdbcRepositoryInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);
 
         final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
         final JpaRepository<?, ?> delegate = this.applicationContext.environment()

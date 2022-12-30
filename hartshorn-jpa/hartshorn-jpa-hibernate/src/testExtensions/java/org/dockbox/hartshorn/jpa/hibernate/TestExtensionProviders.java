@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 
 import test.org.dockbox.hartshorn.jpa.DataSourceConfigurationList;
+import test.org.dockbox.hartshorn.jpa.LazyJdbcRepositoryInitializer;
 import test.org.dockbox.hartshorn.jpa.StandardDataSourceConfigurationList;
 
 @Service
@@ -28,5 +30,10 @@ public class TestExtensionProviders {
     @Binds(priority = 1)
     public DataSourceConfigurationList configurationList(final StandardDataSourceConfigurationList dataSourceConfigurationList) {
         return new HibernateDataSourceConfigurationList(dataSourceConfigurationList);
+    }
+
+    @Binds(priority = 1)
+    public LazyJdbcRepositoryInitializer lazyJdbcRepositoryInitializer(final ApplicationContext applicationContext) {
+        return new HibernateLazyJdbcRepositoryInitializer(applicationContext);
     }
 }

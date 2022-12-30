@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.jpa;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-jpa")
+import org.testcontainers.containers.JdbcDatabaseContainer;
 
-    implementation(libs.bundles.hibernate)
+public interface LazyJdbcRepositoryInitializer {
 
-    testExtensionsImplementation(libs.bundles.testContainers)
-    testExtensionsImplementation(libs.bundles.databaseTestContainers)
-    testExtensionsImplementation(project(":hartshorn-config:hartshorn-config-jackson"))
-    testExtensionsImplementation(libs.mysql)
+    void initialize(JdbcDatabaseContainer<?> container, int mappedPort);
+
 }
