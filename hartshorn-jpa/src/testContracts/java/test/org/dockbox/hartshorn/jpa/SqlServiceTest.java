@@ -16,10 +16,8 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import com.mysql.cj.jdbc.Driver;
 
-import org.apache.derby.jdbc.EmbeddedDriver;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
@@ -28,8 +26,6 @@ import org.dockbox.hartshorn.jpa.JpaRepositoryFactory;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerJpaRepository;
-import org.dockbox.hartshorn.jpa.hibernate.HibernateDataSourceConfiguration;
-import org.dockbox.hartshorn.jpa.hibernate.HibernateJpaRepository;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.jpa.remote.RefreshableDataSourceList;
@@ -37,22 +33,15 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
-import org.hibernate.Session;
-import org.hibernate.dialect.DerbyDialect;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL8Dialect;
-import org.hibernate.dialect.MySQLDialect;
-import org.hibernate.dialect.PostgreSQLDialect;
-import org.hibernate.dialect.SQLServerDialect;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.ContainerState;
-import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.containers.MySQLContainer;
@@ -60,8 +49,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -72,17 +60,17 @@ import jakarta.persistence.EntityManager;
 @Testcontainers(disabledWithoutDocker = true)
 @UsePersistence
 @TestComponents({UserJpaRepository.class, PersistentTestComponentsService.class})
+@TestInstance(Lifecycle.PER_CLASS)
 class SqlServiceTest {
 
     @Inject
     private ApplicationContext applicationContext;
 
-    protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
 
     // will be shared between test methods
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
-    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(DEFAULT_DATABASE);
-    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
+    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
+    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
     @Container private static final MSSQLServerContainer<?> mssqlServer = new MSSQLServerContainer<>(MSSQLServerContainer.IMAGE).acceptLicense();
 
     public static Stream<Arguments> containers() {
@@ -94,50 +82,20 @@ class SqlServiceTest {
         );
     }
 
+    public Stream<Arguments> dialects() {
+        final DataSourceConfigurationList configurationList = this.applicationContext.get(DataSourceConfigurationList.class);
+        return Stream.of(
+                Arguments.of(configurationList.mysql(mySql)),
+                Arguments.of(configurationList.postgresql(postgreSql)),
+                Arguments.of(configurationList.mariadb(mariaDb)),
+                Arguments.of(configurationList.mssql(mssqlServer))
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("containers")
     void testContainerStates(final ContainerState container) {
         Assertions.assertTrue(container.isRunning());
-    }
-
-    public static Stream<Arguments> dialects() {
-        return Stream.of(
-                Arguments.of(derby()),
-                Arguments.of(mssql()),
-                Arguments.of(jdbc("mysql", com.mysql.cj.jdbc.Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT)),
-                Arguments.of(jdbc("postgresql", org.postgresql.Driver.class, postgreSql, PostgreSQLDialect.class, PostgreSQLContainer.POSTGRESQL_PORT)),
-                Arguments.of(jdbc("mariadb", org.mariadb.jdbc.Driver.class, mariaDb, MariaDBDialect.class, 3306))
-        );
-    }
-
-    protected static DataSourceConfiguration jdbc(
-            final String type, final Class<? extends java.sql.Driver> driver, final JdbcDatabaseContainer<?> container,
-            final Class<? extends Dialect> dialect, final int defaultPort) {
-        final String url = "jdbc:%s://%s:%s/%s".formatted(
-                type,
-                "localhost",
-                container.getMappedPort(defaultPort),
-                DEFAULT_DATABASE
-        );
-        return new HibernateDataSourceConfiguration(url, container.getUsername(), container.getPassword(), driver, dialect);
-    }
-
-    protected static DataSourceConfiguration mssql() {
-        final Integer port = mssqlServer.getMappedPort(MSSQLServerContainer.MS_SQL_SERVER_PORT);
-        final String url = "jdbc:sqlserver://localhost:%s;encrypt=true;trustServerCertificate=true;".formatted(port);
-        return new HibernateDataSourceConfiguration(url, mssqlServer.getUsername(), mssqlServer.getPassword(), SQLServerDriver.class, SQLServerDialect.class);
-    }
-
-    protected static DataSourceConfiguration derby() {
-        try {
-            final Path dir = Files.createTempDirectory("derby");
-            final String connectionString = "jdbc:derby:directory:%s/db;create=true".formatted(dir.toFile().getAbsolutePath());
-            return new HibernateDataSourceConfiguration(connectionString, EmbeddedDriver.class, DerbyDialect.class);
-        }
-        catch (final Exception e) {
-            Assumptions.assumeTrue(false);
-            return null;
-        }
     }
 
     @ParameterizedTest
@@ -206,13 +164,13 @@ class SqlServiceTest {
     }
 
     @Test
-    void hibernateRepositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException {
+    void hibernateRepositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException, IOException {
         // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
         if (!mySql.isRunning()) mySql.start();
 
         final JpaRepositoryFactory factory = this.applicationContext.get(JpaRepositoryFactory.class);
         final JpaRepository<User, ?> repository = factory.repository(User.class);
-        Assertions.assertTrue(repository instanceof HibernateJpaRepository);
+        Assertions.assertTrue(repository instanceof EntityManagerCarrier);
 
         final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
 
@@ -220,7 +178,7 @@ class SqlServiceTest {
         propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
         propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
 
-        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), TestContractProviders.DEFAULT_DATABASE);
         propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
 
         // Hibernate specific
@@ -232,12 +190,12 @@ class SqlServiceTest {
             refreshable.refresh();
         }
 
-        final ComponentPostConstructor componentPostConstructor = applicationContext.get(ComponentPostConstructor.class);
+        final ComponentPostConstructor componentPostConstructor = this.applicationContext.get(ComponentPostConstructor.class);
         componentPostConstructor.doPostConstruct(repository);
 
-        final HibernateJpaRepository<User, ?> jpaRepository = (HibernateJpaRepository<User, ?>) repository;
-        final Session session = jpaRepository.manager();
-        Assertions.assertNotNull(session);
+        final EntityManagerCarrier jpaRepository = (EntityManagerCarrier) repository;
+        final EntityManager entityManager = jpaRepository.manager();
+        Assertions.assertNotNull(entityManager);
 
         jpaRepository.close();
     }
@@ -253,7 +211,7 @@ class SqlServiceTest {
         propertyHolder.set("hartshorn.data.sources.default.username", mySql.getUsername());
         propertyHolder.set("hartshorn.data.sources.default.password", mySql.getPassword());
 
-        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), TestContractProviders.DEFAULT_DATABASE);
         propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
 
         // Hibernate specific

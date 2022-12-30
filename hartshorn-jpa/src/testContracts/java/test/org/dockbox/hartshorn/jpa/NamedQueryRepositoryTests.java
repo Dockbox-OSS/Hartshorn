@@ -16,15 +16,12 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
-import com.mysql.cj.jdbc.Driver;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
@@ -41,15 +38,13 @@ public class NamedQueryRepositoryTests {
 
     @Inject
     private ApplicationContext applicationContext;
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
-
-    protected static DataSourceConfiguration connection() {
-        return SqlServiceTest.jdbc("mysql", Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT);
-    }
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
+            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
 
     @Test
     void testRepositoryAttachesEntityLevelQuery() {
-        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
+        this.applicationContext.get(DataSourceList.class).add("users", configuration);
 
         final UserNamedQueryRepository repository = this.applicationContext.get(UserNamedQueryRepository.class);
         final UserWithNamedQuery waldo = new UserWithNamedQuery("Waldo");

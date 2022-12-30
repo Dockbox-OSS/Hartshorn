@@ -16,8 +16,6 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
-import com.mysql.cj.jdbc.Driver;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.query.QueryExecutionContext;
@@ -32,7 +30,6 @@ import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +52,8 @@ import jakarta.persistence.Query;
 public class LockFlushModeTests {
 
     @Container
-    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
+    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
+            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
 
     @Inject
     private UnnamedJpaQueryContextCreator contextCreator;
@@ -65,7 +63,7 @@ public class LockFlushModeTests {
 
     @BeforeEach
     void prepareDataSource() {
-        final DataSourceConfiguration configuration = SqlServiceTest.jdbc("mysql", Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT);
+        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
         this.applicationContext.get(DataSourceList.class).add("users", configuration);
     }
 

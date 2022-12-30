@@ -16,8 +16,6 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
-import com.mysql.cj.jdbc.Driver;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
@@ -25,7 +23,6 @@ import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
-import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
@@ -46,15 +43,16 @@ public class QueryRepositoryTests {
 
     @Inject
     private ApplicationContext applicationContext;
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
+            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
 
-    protected static DataSourceConfiguration connection() {
-        return SqlServiceTest.jdbc("mysql", Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT);
+    protected DataSourceConfiguration connection() {
+        return this.applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
     }
 
     @Test
     void testRepositoryDeleteAll() {
-        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        this.applicationContext.get(DataSourceList.class).add("users", this.connection());
         final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 17);
         repository.save(user);
@@ -65,7 +63,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testRepositoryQueries() {
-        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        this.applicationContext.get(DataSourceList.class).add("users", this.connection());
         final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         repository.deleteAll();
         final JpaUser userA = new JpaUser("JUnit", 17);
@@ -79,7 +77,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateNonTransactional() {
-        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        this.applicationContext.get(DataSourceList.class).add("users", this.connection());
         final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
@@ -88,7 +86,7 @@ public class QueryRepositoryTests {
 
     @Test
     void testUpdateEntity() {
-        this.applicationContext.get(DataSourceList.class).add("users", connection());
+        this.applicationContext.get(DataSourceList.class).add("users", this.connection());
         final UserQueryRepository repository = this.applicationContext.get(UserQueryRepository.class);
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);

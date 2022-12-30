@@ -16,8 +16,6 @@
 
 package test.org.dockbox.hartshorn.jpa;
 
-import com.mysql.cj.jdbc.Driver;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.jpa.annotations.UseTransactionManagement;
@@ -28,7 +26,6 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
-import org.hibernate.dialect.MySQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -43,12 +40,13 @@ import jakarta.persistence.EntityManager;
 public class TransactionalServiceTests {
 
     @Container
-    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(SqlServiceTest.DEFAULT_DATABASE);
+    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
+            .withDatabaseName(TestContractProviders.DEFAULT_DATABASE);
 
     @InjectTest
     @TestComponents(TransactionalService.class)
     public void testTransactionalService(final ApplicationContext applicationContext) {
-        final DataSourceConfiguration configuration = SqlServiceTest.jdbc("mysql", Driver.class, mySql, MySQLDialect.class, MySQLContainer.MYSQL_PORT);
+        final DataSourceConfiguration configuration = applicationContext.get(DataSourceConfigurationList.class).mysql(mySql);
         applicationContext.get(DataSourceList.class).add("users", configuration);
 
         final TransactionalService service = applicationContext.get(TransactionalService.class);

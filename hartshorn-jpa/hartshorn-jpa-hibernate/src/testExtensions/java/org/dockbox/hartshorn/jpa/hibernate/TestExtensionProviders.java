@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.jpa.hibernate;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-jpa")
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Binds;
 
-    implementation(libs.bundles.hibernate)
+import test.org.dockbox.hartshorn.jpa.DataSourceConfigurationList;
+import test.org.dockbox.hartshorn.jpa.StandardDataSourceConfigurationList;
 
-    testExtensionsImplementation(libs.bundles.testContainers)
-    testExtensionsImplementation(libs.bundles.databaseTestContainers)
-    testExtensionsImplementation(project(":hartshorn-config:hartshorn-config-jackson"))
+@Service
+public class TestExtensionProviders {
+
+    @Binds(priority = 1)
+    public DataSourceConfigurationList configurationList(final StandardDataSourceConfigurationList dataSourceConfigurationList) {
+        return new HibernateDataSourceConfigurationList(dataSourceConfigurationList);
+    }
 }

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.jpa;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-jpa")
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Binds;
 
-    implementation(libs.bundles.hibernate)
+@Service
+public class TestContractProviders {
 
-    testExtensionsImplementation(libs.bundles.testContainers)
-    testExtensionsImplementation(libs.bundles.databaseTestContainers)
-    testExtensionsImplementation(project(":hartshorn-config:hartshorn-config-jackson"))
+    public static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
+
+    @Binds
+    public DataSourceConfigurationList configurationList() {
+        return new StandardDataSourceConfigurationList();
+    }
 }
