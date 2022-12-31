@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.jms.parameter;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.reflect.ExecutableElementContext;
-import org.dockbox.hartshorn.util.reflect.TypeContext;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import javax.jms.Message;
 
@@ -28,8 +28,8 @@ public class JMSParameterLoaderContext extends ParameterLoaderContext {
     private final Message message;
 
     public JMSParameterLoaderContext(final Message message,
-                                     final ExecutableElementContext<?, ?> executable,
-                                     final TypeContext<?> type,
+                                     final ExecutableElementView<?> executable,
+                                     final TypeView<?> type,
                                      final Object instance,
                                      final ApplicationContext applicationContext) {
         super(executable, type, instance, applicationContext);

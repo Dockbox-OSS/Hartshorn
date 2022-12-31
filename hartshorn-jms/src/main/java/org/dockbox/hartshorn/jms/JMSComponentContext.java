@@ -22,11 +22,11 @@ import javax.jms.Message;
 
 public class JMSComponentContext {
 
-    int deliveryMode;
-    long timeToLive;
-    int priority;
-    boolean disableMessageId;
-    boolean disableMessageTimestamp;
+    private final int deliveryMode;
+    private final long timeToLive;
+    private final int priority;
+    private final boolean disableMessageId;
+    private final boolean disableMessageTimestamp;
 
     public JMSComponentContext(final int deliveryMode, final long timeToLive, final int priority, final boolean disableMessageId, final boolean disableMessageTimestamp) {
         this.deliveryMode = deliveryMode;

@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.jms.parameter;
 
-import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -30,11 +30,11 @@ public class JMSConsumerParameterLoader extends RuleBasedParameterLoader<JMSPara
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
         if (context.message() instanceof TextMessage textMessage) {
             final ObjectMapper objectMapper = context.applicationContext().get(ObjectMapper.class);
             try {
-                return objectMapper.read(textMessage.getText(), parameter.type()).rethrowUnchecked().orNull();
+                return objectMapper.read(textMessage.getText(), parameter.type().type()).rethrowUnchecked().orNull();
             }
             catch (final JMSException e) {
                 context.applicationContext().handle(e);

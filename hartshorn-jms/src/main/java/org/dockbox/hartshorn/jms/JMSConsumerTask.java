@@ -17,22 +17,23 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
-@ComponentBinding(JMSConsumerTask.class)
-public class JMSConsumerTask extends DefaultContext implements Runnable, LifecycleObserver {
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
+
+@Component
+public class JMSConsumerTask extends DefaultContext implements Runnable {
 
     @Inject
     private JMSExceptionListener exceptionListener;
@@ -57,7 +58,7 @@ public class JMSConsumerTask extends DefaultContext implements Runnable, Lifecyc
     public void run() {
         if (this.consumer != null) {
             try {
-                this.session = this.applicationContext.get(Key.of(Session.class, this.destinationContext.session()));
+                this.session = this.applicationContext.get(ComponentKey.of(Session.class, this.destinationContext.session()));
 
                 final Destination destination = switch (this.destinationContext.destinationType()) {
                     case QUEUE -> this.session.createQueue(this.destinationContext.id());
@@ -87,12 +88,7 @@ public class JMSConsumerTask extends DefaultContext implements Runnable, Lifecyc
         }
     }
 
-    @Override
-    public void onStarted(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
-
-    @Override
+    @PreDestroy
     public void onExit(final ApplicationContext applicationContext) {
         this.closed = true;
         if (this.session != null) {

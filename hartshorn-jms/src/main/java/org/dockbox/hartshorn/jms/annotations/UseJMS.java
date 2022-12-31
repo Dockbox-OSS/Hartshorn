@@ -17,8 +17,10 @@
 package org.dockbox.hartshorn.jms.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.data.annotations.UseConfigurations;
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
+import org.dockbox.hartshorn.jms.JMSConsumerPostProcessor;
+import org.dockbox.hartshorn.jms.JMSProducerPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,7 +29,12 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(scanPackages = "org.dockbox.hartshorn.jms")
+@ServiceActivator(
+        scanPackages = "org.dockbox.hartshorn.jms",
+        processors = {
+                JMSProducerPostProcessor.class,
+                JMSConsumerPostProcessor.class,
+        })
 @UseConfigurations
 @UseServiceProvision
 public @interface UseJMS {

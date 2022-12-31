@@ -1,15 +1,18 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.jms.annotations.DestinationType;
 import org.dockbox.hartshorn.jms.annotations.Subscriber;
 import org.dockbox.hartshorn.jms.annotations.UseJMS;
 import org.slf4j.Logger;
 
-import javax.inject.Inject;
 import javax.jms.Message;
 
-@Service(activators = UseJMS.class, permitProxying = false)
+import jakarta.inject.Inject;
+
+@Service(permitProxying = false)
+@RequiresActivator(UseJMS.class)
 public class JMSTestSubscriber {
 
     @Inject

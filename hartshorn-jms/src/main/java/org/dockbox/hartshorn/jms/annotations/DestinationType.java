@@ -1,23 +1,21 @@
 package org.dockbox.hartshorn.jms.annotations;
 
-import org.dockbox.hartshorn.inject.Key;
-
 import javax.jms.Destination;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
 public enum DestinationType {
-    QUEUE(Key.of(Queue.class)),
-    TOPIC(Key.of(Topic.class)),
+    QUEUE(Queue.class),
+    TOPIC(Topic.class),
     ;
 
-    private final Key<? extends Destination> key;
+    private final Class<? extends Destination> destinationClass;
 
-    DestinationType(final Key<? extends Destination> key) {
-        this.key = key;
+    DestinationType(final Class<? extends Destination> destinationClass) {
+        this.destinationClass = destinationClass;
     }
 
-    public Key<? extends Destination> key() {
-        return this.key;
+    public Class<? extends Destination> destinationClass() {
+        return this.destinationClass;
     }
 }

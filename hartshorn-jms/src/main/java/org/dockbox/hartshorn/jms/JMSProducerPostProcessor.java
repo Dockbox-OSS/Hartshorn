@@ -17,21 +17,13 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.jms.annotations.Producer;
-import org.dockbox.hartshorn.jms.annotations.UseJMS;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
 
-@AutomaticActivation
-public class JMSProducerPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Producer, UseJMS> {
-
-    @Override
-    public Class<UseJMS> activator() {
-        return UseJMS.class;
-    }
+public class JMSProducerPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Producer> {
 
     @Override
     public Class<Producer> annotation() {
@@ -39,13 +31,13 @@ public class JMSProducerPostProcessor extends ServiceAnnotatedMethodInterceptorP
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        return methodContext.method().parameterCount() == 1;
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        return methodContext.method().parameters().count() == 1;
     }
 
     @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final Producer producer = methodContext.method().annotation(Producer.class).get();
+    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+        final Producer producer = methodContext.method().annotations().get(Producer.class).get();
         final JMSSessionContext sessionContext = JMSSessionContext.of(producer);
         final JMSProducerTask producerTask = context.get(JMSFactory.class).createProducer(sessionContext);
 

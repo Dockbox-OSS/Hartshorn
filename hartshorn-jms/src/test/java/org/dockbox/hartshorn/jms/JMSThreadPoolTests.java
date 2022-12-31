@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.jms.annotations.UseActiveMQ;
+import org.dockbox.hartshorn.jms.annotations.UseJMS;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import java.util.concurrent.ExecutorService;
 
 @HartshornTest
-@UseActiveMQ
+@UseJMS
 public class JMSThreadPoolTests {
 
     @InjectTest

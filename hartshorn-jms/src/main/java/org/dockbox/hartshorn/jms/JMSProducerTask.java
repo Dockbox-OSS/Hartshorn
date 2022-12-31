@@ -17,23 +17,24 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Enableable;
-import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.inject.binding.ComponentBinding;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.option.Option;
 
-import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-@ComponentBinding(JMSProducerTask.class)
-public class JMSProducerTask implements Enableable {
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+
+@Component
+public class JMSProducerTask {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -51,8 +52,8 @@ public class JMSProducerTask implements Enableable {
     }
 
     public void send(final Object message) {
-        final Exceptional<String> output = this.mapper.write(message);
-        final String text = output.orElse(() -> String.valueOf(message)).get();
+        final Option<String> output = this.mapper.write(message);
+        final String text = output.orElseGet(() -> String.valueOf(message));
 
         try {
             final TextMessage textMessage = this.session.createTextMessage(text);
@@ -63,10 +64,11 @@ public class JMSProducerTask implements Enableable {
         }
     }
 
-    @Override
+    @PostConstruct
     public void enable() throws ApplicationException {
         try {
-            this.session = this.applicationContext.get(Key.of(Session.class, this.sessionContext.session()));
+            // TODO: Resolve NPE on session lookup
+            this.session = this.applicationContext.get(ComponentKey.of(Session.class, this.sessionContext.session()));
 
             final Destination destination = switch (this.sessionContext.destinationType()) {
                 case QUEUE -> this.session.createQueue(this.sessionContext.id());

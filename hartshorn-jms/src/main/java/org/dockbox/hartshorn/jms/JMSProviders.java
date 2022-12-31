@@ -17,18 +17,21 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.data.annotations.Value;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.jms.annotations.UseJMS;
 
-import javax.inject.Singleton;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Session;
 
-@Service(activators = UseJMS.class)
+import jakarta.inject.Singleton;
+
+@Service
+@RequiresActivator(UseJMS.class)
 public class JMSProviders {
 
     @Value("hartshorn.jms.username")
@@ -43,7 +46,7 @@ public class JMSProviders {
     @Value("hartshorn.jms.acknowledgeMode")
     private int acknowledgeMode = javax.jms.Session.AUTO_ACKNOWLEDGE;
 
-    @Provider
+    @Binds
     public Connection connection(final ConnectionFactory connectionFactory, final ExceptionListener exceptionListener) throws JMSException {
         final Connection connection;
         if (this.username == null || this.password == null)
@@ -55,18 +58,18 @@ public class JMSProviders {
         return connection;
     }
 
-    @Provider
+    @Binds
     public Session session(final Connection connection) throws JMSException {
         connection.start();
         return connection.createSession(this.transacted, this.acknowledgeMode);
     }
 
-    @Provider("jms.session.default")
+    @Binds("jms.session.default")
     public Session defaultSession(final Connection connection) throws JMSException {
         return this.session(connection);
     }
 
-    @Provider
+    @Binds
     @Singleton
     public JMSThreadPoolProvider threadPoolProvider() {
         return new JMSThreadPoolProviderImpl();

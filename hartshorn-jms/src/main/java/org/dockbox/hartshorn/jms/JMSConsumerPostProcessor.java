@@ -18,29 +18,19 @@ package org.dockbox.hartshorn.jms;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.AutomaticActivation;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.jms.annotations.JMSConfiguration;
 import org.dockbox.hartshorn.jms.annotations.Subscriber;
-import org.dockbox.hartshorn.jms.annotations.UseJMS;
 import org.dockbox.hartshorn.jms.parameter.JMSConsumerParameterLoader;
 import org.dockbox.hartshorn.jms.parameter.JMSParameterLoaderContext;
 import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodPostProcessor;
-import org.dockbox.hartshorn.util.reflect.MethodContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
-import javax.inject.Singleton;
-
-@Singleton
-@AutomaticActivation
-public class JMSConsumerPostProcessor extends ServiceAnnotatedMethodPostProcessor<Subscriber, UseJMS> {
-
-    @Override
-    public Class<UseJMS> activator() {
-        return UseJMS.class;
-    }
+public class JMSConsumerPostProcessor extends ServiceAnnotatedMethodPostProcessor<Subscriber> {
 
     @Override
     public Class<Subscriber> annotation() {
@@ -48,17 +38,19 @@ public class JMSConsumerPostProcessor extends ServiceAnnotatedMethodPostProcesso
     }
 
     @Override
-    protected <T> void process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final MethodContext<?, T> method) {
-        final JMSConfiguration configuration = method.annotation(JMSConfiguration.class).get();
+    protected <T> void process(ApplicationContext context, ComponentKey<T> key, @Nullable T instance, MethodView<T, ?> method) {
+        final JMSConfiguration configuration = method.annotations().get(JMSConfiguration.class).get();
 
         final JMSFactory jmsFactory = context.get(JMSFactory.class);
 
         final JMSDestinationContext destinationContext = JMSDestinationContext.of(configuration);
         final JMSConsumerParameterLoader parameterLoader = new JMSConsumerParameterLoader();
 
+        final TypeView<T> typeView = context.environment().introspect(key.type());
+
         final JMSConsumer consumer = message -> {
             final T accessor = context.get(key);
-            final JMSParameterLoaderContext loaderContext = new JMSParameterLoaderContext(message, method, key.type(), accessor, context);
+            final JMSParameterLoaderContext loaderContext = new JMSParameterLoaderContext(message, method, typeView, accessor, context);
             final List<Object> arguments = parameterLoader.loadArguments(loaderContext, message);
             method.invoke(accessor, arguments);
         };

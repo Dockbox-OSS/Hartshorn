@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.jms.annotations.UseActiveMQ;
+import org.dockbox.hartshorn.jms.annotations.UseJMS;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +15,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import javax.jms.Message;
 
 @HartshornTest
-@UseActiveMQ
-@Testcontainers
+@UseJMS
+@Testcontainers(disabledWithoutDocker = true)
 public class JMSCommunicationTests {
 
     private static final String ACTIVEMQ_IMAGE = "rmohr/activemq";

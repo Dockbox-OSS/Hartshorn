@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jms;
+apply {
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
-
-import jakarta.inject.Inject;
-
-@Component
-public class JMSQueueConsumer implements Runnable {
-
-    @Inject
-    private ApplicationContext applicationContext;
-
-    private String connection;
-    private String id;
-    private boolean isQueue;
-
-
-    @Override
-    public void run() {
-
-    }
+dependencies {
+    implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-config")
+    implementation("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
+    implementation("org.apache.activemq:activemq-client:5.17.1")
+    testImplementation(libs.bundles.testContainers)
 }

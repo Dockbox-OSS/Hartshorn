@@ -22,6 +22,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 public class JMSContext extends DefaultContext {
+
     private final Message message;
     private final Session session;
 

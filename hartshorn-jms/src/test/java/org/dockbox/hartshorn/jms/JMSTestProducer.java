@@ -1,11 +1,13 @@
 package org.dockbox.hartshorn.jms;
 
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.jms.annotations.DestinationType;
 import org.dockbox.hartshorn.jms.annotations.Producer;
 import org.dockbox.hartshorn.jms.annotations.UseJMS;
 
-@Service(activators = UseJMS.class)
+@Service
+@RequiresActivator(UseJMS.class)
 public interface JMSTestProducer {
 
     @Producer(id = "test.queue", destination = DestinationType.QUEUE)

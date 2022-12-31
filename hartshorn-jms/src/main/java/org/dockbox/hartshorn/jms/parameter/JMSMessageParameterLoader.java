@@ -16,21 +16,23 @@
 
 package org.dockbox.hartshorn.jms.parameter;
 
-import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
-import org.dockbox.hartshorn.util.reflect.ParameterContext;
 
 import javax.jms.Message;
 
 public class JMSMessageParameterLoader implements ParameterLoaderRule<JMSParameterLoaderContext> {
+
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
+    public boolean accepts(final ParameterView<?> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
         final Message message = context.message();
-        return parameter.type().parentOf(message.getClass());
+        return parameter.type().isParentOf(message.getClass());
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
-        return Exceptional.of(() -> (T) context.message());
+    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
+        return Option.of(() -> TypeUtils.adjustWildcards(context.message(), Object.class));
     }
 }

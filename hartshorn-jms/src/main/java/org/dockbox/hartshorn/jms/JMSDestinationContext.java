@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.jms.annotations.JMSConfiguration;
 
 public class JMSDestinationContext extends DefaultContext {
 
-    String session;
-    String id;
-    DestinationType destinationType;
+    private final String session;
+    private final String id;
+    private final DestinationType destinationType;
 
     public JMSDestinationContext(final String session, final String id, final DestinationType destinationType) {
         this.session = session;

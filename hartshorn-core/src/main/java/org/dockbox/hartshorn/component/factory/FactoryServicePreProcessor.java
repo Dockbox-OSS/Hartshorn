@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
@@ -62,13 +64,24 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
         for (final Provider<?> provider : context.hierarchy(componentKey).providers()) {
             if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
                 final TypeView<?> typeContext = context.environment().introspect(contextDrivenProvider.type());
+                if (typeContainsMatchingConstructor(factoryContext, method, methodParameters, typeContext)) return true;
+            }
+        }
 
-                for (final ConstructorView<?> constructor : typeContext.constructors().bound()) {
-                    if (constructor.parameters().matches(methodParameters)) {
-                        factoryContext.register(method, (ConstructorView<Object>) constructor);
-                        return true;
-                    }
-                }
+        for (final ComponentContainer container : context.get(ComponentLocator.class).containers()) {
+            final TypeView<?> componentType = container.type();
+            if (typeContainsMatchingConstructor(factoryContext, method, methodParameters, componentType)) return true;
+        }
+
+        return false;
+    }
+
+    private static boolean typeContainsMatchingConstructor(final FactoryContext factoryContext, final MethodView<Object, ?> method,
+                                                           final List<Class<?>> methodParameters, final TypeView<?> typeContext) {
+        for (final ConstructorView<?> constructor : typeContext.constructors().bound()) {
+            if (constructor.parameters().matches(methodParameters)) {
+                factoryContext.register(method, (ConstructorView<Object>) constructor);
+                return true;
             }
         }
         return false;

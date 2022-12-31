@@ -18,19 +18,23 @@ package org.dockbox.hartshorn.jms.activemq;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Provider;
-import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.jms.annotations.UseActiveMQ;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.jms.annotations.UseJMS;
 
 import javax.jms.ConnectionFactory;
 
-@Service(activators = UseActiveMQ.class, requires = "org.apache.activemq.ActiveMQConnectionFactory")
+@Service
+@RequiresActivator(UseJMS.class)
+@RequiresClass("org.apache.activemq.ActiveMQConnectionFactory")
 public class ActiveMQProviders {
 
     @Value("hartshorn.jms.url")
     private String url = "tcp://localhost:61616";
 
-    @Provider
+    @Binds
     public ConnectionFactory connectionFactory() {
         return new ActiveMQConnectionFactory(this.url);
     }

@@ -19,9 +19,10 @@ package org.dockbox.hartshorn.jms;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.component.Component;
 
-import javax.inject.Inject;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
+
+import jakarta.inject.Inject;
 
 @Component(singleton = true, permitProxying = false, permitProcessing = false)
 public class JMSExceptionListener implements ExceptionListener {
