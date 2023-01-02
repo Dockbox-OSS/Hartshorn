@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.problem.ProblemReporter;
 import org.slf4j.Logger;
 
 import java.util.Objects;
@@ -108,6 +109,10 @@ public final class InitializingContext extends DefaultApplicationAwareContext im
 
     public AnnotationLookup annotationLookup() {
         return this.configuration.annotationLookup(this);
+    }
+
+    public ProblemReporter problemReporter() {
+        return this.configuration.problemReporter(this);
     }
 
     public ComponentProvider componentProvider() {

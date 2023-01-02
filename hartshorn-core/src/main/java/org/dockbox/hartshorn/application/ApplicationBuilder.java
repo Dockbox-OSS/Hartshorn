@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.problem.ProblemReporter;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
@@ -225,6 +226,14 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     Self annotationLookup(Initializer<AnnotationLookup> annotationLookup);
 
     AnnotationLookup annotationLookup(final InitializingContext context);
+
+    /**
+     * Sets the {@link ProblemReporter} to use. The problem reporter is responsible for reporting problems during
+     * the application lifecycle, such as exceptions or validation warnings.
+     */
+    Self problemReporter(Initializer<ProblemReporter> problemReporter);
+
+    ProblemReporter problemReporter(final InitializingContext context);
 
     /**
      * Sets the {@link ClasspathResourceLocator} to use. The classpath resource locator is responsible for locating resources on

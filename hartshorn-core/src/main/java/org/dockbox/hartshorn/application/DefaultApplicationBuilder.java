@@ -45,6 +45,8 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
+import org.dockbox.hartshorn.util.problem.LoggerProblemReporter;
+import org.dockbox.hartshorn.util.problem.ProblemReporter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
@@ -88,7 +90,7 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected Class<?> mainClass;
     protected boolean includeBasePackages = true;
     protected boolean enableBanner = true;
-    private boolean enableBatchMode = false;
+    private boolean enableBatchMode;
 
     protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
     protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
@@ -111,6 +113,7 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
     protected ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
     protected ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
+    protected ComponentInitializer<ProblemReporter> problemReporter = ComponentInitializer.of(ctx -> new LoggerProblemReporter(ctx.applicationLogger()));
 
     @Override
     public Self mainClass(final Class<?> mainClass) {
@@ -335,6 +338,17 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     @Override
     public AnnotationLookup annotationLookup(final InitializingContext context) {
         return this.annotationLookup.initialize(context);
+    }
+
+    @Override
+    public Self problemReporter(final Initializer<ProblemReporter> problemReporter) {
+        this.problemReporter.initializer(problemReporter);
+        return this.self();
+    }
+
+    @Override
+    public ProblemReporter problemReporter(final InitializingContext context) {
+        return this.problemReporter.initialize(context);
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.proxy.UseProxying;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.problem.ProblemReporter;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -46,7 +47,8 @@ public interface ApplicationEnvironment extends
         LifecycleObservable,
         ApplicationFSProvider,
         ExceptionHandler,
-        AnnotationLookup
+        AnnotationLookup,
+        ProblemReporter
 {
 
     /**

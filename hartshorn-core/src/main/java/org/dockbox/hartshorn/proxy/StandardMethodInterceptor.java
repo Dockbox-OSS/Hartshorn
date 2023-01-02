@@ -227,7 +227,7 @@ public class StandardMethodInterceptor<T> {
 
     protected Object invokeTarget(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
         final Class<T> targetClass = this.manager.targetClass();
-        TypeView<T> targetView = this.applicationContext().environment().introspect(targetClass);
+        final TypeView<T> targetView = this.applicationContext().environment().introspect(targetClass);
 
         try {
             // If the proxy associated with this handler has a delegate, use it.

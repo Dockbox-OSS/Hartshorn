@@ -17,10 +17,10 @@
 package test.org.dockbox.hartshorn.exceptions;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
-import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.ModifyApplication;
+import org.dockbox.hartshorn.util.ExceptionUtilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +74,7 @@ public class ExceptTests {
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception("Something broke!", cause);
 
-        final String message = LoggingExceptionHandler.firstMessage(throwable);
+        final String message = ExceptionUtilities.firstMessage(throwable);
 
         Assertions.assertEquals("Something broke!", message);
     }
@@ -84,7 +84,7 @@ public class ExceptTests {
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception(null, cause);
 
-        final String message = LoggingExceptionHandler.firstMessage(throwable);
+        final String message = ExceptionUtilities.firstMessage(throwable);
 
         Assertions.assertEquals("I caused it!", message);
     }

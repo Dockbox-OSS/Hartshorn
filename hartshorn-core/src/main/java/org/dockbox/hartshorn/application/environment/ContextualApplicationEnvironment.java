@@ -48,6 +48,8 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.problem.Problem;
+import org.dockbox.hartshorn.util.problem.ProblemReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +85,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     private final ApplicationProxier applicationProxier;
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
+    private final ProblemReporter problemReporter;
     private final boolean isCI;
     private final boolean isBatchMode;
 
@@ -97,6 +100,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         this.applicationLogger = this.configure(context.applicationLogger());
         this.applicationProxier = this.configure(context.applicationProxier());
         this.annotationLookup = this.configure(context.annotationLookup());
+        this.problemReporter = this.configure(context.problemReporter());
 
         this.isBatchMode = context.builder().enableBatchMode();
 
@@ -432,5 +436,10 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     @Override
     public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> type) {
         return this.annotationLookup.annotationHierarchy(type);
+    }
+
+    @Override
+    public void report(Problem problem) {
+        this.problemReporter.report(problem);
     }
 }
