@@ -153,15 +153,15 @@ allprojects {
         // This is done to ensure that the output of all modules is placed in the same directory, and
         // can easily be accessed for further local development.
         register<Copy>("copyArtifacts") {
-            doLast {
-                val version = project.version
-                val destinationFolder = "$rootDir/hartshorn-assembly/distributions/$version"
-                val sourceFolder = "$buildDir/libs"
+            val version = rootProject.version
+            val destinationFolder = "$rootDir/hartshorn-assembly/distributions/$version"
+            val sourceFolder = "$buildDir/libs"
 
-                from(sourceFolder)
-                include("*$version*.jar")
-                into(destinationFolder)
-            }
+            if (!File(destinationFolder).exists()) mkdir(destinationFolder)
+
+            from(file(sourceFolder))
+            include("*$version*.jar")
+            into(file(destinationFolder))
         }
 
         // Configure existing tasks
