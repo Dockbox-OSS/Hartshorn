@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
@@ -196,8 +197,7 @@ public class ApplicationContextTests {
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
-        final SampleInterface sample = this.applicationContext.get(SampleInterface.class);
-        Assertions.assertNull(sample); // Non-component, so null
+        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SampleInterface.class));
 
         final SampleInterface provided = this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
@@ -329,8 +329,7 @@ public class ApplicationContextTests {
 
     @Test
     void testNonComponentsAreNotProxied() {
-        final NonComponentType instance = this.applicationContext.get(NonComponentType.class);
-        Assertions.assertNull(instance);
+        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonComponentType.class));
     }
 
     @Test
@@ -344,8 +343,7 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(NonProxyComponentType.class)
     void testNonPermittedComponentsAreNotProxied() {
-        final NonProxyComponentType instance = this.applicationContext.get(NonProxyComponentType.class);
-        Assertions.assertNull(instance);
+        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonProxyComponentType.class));
     }
 
     @Test
