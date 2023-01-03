@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Method;
-import java.util.Set;
-
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * A proxy manager is responsible for managing the lifecycle of a single proxy object. How the proxy is created is
@@ -102,4 +102,15 @@ public interface ProxyManager<T> extends ApplicationAwareContext {
      * @return all method wrappers for the given method
      */
     Set<MethodWrapper<T>> wrappers(Method method);
+
+    /**
+     * Gets the default method stub for the proxy. Stubs are used to provide a default implementation
+     * for methods that are not otherwise delegated or intercepted.
+     *
+     * @return the default method stub for the proxy
+     * @see ProxyFactory#defaultStub()
+     * @see MethodStub
+     * @see MethodStubContext
+     */
+    MethodStub<T> stub();
 }

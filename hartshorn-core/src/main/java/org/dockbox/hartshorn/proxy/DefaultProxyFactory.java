@@ -31,6 +31,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -81,6 +82,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private final ConcurrentClassMap<Object> typeDelegates = new ConcurrentClassMap<>();
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
     private T typeDelegate;
+    private Supplier<MethodStub<T>> defaultStub = DefaultValueResponseMethodStub::new;
 
     // Proxy data
     private final ProxyContextContainer contextContainer = new ProxyContextContainer(this::updateState);
@@ -239,6 +241,17 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
+    public DefaultProxyFactory<T> defaultStub(final MethodStub<T> stub) {
+        return this.defaultStub(() -> stub);
+    }
+
+    @Override
+    public DefaultProxyFactory<T> defaultStub(final Supplier<MethodStub<T>> stub) {
+        this.defaultStub = stub;
+        return this;
+    }
+
+    @Override
     public Class<T> type() {
         return this.type;
     }
@@ -282,6 +295,11 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     @Override
     public MultiMap<Method, MethodWrapper<T>> wrappers() {
         return this.wrappers;
+    }
+
+    @Override
+    public Supplier<MethodStub<T>> defaultStub() {
+        return this.defaultStub;
     }
 
     @Override
