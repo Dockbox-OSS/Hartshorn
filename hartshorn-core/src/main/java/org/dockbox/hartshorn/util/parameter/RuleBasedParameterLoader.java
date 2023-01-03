@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.util.parameter;
 
+import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.option.Option;
-
-public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C>{
+public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C> {
 
     private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
 
@@ -62,14 +62,19 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         parameters:
         for (int i = 0; i < parameters.size(); i++) {
             final ParameterView<?> parameter = parameters.get(i);
-            for (final ParameterLoaderRule<C> rule : this.rules) {
-                if (rule.accepts(parameter, i, context, args)) {
-                    final Option<?> argument = rule.load(parameter, i, context, args);
-                    arguments.add(argument.orNull());
-                    continue parameters;
+            try {
+                for (final ParameterLoaderRule<C> rule : this.rules) {
+                    if (rule.accepts(parameter, i, context, args)) {
+                        final Option<?> argument = rule.load(parameter, i, context, args);
+                        arguments.add(argument.orNull());
+                        continue parameters;
+                    }
                 }
+                arguments.add(this.loadDefault(parameter, i, context, args));
             }
-            arguments.add(this.loadDefault(parameter, i, context, args));
+            catch (final Exception e) {
+                throw new ParameterLoadException(parameter, e);
+            }
         }
         return Collections.unmodifiableList(arguments);
     }
