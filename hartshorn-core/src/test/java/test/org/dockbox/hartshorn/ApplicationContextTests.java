@@ -21,12 +21,14 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.beans.ErrorInConstructorObject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
 import test.org.dockbox.hartshorn.components.CircularConstructorA;
 import test.org.dockbox.hartshorn.components.CircularConstructorB;
@@ -124,7 +127,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
+        Assertions.assertSame(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
     }
@@ -137,7 +140,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
+        Assertions.assertSame(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
     }
@@ -149,7 +152,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
+        Assertions.assertSame(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
     }
@@ -162,7 +165,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
+        Assertions.assertSame(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
     }
@@ -174,7 +177,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
+        Assertions.assertSame(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
     }
@@ -187,7 +190,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleImplementation.class, providedClass);
+        Assertions.assertSame(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
     }
@@ -203,7 +206,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleMetaAnnotatedImplementation.class, providedClass);
+        Assertions.assertSame(SampleMetaAnnotatedImplementation.class, providedClass);
 
         Assertions.assertEquals("MetaAnnotatedHartshorn", provided.name());
     }
@@ -348,7 +351,8 @@ public class ApplicationContextTests {
 
     @Test
     void testFailingConstructorIsRethrown() {
-        Assertions.assertThrows(IllegalStateException.class, () -> this.applicationContext.get(TypeWithFailingConstructor.class));
+        final ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(TypeWithFailingConstructor.class));
+        Assertions.assertTrue(exception.getCause() instanceof IllegalStateException);
     }
 
     @Test
@@ -399,7 +403,8 @@ public class ApplicationContextTests {
             CircularDependencyB.class,
     })
     void testExceptionIsThrownOnCyclicProvision(final Class<?> type, final Class<?>... path) {
-        Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext.get(type));
+        final ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(type));
+        Assertions.assertTrue(exception.getCause() instanceof CyclicComponentException);
     }
 
     @Test
@@ -481,5 +486,16 @@ public class ApplicationContextTests {
         this.applicationContext.bind(String.class).priority(-2).to(() -> "Hello low priority world!");
         final String binding2 = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello modified world!", binding2);
+    }
+
+    @Test
+    void testFailureInComponentConstructorYieldsInitializationException() {
+        final ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(ErrorInConstructorObject.class));
+        final Throwable cause = exception.getCause();
+        Assertions.assertNotNull(cause);
+        Assertions.assertTrue(cause instanceof ApplicationException);
+
+        final ApplicationException applicationException = (ApplicationException) cause;
+        Assertions.assertEquals("Error in constructor", applicationException.getMessage());
     }
 }

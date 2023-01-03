@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
@@ -27,6 +26,7 @@ import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
@@ -47,6 +47,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
@@ -68,7 +69,12 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
     }
 
     private <T> Option<ObjectContainer<T>> create(final ComponentKey<T> key) {
-        return this.provide(key).orComputeFlat(() -> this.raw(key));
+        try {
+            return this.provide(key).orComputeFlat(() -> this.raw(key));
+        }
+        catch (final Exception e) {
+            throw new ComponentInitializationException("Failed to create component for key " + key, e);
+        }
     }
 
     @Override
@@ -259,7 +265,7 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
                 instance = this.owner.postConstructor().doPostConstruct(instance);
             }
             catch (final ApplicationException e) {
-                ExceptionHandler.unchecked(e);
+                throw new ComponentResolutionException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
 
