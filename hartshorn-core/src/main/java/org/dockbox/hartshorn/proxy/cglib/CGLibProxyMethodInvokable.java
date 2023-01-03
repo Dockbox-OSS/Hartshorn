@@ -69,12 +69,12 @@ public class CGLibProxyMethodInvokable implements Invokable {
     }
 
     @Override
-    public Class<?> getDeclaringClass() {
+    public Class<?> declaringClass() {
         return this.proxy.getClass();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return this.methodProxy.getSignature().getName();
     }
 
@@ -84,17 +84,17 @@ public class CGLibProxyMethodInvokable implements Invokable {
     }
 
     @Override
-    public Class<?> getReturnType() {
+    public Class<?> returnType() {
         return this.returnType.type();
     }
 
     @Override
-    public Class<?>[] getParameterTypes() {
+    public Class<?>[] parameterTypes() {
         return this.parameterTypes;
     }
 
     @Override
-    public String getQualifiedName() {
+    public String qualifiedName() {
         return this.methodProxy.getSuperName();
     }
 }

@@ -43,12 +43,12 @@ public class MethodInvokable implements Invokable {
     }
 
     @Override
-    public Class<?> getDeclaringClass() {
+    public Class<?> declaringClass() {
         return this.method.getDeclaringClass();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return this.method.getName();
     }
 
@@ -58,17 +58,17 @@ public class MethodInvokable implements Invokable {
     }
 
     @Override
-    public Class<?> getReturnType() {
+    public Class<?> returnType() {
         return this.method.getReturnType();
     }
 
     @Override
-    public Class<?>[] getParameterTypes() {
+    public Class<?>[] parameterTypes() {
         return this.method.getParameterTypes();
     }
 
     @Override
-    public String getQualifiedName() {
+    public String qualifiedName() {
         return this.toIntrospector().qualifiedName();
     }
 

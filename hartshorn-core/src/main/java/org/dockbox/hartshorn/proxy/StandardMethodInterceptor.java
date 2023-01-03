@@ -76,14 +76,14 @@ public class StandardMethodInterceptor<T> {
             else {
                 final TypeView<Object> resultView = this.applicationContext.environment().introspect(result);
                 if (resultView.isPrimitive() || resultView.isChildOf(returnType.type())) return result;
-                else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.getQualifiedName());
+                else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
             }
         }
         else if (result == null) return null;
         else {
-            final TypeView<Object> resultView = this.applicationContext.environment().introspect(result);
+            final TypeView<Object> resultView = this.applicationContext().environment().introspect(result);
             if (resultView.isChildOf(returnType.type())) return result;
-            else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.getQualifiedName());
+            else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
         }
     }
 
@@ -253,7 +253,7 @@ public class StandardMethodInterceptor<T> {
                 Could not invoke local method %s (targeting %s) on proxy %s of qualified type %s(isProxy=%s) with arguments %s.
                 This typically indicates that there is no appropriate proxy property (delegate or interceptor) for the method.
                 """.formatted(
-                source.getQualifiedName(), target.getQualifiedName(), targetType.qualifiedName(), self.getClass().getCanonicalName(),
+                source.qualifiedName(), target.qualifiedName(), targetType.qualifiedName(), self.getClass().getCanonicalName(),
                 this.applicationContext().environment().isProxy(self), Arrays.toString(args))
         );
     }
@@ -278,14 +278,14 @@ public class StandardMethodInterceptor<T> {
         Object result;
         if (target instanceof MethodInvokable methodInvokable) {
             result = function.invoke(TypeUtils.adjustWildcards(methodInvokable.toIntrospector(), MethodView.class), self, args)
-                    .orElseGet(() -> this.applicationContext().environment().introspect(target.getReturnType()).defaultOrNull());
+                    .orElseGet(() -> this.applicationContext().environment().introspect(target.returnType()).defaultOrNull());
         }
         else {
             try {
                 result = target.invoke(self, args);
             }
             catch (final Throwable e) {
-                result = this.applicationContext().environment().introspect(target.getReturnType()).defaultOrNull();
+                result = this.applicationContext().environment().introspect(target.returnType()).defaultOrNull();
             }
         }
 
@@ -301,8 +301,8 @@ public class StandardMethodInterceptor<T> {
         else {
             handle = MethodHandles.lookup().findSpecial(
                     declaringType,
-                    source.getName(),
-                    MethodType.methodType(source.getReturnType(), source.getParameterTypes()),
+                    source.name(),
+                    MethodType.methodType(source.returnType(), source.parameterTypes()),
                     declaringType
             ).bindTo(self);
             METHOD_HANDLE_CACHE.put(source, handle);
