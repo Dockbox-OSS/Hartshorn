@@ -47,7 +47,6 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
@@ -265,7 +264,7 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
                 instance = this.owner.postConstructor().doPostConstruct(instance);
             }
             catch (final ApplicationException e) {
-                throw new ComponentResolutionException("Failed to perform post-construction on component with key " + componentKey, e);
+                throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
 
