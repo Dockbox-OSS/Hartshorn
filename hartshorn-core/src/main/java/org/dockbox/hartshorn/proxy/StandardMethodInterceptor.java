@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javassist.util.proxy.ProxyFactory;
 
-public class StandardMethodInterceptor<T> {
+public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, ProxyObject<T> {
 
     private static final Map<Invokable, MethodHandle> METHOD_HANDLE_CACHE = new ConcurrentHashMap<>();
 
@@ -51,10 +51,12 @@ public class StandardMethodInterceptor<T> {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public ProxyManager<T> manager() {
         return this.manager;
     }
 
+    @Override
     public Object intercept(final Object self, final MethodInvokable source, final Invokable proxy, final Object[] args) throws Throwable {
         final T callbackTarget = this.manager.delegate().orElse((T) self);
         final MethodView<T, ?> methodView = (MethodView<T, ?>) source.toIntrospector();
@@ -259,6 +261,7 @@ public class StandardMethodInterceptor<T> {
     }
 
     protected Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
+    @Override
         final MethodView<?, ?> methodView = method.toIntrospector();
         final ParameterLoaderContext context = new ParameterLoaderContext(methodView, methodView.declaredBy(), instance, this.applicationContext());
         return this.parameterLoader.loadArguments(context, args).toArray();
@@ -310,6 +313,7 @@ public class StandardMethodInterceptor<T> {
         return handle.invokeWithArguments(args);
     }
 
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }

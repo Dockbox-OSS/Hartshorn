@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.proxy.Invokable;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.MethodInvokable;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.proxy.StandardMethodInterceptor;
+import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.proxy.javassist.JavassistProxyFactory;
 
 /**
@@ -44,7 +44,7 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
     }
 
     @Override
-    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(final StandardMethodInterceptor<T> interceptor) {
+    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(final ProxyMethodInterceptor<T> interceptor) {
         final Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(this.type());
         enhancer.setInterfaces(this.proxyInterfaces(false));

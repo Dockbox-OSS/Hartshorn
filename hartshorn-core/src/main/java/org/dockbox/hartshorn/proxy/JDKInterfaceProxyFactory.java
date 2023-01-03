@@ -50,13 +50,13 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
     }
 
-    protected Attempt<T, Throwable> createProxy(final CheckedFunction<StandardMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
+    protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
 
         this.contextContainer().contexts().forEach(manager::add);
         this.contextContainer().namedContexts().forEach(manager::add);
 
-        final StandardMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationContext());
+        final ProxyMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationContext());
 
         final Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
 
@@ -64,21 +64,21 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return proxy;
     }
 
-    protected InvocationHandler invocationHandler(final StandardMethodInterceptor<T> interceptor) {
+    protected InvocationHandler invocationHandler(final ProxyMethodInterceptor<T> interceptor) {
         return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationContext()), null, args);
     }
 
-    protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(StandardMethodInterceptor<T> interceptor);
+    protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor);
 
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(final StandardMethodInterceptor<T> interceptor, final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 
-    protected Attempt<T, Throwable> createClassProxy(final StandardMethodInterceptor<T> interceptor, final CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
+    protected Attempt<T, Throwable> createClassProxy(final ProxyMethodInterceptor<T> interceptor, final CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
         final ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
             final T proxy = instantiate.apply(enhancer);
@@ -97,7 +97,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return CollectionUtilities.merge(standardInterfaces, this.interfaces().toArray(new Class[0]));
     }
 
-    protected Attempt<T, Throwable> interfaceProxy(final StandardMethodInterceptor<T> interceptor) {
+    protected Attempt<T, Throwable> interfaceProxy(final ProxyMethodInterceptor<T> interceptor) {
         final Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 this.proxyInterfaces(true),
