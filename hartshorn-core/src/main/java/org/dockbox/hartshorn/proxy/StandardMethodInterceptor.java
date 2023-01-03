@@ -31,7 +31,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -194,7 +193,6 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
 
     protected Object invokeTarget(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
         final Class<T> targetClass = this.manager().targetClass();
-        final TypeView<T> targetView = this.applicationContext().environment().introspect(targetClass);
 
         try {
             // If the proxy associated with this handler has a delegate, use it.
@@ -208,21 +206,11 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
             else if (!(self instanceof Proxy || ProxyFactory.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
 
             // If none of the above conditions are met, we have no way to handle the method.
-            else throw this.invokeFailed(self, source, target, args, targetView);
+            else return this.invokeStub(self, source, target, args);
         }
         catch (final InvocationTargetException e) {
             throw e.getCause();
         }
-    }
-
-    protected ProxyInvocationException invokeFailed(final T self, final Invokable source, final Invokable target, final Object[] args, final TypeView<T> targetType) {
-        return new ProxyInvocationException("""
-                Could not invoke local method %s (targeting %s) on proxy %s of qualified type %s(isProxy=%s) with arguments %s.
-                This typically indicates that there is no appropriate proxy property (delegate or interceptor) for the method.
-                """.formatted(
-                source.qualifiedName(), target.qualifiedName(), targetType.qualifiedName(), self.getClass().getCanonicalName(),
-                this.applicationContext().environment().isProxy(self), Arrays.toString(args))
-        );
     }
 
     @Override
