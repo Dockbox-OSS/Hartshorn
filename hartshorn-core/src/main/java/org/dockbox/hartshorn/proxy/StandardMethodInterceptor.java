@@ -186,7 +186,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
         }
     }
 
-    protected Object invokeStub(final T self, final Invokable source, final Invokable target, final Object[] args) {
+    protected Object invokeStub(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
         final MethodStub<T> stub = this.manager().stub();
         final MethodStubContext<T> stubContext = new MethodStubContext<>(self, source, target, this, args);
         return stub.invoke(stubContext);
