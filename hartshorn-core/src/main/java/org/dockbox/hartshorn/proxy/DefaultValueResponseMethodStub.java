@@ -16,20 +16,16 @@
 
 package org.dockbox.hartshorn.proxy;
 
-public interface Invokable {
-    Object invoke(Object obj, Object... args) throws Exception;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-    void setAccessible(boolean accessible);
+public class DefaultValueResponseMethodStub<T> implements MethodStub<T> {
 
-    Class<?> declaringClass();
-
-    String name();
-
-    boolean isDefault();
-
-    Class<?> returnType();
-
-    Class<?>[] parameterTypes();
-
-    String qualifiedName();
+    @Override
+    public Object invoke(final MethodStubContext<T> stubContext) {
+        final Class<?> returnType = stubContext.target().returnType();
+        final TypeView<?> introspectedType = stubContext.applicationContext()
+                .environment()
+                .introspect(returnType);
+        return introspectedType.defaultOrNull();
+    }
 }

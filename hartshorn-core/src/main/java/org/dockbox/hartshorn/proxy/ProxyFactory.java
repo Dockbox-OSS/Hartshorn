@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
@@ -297,6 +298,10 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      */
     F implement(Class<?>... interfaces);
 
+    F defaultStub(MethodStub<T> stub);
+
+    F defaultStub(Supplier<MethodStub<T>> stub);
+
     /**
      * Creates a proxy instance of the active {@link #type()} and returns it. This will create a new proxy,
      * as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy will be created
@@ -389,4 +394,10 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @return The temporary context
      */
     ProxyContextContainer contextContainer();
+
+    /**
+     * Gets the default {@link MethodStub} to use when a method is not implemented.
+     * @return The default method stub
+     */
+    Supplier<MethodStub<T>> defaultStub();
 }

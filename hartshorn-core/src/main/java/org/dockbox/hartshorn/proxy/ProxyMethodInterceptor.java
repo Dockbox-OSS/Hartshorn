@@ -16,20 +16,14 @@
 
 package org.dockbox.hartshorn.proxy;
 
-public interface Invokable {
-    Object invoke(Object obj, Object... args) throws Exception;
+import org.dockbox.hartshorn.context.ContextCarrier;
 
-    void setAccessible(boolean accessible);
+public interface ProxyMethodInterceptor<T> extends ContextCarrier {
 
-    Class<?> declaringClass();
+    ProxyManager<T> manager();
 
-    String name();
+    Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args) throws Throwable;
 
-    boolean isDefault();
+    Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args);
 
-    Class<?> returnType();
-
-    Class<?>[] parameterTypes();
-
-    String qualifiedName();
 }

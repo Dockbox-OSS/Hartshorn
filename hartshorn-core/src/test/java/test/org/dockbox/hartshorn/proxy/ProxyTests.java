@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.proxy.MethodWrapper;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyCallbackContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.ProxyInvocationException;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.proxy.UseProxying;
@@ -33,7 +32,6 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -198,19 +196,6 @@ public class ProxyTests {
         final NamedAgedProxy proxyInstance = proxy.get();
         Assertions.assertEquals(12, proxyInstance.age());
         Assertions.assertEquals("NamedProxy", proxyInstance.name());
-    }
-
-    @ParameterizedTest
-    @MethodSource("factories")
-    void testProxyWillYieldExceptionOnMissingProperty(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        // Use a custom interface for this type of delegation, as the other proxy types override methods from their parent
-        final ProxyFactory<AgedProxy, ?> factory = (ProxyFactory<AgedProxy, ?>) factoryFn.apply(AgedProxy.class, this.applicationContext);
-        final Option<AgedProxy> proxy = factory.proxy();
-        Assertions.assertTrue(proxy.present());
-
-        final AgedProxy proxyInstance = proxy.get();
-        final ProxyInvocationException exception = Assertions.assertThrows(ProxyInvocationException.class, proxyInstance::age);
-        Assertions.assertTrue(StringUtilities.notEmpty(exception.getMessage()));
     }
 
     @ParameterizedTest

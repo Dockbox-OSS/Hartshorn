@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+@FunctionalInterface
+public interface MethodStub<T> {
 
-public class ProxyInvocationException extends ApplicationRuntimeException {
-    public ProxyInvocationException(final String message) {
-        super(message);
-    }
+    Object invoke(MethodStubContext<T> stubContext) throws Throwable;
+
 }

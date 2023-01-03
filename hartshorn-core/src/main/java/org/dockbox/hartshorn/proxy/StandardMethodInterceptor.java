@@ -31,14 +31,14 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javassist.util.proxy.ProxyFactory;
 
-public class StandardMethodInterceptor<T> {
+@SuppressWarnings({ "OverlyBroadThrowsClause", "ProhibitedExceptionDeclared" })
+public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, ProxyObject<T> {
 
     private static final Map<Invokable, MethodHandle> METHOD_HANDLE_CACHE = new ConcurrentHashMap<>();
 
@@ -51,89 +51,91 @@ public class StandardMethodInterceptor<T> {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public ProxyManager<T> manager() {
         return this.manager;
     }
 
+    @Override
     public Object intercept(final Object self, final MethodInvokable source, final Invokable proxy, final Object[] args) throws Throwable {
-        final T callbackTarget = this.manager.delegate().orElse((T) self);
+        final T instance = TypeUtils.adjustWildcards(self, Object.class);
+        final T callbackTarget = this.manager().delegate().orElse(instance);
         final MethodView<T, ?> methodView = (MethodView<T, ?>) source.toIntrospector();
 
         final CustomInvocation<?> customInvocation = this.createDefaultInvocation(source, proxy, callbackTarget);
         final Object[] arguments = this.resolveArgs(source, self, args);
 
-        final Set<MethodWrapper<T>> wrappers = this.manager.wrappers(source.toMethod());
-
-        final Object result = this.interceptAndNotify((T) self, source, proxy, callbackTarget, methodView, customInvocation, arguments, wrappers);
-        return this.validate(source, result);
+        final Set<MethodWrapper<T>> wrappers = this.manager().wrappers(source.toMethod());
+        final MethodWrapper<T> list = new MethodWrapperList<>(wrappers);
+        
+        final Object result = this.interceptAndNotify(instance, source, proxy, callbackTarget, methodView, customInvocation, arguments, list);
+        return this.validateReturnValue(source, result);
     }
 
-    private Object validate(final MethodInvokable source, final Object result) {
+    protected Object validateReturnValue(final MethodInvokable source, final Object result) {
         final TypeView<?> returnType = source.toIntrospector().returnType();
         if (returnType.isVoid()) return null;
         else if (returnType.isPrimitive()) {
             if (result == null) return returnType.defaultOrNull();
             else {
-                final TypeView<Object> resultView = this.applicationContext.environment().introspect(result);
+                final TypeView<Object> resultView = this.applicationContext().environment().introspect(result);
                 if (resultView.isPrimitive() || resultView.isChildOf(returnType.type())) return result;
-                else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.getQualifiedName());
+                else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
             }
         }
         else if (result == null) return null;
         else {
-            final TypeView<Object> resultView = this.applicationContext.environment().introspect(result);
+            final TypeView<Object> resultView = this.applicationContext().environment().introspect(result);
             if (resultView.isChildOf(returnType.type())) return result;
-            else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.getQualifiedName());
+            else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
         }
     }
 
-    private Object interceptAndNotify(final T self, final MethodInvokable source, final Invokable proxy, final T callbackTarget,
+    protected Object interceptAndNotify(final T self, final MethodInvokable source, final Invokable proxy, final T callbackTarget,
                                       final MethodView<T, ?> methodView, final CustomInvocation<?> customInvocation,
-                                      final Object[] arguments, final Set<MethodWrapper<T>> wrappers
-    ) throws Throwable {
+                                      final Object[] arguments, final MethodWrapper<T> wrapper) throws Throwable {
         final ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(callbackTarget, TypeUtils.adjustWildcards(self, Object.class), methodView, arguments);
-
-        for (final MethodWrapper<T> wrapper : wrappers) {
-            wrapper.acceptBefore(callbackContext);
-        }
+        wrapper.acceptBefore(callbackContext);
 
         try {
-            final Object result;
-            final Option<MethodInterceptor<T, ?>> interceptor = this.manager.interceptor(source.toMethod());
-            if (interceptor.present()) {
-                result = this.invokeInterceptor(interceptor.get(), callbackTarget,
-                        TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class),
-                        TypeUtils.adjustWildcards(customInvocation, CustomInvocation.class),
-                        arguments);
-            }
-            else {
-                final Option<T> delegate = this.manager.delegate(source.toMethod());
-                if (delegate.present())
-                    result = this.invokeDelegate(delegate.get(), callbackTarget, source, arguments);
-                else
-                    result = this.interceptWithoutDelegate(self, callbackTarget, source, proxy, arguments);
-            }
+            final Option<MethodInterceptor<T, ?>> interceptor = this.manager().interceptor(source.toMethod());
+            final Object result = this.notifyInterceptor(self, source, proxy, callbackTarget, customInvocation, arguments, interceptor);
 
-            for (final MethodWrapper<T> wrapper : wrappers) {
-                wrapper.acceptAfter(callbackContext);
-            }
+            wrapper.acceptAfter(callbackContext);
             return result;
         }
         catch (final Throwable e) {
             final ProxyCallbackContext<T> errorContext = callbackContext.acceptError(e);
-
-            for (final MethodWrapper<T> wrapper : wrappers) {
-                wrapper.acceptError(errorContext);
-            }
+            wrapper.acceptError(errorContext);
             throw e;
         }
+    }
+
+    protected Object notifyInterceptor(final T self, final MethodInvokable source, final Invokable proxy,
+                                     final T callbackTarget, final CustomInvocation<?> customInvocation,
+                                     final Object[] arguments, final Option<MethodInterceptor<T, ?>> interceptor) throws Throwable {
+        final Object result;
+        if (interceptor.present()) {
+            result = this.invokeInterceptor(interceptor.get(), callbackTarget,
+                    TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class),
+                    TypeUtils.adjustWildcards(customInvocation, CustomInvocation.class),
+                    arguments);
+        }
+        else {
+            final Option<T> delegate = this.manager().delegate(source.toMethod());
+            if (delegate.present())
+                result = this.invokeDelegate(delegate.get(), callbackTarget, source, arguments);
+            else
+                result = this.interceptWithoutDelegate(self, callbackTarget, source, proxy, arguments);
+        }
+        return result;
     }
 
     protected Object interceptWithoutDelegate(final T self, final T callbackTarget, final Invokable source, final Invokable proxy, final Object[] args) throws Throwable {
         // If no handler is known, default to the original method. This is delegated to the instance
         // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
         Invokable target = source;
-        if (this.manager.delegate().absent()) {
+        if (this.manager().delegate().absent()) {
             if (source == null) target = proxy;
 
             if (this.isEqualsMethod(target)) return this.proxyEquals(args[0]);
@@ -152,14 +154,14 @@ public class StandardMethodInterceptor<T> {
     }
 
     protected CustomInvocation<?> createDefaultInvocation(final Invokable source, final Invokable proxy, final T callbackTarget) {
-        return args$0 -> {
-            if (this.manager.delegate().present()) {
-                return this.invokeDelegate(this.manager.delegate().get(), source, args$0);
+        return interceptorArgs -> {
+            if (this.manager().delegate().present()) {
+                return this.invokeDelegate(this.manager().delegate().get(), source, interceptorArgs);
             }
             if (proxy == null) {
-                return this.applicationContext().environment().introspect(source.getReturnType()).defaultOrNull();
+                return this.applicationContext().environment().introspect(source.returnType()).defaultOrNull();
             }
-            return proxy.invoke(callbackTarget, args$0);
+            return proxy.invoke(callbackTarget, interceptorArgs);
         };
     }
 
@@ -175,63 +177,26 @@ public class StandardMethodInterceptor<T> {
     }
 
     protected Object invokeUnregistered(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
-        final Class<T> targetClass = this.manager.targetClass();
-
         if (target != null) {
             return this.invokeTarget(self, source, target, args);
         }
         else {
-            final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
-            final String name = element.getMethodName();
-            final String className = targetClass == null ? "" : targetClass.getSimpleName() + ".";
-            throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
+            return this.invokeStub(self, source, target, args);
         }
     }
 
-    protected boolean isEqualsMethod(final Invokable invokable) {
-        return "equals".equals(invokable.getName())
-                && invokable.getDeclaringClass().equals(Object.class)
-                && invokable.getParameterTypes().length == 1;
-    }
-
-    protected boolean isToStringMethod(final Invokable invokable) {
-        return "toString".equals(invokable.getName())
-                && invokable.getDeclaringClass().equals(Object.class)
-                && invokable.getParameterTypes().length == 0;
-    }
-
-    protected boolean isHashCodeMethod(final Invokable invokable) {
-        return "hashCode".equals(invokable.getName())
-                && invokable.getDeclaringClass().equals(Object.class)
-                && invokable.getParameterTypes().length == 0;
-    }
-
-    protected boolean proxyEquals(final Object obj) {
-        if (obj == null) return false;
-        if (Boolean.TRUE.equals(this.manager.delegate()
-                .map(instance -> instance.equals(obj))
-                .orElse(false))
-        ) return true;
-        return this.manager.proxy() == obj;
-    }
-
-    protected String proxyToString(final T self) {
-        if (self == null) return "null";
-        final String canonicalName = this.manager().targetClass().getCanonicalName();
-        return "Proxy: " + canonicalName + "@" + Integer.toHexString(this.proxyHashCode(self));
-    }
-
-    protected int proxyHashCode(final T self) {
-        return System.identityHashCode(self);
+    protected Object invokeStub(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
+        final MethodStub<T> stub = this.manager().stub();
+        final MethodStubContext<T> stubContext = new MethodStubContext<>(self, source, target, this, args);
+        return stub.invoke(stubContext);
     }
 
     protected Object invokeTarget(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
-        final Class<T> targetClass = this.manager.targetClass();
-        TypeView<T> targetView = this.applicationContext().environment().introspect(targetClass);
+        final Class<T> targetClass = this.manager().targetClass();
 
         try {
             // If the proxy associated with this handler has a delegate, use it.
-            if (this.manager.delegate().present()) return this.invokeDelegate(this.manager.delegate().get(), target, args);
+            if (this.manager().delegate().present()) return this.invokeDelegate(this.manager().delegate().get(), target, args);
 
             // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead, we
             // need to look up the method on the class and invoke it through the method handle directly.
@@ -241,35 +206,26 @@ public class StandardMethodInterceptor<T> {
             else if (!(self instanceof Proxy || ProxyFactory.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
 
             // If none of the above conditions are met, we have no way to handle the method.
-            else throw this.invokeFailed(self, source, target, args, targetView);
+            else return this.invokeStub(self, source, target, args);
         }
         catch (final InvocationTargetException e) {
             throw e.getCause();
         }
     }
 
-    protected ProxyInvocationException invokeFailed(final T self, final Invokable source, final Invokable target, final Object[] args, final TypeView<T> targetType) {
-        return new ProxyInvocationException("""
-                Could not invoke local method %s (targeting %s) on proxy %s of qualified type %s(isProxy=%s) with arguments %s.
-                This typically indicates that there is no appropriate proxy property (delegate or interceptor) for the method.
-                """.formatted(
-                source.getQualifiedName(), target.getQualifiedName(), targetType.qualifiedName(), self.getClass().getCanonicalName(),
-                this.applicationContext().environment().isProxy(self), Arrays.toString(args))
-        );
-    }
-
-    protected Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
+    @Override
+    public Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
         final MethodView<?, ?> methodView = method.toIntrospector();
         final ParameterLoaderContext context = new ParameterLoaderContext(methodView, methodView.declaredBy(), instance, this.applicationContext());
-        return this.parameterLoader.loadArguments(context, args).toArray();
+        return this.parameterLoader().loadArguments(context, args).toArray();
     }
 
     protected Object invokeDelegate(final T self, final Invokable target, final Object[] args) {
-        return this.invokeAccessible(self, target, args, (method, instance, args$0) -> method.invoke(this.manager.delegate().get(), args$0));
+        return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(this.manager().delegate().get(), interceptorArgs));
     }
 
     protected Object invokeSelf(final T self, final Invokable target, final Object[] args) {
-        return this.invokeAccessible(self, target, args, (method, instance, args$0) -> method.invoke(self, args$0));
+        return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(self, interceptorArgs));
     }
 
     protected Object invokeAccessible(final T self, final Invokable target, final Object[] args, final MethodInvoker<Object, T> function) {
@@ -278,14 +234,14 @@ public class StandardMethodInterceptor<T> {
         Object result;
         if (target instanceof MethodInvokable methodInvokable) {
             result = function.invoke(TypeUtils.adjustWildcards(methodInvokable.toIntrospector(), MethodView.class), self, args)
-                    .orElseGet(() -> this.applicationContext().environment().introspect(target.getReturnType()).defaultOrNull());
+                    .orElseGet(() -> this.applicationContext().environment().introspect(target.returnType()).defaultOrNull());
         }
         else {
             try {
                 result = target.invoke(self, args);
             }
             catch (final Throwable e) {
-                result = this.applicationContext().environment().introspect(target.getReturnType()).defaultOrNull();
+                result = this.applicationContext().environment().introspect(target.returnType()).defaultOrNull();
             }
         }
 
@@ -301,8 +257,8 @@ public class StandardMethodInterceptor<T> {
         else {
             handle = MethodHandles.lookup().findSpecial(
                     declaringType,
-                    source.getName(),
-                    MethodType.methodType(source.getReturnType(), source.getParameterTypes()),
+                    source.name(),
+                    MethodType.methodType(source.returnType(), source.parameterTypes()),
                     declaringType
             ).bindTo(self);
             METHOD_HANDLE_CACHE.put(source, handle);
@@ -310,6 +266,11 @@ public class StandardMethodInterceptor<T> {
         return handle.invokeWithArguments(args);
     }
 
+    protected ParameterLoader<ParameterLoaderContext> parameterLoader() {
+        return this.parameterLoader;
+    }
+
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }

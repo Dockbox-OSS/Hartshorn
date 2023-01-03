@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
@@ -29,6 +23,13 @@ import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
@@ -65,14 +66,20 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     private final ConcurrentClassMap<Object> typeDelegates;
     private final Map<Method, MethodInterceptor<T, ?>> interceptors;
     private final MultiMap<Method, MethodWrapper<T>> wrappers;
+    private final Supplier<MethodStub<T>> defaultStub;
     private T delegate;
 
     public LazyProxyManager(final ApplicationContext applicationContext, final DefaultProxyFactory<T> proxyFactory) {
-        this(applicationContext, null, proxyFactory.type(), proxyFactory.typeDelegate(), proxyFactory.delegates(), proxyFactory.typeDelegates(), proxyFactory.interceptors(), proxyFactory.wrappers());
+        this(applicationContext, null, proxyFactory.type(), proxyFactory.typeDelegate(),
+                proxyFactory.delegates(), proxyFactory.typeDelegates(),
+                proxyFactory.interceptors(), proxyFactory.wrappers(),
+                proxyFactory.defaultStub());
     }
 
-    public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
-                            final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
+    public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass,
+                            final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
+                            final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers,
+                            final Supplier<MethodStub<T>> defaultStub) {
         super(applicationContext);
 
         if (applicationContext.environment().isProxy(targetClass)) {
@@ -91,6 +98,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
         this.typeDelegates = new ConcurrentClassMap<>(typeDelegates);
         this.interceptors = new HashMap<>(interceptors);
         this.wrappers = new ConcurrentSetMultiMap<>(wrappers);
+        this.defaultStub = defaultStub;
 
         this.interceptors.put(managerAccessor, context -> this);
     }
@@ -149,6 +157,11 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     @Override
     public Set<MethodWrapper<T>> wrappers(final Method method) {
         return Set.copyOf(this.wrappers.get(method));
+    }
+
+    @Override
+    public MethodStub<T> stub() {
+        return this.defaultStub.get();
     }
 
     @Override

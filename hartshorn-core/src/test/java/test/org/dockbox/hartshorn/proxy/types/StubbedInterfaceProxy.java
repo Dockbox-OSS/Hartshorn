@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy;
+package test.org.dockbox.hartshorn.proxy.types;
 
-public interface Invokable {
-    Object invoke(Object obj, Object... args) throws Exception;
+import org.dockbox.hartshorn.component.Component;
 
-    void setAccessible(boolean accessible);
+@Component
+public interface StubbedInterfaceProxy {
 
-    Class<?> declaringClass();
+    String stringTest();
 
-    String name();
+    int integerTest();
 
-    boolean isDefault();
-
-    Class<?> returnType();
-
-    Class<?>[] parameterTypes();
-
-    String qualifiedName();
 }

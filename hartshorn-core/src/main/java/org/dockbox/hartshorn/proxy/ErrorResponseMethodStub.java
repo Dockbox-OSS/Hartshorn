@@ -16,20 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-public interface Invokable {
-    Object invoke(Object obj, Object... args) throws Exception;
+public class ErrorResponseMethodStub<T> implements MethodStub<T> {
 
-    void setAccessible(boolean accessible);
-
-    Class<?> declaringClass();
-
-    String name();
-
-    boolean isDefault();
-
-    Class<?> returnType();
-
-    Class<?>[] parameterTypes();
-
-    String qualifiedName();
+    @Override
+    public Object invoke(final MethodStubContext<T> stubContext) {
+        final Class<T> targetClass = stubContext.manager().targetClass();
+        final String className = targetClass == null ? "" : targetClass.getSimpleName() + ".";
+        final String name = stubContext.target().name();
+        throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
+    }
 }
