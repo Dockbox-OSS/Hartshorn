@@ -18,12 +18,13 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-public class ComponentRequiredException extends ApplicationRuntimeException {
-    public ComponentRequiredException(final String message) {
+public class ComponentResolutionException extends ApplicationRuntimeException {
+
+    public ComponentResolutionException(final String message) {
         super(message);
     }
 
-    public ComponentRequiredException(final String message, final Throwable cause) {
+    public ComponentResolutionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

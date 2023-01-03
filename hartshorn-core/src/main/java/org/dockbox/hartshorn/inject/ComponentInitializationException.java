@@ -22,4 +22,8 @@ public class ComponentInitializationException extends ApplicationRuntimeExceptio
     public ComponentInitializationException(final String message) {
         super(message);
     }
+
+    public ComponentInitializationException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

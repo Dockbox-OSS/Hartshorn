@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.jpa.query;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.jpa.annotations.NamedQuery;
@@ -32,6 +33,7 @@ import org.dockbox.hartshorn.proxy.processing.ServiceMethodInterceptorPostProces
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,15 +44,16 @@ import jakarta.persistence.EntityManager;
 public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
 
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(
-            final ComponentProcessingContext<T> processingContext) {
-        final JpaQueryContextCreator contextCreator = processingContext.applicationContext()
-                .get(JpaQueryContextCreator.class);
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ComponentProcessingContext<T> processingContext) {
+        final ApplicationContext applicationContext = processingContext.applicationContext();
+        final Attempt<JpaQueryContextCreator, ComponentResolutionException> attempt = Attempt.of(() -> {
+            return applicationContext.get(JpaQueryContextCreator.class);
+        }, ComponentResolutionException.class);
 
-        if (contextCreator == null) return Collections.emptyList();
+        if (attempt.absent()) return Collections.emptyList();
 
         return processingContext.type().methods().declared().stream()
-                .filter(m -> contextCreator.supports(processingContext, m))
+                .filter(m -> attempt.get().supports(processingContext, m))
                 .collect(Collectors.toSet());
     }
 

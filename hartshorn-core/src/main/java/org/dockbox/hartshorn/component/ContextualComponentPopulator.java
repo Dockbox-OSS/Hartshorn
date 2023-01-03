@@ -28,10 +28,12 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.parameter.ParameterLoadException;
 
 import java.util.Collection;
 import java.util.List;
@@ -69,7 +71,21 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private <T> void populateMethods(final TypeView<T> type, final T instance) {
         for (final MethodView<T, ?> method : type.methods().annotatedWith(Inject.class)) {
-            method.invokeWithContext(instance).rethrowUnchecked();
+            try {
+                method.invokeWithContext(instance).rethrowUnchecked();
+            }
+            catch (final ParameterLoadException e) {
+                final boolean required = this.isComponentRequired(e.parameter());
+
+                if (required) {
+                    final String message = "Failed to populate method %s, parameter %s is required but not present in context"
+                            .formatted(method.name(), e.parameter().name());
+                    throw new ComponentRequiredException(message, e);
+                }
+                else {
+                    this.applicationContext().log().warn("Failed to populate method {}, parameter {} is not present in context", method.name(), e.parameter().name());
+                }
+            }
         }
     }
 
@@ -92,13 +108,22 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
         final ComponentKey<?> componentKey = fieldKey.mutable().enable(enable).build();
-        final Object fieldInstance = this.applicationContext().get(componentKey);
 
-        final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
-                .map(Required::value)
-                .orElse(false));
+        final boolean required = this.isComponentRequired(field);
 
-        if (required && fieldInstance == null) throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required");
+        final Object fieldInstance;
+        try {
+            fieldInstance = this.applicationContext().get(componentKey);
+        }
+        catch (final ComponentResolutionException e) {
+            if (required) {
+                throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required", e);
+            }
+            else {
+                this.applicationContext().log().warn("Failed to resolve component for field " + field.name() + " in type " + type.name());
+                return;
+            }
+        }
 
         this.applicationContext().log().debug("Injecting object of type {} into field {}", field.type().name(), field.qualifiedName());
         field.set(instance, fieldInstance);
@@ -137,13 +162,17 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         }
         final Option<? extends Context> context = this.applicationContext().first(contextKey);
 
-        final boolean required = Boolean.TRUE.equals(field.annotations().get(Required.class)
-                .map(Required::value)
-                .orElse(false));
-        if (required && context.absent()) throw new ComponentRequiredException("Context field " + field.name() + " in " + type.qualifiedName() + " is required");
+        final boolean required = this.isComponentRequired(field);
+        if (required && context.absent()) throw new ComponentRequiredException("Context field " + field.name() + " in " + type.qualifiedName() + " is required, but not present in context");
 
         this.applicationContext().log().debug("Injecting context of type {} into field {}", type, field.name());
         field.set(instance, context.orNull());
+    }
+
+    private boolean isComponentRequired(final AnnotatedElementView view) {
+        return Boolean.TRUE.equals(view.annotations().get(Required.class)
+                .map(Required::value)
+                .orElse(false));
     }
 
     @Override

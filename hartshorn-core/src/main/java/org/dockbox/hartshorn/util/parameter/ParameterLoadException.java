@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.util.parameter;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
-public class ComponentRequiredException extends ApplicationRuntimeException {
-    public ComponentRequiredException(final String message) {
-        super(message);
+public class ParameterLoadException extends ApplicationRuntimeException {
+
+    private final ParameterView<?> parameter;
+
+    public ParameterLoadException(final ParameterView<?> parameter, final Throwable cause) {
+        super("Failed to load parameter " + parameter.name() + " of type " + parameter.type().name(), cause);
+        this.parameter = parameter;
     }
 
-    public ComponentRequiredException(final String message, final Throwable cause) {
-        super(message, cause);
+    public ParameterView<?> parameter() {
+        return this.parameter;
     }
 }

@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package test.org.dockbox.hartshorn.beans;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-public class ComponentRequiredException extends ApplicationRuntimeException {
-    public ComponentRequiredException(final String message) {
-        super(message);
-    }
+public class ErrorInConstructorObject {
 
-    public ComponentRequiredException(final String message, final Throwable cause) {
-        super(message, cause);
+    public ErrorInConstructorObject() throws ApplicationException {
+        throw new ApplicationException("Error in constructor");
     }
 }

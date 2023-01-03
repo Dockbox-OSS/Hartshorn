@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
@@ -27,6 +26,7 @@ import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
@@ -68,7 +68,12 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
     }
 
     private <T> Option<ObjectContainer<T>> create(final ComponentKey<T> key) {
-        return this.provide(key).orComputeFlat(() -> this.raw(key));
+        try {
+            return this.provide(key).orComputeFlat(() -> this.raw(key));
+        }
+        catch (final Exception e) {
+            throw new ComponentInitializationException("Failed to create component for key " + key, e);
+        }
     }
 
     @Override
@@ -218,7 +223,7 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
         final ObjectContainer<T> objectContainer = this.create(componentKey)
                 .orElseGet(() -> new ObjectContainer<>(null, false));
 
-        T instance = objectContainer.instance();
+        final T instance = objectContainer.instance();
 
         // If the object is already processed at this point, it means that the object container was
         // reused, so we don't need to process it again. Note that this is not the same as the object
@@ -229,15 +234,23 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
             return instance;
         }
 
+        return this.processInstance(componentKey, objectContainer, instance);
+    }
+
+    private <T> T processInstance(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer, T instance) {
         Class<? extends T> type = componentKey.type();
         if (instance != null) {
             type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
         }
 
         final Option<ComponentContainer> container = this.owner.componentLocator().container(type);
+        instance = container.present()
+                ? this.getManagedComponent(componentKey, objectContainer, container)
+                : this.getUnmanagedComponent(objectContainer, type);
 
-        if (container.present()) instance = this.getManagedComponent(componentKey, objectContainer, container);
-        else instance = this.getUnmanagedComponent(objectContainer, instance, type);
+        if (instance == null) {
+            throw new ComponentResolutionException("No component found for key " + componentKey);
+        }
 
         return this.finishComponentRequest(componentKey, instance);
     }
@@ -251,7 +264,7 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
                 instance = this.owner.postConstructor().doPostConstruct(instance);
             }
             catch (final ApplicationException e) {
-                ExceptionHandler.unchecked(e);
+                throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
 
@@ -265,13 +278,13 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
         return this.process(componentKey, objectContainer, container.get());
     }
 
-    private <T> T getUnmanagedComponent(final ObjectContainer<T> objectContainer, final T instance,
-                                        final Class<? extends T> type) {
+    private <T> T getUnmanagedComponent(final ObjectContainer<T> objectContainer, final Class<? extends T> type) {
         final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }
 
+        final T instance = objectContainer.instance();
         if (instance != null) {
             final TypeView<Object> instanceType = this.applicationContext().environment().introspect(instance);
             for (final FieldView<?, ?> field : instanceType.fields().annotatedWith(Inject.class)) {
