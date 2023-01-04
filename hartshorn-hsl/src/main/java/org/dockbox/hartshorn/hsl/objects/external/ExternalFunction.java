@@ -50,7 +50,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         this(type, methodName, null);
     }
 
-    public ExternalFunction(final TypeView<?> type, final String methodName, final InstanceReference instance) {
+    private ExternalFunction(final TypeView<?> type, final String methodName, final InstanceReference instance) {
         super(false);
         this.methodName = methodName;
         this.type = (TypeView<Object>) type;

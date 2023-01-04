@@ -70,11 +70,18 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-        final boolean isMethod = this.type.methods().all().stream()
-                .anyMatch(method -> method.name().equals(name.lexeme()));
     public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
+        final Object[] methods = this.type.methods().all().stream()
+                .filter(method -> method.name().equals(name.lexeme()))
+                .toArray();
 
-        if (isMethod) return new ExternalFunction(this.type, name.lexeme());
+        if (methods.length > 1 && !options.permitAmbiguousExternalFunctions()) {
+            throw new RuntimeError(name, "Ambiguous method call for method %s".formatted(name.lexeme()));
+        }
+
+        if (methods.length > 0) {
+            return new ExternalFunction(this.type, name.lexeme());
+        }
 
         return this.type.fields().named(name.lexeme())
                 .flatMap(field -> field.get(this.instance()))
