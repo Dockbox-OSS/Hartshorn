@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 buildscript {
     repositories {
@@ -70,6 +72,11 @@ allprojects {
 
     license {
         header.set(resources.text.fromFile(rootProject.file("HEADER.txt")))
+        
+        ignoreFailures.set(false)
+        properties {
+            set("year", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))
+        }
 
         // CI will verify the license headers, but not update them. To ensure
         // invalid/missing headers are clearly visible, we fail the build if
