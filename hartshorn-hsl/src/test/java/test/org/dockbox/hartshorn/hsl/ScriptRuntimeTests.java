@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.HslExpression;
 import org.dockbox.hartshorn.hsl.HslScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
-import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
+import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -216,7 +216,7 @@ public class ScriptRuntimeTests {
 
     ScriptContext assertValid(final HslExpression expression) {
         final ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
-        Assertions.assertTrue(expression.valid());
+        Assertions.assertTrue(expression.valid(context));
         return context;
     }
 
