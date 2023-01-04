@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.condition;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -125,4 +126,8 @@ public interface ConditionContext extends Context {
      * @return The modules.
      */
     Map<String, NativeModule> externalModules();
+
+    void interpreterOptions(ExecutionOptions executionOptions);
+
+    ExecutionOptions interpreterOptions();
 }

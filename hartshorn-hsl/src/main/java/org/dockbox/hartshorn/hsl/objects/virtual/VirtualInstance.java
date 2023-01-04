@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
@@ -47,7 +48,7 @@ public class VirtualInstance implements InstanceReference {
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
         final FieldStatement field = this.virtualClass.field(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
             throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
@@ -60,7 +61,7 @@ public class VirtualInstance implements InstanceReference {
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
+    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
         final FieldStatement field = this.virtualClass.field(name.lexeme());
         if (this.virtualClass.isDynamic() || (field != null && this.fields.containsKey(name.lexeme()))) {
             if (field != null) this.checkScopeCanAccess(name, field, fromScope);
