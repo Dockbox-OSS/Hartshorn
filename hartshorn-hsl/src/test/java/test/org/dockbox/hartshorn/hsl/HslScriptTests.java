@@ -38,7 +38,7 @@ public class HslScriptTests {
         String expression = "var a = 1";
         HslScript script = HslScript.of(this.context, expression);
         ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::evaluate);
-        Object result = scriptContext.interpreter().global().get("a");
+        Object result = scriptContext.interpreter().global().values().get("a");
         Assertions.assertNotNull(result);
     }
 
@@ -47,7 +47,7 @@ public class HslScriptTests {
         String expression = "var a = 1";
         HslScript script = HslScript.of(this.context, expression);
         ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::resolve);
-        Object result = scriptContext.interpreter().global().get("a");
+        Object result = scriptContext.interpreter().global().values().get("a");
         Assertions.assertNull(result);
     }
 }

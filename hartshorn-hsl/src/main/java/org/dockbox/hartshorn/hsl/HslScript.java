@@ -68,13 +68,13 @@ public class HslScript extends DefaultApplicationAwareContext {
     }
 
     public ScriptContext resolve() {
-        this.context = this.getOrCreateRuntime().run(this.source, Phase.RESOLVING);
+        this.context = this.getOrCreateRuntime().runUntil(this.source, Phase.RESOLVING);
         return this.context;
     }
 
     public ScriptContext evaluate() {
         if (this.context != null) {
-            this.context = this.getOrCreateRuntime().run(this.context, Phase.INTERPRETING);
+            this.context = this.getOrCreateRuntime().runOnly(this.context, Phase.INTERPRETING);
         }
         else {
             this.context = this.resolve();

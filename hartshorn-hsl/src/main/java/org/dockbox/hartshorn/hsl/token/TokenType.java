@@ -102,6 +102,7 @@ public enum TokenType {
     CASE(builder -> builder.keyword(true).ok()),
     DEFAULT(builder -> builder.keyword(true).ok()),
     CONSTRUCTOR(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),
@@ -116,9 +117,9 @@ public enum TokenType {
     IMPORT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
+    // Modifiers
     PUBLIC(builder -> builder.keyword(true).ok()),
     PRIVATE(builder -> builder.keyword(true).ok()),
-    FINAL(builder -> builder.keyword(true).reserved(true).ok()),
 
     // Reserved words/characters
     OPERATOR(builder -> builder.keyword(true).reserved(true).ok()),

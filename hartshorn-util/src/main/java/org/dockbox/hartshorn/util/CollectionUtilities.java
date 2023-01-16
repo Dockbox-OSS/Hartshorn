@@ -27,15 +27,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public final class CollectionUtilities {
-
-    public static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
-            Map.entry(Collection.class, ArrayList::new),
-            Map.entry(List.class, ArrayList::new),
-            Map.entry(Set.class, HashSet::new)
-    );
 
     private CollectionUtilities() {
     }
@@ -117,5 +110,9 @@ public final class CollectionUtilities {
 
     public static <T> List<T> distinct(List<T> collection) {
         return collection.stream().distinct().toList();
+    }
+
+    public static <T> T last(final List<T> values) {
+        return values.get(values.size() - 1);
     }
 }

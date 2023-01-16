@@ -34,7 +34,7 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     @Override
     public void call(ScriptContext context) {
-        List<Statement> enhancedStatements = this.enhanceModuleStatements(context.statements(), context.interpreter().externalModules());
+        List<Statement> enhancedStatements = this.enhanceModuleStatements(context.statements(), context.interpreter().state().externalModules());
         context.statements(enhancedStatements);
     }
 
