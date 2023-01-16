@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
@@ -54,23 +53,10 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
                 expectedNumberOrArguments = 2;
             }
 
-            Token extensionName = null;
-
-            if (parser.peek().type() == TokenType.COLON) {
-                validator.expectAfter(TokenType.COLON, "class name");
-                extensionName = validator.expect(TokenType.IDENTIFIER, "extension name");
-            }
-
             final List<Parameter> parameters = this.functionParameters(parser, validator, "function name", expectedNumberOrArguments, functionToken);
             final BlockStatement body = this.blockStatement("function", name, parser, validator);
 
-            if (extensionName != null) {
-                final FunctionStatement function = new FunctionStatement(functionType, extensionName, parameters, body);
-                return Option.of(new ExtensionStatement(name, function));
-            }
-            else {
-                return Option.of(new FunctionStatement(functionType, name, parameters, body));
-            }
+            return Option.of(new FunctionStatement(functionType, name, parameters, body));
         }
         return Option.empty();
     }
@@ -106,6 +92,6 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
 
     @Override
     public Set<Class<? extends Function>> types() {
-        return Set.of(ExtensionStatement.class, FunctionStatement.class, Function.class);
+        return Set.of(FunctionStatement.class, Function.class);
     }
 }

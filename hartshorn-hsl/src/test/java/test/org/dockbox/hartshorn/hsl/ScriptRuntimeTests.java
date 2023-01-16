@@ -38,10 +38,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
@@ -55,7 +57,8 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> scripts() throws IOException {
         final Path resources = Paths.get("src", "test", "resources");
-        return Files.find(resources, 5, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
+        final BiPredicate<Path, BasicFileAttributes> filter = (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl");
+        return Files.find(resources, 5, filter).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {
@@ -163,7 +166,7 @@ public class ScriptRuntimeTests {
                 """;
         final ScriptContext context = this.assertNoErrorsReported(expression);
 
-        final Map<String, Object> results = context.interpreter().global();
+        final Map<String, Object> results = context.interpreter().global().values();
         Assertions.assertFalse(results.isEmpty());
         Assertions.assertEquals(12d, results.get("a"));
         Assertions.assertEquals(13d, results.get("b"));
@@ -192,7 +195,7 @@ public class ScriptRuntimeTests {
     void testBitwiseOperator(final TokenType token, final int left, final int right, final int expected) {
         final String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
         final ScriptContext context = this.assertNoErrorsReported(expression);
-        final Object result = context.interpreter().global().get("result");
+        final Object result = context.interpreter().global().values().get("result");
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expected, result);
     }
@@ -207,6 +210,19 @@ public class ScriptRuntimeTests {
         final int expected = ~35; // -36
         final String expression = "~35 == %s".formatted(expected);
         this.assertValid(expression);
+    }
+
+    @Test
+    void testInterpreterCanBeReused() {
+        final HslScript script = HslScript.of(this.applicationContext, """
+                var x = 1;
+                test ("Variable has not been modified") {
+                    return x == 1;
+                }
+                x = 2;
+                """);
+        script.evaluate();
+        script.evaluate();
     }
 
     ScriptContext assertValid(final String expression) {

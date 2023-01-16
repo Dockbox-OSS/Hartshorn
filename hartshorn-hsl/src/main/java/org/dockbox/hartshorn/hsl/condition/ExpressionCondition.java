@@ -54,7 +54,7 @@ public class ExpressionCondition implements Condition {
             final ValidateExpressionRuntime runtime = this.createRuntime(context);
 
             try {
-                final ScriptContext scriptContext = runtime.run(expression);
+                final ScriptContext scriptContext = runtime.interpret(expression);
                 final boolean result = ValidateExpressionRuntime.valid(scriptContext);
                 return ConditionResult.of(result);
             }

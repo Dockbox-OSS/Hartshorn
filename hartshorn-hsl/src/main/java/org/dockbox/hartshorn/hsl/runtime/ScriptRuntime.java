@@ -16,15 +16,20 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.condition.ConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 
-public interface ScriptRuntime extends ConditionContext {
+public interface ScriptRuntime extends ConditionContext, ContextCarrier {
 
-    ScriptContext run(String source);
+    ScriptContext interpret(String source);
 
-    ScriptContext run(String source, Phase until);
+    ScriptContext runUntil(String source, Phase until);
 
-    ScriptContext run(ScriptContext context, Phase only);
+    ScriptContext runUntil(ScriptContext context, Phase until);
+
+    ScriptContext runOnly(String source, Phase only);
+
+    ScriptContext runOnly(ScriptContext context, Phase only);
 
 }

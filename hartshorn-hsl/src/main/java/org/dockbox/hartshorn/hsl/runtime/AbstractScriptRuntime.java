@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.HslStatementBeans;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +42,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 @Component
-public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime, ContextCarrier {
+public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
 
     @Inject
     @Named(HslStatementBeans.STATEMENT_BEAN)
@@ -67,10 +67,18 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     @Override
-    public ScriptContext run(final String source, final Phase until) {
-        final ScriptContext context = new ScriptContext(this.applicationContext(), source);
-        context.interpreter(this.createInterpreter(context));
+    public ScriptContext interpret(final String source) {
+        return this.runUntil(source, Phase.INTERPRETING);
+    }
 
+    @Override
+    public ScriptContext runUntil(final String source, final Phase until) {
+        final ScriptContext context = this.createScriptContext(source);
+        return this.runUntil(context, until);
+    }
+
+    @Override
+    public ScriptContext runUntil(final ScriptContext context, final Phase until) {
         try {
             // First phase always gets executed
             this.tokenize(context);
@@ -81,15 +89,21 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         catch (final ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
         }
-
         return context;
     }
 
     @Override
-    public ScriptContext run(final ScriptContext context, final Phase only) {
+    public ScriptContext runOnly(final String source, final Phase only) {
+        final ScriptContext context = this.createScriptContext(source);
+        return this.runOnly(context, only);
+    }
+
+    @Override
+    public ScriptContext runOnly(final ScriptContext context, final Phase only) {
         try {
             switch (only) {
-                case PARSING -> this.tokenize(context);
+                case TOKENIZING -> this.tokenize(context);
+                case PARSING -> this.parse(context);
                 case RESOLVING -> this.resolve(context);
                 case INTERPRETING -> this.interpret(context);
                 default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
@@ -100,14 +114,16 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return context;
     }
 
-    @Override
-    public ScriptContext run(final String source) {
-        return this.run(source, Phase.INTERPRETING);
+    @NotNull
+    private ScriptContext createScriptContext(final String source) {
+        final ScriptContext context = new ScriptContext(this, source);
+        context.interpreter(this.createInterpreter(context));
+        return context;
     }
 
     protected Interpreter createInterpreter(final ResultCollector resultCollector) {
         final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries());
-        interpreter.externalModules(this.externalModules());
+        interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
     }
@@ -142,8 +158,8 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         // Interpreter modification is not allowed at this point, as it was restored before
         // the resolve phase.
         this.customizePhase(Phase.INTERPRETING, context);
-        interpreter.global(this.globalVariables());
-        interpreter.imports(this.imports());
+        interpreter.state().global(this.globalVariables());
+        interpreter.state().imports(this.imports());
         interpreter.interpret(context.statements());
     }
 

@@ -26,15 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 public final class CollectionUtilities {
-
-    public static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
-            Map.entry(Collection.class, ArrayList::new),
-            Map.entry(List.class, ArrayList::new),
-            Map.entry(Set.class, HashSet::new)
-    );
 
     private CollectionUtilities() {
     }
@@ -96,5 +89,9 @@ public final class CollectionUtilities {
         mergedDifference.addAll(differenceInTwo);
 
         return Set.copyOf(mergedDifference);
+    }
+
+    public static <T> T last(final List<T> values) {
+        return values.get(values.size() - 1);
     }
 }

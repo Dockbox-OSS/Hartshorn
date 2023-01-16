@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,8 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     @Override
     public void call(final ScriptContext context) {
+        context.runtime().interpreterOptions().enableAssertions(true);
+
         final List<Statement> statements = context.statements();
         this.verifyIsExpression(statements);
         final List<Statement> testStatements = this.enhanceTestStatement(statements);
@@ -57,14 +60,14 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     private void verifyIsExpression(final List<Statement> statements) {
         // Get last statement in the statements list
-        final Statement lastStatement = statements.get(statements.size() - 1);
+        final Statement lastStatement = CollectionUtilities.last(statements);
         if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
             throw new ScriptEvaluationError("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
         }
     }
 
     private List<Statement> enhanceTestStatement(final List<Statement> statements) {
-        final Statement lastStatement = statements.get(statements.size() - 1);
+        final Statement lastStatement = CollectionUtilities.last(statements);
         if (!(lastStatement instanceof ReturnStatement)) {
             final ExpressionStatement statement = (ExpressionStatement) lastStatement;
             final Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
