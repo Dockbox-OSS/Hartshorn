@@ -61,7 +61,7 @@ public class ExpressionCondition implements Condition {
         final ValidateExpressionRuntime runtime = this.createRuntime(context);
 
         try {
-            final ScriptContext scriptContext = runtime.run(expression);
+            final ScriptContext scriptContext = runtime.interpret(expression);
             final boolean result = ValidateExpressionRuntime.valid(scriptContext);
             return ConditionResult.of(result);
         }
@@ -98,7 +98,9 @@ public class ExpressionCondition implements Condition {
 
     private void enhanceWithApplicationContext(final ScriptRuntime runtime, final ApplicationContext applicationContext) {
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
-            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) applicationContext.log().warn("Runtime contains mismatched application context reference");
+            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
+                applicationContext.log().warn("Runtime contains mismatched application context reference");
+            }
             // Ignore if the global applicationContext is equal to our active context
         }
         else {

@@ -105,7 +105,7 @@ public class VariableScope {
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
     }
 
-    void assignAt(final int distance, final Token name, final Object value) {
+    public void assignAt(final int distance, final Token name, final Object value) {
         this.ancestor(name, distance).valuesMap.put(name.lexeme(), value);
     }
 

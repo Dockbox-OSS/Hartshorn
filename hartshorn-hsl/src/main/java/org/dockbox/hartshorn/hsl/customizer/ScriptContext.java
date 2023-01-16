@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -24,6 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.option.Option;
@@ -56,10 +56,12 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
+    private final ScriptRuntime runtime;
 
-    public ScriptContext(final ApplicationContext context, final String source) {
-        super(context);
+    public ScriptContext(final ScriptRuntime runtime, final String source) {
+        super(runtime.applicationContext());
         this.source = source;
+        this.runtime = runtime;
     }
 
     public String source() {
@@ -127,6 +129,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     public ScriptContext interpreter(final Interpreter interpreter) {
         this.interpreter = interpreter;
         return this;
+    }
+
+    public ScriptRuntime runtime() {
+        return this.runtime;
     }
 
     @Override

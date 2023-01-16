@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -174,7 +175,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
         final List<CommandElement<?>> elements = this.definition().elements();
         final List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
-        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
+        if (command.endsWith(" ") && !"".equals(CollectionUtilities.last(tokens))) tokens.add("");
 
         CommandElement<?> last = null;
         for (final CommandElement<?> element : elements) {

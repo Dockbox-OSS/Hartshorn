@@ -17,12 +17,14 @@
 package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
@@ -45,6 +47,13 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
             while (!parser.match(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
                 final Statement statement = parser.statement();
                 statements.add(statement);
+            }
+
+            if (statements.isEmpty()) {
+                throw new IllegalStateException("Test body cannot be empty");
+            }
+            else if (!(CollectionUtilities.last(statements) instanceof ReturnStatement)) {
+                throw new IllegalStateException("Test body must end with a return statement");
             }
 
             final BlockStatement body = new BlockStatement(bodyStart, statements);

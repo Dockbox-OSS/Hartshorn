@@ -20,6 +20,7 @@ public class ExecutionOptions {
 
     private boolean permitAmbiguousExternalFunctions = true;
     private boolean permitDuplicateModules = true;
+    private boolean enableAssertions = true;
 
     public boolean permitAmbiguousExternalFunctions() {
         return this.permitAmbiguousExternalFunctions;
@@ -36,6 +37,15 @@ public class ExecutionOptions {
 
     public ExecutionOptions permitDuplicateModules(final boolean permitDuplicateModules) {
         this.permitDuplicateModules = permitDuplicateModules;
+        return this;
+    }
+
+    public boolean enableAssertions() {
+        return this.enableAssertions;
+    }
+
+    public ExecutionOptions enableAssertions(final boolean enableAssertions) {
+        this.enableAssertions = enableAssertions;
         return this;
     }
 }

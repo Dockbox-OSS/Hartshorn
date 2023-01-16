@@ -76,8 +76,6 @@ public interface StatementVisitor<R> {
 
     R visit(ConstructorStatement statement);
 
-    R visit(ExtensionStatement statement);
-
     R visit(VariableStatement statement);
 
     R visit(ReturnStatement statement);
