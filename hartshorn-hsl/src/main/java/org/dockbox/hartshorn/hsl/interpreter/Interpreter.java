@@ -137,6 +137,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
     private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
+    private final Set<String> activeModules = ConcurrentHashMap.newKeySet();
 
     private final Map<String, NativeModule> externalModules;
     private final ResultCollector resultCollector;
@@ -923,6 +924,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Void visit(final ModuleStatement statement) {
         final String moduleName = statement.name().lexeme();
         final NativeModule module = this.externalModules().get(moduleName);
+
+        if (this.activeModules.contains(moduleName)) {
+            if (this.executionOptions.permitDuplicateModules()) {
+                return null;
+            }
+            throw new ScriptEvaluationError("Module '" + moduleName + "' is already active.", Phase.INTERPRETING, statement.name());
+        }
+        this.activeModules.add(moduleName);
+
         for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
             final HslLibrary library = new HslLibrary(supportedFunction, moduleName, module);
 

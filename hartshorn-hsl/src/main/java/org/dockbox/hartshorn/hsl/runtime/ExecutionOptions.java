@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.runtime;
 public class ExecutionOptions {
 
     private boolean permitAmbiguousExternalFunctions = true;
+    private boolean permitDuplicateModules = true;
 
     public boolean permitAmbiguousExternalFunctions() {
         return this.permitAmbiguousExternalFunctions;
@@ -26,6 +27,15 @@ public class ExecutionOptions {
 
     public ExecutionOptions permitAmbiguousExternalFunctions(final boolean permitAmbiguousModuleFunctions) {
         this.permitAmbiguousExternalFunctions = permitAmbiguousModuleFunctions;
+        return this;
+    }
+
+    public boolean permitDuplicateModules() {
+        return this.permitDuplicateModules;
+    }
+
+    public ExecutionOptions permitDuplicateModules(final boolean permitDuplicateModules) {
+        this.permitDuplicateModules = permitDuplicateModules;
         return this;
     }
 }
