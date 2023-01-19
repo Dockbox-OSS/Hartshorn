@@ -108,6 +108,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     protected Interpreter createInterpreter(final ResultCollector resultCollector) {
         final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries());
         interpreter.externalModules(this.externalModules());
+        interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
     }
 

@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
@@ -45,7 +46,11 @@ public class HslExpression extends HslScript {
 
     public boolean valid() {
         final ScriptContext context = this.evaluate();
-        return ValidateExpressionRuntime.valid(context);
+        return this.valid(context);
+    }
+
+    public boolean valid(final ResultCollector collector) {
+        return ValidateExpressionRuntime.valid(collector);
     }
 
     @Override

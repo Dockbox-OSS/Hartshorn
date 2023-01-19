@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.objects.external;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
@@ -61,7 +62,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
         this.type.fields().named(name.lexeme())
                 .map(field -> (FieldView<Object, Object>) field)
                 .peek(field -> field.set(this.instance(), value))
@@ -69,11 +70,18 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
-        final boolean isMethod = this.type.methods().all().stream()
-                .anyMatch(method -> method.name().equals(name.lexeme()));
+    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
+        final Object[] methods = this.type.methods().all().stream()
+                .filter(method -> method.name().equals(name.lexeme()))
+                .toArray();
 
-        if (isMethod) return new ExternalFunction(this.type, name.lexeme());
+        if (methods.length > 1 && !options.permitAmbiguousExternalFunctions()) {
+            throw new RuntimeError(name, "Ambiguous method call for method %s".formatted(name.lexeme()));
+        }
+
+        if (methods.length > 0) {
+            return new ExternalFunction(this.type, name.lexeme());
+        }
 
         return this.type.fields().named(name.lexeme())
                 .flatMap(field -> field.get(this.instance()))

@@ -109,6 +109,8 @@ public abstract class AbstractNativeModule implements NativeModule {
             final TypeView<?> typeView = this.applicationContext().environment().introspect(this.moduleClass());
             for (final MethodView<?, ?> method : typeView.methods().all()) {
                 if (!method.isPublic()) continue;
+                if (method.declaredBy().is(Object.class)) continue;
+
                 final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
 
                 final List<Parameter> parameters = new ArrayList<>();

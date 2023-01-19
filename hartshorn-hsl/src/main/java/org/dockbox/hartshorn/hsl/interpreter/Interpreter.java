@@ -69,6 +69,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.HslLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.BindableNode;
@@ -83,6 +84,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalFunction;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
@@ -98,8 +100,10 @@ import org.slf4j.Logger;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -115,14 +119,14 @@ import jakarta.inject.Inject;
  * <p>During the execution of a script, the interpreter will track its global variables in a
  * {@link VariableScope}, and report any results to the configured {@link ResultCollector}.
  *
- * <p><code>print</code> statements are handled by the configured {@link Logger}, and are not persisted
+ * <p>{@code print} statements are handled by the configured {@link Logger}, and are not persisted
  * in a local state.
  *
  * <p>Any interpreter instance can only be used <b>once</b>, and should be disposed of after use. This
  * is to prevent scope pollution, and potential leaking of errors and results.
  *
  * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of statements
- * which have been previously parsed by a {@link org.dockbox.hartshorn.hsl.parser.Parser}, and
+ * which have been previously parsed by a {@link org.dockbox.hartshorn.hsl.parser.ASTNodeParser}, and
  * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
  *
  * @author Guus Lieben
@@ -133,20 +137,29 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
     private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
+    private final Set<String> activeModules = ConcurrentHashMap.newKeySet();
 
     private final Map<String, NativeModule> externalModules;
     private final ResultCollector resultCollector;
 
     private VariableScope global = new VariableScope();
     private VariableScope visitingScope = this.global;
-    private boolean isRunning = false;
+    private boolean isRunning;
+    private ExecutionOptions executionOptions;
 
     @Inject
     private ApplicationContext applicationContext;
+
     @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
+        this(resultCollector, externalModules, new ExecutionOptions());
+    }
+
+    @Bound
+    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
         this.resultCollector = resultCollector;
         this.externalModules = new ConcurrentHashMap<>(externalModules);
+        this.executionOptions = executionOptions;
     }
 
     /**
@@ -175,6 +188,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public Map<String, NativeModule> externalModules() {
         return this.externalModules;
+    }
+
+    public Interpreter executionOptions(final ExecutionOptions options) {
+        this.executionOptions = options;
+        return this;
+    }
+
+    public ExecutionOptions executionOptions() {
+        return this.executionOptions;
     }
 
     public Map<String, Object> global() {
@@ -631,7 +653,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Object visit(final GetExpression expr) {
         final Object object = this.evaluate(expr.object());
         if (object instanceof PropertyContainer container) {
-            Object result = container.get(expr.name(), this.variableScope());
+            Object result = container.get(expr.name(), this.variableScope(), this.executionOptions());
             if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
             if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
@@ -647,7 +669,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
         if (object instanceof PropertyContainer instance) {
             final Object value = this.evaluate(expr.value());
-            instance.set(expr.name(), value, this.variableScope());
+            instance.set(expr.name(), value, this.variableScope(), this.executionOptions());
             return value;
         }
         throw new RuntimeError(expr.name(), "Only instances have properties.");
@@ -902,10 +924,37 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     public Void visit(final ModuleStatement statement) {
         final String moduleName = statement.name().lexeme();
         final NativeModule module = this.externalModules().get(moduleName);
+
+        if (this.activeModules.contains(moduleName)) {
+            if (this.executionOptions.permitDuplicateModules()) {
+                return null;
+            }
+            throw new ScriptEvaluationError("Module '" + moduleName + "' is already active.", Phase.INTERPRETING, statement.name());
+        }
+        this.activeModules.add(moduleName);
+
         for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
-            final HslLibrary library = new HslLibrary(supportedFunction, this.externalModules);
-            // TODO #780: Support overloading of functions in same module (or throw error if duplicate from other module)
-            this.global.define(supportedFunction.name().lexeme(), library);
+            final HslLibrary library = new HslLibrary(supportedFunction, moduleName, module);
+
+            CallableNode callableNode = library;
+            if (this.global.contains(supportedFunction.name().lexeme())) {
+                if (!this.executionOptions().permitAmbiguousExternalFunctions()) {
+                    throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + supportedFunction.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunction.name());
+                }
+                else {
+                    final Object existing = this.global.get(supportedFunction.name());
+                    final Set<HslLibrary> existingLibraries = new HashSet<>();
+                    existingLibraries.add(library);
+
+                    if (existing instanceof HslLibrary existingLibrary) existingLibraries.add(existingLibrary);
+                    else if (existing instanceof AmbiguousLibraryFunction ambiguousLibraryFunction)
+                        existingLibraries.addAll(ambiguousLibraryFunction.libraries());
+
+                    callableNode = new AmbiguousLibraryFunction(existingLibraries);
+                }
+            }
+
+            this.global.define(supportedFunction.name().lexeme(), callableNode);
         }
         return null;
     }
@@ -932,7 +981,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         final Object value = this.evaluate(statement.initializer());
         final int distance = this.locals.get(statement.initializer());
         final PropertyContainer object = (PropertyContainer) this.variableScope().getAt(statement.name(), distance - 1, TokenType.THIS.representation());
-        object.set(statement.name(), value, this.variableScope());
+        object.set(statement.name(), value, this.variableScope(), this.executionOptions());
         return null;
     }
 
@@ -1094,7 +1143,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public void global(final Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
-            TypeView<Object> typeView = this.applicationContext().environment().introspect(instance);
+            final TypeView<Object> typeView = this.applicationContext().environment().introspect(instance);
             this.externalVariables.put(name, new ExternalInstance(instance, typeView));
         });
     }

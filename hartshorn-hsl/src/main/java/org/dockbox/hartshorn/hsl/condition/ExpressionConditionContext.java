@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.condition;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -43,6 +44,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
+    private ExecutionOptions executionOptions = new ExecutionOptions();
     private boolean includeApplicationContext;
 
     public ExpressionConditionContext(final ApplicationContext applicationContext) {
@@ -198,5 +200,23 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
     @Override
     public Map<String, NativeModule> externalModules() {
         return this.externalModules;
+    }
+
+    /**
+     * Gets the interpreter options for this context, overriding any existing settings.
+     * @param executionOptions The interpreter options.
+     */
+    @Override
+    public void interpreterOptions(final ExecutionOptions executionOptions) {
+        this.executionOptions = executionOptions;
+    }
+
+    /**
+     * Gets the interpreter options for this context.
+     * @return The interpreter options.
+     */
+    @Override
+    public ExecutionOptions interpreterOptions() {
+        return this.executionOptions;
     }
 }

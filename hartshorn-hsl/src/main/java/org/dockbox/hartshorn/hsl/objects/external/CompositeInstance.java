@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.objects.external;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
@@ -68,11 +69,11 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
         this.checkInstance();
         final FieldStatement virtualField = super.type().field(name.lexeme());
         if (virtualField != null) {
-            super.set(name, value, fromScope);
+            super.set(name, value, fromScope, options);
         }
         else {
             final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
@@ -86,11 +87,11 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
+    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
         this.checkInstance();
         final FieldStatement virtualField = super.type().field(name.lexeme());
         if (virtualField != null) {
-            return super.get(name, fromScope);
+            return super.get(name, fromScope, options);
         }
         else {
             final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
