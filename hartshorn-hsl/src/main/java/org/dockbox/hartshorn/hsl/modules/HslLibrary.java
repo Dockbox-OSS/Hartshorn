@@ -50,6 +50,10 @@ public class HslLibrary implements CallableNode {
         this(declaration, Map.of(moduleName, externalModule));
     }
 
+    public NativeFunctionStatement declaration() {
+        return this.declaration;
+    }
+
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
         final String moduleName = this.declaration.moduleName().lexeme();

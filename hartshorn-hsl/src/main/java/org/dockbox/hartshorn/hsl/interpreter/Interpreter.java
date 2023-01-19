@@ -69,6 +69,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.HslLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.BindableNode;
@@ -99,8 +100,10 @@ import org.slf4j.Logger;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -116,7 +119,7 @@ import jakarta.inject.Inject;
  * <p>During the execution of a script, the interpreter will track its global variables in a
  * {@link VariableScope}, and report any results to the configured {@link ResultCollector}.
  *
- * <p><code>print</code> statements are handled by the configured {@link Logger}, and are not persisted
+ * <p>{@code print} statements are handled by the configured {@link Logger}, and are not persisted
  * in a local state.
  *
  * <p>Any interpreter instance can only be used <b>once</b>, and should be disposed of after use. This
@@ -140,7 +143,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     private VariableScope global = new VariableScope();
     private VariableScope visitingScope = this.global;
-    private boolean isRunning = false;
+    private boolean isRunning;
     private ExecutionOptions executionOptions;
 
     @Inject
@@ -152,7 +155,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Bound
-    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, ExecutionOptions executionOptions) {
+    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
         this.resultCollector = resultCollector;
         this.externalModules = new ConcurrentHashMap<>(externalModules);
         this.executionOptions = executionOptions;
@@ -923,11 +926,25 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
             final HslLibrary library = new HslLibrary(supportedFunction, moduleName, module);
 
-            if (this.global.contains(supportedFunction.name().lexeme()) && !this.executionOptions().permitAmbiguousExternalFunctions()) {
-                throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + supportedFunction.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunction.name());
+            CallableNode callableNode = library;
+            if (this.global.contains(supportedFunction.name().lexeme())) {
+                if (!this.executionOptions().permitAmbiguousExternalFunctions()) {
+                    throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + supportedFunction.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunction.name());
+                }
+                else {
+                    final Object existing = this.global.get(supportedFunction.name());
+                    final Set<HslLibrary> existingLibraries = new HashSet<>();
+                    existingLibraries.add(library);
+
+                    if (existing instanceof HslLibrary existingLibrary) existingLibraries.add(existingLibrary);
+                    else if (existing instanceof AmbiguousLibraryFunction ambiguousLibraryFunction)
+                        existingLibraries.addAll(ambiguousLibraryFunction.libraries());
+
+                    callableNode = new AmbiguousLibraryFunction(existingLibraries);
+                }
             }
 
-            this.global.define(supportedFunction.name().lexeme(), library);
+            this.global.define(supportedFunction.name().lexeme(), callableNode);
         }
         return null;
     }
@@ -1116,7 +1133,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public void global(final Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
-            TypeView<Object> typeView = this.applicationContext().environment().introspect(instance);
+            final TypeView<Object> typeView = this.applicationContext().environment().introspect(instance);
             this.externalVariables.put(name, new ExternalInstance(instance, typeView));
         });
     }
