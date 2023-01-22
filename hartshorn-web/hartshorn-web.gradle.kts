@@ -32,4 +32,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-config")
 
     testImplementation(libs.httpclient)
+    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
 }

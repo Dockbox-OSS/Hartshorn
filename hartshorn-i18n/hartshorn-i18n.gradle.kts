@@ -21,4 +21,7 @@ apply {
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-config")
     implementation("org.dockbox.hartshorn:hartshorn-core")
+
+    // TODO: Can we provide a default implementation per module?
+    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
 }
