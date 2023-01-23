@@ -32,8 +32,8 @@ import java.util.Set;
 
 public class StandardTestHarnessProjectProcessor implements TestHarnessProjectProcessor {
 
-    private static final String TEST_HARNESS_SOURCE_SET_NAME = "testHarness";
-    private static final String TEST_HARNESS_EXTENSIONS_SOURCE_SET_NAME = TEST_HARNESS_SOURCE_SET_NAME + "Extensions";
+    public static final String TEST_HARNESS_SOURCE_SET_NAME = "testHarness";
+    public static final String TEST_HARNESS_EXTENSIONS_SOURCE_SET_NAME = TEST_HARNESS_SOURCE_SET_NAME + "Extensions";
 
     @Override
     public void configureHarnessDefinition(final Project target, final TestHarnessExtension extension) {

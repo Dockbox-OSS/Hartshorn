@@ -94,8 +94,8 @@ public class TestHarnessExtension {
         public List<Dependency> getDependencies(final DependencyHandler handler) {
             return this.dependencies.stream()
                     .flatMap(notation -> {
-                        if (notation instanceof ExternalModuleDependencyBundle bundle) return bundle.stream();
-                        if (notation instanceof Dependency dependency) return Stream.of(dependency);
+                        if (notation instanceof ExternalModuleDependencyBundle bundle) return bundle.stream().map(Dependency.class::cast);
+                        else if (notation instanceof Dependency dependency) return Stream.of(dependency);
                         else return Stream.of(handler.create(notation));
                     })
                     .collect(Collectors.toList());

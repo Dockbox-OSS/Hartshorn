@@ -33,19 +33,19 @@ public class JavadocVerifierTests {
 
     @Test
     void testValidSourceHasNoFaults() throws IOException {
-        final Set<JavadocFault> faults = collectFaults("ValidSource.java");
+        final Set<JavadocFault> faults = this.collectFaults("ValidSource.java");
 
         Assertions.assertTrue(faults.isEmpty());
     }
 
     @Test
     void testUndocumentedClassHasFaults() throws IOException {
-        final Set<JavadocFault> faults = collectFaults("UndocumentedSource.java");
+        final Set<JavadocFault> faults = this.collectFaults("UndocumentedSource.java");
 
         Assertions.assertFalse(faults.isEmpty());
         Assertions.assertEquals(1, faults.size());
 
-        JavadocFault first = faults.iterator().next();
+        final JavadocFault first = faults.iterator().next();
 
         Assertions.assertEquals("UndocumentedSource", first.name());
         Assertions.assertEquals("Missing Javadoc comment", first.message());
@@ -53,12 +53,12 @@ public class JavadocVerifierTests {
 
     @Test
     void testUndocumentedMethodInDocumentedClassHasFaults() throws IOException {
-        Set<JavadocFault> faults = collectFaults("UndocumentedMethodSource.java");
+        final Set<JavadocFault> faults = this.collectFaults("UndocumentedMethodSource.java");
 
         Assertions.assertFalse(faults.isEmpty());
         Assertions.assertEquals(1, faults.size());
 
-        JavadocFault first = faults.iterator().next();
+        final JavadocFault first = faults.iterator().next();
 
         Assertions.assertEquals("undocumentedMethod", first.name());
         Assertions.assertEquals("Missing Javadoc comment", first.message());
@@ -66,18 +66,18 @@ public class JavadocVerifierTests {
 
     @Test
     void testMissingTagsInDocumentedClassHasFaults() throws IOException {
-        Set<JavadocFault> faults = collectFaults("MissingTagSource.java");
+        final Set<JavadocFault> faults = this.collectFaults("MissingTagSource.java");
 
         Assertions.assertFalse(faults.isEmpty());
         Assertions.assertEquals(2, faults.size());
 
-        List<String> expectedMessages = Arrays.asList(
+        final List<String> expectedMessages = Arrays.asList(
                 "Missing author tag in javadoc",
                 "Missing since tag in javadoc"
         );
-        List<String> actualMessages = new ArrayList<>();
+        final List<String> actualMessages = new ArrayList<>();
 
-        for (JavadocFault fault : faults) {
+        for (final JavadocFault fault : faults) {
             Assertions.assertEquals("MissingTagSource", fault.name());
             Assertions.assertTrue(expectedMessages.contains(fault.message()));
             actualMessages.add(fault.message());
@@ -90,12 +90,12 @@ public class JavadocVerifierTests {
 
     @Test
     void testMissingDeprecationInDocumentedClassHasFaults() throws IOException {
-        Set<JavadocFault> faults = collectFaults("MissingDeprecationTagSource.java");
+        final Set<JavadocFault> faults = this.collectFaults("MissingDeprecationTagSource.java");
 
         Assertions.assertFalse(faults.isEmpty());
         Assertions.assertEquals(1, faults.size());
 
-        JavadocFault first = faults.iterator().next();
+        final JavadocFault first = faults.iterator().next();
 
         Assertions.assertEquals("MissingDeprecationTagSource", first.name());
         Assertions.assertEquals("Missing deprecated tag in javadoc", first.message());
