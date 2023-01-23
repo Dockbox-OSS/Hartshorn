@@ -66,9 +66,9 @@ class JpaRepositoryTests {
 
 
     // will be shared between test methods
-    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
-    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
-    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
+    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
+    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
     @Container private static final MSSQLServerContainer<?> mssqlServer = new MSSQLServerContainer<>(MSSQLServerContainer.IMAGE).acceptLicense();
 
     public static Stream<Arguments> containers() {

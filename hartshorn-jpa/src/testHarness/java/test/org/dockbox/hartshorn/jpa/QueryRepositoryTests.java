@@ -47,7 +47,7 @@ public class QueryRepositoryTests {
     @Inject
     private ApplicationContext applicationContext;
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
-            .withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
+            .withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
 
     protected DataSourceConfiguration connection() {
         return this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);

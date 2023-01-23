@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.component.processing.Binds;
  * included by default, and should only be referenced directly in test extensions.
  */
 @Service
-public class JpaTestContractProviders {
+public class JpaTestHarnessProviders {
 
     public static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
 

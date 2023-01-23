@@ -42,7 +42,7 @@ public class StandardLazyJdbcRepositoryConfigurationInitializer implements LazyJ
         propertyHolder.set("hartshorn.data.sources.default.username", container.getUsername());
         propertyHolder.set("hartshorn.data.sources.default.password", container.getPassword());
 
-        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(container.getHost(), container.getMappedPort(mappedPort), JpaTestContractProviders.DEFAULT_DATABASE);
+        final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(container.getHost(), container.getMappedPort(mappedPort), JpaTestHarnessProviders.DEFAULT_DATABASE);
         propertyHolder.set("hartshorn.data.sources.default.url", connectionUrl);
     }
 

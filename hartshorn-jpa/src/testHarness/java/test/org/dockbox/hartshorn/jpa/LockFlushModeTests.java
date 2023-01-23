@@ -56,7 +56,7 @@ public class LockFlushModeTests {
 
     @Container
     private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
-            .withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
+            .withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
 
     @Inject
     private UnnamedJpaQueryContextCreator contextCreator;

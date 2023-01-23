@@ -42,7 +42,7 @@ public class NamedQueryRepositoryTests {
     @Inject
     private ApplicationContext applicationContext;
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
-            .withDatabaseName(JpaTestContractProviders.DEFAULT_DATABASE);
+            .withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
 
     @Test
     void testRepositoryAttachesEntityLevelQuery() {

@@ -73,7 +73,7 @@ public class StandardDataSourceConfigurationLoader implements DataSourceConfigur
                 type,
                 "localhost",
                 container.getMappedPort(defaultPort),
-                JpaTestContractProviders.DEFAULT_DATABASE
+                JpaTestHarnessProviders.DEFAULT_DATABASE
         );
 
         return new DataSourceConfiguration(url, container.getUsername(), container.getPassword(), driver);
