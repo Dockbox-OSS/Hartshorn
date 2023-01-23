@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class JavadocVerifier {
 
     public static void verify(final Path path) throws IOException {
-        Set<JavadocFault> faults = collectFaults(path);
+        final Set<JavadocFault> faults = collectFaults(path);
         processFaults(faults);
     }
 

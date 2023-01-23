@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.gradle.testcontract;
+package org.dockbox.hartshorn.gradle.harness;
 
-public enum ProjectType {
-    CONTRACT_API,
-    CONTRACT_IMPLEMENTATION,
-    STANDALONE,
+import org.gradle.api.Project;
+
+public interface TestHarnessProjectProcessor {
+
+    void configureHarnessDefinition(Project target, TestHarnessExtension extension);
+
+    void configureHarnessImplementation(Project target, TestHarnessExtension extension);
 }

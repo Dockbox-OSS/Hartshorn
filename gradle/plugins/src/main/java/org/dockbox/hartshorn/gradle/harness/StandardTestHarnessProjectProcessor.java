@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.gradle.testcontract;
+package org.dockbox.hartshorn.gradle.harness;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
@@ -27,56 +26,47 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.testing.Test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class TestContractPlugin implements Plugin<Project> {
+public class StandardTestHarnessProjectProcessor implements TestHarnessProjectProcessor {
 
-    private static final String TEST_CONTRACTS_SOURCE_SET_NAME = "testContracts";
-    private static final String TEST_EXTENSIONS_SOURCE_SET_NAME = "testExtensions";
+    private static final String TEST_HARNESS_SOURCE_SET_NAME = "testHarness";
+    private static final String TEST_HARNESS_EXTENSIONS_SOURCE_SET_NAME = TEST_HARNESS_SOURCE_SET_NAME + "Extensions";
 
     @Override
-    public void apply(final @NonNull Project target) {
-        final ProjectType projectType = this.lookupProjectType(target);
-
-        //noinspection UseOfSystemOutOrSystemErr
-        System.out.printf("Determined project type %S for %s%n", projectType, target.getName());
-
-        switch (projectType) {
-            case CONTRACT_API -> this.configureContractApiConfigurations(target);
-            case CONTRACT_IMPLEMENTATION -> {
-                this.configureContractImplementationConfigurations(target);
-                this.configureTests(target);
-            }
-            case STANDALONE -> { /* Nothing to do, skip */ }
-        }
+    public void configureHarnessDefinition(final Project target, final TestHarnessExtension extension) {
+        this.createSourceSet(target, extension, TEST_HARNESS_SOURCE_SET_NAME);
     }
 
-    private void configureContractImplementationConfigurations(final Project target) {
-        this.createSourceSet(target, TEST_EXTENSIONS_SOURCE_SET_NAME)
+    @Override
+    public void configureHarnessImplementation(final Project target, final TestHarnessExtension extension) {
+        this.createSourceSet(target, extension, TEST_HARNESS_EXTENSIONS_SOURCE_SET_NAME)
                 .filter(sourceSet -> target.getParent() != null)
                 .ifPresent(extensionSourceSet -> {
                     this.lookupConfiguration(target, extensionSourceSet)
-                            .flatMap(extensionConfiguration -> this.sourceSet(target.getParent(), TEST_CONTRACTS_SOURCE_SET_NAME))
-                            .ifPresent(testContractsSourceSet -> {
-                                extensionSourceSet.setCompileClasspath(extensionSourceSet.getCompileClasspath().plus(testContractsSourceSet.getOutput()));
-                                extensionSourceSet.setRuntimeClasspath(extensionSourceSet.getRuntimeClasspath().plus(testContractsSourceSet.getOutput()));
+                            .flatMap(extensionConfiguration -> this.sourceSet(target.getParent(), TEST_HARNESS_SOURCE_SET_NAME))
+                            .ifPresent(testHarnessSourceSet -> {
+                                extensionSourceSet.setCompileClasspath(extensionSourceSet.getCompileClasspath().plus(testHarnessSourceSet.getOutput()));
+                                extensionSourceSet.setRuntimeClasspath(extensionSourceSet.getRuntimeClasspath().plus(testHarnessSourceSet.getOutput()));
                             });
                 });
+        this.configureTests(target);
     }
 
-    private void configureContractApiConfigurations(final Project target) {
-        this.createSourceSet(target, TEST_CONTRACTS_SOURCE_SET_NAME);
-    }
-
-    private Optional<SourceSet> createSourceSet(final Project target, final String name) {
+    private Optional<SourceSet> createSourceSet(final Project target, final TestHarnessExtension extension, final String name) {
         final JavaPluginExtension javaExtension = target.getExtensions().getByType(JavaPluginExtension.class);
         final SourceSet sourceSet = javaExtension.getSourceSets().create(name);
 
         final Optional<Configuration> configuration = this.lookupConfiguration(target, sourceSet);
         if (configuration.isEmpty()) return Optional.empty();
 
-        this.configureConfigurationExtensions(target, configuration.get());
+        final Configuration config = configuration.get();
+        final List<Dependency> dependencies = extension.getDependencyHandler().getDependencies(target.getDependencies());
+        config.getDependencies().addAll(dependencies);
+
+        this.configureConfigurationExtensions(target, config);
 
         this.sourceSet(target, SourceSet.MAIN_SOURCE_SET_NAME).ifPresent(mainSourceSet -> {
             sourceSet.setCompileClasspath(sourceSet.getCompileClasspath().plus(mainSourceSet.getOutput()));
@@ -115,23 +105,11 @@ public class TestContractPlugin implements Plugin<Project> {
         return Optional.ofNullable(sourceSets.findByName(sourceSetName));
     }
 
-    private ProjectType lookupProjectType(final Project target) {
-        if (target.getParent() == null) return ProjectType.STANDALONE;
-
-        if (target.getRootProject() == target.getParent()) {
-            final Set<Project> subprojects = target.getSubprojects();
-            if (!subprojects.isEmpty()) return ProjectType.CONTRACT_API;
-            else return ProjectType.STANDALONE;
-        }
-
-        return ProjectType.CONTRACT_IMPLEMENTATION;
-    }
-
     private void configureTests(final Project target) {
         final Test integrationTestTask = target.getTasks().register("integrationTests", Test.class, task -> {
 
             final Project parent = task.getProject().getParent();
-            final Optional<SourceSet> itSourceSet = this.sourceSet(parent, TEST_CONTRACTS_SOURCE_SET_NAME);
+            final Optional<SourceSet> itSourceSet = this.sourceSet(parent, TEST_HARNESS_SOURCE_SET_NAME);
             if (itSourceSet.isEmpty()) return;
 
             final Optional<SourceSet> mainSourceSet = this.sourceSet(task.getProject(), SourceSet.MAIN_SOURCE_SET_NAME);
@@ -144,7 +122,7 @@ public class TestContractPlugin implements Plugin<Project> {
             final FileCollection itRuntimeClasspath = itSourceSet.get().getRuntimeClasspath();
             task.setClasspath(itRuntimeClasspath.plus(mainRuntimeClasspath));
 
-            final Optional<SourceSet> extensionsSourceSet = this.sourceSet(task.getProject(), TEST_EXTENSIONS_SOURCE_SET_NAME);
+            final Optional<SourceSet> extensionsSourceSet = this.sourceSet(task.getProject(), TEST_HARNESS_EXTENSIONS_SOURCE_SET_NAME);
             if (extensionsSourceSet.isPresent()) {
                 final FileCollection extensionsRuntimeClasspath = extensionsSourceSet.get().getRuntimeClasspath();
                 task.setClasspath(task.getClasspath().plus(extensionsRuntimeClasspath));

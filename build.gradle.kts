@@ -33,7 +33,7 @@ plugins {
 
     // Custom plugins, can be found in the gradle/plugins directory
     id("org.dockbox.hartshorn.gradle.javadoc")
-    id("org.dockbox.hartshorn.gradle.testcontract")
+    id("org.dockbox.hartshorn.gradle.testharness")
 
     // Required for CI and to automatically update license headers on build
     id("org.cadixdev.licenser") version "0.6.1"
@@ -69,7 +69,7 @@ allprojects {
         plugin("maven-publish")
         plugin("org.cadixdev.licenser")
         plugin("org.dockbox.hartshorn.gradle.javadoc")
-        plugin("org.dockbox.hartshorn.gradle.testcontract")
+        plugin("org.dockbox.hartshorn.gradle.testharness")
     }
 
     license {

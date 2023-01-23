@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.gradle.testcontract;
+package org.dockbox.hartshorn.gradle.harness;
 
-public class TestContractsTask extends org.gradle.api.DefaultTask {
-    private ProjectType projectType;
-
-    public ProjectType projectType() {
-        return this.projectType;
-    }
-
-    public void projectType(final ProjectType projectType) {
-        this.projectType = projectType;
-    }
+/**
+ * Extension of {@link java.util.function.Consumer} and {@link java.util.function.BiConsumer} with
+ * the addition of a third parameter of type <code>O</code>
+ *
+ * @param <T> the type of the first argument to the operation
+ * @param <U> the type of the second argument to the operation
+ * @param <O> the type of the third argument to the operation
+ */
+@FunctionalInterface
+public interface TriConsumer<T, U, O> {
+    void accept(T t, U u, O o);
 }

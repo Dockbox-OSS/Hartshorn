@@ -1,3 +1,5 @@
+import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension.defaultProject
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -22,6 +24,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-config")
     implementation("org.dockbox.hartshorn:hartshorn-core")
 
-    // TODO: Can we provide a default implementation per module?
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
+    testImplementation(defaultProject(project(":hartshorn-config")))
 }

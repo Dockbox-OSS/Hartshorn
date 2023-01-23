@@ -1,3 +1,7 @@
+import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
+import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension.defaultProject
+import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -24,9 +28,13 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-jpa")
 
     implementation(libs.bundles.hibernate)
+}
 
-    testExtensionsImplementation(libs.bundles.testContainers)
-    testExtensionsImplementation(libs.bundles.databaseTestContainers)
-    testExtensionsImplementation(project(":hartshorn-config:hartshorn-config-jackson"))
-    testExtensionsImplementation(libs.mysql)
+configure<TestHarnessExtension> {
+    projectType = TestHarnessProjectType.IMPLEMENTATION
+
+    dependencyHandler.add(libs.bundles.testContainers)
+    dependencyHandler.add(libs.bundles.databaseTestContainers)
+    dependencyHandler.add(defaultProject(project(":hartshorn-config")))
+    dependencyHandler.add(libs.mysql)
 }
