@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.proxy.javassist;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
+import org.dockbox.hartshorn.proxy.StandardProxyLookup;
 
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+import javassist.util.proxy.ProxyFactory;
+
+public class JavassistProxyLookup implements StandardProxyLookup {
+
+    @Override
+    public boolean isProxy(final Class<?> candidate) {
+        return ProxyFactory.isProxyClass(candidate);
+    }
 }

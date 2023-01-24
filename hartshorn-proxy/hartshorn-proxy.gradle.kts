@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -18,20 +20,23 @@ apply {
     from("${project.rootDir}/gradle/publications.gradle.kts")
 }
 
+plugins {
+    kotlin("jvm") version "1.7.10"
+    scala
+    groovy
+}
+
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
+}
+
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-jpa")
 
-    implementation(libs.bundles.hibernate)
-
-    testImplementation(libs.bundles.testContainers)
-    testImplementation(libs.bundles.databaseTestContainers)
-    testImplementation(libs.mysql)
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation(testFixtures(project(":hartshorn-jpa")))
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    testImplementation(libs.scala)
+    testImplementation(libs.groovy)
 }

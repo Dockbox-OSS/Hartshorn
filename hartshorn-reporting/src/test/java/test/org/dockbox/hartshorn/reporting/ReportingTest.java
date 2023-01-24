@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.UseBeanScanning;
 import org.dockbox.hartshorn.component.factory.UseFactoryServices;
-import org.dockbox.hartshorn.proxy.UseProxying;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
@@ -31,7 +30,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @UseBeanScanning
-@UseProxying
 @UseFactoryServices
 public class ReportingTest {
 

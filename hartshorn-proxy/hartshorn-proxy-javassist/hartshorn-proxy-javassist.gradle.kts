@@ -19,19 +19,7 @@ apply {
 }
 
 dependencies {
+    implementation(libs.javassist)
     implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-jpa")
-
-    implementation(libs.bundles.hibernate)
-
-    testImplementation(libs.bundles.testContainers)
-    testImplementation(libs.bundles.databaseTestContainers)
-    testImplementation(libs.mysql)
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation(testFixtures(project(":hartshorn-jpa")))
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.util.introspect;
+package org.dockbox.hartshorn.proxy.loaders;
 
-import org.dockbox.hartshorn.proxy.NativeProxyLookup;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
-public class ReflectionIntrospectorTests extends IntrospectorTests {
+public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ProxyParameterLoaderContext> {
+
+    public UnproxyingParameterLoader() {
+        this.add(new UnproxyParameterLoaderRule());
+        this.add(new ObjectEqualsParameterLoaderRule());
+    }
 
     @Override
-    protected Introspector introspector() {
-        return new ReflectionIntrospector(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
+        return (T) args[index];
     }
 }

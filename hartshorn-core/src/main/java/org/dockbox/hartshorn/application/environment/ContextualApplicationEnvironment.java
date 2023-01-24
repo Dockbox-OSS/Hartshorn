@@ -131,10 +131,6 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this.applicationLogger;
     }
 
-    public ApplicationProxier applicationProxier() {
-        return this.applicationProxier;
-    }
-
     public ExceptionHandler exceptionHandler() {
         return this.exceptionHandler;
     }

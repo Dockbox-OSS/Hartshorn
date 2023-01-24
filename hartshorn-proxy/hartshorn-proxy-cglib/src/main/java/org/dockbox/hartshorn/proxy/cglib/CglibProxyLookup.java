@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.proxy.cglib;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
+import net.sf.cglib.proxy.Enhancer;
 
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+import org.dockbox.hartshorn.proxy.StandardProxyLookup;
+
+/**
+ * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
+ *             It is recommended to use Javassist instead, through the
+ *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyLookup}.
+ */
+@Deprecated(since = "22.5")
+public class CglibProxyLookup implements StandardProxyLookup {
+
+    @Override
+    public boolean isProxy(final Class<?> candidate) {
+        return Enhancer.isEnhanced(candidate);
+    }
 }

@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.proxy;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
+public interface Invokable {
+    Object invoke(Object obj, Object... args) throws Exception;
 
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    void setAccessible(boolean accessible);
+
+    Class<?> declaringClass();
+
+    String name();
+
+    boolean isDefault();
+
+    Class<?> returnType();
+
+    Class<?>[] parameterTypes();
+
+    String qualifiedName();
 }

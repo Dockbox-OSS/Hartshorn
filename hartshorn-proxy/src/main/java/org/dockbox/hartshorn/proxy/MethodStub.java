@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.proxy;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
+@FunctionalInterface
+public interface MethodStub<T> {
 
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    Object invoke(MethodStubContext<T> stubContext) throws Throwable;
+
 }

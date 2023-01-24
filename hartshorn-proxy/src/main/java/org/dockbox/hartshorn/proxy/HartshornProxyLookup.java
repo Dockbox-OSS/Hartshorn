@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.jpa.hibernate;
+package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.ProxyLookup;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-import org.hibernate.proxy.HibernateProxy;
 
-public class HibernateProxyLookup implements ProxyLookup {
+/**
+ * A {@link ProxyLookup} implementation for Hartshorn's own proxy implementation. This implementation
+ * supports proxies that are created through a {@link ProxyFactory}, or otherwise implement {@link Proxy}
+ * directly.
+ */
+public class HartshornProxyLookup implements ProxyLookup {
 
     @Override
     public <T> Option<Class<T>> unproxy(final T instance) {
-        if (instance instanceof HibernateProxy hibernateProxy) {
-            final Class<T> unproxied = (Class<T>) hibernateProxy.getHibernateLazyInitializer().getPersistentClass();
+        if (instance instanceof Proxy<?> proxy) {
+            final Class<T> unproxied = TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
             return Option.of(unproxied);
         }
         return Option.empty();
@@ -33,11 +37,11 @@ public class HibernateProxyLookup implements ProxyLookup {
 
     @Override
     public boolean isProxy(final Object instance) {
-        return instance instanceof HibernateProxy;
+        return instance != null && (instance instanceof Proxy || this.isProxy(instance.getClass()));
     }
 
     @Override
     public boolean isProxy(final Class<?> candidate) {
-        return HibernateProxy.class.isAssignableFrom(candidate);
+        return Proxy.class.isAssignableFrom(candidate) && !Proxy.class.equals(candidate);
     }
 }

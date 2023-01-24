@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.proxy;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+public interface ProxyConstructorFunction<T> {
+    T create() throws ApplicationException;
+    T create(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
 }
