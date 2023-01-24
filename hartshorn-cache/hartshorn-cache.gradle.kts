@@ -28,4 +28,5 @@ dependencies {
 
 configure<TestHarnessExtension> {
     projectType = TestHarnessProjectType.DEFINITION
+    defaultProject = project(":hartshorn-cache:hartshorn-cache-caffeine")
 }

@@ -37,4 +37,5 @@ dependencies {
 
 configure<TestHarnessExtension> {
     projectType = TestHarnessProjectType.DEFINITION
+    defaultProject = project(":hartshorn-jpa:hartshorn-jpa-hibernate")
 }
