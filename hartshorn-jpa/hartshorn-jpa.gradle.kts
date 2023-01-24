@@ -1,3 +1,6 @@
+import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
+import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -30,4 +33,9 @@ dependencies {
 
     // Drivers
     testImplementation(libs.bundles.databaseDrivers)
+}
+
+configure<TestHarnessExtension> {
+    projectType = TestHarnessProjectType.DEFINITION
+    defaultProject = project(":hartshorn-jpa:hartshorn-jpa-hibernate")
 }

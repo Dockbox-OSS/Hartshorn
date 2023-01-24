@@ -33,6 +33,7 @@ plugins {
 
     // Custom plugins, can be found in the gradle/plugins directory
     id("org.dockbox.hartshorn.gradle.javadoc")
+    id("org.dockbox.hartshorn.gradle.testharness")
 
     // Required for CI and to automatically update license headers on build
     id("org.cadixdev.licenser") version "0.6.1"
@@ -68,6 +69,7 @@ allprojects {
         plugin("maven-publish")
         plugin("org.cadixdev.licenser")
         plugin("org.dockbox.hartshorn.gradle.javadoc")
+        plugin("org.dockbox.hartshorn.gradle.testharness")
     }
 
     license {
@@ -117,20 +119,25 @@ allprojects {
                 )
 
                 dependencySubstitution {
-                    rootDir.listFiles()?.forEach { file ->
-                        // Allows for local development of Hartshorn modules. Instead of having to publish
-                        // the module to a local Maven repository, we simply substitute the dependency with
-                        // the local module.
-                        //
-                        // In practice, this means that if you have a dependency on "org.dockbox.hartshorn:hartshorn-core"
-                        // in your build.gradle.kts file, and you have a local module named "hartshorn-core" in the
-                        // root directory of the project, the dependency will be substituted with project(":hartshorn-core").
-                        if (file.isDirectory && File(file, "${file.name}.gradle.kts").exists()) {
-                            val module = module("${group}:${file.name}")
-                            val project = project(":${file.name}")
-                            substitute(module).using(project)
+                    fun substitute(baseDir: File, prefix: String = "") {
+                        baseDir.listFiles()?.forEach { projectDir ->
+                            // Allows for local development of Hartshorn modules. Instead of having to publish
+                            // the module to a local Maven repository, we simply substitute the dependency with
+                            // the local module.
+                            //
+                            // In practice, this means that if you have a dependency on "org.dockbox.hartshorn:hartshorn-core"
+                            // in your build.gradle.kts file, and you have a local module named "hartshorn-core" in the
+                            // root directory of the project, the dependency will be substituted with project(":hartshorn-core").
+                            if (projectDir.isDirectory && File(projectDir, "${projectDir.name}.gradle.kts").exists()) {
+                                val module = module("${group}:${projectDir.name}")
+                                val project = project("${prefix}:${projectDir.name}")
+                                substitute(module).using(project)
+
+                                substitute(projectDir, ":${projectDir.name}")
+                            }
                         }
                     }
+                    substitute(rootDir)
                 }
             }
         }

@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public interface ConstructorView<T> extends ExecutableElementView<T> {
 
     Constructor<T> constructor();
 
     default Attempt<T, Throwable> create(final Object... arguments) {
-        return this.create(List.of(arguments));
+        return this.create(Arrays.asList(arguments));
     }
 
     Attempt<T, Throwable> create(Collection<?> arguments);
