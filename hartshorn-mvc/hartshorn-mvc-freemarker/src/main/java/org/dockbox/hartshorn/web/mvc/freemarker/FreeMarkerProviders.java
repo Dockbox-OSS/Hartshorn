@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.servlet;
+package org.dockbox.hartshorn.web.mvc.freemarker;
 
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.web.HttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.dockbox.hartshorn.component.condition.RequiresClass;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.web.mvc.MVCInitializer;
+import org.dockbox.hartshorn.web.mvc.UseMvcServer;
+
+import jakarta.inject.Singleton;
 
 @Service
-@RequiresActivator(UseHttpServer.class)
-public interface WebServletFactory {
+@RequiresActivator(UseMvcServer.class)
+@RequiresClass("freemarker.template.Template")
+public class FreeMarkerProviders {
 
-    @Factory
-    WebServlet webServlet(final HttpWebServer starter, final RequestHandlerContext context);
+    @Binds
+    @Singleton
+    public MVCInitializer mvcInitializer() {
+        return new FreeMarkerMVCInitializer();
+    }
 }

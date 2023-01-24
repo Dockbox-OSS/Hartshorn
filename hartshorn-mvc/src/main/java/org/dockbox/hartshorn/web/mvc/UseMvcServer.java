@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.web.mvc;
 
-dependencies {
-    api(libs.jakartaServlet)
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-events")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    testImplementation(libs.httpclient)
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@UseHttpServer
+@ServiceActivator(processors = {
+        MvcControllerPreProcessor.class
+})
+public @interface UseMvcServer {
 }

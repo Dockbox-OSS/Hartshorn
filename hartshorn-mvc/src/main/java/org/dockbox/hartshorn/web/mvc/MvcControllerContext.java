@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.servlet;
+package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.web.HttpWebServer;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-@Service
-@RequiresActivator(UseHttpServer.class)
-public interface WebServletFactory {
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-    @Factory
-    WebServlet webServlet(final HttpWebServer starter, final RequestHandlerContext context);
+@InstallIfAbsent
+public class MvcControllerContext extends DefaultProvisionContext {
+
+    private final Set<RequestHandlerContext> requestHandlerContexts = ConcurrentHashMap.newKeySet();
+
+    public Set<RequestHandlerContext> requestHandlerContexts() {
+        return this.requestHandlerContexts;
+    }
+
+    public void add(final RequestHandlerContext context) {
+        this.requestHandlerContexts.add(context);
+    }
 }

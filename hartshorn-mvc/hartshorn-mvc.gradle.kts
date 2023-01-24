@@ -26,8 +26,8 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
     implementation("org.dockbox.hartshorn:hartshorn-events")
     implementation("org.dockbox.hartshorn:hartshorn-config")
+    implementation("org.dockbox.hartshorn:hartshorn-web")
 
     testImplementation(libs.httpclient)
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

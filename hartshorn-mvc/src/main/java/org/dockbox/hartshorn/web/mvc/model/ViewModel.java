@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.web.mvc.model;
 
-dependencies {
-    api(libs.jakartaServlet)
+import org.dockbox.hartshorn.util.option.Option;
 
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-events")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
+import java.util.Map;
 
-    testImplementation(libs.httpclient)
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+public interface ViewModel {
+    Map<String, Object> attributes();
+    void attribute(String name, Object value);
+    Option<Object> attribute(String name);
 }

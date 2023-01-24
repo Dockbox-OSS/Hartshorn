@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.servlet;
+package org.dockbox.hartshorn.web.mvc;
 
+import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.web.HttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.dockbox.hartshorn.web.annotations.PathSpec;
 
-@Service
-@RequiresActivator(UseHttpServer.class)
-public interface WebServletFactory {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Factory
-    WebServlet webServlet(final HttpWebServer starter, final RequestHandlerContext context);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Extends(PathSpec.class)
+public @interface MvcController {
+    @AliasFor("pathSpec")
+    String value() default "";
+
+    /**
+     * @see Service#lazy()
+     */
+    boolean lazy() default false;
 }

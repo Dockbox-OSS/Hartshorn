@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.web.mvc.template;
 
-dependencies {
-    api(libs.jakartaServlet)
-
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-events")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-
-    testImplementation(libs.httpclient)
-    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+public interface ViewTemplate {
 }

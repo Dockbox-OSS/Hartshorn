@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.web.ServletHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class WebServletImpl implements WebServlet {
+public class WebServletImpl implements HandleWebServlet {
 
     private final ServletHandler handler;
 
@@ -38,6 +38,7 @@ public class WebServletImpl implements WebServlet {
                 .servletHandler(starter, context.httpRequest().method(), context.method());
     }
 
+    @Override
     public ServletHandler handler() {
         return this.handler;
     }

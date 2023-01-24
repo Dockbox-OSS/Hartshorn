@@ -46,6 +46,8 @@ includeReconfigured(
         ":hartshorn-web",
         ":hartshorn-web:hartshorn-web-jetty",
         ":hartshorn-web:hartshorn-web-freemarker",
+        ":hartshorn-mvc",
+        ":hartshorn-mvc:hartshorn-mvc-freemarker",
         ":hartshorn-test-suite",
 )
 

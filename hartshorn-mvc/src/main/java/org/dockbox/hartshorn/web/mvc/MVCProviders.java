@@ -14,19 +14,31 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.servlet;
+package org.dockbox.hartshorn.web.mvc;
 
+import org.dockbox.hartshorn.beans.Bean;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.web.HttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.web.WebContextLoader;
 
 @Service
-@RequiresActivator(UseHttpServer.class)
-public interface WebServletFactory {
+@RequiresActivator(UseMvcServer.class)
+public class MVCProviders {
 
-    @Factory
-    WebServlet webServlet(final HttpWebServer starter, final RequestHandlerContext context);
+    @Binds("mvc_webserver")
+    public ParameterLoader<?> mvcParameterLoader() {
+        return new MvcParameterLoader();
+    }
+
+    @Binds
+    public Class<MvcServlet> mvcServlet() {
+        return MvcServlet.class;
+    }
+
+    @Bean
+    public static WebContextLoader mvcContextLoader() {
+        return new WebMvcContextLoader();
+    }
 }

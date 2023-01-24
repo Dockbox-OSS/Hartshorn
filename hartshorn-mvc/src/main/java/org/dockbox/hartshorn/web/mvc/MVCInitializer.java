@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.web.servlet;
+package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.dockbox.hartshorn.web.mvc.model.ViewModel;
+import org.dockbox.hartshorn.web.mvc.template.ViewTemplate;
 
-@Service
-@RequiresActivator(UseHttpServer.class)
-public interface WebServletFactory {
+import java.util.Set;
 
-    @Factory
-    WebServlet webServlet(final HttpWebServer starter, final RequestHandlerContext context);
+public interface MVCInitializer {
+
+    String TEMPLATE_ROOT = HttpWebServer.WEB_INF + "templates/";
+
+    void initialize(ApplicationContext applicationContext) throws ApplicationException;
+    String transform(ViewTemplate template, ViewModel model) throws ApplicationException;
+    Set<ViewTemplate> templates();
 }
