@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
@@ -42,8 +43,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Attempt<T, Throwable> proxy(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
-        if (args.length != constructor.parameters().count()) {
+    public Attempt<T, Throwable> proxy(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+        if (args.length != constructor.getParameterCount()) {
             throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
         if (this.type().isInterface()) return this.proxy(); // Cannot invoke constructor on interface
@@ -51,7 +52,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
-        final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
+        final LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
         this.contextContainer().contexts().forEach(manager::add);
         this.contextContainer().namedContexts().forEach(manager::add);
@@ -74,7 +75,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final Constructor<T> constructor, final Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 

@@ -16,11 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
@@ -28,23 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractApplicationProxier implements ApplicationProxier, ApplicationManaged {
 
-    private ApplicationEnvironment environment;
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public AbstractApplicationProxier() {
         this.registerProxyLookup(new NativeProxyLookup());
         this.registerProxyLookup(new HartshornProxyLookup());
-    }
-
-    @Override
-    public ApplicationEnvironment environment() {
-        return this.environment;
-    }
-
-    @Override
-    public void environment(final ApplicationEnvironment environment) {
-        if (this.environment == null) this.environment = environment;
-        else throw new IllegalModificationException("Application manager has already been configured");
     }
 
     @Override
@@ -66,11 +51,6 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     }
 
     @Override
-    public <D, T extends D> Option<D> delegate(final TypeView<D> type, final T instance) {
-        return this.delegate(type.type(), instance);
-    }
-
-    @Override
     public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
@@ -78,11 +58,6 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
             return manager.delegate(type);
         }
         return Option.empty();
-    }
-
-    @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
-        return this.factory(type.type());
     }
 
     @Override

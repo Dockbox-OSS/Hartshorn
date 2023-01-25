@@ -35,7 +35,7 @@ import java.util.Set;
  * @author Guus Lieben
  * @since 22.2
  */
-public interface ProxyManager<T> extends ApplicationAwareContext {
+public interface ProxyManager<T> extends Context {
 
     /**
      * Returns the original type of the proxy. This is the type of the object that is proxied, but is not the proxied

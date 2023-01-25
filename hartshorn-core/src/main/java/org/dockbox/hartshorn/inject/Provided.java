@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy;
+package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.proxy.processing.ContextMethodPostProcessor;
+import org.dockbox.hartshorn.component.processing.proxy.ContextMethodPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

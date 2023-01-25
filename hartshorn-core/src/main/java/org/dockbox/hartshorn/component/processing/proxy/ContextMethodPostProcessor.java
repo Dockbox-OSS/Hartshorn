@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.proxy.Provided;
+import org.dockbox.hartshorn.inject.Provided;
 
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 

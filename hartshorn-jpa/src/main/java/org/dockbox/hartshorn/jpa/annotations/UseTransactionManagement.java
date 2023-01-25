@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.jpa.annotations;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.jpa.transaction.TransactionalProxyCallbackPostProcessor;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.component.UseProxying;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

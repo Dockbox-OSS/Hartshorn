@@ -232,16 +232,6 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param delegate The delegate instance
      * @return This factory
      */
-    F delegate(MethodView<T, ?> method, T delegate);
-
-    /**
-     * Delegates the given method to the given delegate instance. This targets a backing implementation,
-     * not the original instance.
-     *
-     * @param method The method to delegate
-     * @param delegate The delegate instance
-     * @return This factory
-     */
     F delegate(Method method, T delegate);
 
     /**
@@ -252,28 +242,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interceptor The interceptor to use
      * @return This factory
      */
-    <R> F intercept(MethodView<T, R> method, MethodInterceptor<T, R> interceptor);
-
-    /**
-     * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
-     * already an interceptor for the given method, it will be chained, so it may be executed in series.
-     *
-     * @param method The method to intercept
-     * @param interceptor The interceptor to use
-     * @return This factory
-     */
     F intercept(Method method, MethodInterceptor<T, ?> interceptor);
-
-    /**
-     * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
-     * wrapper. These phases are; before entry, after return, and after exception thrown.
-     *
-     * @param method The method to intercept
-     * @param wrapper The wrapper to use
-     * @return This factory
-     * @see MethodWrapper
-     */
-    F intercept(MethodView<T, ?> method, MethodWrapper<T> wrapper);
 
     /**
      * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the

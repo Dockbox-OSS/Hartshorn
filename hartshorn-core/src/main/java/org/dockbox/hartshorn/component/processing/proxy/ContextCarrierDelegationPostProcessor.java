@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.component.processing.proxy;
 
-dependencies {
-    implementation(libs.javassist)
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
+import org.dockbox.hartshorn.context.ContextCarrier;
+
+public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier> {
+
+    @Override
+    protected Class<ContextCarrier> parentTarget() {
+        return ContextCarrier.class;
+    }
+
+    @Override
+    protected boolean skipConcreteMethods() {
+        return true;
+    }
 }

@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T>, ModifiableProxyManager<T, LazyProxyManager<T>> {
+public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<T>, ModifiableProxyManager<T, LazyProxyManager<T>> {
 
     private static final Method managerAccessor;
 
@@ -57,7 +57,6 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
         }
     }
 
-    private final ApplicationContext applicationContext;
     private Class<T> proxyClass;
     private final Class<T> targetClass;
     private T proxy;
@@ -69,19 +68,18 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     private final Supplier<MethodStub<T>> defaultStub;
     private T delegate;
 
-    public LazyProxyManager(final ApplicationContext applicationContext, final DefaultProxyFactory<T> proxyFactory) {
+    public LazyProxyManager(final DefaultProxyFactory<T> proxyFactory) {
         this(applicationContext, null, proxyFactory.type(), proxyFactory.typeDelegate(),
                 proxyFactory.delegates(), proxyFactory.typeDelegates(),
                 proxyFactory.interceptors(), proxyFactory.wrappers(),
                 proxyFactory.defaultStub());
     }
 
-    public LazyProxyManager(final ApplicationContext applicationContext, final Class<T> proxyClass, final Class<T> targetClass,
+    public LazyProxyManager(final Class<T> proxyClass, final Class<T> targetClass,
                             final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
                             final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers,
                             final Supplier<MethodStub<T>> defaultStub) {
-        super(applicationContext);
-
+        // TODO: Check if the proxy class is a proxy
         if (applicationContext.environment().isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
@@ -89,7 +87,6 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
-        this.applicationContext = applicationContext;
         this.proxyClass = proxyClass;
         this.targetClass = targetClass;
         this.delegate = delegate;
@@ -162,11 +159,6 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     @Override
     public MethodStub<T> stub() {
         return this.defaultStub.get();
-    }
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
     }
 
     @Override

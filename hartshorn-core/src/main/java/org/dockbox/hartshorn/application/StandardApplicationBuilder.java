@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.beans.UseBeanScanning;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

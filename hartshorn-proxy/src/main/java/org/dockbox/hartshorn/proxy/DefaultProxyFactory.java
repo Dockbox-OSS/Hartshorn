@@ -46,21 +46,16 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>>, ContextCarrier {
+public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>> {
 
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
      * generated proxy classes are unique. This field may be replaced at any time, and the factory will not be
      * affected.
      */
-    public static NameGenerator NAME_GENERATOR = new NameGenerator() {
+    protected static NameGenerator nameGenerator = new NameGenerator() {
         private final String sep = "_$$_hh" + Integer.toHexString(this.hashCode() & 0xfff) + "_";
-        private int counter = 0;
-
-        @Override
-        public String get(final TypeView<?> type) {
-            return this.get(type.type());
-        }
+        private int counter;
 
         @Override
         public String get(final Class<?> type) {
@@ -92,7 +87,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private boolean trackState = true;
     private boolean modified;
 
-    public DefaultProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
+    protected DefaultProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
         this.type = type;
         this.applicationContext = applicationContext;
         this.validate();
@@ -104,8 +99,13 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     protected boolean isGroovyTrait(final Class<?> type) {
-        final TypeView<?> groovyTraitType = this.applicationContext().environment().introspect(GROOVY_TRAIT);
-        return !groovyTraitType.isVoid() && groovyTraitType.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTraitType.type());
+        try {
+            final Class<?> groovyTrait = Class.forName(GROOVY_TRAIT);
+            return groovyTrait.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
+        }
+        catch (final ClassNotFoundException e) {
+            return false;
+        }
     }
 
     protected void updateState() {
@@ -178,11 +178,6 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> delegate(final MethodView<T, ?> method, final T delegate) {
-        return this.delegate(method.method(), delegate);
-    }
-
-    @Override
     public DefaultProxyFactory<T> delegate(final Method method, final T delegate) {
         this.updateState();
         if (delegate == null) {
@@ -194,11 +189,6 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         }
         this.delegates.put(method, delegate);
         return this;
-    }
-
-    @Override
-    public <R> DefaultProxyFactory<T> intercept(final MethodView<T, R> method, final MethodInterceptor<T, R> interceptor) {
-        return this.intercept(method.method(), interceptor);
     }
 
     @Override
@@ -214,11 +204,6 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         this.updateState();
         this.interceptors.put(method, methodInterceptor);
         return this;
-    }
-
-    @Override
-    public DefaultProxyFactory<T> intercept(final MethodView<T, ?> method, final MethodWrapper<T> wrapper) {
-        return this.intercept(method.method(), wrapper);
     }
 
     @Override

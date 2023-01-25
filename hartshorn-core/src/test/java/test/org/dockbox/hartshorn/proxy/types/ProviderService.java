@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.proxy.types;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.proxy.Provided;
+import org.dockbox.hartshorn.inject.Provided;
 
 @Service
 @FunctionalInterface

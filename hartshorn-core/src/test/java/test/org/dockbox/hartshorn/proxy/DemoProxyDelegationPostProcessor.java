@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.component.processing.proxy.ProxyDelegationPostProcessor;
 
 public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<InterfaceProxy> {
     @Override

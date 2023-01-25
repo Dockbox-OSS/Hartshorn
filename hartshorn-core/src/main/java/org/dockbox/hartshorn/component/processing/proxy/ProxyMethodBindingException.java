@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 

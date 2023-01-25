@@ -16,12 +16,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 public class MethodStubContext<T> extends DefaultProvisionContext {
-
-    // TODO: Determine what other information is needed here
 
     private final T self;
     private final Invokable source;
@@ -59,10 +56,6 @@ public class MethodStubContext<T> extends DefaultProvisionContext {
 
     public ProxyManager<T> manager() {
         return this.interceptor.manager();
-    }
-
-    public ApplicationContext applicationContext() {
-        return this.interceptor.applicationContext();
     }
 
     public Object[] args() {

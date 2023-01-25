@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
+import java.lang.reflect.Constructor;
+
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
  *             It is recommended to use Javassist instead, through the
@@ -45,8 +47,8 @@ public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunctio
     }
 
     @Override
-    public T create(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
-        final Class<?>[] parameterTypes = constructor.constructor().getParameterTypes();
+    public T create(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+        final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Object instance = this.enhancer.create(parameterTypes, args);
         return this.type.cast(instance);
     }

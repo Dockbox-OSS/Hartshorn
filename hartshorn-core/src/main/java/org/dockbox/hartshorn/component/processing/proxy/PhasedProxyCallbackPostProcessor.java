@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -49,7 +49,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
             final MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
-                factory.intercept(method, wrapper);
+                factory.intercept(method.method(), wrapper);
             }
         }
 

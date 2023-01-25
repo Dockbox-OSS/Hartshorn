@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
 @Deprecated(since = "22.5")
 public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
-    private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> NAME_GENERATOR.get(prefix);
+    private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> nameGenerator.get(prefix);
 
     public CglibProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
         super(type, applicationContext);

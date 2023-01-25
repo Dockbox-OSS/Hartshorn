@@ -26,7 +26,9 @@ package org.dockbox.hartshorn.proxy;
  * @author Guus Lieben
  * @since 22.2
  */
+@FunctionalInterface
 public interface ProxyCallback<T> {
+
     void accept(ProxyCallbackContext<T> context);
 
     default ProxyCallback<T> then(final ProxyCallback<T> next) {

@@ -108,7 +108,7 @@ public abstract class LockFlushModeTests implements DataSourceConfigurationLoade
         final LockFlushModeUserJpaRepository repository = this.applicationContext.get(LockFlushModeUserJpaRepository.class);
         final TypeView<LockFlushModeUserJpaRepository> repositoryView = this.applicationContext.environment().introspect(repository);
         final MethodView<LockFlushModeUserJpaRepository, ?> methodView = repositoryView.methods().named(methodName).get();
-        final MethodInterceptorContext<LockFlushModeUserJpaRepository, ?> interceptorContext = new MethodInterceptorContext<>(methodView, new Object[0], repository, null, null, null);
+        final MethodInterceptorContext<LockFlushModeUserJpaRepository, ?> interceptorContext = new MethodInterceptorContext<>(methodView, new Object[0], repository, null, null, (Object) null);
 
         final TypeView<User> entityType = this.applicationContext.environment().introspect(User.class);
         final JpaQueryContext queryContext = this.contextCreator.create(this.applicationContext, interceptorContext, entityType, repository).get();

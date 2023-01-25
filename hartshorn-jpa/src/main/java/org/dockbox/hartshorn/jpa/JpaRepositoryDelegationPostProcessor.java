@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.jpa.annotations.DataSource;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.processing.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.component.processing.proxy.ProxyDelegationPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;

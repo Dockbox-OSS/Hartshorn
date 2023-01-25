@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.processing;
+package org.dockbox.hartshorn.component.processing.proxy;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier> {
+import java.lang.annotation.Annotation;
 
-    @Override
-    protected Class<ContextCarrier> parentTarget() {
-        return ContextCarrier.class;
-    }
+public interface MethodProxyContext<T> extends ApplicationAwareContext {
 
-    @Override
-    protected boolean skipConcreteMethods() {
-        return true;
-    }
+    TypeView<T> type();
+
+    MethodView<T, ?> method();
+
+    <A extends Annotation> A annotation(Class<A> annotation);
 }

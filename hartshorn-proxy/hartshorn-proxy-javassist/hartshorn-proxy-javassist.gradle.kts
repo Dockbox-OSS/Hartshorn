@@ -22,4 +22,5 @@ dependencies {
     implementation(libs.javassist)
     implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-proxy")
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
 }

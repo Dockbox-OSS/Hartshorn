@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -30,7 +29,6 @@ import org.dockbox.hartshorn.util.option.Option;
  * @since 21.9
  */
 public interface ApplicationProxier extends ProxyLookup {
-
 
     /**
      * Gets the real type of the given proxy instance. If the given instance is not a proxy, the returned
@@ -46,11 +44,7 @@ public interface ApplicationProxier extends ProxyLookup {
 
     <T> Option<ProxyManager<T>> manager(T instance);
 
-    <D, T extends D> Option<D> delegate(TypeView<D> type, T instance);
-
     <D, T extends D> Option<D> delegate(Class<D> type, T instance);
-
-    <T> StateAwareProxyFactory<T, ?> factory(TypeView<T> type);
 
     <T> StateAwareProxyFactory<T, ?> factory(Class<T> type);
 }

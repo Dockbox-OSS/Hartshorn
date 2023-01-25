@@ -40,6 +40,7 @@ public class NativeProxyLookup implements ProxyLookup {
         // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
         if (Proxy.isProxyClass(instance.getClass())) {
             final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+            // TODO: Move to core (only PolymorphicAnnotationInvocationHandler is in core)
             if (invocationHandler instanceof PolymorphicAnnotationInvocationHandler annotationInvocationHandler) {
                 unproxied = TypeUtils.adjustWildcards(annotationInvocationHandler.annotation().annotationType(), Class.class);
             }
