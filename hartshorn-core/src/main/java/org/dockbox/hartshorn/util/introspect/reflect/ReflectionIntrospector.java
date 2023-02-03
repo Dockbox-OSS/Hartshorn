@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -41,7 +42,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ReflectionIntrospector implements Introspector {
+public class ReflectionIntrospector implements Introspector, ContextCarrier {
 
     // Caches are not static, as application context is passed to views and associated introspectors.
     // Making these static would cause the context to leak across instances (when used in batching or

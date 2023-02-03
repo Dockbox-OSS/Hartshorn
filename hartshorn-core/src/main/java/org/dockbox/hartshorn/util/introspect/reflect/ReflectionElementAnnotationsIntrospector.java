@@ -37,7 +37,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     private final AnnotationLookup annotationLookup;
     private Map<Class<?>, Annotation> annotationCache;
 
-    public ReflectionElementAnnotationsIntrospector(final Introspector introspector, final AnnotatedElement element) {
+    public ReflectionElementAnnotationsIntrospector(final ReflectionIntrospector introspector, final AnnotatedElement element) {
         this.introspector = introspector;
         this.element = element;
         // Could be instantiated early during application startup, so we don't want to use component provision here. This

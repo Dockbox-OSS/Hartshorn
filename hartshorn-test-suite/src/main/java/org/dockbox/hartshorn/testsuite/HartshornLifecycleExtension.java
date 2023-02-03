@@ -25,7 +25,9 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
+import org.dockbox.hartshorn.introspect.ExecutableElementContextParameterLoader;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
@@ -63,7 +65,7 @@ public class HartshornLifecycleExtension implements
     private ApplicationContext applicationContext;
 
     @Override
-    public void beforeEach(final ExtensionContext context) {
+    public void beforeEach(final ExtensionContext context) throws ApplicationException {
         final Class<?> testClass = context.getTestClass().orElse(null);
         final Object testInstance = context.getTestInstance().orElse(null);
         final Method testMethod = context.getTestMethod().orElse(null);
@@ -76,7 +78,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void beforeAll(final ExtensionContext context) {
+    public void beforeAll(final ExtensionContext context) throws ApplicationException {
         if (this.isClassLifecycle(context)) {
             final Class<?> testClass = context.getTestClass().orElse(null);
             final Object testInstance = context.getTestInstance().orElse(null);
@@ -96,7 +98,7 @@ public class HartshornLifecycleExtension implements
         return lifecycle.isPresent() && Lifecycle.PER_CLASS.equals(lifecycle.get());
     }
 
-    protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) {
+    protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) throws ApplicationException {
         if (testClass == null) {
             throw new IllegalArgumentException("Test class cannot be null");
         }
@@ -146,7 +148,7 @@ public class HartshornLifecycleExtension implements
 
         final ParameterLoader<ParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
         final MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
-        final ParameterLoaderContext parameterLoaderContext = new ParameterLoaderContext(executable, executable.declaredBy(), extensionContext.getTestInstance().orElse(null), this.applicationContext);
+        final ParameterLoaderContext parameterLoaderContext = new ParameterLoaderContext(executable, extensionContext.getTestInstance().orElse(null), this.applicationContext);
 
         return parameterLoader.loadArgument(parameterLoaderContext, parameterContext.getIndex());
     }
@@ -172,7 +174,7 @@ public class HartshornLifecycleExtension implements
         return Option.of(context);
     }
 
-    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final List<AnnotatedElement> testComponentSources) {
+    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final List<AnnotatedElement> testComponentSources) throws ApplicationException {
         ApplicationBuilder<?, ?> applicationBuilder = new StandardApplicationBuilder()
                 .loadDefaults()
                 .enableBanner(false)
@@ -185,7 +187,10 @@ public class HartshornLifecycleExtension implements
             Option.of(element.getAnnotation(HartshornTest.class))
                     .peek(annotation -> {
                         for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
-                            final ComponentProcessor componentProcessor = Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class).rethrowUnchecked().get();
+                            final ComponentProcessor componentProcessor = Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class)
+                                    .mapError(ApplicationRuntimeException::new)
+                                    .rethrow()
+                                    .get();
                             if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
                                 finalApplicationBuilder.preProcessor(preProcessor);
                             }
@@ -240,11 +245,17 @@ public class HartshornLifecycleExtension implements
 
                 final Class<?>[] parameters = factoryModifier.getParameterTypes();
                 if (parameters.length == 0) {
-                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class).rethrowUnchecked().orNull();
+                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class)
+                            .mapError(ApplicationException::new)
+                            .rethrow()
+                            .orNull();
                 }
                 else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
                     final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
-                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class).rethrowUnchecked().orNull();
+                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class)
+                            .mapError(ApplicationException::new)
+                            .rethrow()
+                            .orNull();
                 }
                 else {
                     throw new InvalidFactoryModifierException("parameters", parameters[0]);

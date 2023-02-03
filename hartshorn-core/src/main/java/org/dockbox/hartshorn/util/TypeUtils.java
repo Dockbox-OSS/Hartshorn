@@ -108,14 +108,15 @@ public class TypeUtils {
 
     public static <A extends Annotation> A annotation(final Class<A> annotationType, final Map<String, Object> values) {
         final Object instance = Proxy.newProxyInstance(annotationType.getClassLoader(),
-                new Class[] { annotationType },
+                new Class[]{ annotationType },
                 new MapBackedAnnotationInvocationHandler(annotationType, values == null ? Collections.emptyMap() : values));
         return adjustWildcards(instance, annotationType);
     }
 
     public static <T> T checkWrapping(final Object objectToTransform, final TypeView<T> targetType) {
         if (targetType.isInstance(objectToTransform)) return targetType.cast(objectToTransform);
-        if (objectToTransform instanceof Collection<?> collection) return checkCollectionWrapping(collection, targetType);
+        if (objectToTransform instanceof Collection<?> collection)
+            return checkCollectionWrapping(collection, targetType);
         else if (objectToTransform == null) return createAdjustedEmptyWrapper(targetType);
         else return checkSingleValueWrapping(objectToTransform, targetType);
     }
@@ -134,9 +135,16 @@ public class TypeUtils {
         }
         else if (targetType.isChildOf(Collection.class)) {
             final Option<? extends ConstructorView<?>> defaultConstructor = targetType.constructors().defaultConstructor();
-            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
+            if (defaultConstructor.absent())
+                throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
+
             final Attempt<?, Throwable> attempt = defaultConstructor.get().create();
-            final Collection<Object> collection = TypeUtils.adjustWildcards(attempt.rethrowUnchecked().get(), Object.class);
+            final Object istance = attempt
+                    .mapError(error -> new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", default constructor threw exception", error))
+                    .rethrow()
+                    .get();
+
+            final Collection<Object> collection = TypeUtils.adjustWildcards(istance, Object.class);
             collection.add(value);
             return TypeUtils.adjustWildcards(collection, Object.class);
         }
@@ -165,21 +173,25 @@ public class TypeUtils {
             return TypeUtils.adjustWildcards(transformed, Object.class);
         }
         else if (targetType.is(Optional.class)) {
-            if (collectionToTransform.size() > 1) throw new IllegalArgumentException("Cannot convert collection to optional, collection size is greater than 1");
+            if (collectionToTransform.size() > 1)
+                throw new IllegalArgumentException("Cannot convert collection to optional, collection size is greater than 1");
             return TypeUtils.adjustWildcards(collectionToTransform.stream().findFirst(), Object.class);
         }
         else if (targetType.is(Option.class)) {
-            if (collectionToTransform.size() > 1) throw new IllegalArgumentException("Cannot convert collection to option, collection size is greater than 1");
+            if (collectionToTransform.size() > 1)
+                throw new IllegalArgumentException("Cannot convert collection to option, collection size is greater than 1");
             return TypeUtils.adjustWildcards(Option.of(collectionToTransform.stream().findFirst()), Object.class);
         }
         else if (targetType.is(Attempt.class)) {
             Attempt<?, ?> attempt;
-            if (collectionToTransform.size() > 1) attempt = Attempt.of(new IllegalArgumentException("Cannot convert collection to attempt, collection size is greater than 1"));
+            if (collectionToTransform.size() > 1)
+                attempt = Attempt.of(new IllegalArgumentException("Cannot convert collection to attempt, collection size is greater than 1"));
             attempt = Attempt.of(collectionToTransform.stream().findFirst());
             return TypeUtils.adjustWildcards(attempt, Object.class);
         }
         else {
-            if (collectionToTransform.size() > 1) throw new IllegalArgumentException("Cannot convert collection to single value, collection size is greater than 1");
+            if (collectionToTransform.size() > 1)
+                throw new IllegalArgumentException("Cannot convert collection to single value, collection size is greater than 1");
             final Object first = collectionToTransform.iterator().next();
             if (first == null) return null;
             if (targetType.isInstance(first)) return TypeUtils.adjustWildcards(first, Object.class);
@@ -199,8 +211,14 @@ public class TypeUtils {
         }
         else if (targetType.isChildOf(Collection.class)) {
             final Option<? extends ConstructorView<?>> defaultConstructor = targetType.constructors().defaultConstructor();
-            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
-            return TypeUtils.adjustWildcards(defaultConstructor.get().create().rethrowUnchecked().get(), Object.class);
+            if (defaultConstructor.absent())
+                throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
+            
+            return TypeUtils.adjustWildcards(defaultConstructor.get().create()
+                            .mapError(error -> new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", default constructor threw exception", error))
+                            .rethrow()
+                            .get(),
+                    Object.class);
         }
         return null;
     }

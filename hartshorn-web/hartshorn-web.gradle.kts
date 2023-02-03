@@ -31,6 +31,8 @@ dependencies {
     api(libs.freemarker)
 
     implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
     implementation("org.dockbox.hartshorn:hartshorn-events")
     implementation("org.dockbox.hartshorn:hartshorn-config")
 

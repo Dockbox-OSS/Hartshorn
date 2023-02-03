@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.Property;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView implements FieldView<Parent, FieldType>, ReflectionModifierCarrierView {
+public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView<FieldType> implements FieldView<Parent, FieldType>, ReflectionModifierCarrierView {
 
     private final Field field;
     private final Introspector introspector;
@@ -42,13 +43,15 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     private Function<Object, Attempt<FieldType, Throwable>> getter;
     private BiConsumer<Object, FieldType> setter;
 
-    public ReflectionFieldView(final Introspector introspector, final Field field) {
+    public ReflectionFieldView(final ReflectionIntrospector introspector, final Field field) {
         super(introspector);
-        if (!field.trySetAccessible()) {
-            introspector.applicationContext().log().warn("Unable to set field {} accessible", field);
-        }
         this.field = field;
         this.introspector = introspector;
+        if (!field.trySetAccessible()) {
+            if (!"java.lang".startsWith(field.getDeclaringClass().getPackageName())) {
+                throw new IllegalIntrospectionException(this, "Unable to set field " + field.getName() + " accessible");
+            }
+        }
     }
 
     @Override
@@ -169,12 +172,6 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     @Override
     protected AnnotatedElement annotatedElement() {
         return this.field;
-    }
-
-    @Override
-    public Attempt<FieldType, Throwable> getWithContext() {
-        final Parent parent = this.introspector.applicationContext().get(this.declaredBy().type());
-        return this.get(parent);
     }
 
     @Override

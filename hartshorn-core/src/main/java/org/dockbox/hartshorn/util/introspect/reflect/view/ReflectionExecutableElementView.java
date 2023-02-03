@@ -17,9 +17,11 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionExecutableParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
@@ -29,7 +31,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Executable;
 import java.util.List;
 
-public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent>, ReflectionModifierCarrierView {
+public abstract class ReflectionExecutableElementView<Parent, ResultType> extends ReflectionAnnotatedElementView<ResultType> implements ExecutableElementView<Parent, ResultType>, ReflectionModifierCarrierView {
 
     private final Introspector introspector;
     private final Executable executable;
@@ -37,15 +39,15 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     private ExecutableParametersIntrospector parametersIntrospector;
     private TypeVariablesIntrospector typeVariablesIntrospector;
 
-    public ReflectionExecutableElementView(final Introspector introspector, final Executable executable) {
+    public ReflectionExecutableElementView(final ReflectionIntrospector introspector, final Executable executable) {
         super(introspector);
+        this.executable = executable;
+        this.introspector = introspector;
         if (!executable.trySetAccessible()) {
-            if (executable.getDeclaringClass() != Object.class) {
-                introspector.applicationContext().log().debug("Unable to set executable {} accessible", executable);
+            if (!"java.lang".startsWith(executable.getDeclaringClass().getPackageName())) {
+                throw new IllegalIntrospectionException(this, "Unable to set executable " + executable.getName() + " accessible");
             }
         }
-        this.introspector = introspector;
-        this.executable = executable;
     }
 
     public Executable executable() {

@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -30,18 +32,21 @@ import jakarta.annotation.PostConstruct;
 public class ComponentPostConstructorImpl implements ComponentPostConstructor {
 
     private final ApplicationContext applicationContext;
+    private final Lazy<ViewContextAdapter> contextAdapter;
 
     public ComponentPostConstructorImpl(final InitializingContext context) {
         this.applicationContext = context.applicationContext();
+        this.contextAdapter = Lazy.of(this.applicationContext, ViewContextAdapter.class);
     }
 
     @Override
-    public <T> T doPostConstruct(final T type) throws ApplicationException {
-        final TypeView<T> typeView = this.applicationContext.environment().introspect(type);
+    public <T> T doPostConstruct(final T instance) throws ApplicationException {
+        final TypeView<T> typeView = this.applicationContext.environment().introspect(instance);
         final List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWith(PostConstruct.class);
 
         for (final MethodView<T, ?> postConstructMethod : postConstructMethods) {
-            final Attempt<?, Throwable> result = postConstructMethod.invokeWithContext(type);
+            final Object[] arguments = this.contextAdapter.get().loadParameters(postConstructMethod);
+            final Attempt<?, Throwable> result = postConstructMethod.invoke(instance, arguments);
 
             if (result.errorPresent()) {
                 final Throwable error = result.error();
@@ -53,6 +58,6 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
                 }
             }
         }
-        return type;
+        return instance;
     }
 }

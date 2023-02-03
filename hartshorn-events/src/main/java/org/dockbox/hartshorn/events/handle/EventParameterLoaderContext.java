@@ -28,7 +28,7 @@ public class EventParameterLoaderContext extends ParameterLoaderContext {
 
     public EventParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance,
                                        final ApplicationContext applicationContext, final Event event) {
-        super(method, type, instance, applicationContext);
+        super(method, instance, applicationContext);
         this.event = event;
     }
 

@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
+public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T, T> implements ConstructorView<T> {
 
     private final Constructor<T> constructor;
     private final Introspector introspector;
@@ -43,7 +43,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     private Function<Object[], Attempt<T, Throwable>> invoker;
     private String qualifiedName;
 
-    public ReflectionConstructorView(final Introspector introspector, final Constructor<T> constructor) {
+    public ReflectionConstructorView(final ReflectionIntrospector introspector, final Constructor<T> constructor) {
         super(introspector, constructor);
         this.constructor = constructor;
         this.introspector = introspector;
@@ -71,17 +71,6 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     @Override
     public Attempt<T, Throwable> create(final Collection<?> arguments) {
         return this.invoker().apply(arguments.toArray());
-    }
-
-    @Override
-    public Attempt<T, Throwable> createWithContext(final Scope scope) {
-        final Object[] args = this.parameters().loadFromContext(scope);
-        return this.create(args);
-    }
-
-    @Override
-    public Attempt<T, Throwable> createWithContext() {
-        return this.createWithContext(this.introspector.applicationContext());
     }
 
     @Override

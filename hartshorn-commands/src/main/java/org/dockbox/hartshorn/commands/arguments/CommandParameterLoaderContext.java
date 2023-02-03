@@ -30,7 +30,7 @@ public class CommandParameterLoaderContext extends ParameterLoaderContext {
 
     public CommandParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final CommandContext commandContext,
                                          final MethodCommandExecutorContext<?> executorContext) {
-        super(method, type, instance, applicationContext);
+        super(method, instance, applicationContext);
         this.commandContext = commandContext;
         this.executorContext = executorContext;
     }

@@ -39,17 +39,17 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor
         for (final FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Context.class))
             this.validate(field, processingContext);
 
-        final List<ExecutableElementView<T>> constructors = processingContext.type().constructors().injectable()
-                .stream().map(c -> (ExecutableElementView<T>) c)
+        final List<ExecutableElementView<T, ?>> constructors = processingContext.type().constructors().injectable()
+                .stream().map(c -> (ExecutableElementView<T, ?>) c)
                 .collect(Collectors.toList());
 
-        final List<ExecutableElementView<T>> methods = processingContext.type().methods().all().stream()
-                .map(m -> (ExecutableElementView<T>) m)
+        final List<ExecutableElementView<T, ?>> methods = processingContext.type().methods().all().stream()
+                .map(m -> (ExecutableElementView<T, ?>) m)
                 .collect(Collectors.toList());
 
-        final Collection<ExecutableElementView<T>> executables = CollectionUtilities.merge(constructors, methods);
+        final Collection<ExecutableElementView<T, ?>> executables = CollectionUtilities.merge(constructors, methods);
 
-        for (final ExecutableElementView<T> executable : executables)
+        for (final ExecutableElementView<T, ?> executable : executables)
             for (final ParameterView<?> parameter : executable.parameters().annotedWith(Context.class))
                 this.validate(parameter, processingContext);
     }

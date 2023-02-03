@@ -24,23 +24,24 @@ import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ModifiableProxyManager;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 import jakarta.inject.Singleton;
 
@@ -55,7 +56,7 @@ public class BindingProcessor {
             for (final ProviderContext provider : elements.get(phase)) {
 
                 final ComponentKey<?> key = provider.key();
-                final AnnotatedElementView element = provider.element();
+                final AnnotatedElementView<?> element = provider.element();
 
                 applicationContext.log().debug("Processing provider context of " + element.qualifiedName() + " for " + key + " in phase " + phase);
 
@@ -69,8 +70,8 @@ public class BindingProcessor {
         }
     }
 
-    private <R, E extends AnnotatedElementView & ObtainableView<?> & GenericTypeView<?>> void process(final ComponentKey<R> key, final E element,
-                                                                                                      final ApplicationContext applicationContext) throws ApplicationException {
+    private <R, E extends AnnotatedElementView<?> & GenericTypeView<?>> void process(final ComponentKey<R> key, final E element,
+                                                                                     final ApplicationContext applicationContext) throws ApplicationException {
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         final Binds annotation = element.annotations().get(Binds.class).get();
 
@@ -78,21 +79,25 @@ public class BindingProcessor {
 
         if (conditionMatcher.match(element)) {
             if (element.type().is(Class.class)) {
-                this.processClassBinding(applicationContext, TypeUtils.adjustWildcards(element, ObtainableView.class), key, singleton, annotation);
+                this.processClassBinding(applicationContext, TypeUtils.adjustWildcards(element, View.class), key, singleton, annotation);
             }
             else {
                 applicationContext.log().debug("Processing instance binding for " + element.type().name());
-                this.processInstanceBinding(applicationContext, TypeUtils.adjustWildcards(element, ObtainableView.class), key, singleton, annotation);
+                this.processInstanceBinding(applicationContext, TypeUtils.adjustWildcards(element, View.class), key, singleton, annotation);
             }
         }
     }
 
-    private <R> void processInstanceBinding(final Binder context, final ObtainableView<R> element, final ComponentKey<R> key,
-                                            final boolean singleton, final Binds annotation) {
+    private <R> void processInstanceBinding(final ApplicationContext context,
+                                            final AnnotatedElementView<R> element, final ComponentKey<R> key,
+                                            final boolean singleton, final Binds annotation) throws ApplicationException {
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
         element.annotations().get(InstallTo.class).peek(a -> function.installTo(a.value()));
 
-        final Supplier<R> supplier = () -> element.getWithContext().rethrowUnchecked().orNull();
+        final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
+        final CheckedSupplier<R> supplier = () -> contextAdapter.load(element)
+                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + element.qualifiedName(), error))
+                .orNull();
 
         if (singleton) {
             if (annotation.lazy()) function.lazySingleton(supplier);
@@ -101,10 +106,12 @@ public class BindingProcessor {
         else function.to(supplier);
     }
 
-    private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final ObtainableView<C> element,
+    private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final AnnotatedElementView<C> element,
                                                              final ComponentKey<R> key, boolean singleton, final Binds annotation) throws ApplicationException {
-        final C targetType = element.getWithContext()
-                .rethrowUnchecked()
+        final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
+        final C targetType = contextAdapter.load(element)
+                .mapError(error -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName(), error))
+                .rethrow()
                 .orElseThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));
 
         context.log().debug("Processing class binding for %s -> %s".formatted(key.type().getSimpleName(), targetType.getSimpleName()));
@@ -123,7 +130,8 @@ public class BindingProcessor {
             else {
                 final Proxy<R> proxy = TypeUtils.adjustWildcards(context.environment().factory(targetType)
                         .proxy()
-                        .rethrowUnchecked()
+                        .mapError(ApplicationException::new)
+                        .rethrow()
                         .orElseThrow(() -> new ComponentInitializationException("Could create temporary empty proxy for " + targetType.getSimpleName() + ", any errors may be displayed above.")), Proxy.class);
                 this.proxiesToInitialize.add(new LateSingletonContext<>(targetType, proxy));
             }

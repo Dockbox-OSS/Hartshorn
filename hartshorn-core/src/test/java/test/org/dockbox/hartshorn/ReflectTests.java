@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.application.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -194,7 +195,7 @@ public class ReflectTests {
         context.register(new ClassPathScannerTypeReferenceCollector(environment, "test.org.dockbox.hartshorn.components.reflect"));
         final Collection<TypeView<?>> types = environment.types(Demo.class);
         Assertions.assertEquals(1, types.size());
-        Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
+        Assertions.assertSame(ReflectTestType.class, types.iterator().next().type());
     }
 
     @InjectTest
@@ -202,7 +203,7 @@ public class ReflectTests {
         context.register(new ClassPathScannerTypeReferenceCollector(environment, "test.org.dockbox.hartshorn.components.reflect"));
         final Collection<TypeView<? extends ParentTestType>> types = environment.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
-        Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
+        Assertions.assertSame(ReflectTestType.class, types.iterator().next().type());
     }
 
     @Test
@@ -226,7 +227,7 @@ public class ReflectTests {
     void testSuperTypesReturnsAllSuperTypesWithoutObject() {
         final TypeView<?> parent = this.introspector.introspect(ReflectTestType.class).superClass();
         Assertions.assertFalse(parent.isVoid());
-        Assertions.assertEquals(ParentTestType.class, parent.type());
+        Assertions.assertSame(ParentTestType.class, parent.type());
     }
 
     @Test
@@ -254,7 +255,7 @@ public class ReflectTests {
         final TypeView<BridgeImpl> bridge = this.introspector.introspect(BridgeImpl.class);
         final List<MethodView<BridgeImpl, ?>> methods = bridge.methods().bridges();
         Assertions.assertEquals(1, methods.size());
-        Assertions.assertEquals(Object.class, methods.get(0).returnType().type());
+        Assertions.assertSame(Object.class, methods.get(0).returnType().type());
         Assertions.assertTrue(methods.get(0).method().isBridge());
     }
 
@@ -262,7 +263,7 @@ public class ReflectTests {
     void testLookupReturnsClassIfPresent() {
         final TypeView<?> lookup = this.introspector.introspect("test.org.dockbox.hartshorn.components.reflect.ReflectTestType");
         Assertions.assertNotNull(lookup);
-        Assertions.assertEquals(ReflectTestType.class, lookup.type());
+        Assertions.assertSame(ReflectTestType.class, lookup.type());
     }
 
     @Test
@@ -382,14 +383,19 @@ public class ReflectTests {
         final Object proxy = this.applicationContext.environment()
                 .factory(Object.class)
                 .proxy().get();
+
         // Ensure we introspect .getClass directly, as introspecting the instance will
         // automatically unproxy the view.
-        Assertions.assertTrue(this.introspector.introspect(proxy.getClass()).isProxy());
+        final TypeView<?> view = this.introspector.introspect(proxy.getClass());
+        final boolean isProxy = this.applicationContext.get(ViewContextAdapter.class).isProxy(view);
+        Assertions.assertTrue(isProxy);
     }
 
     @Test
     void testIsProxyIsFalseIfTypeIsNormal() {
-        Assertions.assertFalse(this.introspector.introspect(ReflectTestType.class).isProxy());
+        final TypeView<?> view = this.introspector.introspect(ReflectTestType.class);
+        final boolean isProxy = this.applicationContext.get(ViewContextAdapter.class).isProxy(view);
+        Assertions.assertFalse(isProxy);
     }
 
     @ParameterizedTest
@@ -444,7 +450,7 @@ public class ReflectTests {
 
     public void genericTestMethod(final List<List<String>> nestedGeneric) { }
 
-    public void methodWithWildcardUpperbounds(final List<? extends String> list) { }
+    public void methodWithWildcardUpperbounds(final List<String> list) { }
 
     @Test
     void testWildcardsWithUpperBounds() {

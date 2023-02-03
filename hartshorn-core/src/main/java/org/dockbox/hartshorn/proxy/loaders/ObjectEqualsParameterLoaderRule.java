@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-        final ExecutableElementView<?> executable = parameter.declaredBy();
+        final ExecutableElementView<?, ?> executable = parameter.declaredBy();
         return executable.declaredBy().is(Object.class) && "equals".equals(executable.name());
     }
 

@@ -30,7 +30,7 @@ public class ConditionMatcher {
         this.applicationContext = applicationContext;
     }
 
-    public boolean match(final AnnotatedElementView annotatedElementContext, final Context... contexts) {
+    public boolean match(final AnnotatedElementView<?> annotatedElementContext, final Context... contexts) {
         final Set<RequiresCondition> conditions = annotatedElementContext.annotations().all(RequiresCondition.class);
         for (final RequiresCondition condition : conditions) {
             final Class<? extends Condition> conditionClass = condition.condition();
@@ -43,7 +43,7 @@ public class ConditionMatcher {
         return true;
     }
 
-    public boolean match(final AnnotatedElementView element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
+    public boolean match(final AnnotatedElementView<?> element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
         final ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
         for (final Context child : contexts) context.add(child);
         final ConditionResult result = condition.matches(context);

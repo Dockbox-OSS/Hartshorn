@@ -69,9 +69,12 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
 
     private <T> Option<ObjectContainer<T>> create(final ComponentKey<T> key) {
         try {
-            return this.provide(key).orComputeFlat(() -> this.raw(key));
+            final Option<ObjectContainer<T>> objectContainer = this.provide(key);
+            if (objectContainer.present()) return objectContainer;
+
+            return this.raw(key);
         }
-        catch (final Exception e) {
+        catch (final ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
         }
     }
@@ -101,16 +104,16 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
         return this;
     }
 
-    public <T> Option<ObjectContainer<T>> provide(final ComponentKey<T> key) {
-        return Option.of(this.hierarchy(key, true))
-                .flatMap(hierarchy -> {
-                    // Will continue going through each provider until a provider was successful or no other providers remain
-                    for (final Provider<T> provider : hierarchy.providers()) {
-                        final Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
-                        if (provided.present()) return provided;
-                    }
-                    return Option.empty();
-                });
+    public <T> Option<ObjectContainer<T>> provide(final ComponentKey<T> key) throws ApplicationException {
+        final Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
+        if (hierarchy.present()) {
+            // Will continue going through each provider until a provider was successful or no other providers remain
+            for (final Provider<T> provider : hierarchy.get().providers()) {
+                final Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
+                if (provided.present()) return provided;
+            }
+        }
+        return Option.empty();
     }
 
     protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer container) {
@@ -204,7 +207,7 @@ public class HierarchyAwareComponentProvider extends DefaultContext implements H
         }
     }
 
-    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) {
+    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
         return new ContextDrivenProvider<>(key).provide(this.applicationContext());
     }
 

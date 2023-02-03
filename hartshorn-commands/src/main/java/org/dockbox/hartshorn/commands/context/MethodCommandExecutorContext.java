@@ -201,7 +201,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     @Override
-    public AnnotatedElementView element() {
+    public AnnotatedElementView<?> element() {
         return this.method();
     }
 

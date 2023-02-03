@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -30,8 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>If no injectable constructors can be found, the default constructor is used instead. If this
  * constructor is not injectable, an {@link IllegalStateException} is thrown.
  *
- * @param <C>
- *         The type of the class to create.
+ * @param <C> The type of the class to create.
  *
  * @author Guus Lieben
  * @see Provider
@@ -48,18 +49,24 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     @Override
-    public final Option<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return this.optimalConstructor(context)
-                .flatMap(constructor -> constructor.createWithContext(this.context.scope()).rethrowUnchecked())
+    public final Option<ObjectContainer<C>> provide(final ApplicationContext context) throws ApplicationException {
+        final Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(context);
+        if (constructor.absent()) return Option.empty();
+
+        final ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+        return adapter.scope(this.context.scope()).create(constructor.get())
+                .mapError(error -> new ApplicationException("Failed to create instance of type " + this.type().getName(), error))
+                .rethrow()
                 .map(this.type()::cast)
                 .map(instance -> new ObjectContainer<>(instance, false));
     }
 
-    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) {
+    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) throws ApplicationException {
         final TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
         if (this.optimalConstructor == null) {
             this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(typeView)
-                    .rethrowUnchecked().orNull();
+                    .rethrow()
+                    .orNull();
         }
         return Option.of(this.optimalConstructor);
     }

@@ -24,8 +24,10 @@ import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
@@ -44,9 +46,11 @@ import jakarta.inject.Named;
 public class ContextualComponentPopulator implements ComponentPopulator, ContextCarrier {
 
     private final ApplicationContext applicationContext;
+    private final Lazy<ViewContextAdapter> adapter;
 
     public ContextualComponentPopulator(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+        this.adapter = Lazy.of(applicationContext, ViewContextAdapter.class);
     }
 
     @Override
@@ -72,7 +76,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     private <T> void populateMethods(final TypeView<T> type, final T instance) {
         for (final MethodView<T, ?> method : type.methods().annotatedWith(Inject.class)) {
             try {
-                method.invokeWithContext(instance).rethrowUnchecked();
+                final Object[] arguments = this.adapter.get().loadParameters(method);
+                method.invoke(instance, arguments).rethrow();
             }
             catch (final ParameterLoadException e) {
                 final boolean required = this.isComponentRequired(e.parameter());
@@ -85,6 +90,11 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
                 else {
                     this.applicationContext().log().warn("Failed to populate method {}, parameter {} is not present in context", method.name(), e.parameter().name());
                 }
+            }
+            catch (final Throwable t) {
+                final String message = "Failed to populate method %s, an exception occurred while populating the method"
+                        .formatted(method.name());
+                throw new ComponentPopulateException(message, t);
             }
         }
     }
@@ -169,7 +179,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         field.set(instance, context.orNull());
     }
 
-    private boolean isComponentRequired(final AnnotatedElementView view) {
+    private boolean isComponentRequired(final AnnotatedElementView<?> view) {
         return Boolean.TRUE.equals(view.annotations().get(Required.class)
                 .map(Required::value)
                 .orElse(false));

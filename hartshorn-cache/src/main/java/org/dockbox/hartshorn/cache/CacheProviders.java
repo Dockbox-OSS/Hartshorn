@@ -35,7 +35,6 @@ public class CacheProviders {
     /**
      * The default binding for {@link CacheManager}. This implementation is
      * active by default when {@link UseCaching} is used.
-     * @return {@link CacheManagerImpl}
      */
     @Binds
     public Class<? extends CacheManager> cacheManager = CacheManagerImpl.class;

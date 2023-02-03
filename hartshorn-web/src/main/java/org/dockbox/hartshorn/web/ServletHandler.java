@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
@@ -85,8 +86,9 @@ public class ServletHandler {
                 final ParameterLoader<HttpRequestParameterLoaderContext> loader = this.starter.loader();
                 final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), null, this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
+                final Object instance = this.context.get(this.method.declaredBy().type());
+                final Attempt<?, Throwable> result = this.method.invoke(TypeUtils.adjustWildcards(instance, Object.class), arguments);
 
-                final Attempt<?, Throwable> result = this.method.invokeWithContext(arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {

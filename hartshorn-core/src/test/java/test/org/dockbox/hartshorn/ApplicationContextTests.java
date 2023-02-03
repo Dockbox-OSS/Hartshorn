@@ -351,6 +351,7 @@ public class ApplicationContextTests {
 
     @Test
     void testFailingConstructorIsRethrown() {
+        // TODO: Fix me :)
         final ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(TypeWithFailingConstructor.class));
         Assertions.assertTrue(exception.getCause() instanceof IllegalStateException);
     }
@@ -496,6 +497,6 @@ public class ApplicationContextTests {
         Assertions.assertTrue(cause instanceof ApplicationException);
 
         final ApplicationException applicationException = (ApplicationException) cause;
-        Assertions.assertEquals("Error in constructor", applicationException.getMessage());
+        Assertions.assertEquals("Failed to create instance of type " + ErrorInConstructorObject.class.getName(), applicationException.getMessage());
     }
 }

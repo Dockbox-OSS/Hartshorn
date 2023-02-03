@@ -27,9 +27,8 @@ import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.function.Supplier;
 
 public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
@@ -105,7 +104,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public Binder to(final Supplier<T> supplier) {
+    public Binder to(final CheckedSupplier<T> supplier) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
@@ -135,7 +134,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public Binder lazySingleton(final Supplier<T> supplier) {
+    public Binder lazySingleton(final CheckedSupplier<T> supplier) {
         this.lazyContainerSingleton(() -> {
             final T instance = supplier.get();
             return new ObjectContainer<>(instance, false);
@@ -143,7 +142,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
         return this.binder();
     }
 
-    public Binder lazyContainerSingleton(final Supplier<ObjectContainer<T>> supplier) {
+    public Binder lazyContainerSingleton(final CheckedSupplier<ObjectContainer<T>> supplier) {
         return this.add(new LazySingletonProvider<>(supplier));
     }
 

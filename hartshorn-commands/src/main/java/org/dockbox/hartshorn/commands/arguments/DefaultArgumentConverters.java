@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.beans.Bean;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
@@ -33,8 +27,13 @@ import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.Vector3N;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service(permitProxying = false)
 @RequiresActivator(UseCommands.class)
@@ -101,21 +100,6 @@ public final class DefaultArgumentConverters {
     public static ArgumentConverter<UUID> uuidArgumentConverter() {
         return ArgumentConverterImpl.builder(UUID.class, "uuid", "uniqueId")
                 .withConverter(BuiltInStringTypeAdapters.UNIQUE_ID)
-                .build();
-    }
-
-    @Bean
-    public static ArgumentConverter<Vector3N> vector3NArgumentConverter() {
-        return ArgumentConverterImpl.builder(Vector3N.class, "vec3", "vector", "v3n")
-                .withConverter(in -> Option.of(
-                        () -> {
-                            final String[] xyz = in.split(",");
-                            // IndexOutOfBounds is caught by Callable handle in Result
-                            final double x = Double.parseDouble(xyz[0].trim());
-                            final double y = Double.parseDouble(xyz[1].trim());
-                            final double z = Double.parseDouble(xyz[2].trim());
-                            return Vector3N.of(x, y, z);
-                        }))
                 .build();
     }
 

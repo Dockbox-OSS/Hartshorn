@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
@@ -122,7 +123,7 @@ public class ScopeAwareComponentProvider extends DefaultContext implements Hiera
         this.bind(key).singleton(postProcessor);
     }
 
-    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) {
+    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
         return new ContextDrivenProvider<>(key).provide(this.applicationContext());
     }
 

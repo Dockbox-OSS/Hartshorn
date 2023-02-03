@@ -30,7 +30,7 @@ public class HttpRequestParameterLoaderContext extends ParameterLoaderContext {
     private final HttpServletResponse response;
 
     public HttpRequestParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response) {
-        super(method, type, instance, applicationContext);
+        super(method, instance, applicationContext);
         this.request = request;
         this.response = response;
     }

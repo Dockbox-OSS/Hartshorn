@@ -30,6 +30,8 @@ import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyLookup;
@@ -132,6 +134,9 @@ public final class InitializingContext extends DefaultApplicationAwareContext im
         binder.bind(ExceptionHandler.class).singleton(this.applicationContext());
         binder.bind(ApplicationContext.class).singleton(this.applicationContext());
         binder.bind(ApplicationPropertyHolder.class).singleton(this.applicationContext());
+
+        // TODO: Make configurable
+        binder.bind(ViewContextAdapter.class).singleton(new IntrospectionViewContextAdapter(this.applicationContext()));
 
         // Application environment
         binder.bind(Introspector.class).singleton(this.environment());

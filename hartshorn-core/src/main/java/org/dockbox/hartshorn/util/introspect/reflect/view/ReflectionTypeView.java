@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.Tuple;
@@ -29,6 +27,7 @@ import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
@@ -47,7 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements ReflectionModifierCarrierView, TypeView<T> {
+public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> implements ReflectionModifierCarrierView, TypeView<T> {
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, Boolean.class),
@@ -95,23 +94,19 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     private TypeConstructorsIntrospector<T> constructorsIntrospector;
     private TypeParametersIntrospector typeParametersIntrospector;
 
-    public ReflectionTypeView(final Introspector introspector, final Class<T> type) {
+    public ReflectionTypeView(final ReflectionIntrospector introspector, final Class<T> type) {
         this(introspector, type, null);
     }
 
-    public ReflectionTypeView(final Introspector introspector, final ParameterizedType parameterizedType) {
+    public ReflectionTypeView(final ReflectionIntrospector introspector, final ParameterizedType parameterizedType) {
         this(introspector, (Class<T>) parameterizedType.getRawType(), parameterizedType);
     }
 
-    private ReflectionTypeView(final Introspector introspector, final Class<T> type, final ParameterizedType parameterizedType) {
+    private ReflectionTypeView(final ReflectionIntrospector introspector, final Class<T> type, final ParameterizedType parameterizedType) {
         super(introspector);
         this.introspector = introspector;
         this.type = type;
         this.parameterizedType = parameterizedType;
-    }
-
-    private void checkProxy() {
-        if (this.isProxy()) ExceptionHandler.unchecked(new ApplicationException("Cannot collect metadata of proxied type '%s'".formatted(this.qualifiedName())));
     }
 
     @Override
@@ -180,15 +175,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
-    public boolean isProxy() {
-        if (this.isProxy == Tristate.UNDEFINED) {
-            final boolean proxy = this.introspector.applicationContext().environment().isProxy(this.type);
-            this.isProxy = Tristate.valueOf(proxy);
-        }
-        return this.isProxy.booleanValue();
-    }
-
-    @Override
     public boolean isWildcard() {
         return false;
     }
@@ -210,7 +196,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public List<TypeView<?>> interfaces() {
         if (this.interfaces == null) {
-            this.checkProxy();
             this.interfaces = Arrays.stream(this.type().getInterfaces())
                     .map(this.introspector::introspect)
                     .collect(Collectors.toList());
@@ -221,7 +206,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public TypeView<?> superClass() {
         if (this.parent == null) {
-            this.checkProxy();
             final Class<? super T> parent = this.type().getSuperclass();
             this.parent = this.introspector.introspect((Class<?>) Objects.requireNonNullElse(parent, Void.class));
         }
@@ -271,8 +255,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     private boolean compareHierarchy(final Class<?> parent, final Class<?> child) {
-        this.checkProxy();
-
         if (null == child || null == parent) return false;
         if (child == parent || child.equals(parent)) return true;
 
@@ -313,7 +295,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public Option<TypeView<?>> elementType() throws IllegalArgumentException {
         if (this.elementType == null) {
-            this.checkProxy();
             if (this.isArray()) this.elementType = Option.of(this.introspector.introspect(this.type().getComponentType()));
             else throw new IllegalArgumentException("The introspected type must be an array to look up its element type");
         }
@@ -323,7 +304,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public List<T> enumConstants() {
         if (this.enumConstants == null) {
-            this.checkProxy();
             if (!this.isEnum()) this.enumConstants = List.of();
             else {
                 this.enumConstants = List.of(this.type().getEnumConstants());

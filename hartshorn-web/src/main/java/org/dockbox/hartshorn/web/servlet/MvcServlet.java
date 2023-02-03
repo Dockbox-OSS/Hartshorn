@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.web.servlet;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.binding.Bound;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -48,6 +50,9 @@ public class MvcServlet implements WebServlet {
     private MVCInitializer initializer;
 
     @Inject
+    private ViewContextAdapter adapter;
+
+    @Inject
     @Named("mvc_webserver")
     private ParameterLoader<MvcParameterLoaderContext> parameterLoader;
 
@@ -65,7 +70,8 @@ public class MvcServlet implements WebServlet {
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 
-        final Attempt<ViewTemplate, Throwable> result = this.method.invokeWithContext(arguments);
+        final Object instance = this.applicationContext.get(this.method.declaredBy().type());
+        final Attempt<ViewTemplate, Throwable> result = this.method.invoke(TypeUtils.adjustWildcards(instance, Object.class), arguments);
 
         if (result.present()) {
             final ViewTemplate template = result.get();

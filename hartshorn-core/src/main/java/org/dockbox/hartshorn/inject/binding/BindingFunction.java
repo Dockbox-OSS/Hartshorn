@@ -18,8 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.Provider;
-
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 public interface BindingFunction<T> {
 
@@ -43,7 +42,7 @@ public interface BindingFunction<T> {
      * @param supplier The supplier to bind to
      * @return The binder
      */
-    Binder to(Supplier<T> supplier);
+    Binder to(CheckedSupplier<T> supplier);
 
     Binder to(Provider<T> provider);
 
@@ -77,5 +76,5 @@ public interface BindingFunction<T> {
      * @param supplier The supplier to bind to
      * @return The binder
      */
-    Binder lazySingleton(Supplier<T> supplier);
+    Binder lazySingleton(CheckedSupplier<T> supplier);
 }

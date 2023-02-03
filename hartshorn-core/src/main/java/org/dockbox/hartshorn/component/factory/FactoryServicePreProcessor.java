@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.inject.processing.BindingProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -63,7 +64,7 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
             if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
                 final TypeView<?> typeContext = context.environment().introspect(contextDrivenProvider.type());
 
-                for (final ConstructorView<?> constructor : typeContext.constructors().bound()) {
+                for (final ConstructorView<?> constructor : typeContext.constructors().annotatedWith(Bound.class)) {
                     if (constructor.parameters().matches(methodParameters)) {
                         factoryContext.register(method, (ConstructorView<Object>) constructor);
                         return true;

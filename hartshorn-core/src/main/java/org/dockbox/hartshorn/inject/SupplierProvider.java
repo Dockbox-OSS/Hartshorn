@@ -17,6 +17,9 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.function.Supplier;
@@ -33,10 +36,13 @@ import java.util.function.Supplier;
  * @see ContextDrivenProvider
  * @since 21.4
  */
-public record SupplierProvider<C>(Supplier<C> supplier) implements Provider<C> {
+public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements Provider<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return Option.of(() -> new ObjectContainer<>(this.supplier.get(), false));
+    public Option<ObjectContainer<C>> provide(final ApplicationContext context) throws ApplicationException {
+        return Attempt.of(
+                () -> new ObjectContainer<>(this.supplier.get(), false),
+                ApplicationException.class
+        ).rethrow();
     }
 }

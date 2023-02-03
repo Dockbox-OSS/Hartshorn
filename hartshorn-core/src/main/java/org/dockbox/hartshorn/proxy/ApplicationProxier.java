@@ -21,8 +21,6 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.ref.ReferenceQueue;
-
 /**
  * The {@link ApplicationProxier} is responsible for creating proxies of components. It is used by the
  * {@link ApplicationContext} to create proxies of components, as well as allowing {@link ComponentPostProcessor}s

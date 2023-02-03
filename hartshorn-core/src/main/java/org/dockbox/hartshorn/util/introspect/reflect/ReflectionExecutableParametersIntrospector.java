@@ -16,11 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -36,12 +33,12 @@ import java.util.stream.Collectors;
 public class ReflectionExecutableParametersIntrospector implements ExecutableParametersIntrospector {
 
     private final Introspector introspector;
-    private final ReflectionExecutableElementView<?> executable;
+    private final ReflectionExecutableElementView<?, ?> executable;
     private List<ParameterView<?>> parameters;
     private List<TypeView<?>> parameterTypes;
     private List<TypeView<?>> genericParameterTypes;
 
-    public ReflectionExecutableParametersIntrospector(final Introspector introspector, final ReflectionExecutableElementView<?> executable) {
+    public ReflectionExecutableParametersIntrospector(final Introspector introspector, final ReflectionExecutableElementView<?, ?> executable) {
         this.introspector = introspector;
         this.executable = executable;
     }
@@ -94,18 +91,6 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     @Override
     public int count() {
         return this.executable.executable().getParameterCount();
-    }
-
-    @Override
-    public Object[] loadFromContext(final Scope scope) {
-        final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
-        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(this.executable, null, null, this.introspector.applicationContext(), scope);
-        return parameterLoader.loadArguments(loaderContext).toArray();
-    }
-
-    @Override
-    public Object[] loadFromContext() {
-        return this.loadFromContext(this.introspector.applicationContext());
     }
 
     @Override

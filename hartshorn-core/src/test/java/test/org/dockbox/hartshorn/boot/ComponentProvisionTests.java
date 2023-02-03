@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.boot;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -49,7 +50,7 @@ public class ComponentProvisionTests {
                 // org.dockbox.hartshorn.core.types is test-specific and includes a few test-specific types
                 // that are not part of the core types, and thus should not be tested here.
                 .filter(type -> !type.isDeclaredIn("org.dockbox.hartshorn.core.types"))
-                .filter(type -> type.constructors().bound().size() != type.constructors().count())
+                .filter(type -> type.constructors().annotatedWith(Bound.class).size() != type.constructors().count())
                 .map(TypeView::type)
                 .map(Arguments::of);
     }

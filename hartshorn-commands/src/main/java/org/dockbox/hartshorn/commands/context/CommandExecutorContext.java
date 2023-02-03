@@ -95,7 +95,7 @@ public interface CommandExecutorContext extends ApplicationAwareContext {
      *
      * @return The annotated element.
      */
-    AnnotatedElementView element();
+    AnnotatedElementView<?> element();
 
     /**
      * Gets the suggestions to complete the currently incomplete argument or flag. This may either be an alias, or element value,

@@ -36,7 +36,6 @@ public class CaffeineProviders {
     /**
      * The provider for {@link Cache} instances. This uses class-based provision
      * to support both injected and bound provision.
-     * @return {@link CaffeineCache}
      */
     @Binds
     public Class<? extends Cache> cache = CaffeineCache.class;
