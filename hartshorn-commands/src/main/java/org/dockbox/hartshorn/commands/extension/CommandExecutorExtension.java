@@ -48,7 +48,7 @@ public interface CommandExecutorExtension {
      *
      * @param context The executor context
      *
-     * @return <code>true</code> if the executor should be modified, or <code>false</code>
+     * @return {@code true} if the executor should be modified, or {@code false}
      */
     boolean extend(CommandExecutorContext context);
 

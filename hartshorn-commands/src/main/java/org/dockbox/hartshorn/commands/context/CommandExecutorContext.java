@@ -46,26 +46,26 @@ public interface CommandExecutorContext extends ApplicationAwareContext {
      *
      * @param command The raw command.
      *
-     * @return <code>true</code> if the command matches, else <code>false</code>
+     * @return {@code true} if the command matches, else {@code false}
      */
     boolean accepts(String command);
 
     /**
-     * Strips the given raw command to contain only the argument and flag values. If <code>parentOnly</code> is
-     * <code>true</code> and the executor is a child/sub command the alias of the child command is not stripped.
-     * If <code>parentOnly</code> is <code>false</code> both parent and child aliases are stripped.
+     * Strips the given raw command to contain only the argument and flag values. If {@code parentOnly} is
+     * {@code true} and the executor is a child/sub command the alias of the child command is not stripped.
+     * If {@code parentOnly} is {@code false} both parent and child aliases are stripped.
      * <p>For example, when a raw command is as follows:
-     * <pre><code>
+     * <pre>{@code
      *     "parentAlias childAlias argumentA --flagB"
-     * </code></pre>
-     * Then stripping with <code>parentOnly</code> set to <code>true</code> will return:
-     * <pre><code>
+     * }</pre>
+     * Then stripping with {@code parentOnly} set to {@code true} will return:
+     * <pre>{@code
      *     "childAlias argumentA --flagB"
-     * </code></pre>
-     * While the returned value with <code>parentOnly</code> set to <code>false</code> is:
-     * <pre><code>
+     * }</pre>
+     * While the returned value with {@code parentOnly} set to {@code false} is:
+     * <pre>{@code
      *     "argumentA --flagB"
-     * </code></pre>
+     * }</pre>
      *
      * @param command The raw command.
      * @param parentOnly Whether to also include the child alias when stripping the command.

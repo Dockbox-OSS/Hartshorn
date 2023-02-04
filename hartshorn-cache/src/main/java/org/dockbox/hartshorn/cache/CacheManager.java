@@ -38,7 +38,7 @@ public interface CacheManager {
     List<Cache<?, ?>> caches();
 
     /**
-     * Gets the {@link Cache} associated with the given <code>cache</code>
+     * Gets the {@link Cache} associated with the given {@code cache}
      * ID, if it exists.
      *
      * @param cache The cache ID
@@ -50,7 +50,7 @@ public interface CacheManager {
     <K, V> Option<Cache<K, V>> get(String cache);
 
     /**
-     * Gets the {@link Cache} associated with the given <code>cache</code>
+     * Gets the {@link Cache} associated with the given {@code cache}
      * ID, if it exists. If the cache does not exist, a new cache is created
      * with the given {@link Expiration}. If the cache previously existed,
      * the expiration is not modified.

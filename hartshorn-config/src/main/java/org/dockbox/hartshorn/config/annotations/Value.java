@@ -34,11 +34,11 @@ public @interface Value {
     /**
      * The key of the configuration value. Nested values are separated by a single
      * period symbol. For example, in the configuration (JSON) below the deepest
-     * value is accessed with <code>config.nested.value</code>, returning the value 'A'
-     * <pre><code>
+     * value is accessed with {@code config.nested.value}, returning the value 'A'
+     * <pre>{@code
      *     { "config": {     "nested": {         "value": "A"     } }
      *     }
-     * </code></pre>
+     * }</pre>
      *
      * @return The configuration key.
      */

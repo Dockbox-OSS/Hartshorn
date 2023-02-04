@@ -59,10 +59,10 @@ public interface ApplicationEnvironment extends
 
     /**
      * Indicates whether the current environment exists within a Continuous Integration environment. If this returns
-     * <code>true</code> this indicates the application is not active in a production environment. For example, the
+     * {@code true} this indicates the application is not active in a production environment. For example, the
      * default test suite for the framework will indicate the environment acts as a CI environment.
      *
-     * @return <code>true</code> if the environment is a CI environment, <code>false</code> otherwise.
+     * @return {@code true} if the environment is a CI environment, {@code false} otherwise.
      */
     boolean isCI();
 
@@ -105,7 +105,7 @@ public interface ApplicationEnvironment extends
      * annotation, or the value of {@link Component#singleton()}.
      *
      * @param type The type to check
-     * @return <code>true</code> if the type should be treated as a singleton, <code>false</code> otherwise.
+     * @return {@code true} if the type should be treated as a singleton, {@code false} otherwise.
      */
     boolean singleton(Class<?> type);
     boolean singleton(TypeView<?> type);

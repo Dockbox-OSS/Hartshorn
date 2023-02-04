@@ -26,7 +26,7 @@ public interface CommandFlag extends CommandPartial {
     /**
      * Gets whether the flag expects a value to be present.
      *
-     * @return <code>true</code> if the flag expects a value, or <code>false</code>.
+     * @return {@code true} if the flag expects a value, or {@code false}.
      */
     boolean value();
 

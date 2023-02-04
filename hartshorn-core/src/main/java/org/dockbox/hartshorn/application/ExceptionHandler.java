@@ -53,7 +53,7 @@ public interface ExceptionHandler {
      * Throw the provided {@link Throwable} as if it were unchecked. This treats the exception as if it were unchecked,
      * and will not require it to be handled by javac. This is possible because of a side effect of type erasure, see
      * the link below for more details. The return result is only used to mimic a return value when it is needed, as the
-     * <code>throws</code> cause is not enough to make the compiler know that the method will throw an exception.
+     * {@code throws} cause is not enough to make the compiler know that the method will throw an exception.
      *
      * @param t The exception to throw.
      * @param <T> The type of the exception.

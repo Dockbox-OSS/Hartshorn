@@ -45,7 +45,7 @@ public class CommandParameterContext {
      *
      * @param type The type to compare against
      *
-     * @return <code>true</code> if the provided type is equal or a supertype, else <code>false</code>
+     * @return {@code true} if the provided type is equal or a supertype, else {@code false}
      */
     public boolean is(final Class<?> type) {
         return this.parameter().type().isChildOf(type);

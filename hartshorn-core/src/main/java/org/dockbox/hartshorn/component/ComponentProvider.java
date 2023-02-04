@@ -37,7 +37,7 @@ public interface ComponentProvider {
     <T> T get(final ComponentKey<T> key);
 
     /**
-     * Returns the component for the given type and name metadata. If <code>named</code> is null, the given
+     * Returns the component for the given type and name metadata. If {@code named} is null, the given
      * {@link Class} is used to identify the component.
      * @param type The type of the component to return.
      * @param named The name metadata of the component to return.

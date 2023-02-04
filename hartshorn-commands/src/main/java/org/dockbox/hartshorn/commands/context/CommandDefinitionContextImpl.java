@@ -44,8 +44,8 @@ import java.util.regex.Pattern;
 /**
  * Simple implementation of {@link CommandDefinitionContext}. Creates a definition based on the
  * <a href="https://minecraft.fandom.com/wiki/Module:Command/Syntax">Minecraft Command Syntax</a>.
- * <p>Required arguments are formatted as <code>&lt;name&gt;</code>, optional arguments are formatted
- * as <code>[name]</code>, and flags are formatted as <code>-f</code> (short) or <code>--flag</code>
+ * <p>Required arguments are formatted as {@code <name>}, optional arguments are formatted
+ * as {@code [name]}, and flags are formatted as {@code -f} (short) or {@code --flag}
  * (long).
  * <p>See {@link CommandDefinitionContextImpl#FLAG} for details on the flag pattern, and {@link CommandDefinitionContextImpl#ARGUMENT}
  * for details on the argument pattern. Both flags and arguments can be defined with custom types, which

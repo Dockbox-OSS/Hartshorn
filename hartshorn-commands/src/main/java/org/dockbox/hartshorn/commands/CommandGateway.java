@@ -30,8 +30,8 @@ import java.util.List;
 public interface CommandGateway {
 
     /**
-     * Performs a command based on the given {@link CommandSource} and raw <code>command</code>.
-     * The way the provided <code>command</code> is parsed depends on the underlying {@link CommandParser}.
+     * Performs a command based on the given {@link CommandSource} and raw {@code command}.
+     * The way the provided {@code command} is parsed depends on the underlying {@link CommandParser}.
      *
      * @param source The {@link CommandSource} performing the command
      * @param command The raw command

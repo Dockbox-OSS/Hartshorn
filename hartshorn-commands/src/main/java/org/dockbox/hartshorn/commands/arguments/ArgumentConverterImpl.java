@@ -99,7 +99,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
 
         /**
          * Sets the converter function of the converter, indicating the behavior to convert a {@link CommandSource} and
-         * {@link String} into a possible value of type <code>T</code>.
+         * {@link String} into a possible value of type {@code T}.
          *
          * @param converter
          *         The converter function
@@ -121,7 +121,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
 
         /**
          * Sets the converter function of the converter, indicating the behavior to convert a {@link String} into a possible
-         * value of type <code>T</code>.
+         * value of type {@code T}.
          *
          * @param converter
          *         The converter function
