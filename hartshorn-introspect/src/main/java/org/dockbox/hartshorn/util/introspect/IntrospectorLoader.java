@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,16 +14,11 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.util.introspect;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-}
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+@FunctionalInterface
+public interface IntrospectorLoader {
+    Introspector create(ProxyLookup proxyLookup, AnnotationLookup annotationLookup);
 }

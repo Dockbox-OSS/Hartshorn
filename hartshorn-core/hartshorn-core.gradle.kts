@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.logback)
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
     implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-discovery")
 
     testImplementation(libs.scala)
     testImplementation(libs.groovy)

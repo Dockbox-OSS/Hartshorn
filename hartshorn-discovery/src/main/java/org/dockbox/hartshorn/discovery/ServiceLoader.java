@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,16 +14,15 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.discovery;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-}
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.CLASS)
+public @interface ServiceLoader {
+    Class<?> value();
 }

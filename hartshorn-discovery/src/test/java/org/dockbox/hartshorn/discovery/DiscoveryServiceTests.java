@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,16 +14,17 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.discovery;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-}
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+public class DiscoveryServiceTests {
+
+    @Test
+    void testSimpleDiscoveryService() {
+        final DiscoveryService service = DiscoveryService.instance();
+        final HelloWorldService discoverable = service.discover(HelloWorldService.class);
+        Assertions.assertTrue(discoverable instanceof HelloWorldServiceImplementation);
+    }
 }

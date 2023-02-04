@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,16 +14,19 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.discovery;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-}
+import java.util.Set;
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.TypeElement;
+
+// TODO: Annotation processor for @ServiceLoader
+public class DiscoveryServiceProcessor extends AbstractProcessor {
+
+    @Override
+    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment) {
+        return false;
+    }
 }

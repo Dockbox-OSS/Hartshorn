@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
+import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
@@ -39,6 +40,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -143,7 +145,9 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     @Override
     public Introspector introspector() {
         if (this.introspector == null) {
-            this.introspector = new ReflectionIntrospector(this.applicationContext());
+            this.introspector = DiscoveryService.instance()
+                    .discover(IntrospectorLoader.class)
+                    .create(this.applicationProxier(), this.annotationLookup());
         }
         return this.introspector;
     }

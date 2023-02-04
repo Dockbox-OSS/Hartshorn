@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,16 +14,13 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package org.dockbox.hartshorn.discovery;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-}
+@ServiceLoader(HelloWorldService.class)
+public class HelloWorldServiceImplementation implements HelloWorldService {
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+    @Override
+    public void doHelloWorld() {
+        System.out.println("Hello World!");
+    }
 }
