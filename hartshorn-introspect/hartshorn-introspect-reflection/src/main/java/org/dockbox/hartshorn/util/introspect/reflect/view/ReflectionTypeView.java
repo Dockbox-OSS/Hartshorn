@@ -18,10 +18,7 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.Tuple;
-import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
@@ -48,35 +45,35 @@ import java.util.stream.Collectors;
 
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> implements ReflectionModifierCarrierView, TypeView<T> {
 
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = CollectionUtilities.ofEntries(
-            Tuple.of(boolean.class, Boolean.class),
-            Tuple.of(byte.class, Byte.class),
-            Tuple.of(char.class, Character.class),
-            Tuple.of(double.class, Double.class),
-            Tuple.of(float.class, Float.class),
-            Tuple.of(int.class, Integer.class),
-            Tuple.of(long.class, Long.class),
-            Tuple.of(short.class, Short.class)
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = Map.ofEntries(
+            Map.entry(boolean.class, Boolean.class),
+            Map.entry(byte.class, Byte.class),
+            Map.entry(char.class, Character.class),
+            Map.entry(double.class, Double.class),
+            Map.entry(float.class, Float.class),
+            Map.entry(int.class, Integer.class),
+            Map.entry(long.class, Long.class),
+            Map.entry(short.class, Short.class)
     );
-    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = CollectionUtilities.ofEntries(
-            Tuple.of(boolean.class, false),
-            Tuple.of(byte.class, 0),
-            Tuple.of(char.class, '\u0000'),
-            Tuple.of(double.class, 0.0d),
-            Tuple.of(float.class, 0.0f),
-            Tuple.of(int.class, 0),
-            Tuple.of(long.class, 0L),
-            Tuple.of(short.class, 0)
+    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = Map.ofEntries(
+            Map.entry(boolean.class, false),
+            Map.entry(byte.class, 0),
+            Map.entry(char.class, '\u0000'),
+            Map.entry(double.class, 0.0d),
+            Map.entry(float.class, 0.0f),
+            Map.entry(int.class, 0),
+            Map.entry(long.class, 0L),
+            Map.entry(short.class, 0)
     );
-    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = CollectionUtilities.ofEntries(
-            Tuple.of(Boolean.class, boolean.class),
-            Tuple.of(Byte.class, byte.class),
-            Tuple.of(Character.class, char.class),
-            Tuple.of(Double.class, double.class),
-            Tuple.of(Float.class, float.class),
-            Tuple.of(Integer.class, int.class),
-            Tuple.of(Long.class, long.class),
-            Tuple.of(Short.class, short.class)
+    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = Map.ofEntries(
+            Map.entry(Boolean.class, boolean.class),
+            Map.entry(Byte.class, byte.class),
+            Map.entry(Character.class, char.class),
+            Map.entry(Double.class, double.class),
+            Map.entry(Float.class, float.class),
+            Map.entry(Integer.class, int.class),
+            Map.entry(Long.class, long.class),
+            Map.entry(Short.class, short.class)
     );
 
     private final Introspector introspector;
@@ -317,11 +314,11 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
         if (this.isPrimitive()) {
-            return TypeUtils.adjustWildcards(PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null), Object.class);
+            return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
         } else {
             final Class<?> primitive = WRAPPERS_TO_PRIMITIVE.get(this.type());
             if (primitive == null) return null;
-            else return TypeUtils.adjustWildcards(PRIMITIVE_DEFAULTS.getOrDefault(primitive, null), Object.class);
+            else return (T) PRIMITIVE_DEFAULTS.getOrDefault(primitive, null);
         }
     }
 
@@ -330,7 +327,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         if (object == null) return null;
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
-        if (this.isInstance(object)) return TypeUtils.adjustWildcards(object, Object.class);
+        if (this.isInstance(object)) return (T) object;
         else throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(object, this.type));
     }
 

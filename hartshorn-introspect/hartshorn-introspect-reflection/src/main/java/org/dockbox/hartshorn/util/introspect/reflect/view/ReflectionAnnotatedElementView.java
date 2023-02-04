@@ -34,7 +34,6 @@ public abstract class ReflectionAnnotatedElementView<T> implements AnnotatedElem
 
     protected abstract AnnotatedElement annotatedElement();
 
-
     @Override
     public ElementAnnotationsIntrospector annotations() {
         if (this.annotationsIntrospector == null) {

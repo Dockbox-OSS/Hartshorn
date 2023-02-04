@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -150,7 +149,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);
         final Option<?> initialValue = field.get(instance);
-        final Collection<?> transform = CollectionUtilities.transform(beans,
+        final Collection<?> transform = TypeUtils.transform(beans,
                 TypeUtils.adjustWildcards(initialValue.orNull(), Collection.class),
                 TypeUtils.adjustWildcards(field.type(), TypeView.class)
         );

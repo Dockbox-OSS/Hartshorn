@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+
 public interface StandardProxyLookup extends ProxyLookup {
 
     @Override

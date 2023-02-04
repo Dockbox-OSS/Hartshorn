@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components.reflect;
 
-import org.dockbox.hartshorn.util.Property;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;

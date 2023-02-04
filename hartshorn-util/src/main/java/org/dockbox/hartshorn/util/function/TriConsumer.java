@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.function;
 
 /**
  * Extension of {@link java.util.function.Consumer} and {@link java.util.function.BiConsumer} with
- * the addition of a third parameter of type <code>O</code>
+ * the addition of a third parameter of type {@code O}
  *
  * @param <T> the type of the first argument to the operation
  * @param <U> the type of the second argument to the operation

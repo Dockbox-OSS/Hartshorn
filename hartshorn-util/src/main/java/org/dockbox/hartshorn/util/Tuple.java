@@ -20,8 +20,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 /**
- * Represents a simple tuple holding a single key of type <code>K</code> and value
- * of type <code>V</code>. This can be used to populate {@link java.util.Map maps}.
+ * Represents a simple tuple holding a single key of type {@code K} and value
+ * of type {@code V}. This can be used to populate {@link java.util.Map maps}.
  *
  * @param <K> The type of the key represented by this tuple
  * @param <V> The type of the value represented by this tuple

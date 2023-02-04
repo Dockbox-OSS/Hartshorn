@@ -18,7 +18,9 @@ package test.org.dockbox.hartshorn.components;
 
 public class TypeWithFailingConstructor {
 
+    public static final String ERROR_MESSAGE = "This type cannot be instantiated";
+
     public TypeWithFailingConstructor() {
-        throw new IllegalStateException("This type cannot be instantiated");
+        throw new IllegalStateException(ERROR_MESSAGE);
     }
 }

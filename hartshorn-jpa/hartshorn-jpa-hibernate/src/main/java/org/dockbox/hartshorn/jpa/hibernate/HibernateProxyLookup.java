@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
-import org.dockbox.hartshorn.proxy.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.hibernate.proxy.HibernateProxy;
 
 public class HibernateProxyLookup implements ProxyLookup {

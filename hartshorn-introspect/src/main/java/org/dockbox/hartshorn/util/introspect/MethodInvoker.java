@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.function;
+package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
-/**
- * Extension of {@link java.util.function.Function} with the addition of a
- * {@code throws ApplicationException} clause.
- *
- * @param <T> the type of the first argument to the function
- * @param <R> the type of the result of the function
- *
- * @see java.util.function.Function
- */
 @FunctionalInterface
-public interface CheckedFunction<T, R> {
-    R apply(T t) throws ApplicationException;
+public interface MethodInvoker<T, P> {
+    Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args);
 }

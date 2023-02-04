@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.proxy;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.PolymorphicAnnotationInvocationHandler;
 
 import java.lang.annotation.Annotation;

@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.Property;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -71,11 +71,11 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 final String setter = property.get().setter();
                 final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(setter, List.of(this.type().type()));
                 final MethodView<Parent, ?> methodView = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
-                this.setter = (o, v) -> methodView.invoke(this.declaredBy().cast(instance), v);
+                this.setter = (object, propertyValue) -> methodView.invoke(this.declaredBy().cast(instance), propertyValue);
             } else {
-                this.setter = (o, v) -> {
+                this.setter = (object, propertyValue) -> {
                     try {
-                        this.field.set(o, v);
+                        this.field.set(object, propertyValue);
                     }
                     catch (final IllegalAccessException e) {
                         throw new IllegalIntrospectionException(this, e.getMessage());
@@ -94,11 +94,11 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 final String getter = property.get().getter();
                 final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
                 final MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
-                this.getter = o -> methodContext.invoke(instance).map(this.type()::cast);
+                this.getter = object -> methodContext.invoke(instance).map(this.type()::cast);
             } else {
-                this.getter = o -> Attempt.of(() -> {
+                this.getter = object -> Attempt.of(() -> {
                     try {
-                        return this.type().cast(this.field.get(o));
+                        return this.type().cast(this.field.get(object));
                     }
                     catch (final IllegalAccessException e) {
                         throw new IllegalIntrospectionException(this, e.getMessage());

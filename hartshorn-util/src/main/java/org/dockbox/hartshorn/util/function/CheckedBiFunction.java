@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * Extension of {@link java.util.function.BiFunction} with the addition of a
- * <code>throws ApplicationException</code> clause.
+ * {@code throws ApplicationException} clause.
  *
  * @param <T> the type of the first argument to the function
  * @param <U> the type of the second argument to the function

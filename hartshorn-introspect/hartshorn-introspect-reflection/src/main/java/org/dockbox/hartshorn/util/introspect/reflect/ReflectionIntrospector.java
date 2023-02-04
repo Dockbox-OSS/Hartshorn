@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
@@ -42,7 +42,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ReflectionIntrospector implements Introspector, ContextCarrier {
+public class ReflectionIntrospector implements Introspector {
 
     // Caches are not static, as application context is passed to views and associated introspectors.
     // Making these static would cause the context to leak across instances (when used in batching or
@@ -54,10 +54,12 @@ public class ReflectionIntrospector implements Introspector, ContextCarrier {
     private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
     private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
 
-    private final ApplicationContext applicationContext;
+    private final ProxyLookup proxyLookup;
+    private final AnnotationLookup annotationLookup;
 
-    public ReflectionIntrospector(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public ReflectionIntrospector(final ProxyLookup proxyLookup, final AnnotationLookup annotationLookup) {
+        this.proxyLookup = proxyLookup;
+        this.annotationLookup = annotationLookup;
     }
 
     private <T> TypeView<T> voidType() {
@@ -82,8 +84,8 @@ public class ReflectionIntrospector implements Introspector, ContextCarrier {
         if (instance == null) {
             return this.voidType();
         }
-        else if (this.applicationContext().environment().isProxy(instance)) {
-            final Class<T> unproxied = this.applicationContext().environment().unproxy(instance);
+        else if (this.proxyLookup.isProxy(instance)) {
+            final Class<T> unproxied = this.proxyLookup.unproxy(instance);
             return this.introspect(unproxied);
         }
         else {
@@ -140,12 +142,15 @@ public class ReflectionIntrospector implements Introspector, ContextCarrier {
     }
 
     @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
-    }
-
-    @Override
     public IntrospectionEnvironment environment() {
         return this.environment;
+    }
+
+    public ProxyLookup proxyLookup() {
+        return this.proxyLookup;
+    }
+
+    public AnnotationLookup annotationLookup() {
+        return this.annotationLookup;
     }
 }

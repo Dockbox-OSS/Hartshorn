@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 

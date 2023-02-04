@@ -25,36 +25,48 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class TypeUtils {
 
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = CollectionUtilities.ofEntries(
-            Tuple.of(boolean.class, Boolean.class),
-            Tuple.of(byte.class, Byte.class),
-            Tuple.of(char.class, Character.class),
-            Tuple.of(double.class, Double.class),
-            Tuple.of(float.class, Float.class),
-            Tuple.of(int.class, Integer.class),
-            Tuple.of(long.class, Long.class),
-            Tuple.of(short.class, Short.class)
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = Map.ofEntries(
+            Map.entry(boolean.class, Boolean.class),
+            Map.entry(byte.class, Byte.class),
+            Map.entry(char.class, Character.class),
+            Map.entry(double.class, Double.class),
+            Map.entry(float.class, Float.class),
+            Map.entry(int.class, Integer.class),
+            Map.entry(long.class, Long.class),
+            Map.entry(short.class, Short.class)
     );
-    private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = CollectionUtilities.ofEntries(
-            Tuple.of(boolean.class, Boolean::valueOf),
-            Tuple.of(byte.class, Byte::valueOf),
-            Tuple.of(char.class, s -> s.charAt(0)),
-            Tuple.of(double.class, Double::valueOf),
-            Tuple.of(float.class, Float::valueOf),
-            Tuple.of(int.class, Integer::valueOf),
-            Tuple.of(long.class, Long::valueOf),
-            Tuple.of(short.class, Short::valueOf)
+
+    private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = Map.ofEntries(
+            Map.entry(boolean.class, Boolean::valueOf),
+            Map.entry(byte.class, Byte::valueOf),
+            Map.entry(char.class, s -> s.charAt(0)),
+            Map.entry(double.class, Double::valueOf),
+            Map.entry(float.class, Float::valueOf),
+            Map.entry(int.class, Integer::valueOf),
+            Map.entry(long.class, Long::valueOf),
+            Map.entry(short.class, Short::valueOf)
+    );
+
+    private static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
+            Map.entry(Collection.class, ArrayList::new),
+            Map.entry(List.class, ArrayList::new),
+            Map.entry(Set.class, HashSet::new)
     );
 
     public static <T> T toPrimitive(Class<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
@@ -169,7 +181,7 @@ public class TypeUtils {
             return createAdjustedEmptyWrapper(targetType);
         }
         else if (targetType.isChildOf(Collection.class)) {
-            final Collection<?> transformed = CollectionUtilities.transform(collectionToTransform, null, adjustWildcards(targetType, TypeView.class));
+            final Collection<?> transformed = transform(collectionToTransform, null, adjustWildcards(targetType, TypeView.class));
             return TypeUtils.adjustWildcards(transformed, Object.class);
         }
         else if (targetType.is(Optional.class)) {
@@ -273,5 +285,47 @@ public class TypeUtils {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
+    }
+
+    // TODO: Move to proper transformer class
+    public static <E, T extends Collection<E>> T transform(final Collection<E> collection, final Collection<E> initialCollection, final TypeView<? extends Collection<?>> target) {
+        if (initialCollection != null) {
+            initialCollection.addAll(collection);
+            if (!target.isParentOf(initialCollection.getClass())) {
+                throw new IllegalArgumentException("Initial collection is not of the same type as the target collection");
+            }
+            return TypeUtils.adjustWildcards(initialCollection, Collection.class);
+        }
+        else if (target.isAbstract()) {
+            for (final Entry<Class<?>, Supplier<Collection<?>>> entry : COLLECTION_DEFAULTS.entrySet()) {
+                if (target.is(entry.getKey())) {
+                    final Collection<E> collectionInstance = TypeUtils.adjustWildcards(entry.getValue().get(), Collection.class);
+                    collectionInstance.addAll(collection);
+                    return TypeUtils.adjustWildcards(collectionInstance, Collection.class);
+                }
+            }
+            throw new UnsupportedOperationException("Cannot transform to an abstract collection type (was not a Set or List), use a concrete type instead, or assign a default (empty) collection instance.");
+        }
+        else {
+            final Option<? extends ConstructorView<? extends Collection<?>>> fromCollectionConstructor = target.constructors().withParameters(Collection.class);
+            if (fromCollectionConstructor.present()) {
+                final Option<? extends Collection<?>> createdCollection = fromCollectionConstructor.get().create(collection);
+                if (createdCollection.present()) {
+                    return TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
+                }
+            }
+            else {
+                final Option<? extends ConstructorView<? extends Collection<?>>> defaultConstructor = target.constructors().defaultConstructor();
+                if (defaultConstructor.present()) {
+                    final Option<? extends Collection<?>> createdCollection = defaultConstructor.get().create();
+                    if (createdCollection.present()) {
+                        final Collection<E> collectionInstance = TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
+                        collectionInstance.addAll(collection);
+                        return TypeUtils.adjustWildcards(collectionInstance, Collection.class);
+                    }
+                }
+            }
+            throw new IllegalArgumentException("Collection type " + target.name() + " does not have a constructor that accepts a Collection, or a default constructor. Can't transform collection to this type.");
+        }
     }
 }

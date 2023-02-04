@@ -1,3 +1,6 @@
+import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
+import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -14,12 +17,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.reflect;
+apply {
+    from("${project.rootDir}/gradle/publications.gradle.kts")
+}
 
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Attempt;
+dependencies {
+    implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+}
 
-@FunctionalInterface
-public interface MethodInvoker<T, P> {
-    Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args);
+configure<TestHarnessExtension> {
+    projectType = TestHarnessProjectType.IMPLEMENTATION
 }

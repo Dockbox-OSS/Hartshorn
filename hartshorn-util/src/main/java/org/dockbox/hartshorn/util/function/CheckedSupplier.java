@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * Extension of {@link java.util.function.Supplier} with the addition of a
- * <code>throws ApplicationException</code> clause.
+ * {@code throws ApplicationException} clause.
  *
  * @param <T> the type of results supplied by this supplier
  *

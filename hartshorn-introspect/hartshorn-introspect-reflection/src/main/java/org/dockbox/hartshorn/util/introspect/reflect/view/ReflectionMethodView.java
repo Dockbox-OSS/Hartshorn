@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.reflect.MethodInvoker;
+import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;

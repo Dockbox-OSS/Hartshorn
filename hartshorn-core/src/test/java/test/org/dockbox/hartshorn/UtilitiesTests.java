@@ -92,25 +92,6 @@ public class UtilitiesTests {
         );
     }
 
-    @Test
-    void testOfEntriesAddsAllEntries() {
-        final Map<Integer, String> map = CollectionUtilities.ofEntries(
-                Tuple.of(1, "two"),
-                Tuple.of(2, "three")
-        );
-        Assertions.assertTrue(map.containsKey(1));
-        Assertions.assertTrue(map.containsKey(2));
-        Assertions.assertTrue(map.containsValue("two"));
-        Assertions.assertTrue(map.containsValue("three"));
-    }
-
-    @Test
-    void testOfEntriesIsEmptyWithNoEntries() {
-        final Map<Object, Object> map = CollectionUtilities.ofEntries();
-        Assertions.assertNotNull(map);
-        Assertions.assertTrue(map.isEmpty());
-    }
-
     @ParameterizedTest
     @MethodSource("capitalizeValues")
     void testCapitalizeChangesOnlyFirstCharacter(final String input, final String expected) {

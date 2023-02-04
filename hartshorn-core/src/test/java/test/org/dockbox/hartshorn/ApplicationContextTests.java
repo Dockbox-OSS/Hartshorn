@@ -351,9 +351,14 @@ public class ApplicationContextTests {
 
     @Test
     void testFailingConstructorIsRethrown() {
-        // TODO: Fix me :)
         final ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(TypeWithFailingConstructor.class));
-        Assertions.assertTrue(exception.getCause() instanceof IllegalStateException);
+        Assertions.assertTrue(exception.getCause() instanceof ApplicationException);
+
+        final ApplicationException applicationException = (ApplicationException) exception.getCause();
+        Assertions.assertTrue(applicationException.getCause() instanceof IllegalStateException);
+
+        final IllegalStateException illegalStateException = (IllegalStateException) applicationException.getCause();
+        Assertions.assertEquals(TypeWithFailingConstructor.ERROR_MESSAGE, illegalStateException.getMessage());
     }
 
     @Test

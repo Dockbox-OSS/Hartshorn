@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy;
+package org.dockbox.hartshorn.util.introspect;
 
 /**
  * Proxy lookups are used to obtain the real type of a proxy, and identify potential proxy types and instances.
  * Direct use of an implementation of this interface is not guaranteed to be accurate, and should be used with
- * caution. It is recommended to use {@link ApplicationProxier} instead of directly using a specific implementation
- * of this interface.
+ * caution.
  *
  * @author Guus Lieben
  * @since 22.2

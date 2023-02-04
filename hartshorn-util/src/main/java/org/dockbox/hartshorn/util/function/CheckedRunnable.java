@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * Extension of {@link Runnable} with the addition of a
- * <code>throws ApplicationException</code> clause.
+ * {@code throws ApplicationException} clause.
  *
  * @see Runnable
  */
