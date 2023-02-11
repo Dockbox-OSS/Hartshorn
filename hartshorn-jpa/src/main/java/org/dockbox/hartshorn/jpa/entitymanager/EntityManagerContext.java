@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.jpa.entitymanager;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 import java.util.function.Supplier;
 
 import jakarta.persistence.EntityManager;
 
-public class EntityManagerContext extends DefaultContext {
+public class EntityManagerContext extends DefaultProvisionContext {
 
     private final Supplier<EntityManager> supplier;
 

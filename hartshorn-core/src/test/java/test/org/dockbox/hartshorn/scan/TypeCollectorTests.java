@@ -16,13 +16,14 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.scan.AggregateTypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.CachedTypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.PredefinedSetTypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.TypeReference;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.classpath.ClassPathScannerTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.AggregateTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.CachedTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
@@ -43,8 +44,8 @@ import test.org.dockbox.hartshorn.scan.types.ScanRecord;
 public class TypeCollectorTests {
 
     @InjectTest
-    void testClassPathScannerTypeCollector(final ApplicationEnvironment environment) {
-        final TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector(environment, "test.org.dockbox.hartshorn.scan.types");
+    void testClassPathScannerTypeCollector() throws TypeCollectionException {
+        final TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.scan.types");
         final Set<TypeReference> typeReferences = collector.collect();
 
         Assertions.assertEquals(7, typeReferences.size());
@@ -53,7 +54,7 @@ public class TypeCollectorTests {
             try {
                 return typeReference.getOrLoad();
             }
-            catch (final Exception e) {
+            catch (final ClassReferenceLoadException e) {
                 return Assertions.fail(e);
             }
         }).collect(Collectors.toSet());
@@ -68,8 +69,8 @@ public class TypeCollectorTests {
     }
 
     @InjectTest
-    void testCachedTypeCollector(final ApplicationEnvironment environment) {
-        final TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector(environment, "test.org.dockbox.hartshorn.scan.types");
+    void testCachedTypeCollector() throws TypeCollectionException {
+        final TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.scan.types");
         final TypeReferenceCollector cachedCollector = new CachedTypeReferenceCollector(collector);
 
         final Set<TypeReference> typeReferencesA = cachedCollector.collect();
@@ -79,7 +80,7 @@ public class TypeCollectorTests {
     }
 
     @Test
-    void testAggregateTypeCollector() {
+    void testAggregateTypeCollector() throws TypeCollectionException {
         final PredefinedSetTypeReferenceCollector enumCollector = PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
         final PredefinedSetTypeReferenceCollector classCollector = PredefinedSetTypeReferenceCollector.of(ScanClass.class);
         final PredefinedSetTypeReferenceCollector interfaceCollector = PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
@@ -93,7 +94,7 @@ public class TypeCollectorTests {
             try {
                 return typeReference.getOrLoad();
             }
-            catch (final Exception e) {
+            catch (final ClassReferenceLoadException e) {
                 return Assertions.fail(e);
             }
         }).collect(Collectors.toSet());

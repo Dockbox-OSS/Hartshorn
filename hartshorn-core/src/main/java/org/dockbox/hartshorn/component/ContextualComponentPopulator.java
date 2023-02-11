@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.IntrospectionTypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -149,7 +150,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);
         final Option<?> initialValue = field.get(instance);
-        final Collection<?> transform = TypeUtils.transform(beans,
+        final Collection<?> transform = IntrospectionTypeUtils.transform(beans,
                 TypeUtils.adjustWildcards(initialValue.orNull(), Collection.class),
                 TypeUtils.adjustWildcards(field.type(), TypeView.class)
         );

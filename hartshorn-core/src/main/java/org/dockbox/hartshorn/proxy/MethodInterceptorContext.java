@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.IntrospectionTypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.concurrent.Callable;
@@ -124,6 +124,6 @@ public class MethodInterceptorContext<T, R> {
     public R checkedCast(final Object o) {
         if (this.method.returnType().isVoid()) return null;
         else if (this.method.returnType().isInstance(o)) return this.method.returnType().cast(o);
-        else return TypeUtils.checkWrapping(o, this.method.returnType());
+        else return IntrospectionTypeUtils.checkWrapping(o, this.method.returnType());
     }
 }

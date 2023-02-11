@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * for this definition are explained at {@link CommandDefinitionContextImpl#ELEMENT_VALUE}. If no
  * explicit type is defined, {@link CommandDefinitionContextImpl#DEFAULT_TYPE} is used.
  */
-public class CommandDefinitionContextImpl extends DefaultContext implements CommandDefinitionContext {
+public class CommandDefinitionContextImpl extends DefaultProvisionContext implements CommandDefinitionContext {
 
     /**
      * Represents the default type for command elements matched by {@link CommandDefinitionContextImpl#FLAG} or

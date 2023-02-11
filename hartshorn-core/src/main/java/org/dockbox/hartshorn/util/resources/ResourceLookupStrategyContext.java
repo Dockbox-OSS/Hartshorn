@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ResourceLookupStrategyContext extends DefaultContext {
+public class ResourceLookupStrategyContext extends DefaultProvisionContext {
 
     private final Set<ResourceLookupStrategy> strategies = ConcurrentHashMap.newKeySet();
 

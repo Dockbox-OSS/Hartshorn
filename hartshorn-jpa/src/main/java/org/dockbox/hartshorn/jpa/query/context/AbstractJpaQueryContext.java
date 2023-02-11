@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.jpa.query.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.jpa.JpaParameterLoaderContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
@@ -35,7 +35,7 @@ import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
 
-public abstract class AbstractJpaQueryContext extends DefaultContext implements JpaQueryContext {
+public abstract class AbstractJpaQueryContext extends DefaultProvisionContext implements JpaQueryContext {
 
     private ParameterLoader<JpaParameterLoaderContext> parameterLoader;
 
@@ -46,7 +46,7 @@ public abstract class AbstractJpaQueryContext extends DefaultContext implements 
     private final ApplicationContext applicationContext;
     private final Object persistenceCapable;
 
-    public AbstractJpaQueryContext(
+    protected AbstractJpaQueryContext(
             final Object[] args, final MethodView<?, ?> method,
             final TypeView<?> entityType, final ApplicationContext applicationContext,
             final Object persistenceCapable) {

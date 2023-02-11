@@ -19,8 +19,7 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -39,7 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class ScopeAwareComponentProvider extends DefaultContext implements HierarchicalComponentProvider, ComponentProvider, ContextCarrier, ScopedProviderOwner {
+public class ScopeAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ScopedProviderOwner {
 
     private final transient ApplicationContext applicationContext;
     private final transient ComponentLocator locator;

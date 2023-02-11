@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
-public class ProxyCallbackContext<T> extends DefaultContext {
+public class ProxyCallbackContext<T> extends DefaultProvisionContext {
 
     private final T delegate;
     private final T proxy;

@@ -67,6 +67,7 @@ public class TestHarnessExtension {
     public static Project defaultProject(final ProjectDependency dependency) {
         return defaultProject(dependency.getDependencyProject());
     }
+
     public static Project defaultProject(final Project project) {
         final TestHarnessExtension extension = project.getExtensions().getByType(TestHarnessExtension.class);
         if (extension == null) {

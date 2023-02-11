@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
-import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.events.handle.EventExecutionFilter;
 
 import java.util.Collection;
@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @InstallIfAbsent
-public class EventExecutionFilterContext extends DefaultContext {
+public class EventExecutionFilterContext extends DefaultProvisionContext {
 
     private final Set<EventExecutionFilter> executionFilters = ConcurrentHashMap.newKeySet();
 

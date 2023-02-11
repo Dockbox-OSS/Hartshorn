@@ -1,3 +1,5 @@
+import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension.defaultProject
+
 /*
  * Copyright 2019-2023 the original author or authors.
  *

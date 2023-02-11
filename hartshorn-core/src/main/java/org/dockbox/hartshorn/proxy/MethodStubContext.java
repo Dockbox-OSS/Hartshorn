@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
-public class MethodStubContext<T> extends DefaultContext {
+public class MethodStubContext<T> extends DefaultProvisionContext {
 
     // TODO: Determine what other information is needed here
 

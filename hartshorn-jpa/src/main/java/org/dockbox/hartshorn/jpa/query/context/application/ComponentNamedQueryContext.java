@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.jpa.query.context.application;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.persistence.Entity;
 
-public class ComponentNamedQueryContext extends DefaultContext implements Reportable {
+public class ComponentNamedQueryContext extends DefaultProvisionContext implements Reportable {
 
     private final String name;
     private final boolean nativeQuery;

@@ -20,10 +20,10 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
-public class ParameterLoaderContext extends DefaultContext implements ContextCarrier {
+public class ParameterLoaderContext extends DefaultProvisionContext implements ContextCarrier {
 
     private final ExecutableElementView<?, ?> executable;
     private final Object instance;

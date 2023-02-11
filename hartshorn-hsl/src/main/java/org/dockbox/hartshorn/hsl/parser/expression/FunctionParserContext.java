@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FunctionParserContext extends DefaultContext {
+public class FunctionParserContext extends DefaultProvisionContext {
 
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();

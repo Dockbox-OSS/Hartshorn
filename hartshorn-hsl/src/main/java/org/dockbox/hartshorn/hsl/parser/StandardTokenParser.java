@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
-public class StandardTokenParser extends DefaultContext implements TokenParser {
+public class StandardTokenParser extends DefaultProvisionContext implements TokenParser {
 
     private int current = 0;
     private final List<Token> tokens;

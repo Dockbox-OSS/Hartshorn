@@ -25,8 +25,6 @@ import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
 import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.application.scan.ClassReferenceLoadException;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
@@ -36,13 +34,15 @@ import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
-import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -63,6 +63,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -173,22 +174,32 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     private <T> Collection<TypeView<? extends T>> types(final Predicate<TypeView<?>> predicate) {
-        return TypeUtils.adjustWildcards(this.applicationContext().first(TypeReferenceCollectorContext.class)
-                .map(collectorContext -> collectorContext.collector().collect().stream()
-                        .map(reference -> {
-                            try {
-                                return reference.getOrLoad();
-                            }
-                            catch (final ClassReferenceLoadException e) {
-                                this.handle(e);
-                                return null;
-                            }
-                        })
-                        .filter(Objects::nonNull)
-                        .map(this::introspect)
-                        .filter(predicate)
-                        .collect(Collectors.toSet()))
-                .orElseThrow(() -> new IllegalStateException("TypeReferenceCollectorContext not available")), Collection.class);
+        final Option<TypeReferenceCollectorContext> collectorContext = this.applicationContext().first(TypeReferenceCollectorContext.class);
+        if (collectorContext.absent()) {
+            this.log().warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
+            return Collections.emptyList();
+        }
+        try {
+            return collectorContext.get().collector().collect().stream()
+                    .map(reference -> {
+                        try {
+                            return reference.getOrLoad();
+                        }
+                        catch (final ClassReferenceLoadException e) {
+                            this.handle(e);
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .map(this::introspect)
+                    .filter(predicate)
+                    .map(reference -> (TypeView<T>) reference)
+                    .collect(Collectors.toSet());
+        }
+        catch (final TypeCollectionException e) {
+            this.handle(e);
+            return Collections.emptyList();
+        }
     }
 
     @Override

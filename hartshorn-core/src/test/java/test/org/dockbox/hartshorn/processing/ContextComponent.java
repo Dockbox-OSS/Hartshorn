@@ -17,8 +17,8 @@
 package test.org.dockbox.hartshorn.processing;
 
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 @Component
-public class ContextComponent extends DefaultContext {
+public class ContextComponent extends DefaultProvisionContext {
 }

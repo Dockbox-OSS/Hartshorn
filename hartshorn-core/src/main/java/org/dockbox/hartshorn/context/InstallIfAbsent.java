@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates whether a {@link Context} type should be automatically created when
- * it is absent while it is looked up through {@link Context#first(ContextKey)}.
+ * it is absent while it is looked up through {@link Context#first(ContextIdentity)}.
  *
  * <p>Implementations of {@link ApplicationAwareContext} will use this annotation to
  * determine whether a context should be created when a child context is looked up.

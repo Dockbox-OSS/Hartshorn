@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class ProvidedParameterContext extends DefaultContext {
+public final class ProvidedParameterContext extends DefaultProvisionContext {
 
     private final Map<ParameterView<?>, Object> arguments = new HashMap<>();
 
