@@ -30,14 +30,9 @@ dependencies {
     api(libs.bundles.hibernate)
 
     // Test Containers
-    testImplementation(libs.bundles.testContainers)
-    testImplementation(libs.bundles.databaseTestContainers)
+    testFixturesImplementation(libs.bundles.testContainers)
+    testFixturesImplementation(libs.bundles.databaseTestContainers)
 
     // Drivers
-    testImplementation(libs.bundles.databaseDrivers)
-}
-
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.DEFINITION
-    defaultProject = project(":hartshorn-jpa:hartshorn-jpa-hibernate")
+    testFixturesImplementation(libs.bundles.databaseDrivers)
 }

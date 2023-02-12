@@ -37,7 +37,7 @@ import jakarta.persistence.EntityManager;
 @UseConfigurations
 @UseTransactionManagement
 @Testcontainers(disabledWithoutDocker = true)
-public class TransactionalServiceTests {
+public abstract class TransactionalServiceTests implements DataSourceConfigurationLoaderTest {
 
     @Container
     private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
@@ -46,7 +46,7 @@ public class TransactionalServiceTests {
     @InjectTest
     @TestComponents(TransactionalService.class)
     public void testTransactionalService(final ApplicationContext applicationContext) {
-        final DataSourceConfiguration configuration = applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
+        final DataSourceConfiguration configuration = this.configurationLoader().mysql(mySql);
         applicationContext.get(DataSourceList.class).add("users", configuration);
 
         final TransactionalService service = applicationContext.get(TransactionalService.class);

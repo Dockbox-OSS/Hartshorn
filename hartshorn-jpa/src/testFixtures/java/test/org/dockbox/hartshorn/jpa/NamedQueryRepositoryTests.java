@@ -37,7 +37,7 @@ import test.org.dockbox.hartshorn.jpa.repository.UserNamedQueryRepository;
 @UsePersistence
 @HartshornTest(includeBasePackages = false)
 @TestComponents({ UserNamedQueryRepository.class, EntityCollectorLifecycleObserver.class})
-public class NamedQueryRepositoryTests {
+public abstract class NamedQueryRepositoryTests implements DataSourceConfigurationLoaderTest {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -46,7 +46,7 @@ public class NamedQueryRepositoryTests {
 
     @Test
     void testRepositoryAttachesEntityLevelQuery() {
-        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
+        final DataSourceConfiguration configuration = this.configurationLoader().mysql(mySql);
         this.applicationContext.get(DataSourceList.class).add("users", configuration);
 
         final UserNamedQueryRepository repository = this.applicationContext.get(UserNamedQueryRepository.class);

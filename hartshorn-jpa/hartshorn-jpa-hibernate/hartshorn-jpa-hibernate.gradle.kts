@@ -30,13 +30,10 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-jpa")
 
     implementation(libs.bundles.hibernate)
-}
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
-
-    dependencyHandler.add(libs.bundles.testContainers)
-    dependencyHandler.add(libs.bundles.databaseTestContainers)
-    dependencyHandler.add(defaultProject(project(":hartshorn-config")))
-    dependencyHandler.add(libs.mysql)
+    testImplementation(libs.bundles.testContainers)
+    testImplementation(libs.bundles.databaseTestContainers)
+    testImplementation(libs.mysql)
+    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
+    testImplementation(testFixtures(project(":hartshorn-jpa")))
 }

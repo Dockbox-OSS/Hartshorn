@@ -59,7 +59,7 @@ import test.org.dockbox.hartshorn.jpa.repository.UserJpaRepository;
 @UsePersistence
 @TestComponents({ UserJpaRepository.class, EntityCollectorLifecycleObserver.class})
 @TestInstance(Lifecycle.PER_CLASS)
-class JpaRepositoryTests {
+public abstract class JpaRepositoryTests implements DataSourceConfigurationLoaderTest {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -81,12 +81,12 @@ class JpaRepositoryTests {
     }
 
     public Stream<Arguments> dialects() {
-        final DataSourceConfigurationLoader configurationList = this.applicationContext.get(DataSourceConfigurationLoader.class);
+        final DataSourceConfigurationLoader configurationLoader = this.configurationLoader();
         return Stream.of(
-                Arguments.of(configurationList.mysql(mySql)),
-                Arguments.of(configurationList.postgresql(postgreSql)),
-                Arguments.of(configurationList.mariadb(mariaDb)),
-                Arguments.of(configurationList.mssql(mssqlServer))
+                Arguments.of(configurationLoader.mysql(mySql)),
+                Arguments.of(configurationLoader.postgresql(postgreSql)),
+                Arguments.of(configurationLoader.mariadb(mariaDb)),
+                Arguments.of(configurationLoader.mssql(mssqlServer))
         );
     }
 

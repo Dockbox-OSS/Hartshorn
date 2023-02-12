@@ -52,7 +52,7 @@ import test.org.dockbox.hartshorn.jpa.repository.LockFlushModeUserJpaRepository;
 })
 @UsePersistence
 @Testcontainers(disabledWithoutDocker = true)
-public class LockFlushModeTests {
+public abstract class LockFlushModeTests implements DataSourceConfigurationLoaderTest {
 
     @Container
     private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME)
@@ -66,7 +66,7 @@ public class LockFlushModeTests {
 
     @BeforeEach
     void prepareDataSource() {
-        final DataSourceConfiguration configuration = this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
+        final DataSourceConfiguration configuration = this.configurationLoader().mysql(mySql);
         this.applicationContext.get(DataSourceList.class).add("users", configuration);
     }
 

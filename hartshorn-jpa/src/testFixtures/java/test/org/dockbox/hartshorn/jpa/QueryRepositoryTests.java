@@ -42,7 +42,7 @@ import test.org.dockbox.hartshorn.jpa.repository.UserQueryRepository;
 @UsePersistence
 @HartshornTest(includeBasePackages = false)
 @TestComponents({ UserQueryRepository.class, EntityCollectorLifecycleObserver.class})
-public class QueryRepositoryTests {
+public abstract class QueryRepositoryTests implements DataSourceConfigurationLoaderTest {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -50,7 +50,7 @@ public class QueryRepositoryTests {
             .withDatabaseName(JpaTestHarnessProviders.DEFAULT_DATABASE);
 
     protected DataSourceConfiguration connection() {
-        return this.applicationContext.get(DataSourceConfigurationLoader.class).mysql(mySql);
+        return this.configurationLoader().mysql(mySql);
     }
 
     @Test
