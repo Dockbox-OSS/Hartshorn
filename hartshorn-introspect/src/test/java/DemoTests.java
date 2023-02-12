@@ -14,10 +14,5 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.util.introspect;
-
-import test.org.dockbox.hartshorn.annotations.Base;
-
-@Base("parent")
-public interface AnnotatedParent {
+public class DemoTests {
 }

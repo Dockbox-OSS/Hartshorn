@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,13 +14,17 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.util.introspect;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-    testImplementation(testFixtures(project(":hartshorn-introspect")))
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
+import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
+
+public class ReflectionIntrospectorTests extends IntrospectorTests {
+
+    @Override
+    protected Introspector introspector() {
+        return new ReflectionIntrospector(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
+    }
 }

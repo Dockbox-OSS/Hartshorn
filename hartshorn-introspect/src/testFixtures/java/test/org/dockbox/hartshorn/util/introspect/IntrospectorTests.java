@@ -16,15 +16,11 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
-import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
-import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -43,7 +39,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @HartshornTest(includeBasePackages = false)
-public class ReflectTests {
+public abstract class IntrospectorTests {
 
     private static Stream<Arguments> fields() {
         return Stream.of(
@@ -122,12 +118,7 @@ public class ReflectTests {
         );
     }
 
-    private Introspector introspector() {
-        final DiscoveryService discoveryService = DiscoveryService.instance();
-        Assertions.assertTrue(discoveryService.contains(IntrospectorLoader.class));
-        final IntrospectorLoader loader = discoveryService.discover(IntrospectorLoader.class);
-        return loader.create(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
-    }
+    protected abstract Introspector introspector();
 
     @ParameterizedTest
     @MethodSource("fields")

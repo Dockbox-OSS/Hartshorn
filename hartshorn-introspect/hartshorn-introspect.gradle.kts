@@ -17,6 +17,10 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
+plugins {
+    id("java-test-fixtures")
+}
+
 apply {
     from("${project.rootDir}/gradle/publications.gradle.kts")
 }
@@ -24,9 +28,4 @@ apply {
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-util")
     annotationProcessor("org.dockbox.hartshorn:hartshorn-discovery")
-}
-
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.DEFINITION
-    defaultProject = project(":hartshorn-introspect:hartshorn-introspect-reflection")
 }
