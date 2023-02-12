@@ -16,86 +16,31 @@
 
 package test.org.dockbox.hartshorn.config.mapping;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.config.Address;
-import test.org.dockbox.hartshorn.config.ComponentWithUserValue;
 import test.org.dockbox.hartshorn.config.Element;
 import test.org.dockbox.hartshorn.config.EntityElement;
 import test.org.dockbox.hartshorn.config.MultiElement;
 import test.org.dockbox.hartshorn.config.NestedElement;
 import test.org.dockbox.hartshorn.config.PersistentElement;
-import test.org.dockbox.hartshorn.config.User;
 
 @HartshornTest(includeBasePackages = false)
 @UseConfigurations
-public class ObjectMappingTests {
+public abstract class ObjectMappingTests {
 
-    @Test
-    void testPropertyHolder() {
-        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
-
-        propertyHolder.set("user.name", "John Doe");
-
-        final Option<User> user = propertyHolder.get("user", User.class);
-        Assertions.assertTrue(user.present());
-        Assertions.assertEquals("John Doe", user.get().name());
-
-        propertyHolder.set("user.address", new Address("Darwin City", "Darwin Street", 12));
-
-        final Option<Address> address = propertyHolder.get("user.address", Address.class);
-        Assertions.assertTrue(address.present());
-        Assertions.assertEquals("Darwin City", address.get().city());
-        Assertions.assertEquals("Darwin Street", address.get().street());
-        Assertions.assertEquals(12, address.get().number());
-
-        propertyHolder.set("user.address.street", "Darwin Lane");
-
-        final Option<Address> address2 = propertyHolder.get("user.address", Address.class);
-        Assertions.assertTrue(address2.present());
-        Assertions.assertEquals("Darwin City", address2.get().city());
-        Assertions.assertEquals("Darwin Lane", address2.get().street());
-        Assertions.assertEquals(12, address2.get().number());
-    }
-
-    @Test
-    @TestComponents(ComponentWithUserValue.class)
-    void testValueComponents() {
-        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
-        propertyHolder.set("user.name", "John Doe");
-        propertyHolder.set("user.address.city", "Darwin City");
-        propertyHolder.set("user.address.street", "Darwin Lane");
-        propertyHolder.set("user.address.number", 12);
-
-        final ComponentWithUserValue component = this.applicationContext.get(ComponentWithUserValue.class);
-        Assertions.assertNotNull(component);
-        Assertions.assertNotNull(component.user());
-
-        Assertions.assertEquals("John Doe", component.user().name());
-        Assertions.assertEquals("Darwin City", component.user().address().city());
-        Assertions.assertEquals("Darwin Lane", component.user().address().street());
-        Assertions.assertEquals(12, component.user().address().number());
-    }
-
-    @Inject
-    private ApplicationContext applicationContext;
+    protected abstract ObjectMapper objectMapper();
 
     private static Stream<Arguments> serializationElements() {
         return Stream.of(
@@ -129,7 +74,7 @@ public class ObjectMappingTests {
     @ParameterizedTest
     @MethodSource("serializationElements")
     void testObjectSerialization(final FileFormat fileFormat, final Element content, final String expected) {
-        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class);
+        final ObjectMapper mapper = this.objectMapper();
         mapper.fileType(fileFormat);
 
         content.name("sample");
@@ -142,7 +87,7 @@ public class ObjectMappingTests {
     @ParameterizedTest
     @MethodSource("serializationElements")
     void testObjectDeserialization(final FileFormat fileFormat, final Element expected, final String content) {
-        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class);
+        final ObjectMapper mapper = this.objectMapper();
         mapper.fileType(fileFormat);
         expected.name("sample");
 

@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,12 +14,22 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+package test.org.dockbox.hartshorn.config.jackson;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.jackson.JacksonObjectMapper;
+
+import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.config.mapping.ObjectMappingTests;
+
+public class JacksonObjectMappingTests extends ObjectMappingTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
+
+    @Override
+    protected ObjectMapper objectMapper() {
+        return new JacksonObjectMapper(this.applicationContext);
+    }
 }
