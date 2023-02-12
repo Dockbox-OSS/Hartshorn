@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.cache;
+package test.org.dockbox.hartshorn.cache.caffeine;
 
-import org.dockbox.hartshorn.cache.CacheManagerImpl;
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.cache.CacheFactory;
+import org.dockbox.hartshorn.cache.caffeine.CaffeineCache;
 
-@Component(singleton = true)
-public class JUnitCacheManager extends CacheManagerImpl {
+import test.org.dockbox.hartshorn.cache.CacheTests;
 
-    public void reset() {
-        this.caches.clear();
+public class CaffeineCacheTests extends CacheTests {
+    @Override
+    protected CacheFactory cacheFactory() {
+        return CaffeineCache::new;
     }
-
 }

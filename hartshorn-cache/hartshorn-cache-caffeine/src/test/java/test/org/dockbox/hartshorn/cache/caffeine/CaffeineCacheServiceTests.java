@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.cache;
+package test.org.dockbox.hartshorn.cache.caffeine;
 
 import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.cache.caffeine.CaffeineCacheManager;
 
-import jakarta.inject.Singleton;
+import test.org.dockbox.hartshorn.cache.CacheServiceTests;
 
-@Service
-@RequiresActivator(UseCaching.class)
-public class TestCacheProviders {
+public class CaffeineCacheServiceTests extends CacheServiceTests {
 
-    @Binds(priority = 0)
-    @Singleton
-    public Class<? extends CacheManager> cacheManager = JUnitCacheManager.class;
-
+    @Override
+    protected CacheManager cacheManager() {
+        return new CaffeineCacheManager();
+    }
 }

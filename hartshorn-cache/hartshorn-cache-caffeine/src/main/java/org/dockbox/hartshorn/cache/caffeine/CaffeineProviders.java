@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.cache.caffeine;
 
 import org.dockbox.hartshorn.cache.Cache;
+import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
@@ -39,4 +40,9 @@ public class CaffeineProviders {
      */
     @Binds
     public Class<? extends Cache> cache = CaffeineCache.class;
+
+    @Binds(priority = 0)
+    public CacheManager cacheManager() {
+        return new CaffeineCacheManager();
+    }
 }

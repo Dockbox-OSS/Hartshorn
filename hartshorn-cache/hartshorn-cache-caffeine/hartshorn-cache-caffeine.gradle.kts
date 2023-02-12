@@ -27,8 +27,6 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-cache")
 
     implementation(libs.caffeine)
-}
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+    testImplementation(testFixtures(project(":hartshorn-cache")))
 }

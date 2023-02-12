@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheFactory;
 import org.dockbox.hartshorn.cache.Expiration;
@@ -28,24 +27,21 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import jakarta.inject.Inject;
-
 @UseCaching
 @HartshornTest(includeBasePackages = false)
-public class CacheTests {
+public abstract class CacheTests {
 
-    @Inject
-    private ApplicationContext applicationContext;
-
+    protected abstract CacheFactory cacheFactory();
+    
     @Test
     void testCacheCreation() {
-        final Cache<?, ?> cache = this.applicationContext.get(Cache.class);
+        final Cache<?, ?> cache = this.cacheFactory().cache(Expiration.never());
         Assertions.assertNotNull(cache);
     }
 
     @Test
     void testCacheCanWrite() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         final Option<String> result = cache.get("key");
@@ -56,7 +52,7 @@ public class CacheTests {
 
     @Test
     void testCacheInvalidation() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         cache.invalidate("key");
@@ -67,7 +63,7 @@ public class CacheTests {
 
     @Test
     void testCacheSize() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         final int size = cache.size();
@@ -77,7 +73,7 @@ public class CacheTests {
 
     @Test
     void testCacheCanWriteAndReadMultiple() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         cache.put("key2", "value2");
@@ -92,7 +88,7 @@ public class CacheTests {
 
     @Test
     void testCacheMultipleInvalidation() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         cache.put("key2", "value2");
@@ -108,7 +104,7 @@ public class CacheTests {
 
     @Test
     void testCacheInvalidateAll() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         cache.put("key2", "value2");
@@ -123,7 +119,7 @@ public class CacheTests {
 
     @Test
     void testCacheCanWriteAndReadMultipleWithExpiration() throws InterruptedException {
-        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class)
+        final Cache<String, String> cache = this.cacheFactory()
                 // Would be nice to use a lower amount here, but slower devices and CI environments
                 // may not be able to keep up with 1ms reliably
                 .cache(Expiration.of(10, TimeUnit.MILLISECONDS));
@@ -142,7 +138,7 @@ public class CacheTests {
 
     @Test
     void testCacheCanWriteAndReadMultipleWithExpirationAndInvalidation() throws InterruptedException {
-        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class)
+        final Cache<String, String> cache = this.cacheFactory()
                 // Would be nice to use a lower amount here, but slower devices and CI environments
                 // may not be able to keep up with 1ms reliably
                 .cache(Expiration.of(10, TimeUnit.MILLISECONDS));
@@ -163,7 +159,7 @@ public class CacheTests {
 
     @Test
     void testCacheContainsBeforeAfterInvalidation() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         Assertions.assertTrue(cache.contains("key"));
@@ -174,7 +170,7 @@ public class CacheTests {
 
     @Test
     void testCacheContainsBeforeAfterExpiration() throws InterruptedException {
-        final Cache<String, String> cache = this.applicationContext.get(CacheFactory.class)
+        final Cache<String, String> cache = this.cacheFactory()
                 // Would be nice to use a lower amount here, but slower devices and CI environments
                 // may not be able to keep up with 1ms reliably
                 .cache(Expiration.of(10, TimeUnit.MILLISECONDS));
@@ -189,7 +185,7 @@ public class CacheTests {
 
     @Test
     void testCachePutIfAbsent() {
-        final Cache<String, String> cache = this.applicationContext.get(Cache.class);
+        final Cache<String, String> cache = this.cacheFactory().cache(Expiration.never());
 
         cache.put("key", "value");
         Assertions.assertTrue(cache.contains("key"));
@@ -201,13 +197,13 @@ public class CacheTests {
 
     @Test
     void testNullExpirationIsRejected() {
-        final CacheFactory cacheFactory = this.applicationContext.get(CacheFactory.class);
+        final CacheFactory cacheFactory = this.cacheFactory();
         Assertions.assertThrows(NullPointerException.class, () -> cacheFactory.cache(null));
     }
 
     @Test
     void testNeverExpirationIsAccepted() {
-        final CacheFactory cacheFactory = this.applicationContext.get(CacheFactory.class);
+        final CacheFactory cacheFactory = this.cacheFactory();
         Assertions.assertDoesNotThrow(() -> cacheFactory.cache(Expiration.never()));
     }
 }

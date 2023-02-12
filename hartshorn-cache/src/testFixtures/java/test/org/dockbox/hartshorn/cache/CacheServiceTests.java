@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,11 +30,12 @@ import jakarta.inject.Inject;
 
 @UseCaching
 @HartshornTest(includeBasePackages = false)
-@TestComponents(JUnitCacheManager.class)
-public class CacheServiceTests {
+public abstract class CacheServiceTests {
 
     @Inject
     private ApplicationContext applicationContext;
+
+    protected abstract CacheManager cacheManager();
 
     @Test
     @TestComponents(NonAbstractCacheService.class)
@@ -92,7 +92,7 @@ public class CacheServiceTests {
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
+        final CacheManager cacheManager = this.cacheManager();
         cacheManager.get("sample").peek(cache -> cache.put("sample_key", 3L));
 
         final Option<Cache<String, Long>> cache = cacheManager.get("sample");
@@ -113,7 +113,7 @@ public class CacheServiceTests {
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.applicationContext.get(CacheManager.class);
+        final CacheManager cacheManager = this.cacheManager();
         cacheManager.get("sample").peek(Cache::invalidate);
 
         final Option<Cache<String, Long>> cache = cacheManager.get("sample");
@@ -121,10 +121,5 @@ public class CacheServiceTests {
 
         final Option<Long> content = cache.get().get("sample_key");
         Assertions.assertTrue(content.absent());
-    }
-
-    @AfterEach
-    void reset() {
-        this.applicationContext.get(JUnitCacheManager.class).reset();
     }
 }
