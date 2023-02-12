@@ -22,7 +22,3 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-web")
     implementation(libs.bundles.jetty)
 }
-
-configure<org.dockbox.hartshorn.gradle.harness.TestHarnessExtension> {
-    projectType = org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType.IMPLEMENTATION
-}

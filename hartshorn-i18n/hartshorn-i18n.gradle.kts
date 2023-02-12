@@ -26,5 +26,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
 
-    testImplementation(defaultProject(project(":hartshorn-config")))
+    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
 }

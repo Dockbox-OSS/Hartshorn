@@ -39,7 +39,3 @@ dependencies {
     testImplementation(libs.httpclient)
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
 }
-
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.DEFINITION
-}
