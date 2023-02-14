@@ -28,4 +28,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
 
     testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

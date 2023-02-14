@@ -27,4 +27,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
 
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

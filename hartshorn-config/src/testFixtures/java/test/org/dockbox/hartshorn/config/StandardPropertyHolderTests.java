@@ -36,12 +36,14 @@ public abstract class StandardPropertyHolderTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    protected abstract ObjectMapper objectMapper();
+    protected abstract ObjectMapper objectMapper(ApplicationContext applicationContext);
 
     protected PropertyHolder propertyHolder() {
         return new StandardPropertyHolder(
-                this.applicationContext, this.applicationContext,
-                this.objectMapper(), this.objectMapper()
+                this.applicationContext,
+                this.applicationContext,
+                this.objectMapper(this.applicationContext),
+                this.objectMapper(this.applicationContext)
         );
     }
 

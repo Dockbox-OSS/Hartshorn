@@ -30,4 +30,5 @@ dependencies {
     implementation(libs.bundles.jackson)
 
     testImplementation(testFixtures(project(":hartshorn-config")))
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

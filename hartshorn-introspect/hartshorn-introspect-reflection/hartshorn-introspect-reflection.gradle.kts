@@ -26,4 +26,6 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
     implementation("org.dockbox.hartshorn:hartshorn-discovery")
     testImplementation(testFixtures(project(":hartshorn-introspect")))
+
+    annotationProcessor("org.dockbox.hartshorn:hartshorn-discovery")
 }

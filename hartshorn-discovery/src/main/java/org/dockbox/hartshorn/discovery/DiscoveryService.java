@@ -17,21 +17,22 @@
 package org.dockbox.hartshorn.discovery;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class DiscoveryService {
 
-    private static final DiscoveryService instance = new DiscoveryService();
+    private static final DiscoveryService DISCOVERY_SERVICE = new DiscoveryService();
 
-    private final MultiMap<Class<?>, Class<?>> types = new SynchronizedHashSetMultiMap<>();
+    private final Map<Class<?>, Class<?>> types = new ConcurrentHashMap<>();
 
     private DiscoveryService() {
-        if (instance != null) throw new IllegalStateException("Already instantiated");
+        if (DISCOVERY_SERVICE != null) throw new IllegalStateException("Already instantiated");
         // Check that the class is being created by itself
         final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         if (stackTrace.length < 3 || !stackTrace[2].getClassName().equals(DiscoveryService.class.getName())) {
@@ -41,33 +42,7 @@ public final class DiscoveryService {
 
     @NonNull
     public static DiscoveryService instance() {
-        return instance;
-    }
-
-    public void register(final Class<?> type, final Class<?> implementation) {
-        this.verifyRegistration(type, implementation);
-        this.types.put(type, implementation);
-    }
-
-    private void verifyRegistration(final Class<?> type, final Class<?> implementation) {
-        if (!type.isAssignableFrom(implementation)) {
-            throw new IllegalArgumentException("Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
-        }
-        try {
-            final Constructor<?> constructor = implementation.getConstructor();
-            if (!constructor.canAccess(this)) constructor.setAccessible(true);
-        }
-        catch (final NoSuchMethodException e) {
-            throw new IllegalArgumentException("Implementation " + implementation.getName() + " does not have a default constructor");
-        }
-    }
-
-    public MultiMap<Class<?>, Class<?>> types() {
-        return this.types;
-    }
-
-    public void clear() {
-        this.types.clear();
+        return DISCOVERY_SERVICE;
     }
 
     public boolean contains(final Class<?> type) {
@@ -76,23 +51,70 @@ public final class DiscoveryService {
 
     @NonNull
     public <T> T discover(final Class<T> type) throws ServiceDiscoveryException {
-        if (this.types().containsKey(type)) {
-            final Optional<T> optional = this.types().get(type).stream().findFirst()
-                    .map(implementation -> this.loadServiceInstance(type, implementation));
+        final String name = type.getName();
 
-            if (optional.isPresent()) return optional.get();
+        final Class<?> implementationType = this.types.containsKey(type)
+                ? this.types.get(type)
+                : this.tryLoadDiscoveryFile(type, name);
+
+        if (implementationType != null) {
+            return this.loadServiceInstance(type, implementationType);
         }
-        throw new ServiceDiscoveryException("No implementation found for type " + type.getName());
+        throw new ServiceDiscoveryException("No implementation found for type " + name);
+    }
+
+    private <T> Class<?> tryLoadDiscoveryFile(final Class<T> type, final String name) {
+        final InputStream resource = this.getClass().getClassLoader().getResourceAsStream(getDiscoveryFileName(name));
+
+        if (resource != null) {
+            try {
+                final String resourceString = new String(resource.readAllBytes());
+                final Class<?> implementationType = Class.forName(resourceString);
+
+                this.verifyRegistration(type, implementationType);
+                this.types.put(type, implementationType);
+
+                return implementationType;
+            }
+            catch (final IOException e) {
+                throw new ServiceDiscoveryException("Failed to read discovery file for type " + name, e);
+            }
+            catch (final ClassNotFoundException e) {
+                throw new ServiceDiscoveryException("Failed to load implementation class for type " + name, e);
+            }
+        }
+        return null;
+    }
+
+    private void verifyRegistration(final Class<?> type, final Class<?> implementation) {
+        if (!type.isAssignableFrom(implementation)) {
+            throw new IllegalArgumentException("Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
+        }
+        try {
+            implementation.getConstructor();
+        }
+        catch (final NoSuchMethodException e) {
+            throw new IllegalArgumentException("Implementation " + implementation.getName() + " does not have a default constructor");
+        }
     }
 
     private <T> T loadServiceInstance(final Class<T> type, final Class<?> implementationClass) {
         try {
-            final Object instance = implementationClass.getConstructor().newInstance();
+            final Constructor<?> constructor = implementationClass.getConstructor();
+
+            constructor.setAccessible(true);
+            final Object instance = constructor.newInstance();
+            constructor.setAccessible(false);
+
             return type.cast(instance);
         }
         catch (final InstantiationException | NoSuchMethodException | InvocationTargetException |
                      IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    static String getDiscoveryFileName(final String name) {
+        return "META-INF/" + name + ".disco";
     }
 }

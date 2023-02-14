@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.discovery;
 
 import com.google.auto.service.AutoService;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -26,20 +28,67 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeMirror;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 
 @SupportedAnnotationTypes("org.dockbox.hartshorn.discovery.ServiceLoader")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DiscoveryServiceProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment) {
-        System.out.println("Processing");
-        roundEnvironment.getElementsAnnotatedWith(ServiceLoader.class).forEach(element -> {
+        final Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(ServiceLoader.class);
+        if (elements.isEmpty()) return true;
+
+        for (final Element element : elements) {
             final ServiceLoader annotation = element.getAnnotation(ServiceLoader.class);
-            System.out.println(annotation.value());
-        });
-        return false;
+
+            final TypeMirror implementationType = element.asType();
+            final TypeMirror targetType = getTargetType(annotation);
+
+            final FileObject resource = this.createResource(targetType.toString());
+            if (resource == null) continue;
+
+            try {
+                final Writer writer = resource.openWriter();
+                writer.write(implementationType.toString());
+                writer.close();
+            }
+            catch (final IOException e) {
+                System.err.println("Failed to create service loader file for " + annotation.value().getName() + " with implementation " + implementationType.toString());
+            }
+        }
+        return true;
+    }
+
+    private FileObject createResource(final String name) {
+        try {
+            return this.processingEnv.getFiler().createResource(
+                    StandardLocation.CLASS_OUTPUT,
+                    "",
+                    DiscoveryService.getDiscoveryFileName(name)
+            );
+        }
+        catch (final IOException e) {
+            System.err.println("Failed to create Hartshorn service discovery file for " + name);
+            return null;
+        }
+    }
+
+    private static TypeMirror getTargetType(final ServiceLoader annotation) {
+        try {
+            annotation.value();
+        }
+        catch (final MirroredTypeException mirroredTypeException) {
+            return mirroredTypeException.getTypeMirror();
+        }
+        assert false : "This code should not be executed, because the annotation processor should have thrown an exception";
+        return null;
     }
 }

@@ -29,4 +29,5 @@ dependencies {
     implementation(libs.caffeine)
 
     testImplementation(testFixtures(project(":hartshorn-cache")))
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

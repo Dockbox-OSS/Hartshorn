@@ -21,9 +21,8 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
 
-import test.org.dockbox.hartshorn.annotations.Demo;
-
 @Demo
+@SuppressWarnings("ALL")
 public class ReflectTestType extends ParentTestType {
 
     @Demo

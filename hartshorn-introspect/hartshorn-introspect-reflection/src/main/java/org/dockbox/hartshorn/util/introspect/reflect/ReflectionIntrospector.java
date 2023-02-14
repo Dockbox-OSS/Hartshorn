@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -85,8 +86,10 @@ public class ReflectionIntrospector implements Introspector {
             return this.voidType();
         }
         else if (this.proxyLookup.isProxy(instance)) {
-            final Class<T> unproxied = this.proxyLookup.unproxy(instance);
-            return this.introspect(unproxied);
+            final Option<Class<T>> unproxied = this.proxyLookup.unproxy(instance);
+            return unproxied.present()
+                    ? this.introspect(unproxied.get())
+                    : this.voidType();
         }
         else {
             return this.introspect((Class<T>) instance.getClass());
@@ -128,12 +131,12 @@ public class ReflectionIntrospector implements Introspector {
 
     @Override
     public FieldView<?, ?> introspect(final Field field) {
-        return this.fieldViewCache.computeIfAbsent(field, _0 -> new ReflectionFieldView<>(this, field));
+        return this.fieldViewCache.computeIfAbsent(field, fieldKey -> new ReflectionFieldView<>(this, field));
     }
 
     @Override
     public ParameterView<?> introspect(final Parameter parameter) {
-        return this.parameterViewCache.computeIfAbsent(parameter, _0 -> new ReflectionParameterView<>(this, parameter));
+        return this.parameterViewCache.computeIfAbsent(parameter, fieldKey -> new ReflectionParameterView<>(this, parameter));
     }
 
     @Override

@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.ConverterException;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
-import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
 
 @UseCommands
 @HartshornTest(includeBasePackages = false)

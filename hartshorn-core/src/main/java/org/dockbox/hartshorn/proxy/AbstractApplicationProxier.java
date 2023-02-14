@@ -88,11 +88,14 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     }
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(final T instance) {
         for (final ProxyLookup lookup : this.proxyLookups) {
-            if (lookup.isProxy(instance)) return lookup.unproxy(instance);
+            if (lookup.isProxy(instance)) {
+                final Option<Class<T>> unproxied = lookup.unproxy(instance);
+                if (unproxied.present()) return unproxied;
+            }
         }
-        return instance != null ? TypeUtils.adjustWildcards(instance.getClass(), Class.class) : null;
+        return Option.empty();
     }
 
     @Override

@@ -375,7 +375,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(final T instance) {
         return this.applicationProxier.unproxy(instance);
     }
 

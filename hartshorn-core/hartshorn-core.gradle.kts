@@ -44,4 +44,5 @@ dependencies {
 
     testImplementation(libs.scala)
     testImplementation(libs.groovy)
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

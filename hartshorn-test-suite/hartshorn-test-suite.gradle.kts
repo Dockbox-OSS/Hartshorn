@@ -24,4 +24,6 @@ dependencies {
     implementation(libs.bundles.test)
 
     runtimeOnly(libs.junitJupiterEngine)
+
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

@@ -27,5 +27,4 @@ apply {
 
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-util")
-    annotationProcessor("org.dockbox.hartshorn:hartshorn-discovery")
 }

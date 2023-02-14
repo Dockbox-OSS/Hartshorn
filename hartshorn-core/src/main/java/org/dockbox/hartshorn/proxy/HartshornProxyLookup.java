@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link ProxyLookup} implementation for Hartshorn's own proxy implementation. This implementation
@@ -27,11 +28,12 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 public class HartshornProxyLookup implements ProxyLookup {
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(final T instance) {
         if (instance instanceof Proxy<?> proxy) {
-            return TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
+            final Class<T> unproxied = TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
+            return Option.of(unproxied);
         }
-        return TypeUtils.adjustWildcards(instance.getClass(), Class.class);
+        return Option.empty();
     }
 
     @Override

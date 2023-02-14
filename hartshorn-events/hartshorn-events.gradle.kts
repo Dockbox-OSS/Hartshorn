@@ -22,6 +22,7 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    // For expression evaluation
-    testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
+
+    testImplementation("org.dockbox.hartshorn:hartshorn-hsl") // For expression evaluation
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

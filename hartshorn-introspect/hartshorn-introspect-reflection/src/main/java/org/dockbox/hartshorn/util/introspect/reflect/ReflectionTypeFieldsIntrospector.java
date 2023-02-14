@@ -68,7 +68,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public Option<FieldView<T, ?>> named(String name) {
+    public Option<FieldView<T, ?>> named(final String name) {
         this.collect();
         if (this.fields.containsKey(name))
             return Option.of(this.fields.get(name));
@@ -85,14 +85,14 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation) {
+    public List<FieldView<T, ?>> annotatedWith(final Class<? extends Annotation> annotation) {
         return this.all().stream()
                 .filter(field -> field.annotations().has(annotation))
                 .toList();
     }
 
     @Override
-    public <F> List<FieldView<T, ? extends F>> typed(Class<F> type) {
+    public <F> List<FieldView<T, ? extends F>> typed(final Class<F> type) {
         return this.all().stream()
                 .filter(field -> field.type().is(type))
                 .map(field -> (FieldView<T, ? extends F>) field)
@@ -100,7 +100,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public <F> List<FieldView<T, ? extends F>> typed(GenericType<F> type) {
+    public <F> List<FieldView<T, ? extends F>> typed(final GenericType<F> type) {
         return this.all().stream()
                 .filter(field -> field.type().is(type.asClass().get()))
                 .filter(field -> {
@@ -109,7 +109,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
                     final Option<Class<F>> classType = type.asClass();
                     if (classType.absent()) return false;
 
-                    final TypeView<F> targetGenericType = introspector.introspect(classType.get());
+                    final TypeView<F> targetGenericType = this.introspector.introspect(classType.get());
                     final List<TypeView<?>> targetTypeParameters = targetGenericType.typeParameters().all();
                     if (targetTypeParameters.size() != typeParameters.size()) return false;
 

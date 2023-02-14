@@ -23,4 +23,6 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
     api(libs.bundles.jackson)
+
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

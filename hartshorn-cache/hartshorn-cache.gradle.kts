@@ -27,4 +27,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
 
     api(libs.caffeine)
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

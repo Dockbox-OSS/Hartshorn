@@ -38,4 +38,5 @@ dependencies {
 
     testImplementation(libs.httpclient)
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

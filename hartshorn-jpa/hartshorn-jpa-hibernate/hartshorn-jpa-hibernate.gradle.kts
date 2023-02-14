@@ -36,4 +36,5 @@ dependencies {
     testImplementation(libs.mysql)
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
     testImplementation(testFixtures(project(":hartshorn-jpa")))
+    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
 }

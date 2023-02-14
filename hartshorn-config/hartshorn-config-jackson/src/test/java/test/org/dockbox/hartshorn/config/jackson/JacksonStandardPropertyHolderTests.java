@@ -20,16 +20,12 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.jackson.JacksonObjectMapper;
 
-import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.config.StandardPropertyHolderTests;
 
 public class JacksonStandardPropertyHolderTests extends StandardPropertyHolderTests {
 
-    @Inject
-    private ApplicationContext applicationContext;
-
     @Override
-    protected ObjectMapper objectMapper() {
-        return new JacksonObjectMapper(this.applicationContext);
+    protected ObjectMapper objectMapper(final ApplicationContext applicationContext) {
+        return new JacksonObjectMapper(applicationContext);
     }
 }
