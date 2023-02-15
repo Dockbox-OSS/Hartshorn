@@ -35,7 +35,7 @@ public abstract class CacheServiceTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    protected abstract CacheManager cacheManager();
+    protected abstract CacheManager cacheManager(ApplicationContext applicationContext);
 
     @Test
     @TestComponents(NonAbstractCacheService.class)
@@ -92,7 +92,7 @@ public abstract class CacheServiceTests {
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.cacheManager();
+        final CacheManager cacheManager = this.cacheManager(this.applicationContext);
         cacheManager.get("sample").peek(cache -> cache.put("sample_key", 3L));
 
         final Option<Cache<String, Long>> cache = cacheManager.get("sample");
@@ -113,7 +113,7 @@ public abstract class CacheServiceTests {
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.cacheManager();
+        final CacheManager cacheManager = this.cacheManager(this.applicationContext);
         cacheManager.get("sample").peek(Cache::invalidate);
 
         final Option<Cache<String, Long>> cache = cacheManager.get("sample");

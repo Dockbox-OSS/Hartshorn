@@ -17,10 +17,8 @@
 package test.org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
@@ -36,20 +34,11 @@ public abstract class StandardPropertyHolderTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    protected abstract ObjectMapper objectMapper(ApplicationContext applicationContext);
-
-    protected PropertyHolder propertyHolder() {
-        return new StandardPropertyHolder(
-                this.applicationContext,
-                this.applicationContext,
-                this.objectMapper(this.applicationContext),
-                this.objectMapper(this.applicationContext)
-        );
-    }
+    protected abstract PropertyHolder propertyHolder(ApplicationContext applicationContext);
 
     @Test
     void testPropertyHolder() {
-        final PropertyHolder propertyHolder = this.propertyHolder();
+        final PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
 
         propertyHolder.set("user.name", "John Doe");
 
@@ -77,7 +66,7 @@ public abstract class StandardPropertyHolderTests {
     @Test
     @TestComponents(ComponentWithUserValue.class)
     void testValueComponents() {
-        final PropertyHolder propertyHolder = this.propertyHolder();
+        final PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
         propertyHolder.set("user.name", "John Doe");
         propertyHolder.set("user.address.city", "Darwin City");
         propertyHolder.set("user.address.street", "Darwin Lane");

@@ -17,15 +17,14 @@
 package test.org.dockbox.hartshorn.config.jackson;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.config.jackson.JacksonObjectMapper;
+import org.dockbox.hartshorn.config.properties.PropertyHolder;
 
 import test.org.dockbox.hartshorn.config.StandardPropertyHolderTests;
 
 public class JacksonStandardPropertyHolderTests extends StandardPropertyHolderTests {
 
     @Override
-    protected ObjectMapper objectMapper(final ApplicationContext applicationContext) {
-        return new JacksonObjectMapper(applicationContext);
+    protected PropertyHolder propertyHolder(final ApplicationContext applicationContext) {
+        return applicationContext.get(PropertyHolder.class);
     }
 }

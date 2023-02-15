@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.introspect.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -184,29 +183,29 @@ public class HartshornLifecycleExtension implements
         final ApplicationBuilder<?, ?> finalApplicationBuilder = applicationBuilder;
 
         for (final AnnotatedElement element : testComponentSources) {
-            Option.of(element.getAnnotation(HartshornTest.class))
-                    .peek(annotation -> {
-                        for (final Class<? extends ComponentProcessor> processor : annotation.processors()) {
-                            final ComponentProcessor componentProcessor = Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class)
-                                    .mapError(ApplicationRuntimeException::new)
-                                    .rethrow()
-                                    .get();
+            Option.of(element.getAnnotation(HartshornTest.class)).peek(annotation -> {
+                Arrays.stream(annotation.processors())
+                        .map(processor -> Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class)
+                                .mapError(ApplicationRuntimeException::new)
+                                .rethrow()
+                                .get()
+                        ).forEach(componentProcessor -> {
                             if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
                                 finalApplicationBuilder.preProcessor(preProcessor);
                             }
                             else if (componentProcessor instanceof ComponentPostProcessor postProcessor) {
                                 finalApplicationBuilder.postProcessor(postProcessor);
                             }
-                        }
+                        });
 
-                        finalApplicationBuilder
-                                .scanPackages(annotation.scanPackages())
-                                .includeBasePackages(annotation.includeBasePackages());
+                finalApplicationBuilder
+                        .scanPackages(annotation.scanPackages())
+                        .includeBasePackages(annotation.includeBasePackages());
 
-                        if (annotation.mainClass() != Void.class) {
-                            finalApplicationBuilder.mainClass(annotation.mainClass());
-                        }
-                    });
+                if (annotation.mainClass() != Void.class) {
+                    finalApplicationBuilder.mainClass(annotation.mainClass());
+                }
+            });
 
             if (applicationBuilder.mainClass() == null) {
                 applicationBuilder.mainClass(testClass);
@@ -216,7 +215,7 @@ public class HartshornLifecycleExtension implements
                     .peek(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
         }
 
-        applicationBuilder.arguments(arguments.toArray(new String[0]))
+        applicationBuilder.arguments(arguments.toArray(String[]::new))
                 // Properties below are sensible defaults for testing, but can be enabled/disabled by modifying the application builder in a @ModifyApplication
                 // method if needed.
                 .enableBatchMode(true) // Enable batch mode, to make use of additional caching
@@ -224,6 +223,7 @@ public class HartshornLifecycleExtension implements
 
         for (final AnnotatedElement testComponentSource : testComponentSources) {
             if (testComponentSource == null) continue;
+
             if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
                 final TestComponents testComponents = testComponentSource.getAnnotation(TestComponents.class);
                 for (final Class<?> component : testComponents.value()) {
@@ -237,34 +237,32 @@ public class HartshornLifecycleExtension implements
                 .toList();
 
         for (final Method factoryModifier : methods) {
-            if (!Modifier.isStatic(factoryModifier.getModifiers())) {
+            if (!Modifier.isStatic(factoryModifier.getModifiers()))
                 throw new IllegalStateException("Expected " + factoryModifier.getName() + " to be static.");
-            }
-            if (ApplicationBuilder.class.isAssignableFrom(factoryModifier.getReturnType())) {
-                if (!factoryModifier.canAccess(null)) factoryModifier.setAccessible(true);
 
-                final Class<?>[] parameters = factoryModifier.getParameterTypes();
-                if (parameters.length == 0) {
-                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class)
-                            .mapError(ApplicationException::new)
-                            .rethrow()
-                            .orNull();
-                }
-                else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
-                    final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
-                    applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class)
-                            .mapError(ApplicationException::new)
-                            .rethrow()
-                            .orNull();
-                }
-                else {
-                    throw new InvalidFactoryModifierException("parameters", parameters[0]);
-                }
-                factoryModifier.setAccessible(false);
-            }
-            else {
+            if (!ApplicationBuilder.class.isAssignableFrom(factoryModifier.getReturnType()))
                 throw new InvalidFactoryModifierException("return type", factoryModifier.getReturnType());
+
+            if (!factoryModifier.canAccess(null))
+                factoryModifier.setAccessible(true);
+
+            final Class<?>[] parameters = factoryModifier.getParameterTypes();
+            if (parameters.length == 0) {
+                applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class)
+                        .mapError(ApplicationException::new)
+                        .rethrow()
+                        .orNull();
             }
+            else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
+                final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
+                applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class)
+                        .mapError(ApplicationException::new)
+                        .rethrow()
+                        .orNull();
+            }
+            else throw new InvalidFactoryModifierException("parameters", parameters[0]);
+
+            factoryModifier.setAccessible(false);
         }
 
         return applicationBuilder;

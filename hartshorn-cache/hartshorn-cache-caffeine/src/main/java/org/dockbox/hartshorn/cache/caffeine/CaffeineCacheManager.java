@@ -16,10 +16,20 @@
 
 package org.dockbox.hartshorn.cache.caffeine;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.CacheFactory;
 import org.dockbox.hartshorn.cache.CacheManagerImpl;
+import org.dockbox.hartshorn.component.Component;
 
+import jakarta.inject.Inject;
+
+@Component(singleton = true)
 public class CaffeineCacheManager extends CacheManagerImpl {
+
+    @Inject
+    public CaffeineCacheManager(final ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
 
     @Override
     protected CacheFactory factory() {

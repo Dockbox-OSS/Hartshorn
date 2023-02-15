@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.proxy;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.MethodWrapper;
 import org.dockbox.hartshorn.proxy.Proxy;
@@ -337,7 +338,7 @@ public class ProxyTests {
         Assertions.assertNotNull(manager.targetClass());
 
         Assertions.assertNotEquals(proxyType, manager.proxyClass());
-        Assertions.assertEquals(proxyType, manager.targetClass());
+        Assertions.assertSame(proxyType, manager.targetClass());
 
         Assertions.assertTrue(this.applicationContext.environment().isProxy(manager.proxyClass()));
     }
@@ -424,5 +425,25 @@ public class ProxyTests {
         final Option<Supplier<String>> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
         Assertions.assertEquals("foo", proxy.get().get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("factories")
+    void testIsProxyIsTrueIfTypeIsProxy(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<?, ?> factory = factoryFn.apply(Object.class, this.applicationContext);
+        final Object proxy = factory.proxy().get();
+
+        // Ensure we introspect .getClass directly, as introspecting the instance will
+        // automatically unproxy the view.
+        final TypeView<?> view = this.applicationContext.environment().introspect(proxy.getClass());
+        final boolean isProxy = this.applicationContext.get(ViewContextAdapter.class).isProxy(view);
+        Assertions.assertTrue(isProxy);
+    }
+
+    @Test
+    void testIsProxyIsFalseIfTypeIsNormal() {
+        final TypeView<?> view = this.applicationContext.environment().introspect(Object.class);
+        final boolean isProxy = this.applicationContext.get(ViewContextAdapter.class).isProxy(view);
+        Assertions.assertFalse(isProxy);
     }
 }

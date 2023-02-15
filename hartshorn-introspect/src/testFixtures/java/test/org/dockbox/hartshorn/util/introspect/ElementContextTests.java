@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -86,19 +85,6 @@ public abstract class ElementContextTests {
                 Arguments.of(Integer.class, 0),
                 Arguments.of(Long.class, 0L),
                 Arguments.of(Short.class, 0)
-        );
-    }
-
-    public static Stream<Arguments> primitiveStrings() {
-        return Stream.of(
-                Arguments.of(Boolean.class, "true", true),
-                Arguments.of(Byte.class, "0", (byte) 0),
-                Arguments.of(Character.class, "\u0000", '\u0000'),
-                Arguments.of(Double.class, "1.0d", 1.0d),
-                Arguments.of(Float.class, "1.0f", 1.0f),
-                Arguments.of(Integer.class, "1", 1),
-                Arguments.of(Long.class, "0", 0L),
-                Arguments.of(Short.class, "0", (short) 0)
         );
     }
     
@@ -299,15 +285,10 @@ public abstract class ElementContextTests {
     @Test
     void testInterfacesAreObtainable() {
         Assertions.assertEquals(1, this.introspector().introspect(ImplementationWithTP.class).interfaces().size());
-        Assertions.assertEquals(this.introspector().introspect(InterfaceWithTP.class), this.introspector().introspect(ImplementationWithTP.class).interfaces().get(0));
-    }
-
-    @ParameterizedTest
-    @MethodSource("primitiveStrings")
-    @Disabled("TODO: Move to hartshorn-utils")
-    void testPrimitivesFromString(final Class<?> primitive, final String value, final Object real) {
-//        final Object out = TypeUtils.toPrimitive(primitive, value);
-//        Assertions.assertEquals(real, out);
+        Assertions.assertEquals(
+                this.introspector().introspect(InterfaceWithTP.class),
+                this.introspector().introspect(ImplementationWithTP.class).interfaces().get(0)
+        );
     }
 
     @Test

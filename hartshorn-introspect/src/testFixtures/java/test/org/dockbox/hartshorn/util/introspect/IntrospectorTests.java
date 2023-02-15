@@ -17,7 +17,6 @@
 package test.org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -28,7 +27,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -225,7 +223,7 @@ public abstract class IntrospectorTests {
 
     @Test
     void testLookupReturnsClassIfPresent() {
-        final TypeView<?> lookup = this.introspector().introspect("test.org.dockbox.hartshorn.components.reflect.ReflectTestType");
+        final TypeView<?> lookup = this.introspector().introspect(ReflectTestType.class.getName());
         Assertions.assertNotNull(lookup);
         Assertions.assertSame(ReflectTestType.class, lookup.type());
     }
@@ -340,28 +338,6 @@ public abstract class IntrospectorTests {
         final TypeView<ReflectTestType> type = this.introspector().introspect(ReflectTestType.class);
         final List<ConstructorView<ReflectTestType>> constructors = type.constructors().annotatedWith(Demo.class);
         Assertions.assertEquals(1, constructors.size());
-    }
-
-    @Test
-    @Disabled("TODO: Move to proxy tests")
-    void testIsProxyIsTrueIfTypeIsProxy() throws ApplicationException {
-//        final Object proxy = this.applicationContext.environment()
-//                .factory(Object.class)
-//                .proxy().get();
-//
-//        // Ensure we introspect .getClass directly, as introspecting the instance will
-//        // automatically unproxy the view.
-//        final TypeView<?> view = this.introspector().introspect(proxy.getClass());
-//        final boolean isProxy = this.applicationContext.get(ViewContextAdapter.class).isProxy(view);
-//        Assertions.assertTrue(isProxy);
-    }
-
-    @Test
-    @Disabled("TODO: Move to proxy tests")
-    void testIsProxyIsFalseIfTypeIsNormal() {
-//        final TypeView<?> view = this.introspector().introspect(ReflectTestType.class);
-//        final boolean isProxy = this.applicationContext.get(ViewContextAdapter.class).isProxy(view);
-//        Assertions.assertFalse(isProxy);
     }
 
     @ParameterizedTest
