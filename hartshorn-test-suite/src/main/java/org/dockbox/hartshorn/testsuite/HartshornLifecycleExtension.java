@@ -157,7 +157,7 @@ public class HartshornLifecycleExtension implements
         populator.populate(instance);
     }
 
-    public static Option<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, Class<?> activator) {
+    public static Option<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, final Class<?> activator) {
         Class<?> next = activator;
         final Set<Annotation> serviceActivators = new HashSet<>();
         while (next != null) {

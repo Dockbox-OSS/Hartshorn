@@ -154,11 +154,11 @@ allprojects {
         // and we don't want to force users to use CF.
         implementation(rootProject.libs.checkerQual)
 
-        testImplementation(project(":hartshorn-test-suite"))
+        testImplementation("org.dockbox.hartshorn:hartshorn-test-suite")
         testImplementation(rootProject.libs.bundles.test)
         testImplementation(rootProject.libs.junitJupiterEngine)
 
-        testFixturesImplementation(project(":hartshorn-test-suite"))
+        testFixturesImplementation("org.dockbox.hartshorn:hartshorn-test-suite")
         testFixturesImplementation(rootProject.libs.bundles.test)
         testFixturesImplementation(rootProject.libs.junitJupiterEngine)
     }

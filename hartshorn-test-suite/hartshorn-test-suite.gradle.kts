@@ -25,5 +25,5 @@ dependencies {
 
     runtimeOnly(libs.junitJupiterEngine)
 
-    testImplementation(project(":hartshorn-introspect:hartshorn-introspect-reflection"))
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }
