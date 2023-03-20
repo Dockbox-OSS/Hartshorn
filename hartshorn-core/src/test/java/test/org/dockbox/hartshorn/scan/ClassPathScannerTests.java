@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-import org.dockbox.hartshorn.application.scan.classpath.ClassPathScanner;
-import org.dockbox.hartshorn.application.scan.classpath.ClassPathWalkingException;
+import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScanner;
+import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathWalkingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

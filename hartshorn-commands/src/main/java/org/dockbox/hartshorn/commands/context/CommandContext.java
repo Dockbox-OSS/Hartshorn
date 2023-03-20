@@ -30,32 +30,32 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface CommandContext extends ParserContext, ContextCarrier {
 
     /**
-     * Gets the argument or flag associated with the given <code>key</code>, if it exists. If
-     * no argument or flag with the given <code>key</code> exists, <code>null</code> is returned
-     * instead. The value of the argument is cast to type <code>T</code>.
+     * Gets the argument or flag associated with the given {@code key}, if it exists. If
+     * no argument or flag with the given {@code key} exists, {@code null} is returned
+     * instead. The value of the argument is cast to type {@code T}.
      *
      * @param key The key of the argument or flag
      * @param <T> The expected type of the argument or flag
      *
-     * @return The argument or flag, or <code>null</code>
-     * @throws ClassCastException If the argument or flag is not of type <code>T</code>
+     * @return The argument or flag, or {@code null}
+     * @throws ClassCastException If the argument or flag is not of type {@code T}
      */
     @Nullable
     <T> T get(String key, Class<T> type);
 
     /**
-     * Checks for the presence of an argument or flag associated with the given <code>key</code>.
+     * Checks for the presence of an argument or flag associated with the given {@code key}.
      *
      * @param key The key of the argument or flag
      *
-     * @return <code>true</code> if a argument or flag exists, else <code>false</code>
+     * @return {@code true} if a argument or flag exists, else {@code false}
      */
     boolean has(String key);
 
     /**
-     * Gets the argument or flag associated with the given <code>key</code>, if it exists. The
-     * value of the argument is cast to type <code>T</code>. If the argument or flag is not of type
-     * <code>T</code>, or does not exist, {@link Option#empty()} is returned instead.
+     * Gets the argument or flag associated with the given {@code key}, if it exists. The
+     * value of the argument is cast to type {@code T}. If the argument or flag is not of type
+     * {@code T}, or does not exist, {@link Option#empty()} is returned instead.
      *
      * @param key The key of the argument or flag
      * @param <T> The expected type of the argument or flag
@@ -66,7 +66,7 @@ public interface CommandContext extends ParserContext, ContextCarrier {
 
     /**
      * Gets the first {@link CommandParameter} in the form of an argument associated with the given
-     * <code>key</code>, if it exists. If the argument is not of type <code>T</code>, or does not exist,
+     * {@code key}, if it exists. If the argument is not of type {@code T}, or does not exist,
      * {@link Option#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the argument.
      *
@@ -79,7 +79,7 @@ public interface CommandContext extends ParserContext, ContextCarrier {
 
     /**
      * Gets the first {@link CommandParameter} in the form of a flag associated with the given
-     * <code>key</code>, if it exists. If the flag is not of type <code>T</code>, or does not exist,
+     * {@code key}, if it exists. If the flag is not of type {@code T}, or does not exist,
      * {@link Option#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the flag.
      *
@@ -102,13 +102,13 @@ public interface CommandContext extends ParserContext, ContextCarrier {
     /**
      * Gets the raw command as it was provided by the {@link #source()}. For example, if the command has
      * the following definition:
-     * <pre><code>
+     * <pre>{@code
      *     "command &#60;argument&#62;"
-     * </code></pre>
+     * }</pre>
      * The raw command may look like:
-     * <pre><code>
+     * <pre>{@code
      *     "command argumentValue"
-     * </code></pre>
+     * }</pre>
      *
      * @return The raw command
      */

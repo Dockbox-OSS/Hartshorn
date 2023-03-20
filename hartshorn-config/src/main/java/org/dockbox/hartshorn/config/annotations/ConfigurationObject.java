@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.config.annotations;
 
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.util.Property;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 import java.lang.annotation.ElementType;

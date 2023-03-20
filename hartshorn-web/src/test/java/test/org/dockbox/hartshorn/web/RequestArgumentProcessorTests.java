@@ -94,7 +94,7 @@ public class RequestArgumentProcessorTests {
         final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
         Mockito.when(annotationsIntrospector.get(HttpRequest.class)).thenReturn(Option.of(httpRequest));
 
-        final ExecutableElementView<?> element = Mockito.mock(ExecutableElementView.class);
+        final ExecutableElementView<?, ?> element = Mockito.mock(ExecutableElementView.class);
         Mockito.when(element.annotations()).thenReturn(annotationsIntrospector);
 
         // Different order due to generic return type

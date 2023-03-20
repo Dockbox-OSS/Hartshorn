@@ -65,7 +65,7 @@ public class ParameterLoaderTests {
         Mockito.when(parametersIntrospector.all()).thenReturn(parameters);
         Mockito.when(methodContext.parameters()).thenReturn(parametersIntrospector);
 
-        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, null, null, null);
+        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, null, null);
         final List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
         Assertions.assertNotNull(objects);

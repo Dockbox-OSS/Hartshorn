@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -44,8 +44,8 @@ import java.util.regex.Pattern;
 /**
  * Simple implementation of {@link CommandDefinitionContext}. Creates a definition based on the
  * <a href="https://minecraft.fandom.com/wiki/Module:Command/Syntax">Minecraft Command Syntax</a>.
- * <p>Required arguments are formatted as <code>&lt;name&gt;</code>, optional arguments are formatted
- * as <code>[name]</code>, and flags are formatted as <code>-f</code> (short) or <code>--flag</code>
+ * <p>Required arguments are formatted as {@code <name>}, optional arguments are formatted
+ * as {@code [name]}, and flags are formatted as {@code -f} (short) or {@code --flag}
  * (long).
  * <p>See {@link CommandDefinitionContextImpl#FLAG} for details on the flag pattern, and {@link CommandDefinitionContextImpl#ARGUMENT}
  * for details on the argument pattern. Both flags and arguments can be defined with custom types, which
@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * for this definition are explained at {@link CommandDefinitionContextImpl#ELEMENT_VALUE}. If no
  * explicit type is defined, {@link CommandDefinitionContextImpl#DEFAULT_TYPE} is used.
  */
-public class CommandDefinitionContextImpl extends DefaultContext implements CommandDefinitionContext {
+public class CommandDefinitionContextImpl extends DefaultProvisionContext implements CommandDefinitionContext {
 
     /**
      * Represents the default type for command elements matched by {@link CommandDefinitionContextImpl#FLAG} or

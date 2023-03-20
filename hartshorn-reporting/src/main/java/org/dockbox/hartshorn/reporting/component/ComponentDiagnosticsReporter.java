@@ -20,22 +20,17 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import jakarta.inject.Named;
 
 public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
 

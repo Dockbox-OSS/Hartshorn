@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
 
@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class ConditionMatcherEventExecutionFilter extends DefaultContext implements EventExecutionFilter {
+public class ConditionMatcherEventExecutionFilter extends DefaultProvisionContext implements EventExecutionFilter {
 
     @Override
     public boolean accept(final Event event, final EventWrapper wrapper, final ComponentKey<?> target) {

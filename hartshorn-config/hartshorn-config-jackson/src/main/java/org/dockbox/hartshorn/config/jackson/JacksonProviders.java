@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
@@ -77,8 +78,8 @@ public class JacksonProviders {
     }
 
     @Binds(phase = DATA_MAPPER_PHASE + 32)
-    public ObjectMapper objectMapper() {
-        return new JacksonObjectMapper();
+    public ObjectMapper objectMapper(final ApplicationContext applicationContext) {
+        return new JacksonObjectMapper(applicationContext);
     }
 
     @Binds(phase = DATA_MAPPER_PHASE + 16) // Before ObjectMapper

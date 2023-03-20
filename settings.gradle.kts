@@ -20,44 +20,35 @@ gradle.startParameter.isContinueOnFailure = true
 
 includeBuild("gradle/plugins")
 
-includeAll(rootDir, "")
-configureChildren(rootProject)
+includeReconfigured(
+        ":hartshorn-util",
+        ":hartshorn-discovery",
+        ":hartshorn-introspect",
+        ":hartshorn-introspect:hartshorn-introspect-reflection",
+        ":hartshorn-core",
+        ":hartshorn-core:hartshorn-proxy-cglib",
+        ":hartshorn-core:hartshorn-proxy-javassist",
+        ":hartshorn-reporting",
+        ":hartshorn-hsl",
+        ":hartshorn-config",
+        ":hartshorn-config:hartshorn-config-jackson",
+        ":hartshorn-i18n",
+        ":hartshorn-events",
+        ":hartshorn-commands",
+        ":hartshorn-cache",
+        ":hartshorn-cache:hartshorn-cache-caffeine",
+        ":hartshorn-jpa",
+        ":hartshorn-jpa:hartshorn-jpa-hibernate",
+        ":hartshorn-web",
+        ":hartshorn-web:hartshorn-web-jetty",
+        ":hartshorn-web:hartshorn-web-freemarker",
+        ":hartshorn-test-suite",
+)
 
-/**
- * Include all subprojects in the given directory. This method will recursively
- * search for all subdirectories containing a file with the same name as the directory,
- * appended with ".gradle.kts". If such a file is found, it will be included as a subproject.
- *
- * This only includes the projects, it is expected that [configureChildren] is called
- * to configure the subprojects.
- *
- * @see configureChildren
- */
-fun includeAll(dir: File, prefix: String) {
-    dir.listFiles()?.forEach { file ->
-        if (file.isDirectory && File(file, "${file.name}.gradle.kts").exists()) {
-            include("${prefix}:${file.name}")
-            // Include all nested projects
-            includeAll(file, ":${file.name}")
-        }
-    }
-}
-
-/**
- * Configure all children of the given project. The [includeAll] method will include
- * all subprojects, but this method will configure them.
- *
- * This method follows the rule where each project is expected to have a file with the
- * same name as the project, appended with ".gradle.kts". As a result, the
- * [ProjectDescriptor.getBuildFileName] is replaced with the name of the project.
- *
- * @see includeAll
- */
-fun configureChildren(project: ProjectDescriptor) {
-    if (project.children.isNotEmpty()) {
-        project.children.forEach { child ->
-            child.buildFileName = "${child.name}.gradle.kts"
-            configureChildren(child)
-        }
+fun includeReconfigured(vararg paths: String) {
+    paths.forEach { path ->
+        include(path)
+        val project = project(path)
+        project.buildFileName = "${project.name}.gradle.kts"
     }
 }

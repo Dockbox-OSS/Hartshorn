@@ -18,9 +18,10 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.ObjectContainer;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
 @FunctionalInterface
 public interface ComponentInstanceFactory {
-    <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key);
+    <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key) throws ApplicationException;
 }

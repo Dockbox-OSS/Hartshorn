@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -46,7 +47,7 @@ public final class CyclingConstructorAnalyzer {
         if (constructors.isEmpty()) {
             final Option<? extends ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.absent()) {
-                if (type.constructors().bound().isEmpty()) {
+                if (type.constructors().annotatedWith(Bound.class).isEmpty()) {
                     return Attempt.of(new MissingInjectConstructorException(type));
                 }
                 else {

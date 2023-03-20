@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  *
  * <p>To specify when a component post processor should be active, and when the application should ignore
  * it, the processor will always require an activator annotation to be specified as type parameter
- * <code>A</code>. If the specified annotation is not annotated with {@link ServiceActivator}, it is up to
+ * {@code A}. If the specified annotation is not annotated with {@link ServiceActivator}, it is up to
  * the active {@link ApplicationContext} to decide whether this should be considered an error or not.
  *
  * <p>The component post processor will be called for each component that is created, and will be called

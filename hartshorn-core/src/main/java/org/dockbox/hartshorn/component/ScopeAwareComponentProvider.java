@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class ScopeAwareComponentProvider extends DefaultContext implements HierarchicalComponentProvider, ComponentProvider, ContextCarrier, ScopedProviderOwner {
+public class ScopeAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ScopedProviderOwner {
 
     private final transient ApplicationContext applicationContext;
     private final transient ComponentLocator locator;
@@ -122,7 +122,7 @@ public class ScopeAwareComponentProvider extends DefaultContext implements Hiera
         this.bind(key).singleton(postProcessor);
     }
 
-    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) {
+    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
         return new ContextDrivenProvider<>(key).provide(this.applicationContext());
     }
 

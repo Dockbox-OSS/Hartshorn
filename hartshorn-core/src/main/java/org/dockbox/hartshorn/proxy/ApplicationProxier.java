@@ -18,10 +18,9 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.ref.ReferenceQueue;
 
 /**
  * The {@link ApplicationProxier} is responsible for creating proxies of components. It is used by the

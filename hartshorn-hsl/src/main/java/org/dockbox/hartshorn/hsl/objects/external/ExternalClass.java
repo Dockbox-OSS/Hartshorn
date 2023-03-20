@@ -70,7 +70,10 @@ public class ExternalClass<T> implements ClassReference {
         }
         final ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
-            final T objectInstance = executable.create(arguments.toArray()).rethrowUnchecked().orNull();
+            final T objectInstance = executable.create(arguments.toArray())
+                    .mapError(ApplicationException::new)
+                    .rethrow()
+                    .orNull();
             return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspect(objectInstance));
         }
         throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);

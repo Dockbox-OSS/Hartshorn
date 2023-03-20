@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -55,13 +56,16 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
     }
 
-    public void makeInstance(final Token at, final Interpreter interpreter, final List<Object> arguments, final VirtualFunction virtualConstructor) {
+    public void makeInstance(final Token at, final Interpreter interpreter, final List<Object> arguments, final VirtualFunction virtualConstructor) throws ApplicationException {
         if (this.instance != null) {
             throw new IllegalStateException("Instance already made");
         }
         // External class constructor
         final ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
-        this.instance = constructor.create().rethrowUnchecked().orNull();
+        this.instance = constructor.create()
+                .mapError(ApplicationException::new)
+                .rethrow()
+                .orNull();
         // Virtual class constructor
         if (virtualConstructor != null) {
             virtualConstructor.call(at, interpreter, this, arguments);

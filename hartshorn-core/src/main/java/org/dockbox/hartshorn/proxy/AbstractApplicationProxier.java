@@ -20,6 +20,8 @@ import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -33,6 +35,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
 
     public AbstractApplicationProxier() {
         this.registerProxyLookup(new NativeProxyLookup());
+        this.registerProxyLookup(new HartshornProxyLookup());
     }
 
     @Override
@@ -85,11 +88,14 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier, 
     }
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(final T instance) {
         for (final ProxyLookup lookup : this.proxyLookups) {
-            if (lookup.isProxy(instance)) return lookup.unproxy(instance);
+            if (lookup.isProxy(instance)) {
+                final Option<Class<T>> unproxied = lookup.unproxy(instance);
+                if (unproxied.present()) return unproxied;
+            }
         }
-        return instance != null ? TypeUtils.adjustWildcards(instance.getClass(), Class.class) : null;
+        return Option.empty();
     }
 
     @Override

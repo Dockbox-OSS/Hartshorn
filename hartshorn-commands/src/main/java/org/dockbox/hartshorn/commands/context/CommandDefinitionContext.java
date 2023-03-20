@@ -84,7 +84,7 @@ public interface CommandDefinitionContext extends Context {
      *
      * @param command The raw command.
      *
-     * @return <code>true</code> if the command matches, else <code>false</code>
+     * @return {@code true} if the command matches, else {@code false}
      */
     boolean matches(String command);
 }

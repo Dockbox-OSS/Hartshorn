@@ -20,4 +20,8 @@ apply {
 
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

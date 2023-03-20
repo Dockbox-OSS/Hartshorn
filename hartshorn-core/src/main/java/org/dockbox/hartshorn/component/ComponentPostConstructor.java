@@ -19,5 +19,5 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public interface ComponentPostConstructor {
-    <T> T doPostConstruct(T type) throws ApplicationException;
+    <T> T doPostConstruct(T instance) throws ApplicationException;
 }

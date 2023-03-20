@@ -47,13 +47,13 @@ public interface ParserContext extends Context {
     /**
      * Gets the alias of a command. Typically, a raw command will contain both the alias and additional
      * arguments and flags. The result of this method is only the alias. For example the raw command:
-     * <pre><code>
+     * <pre>{@code
      *     "command argumentA --flagB"
-     * </code></pre>
+     * }</pre>
      * Will result in:
-     * <pre><code>
+     * <pre>{@code
      *     "command"
-     * </code></pre>
+     * }</pre>
      *
      * @return The command alias.
      */

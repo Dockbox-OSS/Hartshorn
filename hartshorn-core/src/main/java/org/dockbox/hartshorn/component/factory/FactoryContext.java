@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.component.factory;
 
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
-import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * exists for a given method, an exception will be thrown by this context.
  */
 @InstallIfAbsent
-public class FactoryContext extends DefaultContext {
+public class FactoryContext extends DefaultProvisionContext {
 
     private final Map<MethodView<?, ?>, ConstructorView<?>> bounds = new ConcurrentHashMap<>();
 

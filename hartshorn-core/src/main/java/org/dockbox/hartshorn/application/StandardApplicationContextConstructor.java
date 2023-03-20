@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.application.scan.PredefinedSetTypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.application.scan.classpath.ClassPathScannerTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
@@ -168,9 +168,9 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     protected void enhanceTypeReferenceCollectorContext(final ApplicationBuilder<?, ?> builder, final ApplicationEnvironment environment, final TypeReferenceCollectorContext collectorContext) {
-        collectorContext.register(new ClassPathScannerTypeReferenceCollector(environment, Hartshorn.PACKAGE_PREFIX));
+        collectorContext.register(new ClassPathScannerTypeReferenceCollector(Hartshorn.PACKAGE_PREFIX));
         if (builder.includeBasePackages()) {
-            collectorContext.register(new ClassPathScannerTypeReferenceCollector(environment, builder.mainClass().getPackageName()));
+            collectorContext.register(new ClassPathScannerTypeReferenceCollector(builder.mainClass().getPackageName()));
         }
 
         final Set<String> prefixes = new HashSet<>(builder.scanPackages());
@@ -187,7 +187,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         }
 
         prefixes.stream()
-                .map(prefix -> new ClassPathScannerTypeReferenceCollector(environment, prefix))
+                .map(prefix -> new ClassPathScannerTypeReferenceCollector(prefix))
                 .forEach(collectorContext::register);
 
         if (!builder.standaloneComponents().isEmpty()) {

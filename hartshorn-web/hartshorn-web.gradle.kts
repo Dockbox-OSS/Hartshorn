@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -17,10 +14,6 @@ import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
  * limitations under the License.
  */
 
-plugins {
-    id("war")
-}
-
 apply {
     from("${project.rootDir}/gradle/publications.gradle.kts")
 }
@@ -31,13 +24,12 @@ dependencies {
     api(libs.freemarker)
 
     implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
     implementation("org.dockbox.hartshorn:hartshorn-events")
     implementation("org.dockbox.hartshorn:hartshorn-config")
 
     testImplementation(libs.httpclient)
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
-}
-
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.DEFINITION
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

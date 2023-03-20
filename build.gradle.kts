@@ -30,10 +30,10 @@ buildscript {
 plugins {
     id("java")
     id("java-library")
+    id("java-test-fixtures")
 
     // Custom plugins, can be found in the gradle/plugins directory
     id("org.dockbox.hartshorn.gradle.javadoc")
-    id("org.dockbox.hartshorn.gradle.testharness")
 
     // Required for CI and to automatically update license headers on build
     id("org.cadixdev.licenser") version "0.6.1"
@@ -69,7 +69,7 @@ allprojects {
         plugin("maven-publish")
         plugin("org.cadixdev.licenser")
         plugin("org.dockbox.hartshorn.gradle.javadoc")
-        plugin("org.dockbox.hartshorn.gradle.testharness")
+        plugin("java-test-fixtures")
     }
 
     license {
@@ -103,12 +103,12 @@ allprojects {
     base.archivesName.set(this.name)
 
     configurations {
-        testImplementation {
-            // Ensure that all standard dependencies are included in the test
-            // classpath, so we don't need to explicitly add them to the test
-            // classpath.
-            extendsFrom(configurations.implementation.get())
-        }
+        // Ensure that all standard dependencies are included in the test
+        // classpath, so we don't need to explicitly add them to the test
+        // classpath.
+        testImplementation.get().extendsFrom(configurations.implementation.get())
+        testFixturesImplementation.get().extendsFrom(configurations.implementation.get())
+
         all {
             resolutionStrategy {
                 // Commonly used libraries that may be included in multiple
@@ -154,10 +154,13 @@ allprojects {
         // and we don't want to force users to use CF.
         implementation(rootProject.libs.checkerQual)
 
-        testImplementation(project(":hartshorn-test-suite"))
+        testImplementation("org.dockbox.hartshorn:hartshorn-test-suite")
         testImplementation(rootProject.libs.bundles.test)
         testImplementation(rootProject.libs.junitJupiterEngine)
 
+        testFixturesImplementation("org.dockbox.hartshorn:hartshorn-test-suite")
+        testFixturesImplementation(rootProject.libs.bundles.test)
+        testFixturesImplementation(rootProject.libs.junitJupiterEngine)
     }
 
     tasks {

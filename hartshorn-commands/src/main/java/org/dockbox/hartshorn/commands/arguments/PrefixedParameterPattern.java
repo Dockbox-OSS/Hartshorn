@@ -105,7 +105,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     /**
      * Whether the pattern requires the name of the type to be present.
      *
-     * @return <code>true</code> if the name is required, else <code>false</code>
+     * @return {@code true} if the name is required, else {@code false}
      */
     protected abstract boolean requiresTypeName();
 

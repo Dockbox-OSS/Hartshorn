@@ -23,10 +23,10 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 public class ProviderContext {
 
     private final ComponentKey<?> key;
-    private final AnnotatedElementView element;
+    private final AnnotatedElementView<?> element;
     private final Binds binding;
 
-    public ProviderContext(final ComponentKey<?> key, final AnnotatedElementView element, final Binds binding) {
+    public ProviderContext(final ComponentKey<?> key, final AnnotatedElementView<?> element, final Binds binding) {
         this.key = key;
         this.element = element;
         this.binding = binding;
@@ -36,7 +36,7 @@ public class ProviderContext {
         return this.key;
     }
 
-    public AnnotatedElementView element() {
+    public AnnotatedElementView<?> element() {
         return this.element;
     }
 

@@ -20,30 +20,27 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class ParameterLoaderContext extends DefaultContext implements ContextCarrier {
+public class ParameterLoaderContext extends DefaultProvisionContext implements ContextCarrier {
 
-    private final ExecutableElementView<?> executable;
-    private final TypeView<?> type;
+    private final ExecutableElementView<?, ?> executable;
     private final Object instance;
     private final ApplicationContext applicationContext;
     private final ComponentProvider provider;
     private final Scope scope;
 
-    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext) {
-        this(executable, type, instance, applicationContext, applicationContext);
+    public ParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance, final ApplicationContext applicationContext) {
+        this(executable, instance, applicationContext, applicationContext);
     }
 
-    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final Scope scope) {
-        this(executable, type, instance, applicationContext, applicationContext, scope);
+    public ParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance, final ApplicationContext applicationContext, final Scope scope) {
+        this(executable, instance, applicationContext, applicationContext, scope);
     }
 
-    public ParameterLoaderContext(final ExecutableElementView<?> executable, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider, final Scope scope) {
+    public ParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider, final Scope scope) {
         this.executable = executable;
-        this.type = type;
         this.instance = instance;
         this.applicationContext = applicationContext;
         this.provider = provider;
@@ -55,12 +52,8 @@ public class ParameterLoaderContext extends DefaultContext implements ContextCar
         return this.applicationContext;
     }
 
-    public ExecutableElementView<?> executable() {
+    public ExecutableElementView<?, ?> executable() {
         return this.executable;
-    }
-
-    public TypeView<?> type() {
-        return this.type;
     }
 
     public Object instance() {

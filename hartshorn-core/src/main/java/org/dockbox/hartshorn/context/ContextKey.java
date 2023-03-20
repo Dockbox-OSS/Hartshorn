@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 23.1
  */
-public final class ContextKey<T extends Context> {
+public final class ContextKey<T extends Context> implements ContextIdentity<T> {
 
     private final Class<T> type;
     private final String name;
@@ -54,33 +54,24 @@ public final class ContextKey<T extends Context> {
         this.requiresApplicationContext = builder.requiresApplicationContext;
     }
 
-    /**
-     * Gets the type of the context represented by this key.
-     * @return The type of the context represented by this key.
-     */
+    @Override
     public Class<T> type() {
         return this.type;
     }
 
-    /**
-     * Gets the name of the context represented by this key. This is null if no name was defined. If
-     * the context represented by this key is a {@link NamedContext}, it is not ensured that the
-     * name of the context is equal to the name of the key. This is only a recommendation.
-     *
-     * @return The name of the context represented by this key.
-     */
+    @Override
     public String name() {
         return this.name;
     }
 
-    /**
-     * Indicates whether the fallback function of this key requires a {@link ApplicationContext} to
-     * be present. If there is no explicit fallback function, this will always return true.
-     *
-     * @return {@code true} if the fallback function of this key requires a {@link ApplicationContext}.
-     */
+    @Override
     public boolean requiresApplicationContext() {
         return this.fallback == null || this.requiresApplicationContext;
+    }
+
+    @Override
+    public T create() {
+        return this.create(null);
     }
 
     /**

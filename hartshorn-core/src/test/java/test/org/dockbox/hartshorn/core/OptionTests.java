@@ -150,11 +150,10 @@ public class OptionTests {
 
     @Test
     void testAttemptSupplierExceptionOther() {
-        final IllegalArgumentException illegalArgumentException = new IllegalArgumentException();
-        final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> Attempt.of(() -> {
-            throw illegalArgumentException;
+        final IllegalStateException illegalStateException = new IllegalStateException();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Attempt.of(() -> {
+            throw illegalStateException;
         }, NullPointerException.class));
-        Assertions.assertSame(illegalArgumentException, exception);
     }
 
     @Test

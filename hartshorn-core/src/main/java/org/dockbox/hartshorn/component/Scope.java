@@ -36,8 +36,8 @@ package org.dockbox.hartshorn.component;
  * context. For example, this may be used to create short-lived singletons for
  * HTTP requests (e.g. for a {@code HttpRequest} and {@code HttpResponse}).
  *
- * <p>Scopes are expected to correctly implement {@link #equals(Object)} and
- * {@link #hashCode()} to ensure that they can be used as keys in a dictionary
+ * <p>Scopes are expected to correctly implement {@link Object#equals(Object)} and
+ * {@link Object#hashCode()} to ensure that they can be used as keys in a dictionary
  * of scopes.
  *
  * @author Guus Lieben

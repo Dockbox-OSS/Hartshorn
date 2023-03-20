@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConfigurationURIContextList extends DefaultContext {
+public class ConfigurationURIContextList extends DefaultProvisionContext {
 
     public static final ContextKey<ConfigurationURIContextList> CONTEXT_KEY = ContextKey.builder(ConfigurationURIContextList.class)
             .fallback(ConfigurationURIContextList::new)

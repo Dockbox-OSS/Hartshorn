@@ -20,8 +20,7 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
-
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 public class DelegatingApplicationBindingFunction<T> implements BindingFunction<T> {
 
@@ -50,7 +49,7 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public ApplicationContext to(final Supplier<T> supplier) {
+    public ApplicationContext to(final CheckedSupplier<T> supplier) {
         this.delegate.to(supplier);
         return this.applicationContext;
     }
@@ -73,7 +72,7 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public ApplicationContext lazySingleton(final Supplier<T> supplier) {
+    public ApplicationContext lazySingleton(final CheckedSupplier<T> supplier) {
         this.delegate.lazySingleton(supplier);
         return this.applicationContext;
     }

@@ -23,15 +23,16 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
-import org.dockbox.hartshorn.util.introspect.view.ObtainableView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
@@ -45,45 +46,45 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
         try {
             final TypeView<T> type = processingContext.type();
             final List<FieldView<T, ?>> fields = type.fields().annotatedWith(Bean.class);
-            this.process(context, beanContext, fields);
+            this.process(context, beanContext, TypeUtils.adjustWildcards(fields, List.class));
             final List<MethodView<T, ?>> methods = type.methods().annotatedWith(Bean.class);
-            this.process(context, beanContext, methods);
+            this.process(context, beanContext, TypeUtils.adjustWildcards(methods, List.class));
         }
         catch (final ApplicationException e) {
             throw new ApplicationRuntimeException(e);
         }
     }
 
-    private <E extends AnnotatedElementView
-            & ObtainableView<?>
+    private <T, E extends AnnotatedElementView<T>
             & ModifierCarrierView
-            & GenericTypeView<?>>
-    void process(final ApplicationContext applicationContext, final BeanContext context, final List<E> elements) throws ApplicationException {
+            & GenericTypeView<T>>
+    void process(final ApplicationContext applicationContext, final BeanCollector context, final List<E> elements) throws ApplicationException {
         if (elements.isEmpty()) return;
 
+        final ViewContextAdapter adapter = applicationContext.get(ViewContextAdapter.class);
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         for (final E element : elements) {
             if (!element.has(AccessModifier.STATIC)) {
                 throw new ApplicationException("Bean service pre-processor can only process static fields and methods");
             }
             if (conditionMatcher.match(element)) {
-                this.process(element, context);
+                this.process(adapter, element, context);
             }
         }
     }
 
-    private <T, E extends AnnotatedElementView
-            & ObtainableView<?>
+    private <T, E extends AnnotatedElementView<T>
             & ModifierCarrierView
-            & GenericTypeView<?>>
-    void process(final E element, final BeanContext context) throws ApplicationException {
+            & GenericTypeView<T>>
+    void process(final ViewContextAdapter adapter, final E element, final BeanCollector context) throws ApplicationException {
         final Bean bean = element.annotations().get(Bean.class).get();
         final String id = bean.id();
-        final Object beanInstance = element.getWithContext()
+
+        final T beanInstance = adapter.load(element)
                 .orElseThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
-        final TypeView<?> type = element.genericType();
-        //noinspection unchecked - We know the type is correct
-        context.register((T) beanInstance, (Class<T>) type.type(), id);
+
+        final TypeView<T> type = element.genericType();
+        context.register(beanInstance, type.type(), id);
     }
 
     @Override

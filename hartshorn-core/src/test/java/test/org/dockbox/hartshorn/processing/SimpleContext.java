@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.processing;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
-public class SimpleContext extends DefaultContext {
+public class SimpleContext extends DefaultProvisionContext {
 
     private String value;
 

@@ -33,5 +33,5 @@ public interface KeyGenerator {
      * @param element the annotated element
      * @return the generated key
      */
-    String generateKey(AnnotatedElementView element);
+    String generateKey(AnnotatedElementView<?> element);
 }

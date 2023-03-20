@@ -16,14 +16,18 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.option.Option;
+
 public interface StandardProxyLookup extends ProxyLookup {
 
     @Override
-    default  <T> Class<T> unproxy(final T instance) {
+    default  <T> Option<Class<T>> unproxy(final T instance) {
         if (instance instanceof Proxy<?> proxy) {
-            return (Class<T>) proxy.manager().targetClass();
+            final Class<T> unproxied = (Class<T>) proxy.manager().targetClass();
+            return Option.of(unproxied);
         }
-        return instance != null ? (Class<T>) instance.getClass() : null;
+        return Option.empty();
     }
 
     @Override

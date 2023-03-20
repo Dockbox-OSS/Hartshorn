@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Simple implementation of {@link CommandContext}.
  */
-public class CommandContextImpl extends DefaultContext implements CommandContext {
+public class CommandContextImpl extends DefaultProvisionContext implements CommandContext {
 
     private final String command;
     private final List<CommandParameter<?>> args;

@@ -69,9 +69,5 @@ gradlePlugin {
             id = "org.dockbox.hartshorn.gradle.javadoc"
             implementationClass = "org.dockbox.hartshorn.gradle.javadoc.JavadocVerifierPlugin"
         }
-        create("testHarnessPlugin") {
-            id = "org.dockbox.hartshorn.gradle.testharness"
-            implementationClass = "org.dockbox.hartshorn.gradle.harness.TestHarnessPlugin"
-        }
     }
 }

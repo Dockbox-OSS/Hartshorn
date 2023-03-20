@@ -1,6 +1,3 @@
-import org.dockbox.hartshorn.gradle.harness.TestHarnessExtension
-import org.dockbox.hartshorn.gradle.harness.TestHarnessProjectType
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *
@@ -23,11 +20,11 @@ apply {
 
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
+    implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-cache")
 
     implementation(libs.caffeine)
-}
 
-configure<TestHarnessExtension> {
-    projectType = TestHarnessProjectType.IMPLEMENTATION
+    testImplementation(testFixtures(project(":hartshorn-cache")))
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

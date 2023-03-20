@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -39,6 +40,6 @@ public interface Provider<T> {
      * @param context The {@link ApplicationContext} to use.
      * @return The instance, if it can be created.
      */
-    Option<ObjectContainer<T>> provide(ApplicationContext context);
+    Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException;
 
 }

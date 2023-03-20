@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
-public abstract class DefaultApplicationAwareContext extends DefaultContext implements ApplicationAwareContext {
+public abstract class DefaultApplicationAwareContext extends DefaultProvisionContext implements ApplicationAwareContext {
 
     private final ApplicationContext applicationContext;
 
@@ -51,11 +51,14 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
     }
 
     @Override
-    public <C extends Context> Option<C> first(final ContextKey<C> key) {
+    public <C extends Context> Option<C> first(final ContextIdentity<C> key) {
         return super.first(key).orCompute(() -> {
-            final C context = key.create(this.applicationContext);
-            this.add(context);
-            return context;
+            if (key instanceof ContextKey<C> contextKey) {
+                final C context = contextKey.create(this.applicationContext);
+                this.add(context);
+                return context;
+            }
+            return null;
         });
     }
 }

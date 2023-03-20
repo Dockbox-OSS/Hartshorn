@@ -40,7 +40,7 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
     private ApplicationFSProvider fileSystem;
 
     @Override
-    public InputStream inputStream(final AnnotatedElementView context, final Object... args) {
+    public InputStream inputStream(final AnnotatedElementView<?> context, final Object... args) {
         return this.resolvePath(context)
                 .map(path -> {
                     try {
@@ -55,7 +55,7 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
     }
 
     @Override
-    public OutputStream outputStream(final AnnotatedElementView context, final Object... args) {
+    public OutputStream outputStream(final AnnotatedElementView<?> context, final Object... args) {
         return this.resolvePath(context).map(path -> {
                     try {
                         return Files.newOutputStream(path);
@@ -67,7 +67,7 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
                 .orNull();
     }
 
-    private Option<Path> resolvePath(final AnnotatedElementView context) {
+    private Option<Path> resolvePath(final AnnotatedElementView<?> context) {
         return context.annotations().get(FileSource.class)
                 .map(fileSource -> {
                     if (fileSource.relativeToApplicationPath()) {

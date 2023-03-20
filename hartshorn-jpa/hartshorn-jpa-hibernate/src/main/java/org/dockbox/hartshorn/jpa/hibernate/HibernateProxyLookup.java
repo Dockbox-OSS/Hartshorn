@@ -16,17 +16,19 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
-import org.dockbox.hartshorn.proxy.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.option.Option;
 import org.hibernate.proxy.HibernateProxy;
 
 public class HibernateProxyLookup implements ProxyLookup {
 
     @Override
-    public <T> Class<T> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(final T instance) {
         if (instance instanceof HibernateProxy hibernateProxy) {
-            return (Class<T>) hibernateProxy.getHibernateLazyInitializer().getPersistentClass();
+            final Class<T> unproxied = (Class<T>) hibernateProxy.getHibernateLazyInitializer().getPersistentClass();
+            return Option.of(unproxied);
         }
-        return instance != null ? (Class<T>) instance.getClass() : null;
+        return Option.empty();
     }
 
     @Override

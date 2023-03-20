@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.proxy.loaders.UnproxyingParameterLoader;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.reflect.MethodInvoker;
+import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -216,7 +216,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
     @Override
     public Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
         final MethodView<?, ?> methodView = method.toIntrospector();
-        final ParameterLoaderContext context = new ParameterLoaderContext(methodView, methodView.declaredBy(), instance, this.applicationContext());
+        final ParameterLoaderContext context = new ParameterLoaderContext(methodView, instance, this.applicationContext());
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 

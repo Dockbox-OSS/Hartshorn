@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
-import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -32,7 +32,7 @@ import jakarta.inject.Inject;
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.
  */
 @InstallIfAbsent
-public final class ArgumentConverterContext extends DefaultContext {
+public final class ArgumentConverterContext extends DefaultProvisionContext {
 
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
@@ -44,18 +44,18 @@ public final class ArgumentConverterContext extends DefaultContext {
     }
 
     /**
-     * Indicates if any converter with the given <code>key</code> is registered.
+     * Indicates if any converter with the given {@code key} is registered.
      *
      * @param key The key to use during lookup
      *
-     * @return <code>true</code> if a converter exists, or else <code>false</code>
+     * @return {@code true} if a converter exists, or else {@code false}
      */
     public boolean hasConverter(final String key) {
         return this.converter(key).present();
     }
 
     /**
-     * Gets the converter associated with the registered <code>key</code>, if it exists.
+     * Gets the converter associated with the registered {@code key}, if it exists.
      *
      * @param key The key to use during lookup
      *
@@ -66,18 +66,18 @@ public final class ArgumentConverterContext extends DefaultContext {
     }
 
     /**
-     * Indicates if any registered converter is able to convert into the given <code>type</code>.
+     * Indicates if any registered converter is able to convert into the given {@code type}.
      *
      * @param type The type the converter should convert into.
      *
-     * @return <code>true</code> if a converter exists, or else <code>false</code>
+     * @return {@code true} if a converter exists, or else {@code false}
      */
     public boolean hasConverter(final TypeView<?> type) {
         return this.converter(type).present();
     }
 
     /**
-     * Gets the (first) converter which is able to convert into the given <code>type</code>, if it
+     * Gets the (first) converter which is able to convert into the given {@code type}, if it
      * exists.
      *
      * @param type The type the converter should convert into.

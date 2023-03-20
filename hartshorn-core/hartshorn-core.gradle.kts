@@ -38,7 +38,11 @@ dependencies {
     api(libs.cglib)
 
     implementation(libs.logback)
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+    implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-discovery")
 
     testImplementation(libs.scala)
     testImplementation(libs.groovy)
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

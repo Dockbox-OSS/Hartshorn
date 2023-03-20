@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.dockbox.hartshorn.util.Property;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.option.Option;

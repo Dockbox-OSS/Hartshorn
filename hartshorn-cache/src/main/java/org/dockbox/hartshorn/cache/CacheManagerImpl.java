@@ -38,8 +38,12 @@ public class CacheManagerImpl implements CacheManager {
 
     protected final Map<String, Cache<?, ?>> caches = new ConcurrentHashMap<>();
 
+    private final ApplicationContext applicationContext;
+
     @Inject
-    private ApplicationContext context;
+    public CacheManagerImpl(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public List<Cache<?, ?>> caches() {
@@ -55,12 +59,16 @@ public class CacheManagerImpl implements CacheManager {
     public <K, V> Cache<K, V> getOrCreate(final String name, final Expiration expiration) {
         return this.get(name)
                 .orCompute(() -> {
-                    this.context.log().debug("Cache '" + name + "' does not exist, creating new instance");
-                    final Cache<Object, Object> cache = this.context.get(CacheFactory.class).cache(expiration);
+                    this.applicationContext.log().debug("Cache '" + name + "' does not exist, creating new instance");
+                    final Cache<Object, Object> cache = this.factory().cache(expiration);
                     this.caches.put(name, cache);
                     return cache;
                 })
                 .map(c -> (Cache<K, V>) c)
                 .get();
+    }
+
+    protected CacheFactory factory() {
+        return this.applicationContext.get(CacheFactory.class);
     }
 }

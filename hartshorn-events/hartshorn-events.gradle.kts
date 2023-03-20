@@ -20,6 +20,9 @@ apply {
 
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
-    // For expression evaluation
-    testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
+    implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+
+    testImplementation("org.dockbox.hartshorn:hartshorn-hsl") // For expression evaluation
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
 }

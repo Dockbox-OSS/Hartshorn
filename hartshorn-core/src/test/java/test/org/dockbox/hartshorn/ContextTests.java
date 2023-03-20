@@ -21,9 +21,10 @@ import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
+import org.dockbox.hartshorn.context.ProvisionContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
@@ -161,10 +162,10 @@ public class ContextTests {
     }
 
     @InstallIfAbsent
-    public static class AutoCreatingContext extends DefaultContext {
+    public static class AutoCreatingContext extends DefaultProvisionContext {
     }
 
-    public static class NamedTestContext extends DefaultNamedContext {
+    public static class NamedTestContext extends DefaultNamedContext implements ProvisionContext {
 
         static final String NAME = "JUnitContext";
 

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.config.properties.PropertyAwareComponentPostProcessor;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
+import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Option;
 

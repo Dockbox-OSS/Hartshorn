@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.jpa.query;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.Map;
@@ -25,10 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
 
-public class QueryExecutionContext extends DefaultContext {
+public class QueryExecutionContext extends DefaultProvisionContext {
 
-    private Map<MethodView<?, ?>, LockModeType> lockModes = new ConcurrentHashMap<>();
-    private Map<MethodView<?, ?>, FlushModeType> flushModes = new ConcurrentHashMap<>();
+    private final Map<MethodView<?, ?>, LockModeType> lockModes = new ConcurrentHashMap<>();
+    private final Map<MethodView<?, ?>, FlushModeType> flushModes = new ConcurrentHashMap<>();
 
     public LockModeType lockMode(final MethodView<?, ?> method) {
         return this.lockModes.get(method);
