@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.jackson;
+package org.dockbox.hartshorn.config.jackson.mapping;
 
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
+import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
-public class YamlDataMapper implements JacksonDataMapper {
+public class TomlDataMapper implements JacksonDataMapper {
     @Override
     public FileFormat fileFormat() {
-        return FileFormats.YAML;
+        return FileFormats.TOML;
     }
 
     @Override
     public MapperBuilder<?, ?> get() {
-        final YAMLFactory yamlFactory = new YAMLFactory();
-        yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
-        yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-        yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);
-        return YAMLMapper.builder(yamlFactory);
+        return TomlMapper.builder();
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.jackson;
+package org.dockbox.hartshorn.config.jackson.introspect;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import org.dockbox.hartshorn.config.jackson.JacksonIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -37,7 +38,7 @@ public class JacksonPropertyAnnotationIntrospector extends JacksonAnnotationIntr
 
     private final Introspector introspector;
 
-    public JacksonPropertyAnnotationIntrospector(Introspector introspector) {
+    public JacksonPropertyAnnotationIntrospector(final Introspector introspector) {
         this.introspector = introspector;
     }
 

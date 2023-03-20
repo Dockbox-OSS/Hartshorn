@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.dockbox.hartshorn.config.jackson.JacksonPropertyAnnotationIntrospector;
+import org.dockbox.hartshorn.config.jackson.introspect.JacksonPropertyAnnotationIntrospector;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.junit.jupiter.api.Assertions;

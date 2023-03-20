@@ -31,11 +31,18 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
+import org.dockbox.hartshorn.config.jackson.introspect.JacksonIgnoreAnnotationIntrospector;
+import org.dockbox.hartshorn.config.jackson.introspect.JacksonPropertyAnnotationIntrospector;
+import org.dockbox.hartshorn.config.jackson.mapping.JavaPropsDataMapper;
+import org.dockbox.hartshorn.config.jackson.mapping.JsonDataMapper;
+import org.dockbox.hartshorn.config.jackson.mapping.TomlDataMapper;
+import org.dockbox.hartshorn.config.jackson.mapping.XmlDataMapper;
+import org.dockbox.hartshorn.config.jackson.mapping.YamlDataMapper;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import java.util.function.Function;
@@ -91,7 +98,9 @@ public class JacksonProviders {
             case SKIP_NONE -> Include.ALWAYS;
         };
         return (builder, format, inclusionRule) -> {
-            MapperBuilder<?, ?> mb = builder.annotationIntrospector(new JacksonPropertyAnnotationIntrospector(introspector))
+            MapperBuilder<?, ?> mb = builder
+                    .annotationIntrospector(new JacksonPropertyAnnotationIntrospector(introspector))
+                    .annotationIntrospector(new JacksonIgnoreAnnotationIntrospector(introspector))
                     .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
                     .enable(Feature.ALLOW_COMMENTS)
                     .enable(Feature.ALLOW_YAML_COMMENTS)
