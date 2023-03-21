@@ -16,13 +16,12 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.application.StandardApplicationBuilder;
+import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
-import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
-import org.dockbox.hartshorn.testsuite.HartshornLifecycleExtension;
+import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -83,9 +82,7 @@ public final class TranslationBatchGenerator {
     private TranslationBatchGenerator() {}
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = HartshornLifecycleExtension
-                .createTestContext(new StandardApplicationBuilder().loadDefaults(), TranslationBatchGenerator.class)
-                .orNull();
+        final ApplicationContext context = HartshornApplication.create(TranslationBatchGenerator.class);
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(LocalDateTime.now());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
@@ -174,31 +171,23 @@ public final class TranslationBatchGenerator {
                     .filter(f -> !f.isDirectory())
                     .toList();
         }
-        else throw new IllegalStateException("Existing batch could not be found");
+        else {
+            throw new IllegalStateException("Existing batch could not be found");
+        }
     }
 
     public static Map<String, String> collect(final ApplicationContext context) {
         final Map<String, String> batch = new HashMap<>();
+        final TranslationKeyGenerator keyGenerator = context.get(TranslationKeyGenerator.class);
         for (final ComponentContainer container : context.get(ComponentLocator.class).containers()) {
             final TypeView<?> type = container.type();
             final List<? extends MethodView<?, ?>> methods = type.methods().annotatedWith(InjectTranslation.class);
             for (final MethodView<?, ?> method : methods) {
                 final InjectTranslation annotation = method.annotations().get(InjectTranslation.class).get();
-                final String key = KeyGen.INSTANCE.key(context, type, method);
+                final String key = keyGenerator.key(type, method);
                 batch.put(key, annotation.value());
             }
         }
         return batch;
     }
-
-    private static class KeyGen extends TranslationInjectPostProcessor {
-
-        private static final KeyGen INSTANCE = new KeyGen();
-
-        @Override
-        public String key(final ApplicationContext context, final TypeView<?> type, final MethodView<?, ?> method) {
-            return super.key(context, type, method);
-        }
-    }
-
 }
