@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.jackson;
+package org.dockbox.hartshorn.config.annotations;
 
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.FileFormats;
-
-public class JsonDataMapper implements JacksonDataMapper {
-
-    @Override
-    public FileFormat fileFormat() {
-        return FileFormats.JSON;
-    }
-
-    @Override
-    public MapperBuilder<?, ?> get() {
-        return JsonMapper.builder();
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface IgnoreProperty {
 }

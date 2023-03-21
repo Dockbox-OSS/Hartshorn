@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.jackson;
+package org.dockbox.hartshorn.config.jackson.mapping;
 
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
+import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
 public class JavaPropsDataMapper implements JacksonDataMapper {
     @Override

@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.config;
 
+import org.dockbox.hartshorn.config.annotations.IgnoreProperty;
+
 import java.util.Objects;
 
 public class NestedElement implements Element {
@@ -30,13 +32,13 @@ public class NestedElement implements Element {
     }
 
     @Override
-    // @JsonIgnore: TODO: Fix this
+    @IgnoreProperty
     public String name() {
         return this.child.name();
     }
 
     @Override
-    // @JsonIgnore: TODO: Fix this
+    @IgnoreProperty
     public NestedElement name(final String name) {
         this.child.name(name);
         return this;
