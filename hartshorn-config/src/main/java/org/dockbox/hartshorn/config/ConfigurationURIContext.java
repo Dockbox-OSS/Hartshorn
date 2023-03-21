@@ -20,27 +20,5 @@ import org.dockbox.hartshorn.component.ComponentKey;
 
 import java.net.URI;
 
-public class ConfigurationURIContext {
-
-    private final URI uri;
-    private final ComponentKey<?> key;
-    private final String source;
-
-    public ConfigurationURIContext(final URI uri, final ComponentKey<?> key, final String source) {
-        this.uri = uri;
-        this.key = key;
-        this.source = source;
-    }
-
-    public URI uri() {
-        return this.uri;
-    }
-
-    public ComponentKey<?> key() {
-        return this.key;
-    }
-
-    public String source() {
-        return this.source;
-    }
+public record ConfigurationURIContext(URI uri, ComponentKey<?> key, String source) {
 }

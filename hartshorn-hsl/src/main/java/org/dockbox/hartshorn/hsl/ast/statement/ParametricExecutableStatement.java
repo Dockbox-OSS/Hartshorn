@@ -43,16 +43,6 @@ public abstract class ParametricExecutableStatement extends Function {
         return this.body;
     }
 
-    public static class Parameter {
-
-        private final Token name;
-
-        public Parameter(final Token name) {
-            this.name = name;
-        }
-
-        public Token name() {
-            return this.name;
-        }
+    public record Parameter(Token name) {
     }
 }

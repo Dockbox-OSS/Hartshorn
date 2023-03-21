@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.web.mvc.template;
 
-public class ClassPathViewTemplate implements ViewTemplate {
+public record ClassPathViewTemplate(String location) implements ViewTemplate {
 
-    private final String location;
-
-    public ClassPathViewTemplate(final String location) {
-        this.location = location;
-    }
-
-    public String location() {
-        return this.location;
-    }
 }

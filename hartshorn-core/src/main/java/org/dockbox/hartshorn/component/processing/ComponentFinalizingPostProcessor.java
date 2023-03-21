@@ -37,7 +37,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         if (processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying()) {
             T finalizingInstance = instance;
             if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
-                final ProxyFactory<T, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+                final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
                 try {
                     final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
                     final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();
@@ -54,7 +54,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return instance;
     }
 
-    protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T, ?> factory, @Nullable final T instance) throws ApplicationException {
+    protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T> factory, @Nullable final T instance) throws ApplicationException {
         final TypeView<T> factoryType = context.environment().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {

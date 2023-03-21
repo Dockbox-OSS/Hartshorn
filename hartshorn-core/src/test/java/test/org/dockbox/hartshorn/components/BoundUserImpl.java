@@ -18,15 +18,8 @@ package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.inject.binding.Bound;
 
-public class BoundUserImpl implements User {
-    private final String name;
-
+public record BoundUserImpl(String name) implements User {
     @Bound
-    public BoundUserImpl(final String name) {
-        this.name = name;
-    }
-
-    public String name() {
-        return this.name;
+    public BoundUserImpl {
     }
 }

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.IllegalModificationException;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
@@ -44,7 +43,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<T>, ModifiableProxyManager<T, LazyProxyManager<T>> {
+public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T>, ModifiableProxyManager<T> {
 
     private static final Method managerAccessor;
 
@@ -79,6 +78,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<
                             final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
                             final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers,
                             final Supplier<MethodStub<T>> defaultStub) {
+        super(applicationContext);
         // TODO: Check if the proxy class is a proxy
         if (applicationContext.environment().isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");

@@ -21,13 +21,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
 /**
  * Simple implementation of {@link CommandFlag}.
  */
-public class CommandFlagImpl implements CommandFlag {
-
-    private final String name;
-
-    public CommandFlagImpl(final String name) {
-        this.name = name;
-    }
+public record CommandFlagImpl(String name) implements CommandFlag {
 
     @Override
     public String name() {

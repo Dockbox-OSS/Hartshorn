@@ -68,15 +68,15 @@ public class ProxyTests {
     public static Stream<Arguments> factories() {
         // Does not test deprecated proxy factories, even if they are still available
         return Stream.of(
-                Arguments.of((BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>>) JavassistProxyFactory::new)
+                Arguments.of((BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>>) JavassistProxyFactory::new)
         );
     }
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testConcreteMethodsCanBeProxied(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException, NoSuchMethodException {
+    void testConcreteMethodsCanBeProxied(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factory) throws ApplicationException, NoSuchMethodException {
         final Method name = ConcreteProxyTarget.class.getMethod("name");
-        final ProxyFactory<ConcreteProxyTarget, ?> handler = (ProxyFactory<ConcreteProxyTarget, ?>) factory.apply(ConcreteProxyTarget.class, this.applicationContext);
+        final ProxyFactory<ConcreteProxyTarget> handler = (ProxyFactory<ConcreteProxyTarget>) factory.apply(ConcreteProxyTarget.class, this.applicationContext);
         handler.intercept(name, context -> "Hartshorn");
         final ConcreteProxyTarget proxy = handler.proxy().get();
 
@@ -87,9 +87,9 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testFinalMethodsCanNotBeProxied(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException, NoSuchMethodException {
+    void testFinalMethodsCanNotBeProxied(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factory) throws ApplicationException, NoSuchMethodException {
         final Method name = FinalProxyTarget.class.getMethod("name");
-        final ProxyFactory<FinalProxyTarget, ?> handler = (ProxyFactory<FinalProxyTarget, ?>) factory.apply(FinalProxyTarget.class, this.applicationContext);
+        final ProxyFactory<FinalProxyTarget> handler = (ProxyFactory<FinalProxyTarget>) factory.apply(FinalProxyTarget.class, this.applicationContext);
         handler.intercept(name, context -> "Hartshorn");
         final FinalProxyTarget proxy = handler.proxy().get();
 
@@ -121,24 +121,24 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testRecordProxyCannotBeCreated(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) {
+    void testRecordProxyCannotBeCreated(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factory) {
         // Records are final and cannot be proxied
-        final ProxyFactory<RecordProxy, ?> handler = (ProxyFactory<RecordProxy, ?>) factory.apply(RecordProxy.class, this.applicationContext);
+        final ProxyFactory<RecordProxy> handler = (ProxyFactory<RecordProxy>) factory.apply(RecordProxy.class, this.applicationContext);
         Assertions.assertThrows(ApplicationException.class, handler::proxy);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testEmptyProxyCanCreate(final Class<? extends InterfaceProxy> proxyParent, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> handler = (ProxyFactory<InterfaceProxy, ?>) factory.apply(proxyParent, this.applicationContext);
+    void testEmptyProxyCanCreate(final Class<? extends InterfaceProxy> proxyParent, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factory) throws ApplicationException {
+        final ProxyFactory<InterfaceProxy> handler = (ProxyFactory<InterfaceProxy>) factory.apply(proxyParent, this.applicationContext);
         final InterfaceProxy proxy = handler.proxy().get();
         Assertions.assertNotNull(proxy);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testMethodsCanBeDelegatedToOriginalInstance(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testMethodsCanBeDelegatedToOriginalInstance(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         factory.delegate(new ConcreteProxy());
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -149,7 +149,7 @@ public class ProxyTests {
 
     @Test
     void testConcreteProxyWithNonDefaultConstructorUsesConstructor() {
-        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor, ?> factory = this.applicationContext.environment().factory(ConcreteProxyWithNonDefaultConstructor.class);
+        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor> factory = this.applicationContext.environment().factory(ConcreteProxyWithNonDefaultConstructor.class);
 
         final TypeView<ConcreteProxyWithNonDefaultConstructor> typeView = this.applicationContext.environment().introspect(ConcreteProxyWithNonDefaultConstructor.class);
         final ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor = typeView.constructors().all().get(0);
@@ -162,8 +162,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testMethodsCanBeIntercepted(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testMethodsCanBeIntercepted(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException, NoSuchMethodException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         factory.intercept(proxyType.getMethod("name"), context -> "Hartshorn");
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -174,8 +174,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testMethodsCanBeDelegated(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testMethodsCanBeDelegated(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException, NoSuchMethodException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         factory.delegate(proxyType.getMethod("name"), new ConcreteProxy());
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -186,9 +186,9 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testTypesCanBeDelegated(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
+    void testTypesCanBeDelegated(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
         // Use a custom interface for this type of delegation, as the other proxy types override methods from their parent
-        final ProxyFactory<NamedAgedProxy, ?> factory = (ProxyFactory<NamedAgedProxy, ?>) factoryFn.apply(NamedAgedProxy.class, this.applicationContext);
+        final ProxyFactory<NamedAgedProxy> factory = (ProxyFactory<NamedAgedProxy>) factoryFn.apply(NamedAgedProxy.class, this.applicationContext);
         factory.delegate(AgedProxy.class, () -> 12);
         factory.delegate(NamedProxy.class, () -> "NamedProxy");
         final Option<NamedAgedProxy> proxy = factory.proxy();
@@ -201,8 +201,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testWrapperInterceptionIsCorrect(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws NoSuchMethodException, ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testWrapperInterceptionIsCorrect(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws NoSuchMethodException, ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         final AtomicInteger count = new AtomicInteger();
         factory.intercept(proxyType.getMethod("name"), context -> "done");
         factory.intercept(proxyType.getMethod("name"), new MethodWrapper<>() {
@@ -232,8 +232,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testErrorWrapperInterceptionIsCorrect(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws NoSuchMethodException, ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testErrorWrapperInterceptionIsCorrect(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws NoSuchMethodException, ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         final AtomicInteger count = new AtomicInteger();
         factory.intercept(proxyType.getMethod("name"), context -> {
             throw new IllegalStateException("not done");
@@ -269,8 +269,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testProxyManagerTracksInterceptorsAndDelegates(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws NoSuchMethodException, ApplicationException {
-        final ProxyFactory<NamedAgedProxy, ?> factory = (ProxyFactory<NamedAgedProxy, ?>) factoryFn.apply(NamedAgedProxy.class, this.applicationContext);
+    void testProxyManagerTracksInterceptorsAndDelegates(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws NoSuchMethodException, ApplicationException {
+        final ProxyFactory<NamedAgedProxy> factory = (ProxyFactory<NamedAgedProxy>) factoryFn.apply(NamedAgedProxy.class, this.applicationContext);
 
         final AgedProxy aged = () -> 12;
         factory.delegate(AgedProxy.class, aged);
@@ -294,8 +294,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxyCanHaveExtraInterfaces(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testProxyCanHaveExtraInterfaces(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         factory.implement(DescribedProxy.class);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -307,8 +307,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxiesAlwaysImplementProxyType(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testProxiesAlwaysImplementProxyType(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
         final InterfaceProxy proxyInstance = proxy.get();
@@ -317,8 +317,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxiesExposeManager(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testProxiesExposeManager(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -328,8 +328,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
-    void testProxyManagerExposesTargetAndProxyType(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy, ?> factory = (ProxyFactory<InterfaceProxy, ?>) factoryFn.apply(proxyType, this.applicationContext);
+    void testProxyManagerExposesTargetAndProxyType(final Class<? extends InterfaceProxy> proxyType, final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) factoryFn.apply(proxyType, this.applicationContext);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -387,8 +387,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testConcreteProxySelfEquality(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<EqualProxy, ?> factory = (ProxyFactory<EqualProxy, ?>) factoryFn.apply(EqualProxy.class, this.applicationContext);
+    void testConcreteProxySelfEquality(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<EqualProxy> factory = (ProxyFactory<EqualProxy>) factoryFn.apply(EqualProxy.class, this.applicationContext);
         final Option<EqualProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -399,7 +399,7 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testServiceSelfEquality(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException {
+    void testServiceSelfEquality(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factory) throws ApplicationException {
         final EqualServiceProxy service = (EqualServiceProxy) factory.apply(EqualServiceProxy.class, this.applicationContext).proxy().get();
         Assertions.assertEquals(service, service);
         Assertions.assertTrue(service.test(service));
@@ -407,8 +407,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testInterfaceProxySelfEquality(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<EqualInterfaceProxy, ?> factory = (ProxyFactory<EqualInterfaceProxy, ?>) factoryFn.apply(EqualInterfaceProxy.class, this.applicationContext);
+    void testInterfaceProxySelfEquality(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<EqualInterfaceProxy> factory = (ProxyFactory<EqualInterfaceProxy>) factoryFn.apply(EqualInterfaceProxy.class, this.applicationContext);
         final Option<EqualInterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -419,8 +419,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testLambdaCanBeProxied(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws NoSuchMethodException, ApplicationException {
-        final StateAwareProxyFactory<Supplier<String>, ?> factory = (StateAwareProxyFactory<Supplier<String>, ?>) factoryFn.apply(Supplier.class, this.applicationContext);
+    void testLambdaCanBeProxied(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws NoSuchMethodException, ApplicationException {
+        final StateAwareProxyFactory<Supplier<String>> factory = (StateAwareProxyFactory<Supplier<String>>) factoryFn.apply(Supplier.class, this.applicationContext);
         factory.intercept(Supplier.class.getMethod("get"), context -> "foo");
         final Option<Supplier<String>> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -429,8 +429,8 @@ public class ProxyTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testIsProxyIsTrueIfTypeIsProxy(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factoryFn) throws ApplicationException {
-        final ProxyFactory<?, ?> factory = factoryFn.apply(Object.class, this.applicationContext);
+    void testIsProxyIsTrueIfTypeIsProxy(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?>> factoryFn) throws ApplicationException {
+        final ProxyFactory<?> factory = factoryFn.apply(Object.class, this.applicationContext);
         final Object proxy = factory.proxy().get();
 
         // Ensure we introspect .getClass directly, as introspecting the instance will

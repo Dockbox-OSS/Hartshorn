@@ -23,29 +23,25 @@ package org.dockbox.hartshorn.hsl.lexer;
  * @author Guus Lieben
  * @since 22.4
  */
-public class Comment {
-
-    private final int line;
-    private final String text;
-
-    public Comment(final int line, final String text) {
-        this.line = line;
-        this.text = text;
-    }
+public record Comment(int line, String text) {
 
     /**
      * The first line the comment was found on. If a comment spans multiple lines,
      * this number represents the first of these lines.
+     *
      * @return The first line number.
      */
+    @Override
     public int line() {
         return this.line;
     }
 
     /**
      * The untrimmed text content of the comment, excluding any comment tokens.
+     *
      * @return The comment content.
      */
+    @Override
     public String text() {
         return this.text;
     }

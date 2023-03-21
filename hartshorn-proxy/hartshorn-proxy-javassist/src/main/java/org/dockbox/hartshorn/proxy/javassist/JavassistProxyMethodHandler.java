@@ -23,13 +23,7 @@ import java.lang.reflect.Method;
 
 import javassist.util.proxy.MethodHandler;
 
-public class JavassistProxyMethodHandler<T> implements MethodHandler {
-
-    private final ProxyMethodInterceptor<T> interceptor;
-
-    public JavassistProxyMethodHandler(final ProxyMethodInterceptor<T> interceptor) {
-        this.interceptor = interceptor;
-    }
+public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor) implements MethodHandler {
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
@@ -37,9 +31,5 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler {
                 new MethodInvokable(thisMethod, this.interceptor().applicationContext()),
                 new MethodInvokable(proceed, this.interceptor().applicationContext()),
                 args);
-    }
-
-    public ProxyMethodInterceptor<T> interceptor() {
-        return this.interceptor;
     }
 }

@@ -20,8 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.proxy.DefaultValueResponseMethodStub;
 import org.dockbox.hartshorn.proxy.MethodStub;
-import org.dockbox.hartshorn.proxy.MethodWrapper;
-import org.dockbox.hartshorn.proxy.ProxyCallbackContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.component.UseProxying;
@@ -57,8 +55,8 @@ public class MethodStubTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testDefaultBehaviorIsDefaultOrNull(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException {
-        final ProxyFactory<StubbedInterfaceProxy, ?> proxyFactory = (ProxyFactory<StubbedInterfaceProxy, ?>) factory.apply(StubbedInterfaceProxy.class, this.applicationContext);
+    void testDefaultBehaviorIsDefaultOrNull(final FactoryFunction<StubbedInterfaceProxy> factory) throws ApplicationException {
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = factory.apply(StubbedInterfaceProxy.class, this.applicationContext);
         final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
 
         final Option<ProxyManager<StubbedInterfaceProxy>> manager = this.applicationContext.environment().manager(proxy);
@@ -76,8 +74,8 @@ public class MethodStubTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testStubBehaviorCanBeChanged(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException {
-        final ProxyFactory<StubbedInterfaceProxy, ?> proxyFactory = (ProxyFactory<StubbedInterfaceProxy, ?>) factory.apply(StubbedInterfaceProxy.class, this.applicationContext);
+    void testStubBehaviorCanBeChanged(final FactoryFunction<StubbedInterfaceProxy> factory) throws ApplicationException {
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = factory.apply(StubbedInterfaceProxy.class, this.applicationContext);
 
         // Also verifies that the stub result is not cached
         final AtomicInteger integer = new AtomicInteger(0);
@@ -94,8 +92,8 @@ public class MethodStubTests {
 
     @ParameterizedTest
     @MethodSource("factories")
-    void testStubsAreObserved(final BiFunction<Class<?>, ApplicationContext, ProxyFactory<?, ?>> factory) throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<StubbedInterfaceProxy, ?> proxyFactory = (ProxyFactory<StubbedInterfaceProxy, ?>) factory.apply(StubbedInterfaceProxy.class, this.applicationContext);
+    void testStubsAreObserved(final FactoryFunction<StubbedInterfaceProxy> factory) throws ApplicationException, NoSuchMethodException {
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = factory.apply(StubbedInterfaceProxy.class, this.applicationContext);
 
         final AtomicBoolean beforeObserved = new AtomicBoolean(false);
         final AtomicBoolean afterObserved = new AtomicBoolean(false);
@@ -104,28 +102,16 @@ public class MethodStubTests {
         final AtomicBoolean shouldThrow = new AtomicBoolean(false);
 
         final Method stringTest = StubbedInterfaceProxy.class.getDeclaredMethod("stringTest");
-        proxyFactory.intercept(stringTest, new MethodWrapper<>() {
-            @Override
-            public void acceptBefore(final ProxyCallbackContext<StubbedInterfaceProxy> context) {
-                beforeObserved.set(true);
-            }
-
-            @Override
-            public void acceptAfter(final ProxyCallbackContext<StubbedInterfaceProxy> context) {
-                afterObserved.set(true);
-            }
-
-            @Override
-            public void acceptError(final ProxyCallbackContext<StubbedInterfaceProxy> context) {
-                errorObserved.set(true);
-            }
-        });
-
-        proxyFactory.defaultStub(context -> {
-            // RuntimeException, as it is not declared in the interface
-            if (shouldThrow.get()) throw new ApplicationRuntimeException("Test");
-            return "test";
-        });
+        proxyFactory.intercept(stringTest, wrapper -> wrapper
+                .before(context -> beforeObserved.set(true))
+                .after(context -> afterObserved.set(true))
+                .onError(context -> errorObserved.set(true))
+                )
+                .defaultStub(context -> {
+                    // RuntimeException, as it is not declared in the interface
+                    if (shouldThrow.get()) throw new ApplicationRuntimeException("Test");
+                    return "test";
+                });
 
         final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
         Assertions.assertDoesNotThrow(proxy::stringTest);
@@ -144,5 +130,8 @@ public class MethodStubTests {
         Assertions.assertTrue(beforeObserved.get());
         Assertions.assertFalse(afterObserved.get());
         Assertions.assertTrue(errorObserved.get());
+    }
+
+    private interface FactoryFunction<T> extends BiFunction<Class<T>, ApplicationContext, ProxyFactory<T>> {
     }
 }

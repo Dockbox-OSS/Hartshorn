@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+@SuppressWarnings("ClassCanBeRecord") // Intended for proxy testing
 public class ConcreteProxyWithNonDefaultConstructor {
 
     private final ApplicationContext applicationContext;

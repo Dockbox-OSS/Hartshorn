@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.proxy;
 
-public record InvalidSampleBoundType(String name) implements SampleInterface {
+import java.util.function.Consumer;
+
+public interface MethodWrapperFactory<T> {
+
+    MethodWrapperFactory<T> before(Consumer<ProxyCallbackContext<T>> context);
+
+    MethodWrapperFactory<T> after(Consumer<ProxyCallbackContext<T>> context);
+
+    MethodWrapperFactory<T> onError(Consumer<ProxyCallbackContext<T>> context);
+
+    ProxyFactory<T> build();
 
 }

@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -184,11 +185,10 @@ import java.util.function.Supplier;
  * }</pre>
  *
  * @param <T> The type of the proxy
- * @param <F> The type of the factory, referencing itself
  * @author Guus Lieben
  * @since 22.2
  */
-public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends ModifiableProxyManager<T, F> {
+public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
 
     /**
      * Delegates all abstract methods defined by the active type to the given delegate
@@ -198,7 +198,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param delegate The delegate instance
      * @return This factory
      */
-    F delegateAbstract(T delegate);
+    ProxyFactory<T> delegateAbstract(T delegate);
 
     /**
      * Delegates all methods defined by the given {@code type} to the given delegate instance. This
@@ -209,7 +209,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param <S> The type of the delegate
      * @return This factory
      */
-    <S> F delegate(Class<S> type, S delegate);
+    <S> ProxyFactory<T> delegate(Class<S> type, S delegate);
 
     /**
      * Delegates all methods defined by the given {@code type} which are not implemented to the given
@@ -222,7 +222,7 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param <S> The type of the delegate
      * @return This factory
      */
-    <S> F delegateAbstract(Class<S> type, S delegate);
+    <S> ProxyFactory<T> delegateAbstract(Class<S> type, S delegate);
 
     /**
      * Delegates the given method to the given delegate instance. This targets a backing implementation,
@@ -232,7 +232,17 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param delegate The delegate instance
      * @return This factory
      */
-    F delegate(Method method, T delegate);
+    ProxyFactory<T> delegate(MethodView<T, ?> method, T delegate);
+
+    /**
+     * Delegates the given method to the given delegate instance. This targets a backing implementation,
+     * not the original instance.
+     *
+     * @param method The method to delegate
+     * @param delegate The delegate instance
+     * @return This factory
+     */
+    ProxyFactory<T> delegate(Method method, T delegate);
 
     /**
      * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
@@ -242,7 +252,17 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interceptor The interceptor to use
      * @return This factory
      */
-    F intercept(Method method, MethodInterceptor<T, ?> interceptor);
+    <R> ProxyFactory<T> intercept(MethodView<T, R> method, MethodInterceptor<T, R> interceptor);
+
+    /**
+     * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
+     * already an interceptor for the given method, it will be chained, so it may be executed in series.
+     *
+     * @param method The method to intercept
+     * @param interceptor The interceptor to use
+     * @return This factory
+     */
+    ProxyFactory<T> intercept(Method method, MethodInterceptor<T, ?> interceptor);
 
     /**
      * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
@@ -253,7 +273,22 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @return This factory
      * @see MethodWrapper
      */
-    F intercept(Method method, MethodWrapper<T> wrapper);
+    ProxyFactory<T> intercept(MethodView<T, ?> method, MethodWrapper<T> wrapper);
+
+    /**
+     * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
+     * wrapper. These phases are; before entry, after return, and after exception thrown.
+     *
+     * @param method The method to intercept
+     * @param wrapper The wrapper to use
+     * @return This factory
+     * @see MethodWrapper
+     */
+    ProxyFactory<T> intercept(Method method, MethodWrapper<T> wrapper);
+
+    ProxyFactory<T> intercept(Method method, Consumer<MethodWrapperFactory<T>> wrapper);
+
+    ProxyFactory<T> intercept(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper);
 
     /**
      * Implements the given interfaces on the proxy. This will add the given interfaces to the list of
@@ -265,11 +300,11 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> extends Modifiabl
      * @param interfaces The interfaces to implement
      * @return This factory
      */
-    F implement(Class<?>... interfaces);
+    ProxyFactory<T> implement(Class<?>... interfaces);
 
-    F defaultStub(MethodStub<T> stub);
+    ProxyFactory<T> defaultStub(MethodStub<T> stub);
 
-    F defaultStub(Supplier<MethodStub<T>> stub);
+    ProxyFactory<T> defaultStub(Supplier<MethodStub<T>> stub);
 
     /**
      * Creates a proxy instance of the active {@link #type()} and returns it. This will create a new proxy,

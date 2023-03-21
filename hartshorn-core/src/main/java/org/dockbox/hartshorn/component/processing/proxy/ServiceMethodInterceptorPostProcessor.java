@@ -35,7 +35,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
-        final ProxyFactory<T, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         for (final MethodView<T, ?> method : methods) {

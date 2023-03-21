@@ -18,23 +18,7 @@ package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.inject.binding.Bound;
 
-public class PersonImpl implements Person{
-    private final String name;
-    private final int age;
-
+public record PersonImpl(String name, int age) implements Person {
     @Bound
-    public PersonImpl(final String name, final int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    @Override
-    public String name() {
-        return this.name;
-    }
-
-    @Override
-    public int age() {
-        return this.age;
-    }
+    public PersonImpl {}
 }

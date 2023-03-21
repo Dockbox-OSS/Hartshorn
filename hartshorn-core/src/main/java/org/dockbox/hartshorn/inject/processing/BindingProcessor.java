@@ -147,7 +147,7 @@ public class BindingProcessor {
 
             final Object instance = applicationContext.get(proxyContext.targetType);
             if (proxyContext.proxy.manager() instanceof ModifiableProxyManager) {
-                final ModifiableProxyManager<Object, ?> proxyManager = TypeUtils.adjustWildcards(proxyContext.proxy.manager(), ModifiableProxyManager.class);
+                final ModifiableProxyManager<Object> proxyManager = TypeUtils.adjustWildcards(proxyContext.proxy.manager(), ModifiableProxyManager.class);
                 proxyManager.delegate(instance);
             }
             else {

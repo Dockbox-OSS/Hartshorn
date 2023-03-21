@@ -16,29 +16,13 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
- * Type used to store a {@link java.lang.reflect.Method}'s parameter and the index of said
- * parameter.
+ * Type used to store a {@link MethodView}'s parameter and the index of said parameter.
  */
-public class CommandParameterContext {
-
-    private final ParameterView<?> parameter;
-    private final int index;
-
-    public CommandParameterContext(final ParameterView<?> parameter, final int index) {
-        this.parameter = parameter;
-        this.index = index;
-    }
-
-    public ParameterView<?> parameter() {
-        return this.parameter;
-    }
-
-    public int index() {
-        return this.index;
-    }
+public record CommandParameterContext(ParameterView<?> parameter, int index) {
 
     /**
      * Checks if the provided type is equal to, or a supertype of, the stored parameter's type.

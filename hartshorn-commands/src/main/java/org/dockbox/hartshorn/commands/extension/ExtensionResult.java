@@ -22,17 +22,7 @@ import org.dockbox.hartshorn.i18n.Message;
 /**
  * Indicates the result of a {@link CommandExecutorExtension}.
  */
-public final class ExtensionResult {
-
-    private final boolean proceed;
-    private final Message reason;
-    private final boolean send;
-
-    public ExtensionResult(final boolean proceed, final Message reason, final boolean send) {
-        this.proceed = proceed;
-        this.reason = reason;
-        this.send = send;
-    }
+public record ExtensionResult(boolean proceed, Message reason, boolean send) {
 
     /**
      * Gets a new {@link ExtensionResult} which allows the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
@@ -58,8 +48,8 @@ public final class ExtensionResult {
 
     /**
      * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
-     * proceed. This result will send the provided {@link Message} to the {@link CommandSource}
-     * if {@code send} is {@code true}.
+     * proceed. This result will send the provided {@link Message} to the {@link CommandSource} if {@code send} is
+     * {@code true}.
      *
      * @param reason The reason
      * @param send Whether to send the reason to the {@link CommandSource}
@@ -76,6 +66,7 @@ public final class ExtensionResult {
      *
      * @return {@code true} if the executor should proceed, or {@code false}
      */
+    @Override
     public boolean proceed() {
         return this.proceed;
     }
@@ -87,6 +78,7 @@ public final class ExtensionResult {
      *
      * @return The reason
      */
+    @Override
     public Message reason() {
         return this.reason;
     }
@@ -97,6 +89,7 @@ public final class ExtensionResult {
      *
      * @return {@code true} if the {@link #reason()} should be sent, or {@code false}
      */
+    @Override
     public boolean send() {
         return this.send;
     }

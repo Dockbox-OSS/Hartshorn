@@ -361,12 +361,12 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
+    public <T> StateAwareProxyFactory<T> factory(final TypeView<T> type) {
         return this.applicationProxier.factory(type);
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
+    public <T> StateAwareProxyFactory<T> factory(final Class<T> type) {
         return this.applicationProxier.factory(type);
     }
 

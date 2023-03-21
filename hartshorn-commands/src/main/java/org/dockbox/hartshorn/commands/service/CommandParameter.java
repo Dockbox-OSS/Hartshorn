@@ -25,23 +25,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
  *
  * @param <T> The type of the parameter value.
  */
-public class CommandParameter<T> {
-
-    private final T value;
-    private final String key;
-
-    public CommandParameter(final T value, final String key) {
-        this.value = value;
-        this.key = key;
-    }
-
-    public T value() {
-        return this.value;
-    }
-
-    public String key() {
-        return this.key;
-    }
+public record CommandParameter<T>(T value, String key) {
 
     public String trimmedKey() {
         return StringUtilities.trimWith('-', this.key());

@@ -18,15 +18,5 @@ package org.dockbox.hartshorn.web.mvc.template;
 
 import java.nio.file.Path;
 
-public class FileViewTemplate implements ViewTemplate {
-
-    private final Path path;
-
-    public FileViewTemplate(final Path path) {
-        this.path = path;
-    }
-
-    public Path path() {
-        return this.path;
-    }
+public record FileViewTemplate(Path path) implements ViewTemplate {
 }

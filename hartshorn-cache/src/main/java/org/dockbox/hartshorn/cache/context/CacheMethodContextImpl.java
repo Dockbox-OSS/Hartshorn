@@ -21,27 +21,9 @@ import org.dockbox.hartshorn.cache.Expiration;
 /**
  * Default implementation of {@link CacheMethodContext}.
  *
- * @see CacheMethodContext
  * @author Guus Lieben
+ * @see CacheMethodContext
  * @since 21.2
  */
-public class CacheMethodContextImpl implements CacheMethodContext {
-
-    private final String name;
-    private final Expiration expiration;
-
-    public CacheMethodContextImpl(final String name, final Expiration expiration) {
-        this.name = name;
-        this.expiration = expiration;
-    }
-
-    @Override
-    public String name() {
-        return this.name;
-    }
-
-    @Override
-    public Expiration expiration() {
-        return this.expiration;
-    }
+public record CacheMethodContextImpl(String name, Expiration expiration) implements CacheMethodContext {
 }

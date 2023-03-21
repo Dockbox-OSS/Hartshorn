@@ -56,14 +56,14 @@ import jakarta.persistence.Query;
 @Component
 public class HibernateEntityManagerCarrier implements EntityManagerCarrier, ContextCarrier {
 
-    private static final String HB_USERNAME = "hibernate.connection.username";
-    private static final String HB_PASSWORD = "hibernate.connection.password";
-    private static final String HB_URL = "hibernate.connection.url";
-    private static final String HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
-    private static final String HB_DRIVER_CLASS = "hibernate.connection.driver_class";
-    private static final String HB_DIALECT = "hibernate.dialect";
+    public static final String HB_USERNAME = "hibernate.connection.username";
+    public static final String HB_PASSWORD = "hibernate.connection.password";
+    public static final String HB_URL = "hibernate.connection.url";
+    public static final String HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
+    public static final String HB_DRIVER_CLASS = "hibernate.connection.driver_class";
+    public static final String HB_DIALECT = "hibernate.dialect";
 
-    private static final String HH_HIBERNATE_DIALECT = "hartshorn.data.hibernate.dialect";
+    public static final String HH_HIBERNATE_DIALECT = "hartshorn.data.hibernate.dialect";
 
     private final Configuration hibernateConfiguration = new Configuration();
 

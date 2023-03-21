@@ -32,7 +32,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
     public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
         if (!processingContext.type().isChildOf(this.parentTarget())) return instance;
 
-        final ProxyFactory<P, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        final ProxyFactory<P> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
@@ -49,7 +49,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
         return instance;
     }
 
-    protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P, ?> handler, final Class<? extends P> parent) {
+    protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P> handler, final Class<? extends P> parent) {
         return context.get(this.parentTarget());
     }
 

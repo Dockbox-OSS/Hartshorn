@@ -16,15 +16,5 @@
 
 package org.dockbox.hartshorn.web.mvc.template;
 
-public class StringViewTemplate implements ViewTemplate {
-
-    private final String template;
-
-    public StringViewTemplate(final String template) {
-        this.template = template;
-    }
-
-    public String template() {
-        return this.template;
-    }
+public record StringViewTemplate(String template) implements ViewTemplate {
 }

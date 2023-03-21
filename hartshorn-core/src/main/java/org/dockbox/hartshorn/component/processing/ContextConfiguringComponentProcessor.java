@@ -48,9 +48,9 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
                 contextInstance.add(componentContext);
             }
             else {
-                final ComponentKey<ProxyFactory<T, ?>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
+                final ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
                 if (processingContext.containsKey(factoryKey)) {
-                    final ProxyFactory<T, ?> proxyFactory = processingContext.get(factoryKey);
+                    final ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
                     proxyFactory.contextContainer().add(componentContext);
                 }
             }

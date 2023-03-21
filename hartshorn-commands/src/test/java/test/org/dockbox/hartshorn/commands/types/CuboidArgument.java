@@ -19,15 +19,5 @@ package test.org.dockbox.hartshorn.commands.types;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 
 @Parameter("cuboid")
-public class CuboidArgument {
-
-    private final int size;
-
-    public CuboidArgument(final int size) {
-        this.size = size;
-    }
-
-    public int size() {
-        return this.size;
-    }
+public record CuboidArgument(int size) {
 }

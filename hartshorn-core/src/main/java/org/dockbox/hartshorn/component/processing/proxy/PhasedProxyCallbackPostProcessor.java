@@ -37,7 +37,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
         final ComponentKey<T> key = processingContext.key();
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 
-        final ProxyFactory<T, ?> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) return instance;
 
         instance = this.processProxy(context, instance, processingContext, factory);
@@ -56,7 +56,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
         return instance;
     }
 
-    protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T, ?> proxyFactory) {
+    protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T> proxyFactory) {
         // Left for subclasses to override if necessary
         return instance;
     }

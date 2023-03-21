@@ -20,11 +20,10 @@ package org.dockbox.hartshorn.proxy;
  * A specific {@link ProxyFactory} that is aware of its own state, and exposes it to the outside world.
  *
  * @param <T> the type of the proxy
- * @param <F> the type of the factory, referencing itself
  * @author Guus Lieben
  * @since 22.2
  */
-public interface StateAwareProxyFactory<T, F extends ProxyFactory<T, F>> extends ProxyFactory<T, F> {
+public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
     /**
      * Sets whether the current factory should continue tracking changes. If set to false, the factory will not track
      * changes.
@@ -32,7 +31,7 @@ public interface StateAwareProxyFactory<T, F extends ProxyFactory<T, F>> extends
      * @param trackState whether the factory should track changes
      * @return the current factory
      */
-    StateAwareProxyFactory<T, F> trackState(boolean trackState);
+    StateAwareProxyFactory<T> trackState(boolean trackState);
 
     /**
      * Returns whether the current factory was modified since its creation. If {@link #trackState(boolean)}

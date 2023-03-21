@@ -40,16 +40,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
+ * Simple implementation of {@link CommandExecutorContext} targeting {@link MethodView} based executors.
  */
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
 public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {

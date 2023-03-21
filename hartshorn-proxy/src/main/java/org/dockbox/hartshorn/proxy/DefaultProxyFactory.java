@@ -31,6 +31,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -46,7 +47,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>> {
+public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ContextCarrier {
 
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
@@ -214,6 +215,18 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
+    public ProxyFactory<T> intercept(Method method, Consumer<MethodWrapperFactory<T>> wrapper) {
+        // TODO: Implement
+        return null;
+    }
+
+    @Override
+    public ProxyFactory<T> intercept(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper) {
+        // TODO: Implement
+        return null;
+    }
+
+    @Override
     public DefaultProxyFactory<T> implement(final Class<?>... interfaces) {
         for (final Class<?> anInterface : interfaces) {
             if (!anInterface.isInterface()) {
@@ -242,7 +255,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public StateAwareProxyFactory<T, DefaultProxyFactory<T>> trackState(final boolean trackState) {
+    public StateAwareProxyFactory<T> trackState(final boolean trackState) {
         this.trackState = trackState;
         return this;
     }

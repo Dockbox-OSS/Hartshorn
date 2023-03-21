@@ -35,7 +35,7 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
     }
 
     @Override
-    protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyFactory<JpaRepository, ?> handler, final Class<? extends JpaRepository> parent) {
+    protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyFactory<JpaRepository> handler, final Class<? extends JpaRepository> parent) {
         final TypeView<JpaRepository> repositoryType = context.environment().introspect(handler.type());
         final List<TypeView<?>> list = repositoryType.typeParameters().from(JpaRepository.class);
         final Class<?> type = list.get(0).type();
