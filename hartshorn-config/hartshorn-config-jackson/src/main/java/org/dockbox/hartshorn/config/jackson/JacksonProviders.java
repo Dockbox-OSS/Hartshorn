@@ -36,8 +36,7 @@ import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.config.jackson.introspect.JacksonIgnoreAnnotationIntrospector;
-import org.dockbox.hartshorn.config.jackson.introspect.JacksonPropertyAnnotationIntrospector;
+import org.dockbox.hartshorn.config.jackson.introspect.HartshornJacksonAnnotationIntrospector;
 import org.dockbox.hartshorn.config.jackson.mapping.JavaPropsDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.JsonDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.TomlDataMapper;
@@ -99,8 +98,7 @@ public class JacksonProviders {
         };
         return (builder, format, inclusionRule) -> {
             MapperBuilder<?, ?> mb = builder
-                    .annotationIntrospector(new JacksonPropertyAnnotationIntrospector(introspector))
-                    .annotationIntrospector(new JacksonIgnoreAnnotationIntrospector(introspector))
+                    .annotationIntrospector(new HartshornJacksonAnnotationIntrospector(introspector))
                     .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
                     .enable(Feature.ALLOW_COMMENTS)
                     .enable(Feature.ALLOW_YAML_COMMENTS)

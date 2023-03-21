@@ -21,10 +21,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import org.dockbox.hartshorn.config.annotations.IgnoreProperty;
 import org.dockbox.hartshorn.config.jackson.JacksonIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -34,11 +36,11 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
-public class JacksonPropertyAnnotationIntrospector extends JacksonAnnotationIntrospector {
+public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
     private final Introspector introspector;
 
-    public JacksonPropertyAnnotationIntrospector(final Introspector introspector) {
+    public HartshornJacksonAnnotationIntrospector(final Introspector introspector) {
         this.introspector = introspector;
     }
 
@@ -150,5 +152,13 @@ public class JacksonPropertyAnnotationIntrospector extends JacksonAnnotationIntr
             }
         }
         return defaultValue.apply(a);
+    }
+
+    @Override
+    public boolean hasIgnoreMarker(final AnnotatedMember member) {
+        if (this.introspector.introspect(member.getAnnotated()).has(IgnoreProperty.class)) {
+            return true;
+        }
+        return super.hasIgnoreMarker(member);
     }
 }

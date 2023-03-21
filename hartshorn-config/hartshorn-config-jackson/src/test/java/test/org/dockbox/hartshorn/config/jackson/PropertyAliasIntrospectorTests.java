@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.dockbox.hartshorn.config.jackson.introspect.JacksonPropertyAnnotationIntrospector;
+import org.dockbox.hartshorn.config.jackson.introspect.HartshornJacksonAnnotationIntrospector;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +45,7 @@ public class PropertyAliasIntrospectorTests {
     @Test
     void testPropertyNameForSerialization() throws NoSuchFieldException {
         final Annotated annotated = this.annotated("name");
-        final AnnotationIntrospector introspector = new JacksonPropertyAnnotationIntrospector(this.introspector);
+        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
         final PropertyName name = introspector.findNameForSerialization(annotated);
         final String simpleName = name.getSimpleName();
         Assertions.assertEquals("firstName", simpleName);
@@ -64,7 +64,7 @@ public class PropertyAliasIntrospectorTests {
     @Test
     void testDefaultNameForSerialization() throws NoSuchFieldException {
         final Annotated annotated = this.annotated("other");
-        final AnnotationIntrospector introspector = new JacksonPropertyAnnotationIntrospector(this.introspector);
+        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
         final PropertyName name = introspector.findNameForSerialization(annotated);
         // No explicit property name defined
         Assertions.assertNull(name);
@@ -73,7 +73,7 @@ public class PropertyAliasIntrospectorTests {
     @Test
     void testPropertyNameForDeserialization() throws NoSuchFieldException {
         final Annotated annotated = this.annotated("name");
-        final AnnotationIntrospector introspector = new JacksonPropertyAnnotationIntrospector(this.introspector);
+        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
         final PropertyName name = introspector.findNameForDeserialization(annotated);
         final String simpleName = name.getSimpleName();
         Assertions.assertEquals("firstName", simpleName);
@@ -82,7 +82,7 @@ public class PropertyAliasIntrospectorTests {
     @Test
     void testDefaultNameForDeserialization() throws NoSuchFieldException {
         final Annotated annotated = this.annotated("other");
-        final AnnotationIntrospector introspector = new JacksonPropertyAnnotationIntrospector(this.introspector);
+        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
         final PropertyName name = introspector.findNameForDeserialization(annotated);
         // No explicit property name defined
         Assertions.assertNull(name);
