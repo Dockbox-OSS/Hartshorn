@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -25,6 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
- * a given class, and is a default contract provided in all {@link ComponentProcessingContext}s for
+ * a given class, and is a default contract provided in all {@code ComponentProcessingContext}s for
  * components that permit the creation of proxies.
  *
  * <p>Proxy factories are responsible for creating proxy objects for a given class, after the proxy
@@ -273,7 +273,7 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
      * @return This factory
      * @see MethodWrapper
      */
-    ProxyFactory<T> intercept(MethodView<T, ?> method, MethodWrapper<T> wrapper);
+    ProxyFactory<T> wrapAround(MethodView<T, ?> method, MethodWrapper<T> wrapper);
 
     /**
      * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
@@ -284,11 +284,11 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
      * @return This factory
      * @see MethodWrapper
      */
-    ProxyFactory<T> intercept(Method method, MethodWrapper<T> wrapper);
+    ProxyFactory<T> wrapAround(Method method, MethodWrapper<T> wrapper);
 
-    ProxyFactory<T> intercept(Method method, Consumer<MethodWrapperFactory<T>> wrapper);
+    ProxyFactory<T> wrapAround(Method method, Consumer<MethodWrapperFactory<T>> wrapper);
 
-    ProxyFactory<T> intercept(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper);
+    ProxyFactory<T> wrapAround(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper);
 
     /**
      * Implements the given interfaces on the proxy. This will add the given interfaces to the list of
@@ -336,6 +336,8 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
      * @throws ApplicationException If the proxy could not be created
      */
     Attempt<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
+
+    Attempt<T, Throwable> proxy(Constructor<T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.
@@ -404,4 +406,7 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
      * @return The default method stub
      */
     Supplier<MethodStub<T>> defaultStub();
+
+    @Override
+    ProxyFactory<T> delegate(T delegate);
 }

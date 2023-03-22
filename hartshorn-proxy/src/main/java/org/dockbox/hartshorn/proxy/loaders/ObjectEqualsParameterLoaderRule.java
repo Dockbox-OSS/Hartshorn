@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.proxy.loaders;
 
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
 
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
+
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
         final ExecutableElementView<?, ?> executable = parameter.declaredBy();

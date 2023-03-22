@@ -46,4 +46,5 @@ dependencies {
     testImplementation(libs.scala)
     testImplementation(libs.groovy)
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }

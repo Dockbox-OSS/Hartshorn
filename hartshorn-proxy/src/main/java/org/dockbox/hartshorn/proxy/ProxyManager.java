@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.context.ApplicationAwareContext;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Method;
@@ -113,4 +113,6 @@ public interface ProxyManager<T> extends Context {
      * @see MethodStubContext
      */
     MethodStub<T> stub();
+
+    ApplicationProxier applicationProxier();
 }

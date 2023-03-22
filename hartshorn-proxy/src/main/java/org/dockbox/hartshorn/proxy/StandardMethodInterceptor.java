@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.loaders.ProxyParameterLoaderContext;
 import org.dockbox.hartshorn.proxy.loaders.UnproxyingParameterLoader;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -35,20 +35,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javassist.util.proxy.ProxyFactory;
-
 @SuppressWarnings({ "OverlyBroadThrowsClause", "ProhibitedExceptionDeclared" })
 public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, ProxyObject<T> {
 
     private static final Map<Invokable, MethodHandle> METHOD_HANDLE_CACHE = new ConcurrentHashMap<>();
 
     private final ProxyManager<T> manager;
-    private final ApplicationContext applicationContext;
+    private final Introspector introspector;
+    private final ApplicationProxier applicationProxier;
     private final ParameterLoader<ProxyParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
 
-    public StandardMethodInterceptor(final ProxyManager<T> manager, final ApplicationContext applicationContext) {
+    public StandardMethodInterceptor(final ProxyManager<T> manager, final Introspector introspector, ApplicationProxier applicationProxier) {
         this.manager = manager;
-        this.applicationContext = applicationContext;
+        this.introspector = introspector;
+        this.applicationProxier = applicationProxier;
     }
 
     @Override
@@ -78,14 +78,14 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
         else if (returnType.isPrimitive()) {
             if (result == null) return returnType.defaultOrNull();
             else {
-                final TypeView<Object> resultView = this.applicationContext().environment().introspect(result);
+                final TypeView<Object> resultView = this.introspector.introspect(result);
                 if (resultView.isPrimitive() || resultView.isChildOf(returnType.type())) return result;
                 else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
             }
         }
         else if (result == null) return null;
         else {
-            final TypeView<Object> resultView = this.applicationContext().environment().introspect(result);
+            final TypeView<Object> resultView = this.introspector.introspect(result);
             if (resultView.isChildOf(returnType.type())) return result;
             else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
         }
@@ -125,32 +125,36 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
             final Option<T> delegate = this.manager().delegate(source.toMethod());
             if (delegate.present())
                 result = this.invokeDelegate(delegate.get(), callbackTarget, source, arguments);
-            else
+            else {
                 result = this.interceptWithoutDelegate(self, callbackTarget, source, proxy, arguments);
+            }
         }
         return result;
     }
 
     protected Object interceptWithoutDelegate(final T self, final T callbackTarget, final Invokable source, final Invokable proxy, final Object[] args) throws Throwable {
-        // If no handler is known, default to the original method. This is delegated to the instance
-        // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
-        Invokable target = source;
-        if (this.manager().delegate().absent()) {
-            if (source == null) target = proxy;
-
-            if (this.isEqualsMethod(target)) return this.proxyEquals(args[0]);
-            if (this.isToStringMethod(target)) return this.proxyToString(self);
-            if (this.isHashCodeMethod(target)) return this.proxyHashCode(self);
-        }
+        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
+        if (defaultMethod.present()) return defaultMethod.get();
 
         final Object result;
         if (callbackTarget == self && proxy != null) {
             result = proxy.invoke(callbackTarget, args);
         }
         else {
-            result = this.invokeUnregistered(self, source, target, args);
+            result = this.invokeUnregistered(self, source, source, args);
         }
         return result;
+    }
+
+    protected Option<Object> tryInvokeDefaultMethod(final T self, final Invokable target, final Object[] args) {
+        return Option.of(() -> {
+            if (this.isEqualsMethod(target)){
+                return this.proxyEquals(args[0]);
+            }
+            if (this.isToStringMethod(target)) return this.proxyToString(self);
+            if (this.isHashCodeMethod(target)) return this.proxyHashCode(self);
+            return null;
+        });
     }
 
     protected CustomInvocation<?> createDefaultInvocation(final Invokable source, final Invokable proxy, final T callbackTarget) {
@@ -159,7 +163,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
                 return this.invokeDelegate(this.manager().delegate().get(), source, interceptorArgs);
             }
             if (proxy == null) {
-                return this.applicationContext().environment().introspect(source.returnType()).defaultOrNull();
+                return this.introspector.introspect(source.returnType()).defaultOrNull();
             }
             return proxy.invoke(callbackTarget, interceptorArgs);
         };
@@ -171,6 +175,9 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
     }
 
     protected Object invokeDelegate(final T delegate, final T self, final Invokable source, final Object[] args) throws Throwable {
+        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
+        if (defaultMethod.present()) return defaultMethod.get();
+
         final Object result = source.invoke(delegate, args);
         if (result == delegate) return self;
         return result;
@@ -203,7 +210,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
             else if (source.isDefault()) return this.invokeDefault(targetClass, source, self, args);
 
             // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
-            else if (!(self instanceof Proxy || ProxyFactory.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
+            else if (!(self instanceof Proxy || Proxy.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
 
             // If none of the above conditions are met, we have no way to handle the method.
             else return this.invokeStub(self, source, target, args);
@@ -216,9 +223,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
     @Override
     public Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
         final MethodView<?, ?> methodView = method.toIntrospector();
-        // TODO: Central context attached to the application context?
-        final ApplicationProxier applicationProxier = this.applicationContext().get(ApplicationProxier.class);
-        final ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, methodView.declaredBy(), instance, this.applicationContext(), applicationProxier);
+        final ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, applicationProxier);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 
@@ -236,14 +241,14 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
         Object result;
         if (target instanceof MethodInvokable methodInvokable) {
             result = function.invoke(TypeUtils.adjustWildcards(methodInvokable.toIntrospector(), MethodView.class), self, args)
-                    .orElseGet(() -> this.applicationContext().environment().introspect(target.returnType()).defaultOrNull());
+                    .orElseGet(() -> this.introspector.introspect(target.returnType()).defaultOrNull());
         }
         else {
             try {
                 result = target.invoke(self, args);
             }
             catch (final Throwable e) {
-                result = this.applicationContext().environment().introspect(target.returnType()).defaultOrNull();
+                result = this.introspector.introspect(target.returnType()).defaultOrNull();
             }
         }
 
@@ -270,10 +275,5 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
 
     protected ParameterLoader<ProxyParameterLoaderContext> parameterLoader() {
         return this.parameterLoader;
-    }
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
     }
 }

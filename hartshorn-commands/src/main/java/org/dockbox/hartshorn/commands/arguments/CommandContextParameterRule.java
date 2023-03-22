@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 public class CommandContextParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
 

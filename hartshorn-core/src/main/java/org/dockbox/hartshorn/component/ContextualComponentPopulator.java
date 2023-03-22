@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoadException;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 
 import java.util.Collection;
 import java.util.List;

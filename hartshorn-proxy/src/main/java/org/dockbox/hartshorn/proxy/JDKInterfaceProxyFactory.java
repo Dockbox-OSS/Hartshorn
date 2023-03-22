@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
@@ -31,8 +30,8 @@ import java.lang.reflect.InvocationHandler;
 
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
 
-    protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
-        super(type, applicationContext);
+    protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
+        super(type, applicationProxier);
     }
 
     @Override
@@ -51,13 +50,18 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
     }
 
+    @Override
+    public Attempt<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException {
+        return this.proxy(constructor.constructor(), args);
+    }
+
     protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
         this.contextContainer().contexts().forEach(manager::add);
         this.contextContainer().namedContexts().forEach(manager::add);
 
-        final ProxyMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationContext());
+        final ProxyMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationProxier().introspector(), this.applicationProxier());
 
         final Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
 
@@ -66,7 +70,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected InvocationHandler invocationHandler(final ProxyMethodInterceptor<T> interceptor) {
-        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationContext()), null, args);
+        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationProxier().introspector()), null, args);
     }
 
     protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor);
@@ -107,9 +111,9 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected void restoreFields(final T existing, final T proxy) {
-        final TypeView<T> typeView = this.applicationContext().environment().isProxy(existing)
-                ? this.applicationContext().environment().introspect(this.type())
-                : this.applicationContext().environment().introspect(this.typeDelegate());
+        final TypeView<T> typeView = this.applicationProxier().isProxy(existing)
+                ? this.applicationProxier().introspector().introspect(this.type())
+                : this.applicationProxier().introspector().introspect(this.typeDelegate());
 
         for (final FieldView<T, ?> field : typeView.fields().all()) {
             if (field.isStatic()) continue;

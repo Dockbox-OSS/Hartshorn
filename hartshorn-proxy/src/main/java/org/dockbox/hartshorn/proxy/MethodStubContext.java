@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.context.DefaultContext;
 
-public class MethodStubContext<T> extends DefaultProvisionContext {
+public class MethodStubContext<T> extends DefaultContext {
 
     private final T self;
     private final Invokable source;

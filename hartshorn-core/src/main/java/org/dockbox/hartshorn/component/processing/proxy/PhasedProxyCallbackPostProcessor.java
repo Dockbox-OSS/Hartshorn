@@ -49,7 +49,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
             final MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
-                factory.intercept(method.method(), wrapper);
+                factory.wrapAround(method.method(), wrapper);
             }
         }
 

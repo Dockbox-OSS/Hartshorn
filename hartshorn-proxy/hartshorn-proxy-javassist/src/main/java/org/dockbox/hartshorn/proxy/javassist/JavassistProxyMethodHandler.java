@@ -18,18 +18,19 @@ package org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.proxy.MethodInvokable;
 import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import java.lang.reflect.Method;
 
 import javassist.util.proxy.MethodHandler;
 
-public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor) implements MethodHandler {
+public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector) implements MethodHandler {
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
         return this.interceptor.intercept(self,
-                new MethodInvokable(thisMethod, this.interceptor().applicationContext()),
-                new MethodInvokable(proceed, this.interceptor().applicationContext()),
+                new MethodInvokable(thisMethod, this.introspector()),
+                new MethodInvokable(proceed, this.introspector()),
                 args);
     }
 }

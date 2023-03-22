@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.jpa.query.Pagination;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 import jakarta.persistence.Query;
 

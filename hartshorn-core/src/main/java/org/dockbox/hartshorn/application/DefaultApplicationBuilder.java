@@ -37,10 +37,11 @@ import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxier;
+import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
@@ -98,7 +99,10 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     protected final Set<Class<?>> standaloneComponents = ConcurrentHashMap.newKeySet();
 
     protected ComponentInitializer<ApplicationConfigurator> applicationConfigurator = ComponentInitializer.of(ctx -> new EnvironmentDrivenApplicationConfigurator());
-    protected ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> new JavassistApplicationProxier());
+    protected ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> {
+        ApplicationProxierLoader loader = DiscoveryService.instance().discover(ApplicationProxierLoader.class);
+        return loader.create(ctx.environment());
+    });
     protected ComponentInitializer<ApplicationFSProvider> applicationFSProvider = ComponentInitializer.of(ctx -> new ApplicationFSProviderImpl());
     protected ComponentInitializer<ExceptionHandler> exceptionHandler = ComponentInitializer.of(ctx -> new LoggingExceptionHandler());
     protected ComponentInitializer<ApplicationArgumentParser> argumentParser = ComponentInitializer.of(ctx -> new StandardApplicationArgumentParser());

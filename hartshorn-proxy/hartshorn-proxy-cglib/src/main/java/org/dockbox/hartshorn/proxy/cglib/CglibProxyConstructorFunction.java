@@ -20,7 +20,6 @@ import net.sf.cglib.proxy.Enhancer;
 
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
 import java.lang.reflect.Constructor;
 

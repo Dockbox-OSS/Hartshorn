@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.proxy.cglib;
 
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.Invokable;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.reflect.Method;
@@ -38,12 +38,12 @@ public class CGLibProxyMethodInvokable implements Invokable {
     private final Method method;
     private final TypeView<?> returnType;
 
-    public CGLibProxyMethodInvokable(final ApplicationContext applicationContext, final MethodProxy methodProxy, final Object proxy, final Method method) {
+    public CGLibProxyMethodInvokable(final Introspector introspector, final MethodProxy methodProxy, final Object proxy, final Method method) {
         this.methodProxy = methodProxy;
         this.proxy = proxy;
         this.parameterTypes = method.getParameterTypes();
         this.method = method;
-        this.returnType = applicationContext.environment().introspect(method.getReturnType());
+        this.returnType = introspector.introspect(method.getReturnType());
     }
 
     @Override

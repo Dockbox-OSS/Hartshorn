@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.commands.extension.CooldownExtension;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 import jakarta.inject.Singleton;
 

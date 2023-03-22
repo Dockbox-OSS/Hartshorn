@@ -211,5 +211,9 @@ allprojects {
             (options as StandardJavadocDocletOptions).addStringOption("encoding", "UTF-8")
             (options as StandardJavadocDocletOptions).addStringOption("charSet", "UTF-8")
         }
+
+        withType<Jar> {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
     }
 }

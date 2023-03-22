@@ -16,15 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.util.function.Consumer;
-
 public interface MethodWrapperFactory<T> {
 
-    MethodWrapperFactory<T> before(Consumer<ProxyCallbackContext<T>> context);
+    MethodWrapperFactory<T> before(ProxyCallback<T> callback);
 
-    MethodWrapperFactory<T> after(Consumer<ProxyCallbackContext<T>> context);
+    MethodWrapperFactory<T> after(ProxyCallback<T> callback);
 
-    MethodWrapperFactory<T> onError(Consumer<ProxyCallbackContext<T>> context);
+    MethodWrapperFactory<T> onError(ProxyCallback<T> callback);
 
     ProxyFactory<T> build();
 

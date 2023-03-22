@@ -23,8 +23,9 @@ public class DefaultValueResponseMethodStub<T> implements MethodStub<T> {
     @Override
     public Object invoke(final MethodStubContext<T> stubContext) {
         final Class<?> returnType = stubContext.target().returnType();
-        final TypeView<?> introspectedType = stubContext.applicationContext()
-                .environment()
+        final TypeView<?> introspectedType = stubContext.manager()
+                .applicationProxier()
+                .introspector()
                 .introspect(returnType);
         return introspectedType.defaultOrNull();
     }

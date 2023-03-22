@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**

@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.jpa.query.QueryExecutionContext;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;

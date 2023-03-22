@@ -27,4 +27,5 @@ dependencies {
     testImplementation("org.dockbox.hartshorn:hartshorn-proxy")
 
     annotationProcessor("org.dockbox.hartshorn:hartshorn-discovery")
+    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }

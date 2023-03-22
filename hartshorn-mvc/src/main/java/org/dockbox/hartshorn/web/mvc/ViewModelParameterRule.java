@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.web.mvc;
 
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.web.mvc.model.ViewModel;
 
 public class ViewModelParameterRule implements ParameterLoaderRule<MvcParameterLoaderContext> {

@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
@@ -43,7 +43,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> extends DefaultApplicationAwareContext implements ProxyManager<T>, ModifiableProxyManager<T> {
+public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<T>, ModifiableProxyManager<T> {
 
     private static final Method managerAccessor;
 
@@ -55,6 +55,8 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
             throw new IllegalStateException(e);
         }
     }
+
+    private final ApplicationProxier applicationProxier;
 
     private Class<T> proxyClass;
     private final Class<T> targetClass;
@@ -68,22 +70,23 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     private T delegate;
 
     public LazyProxyManager(final DefaultProxyFactory<T> proxyFactory) {
-        this(applicationContext, null, proxyFactory.type(), proxyFactory.typeDelegate(),
+        this(proxyFactory.applicationProxier(), null, proxyFactory.type(), proxyFactory.typeDelegate(),
                 proxyFactory.delegates(), proxyFactory.typeDelegates(),
                 proxyFactory.interceptors(), proxyFactory.wrappers(),
                 proxyFactory.defaultStub());
     }
 
-    public LazyProxyManager(final Class<T> proxyClass, final Class<T> targetClass,
+    public LazyProxyManager(final ApplicationProxier applicationProxier, final Class<T> proxyClass, final Class<T> targetClass,
                             final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
                             final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers,
                             final Supplier<MethodStub<T>> defaultStub) {
-        super(applicationContext);
+        this.applicationProxier = applicationProxier;
+
         // TODO: Check if the proxy class is a proxy
-        if (applicationContext.environment().isProxy(targetClass)) {
+        if (applicationProxier.isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
-        if (proxyClass != null && !applicationContext.environment().isProxy(proxyClass)) {
+        if (proxyClass != null && !applicationProxier.isProxy(proxyClass)) {
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
@@ -104,7 +107,7 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
         if (this.proxy != null) {
             throw new IllegalModificationException("Proxy instance already set.");
         }
-        if (!this.applicationContext().environment().isProxy(proxy)) {
+        if (!this.applicationProxier.isProxy(proxy)) {
             throw new IllegalArgumentException("Provided object is not a proxy");
         }
         this.proxy = proxy;
@@ -159,6 +162,11 @@ public class LazyProxyManager<T> extends DefaultApplicationAwareContext implemen
     @Override
     public MethodStub<T> stub() {
         return this.defaultStub.get();
+    }
+
+    @Override
+    public ApplicationProxier applicationProxier() {
+        return this.applicationProxier;
     }
 
     @Override

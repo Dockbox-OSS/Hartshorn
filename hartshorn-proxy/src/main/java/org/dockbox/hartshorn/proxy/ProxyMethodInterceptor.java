@@ -16,9 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
-
-public interface ProxyMethodInterceptor<T> extends ContextCarrier {
+public interface ProxyMethodInterceptor<T> {
 
     ProxyManager<T> manager();
 

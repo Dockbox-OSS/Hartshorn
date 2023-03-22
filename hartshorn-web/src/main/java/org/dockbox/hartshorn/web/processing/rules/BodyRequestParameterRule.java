@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.web.MediaType;
 import org.dockbox.hartshorn.web.annotations.RequestBody;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;

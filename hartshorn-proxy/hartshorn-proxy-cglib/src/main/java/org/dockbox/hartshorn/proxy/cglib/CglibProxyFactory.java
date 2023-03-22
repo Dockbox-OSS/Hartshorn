@@ -20,7 +20,6 @@ import net.sf.cglib.core.NamingPolicy;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.Invokable;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.MethodInvokable;
@@ -37,8 +36,8 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
     private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> nameGenerator.get(prefix);
 
-    public CglibProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
-        super(type, applicationContext);
+    public CglibProxyFactory(final Class<T> type, CglibApplicationProxier applicationProxier) {
+        super(type, applicationProxier);
     }
 
     @Override
@@ -50,8 +49,8 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         enhancer.setClassLoader(this.defaultClassLoader());
 
         enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> {
-            final MethodInvokable realMethod = new MethodInvokable(method, this.applicationContext());
-            final Invokable proxyMethod = new CGLibProxyMethodInvokable(this.applicationContext(), proxy, obj, method);
+            final MethodInvokable realMethod = new MethodInvokable(method, this.applicationProxier().introspector());
+            final Invokable proxyMethod = new CGLibProxyMethodInvokable(this.applicationProxier().introspector(), proxy, obj, method);
             return interceptor.intercept(obj, realMethod, proxyMethod, args);
         });
         return new CglibProxyConstructorFunction<>(this.type(), enhancer);

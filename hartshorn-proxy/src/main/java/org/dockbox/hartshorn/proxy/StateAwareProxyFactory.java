@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 /**
  * A specific {@link ProxyFactory} that is aware of its own state, and exposes it to the outside world.
  *
@@ -42,4 +48,94 @@ public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
      * @return whether the factory was modified since its creation
      */
     boolean modified();
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> delegateAbstract(T delegate);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    <S> StateAwareProxyFactory<T> delegate(Class<S> type, S delegate);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    <S> StateAwareProxyFactory<T> delegateAbstract(Class<S> type, S delegate);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> delegate(MethodView<T, ?> method, T delegate);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> delegate(Method method, T delegate);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    <R> StateAwareProxyFactory<T> intercept(MethodView<T, R> method, MethodInterceptor<T, R> interceptor);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> intercept(Method method, MethodInterceptor<T, ?> interceptor);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> wrapAround(MethodView<T, ?> method, MethodWrapper<T> wrapper);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> wrapAround(Method method, MethodWrapper<T> wrapper);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> wrapAround(Method method, Consumer<MethodWrapperFactory<T>> wrapper);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> wrapAround(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> implement(Class<?>... interfaces);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> defaultStub(MethodStub<T> stub);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> defaultStub(Supplier<MethodStub<T>> stub);
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    StateAwareProxyFactory<T> delegate(T delegate);
 }

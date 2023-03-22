@@ -26,8 +26,6 @@ includeReconfigured(
         ":hartshorn-introspect",
         ":hartshorn-introspect:hartshorn-introspect-reflection",
         ":hartshorn-core",
-        ":hartshorn-core:hartshorn-proxy-cglib",
-        ":hartshorn-core:hartshorn-proxy-javassist",
         ":hartshorn-proxy",
         ":hartshorn-proxy:hartshorn-proxy-cglib",
         ":hartshorn-proxy:hartshorn-proxy-javassist",

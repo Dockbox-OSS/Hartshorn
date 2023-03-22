@@ -16,20 +16,28 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractApplicationProxier implements ApplicationProxier, ApplicationManaged {
+public abstract class AbstractApplicationProxier implements ApplicationProxier {
 
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
+    private final Introspector introspector;
 
-    public AbstractApplicationProxier() {
+    public AbstractApplicationProxier(Introspector introspector) {
+        this.introspector = introspector;
         this.registerProxyLookup(new NativeProxyLookup());
         this.registerProxyLookup(new HartshornProxyLookup());
+    }
+
+    @Override
+    public Introspector introspector() {
+        return this.introspector;
     }
 
     @Override

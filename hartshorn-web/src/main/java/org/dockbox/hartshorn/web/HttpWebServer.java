@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.net.URI;

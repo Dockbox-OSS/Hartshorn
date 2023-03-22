@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
@@ -30,8 +29,8 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         ProxyFactory.nameGenerator = classname -> nameGenerator.get(classname);
     }
 
-    public JavassistProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
-        super(type, applicationContext);
+    public JavassistProxyFactory(final Class<T> type, final JavassistApplicationProxier applicationProxier) {
+        super(type, applicationProxier);
     }
 
     @Override
@@ -40,7 +39,7 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));
 
-        final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor);
+        final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor, this.applicationProxier().introspector());
         return new JavassistProxyConstructorFunction<>(this.type(), factory, methodHandler);
     }
 }

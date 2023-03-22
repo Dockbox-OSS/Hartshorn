@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Set;
 
-public class ProxyContextContainer extends DefaultProvisionContext {
+public class ProxyContextContainer extends DefaultContext {
 
     private final Runnable onModify;
 

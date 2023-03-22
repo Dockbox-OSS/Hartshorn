@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * The {@link ApplicationProxier} is responsible for creating proxies of components. It is used by the
- * {@link ApplicationContext} to create proxies of components, as well as allowing {@link ComponentPostProcessor}s
- * to modify components.
+ * The {@link ApplicationProxier} is responsible for creating proxies of components. It acts as middleware
+ * between the application and the lower level proxying library, allowing for easy replacement of the
+ * proxying library.
  *
  * @author Guus Lieben
  * @since 21.9
@@ -47,4 +47,6 @@ public interface ApplicationProxier extends ProxyLookup {
     <D, T extends D> Option<D> delegate(Class<D> type, T instance);
 
     <T> StateAwareProxyFactory<T> factory(Class<T> type);
+
+    Introspector introspector();
 }

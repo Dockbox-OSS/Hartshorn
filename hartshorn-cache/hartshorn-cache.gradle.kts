@@ -27,4 +27,5 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
 
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }

@@ -20,7 +20,6 @@ public interface ProxyObject<T> {
 
     default boolean isEqualsMethod(final Invokable invokable) {
         return "equals".equals(invokable.name())
-                && invokable.declaringClass().equals(Object.class)
                 && invokable.returnType().equals(boolean.class)
                 && invokable.parameterTypes().length == 1
                 && invokable.parameterTypes()[0].equals(Object.class);
@@ -28,25 +27,27 @@ public interface ProxyObject<T> {
 
     default boolean isToStringMethod(final Invokable invokable) {
         return "toString".equals(invokable.name())
-                && invokable.declaringClass().equals(Object.class)
                 && invokable.parameterTypes().length == 0
                 && invokable.returnType().equals(String.class);
     }
 
     default boolean isHashCodeMethod(final Invokable invokable) {
         return "hashCode".equals(invokable.name())
-                && invokable.declaringClass().equals(Object.class)
                 && invokable.parameterTypes().length == 0
                 && invokable.returnType().equals(int.class);
     }
 
     default boolean proxyEquals(final Object obj) {
         if (obj == null) return false;
-        if (Boolean.TRUE.equals(this.manager().delegate()
-                .map(instance -> instance.equals(obj))
-                .orElse(false))
-        ) return true;
-        return this.manager().proxy() == obj;
+        return Boolean.TRUE.equals(this.manager().delegate().map(delegate -> {
+            if (this.manager().applicationProxier().isProxy(obj)) {
+                return this.manager().applicationProxier().manager(obj)
+                        .flatMap(ProxyManager::delegate)
+                        .map(delegate::equals)
+                        .orElse(false);
+            }
+            return delegate.equals(obj);
+        }).orElseGet(() -> this.manager().proxy() == obj));
     }
 
     default String proxyToString(final T self) {

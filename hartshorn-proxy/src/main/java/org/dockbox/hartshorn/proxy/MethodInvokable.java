@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.lang.reflect.Method;
@@ -24,11 +24,11 @@ import java.lang.reflect.Method;
 public class MethodInvokable implements Invokable {
 
     private final Method method;
-    private final ApplicationContext applicationContext;
+    private final Introspector introspector;
 
-    public MethodInvokable(final Method method, final ApplicationContext applicationContext) {
+    public MethodInvokable(final Method method, final Introspector introspector) {
         this.method = method;
-        this.applicationContext = applicationContext;
+        this.introspector = introspector;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MethodInvokable implements Invokable {
     }
 
     public MethodView<?, ?> toIntrospector() {
-        return this.applicationContext.environment().introspect(this.method);
+        return this.introspector.introspect(this.method);
     }
 
     public Method toMethod() {

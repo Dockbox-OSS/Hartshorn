@@ -52,14 +52,4 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
                 }).toArray(Reportable[]::new);
         collector.property("collectors").write(reporters);
     }
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context) {
-        return Option.empty();
-    }
-
-    @Override
-    public <C extends Context> List<C> all(final Class<C> context) {
-        return Collections.emptyList();
-    }
 }

@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -47,7 +45,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ContextCarrier {
+public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T> {
 
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
@@ -83,14 +81,14 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     // Proxy data
     private final ProxyContextContainer contextContainer = new ProxyContextContainer(this::updateState);
     private final Class<T> type;
-    private final ApplicationContext applicationContext;
+    private final ApplicationProxier applicationProxier;
 
     private boolean trackState = true;
     private boolean modified;
 
-    protected DefaultProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
+    protected DefaultProxyFactory(final Class<T> type, ApplicationProxier applicationProxier) {
         this.type = type;
-        this.applicationContext = applicationContext;
+        this.applicationProxier = applicationProxier;
         this.validate();
     }
 
@@ -184,7 +182,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
-        final TypeView<T> delegateType = this.applicationContext().environment().introspect(delegate);
+        final TypeView<T> delegateType = this.applicationProxier().introspector().introspect(delegate);
         if (!delegateType.isChildOf(method.getDeclaringClass())) {
             throw new IllegalArgumentException("Delegate must implement- or be of type " + method.getDeclaringClass().getName());
         }
@@ -208,22 +206,38 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> intercept(final Method method, final MethodWrapper<T> wrapper) {
+    public DefaultProxyFactory<T> wrapAround(final Method method, final MethodWrapper<T> wrapper) {
         this.updateState();
         this.wrappers.put(method, wrapper);
         return this;
     }
 
     @Override
-    public ProxyFactory<T> intercept(Method method, Consumer<MethodWrapperFactory<T>> wrapper) {
-        // TODO: Implement
-        return null;
+    public StateAwareProxyFactory<T> wrapAround(Method method, Consumer<MethodWrapperFactory<T>> wrapper) {
+        StandardMethodWrapperFactory<T> factory = new StandardMethodWrapperFactory<>(this);
+        wrapper.accept(factory);
+        return this.wrapAround(method, factory.create());
     }
 
     @Override
-    public ProxyFactory<T> intercept(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper) {
-        // TODO: Implement
-        return null;
+    public StateAwareProxyFactory<T> wrapAround(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper) {
+        return this.wrapAround(method.method(), wrapper);
+    }
+
+
+    @Override
+    public StateAwareProxyFactory<T> delegate(MethodView<T, ?> method, T delegate) {
+        return this.delegate(method.method(), delegate);
+    }
+
+    @Override
+    public <R> StateAwareProxyFactory<T> intercept(MethodView<T, R> method, org.dockbox.hartshorn.proxy.MethodInterceptor<T, R> interceptor) {
+        return this.intercept(method.method(), interceptor);
+    }
+
+    @Override
+    public StateAwareProxyFactory<T> wrapAround(MethodView<T, ?> method, MethodWrapper<T> wrapper) {
+        return this.wrapAround(method.method(), wrapper);
     }
 
     @Override
@@ -263,11 +277,6 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     @Override
     public boolean modified() {
         return this.modified;
-    }
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
     }
 
     @Override
@@ -316,5 +325,9 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     @Override
     public ProxyContextContainer contextContainer() {
         return this.contextContainer;
+    }
+
+    public ApplicationProxier applicationProxier() {
+        return applicationProxier;
     }
 }

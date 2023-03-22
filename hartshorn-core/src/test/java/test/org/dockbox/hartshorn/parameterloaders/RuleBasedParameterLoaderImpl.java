@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.parameterloaders;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
-import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 
 import java.util.Set;
 

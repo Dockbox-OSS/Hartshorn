@@ -16,5 +16,19 @@
 
 package org.dockbox.hartshorn.context;
 
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+
 public abstract class DefaultProvisionContext extends DefaultContext implements ProvisionContext {
+
+    @Override
+    public <C extends Context> Option<C> first(final Class<C> context) {
+        return ProvisionContext.super.first(context);
+    }
+
+    @Override
+    public <C extends Context> List<C> all(final Class<C> context) {
+        return ProvisionContext.super.all(context);
+    }
 }
