@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.events.handle.ConditionMatcherEventExecutionFilter;
 import org.dockbox.hartshorn.events.handle.EventExecutionFilter;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.handle.EventParameterLoader;
 

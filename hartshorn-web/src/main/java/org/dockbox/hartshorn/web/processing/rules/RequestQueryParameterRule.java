@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.web.processing.rules;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.AnnotatedParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.web.annotations.RequestParam;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 

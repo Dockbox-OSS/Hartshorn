@@ -17,6 +17,7 @@
 dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-core")
     implementation("org.dockbox.hartshorn:hartshorn-util")
+    implementation("org.dockbox.hartshorn:hartshorn-proxy")
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
 
     implementation(libs.slf4j)
@@ -26,4 +27,5 @@ dependencies {
     runtimeOnly(libs.junitJupiterEngine)
 
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }

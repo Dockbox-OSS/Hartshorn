@@ -108,34 +108,15 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         return extendsAnnotation == null ? null : extendsAnnotation.value();
     }
 
-    private static class HierarchyKey {
-        private final AnnotatedElement element;
-        private final Class<? extends Annotation> annotationType;
-
-        public HierarchyKey(final AnnotatedElement element, final Class<? extends Annotation> annotationType) {
-            this.element = element;
-            this.annotationType = annotationType;
-        }
-
-        public AnnotatedElement element() {
-            return this.element;
-        }
-
-        public Class<? extends Annotation> annotationType() {
-            return this.annotationType;
-        }
+    private record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
 
         @Override
-        public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || this.getClass() != o.getClass()) return false;
-            final HierarchyKey that = (HierarchyKey) o;
-            return Objects.equals(this.element, that.element) && Objects.equals(this.annotationType, that.annotationType);
-        }
+            public boolean equals(final Object o) {
+                if (this == o) return true;
+                if (o == null || this.getClass() != o.getClass()) return false;
+                final HierarchyKey that = (HierarchyKey) o;
+                return Objects.equals(this.element, that.element) && Objects.equals(this.annotationType, that.annotationType);
+            }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.element, this.annotationType);
-        }
     }
 }

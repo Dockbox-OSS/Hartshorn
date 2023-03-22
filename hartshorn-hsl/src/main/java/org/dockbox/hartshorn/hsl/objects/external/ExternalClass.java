@@ -44,21 +44,18 @@ import java.util.Map;
  * }</pre>
  *
  * @param <T> The type of the class.
+ *
  * @author Guus Lieben
  * @since 22.4
  */
-public class ExternalClass<T> implements ClassReference {
-
-    private final TypeView<T> type;
-
-    public ExternalClass(final TypeView<T> type) {
-        this.type = type;
-    }
+public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     /**
      * Gets the {@link TypeView} represented by this instance.
+     *
      * @return The {@link TypeView} represented by this instance.
      */
+    @Override
     public TypeView<T> type() {
         return this.type;
     }

@@ -106,4 +106,14 @@ public abstract class DefaultContext implements Context {
         return contexts.filter(key.type()::isInstance)
                 .map(key.type()::cast);
     }
+
+    @Override
+    public <C extends Context> Option<C> first(final Class<C> context) {
+        return this.first(new SimpleContextIdentity<>(context));
+    }
+
+    @Override
+    public <C extends Context> List<C> all(final Class<C> context) {
+        return this.all(new SimpleContextIdentity<>(context));
+    }
 }

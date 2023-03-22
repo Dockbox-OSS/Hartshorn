@@ -52,30 +52,15 @@ public class AggregateJpaQueryContextCreator implements JpaQueryContextCreator {
         this.factories.add(PriorityEntry.of(priority, factory));
     }
 
-    private static class PriorityEntry implements Comparable<PriorityEntry> {
-        private final int priority;
-        private final JpaQueryContextCreator factory;
-
-        private PriorityEntry(final int priority, final JpaQueryContextCreator factory) {
-            this.priority = priority;
-            this.factory = factory;
-        }
-
-        public int priority() {
-            return this.priority;
-        }
-
-        public JpaQueryContextCreator factory() {
-            return this.factory;
-        }
+    private record PriorityEntry(int priority, JpaQueryContextCreator factory) implements Comparable<PriorityEntry> {
 
         public static PriorityEntry of(final int priority, final JpaQueryContextCreator factory) {
-            return new PriorityEntry(priority, factory);
-        }
+                return new PriorityEntry(priority, factory);
+            }
 
-        @Override
-        public int compareTo(@NonNull final PriorityEntry o) {
-            return Integer.compare(this.priority, o.priority);
+            @Override
+            public int compareTo(@NonNull final PriorityEntry o) {
+                return Integer.compare(this.priority, o.priority);
+            }
         }
-    }
 }

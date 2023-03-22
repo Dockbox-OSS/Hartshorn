@@ -26,8 +26,10 @@ includeReconfigured(
         ":hartshorn-introspect",
         ":hartshorn-introspect:hartshorn-introspect-reflection",
         ":hartshorn-core",
-        ":hartshorn-core:hartshorn-proxy-cglib",
-        ":hartshorn-core:hartshorn-proxy-javassist",
+        ":hartshorn-proxy",
+        ":hartshorn-proxy:hartshorn-proxy-cglib",
+        ":hartshorn-proxy:hartshorn-proxy-javassist",
+        ":hartshorn-cdi",
         ":hartshorn-reporting",
         ":hartshorn-hsl",
         ":hartshorn-config",
@@ -42,6 +44,8 @@ includeReconfigured(
         ":hartshorn-web",
         ":hartshorn-web:hartshorn-web-jetty",
         ":hartshorn-web:hartshorn-web-freemarker",
+        ":hartshorn-mvc",
+        ":hartshorn-mvc:hartshorn-mvc-freemarker",
         ":hartshorn-test-suite",
 )
 

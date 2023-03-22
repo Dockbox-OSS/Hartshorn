@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.events.handle;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class EventParameterLoaderContext extends ParameterLoaderContext {
+public class EventParameterLoaderContext extends ApplicationBoundParameterLoaderContext {
 
     private final Event event;
 

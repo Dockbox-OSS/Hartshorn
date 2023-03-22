@@ -20,11 +20,12 @@ import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 
 /**
@@ -90,8 +91,8 @@ public interface CommandExecutorContext extends ApplicationAwareContext {
     TypeView<?> parent();
 
     /**
-     * Gets the {@link AnnotatedElement} behind this executor. This element is typically a {@link java.lang.reflect.Method} but
-     * may deviate from this in custom use-cases. This should only be accessed internally and by a {@link org.dockbox.hartshorn.commands.extension.CommandExecutorExtension}.
+     * Gets the {@link AnnotatedElementView} behind this executor. This element is typically a {@link MethodView} but
+     * may deviate from this in custom use-cases. This should only be accessed internally and by a {@link CommandExecutorExtension}.
      *
      * @return The annotated element.
      */

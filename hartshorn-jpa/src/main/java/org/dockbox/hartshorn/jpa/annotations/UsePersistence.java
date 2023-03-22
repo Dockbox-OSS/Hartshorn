@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.jpa.JpaRepositoryDelegationPostProcessor;
 import org.dockbox.hartshorn.jpa.query.QueryExecutionContextPostProcessor;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.component.UseProxying;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.config.annotations;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.config.DeserializerMethodPostProcessor;
 import org.dockbox.hartshorn.config.SerializerMethodPostProcessor;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.component.UseProxying;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

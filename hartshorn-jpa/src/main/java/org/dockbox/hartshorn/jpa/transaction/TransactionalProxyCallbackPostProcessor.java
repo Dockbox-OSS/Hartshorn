@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.processing.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.component.processing.proxy.PhasedProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -45,7 +45,7 @@ import jakarta.persistence.EntityManager;
 public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallbackPostProcessor {
 
     @Override
-    protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T, ?> proxyFactory) {
+    protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T> proxyFactory) {
         if (processingContext.type().methods().annotatedWith(Transactional.class).isEmpty()) return instance;
 
         // JpaRepository and EntityManagerCarrier expose their own EntityManager, so we don't need to do anything here.

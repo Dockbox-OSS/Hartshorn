@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
@@ -65,7 +65,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     @Override
     public Object[] loadParameters(final ExecutableElementView<?, ?> element) {
         final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
-        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(element, null, this.applicationContext(), this.scope);
+        final ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
 

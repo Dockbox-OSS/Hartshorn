@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoadException;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 
 import java.util.Collection;
 import java.util.List;
@@ -112,7 +112,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private <T> void populateObjectField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
         ComponentKey<?> fieldKey = ComponentKey.of(field.type().type());
-        if (field.annotations().has(Named.class)) fieldKey = fieldKey.mutable().name(field.annotations().get(Named.class).get()).build();
+        if (field.annotations().has(Named.class))
+            fieldKey = fieldKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
         final Option<Enable> enableAnnotation = field.annotations().get(Enable.class);
         final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
@@ -145,7 +146,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             throw new IllegalStateException("Unable to determine bean type for field " + field.name() + " in " + type.name());
         }
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
-        if (field.annotations().has(Named.class)) beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
+        if (field.annotations().has(Named.class))
+            beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
         final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);
@@ -173,7 +175,8 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final Option<? extends Context> context = this.applicationContext().first(contextKey);
 
         final boolean required = this.isComponentRequired(field);
-        if (required && context.absent()) throw new ComponentRequiredException("Context field " + field.name() + " in " + type.qualifiedName() + " is required, but not present in context");
+        if (required && context.absent())
+            throw new ComponentRequiredException("Context field " + field.name() + " in " + type.qualifiedName() + " is required, but not present in context");
 
         this.applicationContext().log().debug("Injecting context of type {} into field {}", type, field.name());
         field.set(instance, context.orNull());

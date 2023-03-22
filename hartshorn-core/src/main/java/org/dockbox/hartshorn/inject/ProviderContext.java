@@ -20,39 +20,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 
 import java.util.function.Supplier;
 
-public class ProviderContext<T> {
+public record ProviderContext<T>(ComponentKey<T> key, boolean singleton, int priority,
+                                 Supplier<T> provider, boolean lazy) {
 
-    private final ComponentKey<T> key;
-    private final boolean singleton;
-    private final int priority;
-    private final Supplier<T> provider;
-    private final boolean lazy;
-
-    public ProviderContext(final ComponentKey<T> key, final boolean singleton, final int priority, final Supplier<T> provider, final boolean lazy) {
-        this.key = key;
-        this.singleton = singleton;
-        this.priority = priority;
-        this.provider = provider;
-        this.lazy = lazy;
-    }
-
-    public ComponentKey<T> key() {
-        return this.key;
-    }
-
-    public boolean singleton() {
-        return this.singleton;
-    }
-
-    public int priority() {
-        return this.priority;
-    }
-
-    public Supplier<T> provider() {
-        return this.provider;
-    }
-
-    public boolean lazy() {
-        return this.lazy;
-    }
 }

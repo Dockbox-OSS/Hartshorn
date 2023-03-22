@@ -41,8 +41,10 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
     implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-discovery")
+    implementation("org.dockbox.hartshorn:hartshorn-proxy")
 
     testImplementation(libs.scala)
     testImplementation(libs.groovy)
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
+    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }

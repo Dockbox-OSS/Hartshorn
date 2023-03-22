@@ -19,18 +19,18 @@ package org.dockbox.hartshorn.testsuite;
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.introspect.ExecutableElementContextParameterLoader;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -145,9 +145,9 @@ public class HartshornLifecycleExtension implements
         final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
 
-        final ParameterLoader<ParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
+        final ParameterLoader<ApplicationBoundParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
         final MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
-        final ParameterLoaderContext parameterLoaderContext = new ParameterLoaderContext(executable, extensionContext.getTestInstance().orElse(null), this.applicationContext);
+        final ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable, extensionContext.getTestInstance().orElse(null), this.applicationContext);
 
         return parameterLoader.loadArgument(parameterLoaderContext, parameterContext.getIndex());
     }

@@ -16,16 +16,6 @@
 
 package test.org.dockbox.hartshorn.components;
 
-public class InvalidSampleBoundType implements SampleInterface {
+public record InvalidSampleBoundType(String name) implements SampleInterface {
 
-    private final String name;
-
-    public InvalidSampleBoundType(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String name() {
-        return this.name;
-    }
 }

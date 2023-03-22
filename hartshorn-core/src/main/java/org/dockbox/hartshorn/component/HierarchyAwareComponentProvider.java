@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ModifiableComponentProcessingContext;
@@ -136,7 +136,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         processingContext.put(ComponentKey.of(ComponentContainer.class), container);
 
         if (container.permitsProxying()) {
-            final StateAwareProxyFactory<T, ?> factory = this.applicationContext().environment().factory(key.type());
+            final StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
 
             if (instance != null) {
                 factory.trackState(false);

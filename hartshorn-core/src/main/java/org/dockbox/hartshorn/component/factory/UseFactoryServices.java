@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.component.UseProxying;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

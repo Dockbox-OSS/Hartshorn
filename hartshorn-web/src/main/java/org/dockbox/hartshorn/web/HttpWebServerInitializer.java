@@ -22,18 +22,14 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
-import org.dockbox.hartshorn.web.annotations.UseMvcServer;
-import org.dockbox.hartshorn.web.mvc.MVCInitializer;
-import org.dockbox.hartshorn.web.mvc.ViewTemplate;
+import org.dockbox.hartshorn.web.servlet.HandleWebServlet;
 import org.dockbox.hartshorn.web.servlet.HttpWebServletAdapter;
-import org.dockbox.hartshorn.web.servlet.MvcServlet;
 import org.dockbox.hartshorn.web.servlet.WebServlet;
 import org.dockbox.hartshorn.web.servlet.WebServletFactory;
-import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
@@ -46,16 +42,19 @@ public class HttpWebServerInitializer implements LifecycleObserver {
     public static final int DEFAULT_PORT = 8080;
 
     @Value("hartshorn.web.port")
-    private int port = DEFAULT_PORT;
+    private final int port = DEFAULT_PORT;
 
     @Value("hartshorn.web.servlet.directory")
-    private boolean useDirectoryServlet = true;
+    private final boolean useDirectoryServlet = true;
 
     @Inject
     private WebServletFactory webServletFactory;
 
     @Inject
     private HttpWebServer webServer;
+
+    @Inject
+    private List<WebContextLoader> contextLoaders;
 
     @Override
     public void onStarted(final ApplicationContext applicationContext) {
@@ -68,15 +67,9 @@ public class HttpWebServerInitializer implements LifecycleObserver {
             servlets.put(context.pathSpec(), adapter);
         }
 
-        final boolean initializeMvcComponents = applicationContext.hasActivator(UseMvcServer.class);
-
-        if (initializeMvcComponents) {
-            final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
-            for (final RequestHandlerContext context : mvcControllerContext.requestHandlerContexts()) {
-                final MvcServlet servlet = this.webServletFactory.mvc((MethodView<?, ViewTemplate>) context.method());
-                final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
-                servlets.put(context.pathSpec(), adapter);
-            }
+        for (final WebContextLoader contextLoader : this.contextLoaders) {
+            final Map<String, Servlet> extraServlets = contextLoader.loadServlets(applicationContext, this.webServer);
+            servlets.putAll(extraServlets);
         }
 
         servlets.forEach((path, servlet) -> this.webServer.register(servlet, path));
@@ -85,13 +78,8 @@ public class HttpWebServerInitializer implements LifecycleObserver {
 
         this.webServer.listStaticDirectories(this.useDirectoryServlet);
 
-        if (initializeMvcComponents) {
-            try {
-                final MVCInitializer initializer = applicationContext.get(MVCInitializer.class);
-                initializer.initialize(applicationContext);
-            } catch (final ApplicationException e) {
-                applicationContext.handle("Failed to initialize MVC components", e);
-            }
+        for (final WebContextLoader contextLoader : this.contextLoaders) {
+            contextLoader.initializeContext(applicationContext, this.webServer);
         }
 
         try {
@@ -112,8 +100,10 @@ public class HttpWebServerInitializer implements LifecycleObserver {
     }
 
     protected WebServlet servlet(final ApplicationContext applicationContext, final RequestHandlerContext context, final HttpWebServer webServer) {
-        final WebServletImpl adapter = this.webServletFactory.webServlet(webServer, context);
-        adapter.handler().mapper().skipBehavior(webServer.skipBehavior());
-        return adapter;
+        final WebServlet servlet = this.webServletFactory.webServlet(webServer, context);
+        if (servlet instanceof HandleWebServlet handleWebServlet) {
+            handleWebServlet.handler().mapper().skipBehavior(webServer.skipBehavior());
+        }
+        return servlet;
     }
 }

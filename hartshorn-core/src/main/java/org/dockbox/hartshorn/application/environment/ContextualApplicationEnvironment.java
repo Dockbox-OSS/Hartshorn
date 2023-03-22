@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application.environment;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.banner.Banner;
 import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
 import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
@@ -131,10 +131,6 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this.applicationLogger;
     }
 
-    public ApplicationProxier applicationProxier() {
-        return this.applicationProxier;
-    }
-
     public ExceptionHandler exceptionHandler() {
         return this.exceptionHandler;
     }
@@ -148,7 +144,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         if (this.introspector == null) {
             this.introspector = DiscoveryService.instance()
                     .discover(IntrospectorLoader.class)
-                    .create(this.applicationProxier(), this.annotationLookup());
+                    .create(this.applicationProxier, this.annotationLookup());
         }
         return this.introspector;
     }
@@ -355,22 +351,12 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public <D, T extends D> Option<D> delegate(final TypeView<D> type, final T instance) {
-        return this.applicationProxier.delegate(type, instance);
-    }
-
-    @Override
     public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
         return this.applicationProxier.delegate(type, instance);
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
-        return this.applicationProxier.factory(type);
-    }
-
-    @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
+    public <T> StateAwareProxyFactory<T> factory(final Class<T> type) {
         return this.applicationProxier.factory(type);
     }
 

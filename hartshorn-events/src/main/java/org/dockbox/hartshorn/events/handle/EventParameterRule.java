@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 public class EventParameterRule implements ParameterLoaderRule<EventParameterLoaderContext> {
     @Override

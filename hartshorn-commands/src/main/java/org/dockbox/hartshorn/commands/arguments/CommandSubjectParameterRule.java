@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 public class CommandSubjectParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
     @Override

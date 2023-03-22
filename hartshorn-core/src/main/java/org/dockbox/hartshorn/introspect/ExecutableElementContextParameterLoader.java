@@ -16,24 +16,24 @@
 
 package org.dockbox.hartshorn.introspect;
 
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
 
 import jakarta.inject.Named;
 
-public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ParameterLoaderContext> {
+public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
     public ExecutableElementContextParameterLoader() {
         this.add(new ContextParameterLoaderRule());
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ApplicationBoundParameterLoaderContext context, final Object... args) {
         final Named named = parameter.annotations().get(Named.class).orNull();
         final ComponentKey<T> key = ComponentKey.builder(parameter.type().type()).name(named).build();
         final boolean enable = Boolean.TRUE.equals(parameter.annotations().get(Enable.class)

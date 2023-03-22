@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.web.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HttpRequestParameterLoaderContext extends ParameterLoaderContext {
+public class HttpRequestParameterLoaderContext extends ApplicationBoundParameterLoaderContext {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;

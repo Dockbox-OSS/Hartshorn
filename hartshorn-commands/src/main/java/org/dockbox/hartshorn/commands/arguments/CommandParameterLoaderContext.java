@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class CommandParameterLoaderContext extends ParameterLoaderContext {
+public class CommandParameterLoaderContext extends ApplicationBoundParameterLoaderContext {
 
     private final CommandContext commandContext;
     private final MethodCommandExecutorContext<?> executorContext;

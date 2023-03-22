@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.jpa.query.context.named.ImplicitNamedJpaQueryContex
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
 import org.dockbox.hartshorn.jpa.query.context.named.NamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.jpa.query.context.unnamed.UnnamedJpaQueryContextCreator;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 import jakarta.inject.Singleton;
 

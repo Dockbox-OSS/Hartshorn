@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.persistence.Query;
 
-public class JpaParameterLoaderContext extends ParameterLoaderContext {
+public class JpaParameterLoaderContext extends ApplicationBoundParameterLoaderContext {
 
     private final Query query;
 

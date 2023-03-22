@@ -23,6 +23,7 @@ dependencies {
     implementation("org.dockbox.hartshorn:hartshorn-config")
     implementation("org.dockbox.hartshorn:hartshorn-util")
     implementation("org.dockbox.hartshorn:hartshorn-introspect")
+    implementation("org.dockbox.hartshorn:hartshorn-proxy")
 
     api(libs.bundles.hibernate)
 

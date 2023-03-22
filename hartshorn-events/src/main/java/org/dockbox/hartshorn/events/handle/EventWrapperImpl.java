@@ -25,17 +25,16 @@ import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
-import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Wrapper type for future invocation of a {@link Method} listening for {@link Event} posting. This
- * type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is
+ * Wrapper type for future invocation of a {@link MethodView} listening for {@link Event} posting. This
+ * type is responsible for filtering and invoking a {@link MethodView} when a supported {@link Event} is
  * fired.
  */
 public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>>, EventWrapper {

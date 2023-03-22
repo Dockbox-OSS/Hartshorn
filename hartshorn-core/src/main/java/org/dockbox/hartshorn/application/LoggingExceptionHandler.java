@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.slf4j.Logger;
