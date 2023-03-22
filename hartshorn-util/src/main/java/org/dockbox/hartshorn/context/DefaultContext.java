@@ -109,11 +109,11 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <C extends Context> Option<C> first(final Class<C> context) {
-        return Option.empty();
+        return this.first(new SimpleContextIdentity<>(context));
     }
 
     @Override
     public <C extends Context> List<C> all(final Class<C> context) {
-        return Collections.emptyList();
+        return this.all(new SimpleContextIdentity<>(context));
     }
 }
