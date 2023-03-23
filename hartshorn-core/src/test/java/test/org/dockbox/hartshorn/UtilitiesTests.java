@@ -19,13 +19,12 @@ package test.org.dockbox.hartshorn;
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.Tuple;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.IntrospectionTypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.NotPrimitiveException;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
@@ -372,7 +371,7 @@ public class UtilitiesTests {
     private static Stream<Arguments> validConversionsFromCollection() {
         final String object = "test";
         final Collection<Collection<String>> collectionsToConvert = new HashSet<>();
-        for (final Supplier<Collection<?>> value : CollectionUtilities.COLLECTION_DEFAULTS.values()) {
+        for (final Supplier<Collection<?>> value : IntrospectionTypeUtils.COLLECTION_DEFAULTS.values()) {
             final Collection<String> collection = TypeUtils.adjustWildcards(value.get(), Collection.class);
             collection.add(object);
             collectionsToConvert.add(collection);
@@ -397,7 +396,7 @@ public class UtilitiesTests {
     }
 
     private static Stream<Arguments> defaultCollectionConversions(final Object object) {
-        return CollectionUtilities.COLLECTION_DEFAULTS.keySet().stream().map(type -> {
+        return IntrospectionTypeUtils.COLLECTION_DEFAULTS.keySet().stream().map(type -> {
             final Predicate<Object> isInstance = type::isInstance;
             final Predicate<Object> containsObject = o -> {
                 final Collection<?> collection = (Collection<?>) o;
@@ -418,9 +417,9 @@ public class UtilitiesTests {
     @ParameterizedTest
     @MethodSource("conversionValues")
     void checkWrappingAcceptsValidConversions(final Object objectToTransform, final Class<?> targetType, final Predicate<Object> validator) {
-        final Introspector introspector = new ReflectionIntrospector(applicationContext);
+        final Introspector introspector = applicationContext.environment();
         final TypeView<?> type = introspector.introspect(targetType);
-        final Object wrapped = TypeUtils.checkWrapping(objectToTransform, type);
+        final Object wrapped = IntrospectionTypeUtils.checkWrapping(objectToTransform, type);
         Assertions.assertTrue(validator.test(wrapped));
     }
 

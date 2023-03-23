@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,7 +36,7 @@ import java.util.function.Supplier;
 
 public final class IntrospectionTypeUtils {
 
-    private static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
+    public static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
             Map.entry(Collection.class, ArrayList::new),
             Map.entry(List.class, ArrayList::new),
             Map.entry(Set.class, HashSet::new)
@@ -61,21 +63,33 @@ public final class IntrospectionTypeUtils {
             return TypeUtils.adjustWildcards(Attempt.of(value), Object.class);
         }
         else if (targetType.isChildOf(Collection.class)) {
-            final Option<? extends ConstructorView<?>> defaultConstructor = targetType.constructors().defaultConstructor();
-            if (defaultConstructor.absent())
-                throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
+            final TypeView<?> collectionType = adjustCollectionType(targetType);
+            final Option<? extends ConstructorView<?>> defaultConstructor = collectionType.constructors().defaultConstructor();
 
+            if (defaultConstructor.absent()) throw new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", no default constructor");
             final Attempt<?, Throwable> attempt = defaultConstructor.get().create();
-            final Object istance = attempt
-                    .mapError(error -> new IllegalArgumentException("Cannot convert null to " + targetType.name() + ", default constructor threw exception", error))
-                    .rethrow()
-                    .get();
+            final Collection<Object> collection = TypeUtils.adjustWildcards(attempt
+                            .mapError(e -> new TypeConversionException(targetType.type(), "Unexpected exception while creating collection of type " + targetType.name(), e))
+                            .get(),
+                    Object.class
+            );
 
-            final Collection<Object> collection = TypeUtils.adjustWildcards(istance, Object.class);
             collection.add(value);
             return TypeUtils.adjustWildcards(collection, Object.class);
         }
         throw new IllegalArgumentException("Cannot convert " + objectToTransform.getClass().getName() + " to " + targetType.name());
+    }
+
+    private static TypeView<?> adjustCollectionType(final TypeView<?> collectionType) {
+        if (collectionType instanceof IntrospectorAwareView introspectorAwareView) {
+            final Introspector introspector = introspectorAwareView.introspector();
+            final Supplier<Collection<?>> supplier = IntrospectionTypeUtils.COLLECTION_DEFAULTS.get(collectionType.type());
+            if (supplier != null) {
+                final Collection<?> collection = supplier.get();
+                return introspector.introspect(collection);
+            }
+        }
+        return collectionType;
     }
 
     private static Object unwrapSingleValue(final Object objectToUnwrap) {
@@ -172,7 +186,7 @@ public final class IntrospectionTypeUtils {
         else {
             final Option<? extends ConstructorView<? extends Collection<?>>> fromCollectionConstructor = target.constructors().withParameters(Collection.class);
             if (fromCollectionConstructor.present()) {
-                final Option<? extends Collection<?>> createdCollection = fromCollectionConstructor.get().create(collection);
+                final Option<? extends Collection<?>> createdCollection = fromCollectionConstructor.get().create(List.of(collection));
                 if (createdCollection.present()) {
                     return TypeUtils.adjustWildcards(createdCollection.get(), Collection.class);
                 }

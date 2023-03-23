@@ -39,9 +39,18 @@ public class TypeUtils {
     );
 
     private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = Map.ofEntries(
-            Map.entry(boolean.class, Boolean::valueOf),
+            Map.entry(boolean.class, s -> {
+                // Boolean.valueOf only checks if the input equals 'true', and otherwise
+                // defaults to 'false'. We want to be more strict.
+                if ("true".equals(s)) return true;
+                else if ("false".equals(s)) return false;
+                else throw new TypeConversionException("Invalid boolean value: " + s);
+            }),
             Map.entry(byte.class, Byte::valueOf),
-            Map.entry(char.class, s -> s.charAt(0)),
+            Map.entry(char.class, s -> {
+                if (s.length() == 1) return s.charAt(0);
+                else throw new TypeConversionException("Invalid char value: " + s + " (length != 1)");
+            }),
             Map.entry(double.class, Double::valueOf),
             Map.entry(float.class, Float::valueOf),
             Map.entry(int.class, Integer::valueOf),
@@ -52,8 +61,13 @@ public class TypeUtils {
     public static <T> T toPrimitive(Class<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
             final String name = String.valueOf(value).toUpperCase();
-            //noinspection unchecked,rawtypes
-            return (T) Enum.valueOf((Class<? extends Enum>) type, name);
+            try {
+                //noinspection unchecked,rawtypes
+                return (T) Enum.valueOf((Class<? extends Enum>) type, name);
+            }
+            catch (final IllegalArgumentException e) {
+                throw new TypeConversionException("No enum constant " + type.getName() + "." + name);
+            }
         }
         else {
             if (!type.isPrimitive()) {
@@ -70,7 +84,9 @@ public class TypeUtils {
             else {
                 try {
                     final Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type);
-                    return adjustWildcards(converter.apply(value), Object.class);
+                    final T result = adjustWildcards(converter.apply(value), Object.class);
+                    if (result == null) throw new TypeConversionException(type, value);
+                    return result;
                 }
                 catch (final Throwable e) {
                     throw new TypeConversionException(type, value, e);
