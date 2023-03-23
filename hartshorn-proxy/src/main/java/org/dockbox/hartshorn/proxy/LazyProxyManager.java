@@ -82,7 +82,6 @@ public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<
                             final Supplier<MethodStub<T>> defaultStub) {
         this.applicationProxier = applicationProxier;
 
-        // TODO: Check if the proxy class is a proxy
         if (applicationProxier.isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }

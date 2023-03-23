@@ -103,33 +103,6 @@ jobs:
     needs: [testSource]
     strategy:
       fail-fast: false
-      matrix:
-        module: [
-          "cache",
-          "cache/hartshorn-cache-caffeine",
-          "commands",
-          "config",
-          "config/hartshorn-config-jackson",
-          "core",
-          "discovery",
-          "events",
-          "hsl",
-          "i18n",
-          "introspect",
-          "introspect/hartshorn-introspect-reflection",
-          "jpa",
-          "jpa/hartshorn-jpa-hibernate",
-          "mvc",
-          "mvc/hartshorn-mvc-freemarker",
-          "proxy",
-          "proxy/hartshorn-proxy-cglib",
-          "proxy/hartshorn-proxy-javassist",
-          "reporting",
-          "test-suite",
-          "util",
-          "web",
-          "web/hartshorn-web-jetty",
-        ]
     name: Code coverage
     runs-on: ubuntu-latest
     steps:
@@ -141,16 +114,40 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Run tests
-        run: ./gradlew :hartshorn-${{ matrix.module }}:test
+        run: ./gradlew test
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
         with:
-          title: "Code coverage: ${{ matrix.module }}"
+          title: Code coverage
           update-comment: true
-          paths: ${{ github.workspace }}/hartshorn-${{ matrix.module }}/build/reports/jacoco/test/jacocoTestReport.xml
+          paths: |
+            ${{ github.workspace }}/hartshorn-cach/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-cache/hartshorn-cache-caffein/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-command/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-confi/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-config/hartshorn-config-jackso/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-cor/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-discover/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-event/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-hs/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-i18/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-introspec/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-introspect/hartshorn-introspect-reflectio/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-jp/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-jpa/hartshorn-jpa-hibernat/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-mv/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-mvc/hartshorn-mvc-freemarke/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-prox/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-cgli/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-javassis/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-reportin/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-test-suit/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-uti/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-we/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-web/hartshorn-web-jetty/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80
       - name: Verify coverage report
-        run: ./gradlew :hartshorn-${{ matrix.module }}:jacocoTestCoverageVerification
+        run: ./gradlew jacocoTestCoverageVerification

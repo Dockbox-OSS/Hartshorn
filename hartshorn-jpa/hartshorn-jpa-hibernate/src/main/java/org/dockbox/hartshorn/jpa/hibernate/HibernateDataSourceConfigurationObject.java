@@ -30,7 +30,6 @@ public class HibernateDataSourceConfigurationObject {
     private final Map<String, DataSourceConfiguration> sources = new ConcurrentHashMap<>();
 
     public Map<String, DataSourceConfiguration> sources() {
-        // TODO: Find out why this is deserializing to DataSourceConfiguration instead of HibernateDataSourceConfiguration
         return this.sources;
     }
 }
