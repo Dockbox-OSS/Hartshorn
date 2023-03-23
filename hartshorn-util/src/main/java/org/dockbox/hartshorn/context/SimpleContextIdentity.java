@@ -19,9 +19,15 @@ package org.dockbox.hartshorn.context;
 public class SimpleContextIdentity<T extends Context> implements ContextIdentity<T> {
 
     private final Class<T> type;
+    private final String name;
 
     public SimpleContextIdentity(Class<T> type) {
+        this(type, null);
+    }
+
+    public SimpleContextIdentity(Class<T> type, String name) {
         this.type = type;
+        this.name = name;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class SimpleContextIdentity<T extends Context> implements ContextIdentity
 
     @Override
     public String name() {
-        return null;
+        return this.name;
     }
 
     @Override

@@ -106,16 +106,29 @@ jobs:
       matrix:
         module: [
           "cache",
+          "cache/hartshorn-cache-caffeine",
           "commands",
           "config",
+          "config/hartshorn-config-jackson",
           "core",
+          "discovery",
           "events",
           "hsl",
           "i18n",
+          "introspect",
+          "introspect/hartshorn-introspect-reflection",
           "jpa",
+          "jpa/hartshorn-jpa-hibernate",
+          "mvc",
+          "mvc/hartshorn-mvc-freemarker",
+          "proxy",
+          "proxy/hartshorn-proxy-cglib",
+          "proxy/hartshorn-proxy-javassist",
           "reporting",
           "test-suite",
+          "util",
           "web",
+          "web/hartshorn-web-jetty",
         ]
     name: Code coverage
     runs-on: ubuntu-latest

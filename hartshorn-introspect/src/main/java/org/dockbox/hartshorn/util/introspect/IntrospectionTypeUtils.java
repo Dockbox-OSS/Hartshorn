@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -24,23 +25,13 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public final class IntrospectionTypeUtils {
-
-    public static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
-            Map.entry(Collection.class, ArrayList::new),
-            Map.entry(List.class, ArrayList::new),
-            Map.entry(Set.class, HashSet::new)
-    );
 
     public static <T> T checkWrapping(final Object objectToTransform, final TypeView<T> targetType) {
         if (targetType.isInstance(objectToTransform)) return targetType.cast(objectToTransform);
@@ -83,7 +74,7 @@ public final class IntrospectionTypeUtils {
     private static TypeView<?> adjustCollectionType(final TypeView<?> collectionType) {
         if (collectionType instanceof IntrospectorAwareView introspectorAwareView) {
             final Introspector introspector = introspectorAwareView.introspector();
-            final Supplier<Collection<?>> supplier = IntrospectionTypeUtils.COLLECTION_DEFAULTS.get(collectionType.type());
+            final Supplier<Collection<?>> supplier = CollectionUtilities.COLLECTION_DEFAULTS.get(collectionType.type());
             if (supplier != null) {
                 final Collection<?> collection = supplier.get();
                 return introspector.introspect(collection);
@@ -174,7 +165,7 @@ public final class IntrospectionTypeUtils {
             return TypeUtils.adjustWildcards(initialCollection, Collection.class);
         }
         else if (target.isAbstract()) {
-            for (final Entry<Class<?>, Supplier<Collection<?>>> entry : COLLECTION_DEFAULTS.entrySet()) {
+            for (final Entry<Class<?>, Supplier<Collection<?>>> entry : CollectionUtilities.COLLECTION_DEFAULTS.entrySet()) {
                 if (target.is(entry.getKey())) {
                     final Collection<E> collectionInstance = TypeUtils.adjustWildcards(entry.getValue().get(), Collection.class);
                     collectionInstance.addAll(collection);

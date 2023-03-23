@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn;
+package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.context.ContextIdentity;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
-import org.dockbox.hartshorn.context.InstallIfAbsent;
-import org.dockbox.hartshorn.context.ProvisionContext;
+import org.dockbox.hartshorn.context.SimpleContextIdentity;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
@@ -32,22 +28,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 @HartshornTest(includeBasePackages = false)
 public class ContextTests {
 
-    @Inject
-    private ApplicationContext applicationContext;
-
     @Test
     void testUnnamedContextFirst() {
-        final ApplicationAwareContext context = new TestContext(this.applicationContext);
-        final Context child = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(child);
 
-        final ContextKey<TestContext> key = ContextKey.of(TestContext.class);
+        final ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
         final Option<TestContext> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
@@ -55,12 +46,12 @@ public class ContextTests {
 
     @Test
     void testUnnamedContextAll() {
-        final Context context = new TestContext(this.applicationContext);
-        final Context child = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(child);
 
-        final ContextKey<TestContext> key = ContextKey.of(TestContext.class);
+        final ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
         final List<TestContext> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
@@ -68,12 +59,12 @@ public class ContextTests {
 
     @Test
     void testNamedContextFirstByName() {
-        final Context context = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
         final Option<Context> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
@@ -81,12 +72,12 @@ public class ContextTests {
 
     @Test
     void testNamedContextFirstByNameAndType() {
-        final Context context = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextKey<NamedTestContext> key = ContextKey.builder(NamedTestContext.class).name(NamedTestContext.NAME).build();
+        final ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         final Option<NamedTestContext> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
@@ -94,12 +85,12 @@ public class ContextTests {
 
     @Test
     void testManuallyNamedContextFirstByName() {
-        final Context context = new TestContext(this.applicationContext);
-        final Context child = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(NamedTestContext.NAME, child);
 
-        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
         final Option<Context> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
@@ -107,12 +98,12 @@ public class ContextTests {
 
     @Test
     void testNamedContextAllByName() {
-        final Context context = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
         final List<Context> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
@@ -120,12 +111,12 @@ public class ContextTests {
 
     @Test
     void testNamedContextAllByNameAndType() {
-        final Context context = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextKey<NamedTestContext> key = ContextKey.builder(NamedTestContext.class).name(NamedTestContext.NAME).build();
+        final ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         final List<NamedTestContext> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
@@ -133,39 +124,20 @@ public class ContextTests {
 
     @Test
     void testManuallyNamedContextAllByName() {
-        final Context context = new TestContext(this.applicationContext);
-        final Context child = new TestContext(this.applicationContext);
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(NamedTestContext.NAME, child);
 
-        final ContextKey<Context> key = ContextKey.builder(Context.class).name(NamedTestContext.NAME).build();
+        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
         final List<Context> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
 
-    @Test
-    void testAutoCreatingContext() {
-        final ApplicationAwareContext context = new TestContext(this.applicationContext);
-        final ContextKey<AutoCreatingContext> key = ContextKey.builder(AutoCreatingContext.class)
-                .fallback(AutoCreatingContext::new)
-                .build();
-        final Option<AutoCreatingContext> first = context.first(key);
-        Assertions.assertTrue(first.present());
-    }
+    public static class TestContext extends DefaultContext { }
 
-    public static class TestContext extends DefaultApplicationAwareContext {
-        public TestContext(final ApplicationContext applicationContext) {
-            super(applicationContext);
-        }
-
-    }
-
-    @InstallIfAbsent
-    public static class AutoCreatingContext extends DefaultProvisionContext {
-    }
-
-    public static class NamedTestContext extends DefaultNamedContext implements ProvisionContext {
+    public static class NamedTestContext extends DefaultNamedContext {
 
         static final String NAME = "JUnitContext";
 

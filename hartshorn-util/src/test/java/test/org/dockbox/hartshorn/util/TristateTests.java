@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn;
+package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.Tristate;
 import org.junit.jupiter.api.Assertions;
