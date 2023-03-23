@@ -21,14 +21,12 @@ import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
 import org.dockbox.hartshorn.context.SimpleContextIdentity;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-@HartshornTest(includeBasePackages = false)
 public class ContextTests {
 
     @Test
