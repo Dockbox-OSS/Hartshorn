@@ -122,17 +122,20 @@ jobs:
           title: Code coverage
           update-comment: true
           paths: |
-            ${{ github.workspace }}/hartshorn-cache/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-cache/hartshorn-cache-caffeine/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-commands/build/reports/jacoco/test/jacocoTestReport.xml,
-            ${{ github.workspace }}/hartshorn-config/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-config/hartshorn-config-jackson/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-core/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-discovery/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-events/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-hsl/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-i18n/build/reports/jacoco/test/jacocoTestReport.xml,
-            ${{ github.workspace }}/hartshorn-jpa/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-introspect/hartshorn-introspect-reflection/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-jpa/hartshorn-jpa-hibernate/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-cglib/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-javassist/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-reporting/build/reports/jacoco/test/jacocoTestReport.xml,
-            ${{ github.workspace }}/hartshorn-test-suite/build/reports/jacoco/test/jacocoTestReport.xml,
-            ${{ github.workspace }}/hartshorn-web/build/reports/jacoco/test/jacocoTestReport.xml
+            ${{ github.workspace }}/hartshorn-util/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80

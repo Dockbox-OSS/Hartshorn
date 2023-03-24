@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -36,7 +35,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Stream;
 
-@HartshornTest(includeBasePackages = false)
 public abstract class IntrospectorTests {
 
     private static Stream<Arguments> fields() {
@@ -55,15 +53,6 @@ public abstract class IntrospectorTests {
         return Stream.of(
                 Arguments.of("publicMethod"),
                 Arguments.of("privateMethod")
-        );
-    }
-
-    private static Stream<Arguments> genericInstances() {
-        return Stream.of(
-                Arguments.of(new ReflectTestType(), ReflectTestType.class, true),
-                Arguments.of(new ReflectTestType(), ParentTestType.class, true),
-                Arguments.of(null, ReflectTestType.class, false),
-                Arguments.of(new ReflectTestType(), String.class, false)
         );
     }
 
@@ -155,6 +144,11 @@ public abstract class IntrospectorTests {
     @Test
     void testAssignableFromSame() {
         Assertions.assertTrue(this.introspector().introspect(ReflectTestType.class).isChildOf(ReflectTestType.class));
+    }
+
+    @Test
+    void testAssignableFromChild() {
+        Assertions.assertFalse(this.introspector().introspect(ParentTestType.class).isChildOf(ReflectTestType.class));
     }
 
     @Test
@@ -348,14 +342,6 @@ public abstract class IntrospectorTests {
         Assertions.assertEquals(expected, o);
     }
 
-    private String privateHelloWorld() {
-        return "Hello World";
-    }
-
-    public String helloWorld() {
-        return "Hello World";
-    }
-
     @Test
     void testRedefinedAnnotationsTakePriority() {
         final TypeView<AnnotatedImpl> typeContext = this.introspector().introspect(AnnotatedImpl.class);
@@ -390,9 +376,11 @@ public abstract class IntrospectorTests {
         Assertions.assertEquals(0, third.typeParameters().count());
     }
 
+    @SuppressWarnings("unused") // Used by genericTypeTests
     public void genericTestMethod(final List<List<String>> nestedGeneric) { }
 
-    public void methodWithWildcardUpperbounds(final List<String> list) { }
+    @SuppressWarnings("unused") // Used by testWildcardsWithUpperBounds
+    public void methodWithWildcardUpperbounds(final List<? extends String> list) { }
 
     @Test
     void testWildcardsWithUpperBounds() {

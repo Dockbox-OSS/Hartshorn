@@ -17,13 +17,15 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 
 import java.lang.reflect.AnnotatedElement;
 
-public abstract class ReflectionAnnotatedElementView<T> implements AnnotatedElementView<T> {
+public abstract class ReflectionAnnotatedElementView<T> implements AnnotatedElementView<T>, IntrospectorAwareView {
 
     private final ReflectionIntrospector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;
@@ -40,5 +42,10 @@ public abstract class ReflectionAnnotatedElementView<T> implements AnnotatedElem
             this.annotationsIntrospector = new ReflectionElementAnnotationsIntrospector(this.introspector, this.annotatedElement());
         }
         return this.annotationsIntrospector;
+    }
+
+    @Override
+    public Introspector introspector() {
+        return this.introspector;
     }
 }

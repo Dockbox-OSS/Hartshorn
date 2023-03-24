@@ -14,24 +14,31 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.view.wildcard;
+package test.org.dockbox.hartshorn.lifecycle;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 
-public class WildcardPackageView implements PackageView {
+public class NonRegisteredObserver implements LifecycleObserver {
+
+    private boolean started;
+    private boolean stopped;
+
     @Override
-    public String name() {
-        return "";
+    public void onStarted(final ApplicationContext applicationContext) {
+        this.started = true;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        // No-op, only report in WildcardTypeView
+    public void onExit(final ApplicationContext applicationContext) {
+        this.stopped = true;
     }
 
-    @Override
-    public String qualifiedName() {
-        return "";
+    public boolean started() {
+        return this.started;
+    }
+
+    public boolean stopped() {
+        return this.stopped;
     }
 }

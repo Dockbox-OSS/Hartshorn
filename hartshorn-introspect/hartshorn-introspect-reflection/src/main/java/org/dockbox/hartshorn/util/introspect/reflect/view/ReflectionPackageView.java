@@ -17,13 +17,17 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
-public class ReflectionPackageView implements PackageView {
+public class ReflectionPackageView implements PackageView, IntrospectorAwareView {
 
+    private final Introspector introspector;
     private final Package pkg;
 
-    public ReflectionPackageView(final Package pkg) {
+    public ReflectionPackageView(final Introspector introspector, final Package pkg) {
+        this.introspector = introspector;
         this.pkg = pkg;
     }
 
@@ -35,6 +39,11 @@ public class ReflectionPackageView implements PackageView {
     @Override
     public String qualifiedName() {
         return this.name();
+    }
+
+    @Override
+    public Introspector introspector() {
+        return this.introspector;
     }
 
     @Override

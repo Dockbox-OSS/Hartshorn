@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import java.util.Locale;
 
 @Demo
-@SuppressWarnings("ALL")
+@SuppressWarnings({ "FieldMayBeFinal", "unused" })
 public class ReflectTestType extends ParentTestType {
 
     @Demo
@@ -37,7 +37,7 @@ public class ReflectTestType extends ParentTestType {
     @Property(getter = "field", setter = "field")
     private String accessorField;
 
-    /* TEST UTILITIES, DO NOT TEST AGAINST */
+    /* Begin: Test utilities, do not read or edit these through introspection */
     private boolean activatedSetter;
     private boolean activatedMethod;
     private boolean activatedConstructor;
@@ -53,6 +53,7 @@ public class ReflectTestType extends ParentTestType {
     public boolean activatedConstructor() {
         return this.activatedConstructor;
     }
+    /* End: Test utilities */
 
     @Demo
     public ReflectTestType() {

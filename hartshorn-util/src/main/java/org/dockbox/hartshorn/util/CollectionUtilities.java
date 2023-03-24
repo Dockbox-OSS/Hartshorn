@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,8 +26,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public final class CollectionUtilities {
+
+    public static final Map<Class<?>, Supplier<Collection<?>>> COLLECTION_DEFAULTS = Map.ofEntries(
+            Map.entry(Collection.class, ArrayList::new),
+            Map.entry(List.class, ArrayList::new),
+            Map.entry(Set.class, HashSet::new)
+    );
 
     private CollectionUtilities() {
     }
