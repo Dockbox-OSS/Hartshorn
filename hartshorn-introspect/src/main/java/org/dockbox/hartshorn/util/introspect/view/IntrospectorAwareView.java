@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 
-import java.util.function.Supplier;
+public interface IntrospectorAwareView {
 
-public record ProviderContext<T>(ComponentKey<T> key, boolean singleton, int priority,
-                                 Supplier<T> provider, boolean lazy) {
-
+    Introspector introspector();
 }

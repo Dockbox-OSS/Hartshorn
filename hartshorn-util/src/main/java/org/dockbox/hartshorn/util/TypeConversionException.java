@@ -18,6 +18,10 @@ package org.dockbox.hartshorn.util;
 
 public class TypeConversionException extends ApplicationRuntimeException {
 
+    public TypeConversionException(String message) {
+        super(message);
+    }
+
     public TypeConversionException(final Class<?> type, final String value) {
         super("Could not convert '" + value + "' to type " + type.getSimpleName());
     }

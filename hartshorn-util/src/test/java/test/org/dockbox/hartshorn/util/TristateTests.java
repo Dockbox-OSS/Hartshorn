@@ -14,33 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package test.org.dockbox.hartshorn.util;
 
-/**
- * Simple implementation of {@link TypedOwner}
- */
-public final class TypedOwnerImpl implements TypedOwner {
+import org.dockbox.hartshorn.util.Tristate;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    private final String id;
+public class TristateTests {
 
-    public TypedOwnerImpl(final String id) {
-        this.id = id;
+    @Test
+    void testBooleanValues() {
+        Assertions.assertTrue(Tristate.TRUE.booleanValue());
+        Assertions.assertFalse(Tristate.FALSE.booleanValue());
+        Assertions.assertFalse(Tristate.UNDEFINED.booleanValue());
     }
-
-    @Override
-    public String id() {
-        return this.id;
-    }
-
-    /**
-     * Creates a new {@link TypedOwnerImpl} from the given ID.
-     *
-     * @param id The ID of the owner
-     *
-     * @return The new {@link TypedOwner}
-     */
-    public static TypedOwner of(final String id) {
-        return new TypedOwnerImpl(id);
-    }
-
 }

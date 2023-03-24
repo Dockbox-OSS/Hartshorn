@@ -1,14 +1,28 @@
 name: Hartshorn
 
-on: [pull_request]
+on: pull_request
 
+# ┌───────────────┐     ┌──────────────┐     ┌───────────────┐
+# │ License check │  →  │   Build all  │  →  │   Build all   │
+# └───────────────┘     │ (JDK source) │     │  (JDK target) │
+#                       └──────────────┘     └───────────────┘
+#                               ↓                    ↓
+#                       ┌──────────────┐     ┌───────────────┐
+#                       │   Test all   │  →  │    Test all   │
+#                       │ (JDK source) │     │  (JDK target) │
+#                       └──────────────┘     └───────────────┘
+#                               ↓
+#                      ┌─────────────────┐
+#                      │ Module coverage │
+#                      │   (JDK source)  │
+#                      └─────────────────┘
 jobs:
   license:
     name: License check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
+      - name: Set up source JDK
         uses: actions/setup-java@v1
         with:
           java-version: 17
@@ -16,13 +30,27 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Check license headers
         run: ./gradlew checkLicenses
-  build:
+  buildSource:
     needs: [license]
+    name: Build all (source JDK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up source JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: "Build (source JDK)"
+        run: ./gradlew build -x test
+  buildTarget:
+    needs: [buildSource]
     strategy:
       fail-fast: false
       matrix:
-        java: [17, 18, 19]
-    name: Build all
+        java: [18, 19]
+    name: Build all (target JDK ${{ matrix.java }})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -34,14 +62,32 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: "Build (Java ${{ matrix.java }})"
         run: ./gradlew build -x test
-  test:
-    needs: [license, build]
+  testSource:
+    needs: [buildSource]
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]
-        java: [17, 18, 19]
-    name: Unit tests
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Unit tests (source JDK)
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up source JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
+        run: ./gradlew test
+  testTarget:
+    needs: [testSource, buildTarget]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: [18, 19]
+    name: Unit tests (target JDK ${{ matrix.java }})
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v2
@@ -53,3 +99,45 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: "Unit testing (OS: ${{ matrix.os }}, Java: ${{ matrix.java }})"
         run: ./gradlew test
+  coverage:
+    needs: [testSource]
+    strategy:
+      fail-fast: false
+    name: Code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up source JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Run tests
+        run: ./gradlew test
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          title: Code coverage
+          update-comment: true
+          paths: |
+            ${{ github.workspace }}/hartshorn-cache/hartshorn-cache-caffeine/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-commands/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-config/hartshorn-config-jackson/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-core/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-discovery/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-events/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-hsl/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-i18n/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-introspect/hartshorn-introspect-reflection/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-jpa/hartshorn-jpa-hibernate/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-cglib/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-javassist/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-reporting/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-util/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 80
+          min-coverage-changed-files: 80
+      - name: Verify coverage report
+        run: ./gradlew jacocoTestCoverageVerification
