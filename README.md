@@ -29,26 +29,60 @@ Or if you are using Gradle:
 implementation "org.dockbox.hartshorn:hartshorn-core:$version"
 ```
 
-Depending on which module you're using, you may also need to import a specific implementation. For example, Hartshorn JPA comes with a Hibernate implementation, which you can import using `hartshorn-jpa-hibernate`. Implementations will always transitively import their API counterpart(s).
-
 ### Starting your first application
 
 Getting started with Hartshorn is easy, the example below will introduce you to the basics of setting up and running your first application.
 
-**TODO: Write content here**
+Hartshorn applications are built using the `HartshornApplication` class. This class is the entry point of your application, and is responsible for bootstrapping the application. The bootstrap process will initialize a standalone `ApplicationContext` which will be used to manage the application's lifecycle.
+
+```java
+public static void main(String[] args) {
+    ApplicationContext applicationContext = HartshornApplication.create();
+    // ...
+}
+```
+
+The `ApplicationContext` is the core of Hartshorn, and is responsible for managing the application's lifecycle. The `ApplicationContext` is also responsible for managing the application's dependency injection container, which is used to inject dependencies into your application. Dependencies can be declared through the use of the `@Binds` annotation, which will bind a type to an implementation. The `@Inject` annotation can be used to inject dependencies into your application.
+
+```java
+@Binds
+public String helloWorld() {
+    return "Hello World!";
+}
+```
+
+Injection is performed on managed components. A component is considered managed if it is annotated with the `@Component` annotation, or a stereotype annotation that is annotated with `@Component`, such as `@Service`.
+
+```java
+@Service
+public class SampleService {
+    
+    @Inject
+    private String helloWorld;
+    
+    public void sayHelloWorld() {
+        System.out.println(helloWorld);
+    }
+}
+```
+
+Bringing it all together, we can now use our `SampleService` to print "Hello World!" to the console.
+
+```java
+public static void main(String[] args) {
+    ApplicationContext applicationContext = HartshornApplication.create();
+    SampleService sampleService = applicationContext.get(SampleService.class);
+    sampleService.sayHelloWorld();
+}
+```
+
+### Next steps
+
+Once you've gotten started with Hartshorn, you'll want to learn more about the framework. The [documentation](https://hartshorn.dockbox.org/) is a great place to start, and will help you get familiar with the framework. You can also check out the [examples](https://github.com/Dockbox-OSS/Hartshorn-Examples) repository for more in-depth examples.
 
 ## Building Hartshorn
 
 If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to build usable JAR artifacts.  All platforms require a Java installation, with JDK 17 or more recent version.
-
-Before building, ensure you set the JAVA\_HOME environment variable. For example:
-
-
-| Platform | Command                                              |
-| :------: | ---------------------------------------------------- |
-|   Unix   | ``export JAVA_HOME=/usr/lib/jvm/openjdk-17-jdk``     |
-|   OSX   | ``export JAVA_HOME=`/usr/libexec/java_home -v 17` `` |
-| Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-17.0.3"`` |
 
 Hartshorn uses Gradle to automate builds, performing several steps before and after a build has completed.
 Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or  `gradlew.bat` for Windows systems in place of any `gradle` command.
