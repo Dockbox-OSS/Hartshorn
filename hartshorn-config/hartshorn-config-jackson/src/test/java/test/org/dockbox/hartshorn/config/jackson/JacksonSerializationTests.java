@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
+package test.org.dockbox.hartshorn.config.jackson;
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+import test.org.dockbox.hartshorn.config.SerializationTests;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+public class JacksonSerializationTests extends SerializationTests {
 }

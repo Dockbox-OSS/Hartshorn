@@ -34,9 +34,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import jakarta.inject.Inject;
 
+/**
+ * <b>Note:</b> This test requires the resources {@code junit.yml} and {@code junit.properties} to be present in the
+ * classpath. These files are located in the {@code hartshorn-config} module under the {@code src/test/resources}
+ * directory.
+ */
 @HartshornTest(includeBasePackages = false)
 @UseConfigurations
-public class ConfigurationManagerTests {
+public abstract class ConfigurationManagerTests {
 
     @Inject
     private ApplicationContext applicationContext;

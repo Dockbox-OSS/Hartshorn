@@ -30,7 +30,7 @@ import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 @UseSerialization
-public class SerializationTests {
+public abstract class SerializationTests {
 
     @Inject
     private ApplicationContext applicationContext;

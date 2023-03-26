@@ -26,6 +26,8 @@ dependencies {
     implementation(libs.caffeine)
 
     testImplementation(testFixtures(project(":hartshorn-cache")))
+    testImplementation("org.dockbox.hartshorn:hartshorn-proxy")
+    testImplementation("org.dockbox.hartshorn:hartshorn-introspect")
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
     testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }

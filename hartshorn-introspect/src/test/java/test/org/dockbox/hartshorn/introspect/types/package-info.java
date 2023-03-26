@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
-
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
-
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
-}
+/**
+ * Contains types used by the {@link test.org.dockbox.hartshorn.introspect.ClassPathScannerTests} to test
+ * whether package scanning works as expected.
+ */
+package test.org.dockbox.hartshorn.introspect.types;

@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -32,6 +33,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -471,4 +473,19 @@ public abstract class IntrospectorTests {
     private enum EnumType {}
     private @interface AnnotationType {}
 
+    @Test
+    void testGenericTypeWithWildcardUsesUpperbounds() {
+        final Option<FieldView<IntrospectorTests, ?>> field = this.introspector().introspect(this).fields().named("genericType");
+        Assertions.assertTrue(field.present());
+
+        final TypeParametersIntrospector parametersIntrospector = field.get().genericType().typeParameters();
+        Assertions.assertEquals(1, parametersIntrospector.count());
+
+        final TypeView<?> parameter = parametersIntrospector.at(0).get();
+        Assertions.assertFalse(parameter.isWildcard());
+        Assertions.assertTrue(parameter.is(Object.class));
+    }
+
+    @SuppressWarnings("unused") // Used by testGenericTypeWithWildcardUsesUpperbounds
+    private final List<?> genericType = new ArrayList<>();
 }
