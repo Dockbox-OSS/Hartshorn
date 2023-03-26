@@ -3,17 +3,17 @@
 <p align="center"><img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"></p>
 <p align="center"><img src="https://img.shields.io/badge/JDK%20source-17-white"> <img src="https://img.shields.io/badge/JDK%20target-19-white"></p>
 
-[Hartshorn](https://hartshorn.dockbox.org/) is a modern JVM-based full stack Java framework. It is capable of aiding developers while building modular, testable, and scalable applications with support for Java and other JVM languages. Hartshorn aims to ease the creation and management of complex JVM applications, this is done by providing tools necessary to build these applications. You can read more about Hartshorn's core technologies and principles in the [core technologies](https://hartshorn.dockbox.org/core/cdi/) topic.
+[Hartshorn](https://hartshorn.dockbox.org/) is a cutting-edge Java framework built on the JVM platform that offers comprehensive support for modular, scalable, and testable application development using Java and other JVM-based languages. Its main objective is to simplify the creation and administration of intricate JVM applications by providing developers with the necessary tools. To learn more about Hartshorn's fundamental technologies and principles, you can refer to the dedicated topic on [core technologies](https://hartshorn.dockbox.org/core/cdi/).
 
 ## Getting started
 
-If you are just getting started with hartshorn, you'll want to view the [Getting Started](https://hartshorn.dockbox.org/getting-started/setup/) guides on the official documentation website. The provided guides use Hartshorn's application starter which enables you to get started quickly. If you are just looking for the Maven dependencies, these are listed below.
+If you are new to Hartshorn, the official documentation website has a [Getting Started](https://hartshorn.dockbox.org/getting-started/setup/) section that provides comprehensive guides to help you get started quickly. The guides use Hartshorn's application starter to facilitate your initial setup. Additionally, if you only need the Maven dependencies for your project, they are listed below for your convenience.
 
 ### Maven configuration
 
-Each module has its own dedicated dependency, so you have the freedom to use only the modules you actually need. You can find all modules and their respective releases on [Maven Central](https://central.sonatype.dev/namespace/org.dockbox.hartshorn).
+The framework provides the flexibility to selectively utilize the required modules by including their dedicated dependencies. You can access all the modules and their corresponding releases on [Maven Central](https://central.sonatype.dev/namespace/org.dockbox.hartshorn).
 
-To get started, add the Maven dependency:
+To begin, add the following Maven dependency:
 
 ```xml
 <dependency>
@@ -23,7 +23,7 @@ To get started, add the Maven dependency:
 </dependency>
 ```
 
-Or if you are using Gradle:
+If you are using Gradle, use this implementation:
 
 ```groovy
 implementation "org.dockbox.hartshorn:hartshorn-core:$version"
@@ -31,9 +31,9 @@ implementation "org.dockbox.hartshorn:hartshorn-core:$version"
 
 ### Starting your first application
 
-Getting started with Hartshorn is easy, the example below will introduce you to the basics of setting up and running your first application.
+The process of starting with Hartshorn is straightforward, and the example below will help you understand the basic steps of setting up and executing your first application.
 
-Hartshorn applications are built using the `HartshornApplication` class. This class is the entry point of your application, and is responsible for bootstrapping the application. The bootstrap process will initialize a standalone `ApplicationContext` which will be used to manage the application's lifecycle.
+The `HartshornApplication` class is used to build Hartshorn applications. It serves as the entry point of your application and performs the bootstrapping process. The process initiates a self-contained `ApplicationContext` that manages your application's lifecycle.
 
 ```java
 public static void main(String[] args) {
@@ -42,7 +42,7 @@ public static void main(String[] args) {
 }
 ```
 
-The `ApplicationContext` is the core of Hartshorn, and is responsible for managing the application's lifecycle. The `ApplicationContext` is also responsible for managing the application's dependency injection container, which is used to inject dependencies into your application. Dependencies can be declared through the use of the `@Binds` annotation, which will bind a type to an implementation. The `@Inject` annotation can be used to inject dependencies into your application.
+`ApplicationContext` is at the heart of Hartshorn, and its primary responsibility is to manage your application's lifecycle. It also manages your application's dependency injection container, which enables the injection of dependencies. The `@Binds` annotation is used to declare dependencies, which binds a type to its implementation. To inject dependencies, you can use the @Inject annotation.
 
 ```java
 @Binds
@@ -51,7 +51,7 @@ public String helloWorld() {
 }
 ```
 
-Injection is performed on managed components. A component is considered managed if it is annotated with the `@Component` annotation, or a stereotype annotation that is annotated with `@Component`, such as `@Service`.
+Managed components are where injections take place. Components annotated with `@Component` or a stereotype annotation annotated with `@Component`, such as `@Service`, are considered managed.
 
 ```java
 @Service
@@ -66,7 +66,7 @@ public class SampleService {
 }
 ```
 
-Bringing it all together, we can now use our `SampleService` to print "Hello World!" to the console.
+Finally, we can bring everything together and print "Hello World!" to the console using our `SampleService`.
 
 ```java
 public static void main(String[] args) {
@@ -78,20 +78,26 @@ public static void main(String[] args) {
 
 ### Next steps
 
-Once you've gotten started with Hartshorn, you'll want to learn more about the framework. The [documentation](https://hartshorn.dockbox.org/) is a great place to start, and will help you get familiar with the framework. You can also check out the [examples](https://github.com/Dockbox-OSS/Hartshorn-Examples) repository for more in-depth examples.
+Once you've taken your first steps with Hartshorn, it's essential to expand your knowledge of the framework. The [documentation](https://hartshorn.dockbox.org/) is an excellent starting point that will help you become more familiar with the framework. Additionally, you can explore the [examples repository](https://github.com/Dockbox-OSS/Hartshorn-Examples) for more comprehensive examples.
 
 ## Building Hartshorn
 
-If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to build usable JAR artifacts.  All platforms require a Java installation, with JDK 17 or more recent version.
+If you want to build Hartshorn yourself, either to access pre-release versions or to customize the framework, the guide below explains how to build usable JAR artifacts.
 
-Hartshorn uses Gradle to automate builds, performing several steps before and after a build has completed.
-Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or  `gradlew.bat` for Windows systems in place of any `gradle` command.
+Please note that you will need a Java installation with JDK 17 or a more recent version for all platforms.
+
+Hartshorn uses Gradle to automate builds, performing several steps before and after a build has completed. Depending on your IDE, the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or `gradlew.bat` for Windows systems instead of any `gradle` command.
 
 To build all Hartshorn modules at once, run `gradle build`. To build specific modules, run `gradle :hartshorn-$module:build`.
 
-Once the build completes, the project distribution archives will be installed at `/hartshorn-assembly/distributions` in the base directory.
-Builds are versioned by release versions, with the artifact following the format `hartshorn-$module-$version.jar`. This will also generate appropriate `javadoc` and `sources` artifacts.
+Once the build is complete, the project distribution archives will be installed at `/hartshorn-assembly/distributions` in the base directory. Builds are versioned by release versions, with the artifact following the format `hartshorn-$module-$version.jar`. This will also generate appropriate `javadoc` and `sources` artifacts.
 
 ## Contributing
 
-Interested in contributing to Hartshorn, want to report a bug, or have a question? Before you do, please read the [contribution guidelines](https://hartshorn.dockbox.org/contributing/)
+Looking to get involved with Hartshorn? We would love to have you on board! Whether you want to report a bug, have a question, or even contribute code, your help is greatly appreciated. Before you start, please take a moment to read through our [contribution guidelines](https://hartshorn.dockbox.org/contributing/) to ensure that your efforts align with our community standards and development practices.
+
+At Dockbox, we value our community of contributors and strive to maintain an open and collaborative environment. Our project is powered by the contributions of individuals like you, who are passionate about building high-quality software and sharing their knowledge with others.
+
+If you're looking for ways to contribute, we have plenty of opportunities available. You can help us by reporting bugs, reviewing code, writing documentation, or even contributing your own code changes. No contribution is too small, and we welcome all levels of experience.
+
+We also welcome QA testers who try out Hartshorn in their own projects to see what works and what doesn't. Your feedback can help us improve the quality of the framework and make it even more valuable for our users.
