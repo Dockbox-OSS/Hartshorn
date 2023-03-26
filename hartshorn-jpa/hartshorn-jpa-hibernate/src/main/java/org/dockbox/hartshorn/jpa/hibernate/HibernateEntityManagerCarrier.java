@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
@@ -33,6 +32,7 @@ import org.dockbox.hartshorn.jpa.query.context.application.ComponentNamedQueryCo
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.hibernate.Session;
@@ -120,7 +120,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
                 this.enable();
             }
             catch (final ApplicationException e) {
-                return ExceptionHandler.unchecked(e);
+                throw new ApplicationRuntimeException("Failed to enable entity manager carrier", e);
             }
         }
 

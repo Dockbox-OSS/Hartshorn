@@ -60,6 +60,7 @@ public interface ExceptionHandler {
      * @throws T The exception to throw.
      * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
      */
+    @Deprecated
     static <T extends Throwable, R> R unchecked(final Throwable t) throws T {
         throw (T) t;
     }
