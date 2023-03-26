@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
+package test.org.dockbox.hartshorn.introspect;
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+import java.util.Set;
+
+public class RuleBasedParameterLoaderImpl extends RuleBasedParameterLoader<ParameterLoaderContext> {
+    @Override // Override for access level
+    public Set<ParameterLoaderRule<ParameterLoaderContext>> rules() {
+        return super.rules();
+    }
 }

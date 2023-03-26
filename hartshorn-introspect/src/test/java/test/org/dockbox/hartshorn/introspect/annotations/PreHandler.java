@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
+package test.org.dockbox.hartshorn.introspect.annotations;
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Extends(Intercept.class)
+public @interface PreHandler {
+    String path() default "";
+
+    HttpMethod method() default HttpMethod.GET;
 }

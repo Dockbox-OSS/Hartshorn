@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
+package test.org.dockbox.hartshorn.introspect.annotations;
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
-
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+public enum InterceptType {
+    PRE_HANDLER,
+    AFTER_SUCCESS
 }

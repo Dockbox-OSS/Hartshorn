@@ -19,9 +19,15 @@ package org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
+import java.lang.reflect.Member;
+
 public class IllegalIntrospectionException extends ApplicationRuntimeException {
 
     public IllegalIntrospectionException(final View view, final String reason) {
         super("Cannot introspect " + view.qualifiedName() + ": " + reason);
+    }
+
+    public IllegalIntrospectionException(final Member member, final String reason) {
+        super("Cannot introspect " + member.getName() + ": " + reason);
     }
 }

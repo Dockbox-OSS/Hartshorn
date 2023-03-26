@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
+package test.org.dockbox.hartshorn.introspect.types;
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+public class ScanClass {
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+    public class NonStaticInnerClass {
+    }
+
+    public static class StaticInnerClass {
+    }
+
 }

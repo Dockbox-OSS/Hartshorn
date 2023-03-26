@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-plugins {
-    id("java-test-fixtures")
-}
+package test.org.dockbox.hartshorn.introspect.components;
 
-apply {
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
+import test.org.dockbox.hartshorn.introspect.annotations.HttpMethod;
+import test.org.dockbox.hartshorn.introspect.annotations.Route;
 
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+@Route(method = HttpMethod.POST, path = "test")
+public class TestClassWithRoute {
+
 }

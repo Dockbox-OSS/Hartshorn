@@ -44,8 +44,9 @@ public abstract class ReflectionExecutableElementView<Parent, ResultType> extend
         this.executable = executable;
         this.introspector = introspector;
         if (!executable.trySetAccessible()) {
-            if (!"java.lang".startsWith(executable.getDeclaringClass().getPackageName())) {
-                throw new IllegalIntrospectionException(this, "Unable to set executable " + executable.getName() + " accessible");
+            String packageName = executable.getDeclaringClass().getPackageName();
+            if (!(packageName.startsWith("java.") || packageName.startsWith("jdk.") || packageName.startsWith("sun.") || packageName.startsWith("com.sun.") || packageName.startsWith("javax."))) {
+                throw new IllegalIntrospectionException(executable, "Unable to set executable " + executable.getName() + " accessible");
             }
         }
     }
