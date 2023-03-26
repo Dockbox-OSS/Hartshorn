@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderContext> {
+
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         return parameter.type().is(String.class);
@@ -29,6 +30,6 @@ public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderC
 
     @Override
     public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
-        return Option.of((T) "JUnit");
+        return Option.of(parameter.type().cast("JUnit"));
     }
 }

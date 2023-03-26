@@ -31,6 +31,6 @@ public class EventParameterRule implements ParameterLoaderRule<EventParameterLoa
 
     @Override
     public <T> Option<T> load(final ParameterView<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
-        return Option.of((T) context.event());
+        return Option.of(parameter.type().cast(context.event()));
     }
 }

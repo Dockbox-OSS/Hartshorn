@@ -39,7 +39,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
             if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
                 final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
                 try {
-                    final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
+                    final boolean stateModified = factory instanceof StateAwareProxyFactory<T> stateAwareProxyFactory && stateAwareProxyFactory.modified();
                     final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();
                     if (stateModified || noConcreteInstancePossible) {
                         finalizingInstance = this.createProxyInstance(context, factory, instance);

@@ -30,6 +30,6 @@ public class CommandSubjectParameterRule implements ParameterLoaderRule<CommandP
 
     @Override
     public <T> Option<T> load(final ParameterView<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        return Option.of((T) context.commandContext());
+        return Option.of(parameter.type().cast(context.commandContext()));
     }
 }

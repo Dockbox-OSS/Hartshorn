@@ -128,6 +128,6 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     }
 
     public <R> R computeIfAbsent(final ComponentKey<R> key, final Function<? super ComponentKey<R>, R> mappingFunction) {
-        return key.type().cast(this.data.computeIfAbsent(key, (Function<? super ComponentKey<?>, ?>) mappingFunction));
+        return key.type().cast(this.data.computeIfAbsent(key, componentKey -> mappingFunction.apply(key)));
     }
 }

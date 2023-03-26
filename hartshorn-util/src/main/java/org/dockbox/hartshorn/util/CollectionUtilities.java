@@ -70,7 +70,7 @@ public final class CollectionUtilities {
 
     @SafeVarargs
     public static <T> Collection<T> merge(final Collection<T>... collections) {
-        final Collection<T> merged = new HashSet<>();
+        final Set<T> merged = new HashSet<>();
         for (final Collection<T> collection : collections) {
             merged.addAll(collection);
         }
@@ -78,17 +78,23 @@ public final class CollectionUtilities {
     }
 
     public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
-        final Object[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length, arrayOne.getClass());
+        final T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
         System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);
-        return (T[]) merged;
+        return merged;
     }
 
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
         final BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
                 .filter(element -> !c2.contains(element))
                 .toList();
+
         final List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
         final List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
-        return Set.copyOf(CollectionUtilities.merge(differenceInOne, differenceInTwo));
+
+        final List<T> mergedDifference = new ArrayList<>(differenceInOne.size() + differenceInTwo.size());
+        mergedDifference.addAll(differenceInOne);
+        mergedDifference.addAll(differenceInTwo);
+
+        return Set.copyOf(mergedDifference);
     }
 }

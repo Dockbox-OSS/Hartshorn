@@ -40,15 +40,19 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
     @Override
     public <T> Attempt<T, Exception> load(final ParameterView<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         final Attempt<String, IOException> body = Attempt.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())), IOException.class);
-        if (parameter.type().is(String.class))
+        if (parameter.type().is(String.class)) {
             return body
-                    .map(o -> (T) o)
+                    .map(parameter.type()::cast)
                     .mapError(e -> e);
+        }
+
         final MediaType mediaType = parameter.declaredBy().annotations().get(HttpRequest.class).get().consumes();
-        if (!mediaType.isSerializable()) return Attempt.empty();
+        if (!mediaType.isSerializable()) {
+            return Attempt.empty();
+        }
+
         final FileFormat bodyFormat = mediaType.fileFormat().get();
         final ObjectMapper objectMapper = context.provider().get(ObjectMapper.class).fileType(bodyFormat);
-
         return body
                 .flatMap(b -> objectMapper.read(b, parameter.type().type()))
                 .attempt(ObjectMappingException.class)
