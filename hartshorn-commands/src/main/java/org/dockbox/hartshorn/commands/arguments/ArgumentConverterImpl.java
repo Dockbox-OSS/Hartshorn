@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.util.StringTypeAdapter;
+import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
@@ -111,11 +111,8 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
             return this;
         }
 
-        /**
-         * @see #withConverter(BiFunction)
-         */
-        public CommandValueConverterBuilder<T> withConverter(final StringTypeAdapter<T> adapter) {
-            this.converter = (source, in) -> adapter.adapt(in);
+        public CommandValueConverterBuilder<T> withConverter(final Converter<String, T> converter) {
+            this.converter = (source, in) -> Option.of(converter.convert(in));
             return this;
         }
 

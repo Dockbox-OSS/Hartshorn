@@ -25,8 +25,12 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
-import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToBooleanConverter;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToCharacterConverter;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.time.Duration;
@@ -42,21 +46,21 @@ public final class DefaultArgumentConverters {
     @Bean
     public static ArgumentConverter<String> stringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "string")
-                .withConverter(BuiltInStringTypeAdapters.STRING)
+                .withConverter((String input) -> Option.of(input))
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Character> characterArgumentConverter() {
         return ArgumentConverterImpl.builder(Character.class, "char", "character")
-                .withConverter(BuiltInStringTypeAdapters.CHARACTER)
+                .withConverter(new StringToCharacterConverter())
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Boolean> booleanArgumentConverter() {
         return ArgumentConverterImpl.builder(Boolean.class, "bool", "boolean")
-                .withConverter(BuiltInStringTypeAdapters.BOOLEAN)
+                .withConverter(new StringToBooleanConverter())
                 .withSuggestionProvider(in -> List.of("true", "false", "yes", "no"))
                 .build();
     }
@@ -64,42 +68,42 @@ public final class DefaultArgumentConverters {
     @Bean
     public static ArgumentConverter<Double> doubleArgumentConverter() {
         return ArgumentConverterImpl.builder(Double.class, "double")
-                .withConverter(BuiltInStringTypeAdapters.DOUBLE)
+                .withConverter(new StringToNumberConverterFactory().create(Double.class))
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Float> floatArgumentConverter() {
         return ArgumentConverterImpl.builder(Float.class, "float")
-                .withConverter(BuiltInStringTypeAdapters.FLOAT)
+                .withConverter(new StringToNumberConverterFactory().create(Float.class))
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Integer> integerArgumentConverter() {
         return ArgumentConverterImpl.builder(Integer.class, "int", "integer")
-                .withConverter(BuiltInStringTypeAdapters.INTEGER)
+                .withConverter(new StringToNumberConverterFactory().create(Integer.class))
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Long> longArgumentConverter() {
         return ArgumentConverterImpl.builder(Long.class, "long")
-                .withConverter(BuiltInStringTypeAdapters.LONG)
+                .withConverter(new StringToNumberConverterFactory().create(Long.class))
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Short> shortArgumentConverter() {
         return ArgumentConverterImpl.builder(Short.class, "short")
-                .withConverter(BuiltInStringTypeAdapters.SHORT)
+                .withConverter(new StringToNumberConverterFactory().create(Short.class))
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<UUID> uuidArgumentConverter() {
         return ArgumentConverterImpl.builder(UUID.class, "uuid", "uniqueId")
-                .withConverter(BuiltInStringTypeAdapters.UNIQUE_ID)
+                .withConverter(new StringToUUIDConverter())
                 .build();
     }
 
@@ -143,20 +147,21 @@ public final class DefaultArgumentConverters {
     @Bean
     public static ArgumentConverter<String> remainingStringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "remaining", "remainingString")
-                .withConverter(Option::of)
+                .withConverter((String input) -> Option.of(input))
                 .withSize(-1)
                 .build();
     }
 
     @Bean
     public static ArgumentConverter<Integer[]> remainingIntegersArgumentConverter() {
+        final Converter<String, Integer> integerConverter = new StringToNumberConverterFactory().create(Integer.class);
         return ArgumentConverterImpl.builder(Integer[].class, "remainingInt")
-                .withConverter(in -> {
+                .withConverter((String in) -> {
                     final String[] parts = in.split(" ");
                     final Integer[] integers = new Integer[parts.length];
                     for (int i = 0; i < parts.length; i++) {
                         final String part = parts[i];
-                        integers[i] = BuiltInStringTypeAdapters.INTEGER.adapt(part).get();
+                        integers[i] = integerConverter.convert(part);
                     }
                     return Option.of(integers);
                 })
