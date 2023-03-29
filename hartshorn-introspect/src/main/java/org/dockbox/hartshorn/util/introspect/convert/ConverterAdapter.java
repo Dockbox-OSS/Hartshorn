@@ -17,14 +17,19 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
 
     @Override
     public boolean canConvert(final Object source, final Class<?> targetType) {
-        if (this.typePair.targetType() != targetType) return false;
-        if (this.typePair.sourceType().isAssignableFrom(source.getClass())) {
-            if (this.converter instanceof ConditionalConverter conditionalConverter) {
-                return conditionalConverter.canConvert(source, targetType);
-            }
-            return true;
+        boolean matches = true;
+        if (this.converter instanceof ConditionalConverter conditionalConverter) {
+            matches = conditionalConverter.canConvert(source, targetType);
         }
-        return false;
+        if (matches) {
+            if (this.typePair.targetType() != targetType) {
+                matches = false;
+            }
+            else if (!this.typePair.sourceType().isAssignableFrom(source.getClass())) {
+                matches = false;
+            }
+        }
+        return matches;
     }
 
     @Override
@@ -34,10 +39,7 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
 
     @SuppressWarnings("unchecked")
     @Override
-    public @Nullable <I, O> Object convert(@NonNull final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
-        if (source == null) {
-            return null;
-        }
+    public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
         final Converter<I, O> ioConverter = (Converter<I, O>) this.converter;
         return ioConverter.convert(sourceType.cast(source));
     }

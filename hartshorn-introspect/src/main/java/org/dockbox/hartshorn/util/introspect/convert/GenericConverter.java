@@ -9,6 +9,6 @@ public interface GenericConverter {
 
     Set<ConvertibleTypePair> convertibleTypes();
 
-    <I, O> @Nullable Object convert(@NonNull Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType);
+    <I, O> @Nullable Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType);
 
 }

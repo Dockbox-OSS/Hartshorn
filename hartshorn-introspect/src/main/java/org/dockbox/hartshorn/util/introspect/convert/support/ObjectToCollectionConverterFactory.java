@@ -1,6 +1,6 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
@@ -30,7 +30,8 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
         }
 
         @Override
-        public O convert(final @NonNull Object source) {
+        public O convert(final @Nullable Object source) {
+            assert source != null;
             final Object[] array = (Object[]) Array.newInstance(source.getClass(), 1);
             array[0] = source;
             return this.helperConverter.convert(array);

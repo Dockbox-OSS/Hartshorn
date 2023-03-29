@@ -23,7 +23,7 @@ public class ArrayToObjectConverter implements GenericConverter {
     }
 
     @Override
-    public @Nullable <I, O> Object convert(final @NonNull Object source, final @NonNull Class<I> sourceType, final @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(final @Nullable Object source, final @NonNull Class<I> sourceType, final @NonNull Class<O> targetType) {
         if (sourceType.isArray()) {
             final Class<?> componentType = sourceType.getComponentType();
             final Object firstElement = Array.get(source, 0);

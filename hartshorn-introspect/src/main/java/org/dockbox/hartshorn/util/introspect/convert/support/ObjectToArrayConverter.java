@@ -15,7 +15,7 @@ public class ObjectToArrayConverter implements GenericConverter {
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@NonNull final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
+    public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
         return new Object[]{source};
     }
 }

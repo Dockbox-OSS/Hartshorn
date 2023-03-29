@@ -1,6 +1,5 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -27,6 +26,9 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
         else if (targetType == Short.class) {
             converter = new StringToNumberConverter<>(Short::parseShort, Short::decode);
         }
+        else if (targetType == Byte.class) {
+            converter = new StringToNumberConverter<>(Byte::parseByte, Byte::decode);
+        }
         else {
             converter = null;
         }
@@ -45,18 +47,25 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
         }
 
         @Override
-        public @Nullable T convert(final @NonNull String input) {
-            if (isHexNumber(input)) {
-                return this.decodeFunction.apply(input);
+        public @Nullable T convert(final @Nullable String input) {
+            assert input != null;
+            try {
+                if (isHexNumber(input)) {
+                    return this.decodeFunction.apply(input);
+                }
+                else {
+                    return this.parseFunction.apply(input);
+                }
             }
-            else {
-                return this.parseFunction.apply(input);
+            catch (final NumberFormatException e) {
+                // If primitive, the conversion service will default to zero
+                return null;
             }
         }
+    }
 
-        private static boolean isHexNumber(final String value) {
-            final int index = value.startsWith("-") ? 1 : 0;
-            return value.toLowerCase().startsWith("0x", index) || value.startsWith("#", index);
-        }
+    public static boolean isHexNumber(final String value) {
+        final int index = value.startsWith("-") ? 1 : 0;
+        return value.toLowerCase().startsWith("0x", index) || value.startsWith("#", index);
     }
 }

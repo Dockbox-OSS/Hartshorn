@@ -171,4 +171,9 @@ public class SuccessSome<T, E extends Throwable> extends Some<T> implements Atte
     public Attempt<T, E> rethrow() throws E {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "SuccessSome[" + super.get() + "]";
+    }
 }

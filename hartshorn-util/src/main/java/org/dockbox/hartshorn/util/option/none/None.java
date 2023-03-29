@@ -129,4 +129,9 @@ public class None<T> implements Option<T> {
     public boolean contains(@Nullable final T value) {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "None";
+    }
 }

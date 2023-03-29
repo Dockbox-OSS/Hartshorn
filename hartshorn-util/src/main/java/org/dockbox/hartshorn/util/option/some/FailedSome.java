@@ -165,4 +165,12 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     public @NonNull Attempt<T, E> peek(final Consumer<T> consumer) {
         return (Attempt<T, E>) super.peek(consumer);
     }
+
+    @Override
+    public String toString() {
+        return "FailedSome{" +
+                "error=" + this.error +
+                ", value=" + super.get() +
+                '}';
+    }
 }

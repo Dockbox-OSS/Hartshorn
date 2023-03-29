@@ -1,6 +1,5 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -23,12 +22,18 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
         }
 
         @Override
-        public @Nullable T convert(final @NonNull String source) {
+        public @Nullable T convert(final @Nullable String source) {
+            assert source != null;
             if (source.isEmpty()) {
                 return null;
             }
-            final Enum value = Enum.valueOf(this.enumType, source.trim());
-            return this.enumType.cast(value);
+            try {
+                final Enum value = Enum.valueOf(this.enumType, source.trim());
+                return this.enumType.cast(value);
+            }
+            catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
     }
 }

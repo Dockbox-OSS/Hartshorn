@@ -313,4 +313,6 @@ public interface Option<T> {
      */
     boolean contains(@Nullable T value);
 
+    String toString();
+
 }
