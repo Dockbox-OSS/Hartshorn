@@ -15,6 +15,10 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
         this.typePair = ConvertibleTypePair.of(sourceType, targetType);
     }
 
+    public ConvertibleTypePair typePair() {
+        return this.typePair;
+    }
+
     @Override
     public Set<ConvertibleTypePair> convertibleTypes() {
         return null;

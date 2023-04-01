@@ -30,6 +30,8 @@ public class StandardConversionService implements ConversionService, ConverterRe
 
     private final Introspector introspector;
     private final GenericConverters genericConverters = new GenericConverters();
+    // Separate registry for default value providers to avoid clashing with Object.class converters
+    private final GenericConverters defaultValueProviders = new GenericConverters();
 
     public StandardConversionService(final Introspector introspector) {
         this.introspector = introspector;
@@ -56,8 +58,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     public <I, O> O convert(final I input, final Class<O> targetType) {
         if (targetType == null) throw new IllegalArgumentException("Target type must not be null");
         if (input == null) {
-            // TODO: Separate tracking of default providers to avoid clashing with Object.class converters?
-            final GenericConverter converter = this.genericConverters.getConverter(Null.INSTANCE, targetType);
+            final GenericConverter converter = this.defaultValueProviders.getConverter(Null.INSTANCE, targetType);
             if (converter != null) {
                 final Object defaultValue = converter.convert(null, Null.TYPE, targetType);
                 return targetType.cast(defaultValue);
