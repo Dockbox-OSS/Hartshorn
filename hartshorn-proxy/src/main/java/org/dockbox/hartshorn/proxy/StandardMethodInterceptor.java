@@ -45,7 +45,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
     private final ApplicationProxier applicationProxier;
     private final ParameterLoader<ProxyParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
 
-    public StandardMethodInterceptor(final ProxyManager<T> manager, final Introspector introspector, ApplicationProxier applicationProxier) {
+    public StandardMethodInterceptor(final ProxyManager<T> manager, final Introspector introspector, final ApplicationProxier applicationProxier) {
         this.manager = manager;
         this.introspector = introspector;
         this.applicationProxier = applicationProxier;

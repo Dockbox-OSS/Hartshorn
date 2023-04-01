@@ -21,7 +21,12 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
+
+import jakarta.inject.Singleton;
 
 /**
  * The {@link ApplicationProviders} class is responsible for providing the default {@link Logger}
@@ -40,4 +45,9 @@ public class ApplicationProviders {
         return context.log();
     }
 
+    @Binds
+    @Singleton
+    public ConversionService conversionService(final Introspector introspector) {
+        return new StandardConversionService(introspector);
+    }
 }

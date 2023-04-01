@@ -21,19 +21,24 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.inject.Provided;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
     public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        return interceptorContext -> {
-            final Provided annotation = methodContext.annotation(Provided.class);
-            final String name = annotation.value();
+        final ConversionService conversionService = context.get(ConversionService.class);
+        final Provided annotation = methodContext.annotation(Provided.class);
+        final String name = annotation.value();
 
-            ComponentKey<?> key = ComponentKey.of(methodContext.method().returnType());
-            if (!name.isEmpty()) key = key.mutable().name(name).build();
-            return interceptorContext.checkedCast(context.get(key));
-        };
+        //noinspection unchecked
+        final TypeView<R> type = (TypeView<R>) methodContext.method().returnType();
+        ComponentKey<?> key = ComponentKey.of(type);
+        if (!name.isEmpty()) key = key.mutable().name(name).build();
+
+        final ComponentKey<?> finalKey = key;
+        return interceptorContext -> conversionService.convert(context.get(finalKey), type.type());
     }
 
     @Override

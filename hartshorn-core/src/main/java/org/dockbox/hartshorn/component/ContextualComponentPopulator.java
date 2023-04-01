@@ -28,14 +28,13 @@ import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.IntrospectionTypeUtils;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,10 +46,12 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private final ApplicationContext applicationContext;
     private final Lazy<ViewContextAdapter> adapter;
+    private final Lazy<ConversionService> conversionService;
 
     public ContextualComponentPopulator(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         this.adapter = Lazy.of(applicationContext, ViewContextAdapter.class);
+        this.conversionService = Lazy.of(applicationContext, ConversionService.class);
     }
 
     @Override
@@ -151,14 +152,15 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
         final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
         final List<?> beans = beanContext.provider().all(beanKey);
-        final Option<?> initialValue = field.get(instance);
-        final Collection<?> transform = IntrospectionTypeUtils.transform(beans,
-                TypeUtils.adjustWildcards(initialValue.orNull(), Collection.class),
-                TypeUtils.adjustWildcards(field.type(), TypeView.class)
-        );
+        //noinspection unchecked
+        final Collection<Object> fieldValue = field.get(instance)
+                .map(Collection.class::cast)
+                .orCompute(() -> (Collection<Object>) this.conversionService.get().convert(null, field.type().type()))
+                .get();
+        fieldValue.addAll(beans);
 
         this.applicationContext().log().debug("Injecting bean collection of type {} into field {}", field.type().name(), field.qualifiedName());
-        field.set(instance, transform);
+        field.set(instance, fieldValue);
     }
 
     protected <T> void populateContextField(final FieldView<T, ?> field, final T instance) {

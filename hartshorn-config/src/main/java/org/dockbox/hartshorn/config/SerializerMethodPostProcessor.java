@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.config.annotations.Serialize;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -37,10 +38,12 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
     @Override
     public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
-        final MethodView<T, ?> method = methodContext.method();
+        //noinspection unchecked
+        final MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
         final Serialize serialize = method.annotations().get(Serialize.class).get();
         final ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
         final boolean returnsStringOrWrapper = this.returnsStringOrWrapper(method);
+        final ConversionService conversionService = context.get(ConversionService.class);
 
         return interceptorContext -> {
             final Object[] arguments = interceptorContext.args();
@@ -51,7 +54,8 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
                 if (outputStream == null && returnsStringOrWrapper) result = mapper.write(arguments[0]);
                 else result = mapper.write(outputStream, arguments[0]);
 
-                return interceptorContext.checkedCast(this.wrapSerializationResult(method, result));
+                final Object serializationResult = this.wrapSerializationResult(method, result);
+                return conversionService.convert(serializationResult, method.returnType().type());
             }
         };
     }

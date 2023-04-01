@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.Deserialize;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.io.InputStream;
 
 public class DeserializerMethodPostProcessor extends AbstractSerializerPostProcessor<Deserialize> {
+
     @Override
     public Class<Deserialize> annotation() {
         return Deserialize.class;
@@ -36,15 +38,18 @@ public class DeserializerMethodPostProcessor extends AbstractSerializerPostProce
     @Override
     public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
         final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
-        final MethodView<T, ?> method = methodContext.method();
+        //noinspection unchecked
+        final MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
         final Deserialize serialize = method.annotations().get(Deserialize.class).get();
         final ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
-        final TypeView<?> returnType = method.genericReturnType();
+        final TypeView<R> returnType = method.genericReturnType();
+        final ConversionService conversionService = context.get(ConversionService.class);
 
         return interceptorContext -> {
             try (final InputStream inputStream = converter.inputStream(method, interceptorContext.args())) {
                 final Option<?> result = mapper.read(inputStream, returnType.type());
-                return interceptorContext.checkedCast(this.wrapSerializationResult(method, result));
+                final Object serializationResult = this.wrapSerializationResult(method, result);
+                return conversionService.convert(serializationResult, returnType.type());
             }
         };
     }

@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -73,6 +74,7 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
 
         final TypeView<?> entityType = this.tryDetermineEntityType(context, method);
         final JpaQueryContextCreator contextCreator = context.get(JpaQueryContextCreator.class);
+        final ConversionService conversionService = context.get(ConversionService.class);
 
         return interceptorContext -> {
             final T persistenceCapable = interceptorContext.instance();
@@ -84,7 +86,8 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
                 entityManager.flush();
 
             final Object result = function.execute(jpaQueryContext);
-            return interceptorContext.checkedCast(result);
+            //noinspection unchecked
+            return (R) conversionService.convert(result, method.returnType().type());
         };
     }
 
