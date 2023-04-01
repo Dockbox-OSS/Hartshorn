@@ -28,12 +28,14 @@ import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToCollectionC
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToStringConverter;
+import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToVoidConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToCollectionConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToObjectConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToOptionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToCollectionConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToObjectConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToOptionConverter;
+import org.dockbox.hartshorn.util.introspect.convert.support.PrimitiveWrapperConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToBooleanConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToCharacterConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToEnumConverterFactory;
@@ -60,6 +62,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
         StandardConversionService.registerCollectionConverters(this, this, introspector);
         StandardConversionService.registerNullWrapperConverters(this, introspector);
         StandardConversionService.registerStringConverters(this);
+        StandardConversionService.registerPrimitiveConverters(this);
         StandardConversionService.registerDefaultProviders(this, introspector);
     }
 
@@ -79,11 +82,6 @@ public class StandardConversionService implements ConversionService, ConverterRe
     @Override
     public <I, O> O convert(final I input, final Class<O> targetType) {
         if (targetType == null) throw new IllegalArgumentException("Target type must not be null");
-
-        // Even if input is non-null, return null if target type is Void
-        if (targetType == Void.TYPE) {
-            return null;
-        }
 
         if (input == null) {
             final GenericConverter converter = this.defaultValueProviders.getConverter(Null.INSTANCE, targetType);
@@ -202,6 +200,11 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(String.class, new StringToEnumConverterFactory());
         registry.addConverterFactory(String.class, new StringToNumberConverterFactory());
         registry.addConverterFactory(String.class, new StringToPrimitiveConverterFactory());
+    }
+
+    public static void registerPrimitiveConverters(final ConverterRegistry registry) {
+        registry.addConverter(new PrimitiveWrapperConverter());
+        registry.addConverter(new ObjectToVoidConverter());
     }
 
     /**
