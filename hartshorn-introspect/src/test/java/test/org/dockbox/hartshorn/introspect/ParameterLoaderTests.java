@@ -46,13 +46,15 @@ public class ParameterLoaderTests {
         final RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
         parameterLoader.add(new StringParameterRule());
 
-        TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
+        final TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(stringTypeView).is(String.class);
         Mockito.doReturn(null).when(stringTypeView).defaultOrNull();
+        Mockito.when(stringTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        TypeView<Integer> intTypeView = Mockito.mock(TypeView.class);
+        final TypeView<Integer> intTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(intTypeView).is(int.class);
         Mockito.doReturn(0).when(intTypeView).defaultOrNull();
+        Mockito.when(intTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final MethodView<?, ?> methodContext = Mockito.mock(MethodView.class);
 
