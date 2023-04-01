@@ -323,7 +323,11 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         // unboxes it correctly, but .cast will yield a ClassCastException.
         if (this.isInstance(object)) //noinspection unchecked
             return (T) object;
-        else throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(object, this.type));
+        else {
+            final String targetType = this.qualifiedName();
+            final String objectType = object.getClass().getCanonicalName();
+            throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(objectType, targetType));
+        }
     }
 
     @Override

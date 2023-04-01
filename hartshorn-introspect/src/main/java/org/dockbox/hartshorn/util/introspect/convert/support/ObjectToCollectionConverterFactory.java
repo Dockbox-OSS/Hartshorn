@@ -1,6 +1,7 @@
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
@@ -9,9 +10,13 @@ import java.util.Collection;
 
 public class ObjectToCollectionConverterFactory implements ConverterFactory<Object, Collection<?>> {
 
-    private final ArrayToCollectionConverterFactory helperConverterFactory;
+    private final ConverterFactory<Object[], Collection<?>> helperConverterFactory;
 
-    public ObjectToCollectionConverterFactory(final ArrayToCollectionConverterFactory helperConverterFactory) {
+    public ObjectToCollectionConverterFactory(final Introspector introspector) {
+        this(new ArrayToCollectionConverterFactory(introspector));
+    }
+
+    public ObjectToCollectionConverterFactory(final ConverterFactory<Object[], Collection<?>> helperConverterFactory) {
         this.helperConverterFactory = helperConverterFactory;
     }
 

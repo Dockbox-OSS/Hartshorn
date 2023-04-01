@@ -9,7 +9,7 @@ public class OptionToObjectConverterFactory implements ConverterFactory<Option<?
 
     @Override
     public <O> Converter<Option<?>, O> create(final Class<O> targetType) {
-        return input -> (O) input.orNull();
+        return input -> input.map(targetType::cast).orNull();
     }
 
     @Override

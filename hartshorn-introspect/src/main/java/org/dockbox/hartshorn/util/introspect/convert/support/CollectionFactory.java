@@ -51,7 +51,7 @@ public class CollectionFactory {
         else {
             final Option<ConstructorView<O>> defaultConstructor = this.introspector.introspect(targetType).constructors().defaultConstructor();
             if (defaultConstructor.present()) {
-                return (O) defaultConstructor.get().create();
+                return defaultConstructor.get().create().orNull();
             }
             else {
                 throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());
