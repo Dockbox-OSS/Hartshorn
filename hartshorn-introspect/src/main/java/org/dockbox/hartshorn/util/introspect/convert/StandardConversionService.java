@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.util.introspect.convert.support.ArrayToObjectConver
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionDefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToArrayConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToCollectionConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToObjectConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToArrayConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToCollectionConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionConverter;
@@ -172,6 +173,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverter(new ObjectToArrayConverter());
         registry.addConverter(new ArrayToObjectConverter(service));
         registry.addConverter(new CollectionToArrayConverter());
+        registry.addConverter(new CollectionToObjectConverter());
 
         final ArrayToCollectionConverterFactory arrayToCollectionConverterFactory = new ArrayToCollectionConverterFactory(introspector);
         registry.addConverterFactory(Object[].class, arrayToCollectionConverterFactory);
