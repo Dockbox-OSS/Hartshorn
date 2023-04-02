@@ -48,6 +48,6 @@ public class ApplicationProviders {
     @Binds
     @Singleton
     public ConversionService conversionService(final Introspector introspector) {
-        return new StandardConversionService(introspector);
+        return new StandardConversionService(introspector).withDefaults();
     }
 }

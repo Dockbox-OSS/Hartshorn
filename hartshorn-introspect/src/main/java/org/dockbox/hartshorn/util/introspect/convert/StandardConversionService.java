@@ -59,12 +59,16 @@ public class StandardConversionService implements ConversionService, ConverterRe
 
     public StandardConversionService(final Introspector introspector) {
         this.introspector = introspector;
+    }
 
-        StandardConversionService.registerCollectionConverters(this, this, introspector);
-        StandardConversionService.registerNullWrapperConverters(this, introspector);
+    public StandardConversionService withDefaults() {
+        StandardConversionService.registerCollectionConverters(this, this, this.introspector);
+        StandardConversionService.registerNullWrapperConverters(this, this.introspector);
         StandardConversionService.registerStringConverters(this);
         StandardConversionService.registerPrimitiveConverters(this);
-        StandardConversionService.registerDefaultProviders(this, introspector);
+        StandardConversionService.registerDefaultProviders(this, this.introspector);
+
+        return this;
     }
 
     @Override
@@ -79,29 +83,29 @@ public class StandardConversionService implements ConversionService, ConverterRe
         return this.genericConverters.getConverter(source, targetType) != null;
     }
 
-    // TODO: Fluent API for registering and converting?
     @Override
     public <I, O> O convert(final I input, final Class<O> targetType) {
-        if (targetType == null) throw new IllegalArgumentException("Target type must not be null");
-
-        if (input == null) {
-            final GenericConverter converter = this.defaultValueProviders.getConverter(Null.INSTANCE, targetType);
-            if (converter != null) {
-                final Object defaultValue = converter.convert(null, Null.TYPE, targetType);
-                return targetType.cast(defaultValue);
-            }
-            return this.introspector.introspect(targetType).defaultOrNull();
+        if (targetType == null) {
+            throw new IllegalArgumentException("Target type must not be null");
         }
-
-        if (targetType.isAssignableFrom(input.getClass())) {
+        else if (input == null) {
+            return this.convertToDefaultValue(targetType);
+        }
+        else if (targetType.isAssignableFrom(input.getClass())) {
             return targetType.cast(input);
         }
+        else {
+            return this.tryConvert(input, targetType);
+        }
+    }
 
+    private <I, O> O tryConvert(final I input, final Class<O> targetType) {
         final GenericConverter converter = this.genericConverters.getConverter(input, targetType);
         if (converter != null) {
             final TypeView<O> targetTypeView = this.introspector.introspect(targetType);
             final Object converted = converter.convert(input, input.getClass(), targetType);
             if (converted == null) {
+                // Ensure we don't return null if the target type is a primitive, or a wrapper for a primitive
                 return targetTypeView.defaultOrNull();
             }
             // Use View to cast, as this supports implicit (un)boxing of primitives
@@ -109,6 +113,15 @@ public class StandardConversionService implements ConversionService, ConverterRe
         }
 
         throw new IllegalArgumentException("No converter found for " + input + " to convert " + input.getClass() + " to " + targetType.getName());
+    }
+
+    private <O> O convertToDefaultValue(final Class<O> targetType) {
+        final GenericConverter converter = this.defaultValueProviders.getConverter(Null.INSTANCE, targetType);
+        if (converter != null) {
+            final Object defaultValue = converter.convert(null, Null.TYPE, targetType);
+            return targetType.cast(defaultValue);
+        }
+        return this.introspector.introspect(targetType).defaultOrNull();
     }
 
     @Override

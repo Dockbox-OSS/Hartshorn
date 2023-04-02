@@ -34,7 +34,7 @@ public abstract class ConversionServiceTests {
     protected abstract Introspector introspector();
 
     protected ConversionService conversionService() {
-        return new StandardConversionService(this.introspector());
+        return new StandardConversionService(this.introspector()).withDefaults();
     }
 
     enum DemoABC {
