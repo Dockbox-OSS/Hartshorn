@@ -34,15 +34,17 @@ public class ArrayToCollectionConverterFactory implements ConverterFactory<Objec
 
     @Override
     public <O extends Collection<?>> Converter<Object[], O> create(final Class<O> targetType) {
-        return new ArrayToCollectionConverter<>(targetType);
+        return new ArrayToCollectionConverter<>(targetType, this.collectionFactory);
     }
 
-    private class ArrayToCollectionConverter<O extends Collection<?>> implements Converter<Object[], O> {
+    private static class ArrayToCollectionConverter<O extends Collection<?>> implements Converter<Object[], O> {
 
         private final Class<O> targetType;
+        private final CollectionFactory helperFactory;
 
-        public ArrayToCollectionConverter(final Class<O> targetType) {
+        private ArrayToCollectionConverter(final Class<O> targetType, final CollectionFactory helperFactory) {
             this.targetType = targetType;
+            this.helperFactory = helperFactory;
         }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -50,8 +52,7 @@ public class ArrayToCollectionConverterFactory implements ConverterFactory<Objec
         public O convert(final Object @Nullable [] source) {
             assert source != null;
             final Class<?> componentType = source.getClass().getComponentType();
-            final CollectionFactory collectionFactory = ArrayToCollectionConverterFactory.this.collectionFactory;
-            final Collection collection = collectionFactory.createCollection(this.targetType, componentType, source.length);
+            final Collection collection = this.helperFactory.createCollection(this.targetType, componentType, source.length);
             collection.addAll(Arrays.asList(source));
             return (O) collection;
         }

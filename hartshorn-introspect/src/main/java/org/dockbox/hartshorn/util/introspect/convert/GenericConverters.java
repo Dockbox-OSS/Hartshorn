@@ -57,36 +57,31 @@ public class GenericConverters {
     }
 
     private GenericConverter getClosestMatchingConverter(final Object source, final Class<?> targetType) {
-        DistantConverterMatch<ConvertibleTypePair> bestMatch = null;
+        final Set<GenericConverter> matchingConverters = new HashSet<>();
         for (final ConvertibleTypePair typePair : this.converters.keySet()) {
             Class<?> inputType = source.getClass();
-            Class<?> sourceType = typePair.targetType();
+            Class<?> sourceType = typePair.sourceType();
             if (inputType.isArray() && sourceType.isArray()) {
                 inputType = inputType.getComponentType();
                 sourceType = sourceType.getComponentType();
             }
 
             // Recursive solution to iterate super classes first, then interfaces
-            if (typePair.sourceType().isAssignableFrom(source.getClass()) && typePair.targetType().isAssignableFrom(targetType)) {
+            if (sourceType.isAssignableFrom(inputType) && typePair.targetType().isAssignableFrom(targetType)) {
                 // distance is the amount of classes in the hierarchy between the typePair sourceType and the source class
                 // the closer the distance, the more specific the typePair sourceType is
                 // the more specific the typePair sourceType is, the more likely it is that the converter can convert the source
                 // to the target type
-                final int distance = this.hierarchyDistance(source.getClass(), typePair.sourceType());
+                final int distance = this.hierarchyDistance(inputType, sourceType);
                 if (distance >= 0) {
-                    if (bestMatch == null || distance < bestMatch.distance()) {
-                        bestMatch = new DistantConverterMatch<>(typePair, distance);
-                    }
+                    matchingConverters.addAll(this.converters.get(typePair));
                 }
             }
         }
-        if (bestMatch != null) {
-            return this.getConverterForPair(source, targetType, bestMatch.target());
-        }
-        return null;
+        return this.findMatchingConverter(source, targetType, matchingConverters);
     }
 
-    private int hierarchyDistance(Class<?> inputType, Class<?> sourceType) {
+    private int hierarchyDistance(final Class<?> inputType, final Class<?> sourceType) {
         if (inputType == sourceType) {
             return 0;
         }
@@ -137,36 +132,53 @@ public class GenericConverters {
             return candidateConverters.iterator().next();
         }
         else if (candidateConverters.size() > 1) {
-            DistantConverterMatch<GenericConverter> bestMatch = null;
-            for (final GenericConverter candidateConverter : candidateConverters) {
-                Set<ConvertibleTypePair> convertibleTypes = candidateConverter.convertibleTypes();
-                if (convertibleTypes == null) {
-                    if (candidateConverter instanceof final ConverterFactoryAdapter adapter) {
-                        convertibleTypes = Set.of(adapter.typePair());
-                    }
-                    else {
-                        continue;
-                    }
-                }
-
-                final int distance = convertibleTypes.stream()
-                        .mapToInt(pair -> this.hierarchyDistance(source.getClass(), pair.sourceType()))
-                        .min()
-                        .orElse(-1);
-                if (distance >= 0) {
-                    if (bestMatch == null || distance < bestMatch.distance()) {
-                        bestMatch = new DistantConverterMatch<>(candidateConverter, distance);
-                    }
-                }
-            }
-
-            if (bestMatch != null) {
-                return bestMatch.target();
-            }
-
-            throw new IllegalStateException("Multiple global converters found for source type " + source.getClass() + " and target type " + targetType);
+            return this.findMatchingConverter(source, targetType, candidateConverters);
         }
         return null;
+    }
+
+    private GenericConverter findMatchingConverter(final Object source, final Class<?> targetType, final Set<GenericConverter> candidateConverters) {
+        if (candidateConverters.isEmpty()) {
+            return null;
+        }
+
+        DistantConverterMatch<GenericConverter> bestMatch = null;
+        for (final GenericConverter candidateConverter : candidateConverters) {
+            if (candidateConverter instanceof final ConditionalConverter conditionalConverter) {
+                if (!conditionalConverter.canConvert(source, targetType)) {
+                    continue;
+                }
+            }
+
+            Set<ConvertibleTypePair> convertibleTypes = candidateConverter.convertibleTypes();
+            if (convertibleTypes == null) {
+                if (candidateConverter instanceof final ConverterFactoryAdapter adapter) {
+                    convertibleTypes = Set.of(adapter.typePair());
+                }
+                else {
+                    continue;
+                }
+            }
+
+            final int distance = convertibleTypes.stream()
+                    .mapToInt(pair -> this.hierarchyDistance(source.getClass(), pair.sourceType()))
+                    .min()
+                    .orElse(-1);
+
+            if (distance >= 0) {
+                if (bestMatch != null && distance == bestMatch.distance()) {
+                    throw new IllegalStateException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + bestMatch.target() + ", " + candidateConverter);
+                }
+
+                if (bestMatch == null || distance < bestMatch.distance()) {
+                    bestMatch = new DistantConverterMatch<>(candidateConverter, distance);
+                }
+            }
+        }
+
+        return bestMatch != null
+                ? bestMatch.target()
+                : null;
     }
 
     protected GenericConverter getTypeMatchingConverter(final Object source, final Class<?> targetType) {

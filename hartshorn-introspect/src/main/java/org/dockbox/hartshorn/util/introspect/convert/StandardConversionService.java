@@ -88,15 +88,13 @@ public class StandardConversionService implements ConversionService, ConverterRe
         if (targetType == null) {
             throw new IllegalArgumentException("Target type must not be null");
         }
-        else if (input == null) {
+        if (input == null) {
             return this.convertToDefaultValue(targetType);
         }
-        else if (targetType.isAssignableFrom(input.getClass())) {
+        if (targetType.isAssignableFrom(input.getClass())) {
             return targetType.cast(input);
         }
-        else {
-            return this.tryConvert(input, targetType);
-        }
+        return this.tryConvert(input, targetType);
     }
 
     private <I, O> O tryConvert(final I input, final Class<O> targetType) {
