@@ -18,11 +18,16 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.beans.BeanContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 
@@ -47,7 +52,11 @@ public class ApplicationProviders {
 
     @Binds
     @Singleton
-    public ConversionService conversionService(final Introspector introspector) {
-        return new StandardConversionService(introspector).withDefaults();
+    public ConversionService conversionService(final Introspector introspector, @Context final BeanContext beanContext) {
+        final StandardConversionService service = new StandardConversionService(introspector).withDefaults();
+        beanContext.provider().all(GenericConverter.class).forEach(service::addConverter);
+        beanContext.provider().all(ConverterFactory.class).forEach(service::addConverterFactory);
+        beanContext.provider().all(Converter.class).forEach(service::addConverter);
+        return service;
     }
 }

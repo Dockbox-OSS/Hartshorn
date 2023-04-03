@@ -34,7 +34,7 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
     @Override
     public boolean canConvert(final Object source, final Class<?> targetType) {
         boolean matches = true;
-        if (this.converter instanceof ConditionalConverter conditionalConverter) {
+        if (this.converter instanceof final ConditionalConverter conditionalConverter) {
             matches = conditionalConverter.canConvert(source, targetType);
         }
         if (matches) {
