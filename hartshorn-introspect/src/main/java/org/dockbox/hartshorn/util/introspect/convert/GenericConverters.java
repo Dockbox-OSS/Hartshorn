@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.util.introspect.convert;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -187,15 +189,22 @@ public class GenericConverters {
     }
 
     private GenericConverter getConverterForPair(final Object source, final Class<?> targetType, final ConvertibleTypePair pair) {
+        final List<GenericConverter> matchingConverters = new ArrayList<>();
         for (final GenericConverter converter : this.converters.get(pair)) {
             if (converter instanceof final ConditionalConverter conditionalConverter) {
                 if (conditionalConverter.canConvert(source, targetType)) {
-                    return converter;
+                    matchingConverters.add(converter);
                 }
             }
             else {
-                return converter;
+                matchingConverters.add(converter);
             }
+        }
+        if (matchingConverters.size() == 1) {
+            return matchingConverters.get(0);
+        }
+        else if (matchingConverters.size() > 1) {
+            throw new IllegalStateException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + matchingConverters);
         }
         return null;
     }
