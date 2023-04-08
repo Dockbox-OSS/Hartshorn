@@ -53,12 +53,18 @@ import java.util.UUID;
 public class StandardConversionService implements ConversionService, ConverterRegistry {
 
     private final Introspector introspector;
-    private final GenericConverters genericConverters = new GenericConverters();
+    private final ConverterCache converterCache;
     // Separate registry for default value providers to avoid clashing with Object.class converters
-    private final GenericConverters defaultValueProviders = new GenericConverters();
+    private final ConverterCache defaultValueProviderCache;
 
     public StandardConversionService(final Introspector introspector) {
+        this(introspector, new GenericConverters(), new GenericConverters());
+    }
+
+    public StandardConversionService(final Introspector introspector, final ConverterCache converterCache, final ConverterCache defaultValueProviderCache) {
         this.introspector = introspector;
+        this.converterCache = converterCache;
+        this.defaultValueProviderCache = defaultValueProviderCache;
     }
 
     public StandardConversionService withDefaults() {
@@ -80,7 +86,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     protected boolean hasConverterForInput(final Object source, final Class<?> targetType) {
-        return this.genericConverters.getConverter(source, targetType) != null;
+        return this.converterCache.getConverter(source, targetType) != null;
     }
 
     @Override
@@ -98,7 +104,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     private <I, O> O tryConvert(final I input, final Class<O> targetType) {
-        final GenericConverter converter = this.genericConverters.getConverter(input, targetType);
+        final GenericConverter converter = this.converterCache.getConverter(input, targetType);
         if (converter != null) {
             final TypeView<O> targetTypeView = this.introspector.introspect(targetType);
             final Object converted = converter.convert(input, input.getClass(), targetType);
@@ -114,7 +120,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     private <O> O convertToDefaultValue(final Class<O> targetType) {
-        final GenericConverter converter = this.defaultValueProviders.getConverter(Null.INSTANCE, targetType);
+        final GenericConverter converter = this.defaultValueProviderCache.getConverter(Null.INSTANCE, targetType);
         if (converter != null) {
             final Object defaultValue = converter.convert(null, Null.TYPE, targetType);
             return targetType.cast(defaultValue);
@@ -135,12 +141,12 @@ public class StandardConversionService implements ConversionService, ConverterRe
     @Override
     public <I, O> void addConverter(final Class<I> sourceType, final Class<O> targetType, final Converter<I, O> converter) {
         final GenericConverter adapter = new ConverterAdapter(sourceType, targetType, converter);
-        this.genericConverters.addConverter(adapter);
+        this.converterCache.addConverter(adapter);
     }
 
     @Override
     public void addConverter(final GenericConverter converter) {
-        this.genericConverters.addConverter(converter);
+        this.converterCache.addConverter(converter);
     }
 
     @Override
@@ -164,13 +170,13 @@ public class StandardConversionService implements ConversionService, ConverterRe
     @Override
     public <O> void addDefaultValueProvider(final Class<O> targetType, final DefaultValueProvider<O> provider) {
         final GenericConverter adapter = new ConverterAdapter(Null.TYPE, targetType, provider);
-        this.defaultValueProviders.addConverter(adapter);
+        this.defaultValueProviderCache.addConverter(adapter);
     }
 
     @Override
     public <O> void addDefaultValueProviderFactory(final DefaultValueProviderFactory<O> factory) {
         final Class<O> targetType = this.getTypeParameter(DefaultValueProviderFactory.class, factory, 0);
-        this.defaultValueProviders.addConverter(new ConverterFactoryAdapter(Null.TYPE, targetType, factory));
+        this.defaultValueProviderCache.addConverter(new ConverterFactoryAdapter(Null.TYPE, targetType, factory));
     }
 
     protected <T, R> Class<R> getTypeParameter(final Class<T> fromType, final T converterFactory, final int parameterIndex) {
@@ -228,7 +234,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * @param registry The registry to register the default value providers to
      * @see TypeView#defaultOrNull()
      */
-    private static void registerDefaultProviders(final ConverterRegistry registry, final Introspector introspector) {
+    public static void registerDefaultProviders(final ConverterRegistry registry, final Introspector introspector) {
         registry.addDefaultValueProvider(Option.class, Option::empty);
         registry.addDefaultValueProvider(String.class, () -> "");
         registry.addDefaultValueProvider(Optional.class, Optional::empty);

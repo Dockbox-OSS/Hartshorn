@@ -25,11 +25,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GenericConverters {
+public class GenericConverters implements ConverterCache {
 
     private final Set<ConditionalConverter> globalConverters = ConcurrentHashMap.newKeySet();
     private final MultiMap<ConvertibleTypePair, GenericConverter> converters = new ConcurrentSetMultiMap<>();
 
+    @Override
     public void addConverter(final GenericConverter converter) {
         final Set<ConvertibleTypePair> convertibleTypes = converter.convertibleTypes();
         if (convertibleTypes == null) {
@@ -47,6 +48,7 @@ public class GenericConverters {
         }
     }
 
+    @Override
     public GenericConverter getConverter(final Object source, final Class<?> targetType) {
         GenericConverter converter = this.getTypeMatchingConverter(source, targetType);
         if (converter == null) {
@@ -56,6 +58,15 @@ public class GenericConverters {
             converter = this.getClosestMatchingConverter(source, targetType);
         }
         return converter;
+    }
+
+    @Override
+    public Set<GenericConverter> converters() {
+        final Set<GenericConverter> converters = new HashSet<>(this.converters.allValues());
+        this.globalConverters.stream()
+                .map(converter -> (GenericConverter) converter)
+                .forEach(converters::add);
+        return converters;
     }
 
     private GenericConverter getClosestMatchingConverter(final Object source, final Class<?> targetType) {

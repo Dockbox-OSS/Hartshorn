@@ -18,6 +18,12 @@ package test.org.dockbox.hartshorn.util.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
+import org.dockbox.hartshorn.util.introspect.convert.ConverterRegistry;
+import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
+import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
+import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
@@ -203,5 +209,63 @@ public abstract class ConversionServiceTests {
         Assertions.assertNotNull(array);
         Assertions.assertEquals(1, array.length);
         Assertions.assertEquals("test", array[0]);
+    }
+
+    @Test
+    void testImplicitlyTypedConverterIsAdaptedCorrectly() {
+        final ConverterCache converterCache = new GenericConverters();
+        final ConverterCache defaultValueProviderCache = new GenericConverters();
+        final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
+        Assertions.assertTrue(converterCache.converters().isEmpty());
+        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
+
+        registry.addConverter(new SimpleConverter());
+        Assertions.assertFalse(converterCache.converters().isEmpty());
+        Assertions.assertEquals(1, converterCache.converters().size());
+        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
+
+        final GenericConverter converter = converterCache.getConverter("1", Integer.class);
+        Assertions.assertNotNull(converter);
+    }
+
+    @Test
+    void testExplicitlyTypedConverterIsAdapterCorrectly() {
+        final ConverterCache converterCache = new GenericConverters();
+        final ConverterCache defaultValueProviderCache = new GenericConverters();
+        final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
+        Assertions.assertTrue(converterCache.converters().isEmpty());
+        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
+
+        registry.addConverter(String.class, Integer.class, new SimpleConverter());
+        Assertions.assertFalse(converterCache.converters().isEmpty());
+        Assertions.assertEquals(1, converterCache.converters().size());
+        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
+
+        final GenericConverter converter = converterCache.getConverter("1", Integer.class);
+        Assertions.assertNotNull(converter);
+    }
+
+    @Test
+    void testDefaultValueProviderIsAdaptedCorrectly() {
+        final ConverterCache converterCache = new GenericConverters();
+        final ConverterCache defaultValueProviderCache = new GenericConverters();
+        final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
+        Assertions.assertTrue(converterCache.converters().isEmpty());
+        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
+
+        registry.addDefaultValueProvider(() -> "");
+        Assertions.assertTrue(converterCache.converters().isEmpty());
+        Assertions.assertFalse(defaultValueProviderCache.converters().isEmpty());
+        Assertions.assertEquals(1, defaultValueProviderCache.converters().size());
+
+        final GenericConverter converter = defaultValueProviderCache.getConverter(NullAccess.getInstance(), String.class);
+        Assertions.assertNotNull(converter);
+    }
+
+    private static final class SimpleConverter implements Converter<String, Integer> {
+        @Override
+        public Integer convert(final String source) {
+            return Integer.parseInt(source);
+        }
     }
 }
