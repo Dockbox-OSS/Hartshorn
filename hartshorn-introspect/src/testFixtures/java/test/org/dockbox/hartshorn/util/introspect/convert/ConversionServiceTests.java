@@ -16,11 +16,13 @@
 
 package test.org.dockbox.hartshorn.util.introspect.convert;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterRegistry;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
 import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 public abstract class ConversionServiceTests {
 
@@ -213,53 +216,52 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testImplicitlyTypedConverterIsAdaptedCorrectly() {
-        final ConverterCache converterCache = new GenericConverters();
-        final ConverterCache defaultValueProviderCache = new GenericConverters();
-        final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
-        Assertions.assertTrue(converterCache.converters().isEmpty());
-        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
-
-        registry.addConverter(new SimpleConverter());
-        Assertions.assertFalse(converterCache.converters().isEmpty());
-        Assertions.assertEquals(1, converterCache.converters().size());
-        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
-
-        final GenericConverter converter = converterCache.getConverter("1", Integer.class);
-        Assertions.assertNotNull(converter);
+        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addConverter(new SimpleConverter()), "1", Integer.class, ConverterType.CONVERTER);
     }
 
     @Test
     void testExplicitlyTypedConverterIsAdapterCorrectly() {
-        final ConverterCache converterCache = new GenericConverters();
-        final ConverterCache defaultValueProviderCache = new GenericConverters();
-        final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
-        Assertions.assertTrue(converterCache.converters().isEmpty());
-        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
-
-        registry.addConverter(String.class, Integer.class, new SimpleConverter());
-        Assertions.assertFalse(converterCache.converters().isEmpty());
-        Assertions.assertEquals(1, converterCache.converters().size());
-        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
-
-        final GenericConverter converter = converterCache.getConverter("1", Integer.class);
-        Assertions.assertNotNull(converter);
+        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()), "1", Integer.class, ConverterType.CONVERTER);
     }
 
     @Test
-    void testDefaultValueProviderIsAdaptedCorrectly() {
+    void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
+        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
+            @Override
+            public @Nullable String defaultValue() {
+                return "";
+            }
+        }), NullAccess.getInstance(), String.class, ConverterType.DEFAULT_VALUE_PROVIDER);
+    }
+
+    @Test
+    void testExplicitDefaultValueProviderIsAdaptedCorrectly() {
+        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addDefaultValueProvider(String.class, () -> ""), NullAccess.getInstance(), String.class, ConverterType.DEFAULT_VALUE_PROVIDER);
+    }
+
+    private void testConverterTypeIsAdaptedCorrectly(final Consumer<ConverterRegistry> registerAction, final Object source, final Class<?> targetType, final ConverterType converterType) {
         final ConverterCache converterCache = new GenericConverters();
         final ConverterCache defaultValueProviderCache = new GenericConverters();
         final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
         Assertions.assertTrue(converterCache.converters().isEmpty());
         Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
 
-        registry.addDefaultValueProvider(() -> "");
-        Assertions.assertTrue(converterCache.converters().isEmpty());
-        Assertions.assertFalse(defaultValueProviderCache.converters().isEmpty());
-        Assertions.assertEquals(1, defaultValueProviderCache.converters().size());
+        registerAction.accept(registry);
 
-        final GenericConverter converter = defaultValueProviderCache.getConverter(NullAccess.getInstance(), String.class);
+        final ConverterCache shouldBeEmpty = converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
+        final ConverterCache shouldBePopulated = converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
+
+        Assertions.assertTrue(shouldBeEmpty.converters().isEmpty());
+        Assertions.assertFalse(shouldBePopulated.converters().isEmpty());
+        Assertions.assertEquals(1, shouldBePopulated.converters().size());
+
+        final GenericConverter converter = shouldBePopulated.getConverter(source, targetType);
         Assertions.assertNotNull(converter);
+    }
+
+    private enum ConverterType {
+        CONVERTER,
+        DEFAULT_VALUE_PROVIDER,
     }
 
     private static final class SimpleConverter implements Converter<String, Integer> {

@@ -2,6 +2,7 @@ package test.org.dockbox.hartshorn.introspect;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
@@ -15,7 +16,7 @@ public class GenericConvertersTests {
     @Test
     void testGenericConverterWithSingleTypePair() {
         final GenericConverter converter = new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
-        final GenericConverters converters = new GenericConverters();
+        final ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
         final GenericConverter locatedConverter = converters.getConverter(new Object(), String.class);
@@ -29,7 +30,7 @@ public class GenericConvertersTests {
                 ConvertibleTypePair.of(Object.class, String.class),
                 ConvertibleTypePair.of(Object.class, Integer.class)
         ));
-        final GenericConverters converters = new GenericConverters();
+        final ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
         final GenericConverter locatedStringConverter = converters.getConverter(new Object(), String.class);
