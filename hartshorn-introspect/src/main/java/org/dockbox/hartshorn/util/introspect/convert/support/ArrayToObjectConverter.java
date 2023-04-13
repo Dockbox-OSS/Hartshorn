@@ -41,9 +41,15 @@ public class ArrayToObjectConverter implements GenericConverter {
     @Override
     public @Nullable <I, O> Object convert(final @Nullable Object source, final @NonNull Class<I> sourceType, final @NonNull Class<O> targetType) {
         if (sourceType.isArray()) {
-            final Class<?> componentType = sourceType.getComponentType();
+            if (Array.getLength(source) != 1) {
+                return null;
+            }
+
             final Object firstElement = Array.get(source, 0);
-            if (componentType.isAssignableFrom(targetType)) {
+            if (firstElement == null) {
+                return null;
+            }
+            else if (targetType.isAssignableFrom(firstElement.getClass())) {
                 return firstElement;
             }
             else {

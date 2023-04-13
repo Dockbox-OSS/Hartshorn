@@ -52,7 +52,7 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
             return () -> defaultConstructor.get().create().orNull();
         }
         else {
-            final Supplier<Collection<?>> supplier = this.defaults.getOrDefault(targetType, this.defaults.get(Collection.class));
+            final Supplier<Collection<?>> supplier = this.defaults.get(targetType);
             if (supplier != null) {
                 return () -> {
                     final Collection<?> collection = supplier.get();
@@ -64,12 +64,13 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     }
 
     public CollectionDefaultValueProviderFactory withDefaults() {
-        this.withDefault(Collection.class, ArrayList::new);
-        this.withDefault(List.class, ArrayList::new);
-        this.withDefault(Set.class, HashSet::new);
-        this.withDefault(Queue.class, LinkedList::new);
-        this.withDefault(Deque.class, LinkedList::new);
-        return this;
+        return this
+                .withDefault(Collection.class, ArrayList::new)
+                .withDefault(List.class, ArrayList::new)
+                .withDefault(Set.class, HashSet::new)
+                .withDefault(Queue.class, LinkedList::new)
+                .withDefault(Deque.class, LinkedList::new)
+                ;
     }
 
     public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(final Class<T> type, final Supplier<T> supplier) {
