@@ -40,9 +40,9 @@ public final class Hartshorn {
     public static final String PROJECT_ID = "hartshorn";
 
     /**
-     * The semantic version of the current/latest release of Hartshorn
+     * The semantic version of the current release of Hartshorn
      */
-    public static final String VERSION = "0.6.0";
+    public static final HartshornVersion VERSION = HartshornVersion.V0_6_0;
 
     private Hartshorn() {}
 }
