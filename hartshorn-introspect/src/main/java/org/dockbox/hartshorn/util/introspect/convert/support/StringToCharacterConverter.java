@@ -23,7 +23,7 @@ public class StringToCharacterConverter implements Converter<String, Character> 
 
     @Override
     public Character convert(final @Nullable String input) {
-        if (input != null) {
+        if (input != null && input.length() == 1) {
             return input.charAt(0);
         }
         return null;

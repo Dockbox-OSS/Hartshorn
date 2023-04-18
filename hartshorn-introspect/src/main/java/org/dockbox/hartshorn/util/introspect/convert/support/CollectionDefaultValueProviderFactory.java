@@ -23,59 +23,57 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class CollectionDefaultValueProviderFactory implements DefaultValueProviderFactory<Collection<?>> {
 
     private final Introspector introspector;
-    private final Map<Class<?>, Supplier<Collection<?>>> defaults = new HashMap<>();
+    private final CollectionFactory helperFactory;
 
     public CollectionDefaultValueProviderFactory(final Introspector introspector) {
         this.introspector = introspector;
+        this.helperFactory = new CollectionFactory(introspector);
     }
 
-    @Override
-    public <O extends Collection<?>> DefaultValueProvider<O> create(final Class<O> targetType) {
+    public <E, O extends Collection<E>> DefaultValueProvider<O> create(final Class<O> targetType, final Class<E> elementType) {
         final TypeView<O> type = this.introspector.introspect(targetType);
         final Option<ConstructorView<O>> defaultConstructor = type.constructors().defaultConstructor();
         if (defaultConstructor.present()) {
             return () -> defaultConstructor.get().create().orNull();
         }
         else {
-            final Supplier<Collection<?>> supplier = this.defaults.get(targetType);
-            if (supplier != null) {
-                return () -> {
-                    final Collection<?> collection = supplier.get();
-                    return targetType.cast(collection);
-                };
-            }
+            return () -> {
+                try {
+                    return this.helperFactory.createCollection(targetType, elementType, 0);
+                }
+                catch (final IllegalArgumentException e) {
+                    return null;
+                }
+            };
         }
-        return () -> null;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public <O extends Collection<?>> DefaultValueProvider<O> create(final Class<O> targetType) {
+        final TypeView<O> type = this.introspector.introspect(targetType);
+        final List<TypeView<?>> typeParameters = type.typeParameters().from(Collection.class);
+        final Class<?> componentType = typeParameters.isEmpty()
+                ? Object.class
+                : typeParameters.get(0).type();
+
+        return this.create((Class) targetType, (Class) componentType);
     }
 
     public CollectionDefaultValueProviderFactory withDefaults() {
-        return this
-                .withDefault(Collection.class, ArrayList::new)
-                .withDefault(List.class, ArrayList::new)
-                .withDefault(Set.class, HashSet::new)
-                .withDefault(Queue.class, LinkedList::new)
-                .withDefault(Deque.class, LinkedList::new)
-                ;
+        this.helperFactory.withDefaults();
+        return this;
     }
 
     public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(final Class<T> type, final Supplier<T> supplier) {
-        //noinspection unchecked
-        this.defaults.put(type, (Supplier<Collection<?>>) supplier);
+        this.helperFactory.withDefault(type, supplier);
         return this;
     }
 }

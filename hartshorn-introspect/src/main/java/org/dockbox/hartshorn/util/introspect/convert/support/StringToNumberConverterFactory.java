@@ -34,10 +34,10 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             converter = new StringToNumberConverter<>(Long::parseLong, Long::decode);
         }
         else if (targetType == Float.class) {
-            converter = new StringToNumberConverter<>(Float::parseFloat, Float::valueOf);
+            converter = new StringToNumberConverter<>(Float::parseFloat, input -> Long.decode(input).floatValue());
         }
         else if (targetType == Double.class) {
-            converter = new StringToNumberConverter<>(Double::parseDouble, Double::valueOf);
+            converter = new StringToNumberConverter<>(Double::parseDouble, input -> Long.decode(input).doubleValue());
         }
         else if (targetType == Short.class) {
             converter = new StringToNumberConverter<>(Short::parseShort, Short::decode);
@@ -46,7 +46,7 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             converter = new StringToNumberConverter<>(Byte::parseByte, Byte::decode);
         }
         else {
-            converter = null;
+            throw new IllegalArgumentException("Unsupported Number type: " + targetType);
         }
         //noinspection unchecked
         return (Converter<String, O>) converter;

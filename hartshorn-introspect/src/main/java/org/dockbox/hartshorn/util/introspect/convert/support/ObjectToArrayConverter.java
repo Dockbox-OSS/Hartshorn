@@ -34,8 +34,58 @@ public class ObjectToArrayConverter implements GenericConverter {
     @SuppressWarnings("unchecked")
     @Override
     public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
+        if (sourceType.isPrimitive()) {
+            return this.convertPrimitive(source, sourceType, targetType);
+        }
+
         final I[] array = (I[]) Array.newInstance(sourceType, 1);
         array[0] = (I) source;
         return array;
+    }
+
+    private <I, O> Object convertPrimitive(final Object source, final Class<I> sourceType, final Class<O> targetType) {
+        switch (sourceType.getName()) {
+            case "boolean" -> {
+                final boolean[] booleanArray = new boolean[1];
+                booleanArray[0] = (boolean) source;
+                return booleanArray;
+            }
+            case "byte" -> {
+                final byte[] byteArray = new byte[1];
+                byteArray[0] = (byte) source;
+                return byteArray;
+            }
+            case "char" -> {
+                final char[] charArray = new char[1];
+                charArray[0] = (char) source;
+                return charArray;
+            }
+            case "short" -> {
+                final short[] shortArray = new short[1];
+                shortArray[0] = (short) source;
+                return shortArray;
+            }
+            case "int" -> {
+                final int[] intArray = new int[1];
+                intArray[0] = (int) source;
+                return intArray;
+            }
+            case "long" -> {
+                final long[] longArray = new long[1];
+                longArray[0] = (long) source;
+                return longArray;
+            }
+            case "float" -> {
+                final float[] floatArray = new float[1];
+                floatArray[0] = (float) source;
+                return floatArray;
+            }
+            case "double" -> {
+                final double[] doubleArray = new double[1];
+                doubleArray[0] = (double) source;
+                return doubleArray;
+            }
+            default -> throw new IllegalArgumentException("Unsupported primitive type: " + sourceType.getName());
+        }
     }
 }

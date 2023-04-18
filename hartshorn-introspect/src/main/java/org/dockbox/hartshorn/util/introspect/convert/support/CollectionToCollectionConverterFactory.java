@@ -41,7 +41,7 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
         return new CollectionToCollectionConverter<>(this.defaultValueProviderFactory.create(targetType), targetType);
     }
 
-    private static class CollectionToCollectionConverter<O extends Collection<?>> implements Converter<Collection<?>, O> {
+    public static class CollectionToCollectionConverter<O extends Collection<?>> implements Converter<Collection<?>, O> {
 
         private final DefaultValueProvider<O> defaultValueProvider;
         private final Class<O> targetType;

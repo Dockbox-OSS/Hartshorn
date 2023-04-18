@@ -20,39 +20,38 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 public class ArrayToCollectionConverterFactory implements ConverterFactory<Object[], Collection<?>> {
 
-    private final CollectionFactory collectionFactory;
+    private final DefaultValueProviderFactory<Collection<?>> collectionFactory;
 
     public ArrayToCollectionConverterFactory(final Introspector introspector) {
-        this.collectionFactory = new CollectionFactory(introspector);
+        this.collectionFactory = new CollectionDefaultValueProviderFactory(introspector).withDefaults();
     }
 
     @Override
     public <O extends Collection<?>> Converter<Object[], O> create(final Class<O> targetType) {
-        return new ArrayToCollectionConverter<>(targetType, this.collectionFactory);
+        return new ArrayToCollectionConverter<>(this.collectionFactory.create(targetType));
     }
 
     private static class ArrayToCollectionConverter<O extends Collection<?>> implements Converter<Object[], O> {
 
-        private final Class<O> targetType;
-        private final CollectionFactory helperFactory;
+        private final DefaultValueProvider<O> helperProvider;
 
-        private ArrayToCollectionConverter(final Class<O> targetType, final CollectionFactory helperFactory) {
-            this.targetType = targetType;
-            this.helperFactory = helperFactory;
+        private ArrayToCollectionConverter(final DefaultValueProvider<O> helperProvider) {
+            this.helperProvider = helperProvider;
         }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public O convert(final Object @Nullable [] source) {
             assert source != null;
-            final Class<?> componentType = source.getClass().getComponentType();
-            final Collection collection = this.helperFactory.createCollection(this.targetType, componentType, source.length);
+            final Collection collection = this.helperProvider.defaultValue();
             collection.addAll(Arrays.asList(source));
             return (O) collection;
         }

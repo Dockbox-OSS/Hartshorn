@@ -26,7 +26,12 @@ public class StringToUUIDConverter implements Converter<String, UUID> {
     @Override
     public @Nullable UUID convert(final @Nullable String input) {
         if (input != null) {
-            return UUID.fromString(input);
+            try {
+                return UUID.fromString(input);
+            }
+            catch (final IllegalArgumentException e) {
+                return null;
+            }
         }
         return null;
     }

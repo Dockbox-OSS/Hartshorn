@@ -22,56 +22,75 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
 public class CollectionFactory {
 
     private final Introspector introspector;
+    private final Map<Class<?>, Supplier<Collection<?>>> defaults = new HashMap<>();
 
     public CollectionFactory(final Introspector introspector) {
         this.introspector = introspector;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <T extends Collection<?>> CollectionFactory withDefault(final Class<T> type, final Supplier<T> supplier) {
+        //noinspection unchecked
+        this.defaults.put(type, (Supplier<Collection<?>>) supplier);
+        return this;
+    }
+
+    public CollectionFactory withDefaults() {
+        return this
+                .withDefault(Collection.class, ArrayList::new)
+                .withDefault(List.class, ArrayList::new)
+                .withDefault(Set.class, HashSet::new)
+                .withDefault(SortedSet.class, TreeSet::new)
+                .withDefault(Queue.class, LinkedList::new)
+                .withDefault(Deque.class, LinkedList::new)
+                ;
+    }
+
+    @SuppressWarnings("rawtypes")
     public <O extends Collection> O createCollection(final Class<O> targetType, final Class<?> elementType, final int length) {
-        if (targetType.isInterface()) {
-            if (targetType == Collection.class) {
-                return (O) new ArrayList<>(length);
-            }
-            else if (targetType == List.class) {
-                return (O) new ArrayList<>(length);
-            }
-            else if (targetType == Set.class) {
-                return (O) new HashSet<>(length);
-            }
-            else if (targetType == SortedSet.class) {
-                return (O) new TreeSet<>();
-            }
-            else if (targetType == Queue.class) {
-                return (O) new LinkedList<>();
-            }
-            else if (EnumSet.class.isAssignableFrom(targetType)) {
-                return (O) EnumSet.noneOf((Class<Enum>) elementType);
-            }
-            else {
-                throw new IllegalArgumentException("Unsupported Collection interface: " + targetType.getName());
-            }
+        final O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType);
+        if (collection != null) {
+            return collection;
+        }
+
+        final Option<ConstructorView<O>> defaultConstructor = this.introspector.introspect(targetType).constructors().defaultConstructor();
+        if (defaultConstructor.present()) {
+            return defaultConstructor.get().create().orNull();
         }
         else {
-            final Option<ConstructorView<O>> defaultConstructor = this.introspector.introspect(targetType).constructors().defaultConstructor();
-            if (defaultConstructor.present()) {
-                return defaultConstructor.get().create().orNull();
+            throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private <O extends Collection> O maybeCreateCollectionFromDefaults(final Class<O> targetType, final Class<?> elementType) {
+        final Supplier<Collection<?>> supplier = this.defaults.get(targetType);
+        if (supplier != null) {
+            return (O) supplier.get();
+        }
+        else if (targetType == EnumSet.class || EnumSet.class.isAssignableFrom(targetType)) {
+            if (elementType.isEnum()) {
+                return (O) EnumSet.noneOf((Class<? extends Enum>) elementType);
             }
             else {
-                throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());
+                throw new IllegalArgumentException("EnumSet must be created with an enum type");
             }
         }
+        return null;
     }
 }
