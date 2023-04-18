@@ -136,6 +136,7 @@ jobs:
             ${{ github.workspace }}/hartshorn-events/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-hsl/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-i18n/build/reports/jacoco/test/jacocoTestReport.xml,
+            ${{ github.workspace }}/hartshorn-introspect/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-introspect/hartshorn-introspect-reflection/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-jpa/hartshorn-jpa-hibernate/build/reports/jacoco/test/jacocoTestReport.xml,
             ${{ github.workspace }}/hartshorn-proxy/hartshorn-proxy-cglib/build/reports/jacoco/test/jacocoTestReport.xml,
