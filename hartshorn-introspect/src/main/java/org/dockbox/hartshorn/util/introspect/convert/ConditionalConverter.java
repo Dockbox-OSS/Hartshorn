@@ -16,7 +16,25 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+/**
+ * A converter which can add additional conditions to the conversion process. This is useful for
+ * converters which can convert a source type to a target type, but only under certain conditions.
+ *
+ * <p>This interface does not directly extend {@link GenericConverter} as it is intended to also
+ * support {@link Converter}, {@link ConverterFactory}, {@link DefaultValueProvider}, and
+ * {@link DefaultValueProviderFactory} implementations.
+ *
+ * @author Guus Lieben
+ * @since 23.1
+ */
 public interface ConditionalConverter {
 
+    /**
+     * Returns whether this converter can convert the given source object to the target type.
+     *
+     * @param source the source object to convert. Will only be {@code null} if this is a {@link DefaultValueProvider}
+     * @param targetType the target type to convert to
+     * @return {@code true} if this converter can perform the conversion; {@code false} otherwise
+     */
     boolean canConvert(Object source, Class<?> targetType);
 }

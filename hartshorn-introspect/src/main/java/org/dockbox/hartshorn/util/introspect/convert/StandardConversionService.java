@@ -50,6 +50,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Standard implementation of {@link ConversionService} and {@link ConverterRegistry}. The registry implementation
+ * is backed by two {@link ConverterCache} instances, one for converters and one for default value providers. The
+ * default value providers are stored in a separate cache to avoid clashes with converters that convert from
+ * {@link Object} to a specific type. The default value providers are only used when the input is {@code null}.
+ *
+ * <p>While the {@link StandardConversionService} does not automatically register any converters, it does come
+ * with a set of default converters that can be registered using the {@link #withDefaults()} method. These converters
+ * include all implementations in the {@link org.dockbox.hartshorn.util.introspect.convert.support} package.
+ *
+ * <p>The default converters are grouped into several categories, which can be registered individually using the
+ * following methods:
+ * <ul>
+ *     <li>{@link #registerCollectionConverters(ConverterRegistry, ConversionService, Introspector)}</li>
+ *     <li>{@link #registerNullWrapperConverters(ConverterRegistry, Introspector)}</li>
+ *     <li>{@link #registerStringConverters(ConverterRegistry)}</li>
+ *     <li>{@link #registerPrimitiveConverters(ConverterRegistry)}</li>
+ *     <li>{@link #registerDefaultProviders(ConverterRegistry, Introspector)}</li>
+ * </ul>
+ *
+ * @author Guus Lieben
+ * @since 23.1
+ */
 public class StandardConversionService implements ConversionService, ConverterRegistry {
 
     private final Introspector introspector;
