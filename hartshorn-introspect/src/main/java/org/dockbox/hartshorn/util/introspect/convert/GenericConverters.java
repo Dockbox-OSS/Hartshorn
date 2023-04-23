@@ -38,7 +38,7 @@ public class GenericConverters implements ConverterCache {
                 this.globalConverters.add(conditionalConverter);
             }
             else {
-                throw new IllegalArgumentException("Converter must implement GenericConditionalConverter if convertibleTypes() returns null");
+                throw new IllegalArgumentException("Converter must implement ConditionalConverter if convertibleTypes() returns null");
             }
         }
         else {
@@ -180,7 +180,7 @@ public class GenericConverters implements ConverterCache {
 
             if (distance >= 0) {
                 if (bestMatch != null && distance == bestMatch.distance()) {
-                    throw new IllegalStateException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + bestMatch.target() + ", " + candidateConverter);
+                    throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + bestMatch.target() + ", " + candidateConverter);
                 }
 
                 if (bestMatch == null || distance < bestMatch.distance()) {
@@ -215,7 +215,7 @@ public class GenericConverters implements ConverterCache {
             return matchingConverters.get(0);
         }
         else if (matchingConverters.size() > 1) {
-            throw new IllegalStateException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + matchingConverters);
+            throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + matchingConverters);
         }
         return null;
     }

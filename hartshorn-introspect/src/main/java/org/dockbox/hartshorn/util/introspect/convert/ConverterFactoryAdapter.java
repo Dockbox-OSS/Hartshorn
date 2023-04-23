@@ -21,6 +21,24 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Set;
 
+/**
+ * Adapts a {@link ConverterFactory} to a {@link GenericConverter}. This is useful when a
+ * {@link ConverterFactory} needs to be used in a place where a {@link GenericConverter} is
+ * expected, such as in a {@link ConverterCache}.
+ *
+ * <p>This converter is conditional and only matches if the {@link #convertibleTypes() convertible types}
+ * match the source and target types. The target type matches if it is assignable to the target type
+ * of the factory.
+ *
+ * <p>If the {@link ConverterFactory} instance also implements {@link ConditionalConverter}, then the
+ * {@link ConditionalConverter#canConvert(Object, Class)} method is used to further narrow the match. If
+ * the {@link Converter} instance created by the factory also implements {@link ConditionalConverter},
+ * then the {@link ConditionalConverter#canConvert(Object, Class)} method is again used to further narrow
+ * the match.
+ *
+ * @author Guus Lieben
+ * @since 23.1
+ */
 public class ConverterFactoryAdapter implements GenericConverter, ConditionalConverter {
 
     private final ConverterFactory<Object, Object> converterFactory;
@@ -31,6 +49,15 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
         this.typePair = ConvertibleTypePair.of(sourceType, targetType);
     }
 
+    /**
+     * Returns the underlying {@link ConvertibleTypePair} that this converter can convert between. This
+     * represents the higher-level target type, not the source-to-target type actually handled by the
+     * underlying {@link ConverterFactory}. For example, for a {@link ConverterFactory} which handles
+     * {@link String} to {@link Number} conversions, this method would return {@link String} to
+     * {@link Number}, but never {@link String} to {@link Integer}.
+     *
+     * @return the convertible type pair
+     */
     public ConvertibleTypePair typePair() {
         return this.typePair;
     }
@@ -52,12 +79,12 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
         }
 
         if (matches) {
-            if (this.converterFactory instanceof ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
+            if (this.converterFactory instanceof final ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
                 matches = false;
             }
 
             final Converter<?, ?> converter = this.converterFactory.create(targetType);
-            if (converter instanceof ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
+            if (converter instanceof final ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
                 matches = false;
             }
         }

@@ -18,6 +18,12 @@ package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * A specialized {@link Converter} to handle {@code null} values. This is useful when implementing
+ * default values for complex objects.
+ *
+ * @param <T> the target type
+ */
 public interface DefaultValueProvider<T> extends Converter<Null, T> {
 
     @Override
@@ -26,5 +32,11 @@ public interface DefaultValueProvider<T> extends Converter<Null, T> {
         return this.defaultValue();
     }
 
+    /**
+     * Returns the default value to use when the input is {@code null}. This method should only
+     * be called through {@link #convert(Null)}, and serves purely as a convenience method.
+     *
+     * @return the default value to use when the input is {@code null}
+     */
     @Nullable T defaultValue();
 }

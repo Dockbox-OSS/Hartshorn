@@ -21,6 +21,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Set;
 
+/**
+ * A generic converter that delegates to a {@link Converter} instance. This is useful when a
+ * {@link ConverterCache} is used to access or implement a {@link ConverterRegistry}.
+ *
+ * <p>This converter is conditional and only matches if the {@link #convertibleTypes() convertible types}
+ * match the source and target types. If the {@link Converter} instance also implements
+ * {@link ConditionalConverter}, then the {@link ConditionalConverter#canConvert(Object, Class)}
+ * method is used to further narrow the match.
+ *
+ * @author Guus Lieben
+ * @since 23.1
+ */
 public class ConverterAdapter implements GenericConverter, ConditionalConverter {
 
     private final Converter<?, ?> converter;

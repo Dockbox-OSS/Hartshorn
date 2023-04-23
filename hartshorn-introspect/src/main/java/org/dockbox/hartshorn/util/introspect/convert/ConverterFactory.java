@@ -16,7 +16,23 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+/**
+ * A factory for creating {@link Converter} instances. This is the main interface used to create
+ * converters for a specific target type, which can be especially useful when working with types
+ * such as {@link Number}.
+ *
+ * @param <I> the input type
+ * @param <R> the parent of targeted types (e.g. {@link Number} for {@link Integer}, {@link Long}, etc.)
+ */
 public interface ConverterFactory<I, R> {
 
+    /**
+     * Returns a converter to convert from the source type to the target type, or {@code null} if
+     * no converter is available.
+     *
+     * @param targetType the target type to convert to
+     * @return the converter to convert from the source type to the target type, or {@code null} if
+     * @param <O> the output type
+     */
     <O extends R> Converter<I, O> create(Class<O> targetType);
 }

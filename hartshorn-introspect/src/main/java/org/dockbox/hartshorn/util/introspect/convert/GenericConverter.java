@@ -21,10 +21,36 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Set;
 
+/**
+ * A generic converter interface that can be used to convert objects from one type to another. This
+ * interface can be used either directly, or through a {@link ConversionService}. Implementations
+ * should be thread-safe.
+ *
+ * @author Guus Lieben
+ * @since 23.1
+ */
 public interface GenericConverter {
 
+    /**
+     * Returns the set of {@link ConvertibleTypePair} that this converter can convert between. This method
+     * is primarily intended to be used for introspection purposes through a {@link ConversionService}. This
+     * allows the service to discover all converters that are available for a given conversion task.
+     *
+     * @return the set of convertible type pairs
+     */
     Set<ConvertibleTypePair> convertibleTypes();
 
+    /**
+     * Convert the source object to the specified target type. The implementation should return {@code null}
+     * if the source cannot be converted to the specified target type.
+     *
+     * @param source the source object to convert
+     * @param sourceType the type descriptor of the source object
+     * @param targetType the type descriptor of the target object, which is to be created
+     * @return the converted object, or {@code null} if the conversion cannot be performed
+     * @param <I> the source type
+     * @param <O> the target type
+     */
     <I, O> @Nullable Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType);
 
 }

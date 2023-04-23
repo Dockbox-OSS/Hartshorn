@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+/**
+ * A pair of types that can be converted between. This is used as a key in maps of converters.
+ *
+ * @param sourceType the source type
+ * @param targetType the target type
+ *
+ * @see GenericConverter#convertibleTypes()
+ * @author Guus Lieben
+ * @since 23.1
+ */
 public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
 
     public ConvertibleTypePair {
@@ -27,6 +37,14 @@ public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
         }
     }
 
+    /**
+     * Create a new null-safe {@link ConvertibleTypePair} from the given source and target type. Null-safe
+     * in this context means that any given {@code null} source type will be replaced with {@link Null#TYPE}.
+     *
+     * @param sourceType the source type
+     * @param targetType the target type
+     * @return a new {@link ConvertibleTypePair} instance
+     */
     public static ConvertibleTypePair of(final Class<?> sourceType, final Class<?> targetType) {
         // Default value providers take 'Null' (null) as input, so we need to ensure we consistently use Null.TYPE
         // in the ConvertibleTypePair to avoid unnecessary conversions.
