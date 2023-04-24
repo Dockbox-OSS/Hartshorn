@@ -40,7 +40,6 @@ plugins {
 
     // Required for CI and to automatically update license headers on build
     id("org.cadixdev.licenser") version "0.6.1"
-    id("jacoco-report-aggregation")
 }
 
 apply {
@@ -204,37 +203,7 @@ allprojects {
 
             // Automatically generate test reports. This is not always required, but it's nice to
             // have, and makes CI integration easier.
-            finalizedBy(jacocoTestReport)
-        }
-
-        jacocoTestReport {
-            reports {
-                // CSV is not required for users or CI, so it can be disabled
-                csv.required.set(false);
-                // XML is required for the CI integration, so it must be enabled
-                xml.required.set(true);
-                // HTML is not strictly required, but it's nice to have for developers, so
-                // it can be enabled.
-                html.required.set(true);
-            }
-        }
-
-        jacocoTestCoverageVerification {
-            dependsOn(jacocoTestReport)
-            violationRules {
-                rule {
-                    limit {
-                        // Checklist when updating:
-                        // - Update .github/workflows/hartshorn.yml
-                        //   - Task `coverage`
-                        //     - min-coverage-overall
-                        //     - min-coverage-changed-files
-                        // - Update CONTRIBUTING.md
-                        //   - Testing > General > Target coverage
-                        minimum = "0.8".toBigDecimal()
-                    }
-                }
-            }
+            finalizedBy(":jacocoMergedReport")
         }
 
         withType<JavaCompile> {
@@ -257,6 +226,65 @@ allprojects {
 
         withType<Jar> {
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+
+        withType<JacocoReport>().configureEach {
+            enabled = true
+        }
+
+        jacocoTestCoverageVerification {
+            violationRules {
+                rule {
+                    limit {
+                        // Checklist when updating:
+                        // - Update .github/workflows/hartshorn.yml
+                        //   - Task `coverage`
+                        //     - min-coverage-overall
+                        //     - min-coverage-changed-files
+                        // - Update CONTRIBUTING.md
+                        //   - Testing > General > Target coverage
+                        minimum = "0.8".toBigDecimal()
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks {
+    register<JacocoReport>("jacocoMergedReport") {
+        group = "verification"
+        description = "Generates a merged Jacoco report from all subprojects"
+
+        allprojects {
+            pluginManager.withPlugin("jacoco") {
+                sourceSets(sourceSets.main.get())
+                executionData(files(tasks.withType<Test>()).filter { it.exists() && it.name.endsWith(".exec") })
+                dependsOn(tasks.withType<Test>())
+
+                sourceSets {
+                    // In case of test fixtures, we need to include the source sets of the parent
+                    // project as well. This is required to ensure that coverage is correctly
+                    // calculated for all source sets.
+                    var parentProject: Project? = project.parent
+                    while (parentProject != null) {
+                        add(parentProject.sourceSets.main.get())
+                        sourceDirectories.from(parentProject.sourceSets.main.get().allSource.srcDirs)
+                        classDirectories.from(parentProject.sourceSets.main.get().output)
+                        parentProject = parentProject.parent
+                    }
+                }
+            }
+        }
+
+        reports {
+            // CSV is not required for users or CI, so it can be disabled
+            csv.required.set(false)
+            // XML is required for the CI integration, so it must be enabled
+            xml.required.set(true)
+            // HTML is not strictly required, but it's nice to have for developers, so
+            // it can be enabled.
+            html.required.set(true)
         }
     }
 }
