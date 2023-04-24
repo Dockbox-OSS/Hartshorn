@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.introspect;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.introspect.convert.AmbiguousConverterException;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
@@ -75,8 +76,8 @@ public class GenericConvertersTests {
         converters.addConverter(converter1);
         converters.addConverter(converter2);
 
-        Assertions.assertThrows(IllegalStateException.class, () -> converters.getConverter(new Object(), String.class));
-        Assertions.assertThrows(IllegalStateException.class, () -> converters.getConverter(new Object(), Integer.class));
+        Assertions.assertThrows(AmbiguousConverterException.class, () -> converters.getConverter(new Object(), String.class));
+        Assertions.assertThrows(AmbiguousConverterException.class, () -> converters.getConverter(new Object(), Integer.class));
         Assertions.assertDoesNotThrow(() -> converters.getConverter(new Object(), Long.class));
     }
 
