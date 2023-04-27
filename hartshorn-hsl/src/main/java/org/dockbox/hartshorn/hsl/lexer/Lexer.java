@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenConstants;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.inject.binding.Bound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,8 @@ import java.util.Map;
  */
 public class Lexer {
 
-    private static final Map<String, TokenType> keywords = TokenType.keywords();
+    private static final Logger LOG = LoggerFactory.getLogger(Lexer.class);
+    private static final Map<String, TokenType> KEYWORDS = TokenType.keywords();
 
     private final List<Token> tokens = new ArrayList<>();
     private final List<Comment> comments = new ArrayList<>();
@@ -328,7 +331,7 @@ public class Lexer {
         // See if the scanIdentifier is a reserved word.
         final String text = this.source.substring(this.start, this.current);
 
-        TokenType type = keywords.get(text);
+        TokenType type = KEYWORDS.get(text);
 
         if (type == null) type = TokenType.IDENTIFIER;
         this.addToken(type);
@@ -341,6 +344,11 @@ public class Lexer {
     }
 
     private void addToken(final TokenType type) {
+        if (type.reserved()) {
+            LOG.warn("Reserved token type used: " + type + " at line " + this.line + ", column " + this.column + ". " +
+                    "Reserved tokens are not supported and may not be implemented yet. " +
+                    "This may cause unexpected behavior.");
+        }
         this.addToken(type, null);
     }
 

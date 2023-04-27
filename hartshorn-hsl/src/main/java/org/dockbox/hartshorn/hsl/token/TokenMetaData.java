@@ -29,6 +29,7 @@ public class TokenMetaData {
     private final String representation;
     private final boolean keyword;
     private final boolean standaloneStatement;
+    private final boolean reserved;
     private final TokenType assignsWith;
 
     TokenMetaData(final TokenMetaDataBuilder builder) {
@@ -36,6 +37,7 @@ public class TokenMetaData {
         this.representation = builder.representation;
         this.keyword = builder.keyword;
         this.standaloneStatement = builder.standaloneStatement;
+        this.reserved = builder.reserved;
         this.assignsWith = builder.assignsWith;
     }
 
@@ -71,6 +73,15 @@ public class TokenMetaData {
      */
     public boolean standaloneStatement() {
         return this.standaloneStatement;
+    }
+
+    /**
+     * Gets whether the use of this {@link TokenType} is reserved. This is typically used
+     * to indicate a token that is not yet supported, but is reserved for future use.
+     * @return {@code true} if the token is reserved.
+     */
+    public boolean reserved() {
+        return this.reserved;
     }
 
     /**
