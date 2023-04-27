@@ -135,4 +135,11 @@ public class Some<T> implements Option<T> {
     public boolean contains(@Nullable final T value) {
         return Objects.equals(this.value, value);
     }
+
+    @Override
+    public String toString() {
+        return "Some{" +
+                "value=" + this.value +
+                '}';
+    }
 }

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.introspect.IntrospectionTypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.concurrent.Callable;
@@ -121,9 +120,10 @@ public class MethodInterceptorContext<T, R> {
         return this.result;
     }
 
+    @Deprecated
     public R checkedCast(final Object o) {
         if (this.method.returnType().isVoid()) return null;
         else if (this.method.returnType().isInstance(o)) return this.method.returnType().cast(o);
-        else return IntrospectionTypeUtils.checkWrapping(o, this.method.returnType());
+        else throw new UnsupportedOperationException("Cannot cast " + o.getClass().getName() + " to " + this.method.returnType().name() + ", use a ConversionService instance to convert the result.");
     }
 }

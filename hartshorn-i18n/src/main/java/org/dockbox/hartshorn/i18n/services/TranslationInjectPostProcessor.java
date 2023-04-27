@@ -24,8 +24,11 @@ import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
+
+    public static final Object[] EMPTY_ARGS = new Object[0];
 
     @Override
     public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
@@ -33,12 +36,16 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
         context.log().debug("Determined I18N key for %s: %s".formatted(methodContext.method().qualifiedName(), key));
 
         final InjectTranslation annotation = methodContext.method().annotations().get(InjectTranslation.class).get();
+        final ConversionService conversionService = context.get(ConversionService.class);
 
         return interceptorContext -> {
             // Prevents NPE when formatting cached resources without arguments
             final Object[] args = interceptorContext.args();
-            final Object[] objects = null == args ? new Object[0] : args;
-            return interceptorContext.checkedCast(context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects));
+            final Object[] objects = null == args ? EMPTY_ARGS : args;
+            final Message message = context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects);
+
+            //noinspection unchecked
+            return (R) conversionService.convert(message, methodContext.method().returnType().type());
         };
     }
 

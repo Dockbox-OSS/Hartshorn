@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.collections.BiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
@@ -45,27 +45,7 @@ import java.util.stream.Collectors;
 
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> implements ReflectionModifierCarrierView, TypeView<T> {
 
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = Map.ofEntries(
-            Map.entry(boolean.class, Boolean.class),
-            Map.entry(byte.class, Byte.class),
-            Map.entry(char.class, Character.class),
-            Map.entry(double.class, Double.class),
-            Map.entry(float.class, Float.class),
-            Map.entry(int.class, Integer.class),
-            Map.entry(long.class, Long.class),
-            Map.entry(short.class, Short.class)
-    );
-    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = Map.ofEntries(
-            Map.entry(boolean.class, false),
-            Map.entry(byte.class, 0),
-            Map.entry(char.class, '\u0000'),
-            Map.entry(double.class, 0.0d),
-            Map.entry(float.class, 0.0f),
-            Map.entry(int.class, 0),
-            Map.entry(long.class, 0L),
-            Map.entry(short.class, 0)
-    );
-    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = Map.ofEntries(
+    private static final BiMap<Class<?>, Class<?>> WRAPPERS = BiMap.ofEntries(
             Map.entry(Boolean.class, boolean.class),
             Map.entry(Byte.class, byte.class),
             Map.entry(Character.class, char.class),
@@ -76,6 +56,17 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
             Map.entry(Short.class, short.class)
     );
 
+    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = Map.ofEntries(
+            Map.entry(boolean.class, false),
+            Map.entry(byte.class, 0),
+            Map.entry(char.class, '\u0000'),
+            Map.entry(double.class, 0.0d),
+            Map.entry(float.class, 0.0f),
+            Map.entry(int.class, 0),
+            Map.entry(long.class, 0L),
+            Map.entry(short.class, 0)
+    );
+
     private final Introspector introspector;
     private final Class<T> type;
     private final ParameterizedType parameterizedType;
@@ -84,7 +75,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
     private TypeView<?> parent;
     private List<TypeView<?>> interfaces;
     private Option<TypeView<?>> elementType;
-    private Tristate isProxy = Tristate.UNDEFINED;
 
     private TypeMethodsIntrospector<T> methodsIntrospector;
     private TypeFieldsIntrospector<T> fieldsIntrospector;
@@ -271,7 +261,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         if (!primitive.isPrimitive()) {
             return false;
         }
-        return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
+        return WRAPPERS.inverse().get(primitive) == targetClass;
     }
 
     @Override
@@ -314,11 +304,15 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
         if (this.isPrimitive()) {
+            //noinspection unchecked
             return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
         } else {
-            final Class<?> primitive = WRAPPERS_TO_PRIMITIVE.get(this.type());
+            final Class<?> primitive = WRAPPERS.get(this.type());
             if (primitive == null) return null;
-            else return (T) PRIMITIVE_DEFAULTS.getOrDefault(primitive, null);
+            else {
+                //noinspection unchecked
+                return (T) PRIMITIVE_DEFAULTS.getOrDefault(primitive, null);
+            }
         }
     }
 
@@ -327,8 +321,13 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         if (object == null) return null;
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
-        if (this.isInstance(object)) return (T) object;
-        else throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(object, this.type));
+        if (this.isInstance(object)) //noinspection unchecked
+            return (T) object;
+        else {
+            final String targetType = this.qualifiedName();
+            final String objectType = object.getClass().getCanonicalName();
+            throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(objectType, targetType));
+        }
     }
 
     @Override

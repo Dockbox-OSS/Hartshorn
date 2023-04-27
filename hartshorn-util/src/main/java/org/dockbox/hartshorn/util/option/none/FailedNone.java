@@ -187,4 +187,11 @@ public class FailedNone<T, E extends Throwable> extends None<T> implements Attem
     public @NonNull Attempt<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "FailedNone{" +
+                "error=" + this.error +
+                '}';
+    }
 }

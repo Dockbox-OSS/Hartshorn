@@ -95,7 +95,7 @@ public class TypeUtils {
         }
     }
 
-    private static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
+    public static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
         if (!primitive.isPrimitive()) {
             throw new IllegalArgumentException("Expected second argument to be primitive type");
         }

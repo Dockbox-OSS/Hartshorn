@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -44,7 +45,9 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
 
     @Override
     public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        final MethodView<T, ?> method = methodContext.method();
+        //noinspection unchecked
+        final MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
+        final ConversionService conversionService = context.get(ConversionService.class);
         final boolean enable = Boolean.TRUE.equals(method.annotations().get(Enable.class).map(Enable::value).orElse(true));
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
@@ -54,7 +57,8 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
                 final ConstructorView<?> constructor = constructorCandidate.get();
                 return interceptorContext -> {
                     final Object instance = constructor.create(interceptorContext.args()).rethrow().orNull();
-                    return this.processInstance(context, interceptorContext.checkedCast(instance), enable);
+                    final R result = conversionService.convert(instance, method.returnType().type());
+                    return this.processInstance(context, result, enable);
                 };
             }
             else {
@@ -71,7 +75,8 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             return interceptorContext -> {
                 final T instance = interceptorContext.instance();
                 final Object result = methodContext.method().invoke(instance, interceptorContext.args()).orNull();
-                return this.processInstance(context, interceptorContext.checkedCast(result), enable);
+                final R convertedResult = conversionService.convert(result, method.returnType().type());
+                return this.processInstance(context, convertedResult, enable);
             };
         }
     }
