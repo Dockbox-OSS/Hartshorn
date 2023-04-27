@@ -42,14 +42,14 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
             final FinalizableStatement finalizable = switch (current.type()) {
                 case PREFIX, INFIX -> {
                     parser.advance();
-                    if (parser.check(TokenType.FUN)) {
+                    if (parser.check(TokenType.FUNCTION)) {
                         yield lookupFinalizableFunction(parser, validator, parser.peek());
                     }
                     else {
                         throw new ScriptEvaluationError("Unexpected token '" + current.lexeme() + "' at line " + current.line() + ", column " + current.column(), Phase.PARSING, current);
                     }
                 }
-                case FUN -> lookupFinalizableFunction(parser, validator, current);
+                case FUNCTION -> lookupFinalizableFunction(parser, validator, current);
                 case VAR -> delegateParseStatement(parser, validator, VariableStatement.class, "variable", current);
                 case CLASS -> delegateParseStatement(parser, validator, ClassStatement.class, "class", current);
                 case NATIVE -> delegateParseStatement(parser, validator, NativeFunctionStatement.class, "native function", current);

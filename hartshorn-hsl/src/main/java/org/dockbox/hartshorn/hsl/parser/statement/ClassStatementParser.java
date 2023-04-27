@@ -94,7 +94,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         if (parser.check(TokenType.CONSTRUCTOR)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
         }
-        else if (parser.check(TokenType.FUN)) {
+        else if (parser.check(TokenType.FUNCTION)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FunctionStatement.class));
         }
         else {

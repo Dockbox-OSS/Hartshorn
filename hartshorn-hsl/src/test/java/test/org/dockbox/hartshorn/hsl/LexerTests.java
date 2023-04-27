@@ -40,13 +40,13 @@ public class LexerTests {
             TokenType.PREFIX, TokenType.INFIX,
             TokenType.CLASS, TokenType.EXTENDS,
             TokenType.IF, TokenType.ELSE,
-            TokenType.FUN, TokenType.RETURN, TokenType.NATIVE,
+            TokenType.FUNCTION, TokenType.RETURN, TokenType.NATIVE,
             TokenType.TRUE, TokenType.FALSE,
             TokenType.FOR, TokenType.DO, TokenType.WHILE, TokenType.REPEAT,
             TokenType.BREAK, TokenType.CONTINUE,
             TokenType.SUPER, TokenType.THIS,
             TokenType.NULL, TokenType.TEST,
-            TokenType.VAR, TokenType.USING,
+            TokenType.VAR, TokenType.IMPORT,
     };
 
     private static final List<TokenType> literals = List.of(

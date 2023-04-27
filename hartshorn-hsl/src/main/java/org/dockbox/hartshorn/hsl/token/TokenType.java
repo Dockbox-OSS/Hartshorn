@@ -88,7 +88,7 @@ public enum TokenType {
     PREFIX(builder -> builder.keyword(true).ok()),
     INFIX(builder -> builder.keyword(true).ok()),
     CLASS(builder -> builder.keyword(true).ok()),
-    FUN(builder -> builder.keyword(true).ok()),
+    FUNCTION(builder -> builder.keyword(true).ok()),
     EXTENDS(builder -> builder.keyword(true).ok()),
     ELSE(builder -> builder.keyword(true).ok()),
     TRUE(builder -> builder.keyword(true).ok()),
@@ -113,7 +113,7 @@ public enum TokenType {
     CONTINUE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     RETURN(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
-    USING(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    IMPORT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
     // Reserved words/characters
