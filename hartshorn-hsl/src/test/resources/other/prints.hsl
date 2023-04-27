@@ -1,9 +1,9 @@
-fun hello () {
+function hello () {
    print("Hello World");
 }
 
 class ClassTestValue {
-  fun serveOn() {
+  function serveOn() {
     return "Scones";
   }
 }

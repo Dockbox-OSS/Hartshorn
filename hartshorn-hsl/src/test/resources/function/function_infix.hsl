@@ -1,4 +1,4 @@
-infix fun orDefault(value, defaultValue) {
+infix function orDefault(value, defaultValue) {
     if (value == null) {
         return defaultValue;
     }

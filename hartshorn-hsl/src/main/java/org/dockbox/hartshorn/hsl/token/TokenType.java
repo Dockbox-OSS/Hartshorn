@@ -116,20 +116,20 @@ public enum TokenType {
     IMPORT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
+    PUBLIC(builder -> builder.keyword(true).ok()),
+    PRIVATE(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).reserved(true).ok()),
+
     // Reserved words/characters
     OPERATOR(builder -> builder.keyword(true).reserved(true).ok()),
 
     STATIC(builder -> builder.keyword(true).reserved(true).ok()),
-    FINAL(builder -> builder.keyword(true).reserved(true).ok()),
 
     ABSTRACT(builder -> builder.keyword(true).reserved(true).ok()),
     OVERRIDE(builder -> builder.keyword(true).reserved(true).ok()),
     INTERFACE(builder -> builder.keyword(true).reserved(true).ok()),
     IMPLEMENTS(builder -> builder.keyword(true).reserved(true).ok()),
     ENUM(builder -> builder.keyword(true).reserved(true).ok()),
-
-    PUBLIC(builder -> builder.keyword(true).reserved(true).ok()),
-    PRIVATE(builder -> builder.keyword(true).reserved(true).ok()),
 
     ASSERT(builder -> builder.keyword(true).reserved(true).ok()),
 

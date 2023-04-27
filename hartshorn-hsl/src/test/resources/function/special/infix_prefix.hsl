@@ -1,8 +1,8 @@
-prefix fun say(message) {
+prefix function say(message) {
    print(message + "\n");
 }
 
-infix fun to(left, right) {
+infix function to(left, right) {
    return left + " " + right;
 }
 

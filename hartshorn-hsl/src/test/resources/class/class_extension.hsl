@@ -5,12 +5,12 @@ class Car {
       this.name = name;
    }
 
-   fun methodShowInfo() {
+   function methodShowInfo() {
       print("Car name from Method : " + this.name);
    }
 }
 
-fun Car:extensionShowInfo(){
+function Car:extensionShowInfo(){
    print("Car name from Extension : " + this.name);
 }
 

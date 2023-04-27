@@ -1,4 +1,4 @@
-fun count(n) {
+function count(n) {
   if (n > 1) {
      count(n - 1);
   }

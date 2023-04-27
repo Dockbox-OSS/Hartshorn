@@ -1,13 +1,13 @@
 class Function {
-    fun accept () {
+    function accept () {
         print(1);
     }
 }
 
-var function = Function();
+var sample = Function();
 
-fun callback(caller) {
+function callback(caller) {
    caller.accept();
 }
 
-callback(function);
+callback(sample);

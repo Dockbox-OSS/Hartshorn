@@ -1,4 +1,4 @@
-prefix fun multiByTen(x) {
+prefix function multiByTen(x) {
    return x * 10;
 }
 

@@ -1,6 +1,6 @@
 var length = 2;
 
-fun arrayContains(arr, obj) {
+function arrayContains(arr, obj) {
    for (var o in arr) {
       if (o == obj) {
          return true;
@@ -10,7 +10,7 @@ fun arrayContains(arr, obj) {
 }
 
 var arr = ["One", "Two"];
-infix fun contains(arr, obj) {
+infix function contains(arr, obj) {
     return arrayContains(arr, obj);
 }
 
