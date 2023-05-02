@@ -91,7 +91,7 @@ public class DelegatingInterpreterVisitor implements ExpressionVisitor<Object>, 
     
     private final InterpreterAdapter adapter;
 
-    public DelegatingInterpreterVisitor(InterpreterAdapter adapter) {
+    public DelegatingInterpreterVisitor(final InterpreterAdapter adapter) {
         this.adapter = adapter;
     }
 

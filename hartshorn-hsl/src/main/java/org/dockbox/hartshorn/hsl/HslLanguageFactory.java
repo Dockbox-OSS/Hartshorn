@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
@@ -28,6 +31,8 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.List;
 import java.util.Map;
 
+@Service
+@RequiresActivator(UseExpressionValidation.class)
 public interface HslLanguageFactory {
 
     Lexer lexer(String source);
@@ -36,7 +41,8 @@ public interface HslLanguageFactory {
 
     Resolver resolver(Interpreter interpreter);
 
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules);
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext);
 
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options);
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext);
+
 }

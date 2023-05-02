@@ -63,16 +63,22 @@ public class Interpreter implements ContextCarrier, InterpreterAdapter {
     private final ResultCollector resultCollector;
     private final InterpreterState state;
 
+
     private ExecutionOptions executionOptions;
     private boolean isRunning;
 
-    public Interpreter(ResultCollector resultCollector, Map<String, NativeModule> externalModules) {
-        this(resultCollector, externalModules, new ExecutionOptions());
+    public Interpreter(ResultCollector resultCollector,
+                       Map<String, NativeModule> externalModules,
+                       ApplicationContext applicationContext) {
+        this(resultCollector, externalModules, new ExecutionOptions(), applicationContext);
     }
 
-    public Interpreter(ResultCollector resultCollector, Map<String, NativeModule> externalModules, ExecutionOptions executionOptions) {
+    public Interpreter(ResultCollector resultCollector,
+                       Map<String, NativeModule> externalModules,
+                       ExecutionOptions executionOptions,
+                       ApplicationContext applicationContext) {
         this.resultCollector = resultCollector;
-        this.applicationContext = resultCollector.applicationContext();
+        this.applicationContext = applicationContext;
         this.state = new InterpreterState(externalModules, this);
         this.executionOptions = executionOptions;
     }
