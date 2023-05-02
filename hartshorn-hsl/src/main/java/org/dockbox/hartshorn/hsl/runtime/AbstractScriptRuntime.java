@@ -51,7 +51,8 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     private final ApplicationContext applicationContext;
     private final HslLanguageFactory factory;
 
-    protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+    protected AbstractScriptRuntime(final ApplicationContext applicationContext,
+                                    final HslLanguageFactory factory) {
         super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
@@ -122,7 +123,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected Interpreter createInterpreter(final ResultCollector resultCollector) {
-        final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries());
+        final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries(), this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;

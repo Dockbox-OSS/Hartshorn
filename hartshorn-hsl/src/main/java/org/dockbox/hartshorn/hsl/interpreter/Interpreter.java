@@ -34,8 +34,6 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.inject.Inject;
-
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
  * step by step. The interpreter is capable of handling all types of statements and expressions. The
@@ -62,24 +60,29 @@ public class Interpreter implements ContextCarrier, InterpreterAdapter {
 
     private final DelegatingInterpreterVisitor visitor = new DelegatingInterpreterVisitor(this);
 
+    private final ApplicationContext applicationContext;
     private final ResultCollector resultCollector;
     private final InterpreterState state;
     private ExecutionOptions executionOptions;
 
-    @Inject
-    private ApplicationContext applicationContext;
     private boolean isRunning;
 
     @Bound
-    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
-        this(resultCollector, externalModules, new ExecutionOptions());
+    public Interpreter(final ResultCollector resultCollector,
+                       final Map<String, NativeModule> externalModules,
+                       final ApplicationContext applicationContext) {
+        this(resultCollector, externalModules, new ExecutionOptions(), applicationContext);
     }
 
     @Bound
-    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
+    public Interpreter(final ResultCollector resultCollector,
+                       final Map<String, NativeModule> externalModules,
+                       final ExecutionOptions executionOptions,
+                       final ApplicationContext applicationContext) {
         this.resultCollector = resultCollector;
         this.state = new InterpreterState(externalModules, this);
         this.executionOptions = executionOptions;
+        this.applicationContext = applicationContext;
     }
 
     /**

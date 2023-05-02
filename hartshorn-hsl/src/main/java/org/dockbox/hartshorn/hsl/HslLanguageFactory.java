@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
@@ -45,9 +46,9 @@ public interface HslLanguageFactory {
     Resolver resolver(Interpreter interpreter);
 
     @Factory
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules);
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext);
 
     @Factory
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options);
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext);
 
 }
