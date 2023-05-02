@@ -31,7 +31,7 @@ public class NativeFunctionStatementParser extends AbstractBodyStatementParser<N
 
     @Override
     public Option<NativeFunctionStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        if (parser.match(TokenType.NATIVE) && parser.match(TokenType.FUN)) {
+        if (parser.match(TokenType.NATIVE) && parser.match(TokenType.FUNCTION)) {
             final Token moduleName = validator.expect(TokenType.IDENTIFIER, "module name");
 
             while (parser.match(TokenType.COLON)) {

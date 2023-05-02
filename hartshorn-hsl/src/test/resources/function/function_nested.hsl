@@ -1,5 +1,5 @@
-fun makePoint(x, y) {
-  fun closure(method) {
+function makePoint(x, y) {
+  function closure(method) {
     if (method == "x") {
        return x;
     }

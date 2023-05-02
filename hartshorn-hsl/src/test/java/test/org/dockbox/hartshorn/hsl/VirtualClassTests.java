@@ -82,10 +82,10 @@ public class VirtualClassTests {
                     constructor(name) {
                         this.name = name;
                     }
-                    fun getName() {
+                    function getName() {
                         return this.name;
                     }
-                    fun setName(name) {
+                    function setName(name) {
                         this.name = name;
                     }
                 }

@@ -1,4 +1,4 @@
-using system;
+import system;
 
 print("Current os name is : " + env("os.name") + "\n");
 

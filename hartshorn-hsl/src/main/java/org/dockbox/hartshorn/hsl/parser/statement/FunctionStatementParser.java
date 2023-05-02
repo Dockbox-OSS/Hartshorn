@@ -38,9 +38,9 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
 
     @Override
     public Option<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
-        if (parser.check(TokenType.PREFIX, TokenType.INFIX, TokenType.FUN)) {
+        if (parser.check(TokenType.PREFIX, TokenType.INFIX, TokenType.FUNCTION)) {
             final Token functionType = parser.advance();
-            final Token functionToken = functionType.type() == TokenType.FUN ? functionType : parser.advance();
+            final Token functionToken = functionType.type() == TokenType.FUNCTION ? functionType : parser.advance();
             final Token name = validator.expect(TokenType.IDENTIFIER, "function name");
 
             int expectedNumberOrArguments = Integer.MAX_VALUE;

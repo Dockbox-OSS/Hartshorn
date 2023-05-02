@@ -84,14 +84,14 @@ public class FinalizedTests {
     @Test
     void testCannotReassignFinalFunctions() {
         final HslScript script = HslScript.of(this.applicationContext, """
-                final fun x() { }
-                fun x() { }
+                final function x() { }
+                function x() { }
                 """);
         final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final function 'x'. While resolving at line 2, column 4.
-                fun x() { }
-                    ^""", error.getMessage());
+                Cannot reassign final function 'x'. While resolving at line 2, column 9.
+                function x() { }
+                         ^""", error.getMessage());
     }
 
     @Test
@@ -110,15 +110,15 @@ public class FinalizedTests {
     @Test
     void testCannotReassignFinalNativeFunctions() {
         final HslScript script = HslScript.of(this.applicationContext, """
-                final native fun a.x();
-                fun x() { }
+                final native function a.x();
+                function x() { }
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
         final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
         Assertions.assertEquals("""
-                Cannot reassign final native function 'x'. While resolving at line 2, column 4.
-                fun x() { }
-                    ^""", error.getMessage());
+                Cannot reassign final native function 'x'. While resolving at line 2, column 9.
+                function x() { }
+                         ^""", error.getMessage());
     }
 
     public static class User { }

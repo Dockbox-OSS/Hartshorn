@@ -88,7 +88,7 @@ public enum TokenType {
     PREFIX(builder -> builder.keyword(true).ok()),
     INFIX(builder -> builder.keyword(true).ok()),
     CLASS(builder -> builder.keyword(true).ok()),
-    FUN(builder -> builder.keyword(true).ok()),
+    FUNCTION(builder -> builder.keyword(true).ok()),
     EXTENDS(builder -> builder.keyword(true).ok()),
     ELSE(builder -> builder.keyword(true).ok()),
     TRUE(builder -> builder.keyword(true).ok()),
@@ -113,23 +113,44 @@ public enum TokenType {
     CONTINUE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     RETURN(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
-    USING(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    IMPORT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
-
-    // Reserved words/characters
-    OPERATOR(builder -> builder.keyword(true).ok()),
-
-    STATIC(builder -> builder.keyword(true).ok()),
-    FINAL(builder -> builder.keyword(true).ok()),
-
-    ABSTRACT(builder -> builder.keyword(true).ok()),
-    OVERRIDE(builder -> builder.keyword(true).ok()),
-    INTERFACE(builder -> builder.keyword(true).ok()),
-    IMPLEMENTS(builder -> builder.keyword(true).ok()),
 
     PUBLIC(builder -> builder.keyword(true).ok()),
     PRIVATE(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).reserved(true).ok()),
 
+    // Reserved words/characters
+    OPERATOR(builder -> builder.keyword(true).reserved(true).ok()),
+
+    STATIC(builder -> builder.keyword(true).reserved(true).ok()),
+
+    ABSTRACT(builder -> builder.keyword(true).reserved(true).ok()),
+    OVERRIDE(builder -> builder.keyword(true).reserved(true).ok()),
+    INTERFACE(builder -> builder.keyword(true).reserved(true).ok()),
+    IMPLEMENTS(builder -> builder.keyword(true).reserved(true).ok()),
+    ENUM(builder -> builder.keyword(true).reserved(true).ok()),
+
+    ASSERT(builder -> builder.keyword(true).reserved(true).ok()),
+
+    THROW(builder -> builder.keyword(true).reserved(true).ok()),
+    TRY(builder -> builder.keyword(true).reserved(true).ok()),
+    CATCH(builder -> builder.keyword(true).reserved(true).ok()),
+    FINALLY(builder -> builder.keyword(true).reserved(true).ok()),
+
+    AS(builder -> builder.keyword(true).reserved(true).ok()),
+    IS(builder -> builder.keyword(true).reserved(true).ok()),
+    NEW(builder -> builder.keyword(true).reserved(true).ok()),
+    TYPEOF(builder -> builder.keyword(true).reserved(true).ok()),
+    INSTANCEOF(builder -> builder.keyword(true).reserved(true).ok()),
+
+    DELETE(builder -> builder.keyword(true).reserved(true).ok()),
+
+    WITH(builder -> builder.keyword(true).reserved(true).ok()),
+    YIELD(builder -> builder.keyword(true).reserved(true).ok()),
+
+    AWAIT(builder -> builder.keyword(true).reserved(true).ok()),
+    ASYNC(builder -> builder.keyword(true).reserved(true).ok()),
     ;
 
     private final TokenMetaData metaData;
@@ -143,7 +164,7 @@ public enum TokenType {
     }
 
     TokenType(final char representation) {
-        this(representation + "");
+        this(String.valueOf(representation));
     }
 
     /**
@@ -152,7 +173,7 @@ public enum TokenType {
      * @param representation The static representation of the token type.
      */
     TokenType(final String representation) {
-        this(b -> b.representation(representation).ok());
+        this(builder -> builder.representation(representation).ok());
     }
 
     /**
@@ -183,6 +204,13 @@ public enum TokenType {
      */
     public boolean standaloneStatement() {
         return this.metaData.standaloneStatement();
+    }
+
+    /**
+     * @see TokenMetaData#reserved()
+     */
+    public boolean reserved() {
+        return this.metaData.reserved();
     }
 
     /**
