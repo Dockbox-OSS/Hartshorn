@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -51,12 +52,12 @@ public class StandardHslLanguageFactory implements HslLanguageFactory {
     }
 
     @Override
-    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules) {
-        return this.interpreter(resultCollector, modules, new ExecutionOptions());
+    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules, final ApplicationContext applicationContext) {
+        return this.interpreter(resultCollector, modules, new ExecutionOptions(), applicationContext);
     }
 
     @Override
-    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules, final ExecutionOptions options) {
-        return new Interpreter(resultCollector, modules, options);
+    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules, final ExecutionOptions options, final ApplicationContext applicationContext) {
+        return new Interpreter(resultCollector, modules, options, applicationContext);
     }
 }

@@ -49,6 +49,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  * @since 0.4.12
  */
 public interface ExpressionVisitor<R> {
+
     R visit(BinaryExpression expr);
 
     R visit(RangeExpression expr);

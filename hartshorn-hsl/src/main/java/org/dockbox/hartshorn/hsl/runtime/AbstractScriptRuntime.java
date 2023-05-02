@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -40,7 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime, ContextCarrier {
+public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers;
 
@@ -52,7 +51,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
-            Set<ASTNodeParser<? extends Statement>> statementParsers) {
+                                    final Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
@@ -130,7 +129,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected Interpreter createInterpreter(final ResultCollector resultCollector) {
-        final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries());
+        final Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries(), this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
