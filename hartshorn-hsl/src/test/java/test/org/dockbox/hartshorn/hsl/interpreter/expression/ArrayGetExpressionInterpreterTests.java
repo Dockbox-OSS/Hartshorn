@@ -16,6 +16,62 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Array;
+import org.dockbox.hartshorn.hsl.interpreter.CacheOnlyResultCollector;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayGetExpressionInterpreter;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 public class ArrayGetExpressionInterpreterTests {
+
+    @Test
+    void testArrayGetExpressionCanGetIfInRange() {
+        final ResultCollector resultCollector = new CacheOnlyResultCollector();
+        final InterpreterAdapter interpreter = new Interpreter(resultCollector, Map.of(), null);
+
+        final Object[] realArray = { "test" };
+        final int targetIndex = 0;
+
+        final Token indexToken = new Token(TokenType.NUMBER, null, targetIndex, 0, 0);
+        final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
+
+        final Token arrayIdentifier = new Token(TokenType.IDENTIFIER, "test", null, 0, 0);
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
+
+        final ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
+        final ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
+
+        final Object interpretedValue = expressionInterpreter.interpret(getExpression, interpreter);
+        Assertions.assertEquals(realArray[targetIndex], interpretedValue);
+    }
+
+    @Test
+    void testArrayGetExpressionThrowsIfOutOfRange() {
+        final ResultCollector resultCollector = new CacheOnlyResultCollector();
+        final InterpreterAdapter interpreter = new Interpreter(resultCollector, Map.of(), null);
+
+        final Object[] realArray = { "test" };
+        final int targetIndex = 1;
+
+        final Token indexToken = new Token(TokenType.NUMBER, null, targetIndex, 0, 0);
+        final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
+
+        final Token arrayIdentifier = new Token(TokenType.IDENTIFIER, "test", null, 0, 0);
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
+
+        final ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
+        final ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
+
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, interpreter));
+    }
 }
