@@ -30,7 +30,7 @@ public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeI
     protected Object accessArray(final InterpreterAdapter adapter, final Token name,
                                final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
         final Array array = (Array) adapter.visitingScope().get(name);
-        final Double indexValue = (Double) adapter.evaluate(indexExp);
+        final Number indexValue = (Number) adapter.evaluate(indexExp);
         final int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
