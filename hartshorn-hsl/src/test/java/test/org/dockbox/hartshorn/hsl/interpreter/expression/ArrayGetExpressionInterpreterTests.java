@@ -42,10 +42,10 @@ public class ArrayGetExpressionInterpreterTests {
         final Object[] realArray = { "test" };
         final int targetIndex = 0;
 
-        final Token indexToken = new Token(TokenType.NUMBER, null, targetIndex, 0, 0);
+        final Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
         final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        final Token arrayIdentifier = new Token(TokenType.IDENTIFIER, "test", null, 0, 0);
+        final Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
         interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
         final ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
@@ -63,10 +63,10 @@ public class ArrayGetExpressionInterpreterTests {
         final Object[] realArray = { "test" };
         final int targetIndex = 1;
 
-        final Token indexToken = new Token(TokenType.NUMBER, null, targetIndex, 0, 0);
+        final Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
         final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        final Token arrayIdentifier = new Token(TokenType.IDENTIFIER, "test", null, 0, 0);
+        final Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
         interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
         final ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
