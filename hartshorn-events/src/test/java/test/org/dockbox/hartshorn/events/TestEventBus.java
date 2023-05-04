@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.events;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.events.EventBusImpl;
@@ -25,8 +26,15 @@ import org.dockbox.hartshorn.events.EventWrapper;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.inject.Inject;
+
 @Component(singleton = true)
 public class TestEventBus extends EventBusImpl {
+
+    @Inject
+    public TestEventBus(final ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
 
     public @NonNull Map<ComponentKey<?>, Set<EventWrapper>> invokers() {
         return this.listenerToInvokers;

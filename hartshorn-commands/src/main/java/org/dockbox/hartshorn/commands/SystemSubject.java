@@ -28,14 +28,18 @@ import jakarta.inject.Singleton;
 @Singleton
 public abstract class SystemSubject implements CommandSource, Identifiable {
 
-    @Inject
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
     private Locale locale = Locale.getDefault();
 
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
     public static SystemSubject instance(final ApplicationContext context) {
         return context.get(SystemSubject.class);
+    }
+
+    @Inject
+    protected SystemSubject(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override

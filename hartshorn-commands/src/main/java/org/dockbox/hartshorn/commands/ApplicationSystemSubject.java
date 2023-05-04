@@ -16,11 +16,19 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 
+import jakarta.inject.Inject;
+
 @Component
 public class ApplicationSystemSubject extends SystemSubject {
+
+    @Inject
+    public ApplicationSystemSubject(final ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
 
     @Override
     public void send(final Message text) {

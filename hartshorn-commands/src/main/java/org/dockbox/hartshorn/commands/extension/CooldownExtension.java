@@ -16,12 +16,14 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.Identifiable;
 
 import java.time.LocalDateTime;
@@ -40,10 +42,13 @@ import jakarta.inject.Inject;
 @Component
 public class CooldownExtension implements CommandExecutorExtension {
 
-    @Inject
-    private CommandResources resources;
-
     private final Map<Object, CooldownEntry> activeCooldowns = new ConcurrentHashMap<>();
+    private final ApplicationContext applicationContext;
+
+    @Inject
+    public CooldownExtension(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public ExtensionResult execute(final CommandContext context, final CommandExecutorContext executorContext) {
@@ -53,13 +58,18 @@ public class CooldownExtension implements CommandExecutorExtension {
         final String id = this.id((Identifiable) sender, context);
         if (this.inCooldown(id)) {
             context.applicationContext().log().debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
-            return ExtensionResult.reject(this.resources.cooldownActive());
+            final Message cooldownMessage = this.activeCooldownMessage();
+            return ExtensionResult.reject(cooldownMessage);
         }
         else {
             final Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
             this.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
+    }
+
+    protected Message activeCooldownMessage() {
+        return this.applicationContext.get(CommandResources.class).cooldownActive();
     }
 
     @Override

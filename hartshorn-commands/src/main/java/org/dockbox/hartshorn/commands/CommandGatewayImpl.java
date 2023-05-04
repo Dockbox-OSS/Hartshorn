@@ -52,12 +52,16 @@ public class CommandGatewayImpl implements CommandGateway {
     private final transient MultiMap<String, CommandExecutorContext> contexts = new CopyOnWriteArrayListMultiMap<>();
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
 
+    private final CommandParser parser;
+    private final CommandResources resources;
+    private final ApplicationContext context;
+
     @Inject
-    private CommandParser parser;
-    @Inject
-    private CommandResources resources;
-    @Inject
-    private ApplicationContext context;
+    public CommandGatewayImpl(final CommandParser parser, final CommandResources resources, final ApplicationContext context) {
+        this.parser = parser;
+        this.resources = resources;
+        this.context = context;
+    }
 
     protected MultiMap<String, CommandExecutorContext> contexts() {
         return this.contexts;

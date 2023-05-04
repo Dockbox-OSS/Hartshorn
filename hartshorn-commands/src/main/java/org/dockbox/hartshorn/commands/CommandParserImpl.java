@@ -52,8 +52,12 @@ public class CommandParserImpl implements CommandParser {
     // to indicate it is a single element and not part of a piece of text.
     private static final Pattern FLAG = Pattern.compile(" -(-?\\w+)(?: ([^ -]+))?");
 
+    private final CommandResources resources;
+
     @Inject
-    private CommandResources resources;
+    public CommandParserImpl(final CommandResources resources) {
+        this.resources = resources;
+    }
 
     @Override
     public Option<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {
