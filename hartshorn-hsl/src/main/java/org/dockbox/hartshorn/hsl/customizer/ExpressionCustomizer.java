@@ -64,11 +64,16 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
         }
     }
 
-    private List<Statement> enhanceTestStatement(final List<Statement> statements) {
+    private List<Statement> enhanceTestStatement(List<Statement> statements) {
         Statement lastStatement = CollectionUtilities.last(statements);
+
         if (!(lastStatement instanceof ReturnStatement)) {
             ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
+            Token returnToken = Token.of(TokenType.RETURN)
+                    .lexeme(VALIDATION_ID)
+                    .virtual()
+                    .build();
+
             ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
             statements.set(statements.size() - 1, returnStatement);
         }

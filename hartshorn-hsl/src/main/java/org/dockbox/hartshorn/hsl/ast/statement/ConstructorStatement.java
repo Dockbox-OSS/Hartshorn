@@ -38,7 +38,11 @@ public class ConstructorStatement extends ParametricExecutableStatement {
     }
 
     public Token initializerIdentifier() {
-        return new Token(TokenType.CONSTRUCTOR, "<init>", this.keyword().line(), this.keyword().column());
+        return Token.of(TokenType.CONSTRUCTOR)
+                .lexeme("<init>")
+                .literal(this.keyword().line())
+                .position(this.keyword())
+                .build();
     }
 
     @Override
