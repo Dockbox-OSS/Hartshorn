@@ -40,7 +40,10 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     private List<Statement> enhanceModuleStatements(final List<Statement> statements, final Map<String, NativeModule> modules) {
         for (final String module : modules.keySet()) {
-            final Token moduleToken = new Token(TokenType.IDENTIFIER, module, -1, -1);
+            final Token moduleToken = Token.of(TokenType.IDENTIFIER)
+                    .lexeme(module)
+                    .virtual()
+                    .build();
             final ModuleStatement moduleStatement = new ModuleStatement(moduleToken);
             statements.add(0, moduleStatement);
         }

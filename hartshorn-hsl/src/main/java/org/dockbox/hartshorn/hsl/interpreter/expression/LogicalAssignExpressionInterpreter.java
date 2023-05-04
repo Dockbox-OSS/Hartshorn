@@ -34,7 +34,10 @@ public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Objec
         final TokenType bitwiseOperator = node.logicalOperator();
 
         // Virtual token to indicate the position of the operator
-        final Token token = new Token(bitwiseOperator, op.lexeme(), op.line(), op.column());
+        final Token token = Token.of(bitwiseOperator)
+                .lexeme(op.lexeme())
+                .position(op)
+                .build();
         final Object result = this.getBitwiseResult(token, left, right);
 
         final Integer distance = adapter.distance(node);
