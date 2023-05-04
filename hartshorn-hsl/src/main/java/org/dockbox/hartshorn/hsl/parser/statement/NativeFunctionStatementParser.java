@@ -35,8 +35,12 @@ public class NativeFunctionStatementParser extends AbstractBodyStatementParser<N
             final Token moduleName = validator.expect(TokenType.IDENTIFIER, "module name");
 
             while (parser.match(TokenType.COLON)) {
-                final Token token = new Token(TokenType.DOT, ".", moduleName.line(), moduleName.column());
+                final Token token = Token.of(TokenType.DOT)
+                        .lexeme(".")
+                        .position(moduleName)
+                        .build();
                 moduleName.concat(token);
+                
                 final Token submodule = validator.expect(TokenType.IDENTIFIER, "module name");
                 moduleName.concat(submodule);
             }

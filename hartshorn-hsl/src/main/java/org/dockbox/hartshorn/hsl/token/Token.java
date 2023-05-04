@@ -43,6 +43,10 @@ public class Token extends ASTNode {
         this.literal = literal;
     }
 
+    public static TokenBuilder of(final TokenType type) {
+        return new TokenBuilder(type);
+    }
+
     /**
      * Adds the lexical meaning of the given token to the lexical meaning of
      * this token.

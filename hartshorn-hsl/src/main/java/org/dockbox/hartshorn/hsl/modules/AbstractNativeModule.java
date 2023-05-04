@@ -112,11 +112,17 @@ public abstract class AbstractNativeModule implements NativeModule {
                 if (!method.modifiers().isPublic()) continue;
                 if (method.declaredBy().is(Object.class)) continue;
 
-                final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
+                final Token token = Token.of(TokenType.IDENTIFIER)
+                        .lexeme(method.name())
+                        .virtual()
+                        .build();
 
                 final List<Parameter> parameters = new ArrayList<>();
                 for (final ParameterView<?> parameter : method.parameters().all()) {
-                    final Token parameterName = new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1);
+                    final Token parameterName = Token.of(TokenType.IDENTIFIER)
+                            .lexeme(parameter.name())
+                            .virtual()
+                            .build();
                     parameters.add(new Parameter(parameterName));
                 }
                 final NativeFunctionStatement functionStatement = new NativeFunctionStatement(token, moduleName, method, parameters);
