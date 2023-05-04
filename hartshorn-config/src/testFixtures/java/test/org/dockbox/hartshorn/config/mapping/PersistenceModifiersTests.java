@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.config.mapping;
 
-import org.dockbox.hartshorn.config.JsonInclusionRule;
+import org.dockbox.hartshorn.config.IncludeRule;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -35,7 +35,7 @@ public abstract class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptyKeepsNonEmpty() {
-        final ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        final ObjectMapper mapper = this.objectMapper().skipBehavior(IncludeRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of("sample", "other"));
         final Option<String> out = mapper.write(element);
 
@@ -45,7 +45,7 @@ public abstract class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptySkipsEmpty() {
-        final ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        final ObjectMapper mapper = this.objectMapper().skipBehavior(IncludeRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of());
         final Option<String> out = mapper.write(element);
 

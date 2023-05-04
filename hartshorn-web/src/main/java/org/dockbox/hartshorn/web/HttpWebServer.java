@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.config.JsonInclusionRule;
+import org.dockbox.hartshorn.config.IncludeRule;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -38,9 +38,9 @@ public interface HttpWebServer {
 
     ParameterLoader<HttpRequestParameterLoaderContext> loader();
 
-    HttpWebServer skipBehavior(JsonInclusionRule modifier);
+    HttpWebServer skipBehavior(IncludeRule modifier);
 
-    JsonInclusionRule skipBehavior();
+    IncludeRule skipBehavior();
 
     HttpWebServer listStaticDirectories(boolean listDirectories);
 

@@ -36,8 +36,12 @@ import jakarta.inject.Inject;
 @Component(singleton = true)
 public class PathSerializationSourceConverter implements SerializationSourceConverter {
 
+    private final ApplicationFSProvider fileSystem;
+
     @Inject
-    private ApplicationFSProvider fileSystem;
+    public PathSerializationSourceConverter(final ApplicationFSProvider fileSystem) {
+        this.fileSystem = fileSystem;
+    }
 
     @Override
     public InputStream inputStream(final AnnotatedElementView<?> context, final Object... args) {

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.config;
 
-public enum JsonInclusionRule {
+public enum IncludeRule {
     SKIP_NONE,
     SKIP_EMPTY,
     SKIP_NULL,

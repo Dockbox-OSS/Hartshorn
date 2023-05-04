@@ -94,6 +94,6 @@ public interface ObjectMapper {
 
     FileFormat fileType();
 
-    ObjectMapper skipBehavior(JsonInclusionRule modifier);
+    ObjectMapper skipBehavior(IncludeRule modifier);
 
 }

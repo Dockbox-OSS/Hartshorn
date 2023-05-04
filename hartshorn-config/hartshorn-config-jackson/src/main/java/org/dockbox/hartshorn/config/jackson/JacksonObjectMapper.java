@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.config.DefaultObjectMapper;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
-import org.dockbox.hartshorn.config.JsonInclusionRule;
+import org.dockbox.hartshorn.config.IncludeRule;
 import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -58,7 +58,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     private final ApplicationContext context;
 
     private ObjectMapper objectMapper;
-    private JsonInclusionRule inclusionRule;
+    private IncludeRule inclusionRule;
 
     public JacksonObjectMapper(final ApplicationContext applicationContext) {
         super(FileFormats.JSON);
@@ -269,7 +269,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public JacksonObjectMapper skipBehavior(final JsonInclusionRule modifier) {
+    public JacksonObjectMapper skipBehavior(final IncludeRule modifier) {
         this.inclusionRule = modifier;
         this.objectMapper = null;
         return this;

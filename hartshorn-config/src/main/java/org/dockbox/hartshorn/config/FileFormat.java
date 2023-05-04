@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.config;
 
 public interface FileFormat {
     String extension();
+
     DataStorageType type();
+
     String asFileName(String file);
 }

@@ -19,10 +19,18 @@ package org.dockbox.hartshorn.config.jackson;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 
 import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.JsonInclusionRule;
+import org.dockbox.hartshorn.config.IncludeRule;
 
 public interface JacksonObjectMapperConfigurator {
 
-    MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format, JsonInclusionRule inclusionRule);
+    default MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format, IncludeRule inclusionRule) {
+        // TODO: Delete this method
+        return builder;
+    }
+
+    default MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format) {
+        // TODO: Make non-default
+        return builder;
+    }
 
 }
