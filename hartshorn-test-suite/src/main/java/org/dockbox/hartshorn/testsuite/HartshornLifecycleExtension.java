@@ -42,7 +42,6 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -72,7 +71,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterEach(final ExtensionContext context) throws IOException {
+    public void afterEach(final ExtensionContext context) throws Exception {
         this.afterLifecycle();
     }
 
@@ -86,7 +85,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) throws IOException {
+    public void afterAll(final ExtensionContext context) throws Exception {
         if (this.isClassLifecycle(context)) {
             this.afterLifecycle();
         }
@@ -121,7 +120,7 @@ public class HartshornLifecycleExtension implements
         this.applicationContext = applicationContext;
     }
 
-    protected void afterLifecycle() throws IOException {
+    protected void afterLifecycle() throws Exception {
         Mockito.clearAllCaches();
         if (this.applicationContext != null) {
             this.applicationContext.close();
