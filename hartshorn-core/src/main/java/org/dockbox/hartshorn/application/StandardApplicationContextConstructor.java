@@ -69,7 +69,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
                 if (!applicationContext.isClosed()) {
                     applicationContext.close();
                 }
-            } catch (final IOException e) {
+            } catch (final Exception e) {
                 this.logger.error("Failed to close application context", e);
             }
         }, "ShutdownHook"));

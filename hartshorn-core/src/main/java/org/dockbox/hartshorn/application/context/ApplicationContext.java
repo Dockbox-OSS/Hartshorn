@@ -22,14 +22,13 @@ import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.slf4j.Logger;
-
-import java.io.Closeable;
 
 /**
  * The primary context for an application. This context is responsible for providing the application
@@ -57,7 +56,7 @@ public interface ApplicationContext extends
         ExceptionHandler,
         ActivatorHolder,
         Scope,
-        Closeable {
+        AutoCloseable {
 
     /**
      * Registers a component processor with the application context. The processor will be invoked when
@@ -96,4 +95,7 @@ public interface ApplicationContext extends
     default Class<? extends Scope> installableScopeType() {
         return ApplicationContext.class;
     }
+
+    @Override
+    void close() throws ApplicationException;
 }
