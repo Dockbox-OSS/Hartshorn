@@ -21,29 +21,27 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 public class LifecycleObserverTests {
 
     @Test
-    void testServiceLifecycleObserverIsPresentAndObserving() throws IOException {
+    void testServiceLifecycleObserverIsPresentAndObserving() {
         final ApplicationContext applicationContext = HartshornApplication.create();
         final TestLifecycleObserver observer = applicationContext.get(TestLifecycleObserver.class);
         Assertions.assertTrue(observer.started());
 
-        applicationContext.close();
+        Assertions.assertDoesNotThrow(applicationContext::close);
         Assertions.assertTrue(observer.stopped());
     }
 
     @Test
-    void testNonRegisteredObserverIsNotPresentOnStart() throws IOException {
+    void testNonRegisteredObserverIsNotPresentOnStart() {
         final ApplicationContext applicationContext = HartshornApplication.create();
         final NonRegisteredObserver observer = applicationContext.get(NonRegisteredObserver.class);
         Assertions.assertFalse(observer.started());
         Assertions.assertFalse(observer.stopped());
 
         applicationContext.environment().register(observer);
-        applicationContext.close();
+        Assertions.assertDoesNotThrow(applicationContext::close);
 
         // Do not late-fire events
         Assertions.assertFalse(observer.started());
@@ -51,7 +49,7 @@ public class LifecycleObserverTests {
     }
 
     @Test
-    void testRegistrationFromClassIsValid() throws IOException {
+    void testRegistrationFromClassIsValid() {
         final ApplicationContext applicationContext = HartshornApplication.create();
         // Static as observer instance is lazily created by the observable, so we cannot
         // access it directly.
@@ -59,7 +57,7 @@ public class LifecycleObserverTests {
         Assertions.assertFalse(StaticNonRegisteredObserver.stopped());
 
         applicationContext.environment().register(StaticNonRegisteredObserver.class);
-        applicationContext.close();
+        Assertions.assertDoesNotThrow(applicationContext::close);
 
         // Do not late-fire events
         Assertions.assertFalse(StaticNonRegisteredObserver.started());

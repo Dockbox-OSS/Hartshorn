@@ -71,7 +71,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterEach(final ExtensionContext context) throws Exception {
+    public void afterEach(final ExtensionContext context) throws ApplicationException {
         this.afterLifecycle();
     }
 
@@ -85,7 +85,7 @@ public class HartshornLifecycleExtension implements
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) throws Exception {
+    public void afterAll(final ExtensionContext context) throws ApplicationException {
         if (this.isClassLifecycle(context)) {
             this.afterLifecycle();
         }
@@ -93,7 +93,7 @@ public class HartshornLifecycleExtension implements
 
     private boolean isClassLifecycle(final ExtensionContext context) {
         final Optional<Lifecycle> lifecycle = context.getTestInstanceLifecycle();
-        return lifecycle.isPresent() && Lifecycle.PER_CLASS.equals(lifecycle.get());
+        return lifecycle.isPresent() && Lifecycle.PER_CLASS == lifecycle.get();
     }
 
     protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) throws ApplicationException {
@@ -120,7 +120,7 @@ public class HartshornLifecycleExtension implements
         this.applicationContext = applicationContext;
     }
 
-    protected void afterLifecycle() throws Exception {
+    protected void afterLifecycle() throws ApplicationException {
         Mockito.clearAllCaches();
         if (this.applicationContext != null) {
             this.applicationContext.close();

@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.slf4j.Logger;
 
 /**
@@ -94,4 +95,7 @@ public interface ApplicationContext extends
     default Class<? extends Scope> installableScopeType() {
         return ApplicationContext.class;
     }
+
+    @Override
+    void close() throws ApplicationException;
 }
