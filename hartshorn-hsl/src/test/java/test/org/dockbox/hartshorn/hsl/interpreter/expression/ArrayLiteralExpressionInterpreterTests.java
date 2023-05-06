@@ -19,12 +19,7 @@ package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.CacheOnlyResultCollector;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
-import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayLiteralExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
@@ -33,7 +28,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
+
+import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
 public class ArrayLiteralExpressionInterpreterTests {
 
@@ -41,8 +37,7 @@ public class ArrayLiteralExpressionInterpreterTests {
     void testEmptyArrayLiteralYieldsEmptyArrayObject() {
         final ArrayLiteralExpression expression = createExpression(List.of());
 
-        final ASTNodeInterpreter<Object, ArrayLiteralExpression> interpreter = new ArrayLiteralExpressionInterpreter();
-        final Object interpreted = interpreter.interpret(expression, null);
+        final Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
         Assertions.assertNotNull(interpreted);
         Assertions.assertTrue(interpreted instanceof Array);
 
@@ -56,11 +51,7 @@ public class ArrayLiteralExpressionInterpreterTests {
         final LiteralExpression literalExpression = new LiteralExpression(value, value.literal());
         final ArrayLiteralExpression expression = createExpression(List.of(literalExpression));
 
-        final ResultCollector resultCollector = new CacheOnlyResultCollector();
-        final InterpreterAdapter interpreter = new Interpreter(resultCollector, Map.of(), null);
-
-        final ASTNodeInterpreter<Object, ArrayLiteralExpression> expressionInterpreter = new ArrayLiteralExpressionInterpreter();
-        final Object interpreted = expressionInterpreter.interpret(expression, interpreter);
+        final Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
         Assertions.assertNotNull(interpreted);
         Assertions.assertTrue(interpreted instanceof Array);
 

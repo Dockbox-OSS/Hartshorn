@@ -16,4 +16,59 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 
-public class AssignExpressionInterpreterTests {}
+import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
+import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
+import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
+import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
+
+public class AssignExpressionInterpreterTests {
+
+    @Test
+    void testAssignmentToDefinedVariable() {
+        final Token variableName = Token.of(TokenType.IDENTIFIER)
+                .lexeme("test")
+                .build();
+
+        final Token variableValue = Token.of(TokenType.STRING)
+                .literal("theValue")
+                .build();
+
+        final LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
+        final AssignExpression expression = new AssignExpression(variableName, literalExpression);
+        final ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+
+        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        adapter.visitingScope().define(variableName.lexeme(), "test");
+
+        final Object interpreted = Assertions.assertDoesNotThrow(() -> interpreter.interpret(expression, adapter));
+        Assertions.assertEquals(literalExpression.value(), interpreted);
+    }
+
+    @Test
+    void testAssignmentToUndefinedVariable() {
+        final Token variableName = Token.of(TokenType.IDENTIFIER)
+                .lexeme("test")
+                .build();
+
+        final Token variableValue = Token.of(TokenType.STRING)
+                .literal("theValue")
+                .build();
+
+        final LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
+        final AssignExpression expression = new AssignExpression(variableName, literalExpression);
+        final ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+
+        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+
+        final RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> interpreter.interpret(expression, adapter));
+        Assertions.assertSame(variableName, error.token());
+    }
+}
