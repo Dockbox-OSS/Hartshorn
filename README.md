@@ -1,7 +1,5 @@
-<p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/logo_shadow.png" height="150" /></p>
-<h1 align="center">Hartshorn Framework</h1>
-<p align="center"><img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"></p>
-<p align="center"><img src="https://img.shields.io/badge/JDK%20source-17-white"> <img src="https://img.shields.io/badge/JDK%20target-19-white"></p>
+<img alt="Hartshorn" src="./hartshorn-assembly/images/hartshorn-banner.png" height="125" />
+<p><img src="https://img.shields.io/badge/JDK%20source-17-white"> <img src="https://img.shields.io/badge/JDK%20target-19-white"> <img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"></p>
 
 [Hartshorn](https://hartshorn.dockbox.org/) is a cutting-edge Java framework built on the JVM platform that offers comprehensive support for modular, scalable, and testable application development using Java and other JVM-based languages. Its main objective is to simplify the creation and administration of intricate JVM applications by providing developers with the necessary tools. To learn more about Hartshorn's fundamental technologies and principles, you can refer to the dedicated topic on [core technologies](https://hartshorn.dockbox.org/core/cdi/).
 
