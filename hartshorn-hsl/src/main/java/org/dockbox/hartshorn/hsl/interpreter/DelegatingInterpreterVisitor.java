@@ -103,13 +103,9 @@ import org.dockbox.hartshorn.hsl.interpreter.statement.WhileStatementInterpreter
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class DelegatingInterpreterVisitor implements ExpressionVisitor<Object>, StatementVisitor<Void> {
-    
-    private final InterpreterAdapter adapter;
-
-    public DelegatingInterpreterVisitor(final InterpreterAdapter adapter) {
-        this.adapter = adapter;
-    }
+public record DelegatingInterpreterVisitor(InterpreterAdapter adapter) implements
+        ExpressionVisitor<Object>,
+        StatementVisitor<Void> {
 
     @Override
     public Object visit(final BinaryExpression expr) {
@@ -300,7 +296,9 @@ public class DelegatingInterpreterVisitor implements ExpressionVisitor<Object>, 
 
     @Override
     public Void visit(final TestStatement statement) {
-        if (!this.adapter.interpreter().executionOptions().enableAssertions()) {return null;}
+        if (!this.adapter.interpreter().executionOptions().enableAssertions()) {
+            return null;
+        }
         else return new TestStatementInterpreter().interpret(statement, this.adapter);
     }
 

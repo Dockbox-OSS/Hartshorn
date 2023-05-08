@@ -16,4 +16,6 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.statement;
 
-public class ForStatementInterpreter {}
+
+public class IfStatementInterpreterTests {
+}

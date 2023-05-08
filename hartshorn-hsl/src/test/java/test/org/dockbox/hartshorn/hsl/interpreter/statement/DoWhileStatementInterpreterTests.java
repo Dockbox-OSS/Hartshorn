@@ -16,4 +16,4 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.statement;
 
-public class NativeFunctionStatementInterpreter {}
+public class DoWhileStatementInterpreterTests {}
