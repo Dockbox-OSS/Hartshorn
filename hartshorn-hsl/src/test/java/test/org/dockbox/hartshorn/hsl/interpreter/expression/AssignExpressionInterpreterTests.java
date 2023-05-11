@@ -20,19 +20,34 @@ import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
 public class AssignExpressionInterpreterTests {
 
-    @Test
-    void testAssignmentToDefinedVariable() {
+    public static Stream<Arguments> variableDefinitionScopes() {
+        return Stream.of(
+                Arguments.of((Function<InterpreterAdapter, VariableScope>) InterpreterAdapter::visitingScope),
+                Arguments.of((Function<InterpreterAdapter, VariableScope>) InterpreterAdapter::global)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("variableDefinitionScopes")
+    void testAssignmentToDefinedVariable(final Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
         final Token variableName = Token.of(TokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
@@ -46,7 +61,7 @@ public class AssignExpressionInterpreterTests {
         final ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
 
         final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(variableName.lexeme(), "test");
+        variableScopeFunction.apply(adapter).define(variableName.lexeme(), "test");
 
         final Object interpreted = Assertions.assertDoesNotThrow(() -> interpreter.interpret(expression, adapter));
         Assertions.assertEquals(literalExpression.value(), interpreted);
