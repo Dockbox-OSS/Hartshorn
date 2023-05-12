@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.util.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.introspect.util.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
+
+import java.util.concurrent.Callable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -49,13 +50,15 @@ public class HeaderRequestParameterRule extends AnnotatedParameterLoaderRule<Req
         final RequestHeader requestHeader = parameter.annotations().get(RequestHeader.class).get();
 
         final HttpServletRequest request = context.request();
+        final String headerName = requestHeader.value();
 
-        if (!request.getHeaders(requestHeader.value()).hasMoreElements()) return Option.empty();
+        if (!request.getHeaders(headerName).hasMoreElements()) return Option.empty();
 
-        if (parameter.type().is(String.class)) return Option.of(() -> request.getHeader(requestHeader.value())).map(v -> TypeUtils.adjustWildcards(v, Object.class));
-        else if (parameter.type().isChildOf(int.class)) return Option.of(() -> request.getIntHeader(requestHeader.value())).map(v -> TypeUtils.adjustWildcards(v, Object.class));
-        else if (parameter.type().isChildOf(long.class)) return Option.of(() -> request.getDateHeader(requestHeader.value())).map(v -> TypeUtils.adjustWildcards(v, Object.class));
+        Callable<?> header = () -> null;
+        if (parameter.type().is(String.class)) header = () -> request.getHeader(headerName);
+        else if (parameter.type().isChildOf(int.class)) header = () -> request.getIntHeader(headerName);
+        else if (parameter.type().isChildOf(long.class)) header = () -> request.getDateHeader(headerName);
 
-        return Option.empty();
+        return Option.of(header).cast(parameter.type().type());
     }
 }

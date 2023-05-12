@@ -37,6 +37,6 @@ public class UnproxyParameterLoaderRule implements ParameterLoaderRule<ProxyPara
             final Unproxy unproxy = parameter.annotations().get(Unproxy.class).orCompute(() -> parameter.declaredBy().annotations().get(Unproxy.class).orNull()).get();
             if (unproxy.fallbackToProxy()) return argument;
             else return null;
-        }).map(parameter.type()::cast);
+        }).cast(parameter.type().type());
     }
 }

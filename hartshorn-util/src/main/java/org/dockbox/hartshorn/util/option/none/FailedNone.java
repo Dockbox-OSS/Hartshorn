@@ -189,7 +189,7 @@ public class FailedNone<T, E extends Throwable> extends None<T> implements Attem
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "FailedNone{" +
                 "error=" + this.error +
                 '}';

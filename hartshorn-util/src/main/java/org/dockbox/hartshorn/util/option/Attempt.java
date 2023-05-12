@@ -424,4 +424,13 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
 
     @Override
     @NonNull Attempt<T, E> filter(@NonNull Predicate<@NonNull T> predicate);
+
+    @Override
+    <U> Attempt<U, E> ofType(@NonNull Class<U> type);
+
+    @Override
+    <U> Attempt<U, E> cast(@NonNull Class<U> type);
+
+    @Override
+    <K extends T, A extends K> Attempt<A, E> adjust(@NonNull Class<K> type);
 }
