@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
-import org.dockbox.hartshorn.component.ComponentKey;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.List;
-
-public interface BeanProvider {
-    <T> T first(Class<T> type);
-
-    <T> T first(Class<T> type, String id);
-
-    <T> T first(ComponentKey<T> key);
-
-    <T> List<T> all(Class<T> type);
-
-    <T> List<T> all(Class<T> type, String id);
-
-    <T> List<T> all(ComponentKey<T> key);
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface StaticBinds {
+    String id() default "";
 }

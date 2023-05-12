@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
-public record BeanObject(String name) {
+import java.util.Collection;
+import java.util.Set;
+
+public interface StaticComponentCollector {
+    <T> StaticComponentContainer<T> register(T instance, Class<T> type, String id);
+
+    <T> Set<StaticComponentContainer<T>> register(Class<T> type, Collection<T> components, String id);
+
+    void unregister(StaticComponentContainer<?> componentReference);
 }

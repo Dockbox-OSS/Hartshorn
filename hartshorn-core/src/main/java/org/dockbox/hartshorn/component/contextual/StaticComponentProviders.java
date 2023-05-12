@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.Observer;
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Binds;
 
-public interface BeanObserver extends Observer {
+@Service
+@RequiresActivator(UseStaticBinding.class)
+public class StaticComponentProviders {
 
-    /**
-     * Called when the application is done collecting static beans. This is called directly after the
-     * {@link BeanContext} has been created and configured.
-     *
-     * @param applicationContext The application context
-     * @param beanContext The bean context
-     */
-    void onBeansCollected(ApplicationContext applicationContext, BeanContext beanContext);
-
+    @Binds
+    public Class<? extends StaticComponentProvider> staticComponentProvider = ContextStaticComponentProvider.class;
 }

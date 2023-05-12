@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
-import org.dockbox.hartshorn.hsl.HslStatementBeans;
+import org.dockbox.hartshorn.hsl.HslStatementStaticProviders;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
@@ -45,7 +45,7 @@ import jakarta.inject.Named;
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime, ContextCarrier {
 
     @Inject
-    @Named(HslStatementBeans.STATEMENT_BEAN)
+    @Named(HslStatementStaticProviders.STATEMENT_BEAN)
     private Set<ASTNodeParser<? extends Statement>> statementParsers;
 
     private final ApplicationContext applicationContext;

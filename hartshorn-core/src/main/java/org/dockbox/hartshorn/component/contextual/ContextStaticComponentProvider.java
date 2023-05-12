@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Context;
@@ -26,25 +26,25 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
-public class ContextBeanProvider implements BeanProvider {
+public class ContextStaticComponentProvider implements StaticComponentProvider {
 
-    private final BeanContext beanContext;
+    private final StaticComponentContext staticComponentContext;
 
     @Inject
-    public ContextBeanProvider(@Context final BeanContext beanContext) {
-        this.beanContext = beanContext;
+    public ContextStaticComponentProvider(@Context final StaticComponentContext staticComponentContext) {
+        this.staticComponentContext = staticComponentContext;
     }
 
-    private Predicate<BeanReference<?>> typeFilter(final Class<?> type) {
+    private Predicate<StaticComponentContainer<?>> typeFilter(final Class<?> type) {
         return ref -> ref.type().isChildOf(type);
     }
 
-    private Predicate<BeanReference<?>> idFilter(final String id) {
+    private Predicate<StaticComponentContainer<?>> idFilter(final String id) {
         if (StringUtilities.empty(id)) return ref -> true;
         return ref -> ref.id().equals(id);
     }
 
-    private Predicate<BeanReference<?>> typeAndIdFilter(final Class<?> type, final String id) {
+    private Predicate<StaticComponentContainer<?>> typeAndIdFilter(final Class<?> type, final String id) {
         return this.typeFilter(type).and(this.idFilter(id));
     }
 
@@ -64,7 +64,7 @@ public class ContextBeanProvider implements BeanProvider {
         return this.first(key.type());
     }
 
-    private <T> T first(final Class<T> type, final Predicate<BeanReference<?>> predicate) {
+    private <T> T first(final Class<T> type, final Predicate<StaticComponentContainer<?>> predicate) {
         return this.stream(type, predicate)
                 .findFirst()
                 .orElse(null);
@@ -88,10 +88,10 @@ public class ContextBeanProvider implements BeanProvider {
         else return this.all(key.type());
     }
 
-    private <T>Stream<T> stream(final Class<T> type, final Predicate<BeanReference<?>> predicate) {
-        return this.beanContext.beans().stream()
+    private <T>Stream<T> stream(final Class<T> type, final Predicate<StaticComponentContainer<?>> predicate) {
+        return this.staticComponentContext.containers().stream()
                 .filter(predicate)
-                .map(BeanReference::bean)
+                .map(StaticComponentContainer::instance)
                 .map(type::cast);
     }
 }

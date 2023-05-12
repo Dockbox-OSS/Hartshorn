@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.beans;
+package test.org.dockbox.hartshorn.components.contextual;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
-import org.dockbox.hartshorn.beans.BeanObserver;
+import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.Service;
 
-import java.util.List;
-
 @Service
-public class TestBeanObserver implements BeanObserver {
+public class StaticComponentService {
 
-    private List<BeanObject> beans;
-
-    @Override
-    public void onBeansCollected(final ApplicationContext applicationContext, final BeanContext beanContext) {
-        this.beans = beanContext.provider().all(BeanObject.class);
+    @StaticBinds(id = "user")
+    public static StaticComponent userComponent() {
+        return new StaticComponent("user");
     }
 
-    public List<BeanObject> beans() {
-        return this.beans;
+    @StaticBinds(id = "admin")
+    public static StaticComponent adminComponent() {
+        return new StaticComponent("admin");
+    }
+
+    @StaticBinds(id = "guest")
+    public static StaticComponent guestComponent() {
+        return new StaticComponent("guest");
     }
 }

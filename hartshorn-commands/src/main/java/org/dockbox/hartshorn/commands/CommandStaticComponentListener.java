@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
-import org.dockbox.hartshorn.beans.BeanObserver;
-import org.dockbox.hartshorn.beans.BeanProvider;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentObserver;
+import org.dockbox.hartshorn.component.contextual.StaticComponentProvider;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
@@ -34,11 +34,11 @@ import java.util.List;
 
 @Service
 @RequiresActivator(UseCommands.class)
-public class CommandBeanListener implements BeanObserver {
+public class CommandStaticComponentListener implements StaticComponentObserver {
 
     @Override
-    public void onBeansCollected(final ApplicationContext applicationContext, final BeanContext beanContext) {
-        final BeanProvider provider = beanContext.provider();
+    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
+        final StaticComponentProvider provider = staticComponentContext.provider();
 
         final List<ArgumentConverter<?>> argumentConverters = TypeUtils.adjustWildcards(provider.all(ArgumentConverter.class), List.class);
         final ContextKey<ArgumentConverterContext> converterContextContextKey = ContextKey.builder(ArgumentConverterContext.class)

@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.resources;
+package test.org.dockbox.hartshorn.components.contextual;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticBinds;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentObserver;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Binds;
+
+import java.util.List;
 
 @Service
-public class ResourceProviders {
+public class TestStaticComponentObserver implements StaticComponentObserver {
 
-    @StaticBinds
-    public static ResourceLookupStrategy classPathResourceLookupStrategy() {
-        return new ClassPathResourceLookupStrategy();
+    private List<StaticComponent> components;
+
+    @Override
+    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
+        this.components = staticComponentContext.provider().all(StaticComponent.class);
     }
 
-    @StaticBinds
-    public static ResourceLookupStrategy fileSystemResourceLookupStrategy() {
-        return new FileSystemLookupStrategy();
+    public List<StaticComponent> components() {
+        return this.components;
     }
-
-    @Binds
-    public ResourceLookup resourceLookup(final ApplicationContext applicationContext) {
-        return new FallbackResourceLookup(applicationContext, new FileSystemLookupStrategy());
-    }
-
 }

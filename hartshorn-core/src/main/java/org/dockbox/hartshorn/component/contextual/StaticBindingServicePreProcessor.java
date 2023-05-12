@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -37,34 +37,34 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.List;
 
-public class BeanServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
+public class StaticBindingServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final BeanContext beanContext = context.first(BeanContext.CONTEXT_KEY).get();
+        final StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
 
         try {
             final TypeView<T> type = processingContext.type();
-            final List<FieldView<T, ?>> fields = type.fields().annotatedWith(Bean.class);
-            this.process(context, beanContext, TypeUtils.adjustWildcards(fields, List.class));
-            final List<MethodView<T, ?>> methods = type.methods().annotatedWith(Bean.class);
-            this.process(context, beanContext, TypeUtils.adjustWildcards(methods, List.class));
+            final List<FieldView<T, ?>> fields = type.fields().annotatedWith(StaticBinds.class);
+            this.process(context, staticComponentContext, TypeUtils.adjustWildcards(fields, List.class));
+            final List<MethodView<T, ?>> methods = type.methods().annotatedWith(StaticBinds.class);
+            this.process(context, staticComponentContext, TypeUtils.adjustWildcards(methods, List.class));
         }
         catch (final ApplicationException e) {
             throw new ApplicationRuntimeException(e);
         }
     }
 
-    private <T, E extends AnnotatedElementView<T>
+    private <T, E extends AnnotatedElementView
             & ModifierCarrierView
             & GenericTypeView<T>>
-    void process(final ApplicationContext applicationContext, final BeanCollector context, final List<E> elements) throws ApplicationException {
+    void process(final ApplicationContext applicationContext, final StaticComponentCollector context, final List<E> elements) throws ApplicationException {
         if (elements.isEmpty()) return;
 
         final ViewContextAdapter adapter = applicationContext.get(ViewContextAdapter.class);
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         for (final E element : elements) {
-            if (!element.has(AccessModifier.STATIC)) {
+            if (!element.modifiers().has(AccessModifier.STATIC)) {
                 throw new ApplicationException("Bean service pre-processor can only process static fields and methods");
             }
             if (conditionMatcher.match(element)) {
@@ -73,12 +73,12 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
         }
     }
 
-    private <T, E extends AnnotatedElementView<T>
+    private <T, E extends AnnotatedElementView
             & ModifierCarrierView
             & GenericTypeView<T>>
-    void process(final ViewContextAdapter adapter, final E element, final BeanCollector context) throws ApplicationException {
-        final Bean bean = element.annotations().get(Bean.class).get();
-        final String id = bean.id();
+    void process(final ViewContextAdapter adapter, final E element, final StaticComponentCollector context) throws ApplicationException {
+        final StaticBinds staticBinds = element.annotations().get(StaticBinds.class).get();
+        final String id = staticBinds.id();
 
         final T beanInstance = adapter.load(element)
                 .orElseThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
@@ -95,10 +95,10 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
     @Override
     public void exit(final ApplicationContext context) {
         final ApplicationEnvironment environment = context.environment();
-        final BeanContext beanContext = context.first(BeanContext.CONTEXT_KEY).get();
+        final StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            for (final BeanObserver observer : observable.observers(BeanObserver.class))
-                observer.onBeansCollected(context, beanContext);
+            for (final StaticComponentObserver observer : observable.observers(StaticComponentObserver.class))
+                observer.onStaticComponentsCollected(context, staticComponentContext);
         }
     }
 }

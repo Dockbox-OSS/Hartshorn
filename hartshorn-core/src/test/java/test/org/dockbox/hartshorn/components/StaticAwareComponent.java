@@ -17,6 +17,8 @@
 package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +28,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 @Component
-public class BeanAwareComponent {
+@RequiresActivator(UseStaticBinding.class)
+public class StaticAwareComponent {
 
     @Inject
     @Named("names")
