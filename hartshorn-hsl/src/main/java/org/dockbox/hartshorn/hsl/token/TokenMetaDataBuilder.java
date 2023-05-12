@@ -26,12 +26,12 @@ import java.util.Locale;
  */
 public class TokenMetaDataBuilder {
 
-    final TokenType type;
-    String representation;
-    boolean keyword;
-    boolean standaloneStatement;
-    boolean reserved;
-    TokenType assignsWith;
+    private final TokenType type;
+    private String representation;
+    private boolean keyword;
+    private boolean standaloneStatement;
+    private boolean reserved;
+    private TokenType assignsWith;
 
     TokenMetaDataBuilder(final TokenType type) {
         this.type = type;
@@ -77,6 +77,6 @@ public class TokenMetaDataBuilder {
     }
 
     public TokenMetaData ok() {
-        return new TokenMetaData(this);
+        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith);
     }
 }

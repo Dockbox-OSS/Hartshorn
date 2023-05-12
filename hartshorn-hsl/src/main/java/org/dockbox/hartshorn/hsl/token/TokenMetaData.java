@@ -32,13 +32,15 @@ public class TokenMetaData {
     private final boolean reserved;
     private final TokenType assignsWith;
 
-    TokenMetaData(final TokenMetaDataBuilder builder) {
-        this.type = builder.type;
-        this.representation = builder.representation;
-        this.keyword = builder.keyword;
-        this.standaloneStatement = builder.standaloneStatement;
-        this.reserved = builder.reserved;
-        this.assignsWith = builder.assignsWith;
+    TokenMetaData(final TokenType type, final String representation,
+            final boolean keyword, final boolean standaloneStatement, final boolean reserved,
+            final TokenType assignsWith) {
+        this.type = type;
+        this.representation = representation;
+        this.keyword = keyword;
+        this.standaloneStatement = standaloneStatement;
+        this.reserved = reserved;
+        this.assignsWith = assignsWith;
     }
 
     /**
