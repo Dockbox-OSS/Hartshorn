@@ -77,6 +77,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     private List<T> enumConstants;
     private TypeView<?> parent;
     private List<TypeView<?>> interfaces;
+    private List<TypeView<? extends T>> permittedSubclasses;
     private Option<TypeView<?>> elementType;
 
     private TypeMethodsIntrospector<T> methodsIntrospector;
@@ -167,6 +168,47 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public boolean isWildcard() {
         return false;
+    }
+
+    @Override
+    public boolean isSealed() {
+        return this.type.isSealed();
+    }
+
+    @Override
+    public boolean isNonSealed() {
+        return this.superClass().isSealed() && !this.isSealed() && !this.isFinal();
+    }
+
+    @Override
+    public boolean isPermittedSubclass() {
+        if (this.superClass().isSealed()) {
+            return this.superClass().permittedSubclasses().contains(this);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPermittedSubclass(final Class<?> subclass) {
+        if (this.isSealed()) {
+            return this.permittedSubclasses().stream()
+                    .anyMatch(permittedSubclass -> permittedSubclass.type().equals(subclass));
+        }
+        return false;
+    }
+
+    @Override
+    public List<TypeView<? extends T>> permittedSubclasses() {
+        if (this.permittedSubclasses == null) {
+            final List<TypeView<? extends T>> list = new ArrayList<>();
+            for(final Class<?> permittedSubclass : this.type.getPermittedSubclasses()) {
+                final TypeView<?> introspect = this.introspector.introspect(permittedSubclass);
+                final TypeView<T> adjustedType = TypeUtils.adjustWildcards(introspect, TypeView.class);
+                list.add(adjustedType);
+            }
+            this.permittedSubclasses = list;
+        }
+        return this.permittedSubclasses;
     }
 
     @Override

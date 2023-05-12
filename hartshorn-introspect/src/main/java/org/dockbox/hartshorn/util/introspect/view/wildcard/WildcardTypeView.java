@@ -104,6 +104,26 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
+    public boolean isSealed() {
+        return false;
+    }
+
+    @Override
+    public boolean isNonSealed() {
+        return false;
+    }
+
+    @Override
+    public boolean isPermittedSubclass() {
+        return false;
+    }
+
+    @Override
+    public boolean isPermittedSubclass(final Class<?> subclass) {
+        return false;
+    }
+
+    @Override
     public boolean isDeclaredIn(final String prefix) {
         return false;
     }
