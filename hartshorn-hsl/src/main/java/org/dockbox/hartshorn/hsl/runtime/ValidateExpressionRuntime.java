@@ -54,7 +54,7 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      * @return The validation result, or {@code false} if it does not exist.
      */
     public static boolean valid(final ResultCollector collector) {
-        final Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
+        final Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID, Boolean.class);
         return Boolean.TRUE.equals(result.orElse(false));
     }
 }

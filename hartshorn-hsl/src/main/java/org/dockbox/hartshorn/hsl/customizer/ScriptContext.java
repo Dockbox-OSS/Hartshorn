@@ -146,14 +146,23 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     @Override
-    public <T> Option<T> result() {
+    public <T> Option<T> result(final Class<T> type) {
+        return this.result(GLOBAL_RESULT, type);
+    }
+
+    @Override
+    public Option<?> result() {
         return this.result(GLOBAL_RESULT);
     }
 
     @Override
-    public <T> Option<T> result(final String id) {
-        return Option.of(this.results.get(id))
-                .map(result -> (T) result);
+    public <T> Option<T> result(final String id, final Class<T> type) {
+        return Option.of(this.results.get(id)).ofType(type);
+    }
+
+    @Override
+    public Option<?> result(final String id) {
+        return Option.of(this.results.get(id));
     }
 
     @Override
