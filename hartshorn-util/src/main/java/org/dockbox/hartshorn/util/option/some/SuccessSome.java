@@ -173,7 +173,7 @@ public class SuccessSome<T, E extends Throwable> extends Some<T> implements Atte
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "SuccessSome[" + super.get() + "]";
     }
 }

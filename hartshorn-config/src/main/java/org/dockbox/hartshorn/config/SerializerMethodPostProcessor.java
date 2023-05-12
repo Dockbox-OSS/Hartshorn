@@ -64,7 +64,7 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
         if (method.returnType().is(String.class)) return true;
         final TypeParametersIntrospector typeParameters = method.genericReturnType().typeParameters();
         return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.at(0)
-                .map(t -> t.is(String.class))
+                .map(type -> type.is(String.class))
                 .orElse(false));
     }
 }

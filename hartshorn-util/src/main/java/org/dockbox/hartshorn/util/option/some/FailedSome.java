@@ -167,7 +167,7 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "FailedSome{" +
                 "error=" + this.error +
                 ", value=" + super.get() +

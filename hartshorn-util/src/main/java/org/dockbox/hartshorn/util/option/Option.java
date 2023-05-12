@@ -21,13 +21,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.option.none.None;
 import org.dockbox.hartshorn.util.option.some.Some;
 
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import javax.xml.transform.Result;
@@ -46,7 +51,7 @@ import javax.xml.transform.Result;
  * @author Guus Lieben
  * @since 22.5
  */
-public interface Option<T> {
+public interface Option<T> extends Iterable<T> {
 
     /**
      * Creates a new {@link Option} instance wrapping the given nullable value. If the value is {@code null}, an
@@ -302,6 +307,8 @@ public interface Option<T> {
     @NonNull
     Stream<T> stream();
 
+    <U> Stream<U> stream(@NonNull Function<@NonNull T, @NonNull Stream<U>> mapper);
+
     /**
      * Returns {@code true} if the value wrapped by the current {@link Option} instance is equal to the given value,
      * otherwise {@code false}. If no value is present, {@code false} is returned. This checks for equality, not for
@@ -313,6 +320,116 @@ public interface Option<T> {
      */
     boolean contains(@Nullable T value);
 
-    String toString();
+    /**
+     * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
+     * given type, an empty {@link Option} is returned. If no value is present, an empty {@link Option} is returned.
+     *
+     * @param type the type to cast the value to
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
+     *       type.
+     * @param <U> the type to cast the value to
+     */
+    <U> Option<U> ofType(@NonNull Class<U> type);
 
+    /**
+     * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
+     * given type, a {@link ClassCastException} is thrown. If no value is present, an empty {@link Option} is returned.
+     *
+     * @param type the type to cast the value to
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
+     *        type.
+     * @param <U> the type to cast the value to
+     * @throws ClassCastException if the value is not of the given type
+     */
+    <U> Option<U> cast(@NonNull Class<U> type);
+
+    <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type);
+
+    <K extends T, A extends K> A adjustAndGet(@NonNull Class<K> type);
+
+    /**
+     * Performs a mutable reduction operation on the elements of this {@link Option} using a {@link Collector}. A mutable
+     * reduction is one in which the reduced value is a mutable result container, such as an {@code ArrayList}, and the
+     * accumulation function mutates it by adding new elements. This produces a result equivalent to using
+     * {@link Stream#collect(Collector)} through {@link #stream()}.
+     *
+     * @param collector the {@link Collector} describing the reduction operation
+     * @return the result of the reduction
+     * @param <E> the type of the result
+     */
+    <E> E collect(@NonNull Collector<T, ?, E> collector);
+
+    /**
+     * Similar to {@link #collect(Collector)}, but using explicit functions instead of a {@link Collector}. This
+     * produces a result equivalent to using {@link Stream#collect(Supplier, BiConsumer, BiConsumer)} through
+     * {@link #stream()}.
+     *
+     * @param supplier
+     *         the supplier function that provides a new mutable result container.
+     * @param accumulator
+     *         an associative, non-interfering, stateless function for incorporating an additional element
+     *         into a result container.
+     * @param combiner
+     *         an associative, non-interfering, stateless function for combining two values, which must be
+     *         compatible with the accumulator function.
+     * @param <E>
+     *         the type of the result
+     *
+     * @return the result of the reduction
+     */
+    <E> E collect(@NonNull Supplier<E> supplier, @NonNull BiConsumer<E, T> accumulator, @NonNull BiConsumer<E, E> combiner);
+
+    /**
+     * Returns a {@link List} containing the value wrapped by the current {@link Option} instance. If no value is
+     * present, an empty {@link List} is returned.
+     *
+     * @return a {@link List} containing the value wrapped by the current {@link Option} instance.
+     */
+    List<T> toList();
+
+    /**
+     * Returns a {@link Set} containing the value wrapped by the current {@link Option} instance. If no value is
+     * present, an empty {@link Set} is returned.
+     *
+     * @return a {@link Set} containing the value wrapped by the current {@link Option} instance.
+     */
+    Set<T> toSet();
+
+    /**
+     * Returns a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
+     * by the key returned by the given {@link Function}. If no value is present in the current {@link Option} instance,
+     * an empty {@link Map} is returned.
+     *
+     * @param keyMapper
+     *         the {@link Function} used to map the value wrapped by the current {@link Option} instance to a
+     *         key in the resulting {@link Map}.
+     * @param <K>
+     *         the type of the key in the resulting {@link Map}.
+     *
+     * @return a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
+     *         by the key returned by the given {@link Function}.
+     */
+    <K> Map<K, T> toMap(@NonNull Function<T, K> keyMapper);
+
+    /**
+     * Returns a {@link Map} containing the value wrapped by the current {@link Option} as both key and value,
+     * identified by the key returned by the given {@link Function}, and the value returned by the given
+     * {@link Function}. If no value is present in the current {@link Option} instance, an empty {@link Map} is
+     * returned.
+     *
+     * @param keyMapper
+     *         the {@link Function} used to map the value wrapped by the current {@link Option} instance to a
+     *         key in the resulting {@link Map}.
+     * @param valueMapper
+     *         the {@link Function} used to map the value wrapped by the current {@link Option} instance to
+     *         a value in the resulting {@link Map}.
+     * @param <K>
+     *         the type of the keys in the resulting {@link Map}.
+     * @param <V>
+     *         the type of the values in the resulting {@link Map}.
+     *
+     * @return a {@link Map} containing the wrapped value as both key and value, as returned by the given
+     *         {@link Function functions}.
+     */
+    <K, V> Map<K, V> toMap(@NonNull Function<T, K> keyMapper, @NonNull Function<T, V> valueMapper);
 }

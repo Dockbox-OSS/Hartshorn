@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.option.none;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.AbstractOption;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
  * @author Guus Lieben
  * @since 22.5
  */
-public class None<T> implements Option<T> {
+public class None<T> extends AbstractOption<T> {
 
     @Override
     public <E extends Throwable> Attempt<T, E> attempt(final Class<E> errorType) {
@@ -131,7 +132,7 @@ public class None<T> implements Option<T> {
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "None";
     }
 }

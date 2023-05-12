@@ -57,7 +57,7 @@ public class ContextDrivenProvider<C> implements Provider<C> {
         return adapter.scope(this.context.scope()).create(constructor.get())
                 .mapError(error -> new ApplicationException("Failed to create instance of type " + this.type().getName(), error))
                 .rethrow()
-                .map(this.type()::cast)
+                .cast(this.type())
                 .map(instance -> new ObjectContainer<>(instance, false));
     }
 

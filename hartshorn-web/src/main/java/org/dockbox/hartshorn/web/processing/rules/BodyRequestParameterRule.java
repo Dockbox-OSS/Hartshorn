@@ -42,7 +42,7 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
         final Attempt<String, IOException> body = Attempt.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())), IOException.class);
         if (parameter.type().is(String.class)) {
             return body
-                    .map(parameter.type()::cast)
+                    .cast(parameter.type().type())
                     .mapError(e -> e);
         }
 

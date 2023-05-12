@@ -36,6 +36,6 @@ public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<Prox
         final Option<ProxyManager<Object>> handler = context.applicationProxier().manager(argument);
         return handler.flatMap(ProxyManager::delegate)
                 .orCompute(() -> argument)
-                .map(a -> (T) a);
+                .cast(parameter.type().type());
     }
 }

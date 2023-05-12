@@ -61,7 +61,7 @@ public class EnvironmentDrivenApplicationConfigurator implements ApplicationConf
         return environment.applicationContext()
                 .property(property)
                 .map(value -> TypeUtils.toPrimitive(type, value))
-                .map(type::cast)
+                .cast(type)
                 .orElse(defaultValue);
     }
 }
