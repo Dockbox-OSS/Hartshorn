@@ -124,6 +124,11 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
+    public List<TypeView<?>> permittedSubclasses() {
+        return List.of();
+    }
+
+    @Override
     public boolean isDeclaredIn(final String prefix) {
         return false;
     }

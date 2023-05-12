@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -38,10 +42,6 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
-
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Singleton;
 
@@ -88,8 +88,8 @@ public class BindingProcessor {
         }
     }
 
-    private <R> void processInstanceBinding(final ApplicationContext context,
-                                            final AnnotatedElementView element, final ComponentKey<R> key,
+    private <R, E extends AnnotatedElementView & GenericTypeView<R>> void processInstanceBinding(final ApplicationContext context,
+                                            final E element, final ComponentKey<R> key,
                                             final boolean singleton, final Binds annotation) throws ApplicationException {
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
         element.annotations().get(InstallTo.class).peek(a -> function.installTo(a.value()));
@@ -106,8 +106,9 @@ public class BindingProcessor {
         else function.to(supplier);
     }
 
-    private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final AnnotatedElementView element,
-                                                             final ComponentKey<R> key, boolean singleton, final Binds annotation) throws ApplicationException {
+    private <R, C extends Class<R>, E extends AnnotatedElementView & GenericTypeView<C>> void processClassBinding(final ApplicationContext context,
+                                                             final E element, final ComponentKey<R> key, boolean singleton,
+                                                             final Binds annotation) throws ApplicationException {
         final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
         final C targetType = contextAdapter.load(element)
                 .mapError(error -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName(), error))

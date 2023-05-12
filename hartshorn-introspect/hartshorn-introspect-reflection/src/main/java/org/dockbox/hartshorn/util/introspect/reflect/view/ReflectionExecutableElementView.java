@@ -32,7 +32,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Executable;
 import java.util.List;
 
-public abstract class ReflectionExecutableElementView<Parent, ResultType> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent> {
+public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent> {
 
     private final Introspector introspector;
     private final Executable executable;

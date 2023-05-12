@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -40,7 +40,7 @@ public interface ViewContextAdapter extends ContextCarrier {
     
     <P, R> Attempt<R, Throwable> load(FieldView<P, R> field);
 
-    <T> Attempt<T, Throwable> load(AnnotatedElementView element);
+    <T> Attempt<T, Throwable> load(GenericTypeView<T> element);
 
     boolean isProxy(TypeView<?> type);
 }

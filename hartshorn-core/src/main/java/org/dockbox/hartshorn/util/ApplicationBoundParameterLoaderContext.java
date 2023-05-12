@@ -47,7 +47,7 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
         this(executable, instance, applicationContext, applicationContext, scope);
     }
 
-    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?, ?> executable, Object instance, ApplicationContext applicationContext, ComponentProvider provider, Scope scope) {
+    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ApplicationContext applicationContext, ComponentProvider provider, Scope scope) {
         super(executable, instance);
         this.applicationContext = applicationContext;
         this.provider = provider;
