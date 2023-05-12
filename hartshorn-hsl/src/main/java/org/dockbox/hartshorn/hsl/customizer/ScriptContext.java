@@ -46,6 +46,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private static final String GLOBAL_RESULT = "$__result__$";
     protected Map<String, Object> results = new ConcurrentHashMap<>();
 
+    private final ScriptRuntime runtime;
     private final String source;
 
     private List<Token> tokens;
@@ -56,7 +57,6 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
-    private final ScriptRuntime runtime;
 
     public ScriptContext(ScriptRuntime runtime, String source) {
         super(runtime.applicationContext());
@@ -146,14 +146,23 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     @Override
-    public <T> Option<T> result() {
+    public <T> Option<T> result(Class<T> type) {
+        return this.result(GLOBAL_RESULT, type);
+    }
+
+    @Override
+    public Option<?> result() {
         return this.result(GLOBAL_RESULT);
     }
 
     @Override
-    public <T> Option<T> result(String id) {
-        return Option.of(this.results.get(id))
-                .map(result -> (T) result);
+    public <T> Option<T> result(String id, Class<T> type) {
+        return Option.of(this.results.get(id)).ofType(type);
+    }
+
+    @Override
+    public Option<?> result(String id) {
+        return Option.of(this.results.get(id));
     }
 
     @Override
