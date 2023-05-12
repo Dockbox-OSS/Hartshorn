@@ -67,10 +67,6 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator, Co
         final Introspector introspector = this.applicationContext().environment();
         final TypeView<T> contract = introspector.introspect(key.type());
 
-        // Skip introspection types, to avoid infinite recursion. Introspectors are utility classes,
-        // and are never registered as components.
-        if (contract.isDeclaredIn(Introspector.class.getPackageName())) return;
-
         if (contract.annotations().has(Component.class) && this.container(contract.type()).absent()) {
             this.applicationContext().log().warn("Component key '%s' is annotated with @Component, but is not registered.".formatted(contract.qualifiedName()));
         }
