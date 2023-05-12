@@ -16,36 +16,92 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Field;
 
-public interface FieldView<Parent, FieldType> extends AnnotatedElementView<FieldType>, ModifierCarrierView, GenericTypeView<FieldType> {
+/**
+ * Represents a view of a field. This view is used to access the field's value, and to set the field's value.
+ *
+ * @param <Parent> The type of the field's declaring class
+ * @param <FieldType> The type of the field
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
+public interface FieldView<Parent, FieldType> extends AnnotatedElementView, ModifierCarrierView, GenericTypeView<FieldType> {
 
-    Field field();
+    /**
+     * Returns the {@link Field} represented by this view, if available.
+     *
+     * @return the field represented by this view, if available
+     */
+    Option<Field> field();
 
+    /**
+     * Sets the value of the field represented by this view on the given instance. If the field is static, the instance
+     * is ignored. If the field is annotated with {@link Property}, an attempt is made to use the field's setter method
+     * as configured in {@link Property#setter()}, if available.
+     *
+     * @param instance the instance on which to set the field's value
+     * @param value the value to set
+     * @throws IllegalIntrospectionException if the field is final, the given value does not match the field's type, or
+     *        if the field is not accessible. Also thrown if the configured setter method does not exist.
+     */
     void set(Object instance, Object value);
 
+    /**
+     * Gets the value of the field represented by this view on the given instance. If the field is static, the instance
+     * is ignored. If the field is annotated with {@link Property}, an attempt is made to use the field's getter method
+     * as configured in {@link Property#getter()}, if available.
+     *
+     * @param instance the instance from which to get the field's value
+     * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
+     * @return the value of the field represented by this view on the given instance
+     */
     Attempt<FieldType, Throwable> get(Parent instance);
 
+    /**
+     * Gets the value of the field represented by this view, as a static field. If the field is annotated with
+     * {@link Property}, an attempt is made to use the field's getter method as configured in {@link Property#getter()},
+     * if available.
+     *
+     * @throws IllegalIntrospectionException if the field is not accessible, not static, or the configured getter method
+     *       does not exist
+     * @return the value of the field represented by this view
+     */
     Attempt<FieldType, Throwable> getStatic();
 
-    String name();
-
-    String qualifiedName();
-
+    /**
+     * Returns the element's declaring type.
+     *
+     * @return the element's declaring type
+     */
     TypeView<Parent> declaredBy();
 
-    boolean isProtected();
-
-    boolean isPublic();
-
-    boolean isPrivate();
-
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isStatic();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isFinal();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isTransient()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isTransient();
 
 }

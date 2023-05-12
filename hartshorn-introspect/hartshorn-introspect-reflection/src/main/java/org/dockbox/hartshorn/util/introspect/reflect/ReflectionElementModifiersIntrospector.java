@@ -1,0 +1,129 @@
+package org.dockbox.hartshorn.util.introspect.reflect;
+
+import org.dockbox.hartshorn.util.introspect.AccessModifier;
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
+public class ReflectionElementModifiersIntrospector implements ElementModifiersIntrospector {
+
+    private static final int SYNTHETIC;
+    private static final int MANDATED;
+
+    static {
+        int syntheticModifier;
+        int mandatedModifier;
+        try {
+            final Class<Modifier> modifier = Modifier.class;
+            final Field synthetic = modifier.getDeclaredField("SYNTHETIC");
+            synthetic.setAccessible(true);
+            syntheticModifier = (int) synthetic.get(null);
+
+            final Field mandated = modifier.getDeclaredField("MANDATED");
+            mandated.setAccessible(true);
+            mandatedModifier = (int) mandated.get(null);
+        }
+        catch (final NoSuchFieldException | IllegalAccessException e) {
+            syntheticModifier = 0x00001000;
+            mandatedModifier  = 0x00008000;
+        }
+        SYNTHETIC = syntheticModifier;
+        MANDATED = mandatedModifier;
+    }
+
+    private final int modifiers;
+    private final Member member;
+
+    public ReflectionElementModifiersIntrospector(final Member member) {
+        this.modifiers = member.getModifiers();
+        this.member = member;
+    }
+
+    public ReflectionElementModifiersIntrospector(final int modifiers) {
+        this.modifiers = modifiers;
+        this.member = null;
+    }
+
+    @Override
+    public int asInt() {
+        return this.modifiers;
+    }
+
+    @Override
+    public boolean has(final AccessModifier modifier) {
+        return modifier.test(this.asInt());
+    }
+
+    @Override
+    public boolean isPublic() {
+        return Modifier.isPublic(this.asInt());
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return Modifier.isPrivate(this.asInt());
+    }
+
+    @Override
+    public boolean isProtected() {
+        return Modifier.isProtected(this.asInt());
+    }
+
+    @Override
+    public boolean isStatic() {
+        return Modifier.isStatic(this.asInt());
+    }
+
+    @Override
+    public boolean isFinal() {
+        return Modifier.isFinal(this.asInt());
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return Modifier.isAbstract(this.asInt());
+    }
+
+    @Override
+    public boolean isTransient() {
+        return Modifier.isTransient(this.asInt());
+    }
+
+    @Override
+    public boolean isVolatile() {
+        return Modifier.isVolatile(this.asInt());
+    }
+
+    @Override
+    public boolean isSynchronized() {
+        return Modifier.isSynchronized(this.asInt());
+    }
+
+    @Override
+    public boolean isNative() {
+        return Modifier.isNative(this.asInt());
+    }
+
+    @Override
+    public boolean isStrict() {
+        return Modifier.isStrict(this.asInt());
+    }
+
+    @Override
+    public boolean isMandated() {
+        return (this.asInt() & MANDATED) != 0;
+    }
+
+    @Override
+    public boolean isSynthetic() {
+        return (this.asInt() & SYNTHETIC) != 0;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return member instanceof Method method && method.isDefault();
+    }
+}

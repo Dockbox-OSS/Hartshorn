@@ -85,13 +85,13 @@ public class ConditionTests {
 
     ConditionResult match(final String expression, final Context... contexts) {
         final ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
-        final AnnotatedElementView<?> element = this.createAnnotatedElement(expression);
+        final AnnotatedElementView element = this.createAnnotatedElement(expression);
         final ConditionContext context = new ConditionContext(this.applicationContext, element, null);
         for (final Context child : contexts) context.add(child);
         return condition.matches(context);
     }
 
-    private AnnotatedElementView<?> createAnnotatedElement(final String expression) {
+    private AnnotatedElementView createAnnotatedElement(final String expression) {
         final RequiresExpression condition = Mockito.mock(RequiresExpression.class);
         Mockito.when(condition.value()).thenReturn(expression);
         Mockito.doReturn(RequiresExpression.class).when(condition).annotationType();
@@ -99,7 +99,7 @@ public class ConditionTests {
         final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
         Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Option.of(condition));
 
-        final AnnotatedElementView<?> elementView = Mockito.mock(AnnotatedElementView.class);
+        final AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
         Mockito.when(elementView.annotations()).thenReturn(annotationsIntrospector);
 
         return elementView;

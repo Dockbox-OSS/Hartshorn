@@ -87,7 +87,7 @@ public class WildcardIntrospectorTests {
     void testWildcardHasNoModifiers() {
         final TypeView<Object> view = new WildcardTypeView();
         for (final AccessModifier modifier : AccessModifier.values()) {
-            Assertions.assertFalse(view.has(modifier));
+            Assertions.assertFalse(view.modifiers().has(modifier));
         }
     }
 

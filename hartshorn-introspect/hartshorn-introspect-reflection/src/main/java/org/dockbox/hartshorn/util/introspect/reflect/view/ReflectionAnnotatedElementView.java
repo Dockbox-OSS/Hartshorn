@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 
 import java.lang.reflect.AnnotatedElement;
 
-public abstract class ReflectionAnnotatedElementView<T> implements AnnotatedElementView<T>, IntrospectorAwareView {
+public abstract class ReflectionAnnotatedElementView implements AnnotatedElementView, IntrospectorAwareView {
 
     private final ReflectionIntrospector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;

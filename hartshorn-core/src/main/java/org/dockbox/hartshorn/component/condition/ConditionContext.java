@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 public class ConditionContext extends DefaultApplicationAwareContext {
 
-    private final AnnotatedElementView<?> annotatedElementContext;
+    private final AnnotatedElementView annotatedElementContext;
     private final RequiresCondition condition;
 
     public ConditionContext(final ApplicationContext applicationContext, final AnnotatedElementView<?> annotatedElementContext, final RequiresCondition condition) {
@@ -31,7 +31,7 @@ public class ConditionContext extends DefaultApplicationAwareContext {
         this.condition = condition;
     }
 
-    public AnnotatedElementView<?> annotatedElement() {
+    public AnnotatedElementView annotatedElement() {
         return this.annotatedElementContext;
     }
 

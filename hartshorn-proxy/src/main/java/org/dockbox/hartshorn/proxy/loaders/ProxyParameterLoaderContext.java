@@ -24,7 +24,7 @@ public class ProxyParameterLoaderContext extends ParameterLoaderContext {
 
     private final ApplicationProxier applicationProxier;
 
-    public ProxyParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance, final ApplicationProxier applicationProxier) {
+    public ProxyParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationProxier applicationProxier) {
         super(executable, instance);
         this.applicationProxier = applicationProxier;
     }

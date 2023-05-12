@@ -339,7 +339,7 @@ public abstract class ElementContextTests {
                 .named("testStatic");
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
-        Assertions.assertTrue(methodContext.isStatic());
+        Assertions.assertTrue(methodContext.modifiers().isStatic());
         final Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
@@ -353,7 +353,7 @@ public abstract class ElementContextTests {
                 .named("testNonStatic");
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
-        Assertions.assertFalse(methodContext.isStatic());
+        Assertions.assertFalse(methodContext.modifiers().isStatic());
         final Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorPresent());
         Assertions.assertTrue(result.error() instanceof IllegalAccessException);

@@ -49,7 +49,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
         final MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
         final ConversionService conversionService = context.get(ConversionService.class);
         final boolean enable = Boolean.TRUE.equals(method.annotations().get(Enable.class).map(Enable::value).orElse(true));
-        if (method.isAbstract()) {
+        if (method.modifiers().isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
             final Option<? extends ConstructorView<?>> constructorCandidate = factoryContext.get(method);

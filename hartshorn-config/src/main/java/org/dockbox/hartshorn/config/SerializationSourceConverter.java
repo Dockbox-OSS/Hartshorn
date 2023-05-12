@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface SerializationSourceConverter {
-    InputStream inputStream(AnnotatedElementView<?> context, Object... args) throws ApplicationException;
+    InputStream inputStream(AnnotatedElementView context, Object... args) throws ApplicationException;
 
-    OutputStream outputStream(AnnotatedElementView<?> context, Object... args) throws ApplicationException;
+    OutputStream outputStream(AnnotatedElementView context, Object... args) throws ApplicationException;
 }

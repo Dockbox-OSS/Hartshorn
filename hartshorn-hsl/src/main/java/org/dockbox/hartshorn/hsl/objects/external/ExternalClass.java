@@ -105,7 +105,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
     public boolean isFinal() {
-        return this.type().isFinal();
+        return this.type().modifiers().isFinal();
     }
 
     @Override

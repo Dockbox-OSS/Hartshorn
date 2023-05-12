@@ -184,7 +184,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         field.set(instance, context.orNull());
     }
 
-    private boolean isComponentRequired(final AnnotatedElementView<?> view) {
+    private boolean isComponentRequired(final AnnotatedElementView view) {
         return Boolean.TRUE.equals(view.annotations().get(Required.class)
                 .map(Required::value)
                 .orElse(false));

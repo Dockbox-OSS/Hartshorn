@@ -63,7 +63,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     }
 
     @Override
-    public Object[] loadParameters(final ExecutableElementView<?, ?> element) {
+    public Object[] loadParameters(final ExecutableElementView<?> element) {
         final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
         final ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         return parameterLoader.loadArguments(loaderContext).toArray();
@@ -71,7 +71,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
 
     @Override
     public <P, R> Attempt<R, Throwable> invoke(final MethodView<P, R> method) {
-        if (method.isStatic()) {
+        if (method.modifiers().isStatic()) {
             return this.invokeStatic(method);
         }
         final Object[] parameters = this.loadParameters(method);
@@ -81,7 +81,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
 
     @Override
     public <P, R> Attempt<R, Throwable> invokeStatic(final MethodView<P, R> method) {
-        if (!method.isStatic()) {
+        if (!method.modifiers().isStatic()) {
             return this.invoke(method);
         }
         final Object[] parameters = this.loadParameters(method);
@@ -95,7 +95,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     }
 
     @Override
-    public <T> Attempt<T, Throwable> load(final AnnotatedElementView<T> element) {
+    public <T> Attempt<T, Throwable> load(final AnnotatedElementView element) {
         if (element instanceof TypeView<T> typeView) {
             return Attempt.of(this.applicationContext().get(this.key(typeView.type())));
         }

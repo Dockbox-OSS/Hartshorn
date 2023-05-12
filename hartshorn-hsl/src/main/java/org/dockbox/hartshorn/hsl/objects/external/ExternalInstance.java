@@ -17,15 +17,14 @@
 package org.dockbox.hartshorn.hsl.objects.external;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Map;
@@ -64,7 +63,6 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     @Override
     public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
         this.type.fields().named(name.lexeme())
-                .map(field -> (FieldView<Object, Object>) field)
                 .peek(field -> field.set(this.instance(), value))
                 .orElseThrow(() -> this.propertyDoesNotExist(name));
     }

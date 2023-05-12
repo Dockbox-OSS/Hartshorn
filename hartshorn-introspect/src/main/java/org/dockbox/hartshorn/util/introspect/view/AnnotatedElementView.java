@@ -18,12 +18,37 @@ package org.dockbox.hartshorn.util.introspect.view;
 
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
-public interface AnnotatedElementView<T> extends View {
+/**
+ * Represents a view of an annotated element, such as a field or method. This view can be
+ * used to introspect the element's annotations, as well as its name and qualified name.
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
+public interface AnnotatedElementView extends View {
 
+    /**
+     * Returns an {@link ElementAnnotationsIntrospector} for the element. This introspector
+     * can be used to introspect the element's annotations.
+     *
+     * @return an introspector for the element's annotations
+     */
     ElementAnnotationsIntrospector annotations();
 
+    /**
+     * Returns the simple name of the element. For example, if the element is a field, this
+     * method will return the field's name, without further qualification.
+     *
+     * @return the simple name of the element
+     */
     String name();
 
+    /**
+     * Returns the qualified name of the element. For example, if the element is a field,
+     * this method will return the field's name, qualified by the declaring class.
+     *
+     * @return the qualified name of the element
+     */
     String qualifiedName();
 
 }

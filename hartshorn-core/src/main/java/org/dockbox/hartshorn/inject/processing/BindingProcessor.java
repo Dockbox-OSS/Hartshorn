@@ -56,7 +56,7 @@ public class BindingProcessor {
             for (final ProviderContext provider : elements.get(phase)) {
 
                 final ComponentKey<?> key = provider.key();
-                final AnnotatedElementView<?> element = provider.element();
+                final AnnotatedElementView element = provider.element();
 
                 applicationContext.log().debug("Processing provider context of " + element.qualifiedName() + " for " + key + " in phase " + phase);
 
@@ -70,8 +70,8 @@ public class BindingProcessor {
         }
     }
 
-    private <R, E extends AnnotatedElementView<?> & GenericTypeView<?>> void process(final ComponentKey<R> key, final E element,
-                                                                                     final ApplicationContext applicationContext) throws ApplicationException {
+    private <R, E extends AnnotatedElementView & GenericTypeView<?>> void process(final ComponentKey<R> key, final E element,
+                                                                                  final ApplicationContext applicationContext) throws ApplicationException {
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         final Binds annotation = element.annotations().get(Binds.class).get();
 
@@ -89,7 +89,7 @@ public class BindingProcessor {
     }
 
     private <R> void processInstanceBinding(final ApplicationContext context,
-                                            final AnnotatedElementView<R> element, final ComponentKey<R> key,
+                                            final AnnotatedElementView element, final ComponentKey<R> key,
                                             final boolean singleton, final Binds annotation) throws ApplicationException {
         final BindingFunction<R> function = context.bind(key).priority(annotation.priority());
         element.annotations().get(InstallTo.class).peek(a -> function.installTo(a.value()));
@@ -106,7 +106,7 @@ public class BindingProcessor {
         else function.to(supplier);
     }
 
-    private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final AnnotatedElementView<C> element,
+    private <R, C extends Class<R>> void processClassBinding(final ApplicationContext context, final AnnotatedElementView element,
                                                              final ComponentKey<R> key, boolean singleton, final Binds annotation) throws ApplicationException {
         final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
         final C targetType = contextAdapter.load(element)

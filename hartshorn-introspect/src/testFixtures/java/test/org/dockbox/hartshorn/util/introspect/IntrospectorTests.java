@@ -33,6 +33,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -204,7 +205,9 @@ public abstract class IntrospectorTests {
         final TypeView<BridgeImpl> bridge = this.introspector().introspect(BridgeImpl.class);
         final List<MethodView<BridgeImpl, ?>> methods = bridge.methods().all();
         for (final MethodView<BridgeImpl, ?> method : methods) {
-            Assertions.assertFalse(method.method().isBridge());
+            final Option<Method> nativeMethod = method.method();
+            Assertions.assertTrue(nativeMethod.present());
+            Assertions.assertFalse(nativeMethod.get().isBridge());
         }
     }
 
@@ -214,7 +217,8 @@ public abstract class IntrospectorTests {
         final List<MethodView<BridgeImpl, ?>> methods = bridge.methods().bridges();
         Assertions.assertEquals(1, methods.size());
         Assertions.assertSame(Object.class, methods.get(0).returnType().type());
-        Assertions.assertTrue(methods.get(0).method().isBridge());
+        Assertions.assertTrue(methods.get(0).method().present());
+        Assertions.assertTrue(methods.get(0).method().get().isBridge());
     }
 
     @Test

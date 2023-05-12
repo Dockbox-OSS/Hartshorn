@@ -37,7 +37,7 @@ public final class CyclingConstructorAnalyzer {
     }
 
     private static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
-        if (type.isAbstract()) return Attempt.empty();
+        if (type.modifiers().isAbstract()) return Attempt.empty();
         if (cache.containsKey(type.type())) {
             return Attempt.of((ConstructorView<C>) cache.get(type.type()));
         }

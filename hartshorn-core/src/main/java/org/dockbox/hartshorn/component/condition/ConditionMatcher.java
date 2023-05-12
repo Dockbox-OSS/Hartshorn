@@ -30,7 +30,7 @@ public class ConditionMatcher {
         this.applicationContext = applicationContext;
     }
 
-    public boolean match(final AnnotatedElementView<?> annotatedElementContext, final Context... contexts) {
+    public boolean match(final AnnotatedElementView annotatedElementContext, final Context... contexts) {
         final Set<RequiresCondition> conditions = annotatedElementContext.annotations().all(RequiresCondition.class);
         for (final RequiresCondition condition : conditions) {
             final Class<? extends Condition> conditionClass = condition.condition();

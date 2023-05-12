@@ -18,21 +18,23 @@ package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.StringJoiner;
 
-public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent, ReturnType> implements MethodView<Parent, ReturnType> {
+public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent, ReturnType> implements MethodView<Parent, ReturnType>, ReflectionModifierCarrierView {
 
     private final Introspector introspector;
     private final Method method;
@@ -47,8 +49,8 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Method method() {
-        return this.method;
+    public Option<Method> method() {
+        return Option.of(this.method);
     }
 
     @Override
@@ -61,8 +63,8 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     @Override
     public Attempt<ReturnType, Throwable> invokeStatic(final Collection<?> arguments) {
-        if (this.isStatic()) return this.invoke(null, arguments);
-        else return Attempt.of(new IllegalAccessException("Method is not static"));
+        if (this.modifiers().isStatic()) return this.invoke(null, arguments);
+        else throw new IllegalIntrospectionException(this, "Method is not static");
     }
 
     @Override
@@ -84,9 +86,9 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     public String qualifiedName() {
         if (this.qualifiedName == null) {
             final StringJoiner j = new StringJoiner(" ");
-            final String shortSig = MethodType.methodType(this.method().getReturnType(), this.method().getParameterTypes()).toString();
+            final String shortSig = MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes()).toString();
             final int split = shortSig.lastIndexOf(')') + 1;
-            j.add(shortSig.substring(split)).add(this.method().getName() + shortSig.substring(0, split));
+            j.add(shortSig.substring(split)).add(this.method.getName() + shortSig.substring(0, split));
             final String k = j.toString();
             this.qualifiedName = this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
         }
@@ -95,37 +97,37 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     @Override
     public boolean isProtected() {
-        return Modifier.isProtected(this.method.getModifiers());
+        return this.modifiers().isProtected();
     }
 
     @Override
     public boolean isPublic() {
-        return Modifier.isPublic(this.method.getModifiers());
+        return this.modifiers().isPublic();
     }
 
     @Override
     public boolean isPrivate() {
-        return Modifier.isPrivate(this.method.getModifiers());
+        return this.modifiers().isPrivate();
     }
 
     @Override
     public boolean isStatic() {
-        return Modifier.isStatic(this.method.getModifiers());
+        return this.modifiers().isStatic();
     }
 
     @Override
     public boolean isFinal() {
-        return Modifier.isFinal(this.method.getModifiers());
+        return this.modifiers().isFinal();
     }
 
     @Override
     public boolean isAbstract() {
-        return Modifier.isAbstract(this.method.getModifiers());
+        return this.modifiers().isAbstract();
     }
 
     @Override
     public boolean isDefault() {
-        return this.method.isDefault();
+        return this.modifiers().isDefault();
     }
 
     @Override

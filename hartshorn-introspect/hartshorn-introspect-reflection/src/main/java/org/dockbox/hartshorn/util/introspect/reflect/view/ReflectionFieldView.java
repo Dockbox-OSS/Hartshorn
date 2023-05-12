@@ -17,9 +17,11 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -30,12 +32,11 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView<FieldType> implements FieldView<Parent, FieldType>, ReflectionModifierCarrierView {
+public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView implements FieldView<Parent, FieldType>, ReflectionModifierCarrierView {
 
     private final Field field;
     private final Introspector introspector;
@@ -55,8 +56,8 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public Field field() {
-        return this.field;
+    public Option<Field> field() {
+        return Option.of(this.field);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 final String getter = property.get().getter();
                 final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
                 final MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
-                this.getter = object -> methodContext.invoke(instance).map(this.type()::cast);
+                this.getter = object -> methodContext.invoke(instance).cast(this.type().type());
             } else {
                 this.getter = object -> Attempt.of(() -> {
                     try {
@@ -111,6 +112,9 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
 
     @Override
     public Attempt<FieldType, Throwable> getStatic() {
+        if (!this.modifiers().isStatic()) {
+            throw new IllegalIntrospectionException(this, "Cannot get static value of non-static field");
+        }
         return this.get(null);
     }
 
@@ -141,42 +145,42 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
 
     @Override
     public boolean isProtected() {
-        return Modifier.isProtected(this.field.getModifiers());
+        return this.modifiers().isProtected();
     }
 
     @Override
     public boolean isPublic() {
-        return Modifier.isPublic(this.field.getModifiers());
+        return this.modifiers().isPublic();
     }
 
     @Override
     public boolean isPrivate() {
-        return Modifier.isPrivate(this.field.getModifiers());
+        return this.modifiers().isPrivate();
+    }
+
+    @Override
+    public ElementModifiersIntrospector modifiers() {
+        return new ReflectionElementModifiersIntrospector(this.field);
     }
 
     @Override
     public boolean isStatic() {
-        return Modifier.isStatic(this.field.getModifiers());
+        return this.modifiers().isStatic();
     }
 
     @Override
     public boolean isFinal() {
-        return Modifier.isFinal(this.field.getModifiers());
+        return this.modifiers().isFinal();
     }
 
     @Override
     public boolean isTransient() {
-        return Modifier.isTransient(this.field.getModifiers());
+        return this.modifiers().isTransient();
     }
 
     @Override
     protected AnnotatedElement annotatedElement() {
         return this.field;
-    }
-
-    @Override
-    public int modifiers() {
-        return this.field.getModifiers();
     }
 
     @Override

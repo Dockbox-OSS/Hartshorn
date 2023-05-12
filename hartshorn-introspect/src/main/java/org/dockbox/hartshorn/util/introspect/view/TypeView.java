@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.util.List;
+
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-
-public interface TypeView<T> extends AnnotatedElementView<T>, ModifierCarrierView {
+public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 
     Class<T> type();
 
@@ -42,10 +43,25 @@ public interface TypeView<T> extends AnnotatedElementView<T>, ModifierCarrierVie
 
     boolean isRecord();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isAbstract();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isFinal();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isStatic();
 
     boolean isArray();
