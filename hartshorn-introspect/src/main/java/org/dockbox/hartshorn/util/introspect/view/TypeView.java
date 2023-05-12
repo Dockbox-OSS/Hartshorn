@@ -68,6 +68,16 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 
     boolean isWildcard();
 
+    boolean isSealed();
+
+    boolean isNonSealed();
+
+    boolean isPermittedSubclass();
+
+    boolean isPermittedSubclass(Class<?> subclass);
+
+    List<TypeView<? extends T>> permittedSubclasses();
+
     boolean isDeclaredIn(String prefix);
 
     boolean isInstance(Object object);
@@ -89,10 +99,6 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
     boolean isChildOf(Class<?> type);
 
     boolean is(Class<?> type);
-
-    String name();
-
-    String qualifiedName();
 
     Option<TypeView<?>> elementType() throws IllegalArgumentException;
 
