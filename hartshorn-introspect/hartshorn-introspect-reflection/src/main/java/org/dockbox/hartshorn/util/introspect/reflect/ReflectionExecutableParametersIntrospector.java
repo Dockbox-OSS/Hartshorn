@@ -33,12 +33,12 @@ import java.util.stream.Collectors;
 public class ReflectionExecutableParametersIntrospector implements ExecutableParametersIntrospector {
 
     private final Introspector introspector;
-    private final ReflectionExecutableElementView<?, ?> executable;
+    private final ReflectionExecutableElementView<?> executable;
     private List<ParameterView<?>> parameters;
     private List<TypeView<?>> parameterTypes;
     private List<TypeView<?>> genericParameterTypes;
 
-    public ReflectionExecutableParametersIntrospector(final Introspector introspector, final ReflectionExecutableElementView<?, ?> executable) {
+    public ReflectionExecutableParametersIntrospector(final Introspector introspector, final ReflectionExecutableElementView<?> executable) {
         this.introspector = introspector;
         this.executable = executable;
     }

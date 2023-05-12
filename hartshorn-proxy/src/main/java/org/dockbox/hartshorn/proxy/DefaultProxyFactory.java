@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -31,6 +24,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -86,7 +86,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private boolean trackState = true;
     private boolean modified;
 
-    protected DefaultProxyFactory(final Class<T> type, ApplicationProxier applicationProxier) {
+    protected DefaultProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
         this.type = type;
         this.applicationProxier = applicationProxier;
         this.validate();
@@ -213,31 +213,31 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public StateAwareProxyFactory<T> wrapAround(Method method, Consumer<MethodWrapperFactory<T>> wrapper) {
-        StandardMethodWrapperFactory<T> factory = new StandardMethodWrapperFactory<>(this);
+    public StateAwareProxyFactory<T> wrapAround(final Method method, final Consumer<MethodWrapperFactory<T>> wrapper) {
+        final StandardMethodWrapperFactory<T> factory = new StandardMethodWrapperFactory<>(this);
         wrapper.accept(factory);
         return this.wrapAround(method, factory.create());
     }
 
     @Override
-    public StateAwareProxyFactory<T> wrapAround(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper) {
-        return this.wrapAround(method.method(), wrapper);
+    public StateAwareProxyFactory<T> wrapAround(final MethodView<T, ?> method, final Consumer<MethodWrapperFactory<T>> wrapper) {
+        return method.method().map(m -> this.wrapAround(m, wrapper)).orElse(this);
     }
 
 
     @Override
-    public StateAwareProxyFactory<T> delegate(MethodView<T, ?> method, T delegate) {
-        return this.delegate(method.method(), delegate);
+    public StateAwareProxyFactory<T> delegate(final MethodView<T, ?> method, final T delegate) {
+        return method.method().map(m -> this.delegate(m, delegate)).orElse(this);
     }
 
     @Override
-    public <R> StateAwareProxyFactory<T> intercept(MethodView<T, R> method, org.dockbox.hartshorn.proxy.MethodInterceptor<T, R> interceptor) {
-        return this.intercept(method.method(), interceptor);
+    public <R> StateAwareProxyFactory<T> intercept(final MethodView<T, R> method, final MethodInterceptor<T, R> interceptor) {
+        return method.method().map(m -> this.intercept(m, interceptor)).orElse(this);
     }
 
     @Override
-    public StateAwareProxyFactory<T> wrapAround(MethodView<T, ?> method, MethodWrapper<T> wrapper) {
-        return this.wrapAround(method.method(), wrapper);
+    public StateAwareProxyFactory<T> wrapAround(final MethodView<T, ?> method, final MethodWrapper<T> wrapper) {
+        return method.method().map(m -> this.wrapAround(m, wrapper)).orElse(this);
     }
 
     @Override
@@ -328,6 +328,6 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     public ApplicationProxier applicationProxier() {
-        return applicationProxier;
+        return this.applicationProxier;
     }
 }

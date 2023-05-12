@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T, T> implements ConstructorView<T>, ReflectionModifierCarrierView {
+public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T>, ReflectionModifierCarrierView {
 
     private final Constructor<T> constructor;
     private final Introspector introspector;

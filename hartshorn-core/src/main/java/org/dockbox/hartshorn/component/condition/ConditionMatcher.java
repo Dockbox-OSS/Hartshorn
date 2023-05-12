@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.component.condition;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-
-import java.util.Set;
 
 public class ConditionMatcher {
 
@@ -43,7 +43,7 @@ public class ConditionMatcher {
         return true;
     }
 
-    public boolean match(final AnnotatedElementView<?> element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
+    public boolean match(final AnnotatedElementView element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
         final ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
         for (final Context child : contexts) context.add(child);
         final ConditionResult result = condition.matches(context);

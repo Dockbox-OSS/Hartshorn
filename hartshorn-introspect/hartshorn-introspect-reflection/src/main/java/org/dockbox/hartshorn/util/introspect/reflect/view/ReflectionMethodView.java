@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.StringJoiner;
 
-public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent, ReturnType> implements MethodView<Parent, ReturnType>, ReflectionModifierCarrierView {
+public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType>, ReflectionModifierCarrierView {
 
     private final Introspector introspector;
     private final Method method;
