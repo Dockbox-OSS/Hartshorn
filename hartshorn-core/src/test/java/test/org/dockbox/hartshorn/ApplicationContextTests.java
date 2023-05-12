@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.beans.ErrorInConstructorObject;
+import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
 import test.org.dockbox.hartshorn.components.CircularConstructorA;
 import test.org.dockbox.hartshorn.components.CircularConstructorB;

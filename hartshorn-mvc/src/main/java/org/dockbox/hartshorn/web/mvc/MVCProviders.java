@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
-import org.dockbox.hartshorn.beans.Bean;
+import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -37,7 +37,7 @@ public class MVCProviders {
         return MvcServlet.class;
     }
 
-    @Bean
+    @StaticBinds
     public static WebContextLoader mvcContextLoader() {
         return new WebMvcContextLoader();
     }

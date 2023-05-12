@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -144,14 +144,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     private <T> void populateBeanCollectionField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
         final Option<TypeView<?>> beanType = field.genericType().typeParameters().at(0);
         if (beanType.absent()) {
-            throw new IllegalStateException("Unable to determine bean type for field " + field.name() + " in " + type.name());
+            throw new IllegalStateException("Unable to determine instance type for field " + field.name() + " in " + type.name());
         }
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
         if (field.annotations().has(Named.class))
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
 
-        final BeanContext beanContext = this.applicationContext().first(BeanContext.CONTEXT_KEY).get();
-        final List<?> beans = beanContext.provider().all(beanKey);
+        final StaticComponentContext staticComponentContext = this.applicationContext().first(StaticComponentContext.CONTEXT_KEY).get();
+        final List<?> beans = staticComponentContext.provider().all(beanKey);
         //noinspection unchecked
         final Collection<Object> fieldValue = field.get(instance)
                 .map(Collection.class::cast)

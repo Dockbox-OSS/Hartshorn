@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.UseBeanScanning;
+import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
 import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -79,7 +79,7 @@ public class StandardApplicationBuilder extends DefaultApplicationBuilder<Standa
                 .serviceActivator(TypeUtils.annotation(UseBootstrap.class))
                 .serviceActivator(TypeUtils.annotation(UseProxying.class))
                 .serviceActivator(TypeUtils.annotation(UseServiceProvision.class))
-                .serviceActivator(TypeUtils.annotation(UseBeanScanning.class));
+                .serviceActivator(TypeUtils.annotation(UseStaticBinding.class));
     }
 
     @Override

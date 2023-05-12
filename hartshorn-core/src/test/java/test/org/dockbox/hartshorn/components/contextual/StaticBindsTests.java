@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.beans;
+package test.org.dockbox.hartshorn.components.contextual;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanCollector;
-import org.dockbox.hartshorn.beans.BeanContext;
-import org.dockbox.hartshorn.beans.BeanProvider;
-import org.dockbox.hartshorn.beans.BeanReference;
+import org.dockbox.hartshorn.component.contextual.StaticComponentCollector;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentProvider;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContainer;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -37,10 +37,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.components.BeanAwareComponent;
+import test.org.dockbox.hartshorn.components.StaticAwareComponent;
 
 @HartshornTest(includeBasePackages = false)
-public class BeanTests {
+public class StaticBindsTests {
 
     @ModifyApplication
     public static ApplicationBuilder<?, ?> builder(final ApplicationBuilder<?, ?> builder) {
@@ -52,21 +52,21 @@ public class BeanTests {
 
     @Test
     void testBeanRegistrationCreatesValidReference() {
-        final BeanCollector beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
-        final BeanReference<String> reference = beanContext.register("John Doe", String.class, "names");
+        final StaticComponentCollector beanContext = this.applicationContext.first(StaticComponentContext.CONTEXT_KEY).get();
+        final StaticComponentContainer<String> reference = beanContext.register("John Doe", String.class, "names");
 
-        Assertions.assertEquals("John Doe", reference.bean());
+        Assertions.assertEquals("John Doe", reference.instance());
         Assertions.assertEquals("names", reference.id());
         Assertions.assertEquals(String.class, reference.type().type());
     }
 
     @Test
     void testBeanRegistrationCanBeProvided() {
-        final BeanCollector beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
+        final StaticComponentCollector beanContext = this.applicationContext.first(StaticComponentContext.CONTEXT_KEY).get();
         beanContext.register(String.class, List.of("John", "Jane", "Joe"), "names");
 
-        final BeanProvider beanProvider = this.applicationContext.get(BeanProvider.class);
-        final List<String> names = beanProvider.all(String.class, "names");
+        final StaticComponentProvider staticComponentProvider = this.applicationContext.get(StaticComponentProvider.class);
+        final List<String> names = staticComponentProvider.all(String.class, "names");
 
         Assertions.assertEquals(3, names.size());
         Assertions.assertTrue(names.contains("John"));
@@ -75,13 +75,13 @@ public class BeanTests {
     }
 
     @Test
-    @TestComponents(BeanAwareComponent.class)
+    @TestComponents(StaticAwareComponent.class)
     void testComponentInjectionWithoutExplicitCollection() {
-        final BeanCollector beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
+        final StaticComponentCollector beanContext = this.applicationContext.first(StaticComponentContext.CONTEXT_KEY).get();
         beanContext.register("Foo", String.class, "names");
         beanContext.register("Bar", String.class, "names");
 
-        final BeanAwareComponent component = this.applicationContext.get(BeanAwareComponent.class);
+        final StaticAwareComponent component = this.applicationContext.get(StaticAwareComponent.class);
         final List<String> names = component.names();
 
         Assertions.assertNotNull(names);
@@ -91,13 +91,13 @@ public class BeanTests {
     }
 
     @Test
-    @TestComponents(BeanAwareComponent.class)
+    @TestComponents(StaticAwareComponent.class)
     void testComponentInjectionWithExplicitCollection() {
-        final BeanContext beanContext = this.applicationContext.first(BeanContext.CONTEXT_KEY).get();
-        beanContext.register(1, Integer.class, "ages");
-        beanContext.register(2, Integer.class, "ages");
+        final StaticComponentContext staticComponentContext = this.applicationContext.first(StaticComponentContext.CONTEXT_KEY).get();
+        staticComponentContext.register(1, Integer.class, "ages");
+        staticComponentContext.register(2, Integer.class, "ages");
 
-        final BeanAwareComponent component = this.applicationContext.get(BeanAwareComponent.class);
+        final StaticAwareComponent component = this.applicationContext.get(StaticAwareComponent.class);
         final Set<Integer> ages = component.ages();
 
         Assertions.assertNotNull(ages);
@@ -108,50 +108,50 @@ public class BeanTests {
     }
 
     @InjectTest
-    @TestComponents(BeanService.class)
+    @TestComponents(StaticComponentService.class)
     void testApplicationHasBeanContext(final ApplicationContext applicationContext) {
-        final Option<BeanContext> beanContext = applicationContext.first(BeanContext.CONTEXT_KEY);
+        final Option<StaticComponentContext> beanContext = applicationContext.first(StaticComponentContext.CONTEXT_KEY);
         Assertions.assertTrue(beanContext.present());
 
-        final BeanProvider provider = beanContext.get().provider();
+        final StaticComponentProvider provider = beanContext.get().provider();
         Assertions.assertNotNull(provider);
     }
 
     @InjectTest
-    @TestComponents(BeanService.class)
-    void testBeansAreCollected(@Context final BeanContext beanContext) {
-        final BeanProvider beanProvider = beanContext.provider();
-        final List<BeanObject> beanObjects = beanProvider.all(BeanObject.class);
-        Assertions.assertEquals(3, beanObjects.size());
+    @TestComponents(StaticComponentService.class)
+    void testBeansAreCollected(@Context final StaticComponentContext staticComponentContext) {
+        final StaticComponentProvider staticComponentProvider = staticComponentContext.provider();
+        final List<StaticComponent> staticComponents = staticComponentProvider.all(StaticComponent.class);
+        Assertions.assertEquals(3, staticComponents.size());
 
-        final BeanObject user = beanProvider.first(BeanObject.class, "user");
+        final StaticComponent user = staticComponentProvider.first(StaticComponent.class, "user");
         Assertions.assertNotNull(user);
 
-        final BeanObject admin = beanProvider.first(BeanObject.class, "admin");
+        final StaticComponent admin = staticComponentProvider.first(StaticComponent.class, "admin");
         Assertions.assertNotNull(admin);
 
-        final BeanObject guest = beanProvider.first(BeanObject.class, "guest");
+        final StaticComponent guest = staticComponentProvider.first(StaticComponent.class, "guest");
         Assertions.assertNotNull(guest);
     }
 
     @InjectTest
-    @TestComponents({BeanService.class, TestBeanObserver.class })
-    void testBeansAreObserved(final TestBeanObserver observer) {
-        final List<BeanObject> beans = observer.beans();
+    @TestComponents({ StaticComponentService.class, TestStaticComponentObserver.class })
+    void testBeansAreObserved(final TestStaticComponentObserver observer) {
+        final List<StaticComponent> beans = observer.components();
         Assertions.assertEquals(3, beans.size());
 
-        final BeanObject user = findBeanInList(beans, "user");
+        final StaticComponent user = findBeanInList(beans, "user");
         Assertions.assertNotNull(user);
 
-        final BeanObject admin = findBeanInList(beans, "admin");
+        final StaticComponent admin = findBeanInList(beans, "admin");
         Assertions.assertNotNull(admin);
 
-        final BeanObject guest = findBeanInList(beans, "guest");
+        final StaticComponent guest = findBeanInList(beans, "guest");
         Assertions.assertNotNull(guest);
     }
 
     @Nullable
-    private static BeanObject findBeanInList(final List<BeanObject> beans, final String user) {
+    private static StaticComponent findBeanInList(final List<StaticComponent> beans, final String user) {
         return beans.stream()
                 .filter(bean -> user.equals(bean.name()))
                 .findFirst()

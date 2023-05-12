@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.beans.Bean;
+import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
@@ -41,7 +41,7 @@ public class EventProviders {
         return new EventParameterLoader();
     }
 
-    @Bean
+    @StaticBinds
     public static EventExecutionFilter conditionMatchingExecutionFilter() {
         return new ConditionMatcherEventExecutionFilter();
     }

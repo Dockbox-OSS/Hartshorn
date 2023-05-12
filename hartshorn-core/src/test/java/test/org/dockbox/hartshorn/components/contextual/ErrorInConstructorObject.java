@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package test.org.dockbox.hartshorn.components.contextual;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-public record BeanReference<T>(T bean, TypeView<T> type, String id) {
+public class ErrorInConstructorObject {
+
+    public ErrorInConstructorObject() throws ApplicationException {
+        throw new ApplicationException("Error in constructor");
+    }
 }

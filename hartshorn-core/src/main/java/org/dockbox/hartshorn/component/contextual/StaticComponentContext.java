@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -33,53 +33,53 @@ import java.util.stream.Collectors;
 import jakarta.inject.Inject;
 
 @InstallIfAbsent
-public class BeanContext extends DefaultApplicationAwareContext implements BeanCollector, Reportable {
+public class StaticComponentContext extends DefaultApplicationAwareContext implements StaticComponentCollector, Reportable {
 
-    public static final ContextKey<BeanContext> CONTEXT_KEY = ContextKey.builder(BeanContext.class)
-            .fallback(BeanContext::new)
+    public static ContextKey<StaticComponentContext> CONTEXT_KEY = ContextKey.builder(StaticComponentContext.class)
+            .fallback(StaticComponentContext::new)
             .build();
 
-    private final List<BeanReference<?>> beans = new CopyOnWriteArrayList<>();
+    private final List<StaticComponentContainer<?>> staticComponentContainers = new CopyOnWriteArrayList<>();
 
     @Inject
-    public BeanContext(final ApplicationContext applicationContext) {
+    public StaticComponentContext(final ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
-    public BeanProvider provider() {
-        return new ContextBeanProvider(this);
+    public StaticComponentProvider provider() {
+        return new ContextStaticComponentProvider(this);
     }
 
-    public List<BeanReference<?>> beans() {
-        return this.beans;
+    public List<StaticComponentContainer<?>> containers() {
+        return this.staticComponentContainers;
     }
 
     @Override
-    public <T> BeanReference<T> register(final T bean, final Class<T> type, final String id) {
+    public <T> StaticComponentContainer<T> register(final T instance, final Class<T> type, final String id) {
         final TypeView<T> typeView = this.applicationContext().environment().introspect(type);
-        final BeanReference<T> beanReference = new BeanReference<>(bean, typeView, id);
-        this.beans.add(beanReference);
-        return beanReference;
+        final StaticComponentContainer<T> componentReference = new StaticComponentContainer<>(instance, typeView, id);
+        this.staticComponentContainers.add(componentReference);
+        return componentReference;
     }
 
     @Override
-    public <T> Set<BeanReference<T>> register(final Class<T> type, final Collection<T> beans, final String id) {
-        return beans.stream()
+    public <T> Set<StaticComponentContainer<T>> register(final Class<T> type, final Collection<T> components, final String id) {
+        return components.stream()
                 .map(b -> this.register(b, type, id))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public void unregister(final BeanReference<?> beanReference) {
-        this.beans.remove(beanReference);
+    public void unregister(final StaticComponentContainer<?> componentReference) {
+        this.staticComponentContainers.remove(componentReference);
     }
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.beans.stream().map(beanReference -> (Reportable) c -> {
-            c.property("type").write(beanReference.type());
-            c.property("id").write(beanReference.id());
-            c.property("instance").write(beanReference.bean().toString());
+        final Reportable[] reporters = this.staticComponentContainers.stream().map(componentReference -> (Reportable) c -> {
+            c.property("type").write(componentReference.type());
+            c.property("id").write(componentReference.id());
+            c.property("instance").write(componentReference.instance().toString());
         }).toArray(Reportable[]::new);
         collector.property("beans").write(reporters);
     }

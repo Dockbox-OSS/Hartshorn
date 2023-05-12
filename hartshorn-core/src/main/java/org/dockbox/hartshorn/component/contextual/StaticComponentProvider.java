@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.ComponentKey;
 
-@Service
-@RequiresActivator(UseBeanScanning.class)
-public class BeanProviders {
+import java.util.List;
 
-    @Binds
-    public Class<? extends BeanProvider> beanProvider = ContextBeanProvider.class;
+public interface StaticComponentProvider {
+    <T> T first(Class<T> type);
+
+    <T> T first(Class<T> type, String id);
+
+    <T> T first(ComponentKey<T> key);
+
+    <T> List<T> all(Class<T> type);
+
+    <T> List<T> all(Class<T> type, String id);
+
+    <T> List<T> all(ComponentKey<T> key);
 }
