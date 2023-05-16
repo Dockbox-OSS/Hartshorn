@@ -185,7 +185,7 @@ public class CommandGatewayImpl implements CommandGateway {
             for (final String contextAlias : executorContext.aliases()) {
                 if (contextAlias.startsWith(command)) {
                     final String stripped = contextAlias.replaceFirst(alias + " ", "");
-                    if (!"".equals(stripped)) suggestions.add(stripped);
+                    if (!stripped.isEmpty()) suggestions.add(stripped);
                 }
             }
         }

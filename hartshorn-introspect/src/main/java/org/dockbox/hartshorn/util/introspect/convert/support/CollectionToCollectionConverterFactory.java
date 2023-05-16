@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.Objects;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
-
-import java.util.Collection;
 
 public class CollectionToCollectionConverterFactory implements ConverterFactory<Collection<?>, Collection<?>> {
 
@@ -55,7 +56,7 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
         public O convert(final Collection<?> source) {
             //noinspection unchecked
             final Collection<Object> collection = (Collection<Object>) this.defaultValueProvider.defaultValue();
-            collection.addAll(source);
+            Objects.requireNonNull(collection).addAll(source);
             return this.targetType.cast(collection);
         }
     }
