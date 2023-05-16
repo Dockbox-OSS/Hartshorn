@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Objects;
 
-public class ScopeAdapter<T> implements Scope {
+public final class ScopeAdapter<T> implements Scope {
 
     private final T adaptee;
 

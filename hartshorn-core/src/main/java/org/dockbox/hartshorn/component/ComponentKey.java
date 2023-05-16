@@ -75,7 +75,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         return Objects.hash(this.type, this.name, this.scope, this.enable);
     }
 
-    public static class Builder<T> {
+    public static final class Builder<T> {
 
         private Class<T> type;
         private String name;
@@ -125,7 +125,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         }
     }
 
-    public static class ComponentKeyView<T> {
+    public static final class ComponentKeyView<T> {
 
         private final Class<T> type;
         private final String name;

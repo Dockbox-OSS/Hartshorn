@@ -89,7 +89,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
         return this.proxyLookups.stream().anyMatch(lookup -> lookup.isProxy(candidate));
     }
 
-    public void registerProxyLookup(final ProxyLookup proxyLookup) {
+    public final void registerProxyLookup(final ProxyLookup proxyLookup) {
         this.proxyLookups.add(proxyLookup);
     }
 }

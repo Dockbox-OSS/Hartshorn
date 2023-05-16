@@ -16,14 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -25,5 +25,5 @@ import org.dockbox.hartshorn.component.processing.Binds;
 public class StaticComponentProviders {
 
     @Binds
-    public Class<? extends StaticComponentProvider> staticComponentProvider = ContextStaticComponentProvider.class;
+    public final Class<? extends StaticComponentProvider> staticComponentProvider = ContextStaticComponentProvider.class;
 }
