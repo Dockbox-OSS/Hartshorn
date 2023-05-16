@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.application.lifecycle;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 
 public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
@@ -31,6 +32,6 @@ public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
     @Override
     public Integer order() {
-        return (Integer.MIN_VALUE / 2) - 1024;
+        return (Integer.MIN_VALUE / 2) - (ProcessingOrder.LAST * 4);
     }
 }

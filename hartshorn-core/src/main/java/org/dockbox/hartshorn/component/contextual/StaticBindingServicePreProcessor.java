@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
@@ -87,7 +88,7 @@ public class StaticBindingServicePreProcessor extends ComponentPreProcessor impl
 
     @Override
     public Integer order() {
-        return (Integer.MIN_VALUE / 2) - 512;
+        return (Integer.MIN_VALUE / 2) - (ProcessingOrder.LAST * 2);
     }
 
     @Override
