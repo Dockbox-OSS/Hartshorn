@@ -168,7 +168,7 @@ public abstract class IntrospectorTests {
     @Test
     void testStaticFieldsReturnsAllModifiers() {
         final List<FieldView<ReflectTestType, ?>> fields = this.introspector().introspect(ReflectTestType.class).fields().all().stream()
-                .filter(FieldView::isStatic)
+                .filter(field -> field.modifiers().isStatic())
                 .toList();
         Assertions.assertEquals(2, fields.size());
     }
@@ -328,7 +328,7 @@ public abstract class IntrospectorTests {
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
         for (final FieldView<ReflectTestType, ?> field : fields) {
-            if (field.isStatic()) statics++;
+            if (field.modifiers().isStatic()) statics++;
         }
         Assertions.assertEquals(1, statics);
     }
@@ -413,7 +413,7 @@ public abstract class IntrospectorTests {
     @Test
     void concreteClassIsCorrectlyIdentified() {
         final TypeView<ConcreteClass> type = this.introspector().introspect(ConcreteClass.class);
-        Assertions.assertFalse(type.isAbstract());
+        Assertions.assertFalse(type.modifiers().isAbstract());
         Assertions.assertFalse(type.isInterface());
         Assertions.assertFalse(type.isRecord());
         Assertions.assertFalse(type.isEnum());
@@ -423,7 +423,7 @@ public abstract class IntrospectorTests {
     @Test
     void abstractClassIsCorrectlyIdentified() {
         final TypeView<AbstractClass> type = this.introspector().introspect(AbstractClass.class);
-        Assertions.assertTrue(type.isAbstract());
+        Assertions.assertTrue(type.modifiers().isAbstract());
         Assertions.assertFalse(type.isInterface());
         Assertions.assertFalse(type.isRecord());
         Assertions.assertFalse(type.isEnum());
@@ -433,7 +433,7 @@ public abstract class IntrospectorTests {
     @Test
     void interfaceIsCorrectlyIdentified() {
         final TypeView<Interface> type = this.introspector().introspect(Interface.class);
-        Assertions.assertTrue(type.isAbstract());
+        Assertions.assertTrue(type.modifiers().isAbstract());
         Assertions.assertTrue(type.isInterface());
         Assertions.assertFalse(type.isRecord());
         Assertions.assertFalse(type.isEnum());
@@ -443,7 +443,7 @@ public abstract class IntrospectorTests {
     @Test
     void recordIsCorrectlyIdentified() {
         final TypeView<RecordType> type = this.introspector().introspect(RecordType.class);
-        Assertions.assertFalse(type.isAbstract());
+        Assertions.assertFalse(type.modifiers().isAbstract());
         Assertions.assertFalse(type.isInterface());
         Assertions.assertTrue(type.isRecord());
         Assertions.assertFalse(type.isEnum());
@@ -453,7 +453,7 @@ public abstract class IntrospectorTests {
     @Test
     void enumIsCorrectlyIdentified() {
         final TypeView<EnumType> type = this.introspector().introspect(EnumType.class);
-        Assertions.assertFalse(type.isAbstract());
+        Assertions.assertFalse(type.modifiers().isAbstract());
         Assertions.assertFalse(type.isInterface());
         Assertions.assertFalse(type.isRecord());
         Assertions.assertTrue(type.isEnum());
@@ -463,7 +463,7 @@ public abstract class IntrospectorTests {
     @Test
     void annotationIsCorrectlyIdentified() {
         final TypeView<AnnotationType> type = this.introspector().introspect(AnnotationType.class);
-        Assertions.assertTrue(type.isAbstract());
+        Assertions.assertTrue(type.modifiers().isAbstract());
         Assertions.assertTrue(type.isInterface());
         Assertions.assertFalse(type.isRecord());
         Assertions.assertFalse(type.isEnum());

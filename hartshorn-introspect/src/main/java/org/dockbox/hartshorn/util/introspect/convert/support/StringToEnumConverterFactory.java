@@ -29,25 +29,19 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
     }
 
     @SuppressWarnings("unchecked")
-    private static class StringToEnumConverter<T extends Enum> implements Converter<String, T> {
-
-        private final Class<T> enumType;
-
-        private StringToEnumConverter(final Class<T> enumType) {
-            this.enumType = enumType;
-        }
+    private record StringToEnumConverter<T extends Enum>(Class<T> enumType) implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(final @Nullable String source) {
             assert source != null;
-            if (source.isEmpty()) {
+            if(source.isEmpty()) {
                 return null;
             }
             try {
                 final Enum value = Enum.valueOf(this.enumType, source.trim());
                 return this.enumType.cast(value);
             }
-            catch (final IllegalArgumentException e) {
+            catch(final IllegalArgumentException e) {
                 return null;
             }
         }

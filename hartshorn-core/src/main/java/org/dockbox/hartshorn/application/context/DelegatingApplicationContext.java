@@ -39,7 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
-        ApplicationContext, HierarchicalComponentProvider {
+        ApplicationContext {
 
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;

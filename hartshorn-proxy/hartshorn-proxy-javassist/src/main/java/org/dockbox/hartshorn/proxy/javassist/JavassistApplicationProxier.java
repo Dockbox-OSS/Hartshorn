@@ -22,11 +22,8 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 
 public class JavassistApplicationProxier extends AbstractApplicationProxier {
 
-    private final Introspector introspector;
-
     public JavassistApplicationProxier(final Introspector introspector) {
         super(introspector);
-        this.introspector = introspector;
         this.registerProxyLookup(new JavassistProxyLookup());
     }
 

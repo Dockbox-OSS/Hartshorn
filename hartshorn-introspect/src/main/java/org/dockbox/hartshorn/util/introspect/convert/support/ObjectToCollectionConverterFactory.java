@@ -42,20 +42,15 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
         return new ObjectToCollectionConverter<>(converter);
     }
 
-    private static class ObjectToCollectionConverter<O extends Collection<?>> implements Converter<Object, O> {
-
-        private final Converter<Object[], O> helperConverter;
-
-        public ObjectToCollectionConverter(final Converter<Object[], O> helperConverter) {
-            this.helperConverter = helperConverter;
-        }
+    private record ObjectToCollectionConverter<O extends Collection<?>>(Converter<Object[], O> helperConverter)
+            implements Converter<Object, O> {
 
         @Override
-        public O convert(final @Nullable Object source) {
-            assert source != null;
-            final Object[] array = (Object[]) Array.newInstance(source.getClass(), 1);
-            array[0] = source;
-            return this.helperConverter.convert(array);
+            public O convert(final @Nullable Object source) {
+                assert source != null;
+                final Object[] array = (Object[]) Array.newInstance(source.getClass(), 1);
+                array[0] = source;
+                return this.helperConverter.convert(array);
+            }
         }
-    }
 }

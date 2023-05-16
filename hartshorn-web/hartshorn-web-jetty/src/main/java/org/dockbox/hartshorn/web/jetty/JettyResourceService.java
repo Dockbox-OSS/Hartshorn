@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Enumeration;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
@@ -24,10 +28,6 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.ResourceService;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.resource.Resource;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Enumeration;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
@@ -137,8 +137,9 @@ public class JettyResourceService extends ResourceService {
         catch (final IllegalArgumentException e)
         {
             this.applicationContext.handle(e);
-            if (!response.isCommitted())
-                response.sendError(500, e.getMessage());
+            if (!response.isCommitted()) {
+                response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+            }
         }
         finally
         {

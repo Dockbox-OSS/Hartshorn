@@ -27,7 +27,7 @@ public interface ModifierCarrierView extends View {
      */
     @Deprecated(forRemoval = true, since = "23.1")
     default boolean isPublic() {
-        return this.has(AccessModifier.PUBLIC);
+        return this.modifiers().isPublic();
     }
 
     /**
@@ -36,7 +36,7 @@ public interface ModifierCarrierView extends View {
      */
     @Deprecated(forRemoval = true, since = "23.1")
     default boolean isProtected() {
-        return this.has(AccessModifier.PROTECTED);
+        return this.modifiers().isProtected();
     }
 
     /**
@@ -45,7 +45,7 @@ public interface ModifierCarrierView extends View {
      */
     @Deprecated(forRemoval = true, since = "23.1")
     default boolean isPrivate() {
-        return this.has(AccessModifier.PRIVATE);
+        return this.modifiers().isPrivate();
     }
 
     /**
