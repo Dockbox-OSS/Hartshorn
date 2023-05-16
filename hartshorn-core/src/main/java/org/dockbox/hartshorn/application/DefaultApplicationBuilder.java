@@ -86,35 +86,35 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
         }
     }
 
-    protected Class<?> mainClass;
-    protected boolean includeBasePackages = true;
-    protected boolean enableBanner = true;
+    private Class<?> mainClass;
+    private boolean includeBasePackages = true;
+    private boolean enableBanner = true;
     private boolean enableBatchMode = false;
 
-    protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
-    protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
-    protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
-    protected final Set<ComponentPostProcessor> componentPostProcessors = ConcurrentHashMap.newKeySet();
-    protected final Set<ComponentPreProcessor> componentPreProcessors = ConcurrentHashMap.newKeySet();
-    protected final Set<Class<?>> standaloneComponents = ConcurrentHashMap.newKeySet();
+    private final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
+    private final Set<String> arguments = ConcurrentHashMap.newKeySet();
+    private final Set<String> prefixes = ConcurrentHashMap.newKeySet();
+    private final Set<ComponentPostProcessor> componentPostProcessors = ConcurrentHashMap.newKeySet();
+    private final Set<ComponentPreProcessor> componentPreProcessors = ConcurrentHashMap.newKeySet();
+    private final Set<Class<?>> standaloneComponents = ConcurrentHashMap.newKeySet();
 
-    protected ComponentInitializer<ApplicationConfigurator> applicationConfigurator = ComponentInitializer.of(ctx -> new EnvironmentDrivenApplicationConfigurator());
-    protected ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> {
+    private final ComponentInitializer<ApplicationConfigurator> applicationConfigurator = ComponentInitializer.of(ctx -> new EnvironmentDrivenApplicationConfigurator());
+    private final ComponentInitializer<ApplicationProxier> applicationProxier = ComponentInitializer.of(ctx -> {
         ApplicationProxierLoader loader = DiscoveryService.instance().discover(ApplicationProxierLoader.class);
         return loader.create(ctx.environment());
     });
-    protected ComponentInitializer<ApplicationFSProvider> applicationFSProvider = ComponentInitializer.of(ctx -> new ApplicationFSProviderImpl());
-    protected ComponentInitializer<ExceptionHandler> exceptionHandler = ComponentInitializer.of(ctx -> new LoggingExceptionHandler());
-    protected ComponentInitializer<ApplicationArgumentParser> argumentParser = ComponentInitializer.of(ctx -> new StandardApplicationArgumentParser());
-    protected ComponentInitializer<ApplicationLogger> applicationLogger = ComponentInitializer.of(ctx -> new LogbackApplicationLogger());
-    protected ComponentInitializer<ApplicationEnvironment> applicationEnvironment = ComponentInitializer.of(ContextualApplicationEnvironment::new);
-    protected ComponentInitializer<ComponentLocator> componentLocator = ComponentInitializer.of(ctx -> new TypeReferenceLookupComponentLocator(ctx.applicationContext()));
-    protected ComponentInitializer<ComponentPostConstructor> componentPostConstructor = ComponentInitializer.of(ComponentPostConstructorImpl::new);
-    protected ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.environment()));
-    protected ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(ScopeAwareComponentProvider::new);
-    protected ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
-    protected ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
-    protected ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
+    private final ComponentInitializer<ApplicationFSProvider> applicationFSProvider = ComponentInitializer.of(ctx -> new ApplicationFSProviderImpl());
+    private final ComponentInitializer<ExceptionHandler> exceptionHandler = ComponentInitializer.of(ctx -> new LoggingExceptionHandler());
+    private final ComponentInitializer<ApplicationArgumentParser> argumentParser = ComponentInitializer.of(ctx -> new StandardApplicationArgumentParser());
+    private final ComponentInitializer<ApplicationLogger> applicationLogger = ComponentInitializer.of(ctx -> new LogbackApplicationLogger());
+    private final ComponentInitializer<ApplicationEnvironment> applicationEnvironment = ComponentInitializer.of(ContextualApplicationEnvironment::new);
+    private final ComponentInitializer<ComponentLocator> componentLocator = ComponentInitializer.of(ctx -> new TypeReferenceLookupComponentLocator(ctx.applicationContext()));
+    private final ComponentInitializer<ComponentPostConstructor> componentPostConstructor = ComponentInitializer.of(ComponentPostConstructorImpl::new);
+    private final ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.environment()));
+    private final ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(ScopeAwareComponentProvider::new);
+    private final ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
+    private final ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
+    private final ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
 
     @Override
     public Self mainClass(final Class<?> mainClass) {
