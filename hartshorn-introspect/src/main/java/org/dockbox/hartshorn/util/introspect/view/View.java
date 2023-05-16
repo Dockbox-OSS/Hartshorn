@@ -21,6 +21,12 @@ import org.dockbox.hartshorn.util.Named;
 
 public interface View extends Named, Reportable {
 
+    /**
+     * Returns the qualified name of the element. For example, if the element is a field,
+     * this method will return the field's name, qualified by the declaring class.
+     *
+     * @return the qualified name of the element
+     */
     String qualifiedName();
 
 }

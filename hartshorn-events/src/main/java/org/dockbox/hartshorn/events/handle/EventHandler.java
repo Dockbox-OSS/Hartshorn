@@ -65,8 +65,9 @@ public class EventHandler {
         EventWrapperImpl<?>[] cache = this.computedInvokerCache;
         if (null == cache) {
             synchronized (this) {
-                if (null == (cache = this.computedInvokerCache)) {
-                    cache = this.computedInvokerCache = this.computeInvokerCache();
+                if (null == this.computedInvokerCache) {
+                    cache = this.computeInvokerCache();
+                    this.computedInvokerCache = cache;
                 }
             }
         }

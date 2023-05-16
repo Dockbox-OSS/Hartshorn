@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public class ArrayToCollectionConverterFactory implements ConverterFactory<Object[], Collection<?>> {
 
@@ -39,21 +40,16 @@ public class ArrayToCollectionConverterFactory implements ConverterFactory<Objec
         return new ArrayToCollectionConverter<>(this.collectionFactory.create(targetType));
     }
 
-    private static class ArrayToCollectionConverter<O extends Collection<?>> implements Converter<Object[], O> {
-
-        private final DefaultValueProvider<O> helperProvider;
-
-        private ArrayToCollectionConverter(final DefaultValueProvider<O> helperProvider) {
-            this.helperProvider = helperProvider;
-        }
+    private record ArrayToCollectionConverter<O extends Collection<?>>(DefaultValueProvider<O> helperProvider)
+            implements Converter<Object[], O> {
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        @Override
-        public O convert(final Object @Nullable [] source) {
-            assert source != null;
-            final Collection collection = this.helperProvider.defaultValue();
-            collection.addAll(Arrays.asList(source));
-            return (O) collection;
+            @Override
+            public O convert(final Object @Nullable [] source) {
+                assert source != null;
+                final Collection collection = this.helperProvider.defaultValue();
+                Objects.requireNonNull(collection).addAll(Arrays.asList(source));
+                return (O) collection;
+            }
         }
-    }
 }

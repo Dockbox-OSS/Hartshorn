@@ -52,33 +52,26 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
         return (Converter<String, O>) converter;
     }
 
-    private static class StringToNumberConverter<T extends Number> implements Converter<String, T> {
-
-        private final Function<String, T> parseFunction;
-        private final Function<String, T> decodeFunction;
-
-        public StringToNumberConverter(final Function<String, T> parseFunction, final Function<String, T> decodeFunction) {
-            this.parseFunction = parseFunction;
-            this.decodeFunction = decodeFunction;
-        }
+    private record StringToNumberConverter<T extends Number>(Function<String, T> parseFunction, Function<String, T> decodeFunction)
+            implements Converter<String, T> {
 
         @Override
-        public @Nullable T convert(final @Nullable String input) {
-            assert input != null;
-            try {
-                if (isHexNumber(input)) {
-                    return this.decodeFunction.apply(input);
+            public @Nullable T convert(final @Nullable String input) {
+                assert input != null;
+                try {
+                    if(isHexNumber(input)) {
+                        return this.decodeFunction.apply(input);
+                    }
+                    else {
+                        return this.parseFunction.apply(input);
+                    }
                 }
-                else {
-                    return this.parseFunction.apply(input);
+                catch(final NumberFormatException e) {
+                    // If primitive, the conversion service will default to zero
+                    return null;
                 }
-            }
-            catch (final NumberFormatException e) {
-                // If primitive, the conversion service will default to zero
-                return null;
             }
         }
-    }
 
     public static boolean isHexNumber(final String value) {
         final int index = value.startsWith("-") ? 1 : 0;

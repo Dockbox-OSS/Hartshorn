@@ -18,5 +18,12 @@ package org.dockbox.hartshorn.util;
 
 @FunctionalInterface
 public interface Named {
+
+    /**
+     * Returns the simple name of the element. This can represent the actual {@code name}
+     * property, or a derived value, such as the name of a field or method.
+     *
+     * @return the simple name of the element
+     */
     String name();
 }

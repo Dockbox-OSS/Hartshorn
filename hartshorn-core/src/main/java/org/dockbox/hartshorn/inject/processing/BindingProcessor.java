@@ -106,11 +106,11 @@ public class BindingProcessor {
         else function.to(supplier);
     }
 
-    private <R, C extends Class<R>, E extends AnnotatedElementView & GenericTypeView<C>> void processClassBinding(final ApplicationContext context,
+    private <R, E extends AnnotatedElementView & GenericTypeView<Class<R>>> void processClassBinding(final ApplicationContext context,
                                                              final E element, final ComponentKey<R> key, boolean singleton,
                                                              final Binds annotation) throws ApplicationException {
         final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
-        final C targetType = contextAdapter.load(element)
+        final Class<R> targetType = contextAdapter.load(element)
                 .mapError(error -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName(), error))
                 .rethrow()
                 .orElseThrow(() -> new ComponentInitializationException("Failed to obtain class type for " + element.qualifiedName()));
@@ -140,7 +140,7 @@ public class BindingProcessor {
         else function.to(targetType);
     }
 
-    public void finalizeProxies(final ApplicationContext applicationContext) throws ApplicationException {
+    public void finalizeProxies(final ApplicationContext applicationContext) throws ComponentInitializationException {
         if (this.proxiesToInitialize.isEmpty()) return;
 
         for (final LateSingletonContext<?> proxyContext : new ArrayList<>(this.proxiesToInitialize)) {

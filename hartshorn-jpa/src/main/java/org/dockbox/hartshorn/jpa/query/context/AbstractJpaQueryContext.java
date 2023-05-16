@@ -101,16 +101,20 @@ public abstract class AbstractJpaQueryContext extends DefaultProvisionContext im
 
     protected void modifyQueryFromContext(final Query persistenceQuery) {
         final ApplicationEnvironment environment = this.applicationContext().environment();
-        if (environment.isProxy(this.persistenceCapable)) {
-            environment.manager(this.persistenceCapable).peek(manager -> {
-                manager.first(QueryExecutionContext.class).peek(queryExecutionContext -> {
-                    final LockModeType lockMode = queryExecutionContext.lockMode(this.method);
-                    if (lockMode != null) persistenceQuery.setLockMode(lockMode);
+        if(environment.isProxy(this.persistenceCapable)) {
+            environment.manager(this.persistenceCapable)
+                    .flatMap(manager -> manager.first(QueryExecutionContext.class))
+                    .peek(queryExecutionContext -> {
+                        final LockModeType lockMode = queryExecutionContext.lockMode(this.method);
+                        if(lockMode != null) {
+                            persistenceQuery.setLockMode(lockMode);
+                        }
 
-                    final FlushModeType flushMode = queryExecutionContext.flushMode(this.method);
-                    if (flushMode != null) persistenceQuery.setFlushMode(flushMode);
-                });
-            });
+                        final FlushModeType flushMode = queryExecutionContext.flushMode(this.method);
+                        if(flushMode != null) {
+                            persistenceQuery.setFlushMode(flushMode);
+                        }
+                    });
         }
     }
 

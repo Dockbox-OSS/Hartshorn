@@ -155,7 +155,7 @@ public class PrimitiveWrapperConverterTests {
         Assertions.assertTrue(converter.canConvert(Boolean.TRUE, boolean.class));
 
         final boolean converted = (boolean) converter.convert(Boolean.TRUE, Boolean.class, boolean.class);
-        Assertions.assertEquals(true, converted);
+        Assertions.assertTrue(converted);
     }
 
     @Test

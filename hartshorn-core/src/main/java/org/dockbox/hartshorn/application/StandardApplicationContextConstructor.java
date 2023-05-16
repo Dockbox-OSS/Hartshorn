@@ -187,7 +187,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         }
 
         prefixes.stream()
-                .map(prefix -> new ClassPathScannerTypeReferenceCollector(prefix))
+                .map(ClassPathScannerTypeReferenceCollector::new)
                 .forEach(collectorContext::register);
 
         if (!builder.standaloneComponents().isEmpty()) {

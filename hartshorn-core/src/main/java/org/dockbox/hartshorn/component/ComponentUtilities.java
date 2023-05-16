@@ -40,7 +40,7 @@ public final class ComponentUtilities {
         return format(context, type, ignoreExisting, ' ', ComponentContainer::name);
     }
 
-    protected static String format(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
+    public static String format(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
         final Option<ComponentContainer> container = context.get(ComponentLocator.class).container(type);
         if (!ignoreExisting && container.present()) {
             final String name = attribute.apply(container.get());

@@ -20,6 +20,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileSystem;
@@ -69,7 +71,7 @@ public final class ClassPathScanner {
                     }
                 });
             }
-            catch (final Exception e) {
+            catch (final MalformedURLException e) {
                 // Ignore
             }
         }
@@ -123,19 +125,19 @@ public final class ClassPathScanner {
             final FileSystem fileSystem = FileSystems.newFileSystem(Paths.get(url.toURI()), (ClassLoader) null);
             Files.walkFileTree(fileSystem.getRootDirectories().iterator().next(), new JarFileWalker(this, handler, classLoader));
         }
-        catch (final Exception e) {
+        catch (final IOException | URISyntaxException e) {
             throw new ClassPathWalkingException("Error while scanning jar file " + jarFile, e);
         }
     }
 
-    private void processDirectoryResource(final ResourceHandler handler, final URLClassLoader classLoader, final File directory) {
+    private void processDirectoryResource(final ResourceHandler handler, final URLClassLoader classLoader, final File directory) throws ClassPathWalkingException {
         try {
             final File rootDir = directory.getCanonicalFile();
             final int rootDirNameLen = rootDir.getCanonicalPath().length();
             Files.walkFileTree(rootDir.toPath(), new DirectoryFileTreeWalker(this, rootDirNameLen, handler, classLoader));
         }
         catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new ClassPathWalkingException("Could not process directory resource " + directory.getPath(), e);
         }
     }
 

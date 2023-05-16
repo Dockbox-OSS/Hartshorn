@@ -16,23 +16,23 @@
 
 package org.dockbox.hartshorn.component.factory;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.inject.processing.BindingProcessor;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FactoryServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
@@ -84,7 +84,7 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
     public void exit(final ApplicationContext context) {
         try {
             context.get(BindingProcessor.class).finalizeProxies(context);
-        } catch (final ApplicationException e) {
+        } catch (final ComponentInitializationException e) {
             context.handle(e);
         }
     }
