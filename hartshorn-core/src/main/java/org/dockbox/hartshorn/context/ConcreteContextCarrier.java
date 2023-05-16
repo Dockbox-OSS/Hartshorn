@@ -30,6 +30,7 @@ public class ConcreteContextCarrier implements ContextCarrier {
     @Inject
     private ApplicationContext applicationContext;
 
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }

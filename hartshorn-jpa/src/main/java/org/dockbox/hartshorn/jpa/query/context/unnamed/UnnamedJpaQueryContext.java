@@ -57,6 +57,7 @@ public class UnnamedJpaQueryContext extends AbstractJpaQueryContext {
         return this.applicationContext().get(QueryExecuteTypeLookup.class).lookup(this.annotation.value());
     }
 
+    @Override
     protected jakarta.persistence.Query persistenceQuery(final QueryConstructor queryConstructor, final EntityManager entityManager) throws IllegalArgumentException {
         final String query = this.annotation.value();
         final QueryType queryType = this.annotation.type();

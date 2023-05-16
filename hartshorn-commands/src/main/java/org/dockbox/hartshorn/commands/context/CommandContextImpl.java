@@ -46,10 +46,12 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public CommandSource source() {
         return this.source;
     }
 
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }

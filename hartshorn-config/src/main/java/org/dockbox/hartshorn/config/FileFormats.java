@@ -37,10 +37,12 @@ public enum FileFormats implements FileFormat {
         this.aliases = aliases;
     }
 
+    @Override
     public String extension() {
         return this.extension;
     }
 
+    @Override
     public DataStorageType type() {
         return this.type;
     }

@@ -55,6 +55,7 @@ public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T,
         this.connection = connection;
     }
 
+    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
     }

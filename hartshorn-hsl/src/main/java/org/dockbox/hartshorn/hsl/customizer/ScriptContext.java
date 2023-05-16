@@ -150,6 +150,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
                 .map(result -> (T) result);
     }
 
+    @Override
     public void clear() {
         this.results.clear();
     }

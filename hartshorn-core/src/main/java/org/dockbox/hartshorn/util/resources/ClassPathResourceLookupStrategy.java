@@ -33,6 +33,7 @@ public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
     public static final String NAME = "classpath";
 
+    @Override
     public String name() {
         return NAME;
     }
