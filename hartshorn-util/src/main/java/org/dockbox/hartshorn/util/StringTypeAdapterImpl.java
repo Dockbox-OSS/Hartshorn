@@ -39,6 +39,7 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
         this.function = function;
     }
 
+    @Override
     public Class<T> type() {
         return this.type;
     }

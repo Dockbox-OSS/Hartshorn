@@ -35,6 +35,7 @@ public class ProxyContextContainer extends DefaultContext {
     }
 
     // Change access level to public
+    @Override
     public MultiMap<String, Context> namedContexts() {
         return super.namedContexts();
     }

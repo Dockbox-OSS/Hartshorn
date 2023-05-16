@@ -36,6 +36,7 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
         super(map);
     }
 
+    @Override
     protected Map<K, Collection<V>> map() {
         if (this.map == null) {
             this.map = createEmptyMap();

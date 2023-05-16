@@ -29,10 +29,12 @@ public class PersistentElement implements Element {
         this.name = name;
     }
 
+    @Override
     public String name() {
         return this.name;
     }
 
+    @Override
     public PersistentElement name(final String name) {
         this.name = name;
         return this;

@@ -43,10 +43,12 @@ public class DefaultTranslationBundle implements TranslationBundle {
     private ApplicationContext applicationContext;
     private Locale primaryLanguage = Locale.getDefault();
 
+    @Override
     public Locale primaryLanguage() {
         return this.primaryLanguage;
     }
 
+    @Override
     public DefaultTranslationBundle primaryLanguage(final Locale primaryLanguage) {
         this.primaryLanguage = primaryLanguage;
         return this;
