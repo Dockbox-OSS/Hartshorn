@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -42,7 +43,7 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
             mandated.setAccessible(true);
             mandatedModifier = (int) mandated.get(null);
         }
-        catch (final NoSuchFieldException | IllegalAccessException e) {
+        catch (final NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
             syntheticModifier = 0x00001000;
             mandatedModifier  = 0x00008000;
         }
