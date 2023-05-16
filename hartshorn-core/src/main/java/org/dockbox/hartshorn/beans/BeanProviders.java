@@ -25,5 +25,5 @@ import org.dockbox.hartshorn.component.processing.Binds;
 public class BeanProviders {
 
     @Binds
-    public Class<? extends BeanProvider> beanProvider = ContextBeanProvider.class;
+    public final Class<? extends BeanProvider> beanProvider = ContextBeanProvider.class;
 }

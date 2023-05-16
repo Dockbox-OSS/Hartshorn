@@ -46,7 +46,7 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     protected abstract Map<K, Collection<V>> createEmptyMap();
 
-    public static abstract class ConcurrentMultiMap<K, V> extends StandardMultiMap<K, V> {
+    public abstract static class ConcurrentMultiMap<K, V> extends StandardMultiMap<K, V> {
 
         public ConcurrentMultiMap() {
         }
@@ -91,7 +91,7 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
         }
     }
 
-    public static abstract class HashMultiMap<K, V> extends StandardMultiMap<K, V> {
+    public abstract static class HashMultiMap<K, V> extends StandardMultiMap<K, V> {
 
         public HashMultiMap() {
         }
@@ -136,7 +136,7 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
         }
     }
 
-    public static abstract class TreeMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
+    public abstract static class TreeMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
 
         public TreeMultiMap() {
         }

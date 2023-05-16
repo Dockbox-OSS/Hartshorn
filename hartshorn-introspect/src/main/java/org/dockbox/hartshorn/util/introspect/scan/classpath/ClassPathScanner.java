@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClassPathScanner {
+public final class ClassPathScanner {
 
     private final Set<String> classNames = new HashSet<>();
     private final Set<ClassLoader> classLoaders = new HashSet<>();

@@ -17,11 +17,12 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 
 import java.lang.reflect.Constructor;
 
 public interface ProxyConstructorFunction<T> {
+
     T create() throws ApplicationException;
+
     T create(Constructor<T> constructor, Object[] args) throws ApplicationException;
 }

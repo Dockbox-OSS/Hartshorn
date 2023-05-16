@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @author Guus Lieben
  * @since 21.2
  */
-public class Expiration {
+public final class Expiration {
 
     private static final Expiration NEVER = new Expiration(-1, TimeUnit.MILLISECONDS);
     private final long amount;
