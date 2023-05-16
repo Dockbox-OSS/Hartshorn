@@ -19,15 +19,9 @@ apply {
 }
 
 dependencies {
-    api(libs.jakartaServlet)
+    api("org.dockbox.hartshorn:hartshorn-web")
 
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-events")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-web")
+    implementation(libs.jakartaServlet)
 
     testImplementation(libs.httpclient)
     testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")

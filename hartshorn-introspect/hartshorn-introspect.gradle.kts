@@ -23,6 +23,6 @@ apply {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
+    api("org.dockbox.hartshorn:hartshorn-util")
     testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
 }
