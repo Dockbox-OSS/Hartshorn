@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.beans;
+package org.dockbox.hartshorn.component.contextual;
 
-import java.util.Collection;
-import java.util.Set;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public interface BeanCollector {
-    <T> BeanReference<T> register(T bean, Class<T> type, String id);
-
-    <T> Set<BeanReference<T>> register(Class<T> type, Collection<T> beans, String id);
-
-    void unregister(BeanReference<?> beanReference);
+public record StaticComponentContainer<T>(T instance, TypeView<T> type, String id) {
 }

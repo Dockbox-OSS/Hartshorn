@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.beans.Bean;
+import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
@@ -45,7 +45,7 @@ public class CommandProviders {
     @Binds
     public Class<? extends CommandParser> commandParser = CommandParserImpl.class;
 
-    @Bean
+    @StaticBinds
     public static CooldownExtension cooldownExtension() {
         return new CooldownExtension();
     }

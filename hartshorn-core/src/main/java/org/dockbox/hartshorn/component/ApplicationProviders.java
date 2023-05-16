@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.Context;
@@ -52,11 +52,11 @@ public class ApplicationProviders {
 
     @Binds
     @Singleton
-    public ConversionService conversionService(final Introspector introspector, @Context final BeanContext beanContext) {
+    public ConversionService conversionService(final Introspector introspector, @Context final StaticComponentContext staticComponentContext) {
         final StandardConversionService service = new StandardConversionService(introspector).withDefaults();
-        beanContext.provider().all(GenericConverter.class).forEach(service::addConverter);
-        beanContext.provider().all(ConverterFactory.class).forEach(service::addConverterFactory);
-        beanContext.provider().all(Converter.class).forEach(service::addConverter);
+        staticComponentContext.provider().all(GenericConverter.class).forEach(service::addConverter);
+        staticComponentContext.provider().all(ConverterFactory.class).forEach(service::addConverterFactory);
+        staticComponentContext.provider().all(Converter.class).forEach(service::addConverter);
         return service;
     }
 }

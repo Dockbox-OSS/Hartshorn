@@ -17,19 +17,19 @@
 package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
-import org.dockbox.hartshorn.beans.BeanObserver;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentObserver;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ContextKey;
 
 import java.util.List;
 
 @Service
-public class ResourceLookupStrategyBeanObserver implements BeanObserver {
+public class ResourceLookupStrategyStaticComponentObserver implements StaticComponentObserver {
 
     @Override
-    public void onBeansCollected(final ApplicationContext applicationContext, final BeanContext beanContext) {
-        final List<ResourceLookupStrategy> strategies = beanContext.provider().all(ResourceLookupStrategy.class);
+    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
+        final List<ResourceLookupStrategy> strategies = staticComponentContext.provider().all(ResourceLookupStrategy.class);
         final ContextKey<ResourceLookupStrategyContext> contextKey = ContextKey.builder(ResourceLookupStrategyContext.class)
                 .fallback(ResourceLookupStrategyContext::new)
                 .build();

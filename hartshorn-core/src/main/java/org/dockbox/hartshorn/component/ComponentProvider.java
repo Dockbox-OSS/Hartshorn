@@ -17,14 +17,33 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentProvider;
 
 import jakarta.inject.Named;
 
 /**
  * A component provider is a class that is capable of providing components. Components are identified using
- * {@link ComponentKey keys}. Components can be either managed or unmanaged. Managed components are typically bound to an active
- * {@link ApplicationContext} and are therefore available to all components in the application. Unmanaged components are
- * typically not explicitly registered, and are treated as injectable beans.
+ * {@link ComponentKey keys}. Components can be either managed or unmanaged. Managed components are typically
+ * bound to an active {@link ApplicationContext} and are therefore available to all components in the application.
+ * Unmanaged components are typically not explicitly registered, and may be treated as either injectable or
+ * non-injectable, depending on the implementation.
+ *
+ * <p>Component providers are typically used to provide components to other components, and are therefore
+ * typically injectable. However, they may also be used to provide components to non-injectable classes, such
+ * as static classes. In this case, the provider will typically be obtained from a {@link ApplicationContext}
+ * or another {@link ComponentProvider}.
+ *
+ * <p>Components may be provided from a configured scope, as defined in {@link ComponentKey#scope()}, or from
+ * the default scope configured by the provider. The default scope is typically the same as the scope of the provider
+ * itself, but this is not required.
+ *
+ * <p>Component providers typically do not support static components as they are not bound to an active
+ * {@link ApplicationContext}. Usually, static components are provided by {@link StaticComponentProvider}s, which
+ * are initialized in earlier stages of the application lifecycle.
+ *
+ * @see ComponentKey
+ * @author Guus Lieben
+ * @since 22.1
  */
 public interface ComponentProvider {
 

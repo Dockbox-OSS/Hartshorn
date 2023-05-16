@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.beans.BeanContext;
-import org.dockbox.hartshorn.beans.BeanObserver;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
+import org.dockbox.hartshorn.component.contextual.StaticComponentObserver;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
@@ -27,11 +27,11 @@ import org.dockbox.hartshorn.events.handle.EventExecutionFilter;
 
 @Service
 @RequiresActivator(UseEvents.class)
-public class EventExecutionFilterBeanListener implements BeanObserver {
+public class EventExecutionFilterStaticComponentListener implements StaticComponentObserver {
 
     @Override
-    public void onBeansCollected(final ApplicationContext applicationContext, final BeanContext beanContext) {
-        beanContext.provider().all(EventExecutionFilter.class).forEach(filter -> {
+    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
+        staticComponentContext.provider().all(EventExecutionFilter.class).forEach(filter -> {
             applicationContext.log().debug("Adding filter " + filter.getClass().getSimpleName() + " to event context");
             applicationContext.first(EventExecutionFilterContext.class).get().add(filter);
         });
