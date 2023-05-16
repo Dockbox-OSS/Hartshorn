@@ -19,11 +19,9 @@ apply {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    api(libs.bundles.jackson)
+    api("org.dockbox.hartshorn:hartshorn-core")
+
+    implementation(libs.bundles.jackson)
 
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
     testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")

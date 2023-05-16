@@ -19,12 +19,8 @@ apply {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-i18n")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-events")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+    api("org.dockbox.hartshorn:hartshorn-i18n")
+    api("org.dockbox.hartshorn:hartshorn-events")
 
     testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")

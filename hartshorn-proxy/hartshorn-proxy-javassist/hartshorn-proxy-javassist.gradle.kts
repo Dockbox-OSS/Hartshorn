@@ -20,10 +20,9 @@ apply {
 
 dependencies {
     implementation(libs.javassist)
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
+
+    api("org.dockbox.hartshorn:hartshorn-proxy")
+    api("org.dockbox.hartshorn:hartshorn-discovery")
 
     testImplementation(testFixtures(project(":hartshorn-proxy")))
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")

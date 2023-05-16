@@ -34,14 +34,12 @@ tasks {
 
 dependencies {
     api(libs.bundles.jakarta)
-    api(libs.javassist)
-    api(libs.cglib)
+    api("org.dockbox.hartshorn:hartshorn-introspect")
+    api("org.dockbox.hartshorn:hartshorn-util")
+    api("org.dockbox.hartshorn:hartshorn-discovery")
+    api("org.dockbox.hartshorn:hartshorn-proxy")
 
     implementation(libs.logback)
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-discovery")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
 
     testImplementation(libs.scala)
     testImplementation(libs.groovy)
