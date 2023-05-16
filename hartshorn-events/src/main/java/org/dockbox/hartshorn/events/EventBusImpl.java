@@ -63,7 +63,7 @@ public class EventBusImpl implements EventBus {
         });
         // Event listeners cannot be abstract
         this.addValidationRule(method -> {
-            if (method.isAbstract()) {
+            if (method.modifiers().isAbstract()) {
                 return Attempt.of(false, new InvalidEventListenerException("Method cannot be abstract: " + method.qualifiedName()));
             }
             return Attempt.of(true);

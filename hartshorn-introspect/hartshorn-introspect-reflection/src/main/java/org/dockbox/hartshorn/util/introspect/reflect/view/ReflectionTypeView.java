@@ -16,14 +16,26 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.BiMap;
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsIntrospector;
@@ -34,16 +46,7 @@ import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> implements ReflectionModifierCarrierView, TypeView<T> {
+public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements ReflectionModifierCarrierView, TypeView<T> {
 
     private static final BiMap<Class<?>, Class<?>> WRAPPERS = BiMap.ofEntries(
             Map.entry(Boolean.class, boolean.class),
@@ -74,6 +77,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
     private List<T> enumConstants;
     private TypeView<?> parent;
     private List<TypeView<?>> interfaces;
+    private List<TypeView<? extends T>> permittedSubclasses;
     private Option<TypeView<?>> elementType;
 
     private TypeMethodsIntrospector<T> methodsIntrospector;
@@ -143,17 +147,17 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
 
     @Override
     public boolean isAbstract() {
-        return this.isInterface() || Modifier.isAbstract(this.type.getModifiers());
+        return this.isInterface() || this.modifiers().isAbstract();
     }
 
     @Override
     public boolean isFinal() {
-        return Modifier.isFinal(this.type.getModifiers());
+        return this.modifiers().isFinal();
     }
 
     @Override
     public boolean isStatic() {
-        return Modifier.isStatic(this.type.getModifiers());
+        return this.modifiers().isStatic();
     }
 
     @Override
@@ -164,6 +168,47 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
     @Override
     public boolean isWildcard() {
         return false;
+    }
+
+    @Override
+    public boolean isSealed() {
+        return this.type.isSealed();
+    }
+
+    @Override
+    public boolean isNonSealed() {
+        return this.superClass().isSealed() && !this.isSealed() && !this.isFinal();
+    }
+
+    @Override
+    public boolean isPermittedSubclass() {
+        if (this.superClass().isSealed()) {
+            return this.superClass().permittedSubclasses().contains(this);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPermittedSubclass(final Class<?> subclass) {
+        if (this.isSealed()) {
+            return this.permittedSubclasses().stream()
+                    .anyMatch(permittedSubclass -> permittedSubclass.type().equals(subclass));
+        }
+        return false;
+    }
+
+    @Override
+    public List<TypeView<? extends T>> permittedSubclasses() {
+        if (this.permittedSubclasses == null) {
+            final List<TypeView<? extends T>> list = new ArrayList<>();
+            for(final Class<?> permittedSubclass : this.type.getPermittedSubclasses()) {
+                final TypeView<?> introspect = this.introspector.introspect(permittedSubclass);
+                final TypeView<T> adjustedType = TypeUtils.adjustWildcards(introspect, TypeView.class);
+                list.add(adjustedType);
+            }
+            this.permittedSubclasses = list;
+        }
+        return this.permittedSubclasses;
     }
 
     @Override
@@ -331,11 +376,6 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
     }
 
     @Override
-    public int modifiers() {
-        return this.type.getModifiers();
-    }
-
-    @Override
     public PackageView packageInfo() {
         return new ReflectionPackageView(this.introspector, this.type.getPackage());
     }
@@ -349,5 +389,10 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView<T> imp
         if (typeParameters.count() > 0) {
             collector.property("typeParameters").write(typeParameters.all().toArray(Reportable[]::new));
         }
+    }
+
+    @Override
+    public ElementModifiersIntrospector modifiers() {
+        return new ReflectionElementModifiersIntrospector(this.type.getModifiers());
     }
 }

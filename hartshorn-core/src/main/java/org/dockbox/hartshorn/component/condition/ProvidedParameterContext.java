@@ -46,7 +46,7 @@ public final class ProvidedParameterContext extends DefaultProvisionContext {
         return new ProvidedParameterContext(argumentMap);
     }
 
-    public static ProvidedParameterContext of(final ExecutableElementView<?, ?> executable, final List<Object> arguments) {
+    public static ProvidedParameterContext of(final ExecutableElementView<?> executable, final List<Object> arguments) {
         return of(executable.parameters().all(), arguments);
     }
 

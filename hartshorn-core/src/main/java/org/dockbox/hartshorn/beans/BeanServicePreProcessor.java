@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.beans;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
@@ -27,15 +29,12 @@ import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
 
 public class BeanServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
@@ -55,7 +54,7 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
         }
     }
 
-    private <T, E extends AnnotatedElementView<T>
+    private <T, E extends AnnotatedElementView
             & ModifierCarrierView
             & GenericTypeView<T>>
     void process(final ApplicationContext applicationContext, final BeanCollector context, final List<E> elements) throws ApplicationException {
@@ -64,7 +63,7 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
         final ViewContextAdapter adapter = applicationContext.get(ViewContextAdapter.class);
         final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
         for (final E element : elements) {
-            if (!element.has(AccessModifier.STATIC)) {
+            if (!element.modifiers().isStatic()) {
                 throw new ApplicationException("Bean service pre-processor can only process static fields and methods");
             }
             if (conditionMatcher.match(element)) {
@@ -73,7 +72,7 @@ public class BeanServicePreProcessor extends ComponentPreProcessor implements Ex
         }
     }
 
-    private <T, E extends AnnotatedElementView<T>
+    private <T, E extends AnnotatedElementView
             & ModifierCarrierView
             & GenericTypeView<T>>
     void process(final ViewContextAdapter adapter, final E element, final BeanCollector context) throws ApplicationException {

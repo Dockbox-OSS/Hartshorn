@@ -14,22 +14,39 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.view;
+package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
+public interface ElementModifiersIntrospector {
 
-/**
- * Specialized view that is aware of the {@link Introspector} that created it.
- *
- * @author Guus Lieben
- * @since 22.5
- */
-public interface IntrospectorAwareView {
+    int asInt();
 
-    /**
-     * Returns the {@link Introspector} that created this view.
-     *
-     * @return the introspector that created this view
-     */
-    Introspector introspector();
+    boolean has(AccessModifier modifier);
+
+    boolean isPublic();
+
+    boolean isPrivate();
+
+    boolean isProtected();
+
+    boolean isStatic();
+
+    boolean isFinal();
+
+    boolean isAbstract();
+
+    boolean isTransient();
+
+    boolean isVolatile();
+
+    boolean isSynchronized();
+
+    boolean isNative();
+
+    boolean isStrict();
+
+    boolean isMandated();
+
+    boolean isSynthetic();
+
+    boolean isDefault();
 }

@@ -20,10 +20,11 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -63,7 +64,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     }
 
     @Override
-    public Object[] loadParameters(final ExecutableElementView<?, ?> element) {
+    public Object[] loadParameters(final ExecutableElementView<?> element) {
         final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
         final ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         return parameterLoader.loadArguments(loaderContext).toArray();
@@ -71,7 +72,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
 
     @Override
     public <P, R> Attempt<R, Throwable> invoke(final MethodView<P, R> method) {
-        if (method.isStatic()) {
+        if (method.modifiers().isStatic()) {
             return this.invokeStatic(method);
         }
         final Object[] parameters = this.loadParameters(method);
@@ -81,7 +82,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
 
     @Override
     public <P, R> Attempt<R, Throwable> invokeStatic(final MethodView<P, R> method) {
-        if (!method.isStatic()) {
+        if (!method.modifiers().isStatic()) {
             return this.invoke(method);
         }
         final Object[] parameters = this.loadParameters(method);
@@ -95,21 +96,22 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     }
 
     @Override
-    public <T> Attempt<T, Throwable> load(final AnnotatedElementView<T> element) {
-        if (element instanceof TypeView<T> typeView) {
-            return Attempt.of(this.applicationContext().get(this.key(typeView.type())));
+    public <T> Attempt<T, Throwable> load(final GenericTypeView<T> element) {
+        if (element instanceof TypeView<?> typeView) {
+            final ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
+            return Attempt.of(this.applicationContext().get(key));
         }
-        else if (element instanceof FieldView<?, T> fieldView) {
-            return this.load(fieldView);
+        else if (element instanceof FieldView<?, ?> fieldView) {
+            return this.load(TypeUtils.adjustWildcards(fieldView, FieldView.class));
         }
-        else if (element instanceof MethodView<?, T> methodView) {
-            return this.invoke(methodView);
+        else if (element instanceof MethodView<?, ?> methodView) {
+            return this.invoke(TypeUtils.adjustWildcards(methodView, MethodView.class));
         }
-        else if (element instanceof ConstructorView<T> constructorView) {
-            return this.create(constructorView);
+        else if (element instanceof ConstructorView<?> constructorView) {
+            return this.create(TypeUtils.adjustWildcards(constructorView, ConstructorView.class));
         }
-        else if (element instanceof ParameterView<T> parameterView) {
-            final ComponentKey<T> key = this.key(parameterView.type().type());
+        else if (element instanceof ParameterView<?> parameterView) {
+            final ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
             return Attempt.of(this.applicationContext().get(key));
         }
         return Attempt.of(new IllegalArgumentException("Unsupported element type: " + element.getClass().getName()));

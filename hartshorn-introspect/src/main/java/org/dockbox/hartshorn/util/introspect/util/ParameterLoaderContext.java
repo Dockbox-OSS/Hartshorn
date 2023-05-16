@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
 public class ParameterLoaderContext {
 
-    private final ExecutableElementView<?, ?> executable;
+    private final ExecutableElementView<?> executable;
     private final Object instance;
 
-    public ParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance) {
+    public ParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance) {
         this.executable = executable;
         this.instance = instance;
     }
 
-    public ExecutableElementView<?, ?> executable() {
+    public ExecutableElementView<?> executable() {
         return this.executable;
     }
 

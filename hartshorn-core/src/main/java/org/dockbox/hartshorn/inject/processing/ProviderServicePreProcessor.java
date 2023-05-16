@@ -51,7 +51,7 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
         }
     }
 
-    private <E extends AnnotatedElementView<?> & GenericTypeView<?>> void register(final ProviderContextList context, final E element) {
+    private <E extends AnnotatedElementView & GenericTypeView<?>> void register(final ProviderContextList context, final E element) {
         final ComponentKey<?> key = this.key(element);
         final Binds binding = element.annotations().get(Binds.class).get();
         final ProviderContext providerContext = new ProviderContext(key, element, binding);
@@ -71,7 +71,7 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
         }
     }
 
-    private <E extends AnnotatedElementView<?> & GenericTypeView<?>> ComponentKey<?> key(final E element) {
+    private <E extends AnnotatedElementView & GenericTypeView<?>> ComponentKey<?> key(final E element) {
         final Binds annotation = element.annotations().get(Binds.class).get();
         if (element.type().is(Class.class) || element.type().is(TypeView.class)) {
             final TypeView<?> view = element.genericType().typeParameters().at(0).get();

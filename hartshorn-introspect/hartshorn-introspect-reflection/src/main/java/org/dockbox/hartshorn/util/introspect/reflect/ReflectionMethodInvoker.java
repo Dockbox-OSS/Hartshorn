@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Method;
 
@@ -27,11 +28,13 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
     @Override
     public Attempt<T, Throwable> invoke(final MethodView<P, T> method, final P instance, final Object[] args) {
         final Attempt<T, Throwable> result = Attempt.of(() -> {
-            final Method jlrMethod = method.method();
+            final Option<Method> jlrMethod = method.method();
+            if (jlrMethod.absent()) return null;
+
             // Do not use explicit casting here, as it will cause a ClassCastException if the method
             // returns a primitive type. Instead, use the inferred type from the method view.
             //noinspection unchecked
-            return (T) jlrMethod.invoke(instance, args);
+            return (T) jlrMethod.get().invoke(instance, args);
         }, Throwable.class);
 
         if (result.errorPresent()) {

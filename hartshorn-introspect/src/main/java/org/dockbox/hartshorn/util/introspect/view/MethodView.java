@@ -16,44 +16,126 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 
-public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent, ReturnType>, GenericTypeView<ReturnType> {
+/**
+ * Represents a view of a {@link Method} instance. This view provides access various properties of
+ * the method, such as its name, return type, and parameter types. It also provides the ability to
+ * invoke the method.
+ *
+ * @param <Parent> the type of the method's parent
+ * @param <ReturnType> the type of the method's return type
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
+public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent>, GenericTypeView<ReturnType> {
 
-    Method method();
+    /**
+     * Returns the {@link Method} instance represented by this view, if it exists.
+     *
+     * @return the method instance, if it exists
+     */
+    Option<Method> method();
 
+    /**
+     * Invokes the method represented by this view on the given instance with the given arguments. If
+     * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
+     * will be caught and returned as a failed {@link Attempt}.
+     *
+     * @param instance the instance to invoke the method on
+     * @param arguments the arguments to pass to the method
+     * @return the result of the method invocation
+     */
     default Attempt<ReturnType, Throwable> invoke(final Parent instance, final Object... arguments) {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
+    /**
+     * Invokes the method represented by this view on the given instance with the given arguments. If
+     * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
+     * will be caught and returned as a failed {@link Attempt}.
+     *
+     * @param instance the instance to invoke the method on
+     * @param arguments the arguments to pass to the method
+     * @return the result of the method invocation
+     */
     Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments);
 
+    /**
+     * Invokes the method represented by this view as a static method call with the given arguments.
+     * If the method is not static, a {@link IllegalIntrospectionException} will be thrown. Any
+     * exceptions thrown by the method will be caught and returned as a failed {@link Attempt}.
+     *
+     * @param arguments the arguments to pass to the method
+     * @throws IllegalIntrospectionException if the method is not static
+     * @return the result of the method invocation
+     */
     default Attempt<ReturnType, Throwable> invokeStatic(final Object... arguments) {
         return this.invokeStatic(Arrays.asList(arguments));
     }
 
+    /**
+     * Invokes the method represented by this view as a static method call with the given arguments.
+     * If the method is not static, a {@link IllegalIntrospectionException} will be thrown. Any
+     * exceptions thrown by the method will be caught and returned as a failed {@link Attempt}.
+     *
+     * @param arguments the arguments to pass to the method
+     * @throws IllegalIntrospectionException if the method is not static
+     * @return the result of the method invocation
+     */
     Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments);
 
+    /**
+     * Returns a {@link TypeView} representing the non-generic return type of the method.
+     *
+     * @return a view of the method's return type
+     * @see #type()
+     */
     TypeView<ReturnType> returnType();
 
+    /**
+     * Returns a {@link TypeView} representing the generic return type of the method. If the method
+     * is not generic, this will return the same value as {@link #returnType()}.
+     *
+     * @return a view of the method's generic return type
+     * @see #genericType()
+     */
     TypeView<ReturnType> genericReturnType();
 
-    boolean isProtected();
-
-    boolean isPublic();
-
-    boolean isPrivate();
-
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isStatic();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isFinal();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isAbstract();
 
+    /**
+     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isDefault()} instead
+     * @return true if the modifier is present
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     boolean isDefault();
 
 }

@@ -77,7 +77,7 @@ public class ExecutableLookup {
      * @param <P> The type of the declaring parent of the executable.
      * @param <T> The context type representing the executable.
      */
-    public static <P, T extends ExecutableElementView<P, ?>> T executable(final List<T> executables, final List<Object> arguments) {
+    public static <P, T extends ExecutableElementView<P>> T executable(final List<T> executables, final List<Object> arguments) {
         for (final T executable : executables) {
             boolean pass = true;
             if (executable.parameters().count() != arguments.size()) continue;

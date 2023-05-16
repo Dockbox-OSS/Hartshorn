@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -339,7 +340,7 @@ public abstract class ElementContextTests {
                 .named("testStatic");
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
-        Assertions.assertTrue(methodContext.isStatic());
+        Assertions.assertTrue(methodContext.modifiers().isStatic());
         final Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
@@ -353,10 +354,8 @@ public abstract class ElementContextTests {
                 .named("testNonStatic");
         Assertions.assertTrue(test.present());
         final MethodView<ElementContextTests, ?> methodContext = test.get();
-        Assertions.assertFalse(methodContext.isStatic());
-        final Attempt<?, ?> result = methodContext.invokeStatic();
-        Assertions.assertTrue(result.errorPresent());
-        Assertions.assertTrue(result.error() instanceof IllegalAccessException);
+        Assertions.assertFalse(methodContext.modifiers().isStatic());
+        Assertions.assertThrows(IllegalIntrospectionException.class, () -> methodContext.invokeStatic());
     }
 
     public void testNonStatic() {}

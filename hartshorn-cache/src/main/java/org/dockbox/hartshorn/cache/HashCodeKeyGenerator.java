@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 public class HashCodeKeyGenerator implements KeyGenerator {
 
     @Override
-    public String generateKey(final AnnotatedElementView<?> element) {
+    public String generateKey(final AnnotatedElementView element) {
         return element.name() + "_" + element.hashCode();
     }
 }

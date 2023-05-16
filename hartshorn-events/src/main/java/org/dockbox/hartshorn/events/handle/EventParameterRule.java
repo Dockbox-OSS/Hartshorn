@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 public class EventParameterRule implements ParameterLoaderRule<EventParameterLoaderContext> {
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
-        TypeView<Event> typeView = context.applicationContext().environment().introspect(context.event());
+        final TypeView<Event> typeView = context.applicationContext().environment().introspect(context.event());
         return typeView.isChildOf(parameter.type().type());
     }
 

@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -31,7 +32,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Executable;
 import java.util.List;
 
-public abstract class ReflectionExecutableElementView<Parent, ResultType> extends ReflectionAnnotatedElementView<ResultType> implements ExecutableElementView<Parent, ResultType>, ReflectionModifierCarrierView {
+public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent> {
 
     private final Introspector introspector;
     private final Executable executable;
@@ -44,7 +45,7 @@ public abstract class ReflectionExecutableElementView<Parent, ResultType> extend
         this.executable = executable;
         this.introspector = introspector;
         if (!executable.trySetAccessible()) {
-            String packageName = executable.getDeclaringClass().getPackageName();
+            final String packageName = executable.getDeclaringClass().getPackageName();
             if (!(packageName.startsWith("java.") || packageName.startsWith("jdk.") || packageName.startsWith("sun.") || packageName.startsWith("com.sun.") || packageName.startsWith("javax."))) {
                 throw new IllegalIntrospectionException(executable, "Unable to set executable " + executable.getName() + " accessible");
             }
@@ -82,7 +83,7 @@ public abstract class ReflectionExecutableElementView<Parent, ResultType> extend
     }
 
     @Override
-    public int modifiers() {
-        return this.executable.getModifiers();
+    public ElementModifiersIntrospector modifiers() {
+        return new ReflectionElementModifiersIntrospector(this.executable);
     }
 }

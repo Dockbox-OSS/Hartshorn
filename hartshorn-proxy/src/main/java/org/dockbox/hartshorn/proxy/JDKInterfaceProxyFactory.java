@@ -51,8 +51,13 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Attempt<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException {
-        return this.proxy(constructor.constructor(), args);
+    public Attempt<T, Throwable> proxy(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+        if (constructor.constructor().present()) {
+            return this.proxy(constructor.constructor().get(), args);
+        }
+        else {
+            throw new ApplicationException("Constructor " + constructor + " is not present on type " + this.type());
+        }
     }
 
     protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
@@ -116,7 +121,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
                 : this.applicationProxier().introspector().introspect(this.typeDelegate());
 
         for (final FieldView<T, ?> field : typeView.fields().all()) {
-            if (field.isStatic()) continue;
+            if (field.modifiers().isStatic()) continue;
             field.set(proxy, field.get(existing).orNull());
         }
     }

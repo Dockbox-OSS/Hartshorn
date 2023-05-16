@@ -45,7 +45,7 @@ public class EventValidator implements LifecycleObserver {
 
         final List<TypeView<? extends Event>> allEvents = applicationContext.environment().children(Event.class)
                 .stream()
-                .filter(type -> !type.isAbstract())
+                .filter(type -> !type.modifiers().isAbstract())
                 // Anonymous classes indicate the event carries type parameters when posted (e.g. EngineChangedState<State>)
                 // These are only created when the event is posted, so they can be ignored here, as they are not explicit
                 // definitions.

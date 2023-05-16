@@ -16,9 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
@@ -26,9 +30,6 @@ import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WildcardTypeView implements TypeView<Object> {
 
@@ -100,6 +101,31 @@ public class WildcardTypeView implements TypeView<Object> {
     @Override
     public boolean isWildcard() {
         return true;
+    }
+
+    @Override
+    public boolean isSealed() {
+        return false;
+    }
+
+    @Override
+    public boolean isNonSealed() {
+        return false;
+    }
+
+    @Override
+    public boolean isPermittedSubclass() {
+        return false;
+    }
+
+    @Override
+    public boolean isPermittedSubclass(final Class<?> subclass) {
+        return false;
+    }
+
+    @Override
+    public List<TypeView<?>> permittedSubclasses() {
+        return List.of();
     }
 
     @Override
@@ -190,6 +216,11 @@ public class WildcardTypeView implements TypeView<Object> {
     @Override
     public boolean has(final AccessModifier modifier) {
         return false;
+    }
+
+    @Override
+    public ElementModifiersIntrospector modifiers() {
+        return new WildcardElementModifiersIntrospector();
     }
 
     @Override

@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-public interface ParameterView<T> extends AnnotatedElementView<T>, GenericTypeView<T> {
-
-    String name();
+public interface ParameterView<T> extends AnnotatedElementView, GenericTypeView<T> {
 
     boolean isVarArgs();
 
     boolean isNamePresent();
 
-    ExecutableElementView<?, ?> declaredBy();
+    ExecutableElementView<?> declaredBy();
 }

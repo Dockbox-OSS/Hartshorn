@@ -29,12 +29,12 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView<T> implements ParameterView<T> {
+public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView implements ParameterView<T> {
 
     private final Introspector introspector;
     private final Parameter parameter;
     private String name;
-    private ExecutableElementView<?, ?> declaredBy;
+    private ExecutableElementView<?> declaredBy;
 
     public ReflectionParameterView(final ReflectionIntrospector introspector, final Parameter parameter) {
         super(introspector);
@@ -81,7 +81,7 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView<T
     }
 
     @Override
-    public ExecutableElementView<?, ?> declaredBy() {
+    public ExecutableElementView<?> declaredBy() {
         if (this.declaredBy == null) {
             final Executable executable = this.parameter.getDeclaringExecutable();
             if (executable instanceof Method method) this.declaredBy = this.introspector.introspect(method);

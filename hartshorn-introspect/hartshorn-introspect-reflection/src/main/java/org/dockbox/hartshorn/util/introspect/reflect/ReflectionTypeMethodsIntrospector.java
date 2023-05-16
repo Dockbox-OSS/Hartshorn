@@ -54,7 +54,7 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
         if (!this.type.superClass().isVoid()) {
             final List<Method> superClassMethods = this.type.superClass().methods().all().stream()
                     .filter(m -> m.isPublic() || m.isProtected())
-                    .map(MethodView::method)
+                    .flatMap(m -> m.method().stream())
                     .toList();
             allMethods.addAll(superClassMethods);
         }
@@ -67,16 +67,20 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
                 .map(method -> (MethodView<T, ?>) method)
                 .toList();
 
-        this.declaredMethods = introspectors.stream()
-                .filter(method -> declaredMethods.contains(method.method()))
+        final List<? extends MethodView<T, ?>> definedMethods = introspectors.stream()
+                .filter(method -> method.method().present())
+                .toList();
+
+        this.declaredMethods = definedMethods.stream()
+                .filter(method -> declaredMethods.contains(method.method().get()))
                 .collect(Collectors.toList());
 
-        this.declaredAndInheritedMethods = introspectors.stream()
-                .filter(method -> !method.method().isBridge())
+        this.declaredAndInheritedMethods = definedMethods.stream()
+                .filter(method -> !method.method().get().isBridge())
                 .collect(Collectors.toList());
 
-        this.bridgeMethods = introspectors.stream()
-                .filter(method -> method.method().isBridge())
+        this.bridgeMethods = definedMethods.stream()
+                .filter(method -> method.method().get().isBridge())
                 .collect(Collectors.toList());
     }
 

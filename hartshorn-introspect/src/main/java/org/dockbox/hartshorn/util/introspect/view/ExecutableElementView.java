@@ -19,15 +19,37 @@ package org.dockbox.hartshorn.util.introspect.view;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 
-public interface ExecutableElementView<Parent, ResultType> extends AnnotatedElementView<ResultType>, ModifierCarrierView {
+/**
+ * Represents a view of an executable element, such as a method or constructor. This view can be
+ * used to introspect the element's parameters, type variables, and declaring type.
+ *
+ * @param <Parent> the type of the element's parent
+ *
+ * @author Guus Lieben
+ * @since 22.5
+ */
+public interface ExecutableElementView<Parent> extends AnnotatedElementView, ModifierCarrierView {
 
+    /**
+     * Returns an {@link ExecutableParametersIntrospector} for the element. This introspector
+     * can be used to introspect the element's parameters.
+     *
+     * @return an introspector for the element's parameters
+     */
     ExecutableParametersIntrospector parameters();
 
+    /**
+     * Returns an {@link TypeVariablesIntrospector} for the element. This introspector
+     * can be used to introspect the element's type variables.
+     *
+     * @return an introspector for the element's type variables
+     */
     TypeVariablesIntrospector typeVariables();
 
-    String name();
-
-    String qualifiedName();
-
+    /**
+     * Returns the element's declaring type.
+     *
+     * @return the element's declaring type
+     */
     TypeView<Parent> declaredBy();
 }

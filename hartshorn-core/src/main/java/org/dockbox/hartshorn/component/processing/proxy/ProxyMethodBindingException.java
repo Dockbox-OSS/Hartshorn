@@ -27,7 +27,7 @@ public class ProxyMethodBindingException extends RuntimeException {
     }
 
     public ProxyMethodBindingException(final MethodView<?, ?> ctx) {
-        this(ctx.method());
+        super("Could not bind proxy to " + ctx.name() + " because preconditions failed");
     }
 
     public ProxyMethodBindingException(final Method method) {

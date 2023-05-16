@@ -39,15 +39,15 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
 
     private final Context context = new DefaultProvisionContext() {};
 
-    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance, final ApplicationContext applicationContext) {
+    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationContext applicationContext) {
         this(executable, instance, applicationContext, applicationContext);
     }
 
-    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?, ?> executable, final Object instance, final ApplicationContext applicationContext, final Scope scope) {
+    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationContext applicationContext, final Scope scope) {
         this(executable, instance, applicationContext, applicationContext, scope);
     }
 
-    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?, ?> executable, Object instance, ApplicationContext applicationContext, ComponentProvider provider, Scope scope) {
+    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ApplicationContext applicationContext, ComponentProvider provider, Scope scope) {
         super(executable, instance);
         this.applicationContext = applicationContext;
         this.provider = provider;

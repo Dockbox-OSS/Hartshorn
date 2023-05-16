@@ -26,7 +26,7 @@ public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<Prox
 
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
-        final ExecutableElementView<?, ?> executable = parameter.declaredBy();
+        final ExecutableElementView<?> executable = parameter.declaredBy();
         return executable.declaredBy().is(Object.class) && "equals".equals(executable.name());
     }
 
