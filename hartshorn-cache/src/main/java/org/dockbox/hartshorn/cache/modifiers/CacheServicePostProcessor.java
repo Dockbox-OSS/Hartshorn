@@ -52,7 +52,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
         final CacheManager manager = context.get(CacheManager.class);
 
         String name = cacheMethodContext.name();
-        if ("".equals(name)) {
+        if (name != null && name.isEmpty()) {
             final Option<CacheService> annotation = proxyContext.type().annotations().get(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();

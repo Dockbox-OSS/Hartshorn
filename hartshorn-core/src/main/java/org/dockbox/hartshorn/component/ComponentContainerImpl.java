@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Objects;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Objects;
 
 public class ComponentContainerImpl implements ComponentContainer {
 
@@ -54,14 +54,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public String id() {
         final String id = this.annotation().id();
-        if ("".equals(id)) return ComponentUtilities.id(this.context, this.component, true);
+        if (id != null && id.isEmpty()) return ComponentUtilities.id(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
         final String name = this.annotation().name();
-        if ("".equals(name)) return ComponentUtilities.name(this.context, this.component, true);
+        if (name != null && name.isEmpty()) return ComponentUtilities.name(this.context, this.component, true);
         return name;
     }
 

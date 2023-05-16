@@ -56,7 +56,7 @@ public class ClassPathScanner {
             return this;
         }
 
-        for (final String path : value.split("" + File.pathSeparatorChar, -1)) {
+        for (final String path : value.split(String.valueOf(File.pathSeparatorChar), -1)) {
             if (path == null || path.trim().isEmpty()) continue;
             final File file = new File(path);
             if (!file.exists()) continue;

@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Converts prefixed patterns into type instances used by command executors. The
  * pattern is decided on by any implementation of this type.
@@ -34,7 +33,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
 
     @Override
     public <T> Attempt<Boolean, ConverterException> preconditionsMatch(final Class<T> type, final CommandSource source, final String raw) {
-        String prefix = this.prefix() + "";
+        String prefix = String.valueOf(this.prefix());
         if (this.requiresTypeName()) {
             final ApplicationContext applicationContext = source.applicationContext();
             final TypeView<T> typeView = applicationContext.environment().introspect(type);
@@ -73,7 +72,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
 
     @Override
     public Attempt<String, ConverterException> parseIdentifier(final String argument) {
-        if (argument.startsWith(this.prefix() + "")) {
+        if (argument.startsWith(String.valueOf(this.prefix()))) {
             return Attempt.of(argument.substring(1, argument.indexOf(this.opening())));
         }
         else {

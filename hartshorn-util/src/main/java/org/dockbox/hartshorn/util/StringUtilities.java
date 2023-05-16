@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.Option;
 
 public final class StringUtilities {
 
@@ -114,7 +114,7 @@ public final class StringUtilities {
         final Map<String, String> map = new HashMap<>();
 
         for (int i = 0; i < args.length; i++) {
-            final String arg = "" + args[i];
+            final String arg = String.valueOf(args[i]);
             map.put(String.format("{%d}", i), arg);
         }
         return StringUtilities.format(format, map);
