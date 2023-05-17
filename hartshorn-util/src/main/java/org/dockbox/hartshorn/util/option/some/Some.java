@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.util.option.some;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.AbstractOption;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -38,7 +37,7 @@ import java.util.stream.Stream;
  * @author Guus Lieben
  * @since 22.5
  */
-public class Some<T> extends AbstractOption<T> {
+public class Some<T> implements Option<T> {
 
     private final T value;
 

@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.option;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.function.ThrowingSupplier;
 import org.dockbox.hartshorn.util.option.none.FailedNone;
 import org.dockbox.hartshorn.util.option.none.SuccessNone;
@@ -426,11 +427,17 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     @NonNull Attempt<T, E> filter(@NonNull Predicate<@NonNull T> predicate);
 
     @Override
-    <U> Attempt<U, E> ofType(@NonNull Class<U> type);
+    default <U> Attempt<U, E> ofType(@NonNull final Class<U> type) {
+        return this.filter(type::isInstance).cast(type);
+    }
 
     @Override
-    <U> Attempt<U, E> cast(@NonNull Class<U> type);
+    default <U> Attempt<U, E> cast(@NonNull final Class<U> type) {
+        return this.map(type::cast);
+    }
 
     @Override
-    <K extends T, A extends K> Attempt<A, E> adjust(@NonNull Class<K> type);
+    default <K extends T, A extends K> Attempt<A, E> adjust(@NonNull final Class<K> type) {
+        return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+    }
 }

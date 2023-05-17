@@ -18,14 +18,19 @@ package org.dockbox.hartshorn.util.option;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.none.None;
 import org.dockbox.hartshorn.util.option.some.Some;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -33,6 +38,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.transform.Result;
@@ -307,7 +313,18 @@ public interface Option<T> extends Iterable<T> {
     @NonNull
     Stream<T> stream();
 
-    <U> Stream<U> stream(@NonNull Function<@NonNull T, @NonNull Stream<U>> mapper);
+    /**
+     * Returns a {@link Stream} based on the current {@link Option} instance. If a value is present, a {@link Stream}
+     * is created using the provided {@link Function}. If no value is present, an empty {@link Stream} is returned.
+     *
+     * @param mapper the {@link Function} to use to create the {@link Stream} if a value is present.
+     * @return a {@link Stream} based on the current {@link Option} instance.
+     * @param <U> the type of the elements of the new {@link Stream}
+     */
+    @NonNull
+    default <U> Stream<U> stream(@NonNull final Function<@NonNull T, @NonNull Stream<U>> mapper) {
+        return this.stream().flatMap(mapper);
+    }
 
     /**
      * Returns {@code true} if the value wrapped by the current {@link Option} instance is equal to the given value,
@@ -329,7 +346,9 @@ public interface Option<T> extends Iterable<T> {
      *       type.
      * @param <U> the type to cast the value to
      */
-    <U> Option<U> ofType(@NonNull Class<U> type);
+    default <U> Option<U> ofType(@NonNull final Class<U> type) {
+        return this.filter(type::isInstance).cast(type);
+    }
 
     /**
      * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
@@ -341,11 +360,23 @@ public interface Option<T> extends Iterable<T> {
      * @param <U> the type to cast the value to
      * @throws ClassCastException if the value is not of the given type
      */
-    <U> Option<U> cast(@NonNull Class<U> type);
+    default <U> Option<U> cast(@NonNull final Class<U> type) {
+        return this.map(type::cast);
+    }
 
-    <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type);
-
-    <K extends T, A extends K> A adjustAndGet(@NonNull Class<K> type);
+    /**
+     * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
+     * given type, an empty {@link Option} is returned. If no value is present, an empty {@link Option} is returned.
+     * The wildcards of the given type are adjusted to match the wildcards of the provided type parameter {@link A}.
+     *
+     * @param type the type to cast the value to
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
+     * @param <K> the type to cast the value to
+     * @param <A> the type parameter to adjust the wildcards of the given type to
+     */
+    default <K extends T, A extends K> Option<A> adjust(@NonNull final Class<K> type) {
+        return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+    }
 
     /**
      * Performs a mutable reduction operation on the elements of this {@link Option} using a {@link Collector}. A mutable
@@ -357,7 +388,9 @@ public interface Option<T> extends Iterable<T> {
      * @return the result of the reduction
      * @param <E> the type of the result
      */
-    <E> E collect(@NonNull Collector<T, ?, E> collector);
+    default <E> E collect(@NonNull final Collector<T, ?, E> collector) {
+        return this.stream().collect(collector);
+    }
 
     /**
      * Similar to {@link #collect(Collector)}, but using explicit functions instead of a {@link Collector}. This
@@ -377,7 +410,9 @@ public interface Option<T> extends Iterable<T> {
      *
      * @return the result of the reduction
      */
-    <E> E collect(@NonNull Supplier<E> supplier, @NonNull BiConsumer<E, T> accumulator, @NonNull BiConsumer<E, E> combiner);
+    default <E> E collect(@NonNull final Supplier<E> supplier, @NonNull final BiConsumer<E, T> accumulator, @NonNull final BiConsumer<E, E> combiner) {
+        return this.stream().collect(supplier, accumulator, combiner);
+    }
 
     /**
      * Returns a {@link List} containing the value wrapped by the current {@link Option} instance. If no value is
@@ -385,7 +420,9 @@ public interface Option<T> extends Iterable<T> {
      *
      * @return a {@link List} containing the value wrapped by the current {@link Option} instance.
      */
-    List<T> toList();
+    default List<T> toList() {
+        return this.collect(Collectors.toList());
+    }
 
     /**
      * Returns a {@link Set} containing the value wrapped by the current {@link Option} instance. If no value is
@@ -393,7 +430,9 @@ public interface Option<T> extends Iterable<T> {
      *
      * @return a {@link Set} containing the value wrapped by the current {@link Option} instance.
      */
-    Set<T> toSet();
+    default Set<T> toSet() {
+        return this.collect(Collectors.toSet());
+    }
 
     /**
      * Returns a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
@@ -409,7 +448,9 @@ public interface Option<T> extends Iterable<T> {
      * @return a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
      *         by the key returned by the given {@link Function}.
      */
-    <K> Map<K, T> toMap(@NonNull Function<T, K> keyMapper);
+    default <K> Map<K, T> toMap(@NonNull final Function<T, K> keyMapper) {
+        return this.collect(Collectors.toMap(keyMapper, Function.identity()));
+    }
 
     /**
      * Returns a {@link Map} containing the value wrapped by the current {@link Option} as both key and value,
@@ -431,5 +472,24 @@ public interface Option<T> extends Iterable<T> {
      * @return a {@link Map} containing the wrapped value as both key and value, as returned by the given
      *         {@link Function functions}.
      */
-    <K, V> Map<K, V> toMap(@NonNull Function<T, K> keyMapper, @NonNull Function<T, V> valueMapper);
+    default <K, V> Map<K, V> toMap(@NonNull final Function<T, K> keyMapper, @NonNull final Function<T, V> valueMapper) {
+        return this.collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    @Override
+    default Spliterator<T> spliterator() {
+        final int size = this.map(value -> 1).orElse(0);
+        return Spliterators.spliterator(this.iterator(), size, 0);
+    }
+
+    @Override
+    default Iterator<T> iterator() {
+        return this.map(List::of)
+                .map(List::iterator)
+                .orElseGet(Collections::emptyIterator);
+    }
+
+    @Override
+    @NonNull
+    String toString(); // Force implementation of toString
 }
