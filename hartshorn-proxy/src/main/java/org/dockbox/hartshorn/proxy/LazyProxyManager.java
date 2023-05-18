@@ -139,10 +139,8 @@ public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<
     }
 
     @Override
-    public Option<T> delegate(final Method method) {
-        return Option.of(this.delegates)
-                .map(map -> map.get(method))
-                .cast(targetClass);
+    public Option<?> delegate(final Method method) {
+        return Option.of(this.delegates.get(method));
     }
 
     @Override
