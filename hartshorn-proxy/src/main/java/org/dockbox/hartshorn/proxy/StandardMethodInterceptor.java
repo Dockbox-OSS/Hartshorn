@@ -223,7 +223,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
     @Override
     public Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
         final MethodView<?, ?> methodView = method.toIntrospector();
-        final ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, applicationProxier);
+        final ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, this.applicationProxier);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 

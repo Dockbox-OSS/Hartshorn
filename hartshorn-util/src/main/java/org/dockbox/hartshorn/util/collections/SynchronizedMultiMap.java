@@ -37,7 +37,7 @@ public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> 
     protected synchronized Map<K, Collection<V>> map() {
         synchronized (this) {
             if (this.map == null) {
-                this.map = createEmptyMap();
+                this.map = this.createEmptyMap();
             }
             return this.map;
         }

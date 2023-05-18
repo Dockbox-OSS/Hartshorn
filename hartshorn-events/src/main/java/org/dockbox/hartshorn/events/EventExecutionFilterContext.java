@@ -30,19 +30,19 @@ public class EventExecutionFilterContext extends DefaultProvisionContext {
     private final Set<EventExecutionFilter> executionFilters = ConcurrentHashMap.newKeySet();
 
     public boolean contains(final EventExecutionFilter o) {
-        return executionFilters.contains(o);
+        return this.executionFilters.contains(o);
     }
 
     public boolean add(final EventExecutionFilter eventExecutionFilter) {
-        return executionFilters.add(eventExecutionFilter);
+        return this.executionFilters.add(eventExecutionFilter);
     }
 
     public boolean remove(final EventExecutionFilter o) {
-        return executionFilters.remove(o);
+        return this.executionFilters.remove(o);
     }
 
     public boolean addAll(final Collection<? extends EventExecutionFilter> c) {
-        return executionFilters.addAll(c);
+        return this.executionFilters.addAll(c);
     }
 
     public Set<EventExecutionFilter> filters() {

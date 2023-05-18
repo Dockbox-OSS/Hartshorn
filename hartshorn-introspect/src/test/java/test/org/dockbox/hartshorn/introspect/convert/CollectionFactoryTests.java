@@ -38,28 +38,28 @@ public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithArrayList() {
-        final List<Integer> list = createDefaultFactory().createCollection(List.class, Integer.class, 10);
+        final List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class, 10);
         Assertions.assertTrue(list instanceof ArrayList);
         Assertions.assertEquals(list.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithHashSet() {
-        final Set<String> set = createDefaultFactory().createCollection(Set.class, String.class, 5);
+        final Set<String> set = this.createDefaultFactory().createCollection(Set.class, String.class, 5);
         Assertions.assertTrue(set instanceof HashSet);
         Assertions.assertEquals(set.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithTreeSet() {
-        final SortedSet<Double> sortedSet = createDefaultFactory().createCollection(SortedSet.class, Double.class, 3);
+        final SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class, 3);
         Assertions.assertTrue(sortedSet instanceof TreeSet);
         Assertions.assertEquals(sortedSet.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithLinkedList() {
-        final Queue<Boolean> queue = createDefaultFactory().createCollection(Queue.class, Boolean.class, 7);
+        final Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class, 7);
         Assertions.assertTrue(queue instanceof LinkedList);
         Assertions.assertEquals(queue.size(), 0);
     }
