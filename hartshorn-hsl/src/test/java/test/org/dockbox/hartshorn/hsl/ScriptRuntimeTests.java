@@ -165,9 +165,9 @@ public class ScriptRuntimeTests {
 
         final Map<String, Object> results = context.interpreter().global();
         Assertions.assertFalse(results.isEmpty());
-        Assertions.assertEquals(12d, results.get("a"));
-        Assertions.assertEquals(13d, results.get("b"));
-        Assertions.assertEquals(25d, results.get("c"));
+        Assertions.assertEquals(12.0d, results.get("a"));
+        Assertions.assertEquals(13.0d, results.get("b"));
+        Assertions.assertEquals(25.0d, results.get("c"));
     }
 
     @ParameterizedTest

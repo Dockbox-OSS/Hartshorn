@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.component.Component
 class GroovyClassComponent {
 
     @Inject
-    private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext
     private ApplicationEnvironment environment
 
     @Inject

@@ -44,19 +44,19 @@ public class PrimitiveWrapperConverterTests {
     @Test
     void testDoubleToWrapperCanConvert() {
         final GenericConverter converter = new PrimitiveWrapperConverter();
-        final Object converted = converter.convert(1D, double.class, Double.class);
+        final Object converted = converter.convert(1.0D, double.class, Double.class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Double);
-        Assertions.assertEquals(1D, converted);
+        Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
     void testFloatToWrapperCanConvert() {
         final GenericConverter converter = new PrimitiveWrapperConverter();
-        final Object converted = converter.convert(1F, float.class, Float.class);
+        final Object converted = converter.convert(1.0F, float.class, Float.class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Float);
-        Assertions.assertEquals(1F, converted);
+        Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
@@ -116,19 +116,19 @@ public class PrimitiveWrapperConverterTests {
     @Test
     void testWrapperToDoubleCanConvert() {
         final PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Double.valueOf(1D), double.class));
+        Assertions.assertTrue(converter.canConvert(Double.valueOf(1.0D), double.class));
 
-        final double converted = (double) converter.convert(Double.valueOf(1D), Double.class, double.class);
-        Assertions.assertEquals(1D, converted);
+        final double converted = (double) converter.convert(Double.valueOf(1.0D), Double.class, double.class);
+        Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
     void testWrapperToFloatCanConvert() {
         final PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Float.valueOf(1F), float.class));
+        Assertions.assertTrue(converter.canConvert(Float.valueOf(1.0F), float.class));
 
-        final float converted = (float) converter.convert(Float.valueOf(1F), Float.class, float.class);
-        Assertions.assertEquals(1F, converted);
+        final float converted = (float) converter.convert(Float.valueOf(1.0F), Float.class, float.class);
+        Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
