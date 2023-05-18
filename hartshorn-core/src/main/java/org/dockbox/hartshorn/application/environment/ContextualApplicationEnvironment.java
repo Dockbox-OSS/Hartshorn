@@ -333,7 +333,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         final ApplicationArgumentParser parser = context.argumentParser();
 
         final boolean debug = Boolean.TRUE.equals(Option.of(parser.parse(arguments).get("hartshorn:debug"))
-                .map(String.class::cast)
+                .cast(String.class)
                 .map(Boolean::valueOf)
                 .orElse(false));
 

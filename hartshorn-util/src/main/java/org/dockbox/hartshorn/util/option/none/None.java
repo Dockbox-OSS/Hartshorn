@@ -131,7 +131,7 @@ public class None<T> implements Option<T> {
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "None";
     }
 }

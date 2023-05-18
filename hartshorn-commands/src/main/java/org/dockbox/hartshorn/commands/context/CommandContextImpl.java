@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collections;
@@ -100,7 +99,7 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
         return Option.of(this.args.stream()
                 .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
-        ).map(arg -> TypeUtils.adjustWildcards(arg, CommandParameter.class));
+        ).adjust(CommandParameter.class);
     }
 
     @Override
@@ -108,7 +107,7 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
         return Option.of(this.flags.stream()
                 .filter(flag -> flag.trimmedKey().equals(key))
                 .findFirst()
-        ).map(flag -> TypeUtils.adjustWildcards(flag, CommandParameter.class));
+        ).adjust(CommandParameter.class);
     }
 
     @Override

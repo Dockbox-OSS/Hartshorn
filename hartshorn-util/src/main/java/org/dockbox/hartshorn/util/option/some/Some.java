@@ -137,7 +137,7 @@ public class Some<T> implements Option<T> {
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "Some{" +
                 "value=" + this.value +
                 '}';

@@ -154,7 +154,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final List<?> beans = staticComponentContext.provider().all(beanKey);
         //noinspection unchecked
         final Collection<Object> fieldValue = field.get(instance)
-                .map(Collection.class::cast)
+                .cast(Collection.class)
                 .orCompute(() -> (Collection<Object>) this.conversionService.get().convert(null, field.type().type()))
                 .get();
         fieldValue.addAll(beans);

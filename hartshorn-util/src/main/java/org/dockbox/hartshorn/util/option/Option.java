@@ -18,16 +18,27 @@ package org.dockbox.hartshorn.util.option;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.none.None;
 import org.dockbox.hartshorn.util.option.some.Some;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.transform.Result;
@@ -46,7 +57,7 @@ import javax.xml.transform.Result;
  * @author Guus Lieben
  * @since 22.5
  */
-public interface Option<T> {
+public interface Option<T> extends Iterable<T> {
 
     /**
      * Creates a new {@link Option} instance wrapping the given nullable value. If the value is {@code null}, an
@@ -303,6 +314,19 @@ public interface Option<T> {
     Stream<T> stream();
 
     /**
+     * Returns a {@link Stream} based on the current {@link Option} instance. If a value is present, a {@link Stream}
+     * is created using the provided {@link Function}. If no value is present, an empty {@link Stream} is returned.
+     *
+     * @param mapper the {@link Function} to use to create the {@link Stream} if a value is present.
+     * @return a {@link Stream} based on the current {@link Option} instance.
+     * @param <U> the type of the elements of the new {@link Stream}
+     */
+    @NonNull
+    default <U> Stream<U> stream(@NonNull final Function<@NonNull T, @NonNull Stream<U>> mapper) {
+        return this.stream().flatMap(mapper);
+    }
+
+    /**
      * Returns {@code true} if the value wrapped by the current {@link Option} instance is equal to the given value,
      * otherwise {@code false}. If no value is present, {@code false} is returned. This checks for equality, not for
      * identity.
@@ -313,6 +337,159 @@ public interface Option<T> {
      */
     boolean contains(@Nullable T value);
 
-    String toString();
+    /**
+     * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
+     * given type, an empty {@link Option} is returned. If no value is present, an empty {@link Option} is returned.
+     *
+     * @param type the type to cast the value to
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
+     *       type.
+     * @param <U> the type to cast the value to
+     */
+    default <U> Option<U> ofType(@NonNull final Class<U> type) {
+        return this.filter(type::isInstance).cast(type);
+    }
 
+    /**
+     * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
+     * given type, a {@link ClassCastException} is thrown. If no value is present, an empty {@link Option} is returned.
+     *
+     * @param type the type to cast the value to
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
+     *        type.
+     * @param <U> the type to cast the value to
+     * @throws ClassCastException if the value is not of the given type
+     */
+    default <U> Option<U> cast(@NonNull final Class<U> type) {
+        return this.map(type::cast);
+    }
+
+    /**
+     * Casts the value wrapped by the current {@link Option} instance to the given type. If the value is not of the
+     * given type, an empty {@link Option} is returned. If no value is present, an empty {@link Option} is returned.
+     * The wildcards of the given type are adjusted to match the wildcards of the provided type parameter {@link A}.
+     *
+     * @param type the type to cast the value to
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
+     * @param <K> the type to cast the value to
+     * @param <A> the type parameter to adjust the wildcards of the given type to
+     */
+    default <K extends T, A extends K> Option<A> adjust(@NonNull final Class<K> type) {
+        return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+    }
+
+    /**
+     * Performs a mutable reduction operation on the elements of this {@link Option} using a {@link Collector}. A mutable
+     * reduction is one in which the reduced value is a mutable result container, such as an {@code ArrayList}, and the
+     * accumulation function mutates it by adding new elements. This produces a result equivalent to using
+     * {@link Stream#collect(Collector)} through {@link #stream()}.
+     *
+     * @param collector the {@link Collector} describing the reduction operation
+     * @return the result of the reduction
+     * @param <E> the type of the result
+     */
+    default <E> E collect(@NonNull final Collector<T, ?, E> collector) {
+        return this.stream().collect(collector);
+    }
+
+    /**
+     * Similar to {@link #collect(Collector)}, but using explicit functions instead of a {@link Collector}. This
+     * produces a result equivalent to using {@link Stream#collect(Supplier, BiConsumer, BiConsumer)} through
+     * {@link #stream()}.
+     *
+     * @param supplier
+     *         the supplier function that provides a new mutable result container.
+     * @param accumulator
+     *         an associative, non-interfering, stateless function for incorporating an additional element
+     *         into a result container.
+     * @param combiner
+     *         an associative, non-interfering, stateless function for combining two values, which must be
+     *         compatible with the accumulator function.
+     * @param <E>
+     *         the type of the result
+     *
+     * @return the result of the reduction
+     */
+    default <E> E collect(@NonNull final Supplier<E> supplier, @NonNull final BiConsumer<E, T> accumulator, @NonNull final BiConsumer<E, E> combiner) {
+        return this.stream().collect(supplier, accumulator, combiner);
+    }
+
+    /**
+     * Returns a {@link List} containing the value wrapped by the current {@link Option} instance. If no value is
+     * present, an empty {@link List} is returned.
+     *
+     * @return a {@link List} containing the value wrapped by the current {@link Option} instance.
+     */
+    default List<T> toList() {
+        return this.collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a {@link Set} containing the value wrapped by the current {@link Option} instance. If no value is
+     * present, an empty {@link Set} is returned.
+     *
+     * @return a {@link Set} containing the value wrapped by the current {@link Option} instance.
+     */
+    default Set<T> toSet() {
+        return this.collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
+     * by the key returned by the given {@link Function}. If no value is present in the current {@link Option} instance,
+     * an empty {@link Map} is returned.
+     *
+     * @param keyMapper
+     *         the {@link Function} used to map the value wrapped by the current {@link Option} instance to a
+     *         key in the resulting {@link Map}.
+     * @param <K>
+     *         the type of the key in the resulting {@link Map}.
+     *
+     * @return a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
+     *         by the key returned by the given {@link Function}.
+     */
+    default <K> Map<K, T> toMap(@NonNull final Function<T, K> keyMapper) {
+        return this.collect(Collectors.toMap(keyMapper, Function.identity()));
+    }
+
+    /**
+     * Returns a {@link Map} containing the value wrapped by the current {@link Option} as both key and value,
+     * identified by the key returned by the given {@link Function}, and the value returned by the given
+     * {@link Function}. If no value is present in the current {@link Option} instance, an empty {@link Map} is
+     * returned.
+     *
+     * @param keyMapper
+     *         the {@link Function} used to map the value wrapped by the current {@link Option} instance to a
+     *         key in the resulting {@link Map}.
+     * @param valueMapper
+     *         the {@link Function} used to map the value wrapped by the current {@link Option} instance to
+     *         a value in the resulting {@link Map}.
+     * @param <K>
+     *         the type of the keys in the resulting {@link Map}.
+     * @param <V>
+     *         the type of the values in the resulting {@link Map}.
+     *
+     * @return a {@link Map} containing the wrapped value as both key and value, as returned by the given
+     *         {@link Function functions}.
+     */
+    default <K, V> Map<K, V> toMap(@NonNull final Function<T, K> keyMapper, @NonNull final Function<T, V> valueMapper) {
+        return this.collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    @Override
+    default Spliterator<T> spliterator() {
+        final int size = this.map(value -> 1).orElse(0);
+        return Spliterators.spliterator(this.iterator(), size, 0);
+    }
+
+    @Override
+    default Iterator<T> iterator() {
+        return this.map(List::of)
+                .map(List::iterator)
+                .orElseGet(Collections::emptyIterator);
+    }
+
+    @Override
+    @NonNull
+    String toString(); // Force implementation of toString
 }

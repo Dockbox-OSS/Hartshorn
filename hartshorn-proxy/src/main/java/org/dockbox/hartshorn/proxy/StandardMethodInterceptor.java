@@ -122,7 +122,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
                     arguments);
         }
         else {
-            final Option<T> delegate = this.manager().delegate(source.toMethod());
+            final Option<?> delegate = this.manager().delegate(source.toMethod());
             if (delegate.present())
                 result = this.invokeDelegate(delegate.get(), callbackTarget, source, arguments);
             else {
@@ -174,7 +174,7 @@ public class StandardMethodInterceptor<T> implements ProxyMethodInterceptor<T>, 
         return interceptor.intercept(context);
     }
 
-    protected Object invokeDelegate(final T delegate, final T self, final Invokable source, final Object[] args) throws Throwable {
+    protected Object invokeDelegate(final Object delegate, final T self, final Invokable source, final Object[] args) throws Throwable {
         Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
         if (defaultMethod.present()) return defaultMethod.get();
 

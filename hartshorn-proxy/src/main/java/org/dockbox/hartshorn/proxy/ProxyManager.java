@@ -71,10 +71,14 @@ public interface ProxyManager<T> extends Context {
      * Returns the delegate for the given method. This method is used to obtain the delegate for the given method, which
      * may be either a subtype of the original type, or a supertype of the original type.
      *
+     * <p>Implementation note: this method does not return a parameterized type, as the type of the delegate is not
+     * guaranteed to be a subtype of the original type, as it is also possible for the delegate to be a concrete
+     * implementation of a super type- or interface of the target type.
+     *
      * @param method the method for which to obtain the delegate
      * @return the delegate for the given method
      */
-    Option<T> delegate(Method method);
+    Option<?> delegate(Method method);
 
     /**
      * Returns the delegate for the given type. This method is used to obtain the delegate for the given type, which is

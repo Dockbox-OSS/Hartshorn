@@ -57,7 +57,7 @@ public class StandardPropertyHolder implements PropertyHolder {
         this.propertyMapper = propertyMapper.fileType(FileFormats.PROPERTIES);
         this.properties = this.createConfigurationMap();
         propertyHolder.properties()
-                .forEach((k, v) -> this.set(String.valueOf(k), v));
+                .forEach((key, value) -> this.set(String.valueOf(key), value));
     }
 
     @Override
@@ -120,7 +120,7 @@ public class StandardPropertyHolder implements PropertyHolder {
 
         final Object patch = this.objectMapper.write(value)
                 .flatMap(serialized -> this.objectMapper.read(serialized, Map.class))
-                .map(map -> (Object) map)
+                .cast(Object.class)
                 .orElse(value);
 
         Map<String, Object> current = this.properties;

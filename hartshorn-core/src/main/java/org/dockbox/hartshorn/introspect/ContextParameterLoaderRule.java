@@ -52,6 +52,6 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Applicati
                 .orElse(false));
         if (required && out.absent()) throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
 
-        return out.map(parameter.type()::cast);
+        return out.cast(parameter.type().type());
     }
 }

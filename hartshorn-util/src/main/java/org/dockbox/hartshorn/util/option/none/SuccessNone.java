@@ -163,7 +163,7 @@ public class SuccessNone<T, E extends Throwable> extends None<T> implements Atte
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "SuccessNone";
     }
 }
