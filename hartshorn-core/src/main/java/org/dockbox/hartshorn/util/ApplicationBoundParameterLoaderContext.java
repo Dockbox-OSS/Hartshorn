@@ -47,7 +47,7 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
         this(executable, instance, applicationContext, applicationContext, scope);
     }
 
-    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ApplicationContext applicationContext, ComponentProvider provider, Scope scope) {
+    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider, final Scope scope) {
         super(executable, instance);
         this.applicationContext = applicationContext;
         this.provider = provider;
@@ -73,12 +73,12 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     @Override
-    public <C extends Context> void add(C context) {
+    public <C extends Context> void add(final C context) {
         this.context.add(context);
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
+    public <C extends Context> void add(final String name, final C context) {
         this.context.add(name, context);
     }
 
@@ -88,12 +88,12 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     @Override
-    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
+    public <C extends Context> Option<C> first(final ContextIdentity<C> key) {
         return this.context.first(key);
     }
 
     @Override
-    public <C extends Context> List<C> all(ContextIdentity<C> key) {
+    public <C extends Context> List<C> all(final ContextIdentity<C> key) {
         return this.context.all(key);
     }
 }

@@ -36,7 +36,7 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
     private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> nameGenerator.get(prefix);
 
-    public CglibProxyFactory(final Class<T> type, CglibApplicationProxier applicationProxier) {
+    public CglibProxyFactory(final Class<T> type, final CglibApplicationProxier applicationProxier) {
         super(type, applicationProxier);
     }
 

@@ -334,14 +334,14 @@ public abstract class ProxyTests {
 
     @Test
     public void testConcreteClassProxyWithNonEqualsImplementedDelegateDoesNotEqual() throws ApplicationException {
-        CheckedSupplier<DemoServiceC> supplier = () -> proxierLoader().create(this.introspector())
+        final CheckedSupplier<DemoServiceC> supplier = () -> this.proxierLoader().create(this.introspector())
                 .factory(DemoServiceC.class)
                 .delegate(new DemoServiceC())
                 .proxy()
                 .get();
 
-        DemoServiceC serviceC3 = supplier.get();
-        DemoServiceC serviceC4 = supplier.get();
+        final DemoServiceC serviceC3 = supplier.get();
+        final DemoServiceC serviceC4 = supplier.get();
 
         Assertions.assertNotSame(serviceC3, serviceC4);
         Assertions.assertNotEquals(serviceC3, serviceC4);
@@ -349,7 +349,7 @@ public abstract class ProxyTests {
 
     @Test
     void testConcreteClassProxyWithDelegateDoesNotEqual() throws ApplicationException {
-        CheckedSupplier<DemoServiceD> supplier = () -> proxierLoader().create(this.introspector())
+        final CheckedSupplier<DemoServiceD> supplier = () -> this.proxierLoader().create(this.introspector())
                 .factory(DemoServiceD.class)
                 .delegate(new DemoServiceD("name"))
                 .proxy()
@@ -425,8 +425,8 @@ public abstract class ProxyTests {
 
     @Test
     void testLambdaCanBeProxied() throws NoSuchMethodException, ApplicationException {
-        Class<Supplier<String>> supplierClass = (Class<Supplier<String>>) (Class<?>) Supplier.class;
-        final StateAwareProxyFactory<Supplier<String>> factory = proxierLoader().create(this.introspector()).factory(supplierClass);
+        final Class<Supplier<String>> supplierClass = (Class<Supplier<String>>) (Class<?>) Supplier.class;
+        final StateAwareProxyFactory<Supplier<String>> factory = this.proxierLoader().create(this.introspector()).factory(supplierClass);
         factory.intercept(Supplier.class.getMethod("get"), context -> "foo");
         final Option<Supplier<String>> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -435,8 +435,8 @@ public abstract class ProxyTests {
 
     @Test
     void testIsProxyIsTrueIfTypeIsProxy() throws ApplicationException {
-        Introspector introspector = this.introspector();
-        ApplicationProxier proxier = this.proxierLoader().create(introspector);
+        final Introspector introspector = this.introspector();
+        final ApplicationProxier proxier = this.proxierLoader().create(introspector);
         final ProxyFactory<?> factory = proxier.factory(Object.class);
         final Object proxy = factory.proxy().get();
 
@@ -449,8 +449,8 @@ public abstract class ProxyTests {
 
     @Test
     void testIsProxyIsFalseIfTypeIsNormal() {
-        Introspector introspector = this.introspector();
-        ApplicationProxier proxier = this.proxierLoader().create(introspector);
+        final Introspector introspector = this.introspector();
+        final ApplicationProxier proxier = this.proxierLoader().create(introspector);
         final TypeView<?> view = introspector.introspect(Object.class);
         final boolean isProxy = proxier.isProxy(view);
         Assertions.assertFalse(isProxy);

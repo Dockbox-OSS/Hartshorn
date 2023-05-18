@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 @ServiceLoader(ApplicationProxierLoader.class)
 public class CglibApplicationProxierLoader implements ApplicationProxierLoader {
     @Override
-    public ApplicationProxier create(Introspector introspector) {
+    public ApplicationProxier create(final Introspector introspector) {
         return new CglibApplicationProxier(introspector);
     }
 }

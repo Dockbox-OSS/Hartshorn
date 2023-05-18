@@ -142,7 +142,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public void forEach(BiConsumer<K, V> consumer) {
+    public void forEach(final BiConsumer<K, V> consumer) {
         this.map().forEach((k, v) -> v.forEach(v1 -> consumer.accept(k, v1)));
     }
 }

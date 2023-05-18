@@ -31,7 +31,7 @@ public interface CommandSource extends MessageReceiver, ContextCarrier {
      *
      * @param command The raw command
      */
-    default void execute(String command) throws ParsingException {
+    default void execute(final String command) throws ParsingException {
         final CommandGateway gateway = this.applicationContext().get(CommandGateway.class);
         gateway.accept(this, command);
     }

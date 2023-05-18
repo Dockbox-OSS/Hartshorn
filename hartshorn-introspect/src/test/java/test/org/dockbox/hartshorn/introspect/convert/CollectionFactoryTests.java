@@ -66,7 +66,7 @@ public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithEnumSet() {
-        CollectionFactory factory = this.createFactory(EnumSet.class, () -> null);
+        final CollectionFactory factory = this.createFactory(EnumSet.class, () -> null);
         final EnumSet<Color> enumSet = factory.createCollection(EnumSet.class, Color.class, 2);
         Assertions.assertTrue(enumSet instanceof EnumSet);
         Assertions.assertEquals(enumSet.size(), 0);
@@ -74,7 +74,7 @@ public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithUnsupportedInterface() {
-        CollectionFactory factory = this.createFactory(BeanContext.class, () -> null);
+        final CollectionFactory factory = this.createFactory(BeanContext.class, () -> null);
         Assertions.assertThrows(IllegalArgumentException.class, () -> factory.createCollection(BeanContext.class, Integer.class, 0));
     }
 

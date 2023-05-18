@@ -156,7 +156,7 @@ public class DefaultArgumentConverters {
     public static ArgumentConverter<Integer[]> remainingIntegersArgumentConverter() {
         final Converter<String, Integer> integerConverter = new StringToNumberConverterFactory().create(Integer.class);
         return ArgumentConverterImpl.builder(Integer[].class, "remainingInt")
-                .withConverter((String in) -> {
+                .withConverter((final String in) -> {
                     final String[] parts = in.split(" ");
                     final Integer[] integers = new Integer[parts.length];
                     for (int i = 0; i < parts.length; i++) {
