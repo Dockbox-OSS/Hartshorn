@@ -16,11 +16,13 @@
 
 package test.org.dockbox.hartshorn.events.listeners;
 
-import test.org.dockbox.hartshorn.events.SampleEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
+
+import test.org.dockbox.hartshorn.events.SampleEvent;
 
 public final class StaticEventListener {
 
+    @SuppressWarnings({ "PublicField", "StaticNonFinalField" })
     public static boolean fired;
 
     private StaticEventListener() {}

@@ -35,7 +35,7 @@ import jakarta.inject.Inject;
 @InstallIfAbsent
 public class StaticComponentContext extends DefaultApplicationAwareContext implements StaticComponentCollector, Reportable {
 
-    public static ContextKey<StaticComponentContext> CONTEXT_KEY = ContextKey.builder(StaticComponentContext.class)
+    public static final ContextKey<StaticComponentContext> CONTEXT_KEY = ContextKey.builder(StaticComponentContext.class)
             .fallback(StaticComponentContext::new)
             .build();
 
