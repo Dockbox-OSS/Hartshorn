@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.reporting.component;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 public class ComponentReportingConfiguration {
 
@@ -58,7 +59,7 @@ public class ComponentReportingConfiguration {
         return this;
     }
 
-    public EnumMap<ComponentAttribute, Boolean> attributes() {
+    public Map<ComponentAttribute, Boolean> attributes() {
         return this.attributes;
     }
 

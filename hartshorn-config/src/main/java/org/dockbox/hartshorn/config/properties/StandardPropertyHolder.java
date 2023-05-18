@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Function;
 
@@ -152,15 +153,20 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     protected void patchConfigurationMap(final Map<String, Object> origin, final Map<String, Object> patch) {
-        for (final String key : patch.keySet()) {
-            final Object patchValue = patch.get(key);
+        for (final Entry<String, Object> entry : patch.entrySet()) {
+            final String key = entry.getKey();
+            final Object patchValue = entry.getValue();
             if (origin.containsKey(key)) {
                 final Object originValue = origin.get(key);
-                if (originValue instanceof Map && patchValue instanceof Map)
+                if (originValue instanceof Map && patchValue instanceof Map) {
                     this.patchConfigurationMap((Map<String, Object>) originValue, (Map<String, Object>) patchValue);
-                else if (originValue instanceof Collection<?> && patchValue instanceof Collection<?>)
+                }
+                else if (originValue instanceof List<?> && patchValue instanceof List<?>) {
                     origin.put(key, this.merge((List<Object>) originValue, (List<Object>) patchValue));
-                else origin.put(key, patchValue);
+                }
+                else {
+                    origin.put(key, patchValue);
+                }
             }
             else origin.put(key, patchValue);
         }

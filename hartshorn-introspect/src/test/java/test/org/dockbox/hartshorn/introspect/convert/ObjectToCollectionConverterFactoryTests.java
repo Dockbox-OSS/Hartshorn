@@ -36,8 +36,8 @@ public class ObjectToCollectionConverterFactoryTests {
         final Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Set);
-        Assertions.assertEquals(1, ((Set) converted).size());
-        Assertions.assertEquals(element, ((Set) converted).iterator().next());
+        Assertions.assertEquals(1, ((Collection) converted).size());
+        Assertions.assertEquals(element, ((Iterable) converted).iterator().next());
     }
 
     @Test
@@ -47,8 +47,8 @@ public class ObjectToCollectionConverterFactoryTests {
         final Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Set);
-        Assertions.assertEquals(1, ((Set) converted).size());
-        Assertions.assertEquals(element, ((Set) converted).iterator().next());
+        Assertions.assertEquals(1, ((Collection) converted).size());
+        Assertions.assertEquals(element, ((Iterable) converted).iterator().next());
     }
 
     private static Converter<Object, Set> createConverter() {

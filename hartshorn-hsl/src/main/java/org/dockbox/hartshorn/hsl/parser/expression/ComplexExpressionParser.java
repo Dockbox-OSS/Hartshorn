@@ -83,16 +83,16 @@ public class ComplexExpressionParser {
             final Token equals = this.parser.previous();
             final Expression value = this.parse();
 
-            if (expr instanceof VariableExpression) {
-                final Token name = ((VariableExpression) expr).name();
+            if (expr instanceof VariableExpression variableExpression) {
+                final Token name = variableExpression.name();
                 return new AssignExpression(name, value);
             }
             else if (expr instanceof final ArrayGetExpression arrayGetExpression) {
                 final Token name = arrayGetExpression.name();
                 return new ArraySetExpression(name, arrayGetExpression.index(), value);
             }
-            else if (expr instanceof final GetExpression get) {
-                return new SetExpression(get.object(), get.name(), value);
+            else if (expr instanceof final GetExpression getExpression) {
+                return new SetExpression(getExpression.object(), getExpression.name(), value);
             }
             throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, equals);
         }

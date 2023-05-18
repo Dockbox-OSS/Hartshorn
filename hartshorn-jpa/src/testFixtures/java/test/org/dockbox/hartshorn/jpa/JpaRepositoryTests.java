@@ -196,7 +196,7 @@ public abstract class JpaRepositoryTests implements DataSourceConfigurationLoade
 
         Assertions.assertTrue(delegate instanceof EntityManagerJpaRepository);
 
-        final EntityManagerCarrier entityJpaRepository = (EntityManagerJpaRepository<?, ?>) delegate;
+        final EntityManagerCarrier entityJpaRepository = (EntityManagerCarrier) delegate;
         final EntityManager em = entityJpaRepository.manager();
         Assertions.assertNotNull(em);
     }

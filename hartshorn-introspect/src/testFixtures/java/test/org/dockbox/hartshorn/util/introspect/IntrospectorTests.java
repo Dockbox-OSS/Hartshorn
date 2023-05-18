@@ -386,7 +386,7 @@ public abstract class IntrospectorTests {
     public void genericTestMethod(final List<List<String>> nestedGeneric) { }
 
     @SuppressWarnings("unused") // Used by testWildcardsWithUpperBounds
-    public void methodWithWildcardUpperbounds(final List<? extends String> list) { }
+    public void methodWithWildcardUpperbounds(final List<String> list) { }
 
     @Test
     void testWildcardsWithUpperBounds() {
