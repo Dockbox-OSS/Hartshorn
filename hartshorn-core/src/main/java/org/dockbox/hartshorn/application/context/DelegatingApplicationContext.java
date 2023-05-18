@@ -48,7 +48,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     private boolean isClosed = false;
     protected boolean isRunning = false;
 
-    public DelegatingApplicationContext(InitializingContext context) {
+    protected DelegatingApplicationContext(InitializingContext context) {
         super(null);
         context = new InitializingContext(context.environment(), this, context.builder());
         this.add(context);

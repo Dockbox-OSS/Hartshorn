@@ -40,7 +40,7 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     private ExecutableParametersIntrospector parametersIntrospector;
     private TypeVariablesIntrospector typeVariablesIntrospector;
 
-    public ReflectionExecutableElementView(final ReflectionIntrospector introspector, final Executable executable) {
+    protected ReflectionExecutableElementView(final ReflectionIntrospector introspector, final Executable executable) {
         super(introspector);
         this.executable = executable;
         this.introspector = introspector;

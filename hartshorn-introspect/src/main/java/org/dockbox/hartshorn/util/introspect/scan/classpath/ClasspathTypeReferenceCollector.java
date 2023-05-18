@@ -33,7 +33,7 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     private final String packageName;
     private final Set<TypeReference> cache = ConcurrentHashMap.newKeySet();
 
-    public ClasspathTypeReferenceCollector(final String packageName) {
+    protected ClasspathTypeReferenceCollector(final String packageName) {
         this.packageName = packageName;
     }
 

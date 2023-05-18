@@ -27,10 +27,10 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     protected abstract Map<K, Collection<V>> map();
     protected abstract Collection<V> createEmptyCollection();
 
-    public AbstractMultiMap() {
+    protected AbstractMultiMap() {
     }
 
-    public AbstractMultiMap(MultiMap<K, V> map) {
+    protected AbstractMultiMap(final MultiMap<K, V> map) {
         this.putAll(map);
     }
 

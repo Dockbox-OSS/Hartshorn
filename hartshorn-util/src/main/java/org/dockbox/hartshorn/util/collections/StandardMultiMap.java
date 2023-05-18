@@ -29,10 +29,10 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     protected Map<K, Collection<V>> map;
 
-    public StandardMultiMap() {
+    protected StandardMultiMap() {
     }
 
-    public StandardMultiMap(final MultiMap<K, V> map) {
+    protected StandardMultiMap(final MultiMap<K, V> map) {
         super(map);
     }
 
@@ -48,10 +48,10 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     public abstract static class ConcurrentMultiMap<K, V> extends StandardMultiMap<K, V> {
 
-        public ConcurrentMultiMap() {
+        protected ConcurrentMultiMap() {
         }
 
-        public ConcurrentMultiMap(final MultiMap<K, V> map) {
+        protected ConcurrentMultiMap(final MultiMap<K, V> map) {
             super(map);
         }
 
@@ -93,10 +93,10 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     public abstract static class HashMultiMap<K, V> extends StandardMultiMap<K, V> {
 
-        public HashMultiMap() {
+        protected HashMultiMap() {
         }
 
-        public HashMultiMap(final MultiMap<K, V> map) {
+        protected HashMultiMap(final MultiMap<K, V> map) {
             super(map);
         }
 
@@ -138,10 +138,10 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     public abstract static class TreeMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
 
-        public TreeMultiMap() {
+        protected TreeMultiMap() {
         }
 
-        public TreeMultiMap(final MultiMap<K, V> map) {
+        protected TreeMultiMap(final MultiMap<K, V> map) {
             super(map);
         }
 

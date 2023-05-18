@@ -26,10 +26,10 @@ public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> 
 
     private transient Map<K, Collection<V>> map;
 
-    public SynchronizedMultiMap() {
+    protected SynchronizedMultiMap() {
     }
 
-    public SynchronizedMultiMap(final MultiMap<K, V> map) {
+    protected SynchronizedMultiMap(final MultiMap<K, V> map) {
         super(map);
     }
 
