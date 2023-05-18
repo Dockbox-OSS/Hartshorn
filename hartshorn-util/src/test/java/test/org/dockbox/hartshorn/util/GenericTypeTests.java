@@ -36,7 +36,7 @@ public class GenericTypeTests {
 
         final Option<Class<String>> classOption = genericType.asClass();
         Assertions.assertTrue(classOption.present());
-        Assertions.assertEquals(String.class, classOption.get());
+        Assertions.assertSame(String.class, classOption.get());
     }
 
     @Test
