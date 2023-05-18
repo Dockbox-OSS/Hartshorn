@@ -64,10 +64,10 @@ public class Tuple<K, V> implements Entry<K, V> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final Tuple<?, ?> tuple = (Tuple<?, ?>) other;
         return Objects.equals(this.key, tuple.key) && Objects.equals(this.value, tuple.value);
     }
 

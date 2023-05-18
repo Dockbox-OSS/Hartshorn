@@ -121,9 +121,9 @@ public class MethodInterceptorContext<T, R> {
     }
 
     @Deprecated
-    public R checkedCast(final Object o) {
+    public R checkedCast(final Object object) {
         if (this.method.returnType().isVoid()) return null;
-        else if (this.method.returnType().isInstance(o)) return this.method.returnType().cast(o);
-        else throw new UnsupportedOperationException("Cannot cast " + o.getClass().getName() + " to " + this.method.returnType().name() + ", use a ConversionService instance to convert the result.");
+        else if (this.method.returnType().isInstance(object)) return this.method.returnType().cast(object);
+        else throw new UnsupportedOperationException("Cannot cast " + object.getClass().getName() + " to " + this.method.returnType().name() + ", use a ConversionService instance to convert the result.");
     }
 }

@@ -71,26 +71,26 @@ public class CooldownExtension implements CommandExecutorExtension {
      * Places an object in the cooldown queue for a given amount of time. If the object is already in
      * the cooldown queue it will not be overwritten and the existing queue position with be kept.
      *
-     * @param o The object to place in cooldown
+     * @param target The object to place in cooldown
      * @param duration The duration
      * @param timeUnit The time unit in which the duration is kept
      */
-    protected void cooldown(final Object o, final long duration, final TemporalUnit timeUnit) {
-        if (this.inCooldown(o)) return;
-        this.activeCooldowns.put(o, new CooldownEntry(LocalDateTime.now(), duration, timeUnit));
+    protected void cooldown(final Object target, final long duration, final TemporalUnit timeUnit) {
+        if (this.inCooldown(target)) return;
+        this.activeCooldowns.put(target, new CooldownEntry(LocalDateTime.now(), duration, timeUnit));
     }
 
     /**
      * Returns true if an object is in an active cooldown queue. Otherwise false
      *
-     * @param o The object
+     * @param target The object to check
      *
      * @return true if an object is in an active cooldown queue. Otherwise false
      */
-    protected boolean inCooldown(final Object o) {
-        if (this.activeCooldowns.containsKey(o)) {
+    protected boolean inCooldown(final Object target) {
+        if (this.activeCooldowns.containsKey(target)) {
             final LocalDateTime now = LocalDateTime.now();
-            final CooldownEntry cooldown = this.activeCooldowns.get(o);
+            final CooldownEntry cooldown = this.activeCooldowns.get(target);
             final LocalDateTime timeCooledDown = cooldown.startTime();
             final long duration = cooldown.duration();
             final TemporalUnit timeUnit = cooldown.timeUnit();

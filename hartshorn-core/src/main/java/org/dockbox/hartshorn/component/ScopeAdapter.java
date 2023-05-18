@@ -35,11 +35,11 @@ public final class ScopeAdapter<T> implements Scope {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final ScopeAdapter<?> that = (ScopeAdapter<?>) o;
-        return this.adaptee.equals(that.adaptee);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final ScopeAdapter<?> adapter = (ScopeAdapter<?>) other;
+        return this.adaptee.equals(adapter.adaptee);
     }
 
     @Override

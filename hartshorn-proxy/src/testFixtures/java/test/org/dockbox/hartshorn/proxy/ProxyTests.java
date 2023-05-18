@@ -386,11 +386,11 @@ public abstract class ProxyTests {
         }
 
         @Override
-        public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || this.getClass() != o.getClass()) return false;
-            final DemoServiceD that = (DemoServiceD) o;
-            return this.name.equals(that.name);
+        public boolean equals(final Object other) {
+            if (this == other) return true;
+            if (other == null || this.getClass() != other.getClass()) return false;
+            final DemoServiceD service = (DemoServiceD) other;
+            return this.name.equals(service.name);
         }
     }
 

@@ -51,10 +51,10 @@ public interface BindingFunction<T> {
      * every time it is requested. This may not enhance the instance before it
      * is returned.
      *
-     * @param t The instance to bind to
+     * @param instance The instance to bind to
      * @return The binder
      */
-    Binder singleton(T t);
+    Binder singleton(T instance);
 
     /**
      * Binds to a supplier that will provide a lazy instance of the given type

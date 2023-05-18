@@ -60,8 +60,8 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public ApplicationContext singleton(final T t) {
-        this.delegate.singleton(t);
+    public ApplicationContext singleton(final T instance) {
+        this.delegate.singleton(instance);
         return this.applicationContext;
     }
 

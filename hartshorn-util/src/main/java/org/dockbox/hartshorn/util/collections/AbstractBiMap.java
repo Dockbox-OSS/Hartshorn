@@ -51,8 +51,8 @@ public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
     }
 
     @Override
-    public void putAll(final Map<? extends K, ? extends V> m) {
-        m.forEach(this::put);
+    public void putAll(final Map<? extends K, ? extends V> map) {
+        map.forEach(this::put);
     }
 
     @Override

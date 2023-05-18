@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -154,21 +155,21 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         }
     }
 
-    protected void handleScriptEvaluationError(final ScriptContext context, final ScriptEvaluationError e) {
+    protected void handleScriptEvaluationError(final ScriptContext context, final ScriptEvaluationError error) {
         final String source = context.source();
-        final Phase phase = e.phase();
-        final int line = e.line();
-        final int column = e.column();
+        final Phase phase = error.phase();
+        final int line = error.line();
+        final int column = error.column();
 
         final StringBuilder sb = new StringBuilder();
-        sb.append(e.getMessage());
-        if (e.getMessage().trim().endsWith(".")) {
+        sb.append(error.getMessage());
+        if (error.getMessage().trim().endsWith(".")) {
             sb.append(" While ");
         }
         else {
             sb.append(" while ");
         }
-        sb.append(phase.name().toLowerCase());
+        sb.append(phase.name().toLowerCase(Locale.ROOT));
         if (line <= -1 || column <= -1) {
             sb.append(" (outside source).");
         }
@@ -192,10 +193,10 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             message = "%s\n%s\n%s".formatted(message, lineText, marker);
         }
 
-        final ScriptEvaluationError error = new ScriptEvaluationError(e.getCause(), message, phase, e.at(), line, column);
+        final ScriptEvaluationError evaluationError = new ScriptEvaluationError(error.getCause(), message, phase, error.at(), line, column);
         // We only want to customize the error message, not the stack trace, so we
         // keep the original stack trace.
-        error.setStackTrace(e.getStackTrace());
-        throw error;
+        evaluationError.setStackTrace(evaluationError.getStackTrace());
+        throw evaluationError;
     }
 }

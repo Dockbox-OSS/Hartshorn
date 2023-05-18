@@ -45,9 +45,9 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
     }
 
     @Override
-    public JavaType refineSerializationType(final MapperConfig<?> config, final Annotated a, final JavaType baseType) throws JsonMappingException {
-        if (a.hasAnnotation(Property.class)) {
-            final Property property = a.getAnnotation(Property.class);
+    public JavaType refineSerializationType(final MapperConfig<?> config, final Annotated annotated, final JavaType baseType) throws JsonMappingException {
+        if (annotated.hasAnnotation(Property.class)) {
+            final Property property = annotated.getAnnotation(Property.class);
             final TypeFactory typeFactory = config.getTypeFactory();
             JavaType type = baseType;
 
@@ -82,7 +82,7 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
 
             return type;
         }
-        return super.refineSerializationType(config, a, baseType);
+        return super.refineSerializationType(config, annotated, baseType);
     }
 
     private JavaType refineAssignableType(final TypeFactory typeFactory, final JavaType javaType, final Class<?> type) throws JacksonIntrospectionException {
@@ -93,9 +93,9 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
     }
 
     @Override
-    public JavaType refineDeserializationType(final MapperConfig<?> config, final Annotated a, final JavaType baseType) throws JsonMappingException {
-        if (a.hasAnnotation(Property.class)) {
-            final Property property = a.getAnnotation(Property.class);
+    public JavaType refineDeserializationType(final MapperConfig<?> config, final Annotated annotated, final JavaType baseType) throws JsonMappingException {
+        if (annotated.hasAnnotation(Property.class)) {
+            final Property property = annotated.getAnnotation(Property.class);
             final TypeFactory typeFactory = config.getTypeFactory();
             JavaType type = baseType;
 
@@ -129,29 +129,29 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
 
             return type;
         }
-        return super.refineDeserializationType(config, a, baseType);
+        return super.refineDeserializationType(config, annotated, baseType);
     }
 
     @Override
-    public PropertyName findNameForSerialization(final Annotated a) {
-        return this.findName(a, super::findNameForSerialization);
+    public PropertyName findNameForSerialization(final Annotated annotated) {
+        return this.findName(annotated, super::findNameForSerialization);
     }
 
     @Override
-    public PropertyName findNameForDeserialization(final Annotated a) {
-        return this.findName(a, super::findNameForDeserialization);
+    public PropertyName findNameForDeserialization(final Annotated annotated) {
+        return this.findName(annotated, super::findNameForDeserialization);
     }
 
-    private PropertyName findName(final Annotated a, final Function<Annotated, PropertyName> defaultValue) {
-        final AnnotatedElement annotated = a.getAnnotated();
-        if (annotated != null) {
-            final ElementAnnotationsIntrospector introspector = this.introspector.introspect(annotated);
+    private PropertyName findName(final Annotated annotated, final Function<Annotated, PropertyName> defaultValue) {
+        final AnnotatedElement element = annotated.getAnnotated();
+        if (element != null) {
+            final ElementAnnotationsIntrospector introspector = this.introspector.introspect(element);
             final Option<Property> annotation = introspector.get(Property.class);
             if (annotation.present()) {
                 return new PropertyName(annotation.get().name());
             }
         }
-        return defaultValue.apply(a);
+        return defaultValue.apply(annotated);
     }
 
     @Override

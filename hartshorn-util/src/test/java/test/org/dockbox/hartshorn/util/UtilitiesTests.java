@@ -195,8 +195,8 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("differences")
-    void testDifferenceInCollections(final Collection<String> a, final Collection<String> b, final Collection<String> expected) {
-        final Set<String> difference = CollectionUtilities.difference(a, b);
+    void testDifferenceInCollections(final Collection<String> collectionOne, final Collection<String> collectionTwo, final Collection<String> expected) {
+        final Set<String> difference = CollectionUtilities.difference(collectionOne, collectionTwo);
         Assertions.assertEquals(difference.size(), expected.size());
         Assertions.assertTrue(difference.containsAll(expected));
         Assertions.assertTrue(expected.containsAll(difference));

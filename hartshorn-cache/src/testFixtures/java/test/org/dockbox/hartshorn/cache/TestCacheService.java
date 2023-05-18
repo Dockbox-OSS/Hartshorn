@@ -31,7 +31,7 @@ public abstract class TestCacheService {
     }
 
     @UpdateCache(key = "sample_key")
-    public abstract void update(long s);
+    public abstract void update(long number);
 
     @EvictCache(key = "sample_key")
     public abstract void evict();

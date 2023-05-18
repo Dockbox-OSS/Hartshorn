@@ -22,14 +22,14 @@ import jakarta.inject.Singleton;
 @Singleton
 public class CircularConstructorB {
 
-    private final CircularConstructorA a;
+    private final CircularConstructorA constructorA;
 
     @Inject
-    public CircularConstructorB(final CircularConstructorA a) {
-        this.a = a;
+    public CircularConstructorB(final CircularConstructorA constructorA) {
+        this.constructorA = constructorA;
     }
 
-    public CircularConstructorA a() {
-        return this.a;
+    public CircularConstructorA constructorA() {
+        return this.constructorA;
     }
 }

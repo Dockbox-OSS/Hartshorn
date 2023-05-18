@@ -176,8 +176,8 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     }
 
     @Override
-    public int compareTo(@NonNull final EventWrapperImpl o) {
-        return COMPARATOR.compare(this, o);
+    public int compareTo(@NonNull final EventWrapperImpl other) {
+        return COMPARATOR.compare(this, other);
     }
 
     @Override
@@ -190,10 +190,10 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EventWrapperImpl)) return false;
-        return fastEqual(this, (EventWrapperImpl<?>) o);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (!(other instanceof EventWrapperImpl)) return false;
+        return fastEqual(this, (EventWrapperImpl<?>) other);
     }
 
     private static boolean fastEqual(final EventWrapperImpl<?> o1, final EventWrapperImpl<?> o2) {

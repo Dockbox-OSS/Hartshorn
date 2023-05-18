@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Objects;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Objects;
 
 public class ComponentContainerImpl implements ComponentContainer {
 
@@ -96,11 +96,11 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final ComponentContainerImpl that = (ComponentContainerImpl) o;
-        return this.component.equals(that.component);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final ComponentContainerImpl container = (ComponentContainerImpl) other;
+        return this.component.equals(container.component);
     }
 
     @Override

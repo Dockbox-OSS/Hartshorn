@@ -52,7 +52,7 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
     }
 
     @Override
-    public int compareTo(@NonNull final GenericType<T> o) {
+    public int compareTo(@NonNull final GenericType<T> other) {
         return 0;
     }
 

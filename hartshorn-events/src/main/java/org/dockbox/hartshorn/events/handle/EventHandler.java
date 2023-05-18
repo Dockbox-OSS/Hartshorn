@@ -132,10 +132,10 @@ public class EventHandler {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EventHandler)) return false;
-        return Objects.equals(this.eventType, ((EventHandler) o).eventType);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (!(other instanceof EventHandler)) return false;
+        return Objects.equals(this.eventType, ((EventHandler) other).eventType);
     }
 
     @Override
