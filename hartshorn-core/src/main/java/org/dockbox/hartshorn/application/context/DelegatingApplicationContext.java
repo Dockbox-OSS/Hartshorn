@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.InitializingContextBinderConfiguration;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
@@ -63,7 +64,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.componentProvider = context.componentProvider();
         this.locator = context.componentLocator();
 
-        context.applyTo(this);
+        final InitializingContextBinderConfiguration configuration = new InitializingContextBinderConfiguration();
+        configuration.configureBindings(context, this);
     }
 
     protected abstract void prepareInitialization();

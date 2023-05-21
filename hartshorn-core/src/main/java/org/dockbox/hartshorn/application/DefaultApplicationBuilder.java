@@ -38,6 +38,8 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.discovery.DiscoveryService;
+import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
@@ -113,6 +115,7 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     private final ComponentInitializer<ClasspathResourceLocator> resourceLocator = ComponentInitializer.of(ctx -> new ClassLoaderClasspathResourceLocator(ctx.environment()));
     private final ComponentInitializer<ComponentProvider> componentProvider = ComponentInitializer.of(ScopeAwareComponentProvider::new);
     private final ComponentInitializer<ComponentPopulator> componentPopulator = ComponentInitializer.of(ctx -> new ContextualComponentPopulator(ctx.applicationContext()));
+    private final ComponentInitializer<ViewContextAdapter> viewContextAdapter = ComponentInitializer.of(ctx -> new IntrospectionViewContextAdapter(ctx.applicationContext()));
     private final ComponentInitializer<ConditionMatcher> conditionMatcher = ComponentInitializer.of(ctx -> new ConditionMatcher(ctx.applicationContext()));
     private final ComponentInitializer<AnnotationLookup> annotationLookup = ComponentInitializer.of(ctx -> new VirtualHierarchyAnnotationLookup());
 
@@ -394,6 +397,17 @@ public abstract class DefaultApplicationBuilder<Self extends DefaultApplicationB
     @Override
     public ComponentPopulator componentPopulator(final InitializingContext context) {
         return this.componentPopulator.initialize(context);
+    }
+
+    @Override
+    public Self viewContextAdapter(Initializer<ViewContextAdapter> viewContextAdapter) {
+        this.viewContextAdapter.initializer(viewContextAdapter);
+        return this.self();
+    }
+
+    @Override
+    public ViewContextAdapter viewContextAdapter(InitializingContext context) {
+        return this.viewContextAdapter.initialize(context);
     }
 
     @Override

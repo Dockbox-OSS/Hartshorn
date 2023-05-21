@@ -21,25 +21,18 @@ import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.ComponentProvider;
-import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.slf4j.Logger;
 
 import java.util.Objects;
 
@@ -124,44 +117,12 @@ public final class InitializingContext extends DefaultApplicationAwareContext im
         return this.configuration.componentPopulator(this);
     }
 
-    public ApplicationBuilder<?, ?> builder() {
-        return this.configuration;
+    public ViewContextAdapter viewContextAdapter() {
+        return this.configuration.viewContextAdapter(this);
     }
 
-    public void applyTo(final Binder binder) {
-        // Application context
-        binder.bind(ComponentProvider.class).singleton(this.applicationContext());
-        binder.bind(ExceptionHandler.class).singleton(this.applicationContext());
-        binder.bind(ApplicationContext.class).singleton(this.applicationContext());
-        binder.bind(ApplicationPropertyHolder.class).singleton(this.applicationContext());
-
-        // TODO: Make configurable
-        binder.bind(ViewContextAdapter.class).singleton(new IntrospectionViewContextAdapter(this.applicationContext()));
-
-        // Application environment
-        binder.bind(Introspector.class).singleton(this.environment());
-        binder.bind(ApplicationEnvironment.class).singleton(this.environment());
-        binder.bind(ProxyLookup.class).singleton(this.environment());
-        binder.bind(ApplicationLogger.class).singleton(this.environment());
-        binder.bind(ApplicationProxier.class).singleton(this.environment());
-        binder.bind(LifecycleObservable.class).singleton(this.environment());
-        binder.bind(ApplicationFSProvider.class).singleton(this.environment());
-
-        // Standalone components - alphabetical order
-        binder.bind(AnnotationLookup.class).singleton(this.annotationLookup());
-        binder.bind(ComponentLocator.class).singleton(this.componentLocator());
-        binder.bind(ComponentPopulator.class).singleton(this.componentPopulator());
-        binder.bind(ComponentPostConstructor.class).singleton(this.componentPostConstructor());
-        binder.bind(ComponentProvider.class).singleton(this.componentProvider());
-        binder.bind(ConditionMatcher.class).singleton(this.conditionMatcher());
-        binder.bind(ClasspathResourceLocator.class).singleton(this.resourceLocator());
-
-        // Standalone components - special behavior
-        if (this.componentProvider() instanceof PostProcessingComponentProvider provider)
-            binder.bind(PostProcessingComponentProvider.class).singleton(provider);
-
-        // Dynamic components
-        binder.bind(Logger.class).to(this.applicationContext()::log);
+    public ApplicationBuilder<?, ?> builder() {
+        return this.configuration;
     }
 
     @Override
