@@ -82,24 +82,26 @@ public class CommandListenerImpl implements CommandListener {
     }
 
     protected Runnable createTask() {
-        return () -> {
-            try (
-                    final InputStream input = this.input();
-                    final Scanner scanner = new Scanner(input)
-            ) {
-                this.context.log().debug("Starting command CLI input listener");
-                while (this.running()) {
-                    final String next = scanner.nextLine();
-                    try {
-                        this.gateway.accept(this.source(), next);
-                    } catch (final ParsingException e) {
-                        this.context.handle(e);
-                    }
+        return this::listenForInput;
+    }
+
+    private void listenForInput() {
+        try (
+                final InputStream input = this.input();
+                final Scanner scanner = new Scanner(input)
+        ) {
+            this.context.log().debug("Starting command CLI input listener");
+            while (this.running()) {
+                final String next = scanner.nextLine();
+                try {
+                    this.gateway.accept(this.source(), next);
+                } catch (final ParsingException e) {
+                    this.context.handle(e);
                 }
-            } catch (final IOException e) {
-                this.context.handle(e);
             }
-        };
+        } catch (final IOException e) {
+            this.context.handle(e);
+        }
     }
 
     /**
