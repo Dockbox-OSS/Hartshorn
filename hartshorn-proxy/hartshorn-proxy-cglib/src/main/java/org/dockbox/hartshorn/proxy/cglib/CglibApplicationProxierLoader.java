@@ -21,6 +21,12 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
+/**
+ * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
+ *             It is recommended to use Javassist instead, through the
+ *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxierLoader}.
+ */
+@Deprecated(since = "23.1")
 @ServiceLoader(ApplicationProxierLoader.class)
 public class CglibApplicationProxierLoader implements ApplicationProxierLoader {
     @Override
