@@ -17,15 +17,12 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -55,11 +52,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             final Option<? extends ConstructorView<?>> constructorCandidate = factoryContext.get(method);
             if (constructorCandidate.present()) {
                 final ConstructorView<?> constructor = constructorCandidate.get();
-                return interceptorContext -> {
-                    final Object instance = constructor.create(interceptorContext.args()).rethrow().orNull();
-                    final R result = conversionService.convert(instance, method.returnType().type());
-                    return this.processInstance(context, result, enable);
-                };
+                return new ConstructorFactoryAbstractMethodInterceptor<>(constructor, conversionService, method, context, enable);
             }
             else {
                 final Factory factory = method.annotations().get(Factory.class).get();
@@ -72,22 +65,8 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
             }
         }
         else {
-            return interceptorContext -> {
-                final T instance = interceptorContext.instance();
-                final Object result = methodContext.method().invoke(instance, interceptorContext.args()).orNull();
-                final R convertedResult = conversionService.convert(result, method.returnType().type());
-                return this.processInstance(context, convertedResult, enable);
-            };
+            return new ConstructorFactoryConcreteMethodInterceptor<>(methodContext, conversionService, method, context, enable);
         }
-    }
-
-    private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) throws ApplicationException {
-        T out = instance;
-        out = context.get(ComponentPopulator.class).populate(out);
-        if (enable) {
-            out = context.get(ComponentPostConstructor.class).doPostConstruct(out);
-        }
-        return out;
     }
 
     @Override

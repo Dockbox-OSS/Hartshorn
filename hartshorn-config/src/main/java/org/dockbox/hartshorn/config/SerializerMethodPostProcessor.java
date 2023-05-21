@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Option;
-
-import java.io.OutputStream;
 
 public class SerializerMethodPostProcessor extends AbstractSerializerPostProcessor<Serialize> {
 
@@ -45,19 +42,7 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
         final boolean returnsStringOrWrapper = this.returnsStringOrWrapper(method);
         final ConversionService conversionService = context.get(ConversionService.class);
 
-        return interceptorContext -> {
-            final Object[] arguments = interceptorContext.args();
-
-            try (final OutputStream outputStream = converter.outputStream(method, arguments)) {
-                final Option<?> result;
-
-                if (outputStream == null && returnsStringOrWrapper) result = mapper.write(arguments[0]);
-                else result = mapper.write(outputStream, arguments[0]);
-
-                final Object serializationResult = this.wrapSerializationResult(method, result);
-                return conversionService.convert(serializationResult, method.returnType().type());
-            }
-        };
+        return new SerializerMethodInterceptor<>(converter, method, returnsStringOrWrapper, mapper, conversionService);
     }
 
     private boolean returnsStringOrWrapper(final MethodView<?, ?> method) {

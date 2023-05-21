@@ -18,15 +18,12 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.config.annotations.Deserialize;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
-import java.io.InputStream;
 
 public class DeserializerMethodPostProcessor extends AbstractSerializerPostProcessor<Deserialize> {
 
@@ -45,12 +42,6 @@ public class DeserializerMethodPostProcessor extends AbstractSerializerPostProce
         final TypeView<R> returnType = method.genericReturnType();
         final ConversionService conversionService = context.get(ConversionService.class);
 
-        return interceptorContext -> {
-            try (final InputStream inputStream = converter.inputStream(method, interceptorContext.args())) {
-                final Option<?> result = mapper.read(inputStream, returnType.type());
-                final Object serializationResult = this.wrapSerializationResult(method, result);
-                return conversionService.convert(serializationResult, returnType.type());
-            }
-        };
+        return new DeserializerMethodInterceptor<>(converter, method, mapper, returnType, conversionService);
     }
 }

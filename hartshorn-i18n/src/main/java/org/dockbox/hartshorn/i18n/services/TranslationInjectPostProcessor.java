@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.i18n.services;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
@@ -38,15 +37,7 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
         final InjectTranslation annotation = methodContext.method().annotations().get(InjectTranslation.class).get();
         final ConversionService conversionService = context.get(ConversionService.class);
 
-        return interceptorContext -> {
-            // Prevents NPE when formatting cached resources without arguments
-            final Object[] args = interceptorContext.args();
-            final Object[] objects = null == args ? EMPTY_ARGS : args;
-            final Message message = context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects);
-
-            //noinspection unchecked
-            return (R) conversionService.convert(message, methodContext.method().returnType().type());
-        };
+        return new TranslationInjectMethodInterceptor<>(context, key, annotation, conversionService, methodContext);
     }
 
     @Override
