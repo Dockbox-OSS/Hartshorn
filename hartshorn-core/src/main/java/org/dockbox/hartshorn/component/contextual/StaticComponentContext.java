@@ -76,11 +76,9 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.staticComponentContainers.stream().map(componentReference -> (Reportable) containerCollector -> {
-            containerCollector.property("type").write(componentReference.type());
-            containerCollector.property("id").write(componentReference.id());
-            containerCollector.property("instance").write(componentReference.instance().toString());
-        }).toArray(Reportable[]::new);
+        final Reportable[] reporters = this.staticComponentContainers.stream()
+                .map(StaticComponentContainerReportable::new)
+                .toArray(Reportable[]::new);
         collector.property("beans").write(reporters);
     }
 }
