@@ -148,9 +148,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
             // Lazy initialisation to allow processors to register first
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
 
-            final TypeView<T> listenerType = event.applicationContext().environment().introspect(this.listenerType.type());
-            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, listenerType, this.listener, this.context, event);
-
+            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listener, this.context, event);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             final Attempt<?, Throwable> result = this.method.invoke(this.listener, arguments);
 

@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.proxy.ProxyCallback;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.component.processing.proxy.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -102,8 +103,8 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
         return this.performAndFlush(context, method, Transactional::rollbackOnError, TransactionManager::rollbackTransaction);
     }
 
-    private <T> ProxyCallback<T> performAndFlush(final ApplicationContext context, final MethodView<T, ?> method, final Predicate<Transactional> rule, final Consumer<TransactionManager> consumer) {
-        final Transactional annotation = method.annotations().get(Transactional.class).get();
+    private <T> ProxyCallback<T> performAndFlush(final ApplicationContext context, final AnnotatedElementView element, final Predicate<Transactional> rule, final Consumer<TransactionManager> consumer) {
+        final Transactional annotation = element.annotations().get(Transactional.class).get();
         final boolean ruleResult = rule.test(annotation);
 
         final ProxyCallback<T> flush = this.flushTarget();

@@ -18,8 +18,7 @@ package org.dockbox.hartshorn.web.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +28,10 @@ public class HttpRequestParameterLoaderContext extends ApplicationBoundParameter
     private final HttpServletRequest request;
     private final HttpServletResponse response;
 
-    public HttpRequestParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response) {
-        super(method, instance, applicationContext);
+    public HttpRequestParameterLoaderContext(final ExecutableElementView<?> element, final Object instance,
+                                             final ApplicationContext applicationContext, final HttpServletRequest request,
+                                             final HttpServletResponse response) {
+        super(element, instance, applicationContext);
         this.request = request;
         this.response = response;
     }

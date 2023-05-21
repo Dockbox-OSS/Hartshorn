@@ -65,7 +65,7 @@ public class MvcServlet implements WebServlet {
         final ParameterLoader<MvcParameterLoaderContext> loader = this.parameterLoader;
         final ViewModelImpl viewModel = new ViewModelImpl();
         final TypeView<ViewTemplate> typeView = this.applicationContext.environment().introspect(ViewTemplate.class);
-        final MvcParameterLoaderContext loaderContext = new MvcParameterLoaderContext(this.method, typeView,
+        final MvcParameterLoaderContext loaderContext = new MvcParameterLoaderContext(this.method,
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
 

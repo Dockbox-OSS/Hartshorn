@@ -93,7 +93,7 @@ public abstract class AbstractJpaQueryContext extends DefaultProvisionContext im
         this.modifyQueryFromContext(persistenceQuery);
 
         // Process parameters to modify query
-        final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
+        final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
 
         return persistenceQuery;

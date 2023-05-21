@@ -134,7 +134,6 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     @Override
     public CommandExecutor executor() {
         final ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
-        final TypeView<T> typeView = this.applicationContext().environment().introspect(this.key().type());
 
         return (ctx) -> {
             final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
@@ -146,7 +145,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             }
 
             final T instance = this.applicationContext().get(this.key());
-            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), typeView, null, this.applicationContext(), ctx, this);
+            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), null, this.applicationContext(), ctx, this);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
 
             if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {

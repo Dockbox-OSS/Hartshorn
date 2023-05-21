@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Option;
 
 public final class StringUtilities {
 
@@ -41,11 +41,11 @@ public final class StringUtilities {
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-    public static boolean empty(final String value) {
+    public static boolean empty(final CharSequence value) {
         return null == value || value.isEmpty();
     }
 
-    public static boolean notEmpty(final String value) {
+    public static boolean notEmpty(final CharSequence value) {
         return null != value && !value.isEmpty();
     }
 

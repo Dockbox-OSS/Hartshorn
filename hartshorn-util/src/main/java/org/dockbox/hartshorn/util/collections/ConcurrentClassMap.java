@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentClassMap<T> extends ConcurrentHashMap<Class<T>, T> {
@@ -23,7 +24,7 @@ public class ConcurrentClassMap<T> extends ConcurrentHashMap<Class<T>, T> {
     public ConcurrentClassMap() {
     }
 
-    public ConcurrentClassMap(final ConcurrentClassMap<T> map) {
+    public ConcurrentClassMap(final Map<Class<T>, T> map) {
         super(map);
     }
 }

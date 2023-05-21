@@ -17,11 +17,12 @@
 package org.dockbox.hartshorn.jpa.entitymanager;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
 public class MissingEntityManagerException extends ApplicationRuntimeException {
-    public MissingEntityManagerException(final MethodView<?,?> methodContext) {
-        super("No entity manager found in execution cache for method %s in type %s."
-                .formatted(methodContext.qualifiedName(), methodContext.declaredBy().name()));
+
+    public MissingEntityManagerException(final ExecutableElementView<?> elementView) {
+        super("No entity manager found in execution cache for executable %s in type %s."
+                .formatted(elementView.qualifiedName(), elementView.declaredBy().name()));
     }
 }

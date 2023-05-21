@@ -18,8 +18,7 @@ package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
 import jakarta.persistence.Query;
 
@@ -27,8 +26,9 @@ public class JpaParameterLoaderContext extends ApplicationBoundParameterLoaderCo
 
     private final Query query;
 
-    public JpaParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final Query query) {
-        super(method, instance, applicationContext);
+    public JpaParameterLoaderContext(final ExecutableElementView<?> element, final Object instance,
+                                     final ApplicationContext applicationContext, final Query query) {
+        super(element, instance, applicationContext);
         this.query = query;
     }
 

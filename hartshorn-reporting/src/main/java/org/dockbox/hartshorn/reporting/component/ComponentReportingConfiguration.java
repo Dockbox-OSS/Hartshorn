@@ -24,7 +24,7 @@ public class ComponentReportingConfiguration {
     private ComponentAttribute groupBy = ComponentAttribute.STEREOTYPE;
     private boolean includeDependencies = true;
     private boolean includeRequiredConditions = true;
-    private final EnumMap<ComponentAttribute, Boolean> attributes = new EnumMap<>(ComponentAttribute.class);
+    private final Map<ComponentAttribute, Boolean> attributes = new EnumMap<>(ComponentAttribute.class);
 
     public ComponentReportingConfiguration() {
         // Package is included by type definition, so we don't need to include it by default
