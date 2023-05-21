@@ -105,7 +105,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     private <T extends Statement> T handleDelegate(final TokenParser parser, final TokenStepValidator validator,
                                                    final Option<ASTNodeParser<T>> statement) {
         return statement
-                .flatMap(p -> p.parse(parser, validator))
+                .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .attempt(ScriptEvaluationError.class)
                 .rethrow()
                 .orNull();

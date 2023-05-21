@@ -748,25 +748,25 @@ public class OptionTests {
     void testPeekErrorWithMatchingExactType() {
         final Attempt<Object, NullPointerException> attempt = Attempt.of(new NullPointerException());
         final AtomicBoolean called = new AtomicBoolean(false);
-        attempt.peekError(NullPointerException.class, e -> called.set(true));
+        attempt.peekError(NullPointerException.class, exception -> called.set(true));
         Assertions.assertTrue(called.get());
     }
 
     @Test
     void testPeekErrorWithNonExactType() {
         final Attempt<Object, RuntimeException> attempt = Attempt.of(new NullPointerException());
-        attempt.peekError(RuntimeException.class, e -> Assertions.fail());
+        attempt.peekError(RuntimeException.class, exception -> Assertions.fail());
     }
 
     @Test
     void testPeekErrorWithNonMatchingType() {
         final Attempt<Object, RuntimeException> attempt = Attempt.of(new NullPointerException());
-        attempt.peekError(IllegalArgumentException.class, e -> Assertions.fail());
+        attempt.peekError(IllegalArgumentException.class, exception -> Assertions.fail());
     }
 
     @Test
     void testPeekErrorWithEmpty() {
         final Attempt<Object, RuntimeException> attempt = Attempt.empty();
-        attempt.peekError(RuntimeException.class, e -> Assertions.fail());
+        attempt.peekError(RuntimeException.class, exception -> Assertions.fail());
     }
 }

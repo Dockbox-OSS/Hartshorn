@@ -59,20 +59,20 @@ public class ProviderContextList extends DefaultProvisionContext implements Repo
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.elements.allValues().stream().map(context -> (Reportable) c -> {
-            c.property("key").write(keyCollector -> {
+        final Reportable[] reporters = this.elements.allValues().stream().map(context -> (Reportable) elementCollector -> {
+            elementCollector.property("key").write(keyCollector -> {
                 keyCollector.property("type").write(context.key().type().getCanonicalName());
                 if (context.key().name() != null) {
                     keyCollector.property("name").write(context.key().name());
                 }
             });
-            c.property("phase").write(context.provider().phase());
-            c.property("lazy").write(context.provider().lazy());
-            c.property("priority").write(context.provider().priority());
+            elementCollector.property("phase").write(context.provider().phase());
+            elementCollector.property("lazy").write(context.provider().lazy());
+            elementCollector.property("priority").write(context.provider().priority());
             if (StringUtilities.notEmpty(context.provider().value())) {
-                c.property("name").write(context.provider().value());
+                elementCollector.property("name").write(context.provider().value());
             }
-            c.property("element").write(context.element());
+            elementCollector.property("element").write(context.element());
         }).toArray(Reportable[]::new);
         collector.property("providers").write(reporters);
     }

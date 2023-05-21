@@ -54,7 +54,7 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
         if (attempt.absent()) return Collections.emptyList();
 
         return processingContext.type().methods().declared().stream()
-                .filter(m -> attempt.get().supports(processingContext, m))
+                .filter(method -> attempt.get().supports(processingContext, method))
                 .collect(Collectors.toSet());
     }
 

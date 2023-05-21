@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -24,13 +31,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -221,23 +221,23 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
 
     @Override
     public StateAwareProxyFactory<T> wrapAround(final MethodView<T, ?> method, final Consumer<MethodWrapperFactory<T>> wrapper) {
-        return method.method().map(m -> this.wrapAround(m, wrapper)).orElse(this);
+        return method.method().map(jlrMethod -> this.wrapAround(jlrMethod, wrapper)).orElse(this);
     }
 
 
     @Override
     public StateAwareProxyFactory<T> delegate(final MethodView<T, ?> method, final T delegate) {
-        return method.method().map(m -> this.delegate(m, delegate)).orElse(this);
+        return method.method().map(jlrMethod -> this.delegate(jlrMethod, delegate)).orElse(this);
     }
 
     @Override
     public <R> StateAwareProxyFactory<T> intercept(final MethodView<T, R> method, final MethodInterceptor<T, R> interceptor) {
-        return method.method().map(m -> this.intercept(m, interceptor)).orElse(this);
+        return method.method().map(jlrMethod -> this.intercept(jlrMethod, interceptor)).orElse(this);
     }
 
     @Override
     public StateAwareProxyFactory<T> wrapAround(final MethodView<T, ?> method, final MethodWrapper<T> wrapper) {
-        return method.method().map(m -> this.wrapAround(m, wrapper)).orElse(this);
+        return method.method().map(jlrMethod -> this.wrapAround(jlrMethod, wrapper)).orElse(this);
     }
 
     @Override

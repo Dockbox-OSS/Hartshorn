@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -35,6 +29,12 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView implements FieldView<Parent, FieldType>, ReflectionModifierCarrierView {
 
@@ -96,7 +96,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
                 final MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
                 this.getter = object -> methodContext.invoke(instance)
-                        .map(o -> this.type().cast(o));
+                        .map(result -> this.type().cast(result));
             } else {
                 this.getter = object -> Attempt.of(() -> {
                     try {

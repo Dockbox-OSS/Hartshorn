@@ -69,7 +69,7 @@ public class ApplicationNamedQueriesContext extends DefaultProvisionContext impl
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
         for (final Entry<String, ComponentNamedQueryContext> entry : this.namedQueries.entrySet()) {
-            collector.property(entry.getKey()).write(c -> entry.getValue().report(c));
+            collector.property(entry.getKey()).write(propertyCollector -> entry.getValue().report(propertyCollector));
         }
     }
 }

@@ -65,7 +65,7 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
     @Override
     public <T> Set<StaticComponentContainer<T>> register(final Class<T> type, final Collection<T> components, final String id) {
         return components.stream()
-                .map(b -> this.register(b, type, id))
+                .map(component -> this.register(component, type, id))
                 .collect(Collectors.toSet());
     }
 
@@ -76,10 +76,10 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.staticComponentContainers.stream().map(componentReference -> (Reportable) c -> {
-            c.property("type").write(componentReference.type());
-            c.property("id").write(componentReference.id());
-            c.property("instance").write(componentReference.instance().toString());
+        final Reportable[] reporters = this.staticComponentContainers.stream().map(componentReference -> (Reportable) containerCollector -> {
+            containerCollector.property("type").write(componentReference.type());
+            containerCollector.property("id").write(componentReference.id());
+            containerCollector.property("instance").write(componentReference.instance().toString());
         }).toArray(Reportable[]::new);
         collector.property("beans").write(reporters);
     }

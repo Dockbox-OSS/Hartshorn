@@ -94,13 +94,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     @Override
     public <A> Option<A> activator(final Class<A> activator) {
         return this.first(ServiceActivatorContext.class)
-                .map(c -> c.activator(activator));
+                .map(context -> context.activator(activator));
     }
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         return this.first(ServiceActivatorContext.class)
-                .map(c -> c.hasActivator(activator))
+                .map(context -> context.hasActivator(activator))
                 .orElseGet(() -> false);
     }
 

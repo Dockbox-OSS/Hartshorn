@@ -69,7 +69,7 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
         final String[] activators = this.activators().stream()
-                .map(a -> a.annotationType().getCanonicalName())
+                .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").write(activators);
     }

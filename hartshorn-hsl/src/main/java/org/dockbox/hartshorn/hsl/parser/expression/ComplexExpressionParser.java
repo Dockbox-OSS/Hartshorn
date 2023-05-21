@@ -63,7 +63,7 @@ public class ComplexExpressionParser {
     private final TokenStepValidator validator;
 
     private static final int MAX_NUM_OF_ARGUMENTS = 8;
-    private static final TokenType[] ASSIGNMENT_TOKENS = allTokensMatching(t -> t.assignsWith() != null);
+    private static final TokenType[] ASSIGNMENT_TOKENS = allTokensMatching(token -> token.assignsWith() != null);
 
     public ComplexExpressionParser(final TokenParser parser, final TokenStepValidator validator) {
         this.parser = parser;

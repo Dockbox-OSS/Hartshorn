@@ -168,7 +168,7 @@ public final class TranslationBatchGenerator {
         final File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
             return Stream.of(batch.listFiles())
-                    .filter(f -> !f.isDirectory())
+                    .filter(file -> !file.isDirectory())
                     .toList();
         }
         else {

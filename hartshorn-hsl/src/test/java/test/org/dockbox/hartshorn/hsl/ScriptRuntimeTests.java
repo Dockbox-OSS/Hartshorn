@@ -55,7 +55,7 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> scripts() throws IOException {
         final Path resources = Paths.get("src", "test", "resources");
-        return Files.find(resources, 5, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
+        return Files.find(resources, 5, (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {

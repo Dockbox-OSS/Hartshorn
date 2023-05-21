@@ -18,15 +18,17 @@ package org.dockbox.hartshorn.gradle.javadoc;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.UnknownDomainObjectException;
 import org.gradle.api.plugins.JavaPluginExtension;
 
 import java.io.File;
+import java.io.IOException;
 
 public class JavadocVerifierPlugin implements Plugin<Project> {
 
     @Override
     public void apply(final Project target) {
-        target.getTasks().register("verifyJavadoc", task -> task.doLast(t -> {
+        target.getTasks().register("verifyJavadoc", task -> task.doLast(task0 -> {
             final Project project = task.getProject();
             try {
                 final File javaSourceDirectory = project.getExtensions().getByType(JavaPluginExtension.class)
@@ -46,7 +48,7 @@ public class JavadocVerifierPlugin implements Plugin<Project> {
                     assert project.getParent() == null;
                 }
             }
-            catch (final Exception e) {
+            catch (IOException | UnknownDomainObjectException | IllegalStateException e) {
                 throw new RuntimeException(e);
             }
         }));

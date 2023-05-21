@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
@@ -87,7 +88,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
 
     private void reportServiceActivators(final DiagnosticsPropertyCollector collector) {
         final String[] activators = this.applicationContext.activators().stream()
-                .map(a -> a.annotationType().getCanonicalName())
+                .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").write(activators);
     }
@@ -98,9 +99,9 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
             final Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
                             .collect(Collectors.groupingBy(Observer::getClass));
 
-            collector.property("observers").write(c -> {
-                for (final Class<? extends Observer> observerType : observers.keySet()) {
-                    c.property(observerType.getSimpleName()).write(observers.get(observerType).size());
+            collector.property("observers").write(observerCollector -> {
+                for (final Entry<Class<? extends Observer>, List<Observer>> entry : observers.entrySet()) {
+                    observerCollector.property(entry.getKey().getSimpleName()).write(entry.getValue().size());
                 }
             });
         }
@@ -114,8 +115,9 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
             if (context instanceof Reportable reportable) {
                 contextsCollector.property("data").write(reportable);
             }
-
-            if (context instanceof NamedContext namedContext) contextsCollector.property("name").write(namedContext.name());
+            else if (context instanceof NamedContext namedContext) {
+                contextsCollector.property("name").write(namedContext.name());
+            }
             if (!context.all().isEmpty()) {
                 final Reportable[] childReporters = childReporters(reporterReference, context);
                 contextsCollector.property("children").write(childReporters);
@@ -130,7 +132,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @NotNull
     private static Reportable[] childReporters(final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, final Context context) {
         return context.all().stream()
-                .map(c -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, c)))
+                .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))
                 .toArray(Reportable[]::new);
     }
 
