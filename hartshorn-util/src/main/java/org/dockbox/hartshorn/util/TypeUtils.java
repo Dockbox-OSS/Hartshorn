@@ -172,4 +172,14 @@ public class TypeUtils {
         }
         return Arrays.stream(boxed);
     }
+
+    public static boolean isAssignable(final Class<?> source, final Class<?> target) {
+        if (target.isAssignableFrom(source)) {
+            return true;
+        }
+        if (target.isPrimitive() && TypeUtils.isPrimitiveWrapper(source, target)) {
+            return true;
+        }
+        return source.isPrimitive() && TypeUtils.isPrimitiveWrapper(target, source);
+    }
 }
