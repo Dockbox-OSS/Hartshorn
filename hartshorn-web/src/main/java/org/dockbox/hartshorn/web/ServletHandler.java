@@ -84,7 +84,7 @@ public class ServletHandler {
                 if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
                 final ParameterLoader<HttpRequestParameterLoaderContext> loader = this.starter.loader();
-                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), null, this.context, req, res);
+                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), this.context, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
                 final Object instance = this.context.get(this.method.declaredBy().type());
                 final Attempt<?, Throwable> result = this.method.invoke(TypeUtils.adjustWildcards(instance, Object.class), arguments);

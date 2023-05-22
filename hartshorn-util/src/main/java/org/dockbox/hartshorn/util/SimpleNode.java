@@ -26,14 +26,17 @@ public class SimpleNode<T> implements Node<T> {
         this.value = value;
     }
 
+    @Override
     public String name() {
         return this.name;
     }
 
+    @Override
     public T value() {
         return this.value;
     }
 
+    @Override
     public <R> R accept(final NodeVisitor<R> visitor) {
         return visitor.visit(this);
     }

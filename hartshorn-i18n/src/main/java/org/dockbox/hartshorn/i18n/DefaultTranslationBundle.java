@@ -43,10 +43,12 @@ public class DefaultTranslationBundle implements TranslationBundle {
     private ApplicationContext applicationContext;
     private Locale primaryLanguage = Locale.getDefault();
 
+    @Override
     public Locale primaryLanguage() {
         return this.primaryLanguage;
     }
 
+    @Override
     public DefaultTranslationBundle primaryLanguage(final Locale primaryLanguage) {
         this.primaryLanguage = primaryLanguage;
         return this;
@@ -110,7 +112,7 @@ public class DefaultTranslationBundle implements TranslationBundle {
         final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
         final Map<String, String> result = objectMapper.flat(source).entrySet()
                 .stream()
-                .collect(Collectors.toMap(Entry::getKey, e -> String.valueOf(e.getValue())));
+                .collect(Collectors.toMap(Entry::getKey, value -> String.valueOf(value.getValue())));
         return this.register(result, locale);
     }
 

@@ -57,7 +57,7 @@ public class StaticBindsTests {
 
         Assertions.assertEquals("John Doe", reference.instance());
         Assertions.assertEquals("names", reference.id());
-        Assertions.assertEquals(String.class, reference.type().type());
+        Assertions.assertSame(String.class, reference.type().type());
     }
 
     @Test

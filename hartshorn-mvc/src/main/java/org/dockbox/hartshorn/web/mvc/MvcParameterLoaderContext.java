@@ -17,8 +17,7 @@
 package org.dockbox.hartshorn.web.mvc;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.web.mvc.model.ViewModel;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
@@ -29,9 +28,11 @@ public class MvcParameterLoaderContext extends HttpRequestParameterLoaderContext
 
     private final ViewModel viewModel;
 
-    public MvcParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response,
+    public MvcParameterLoaderContext(final ExecutableElementView<?> element, final Object instance,
+                                     final ApplicationContext applicationContext, final HttpServletRequest request,
+                                     final HttpServletResponse response,
                                      final ViewModel viewModel) {
-        super(method, type, instance, applicationContext, request, response);
+        super(element, instance, applicationContext, request, response);
         this.viewModel = viewModel;
     }
 

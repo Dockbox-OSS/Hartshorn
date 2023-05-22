@@ -63,7 +63,7 @@ public class ComplexExpressionParser {
     private final TokenStepValidator validator;
 
     private static final int MAX_NUM_OF_ARGUMENTS = 8;
-    private static final TokenType[] ASSIGNMENT_TOKENS = allTokensMatching(t -> t.assignsWith() != null);
+    private static final TokenType[] ASSIGNMENT_TOKENS = allTokensMatching(token -> token.assignsWith() != null);
 
     public ComplexExpressionParser(final TokenParser parser, final TokenStepValidator validator) {
         this.parser = parser;
@@ -83,16 +83,16 @@ public class ComplexExpressionParser {
             final Token equals = this.parser.previous();
             final Expression value = this.parse();
 
-            if (expr instanceof VariableExpression) {
-                final Token name = ((VariableExpression) expr).name();
+            if (expr instanceof VariableExpression variableExpression) {
+                final Token name = variableExpression.name();
                 return new AssignExpression(name, value);
             }
             else if (expr instanceof final ArrayGetExpression arrayGetExpression) {
                 final Token name = arrayGetExpression.name();
                 return new ArraySetExpression(name, arrayGetExpression.index(), value);
             }
-            else if (expr instanceof final GetExpression get) {
-                return new SetExpression(get.object(), get.name(), value);
+            else if (expr instanceof final GetExpression getExpression) {
+                return new SetExpression(getExpression.object(), getExpression.name(), value);
             }
             throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, equals);
         }

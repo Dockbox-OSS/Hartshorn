@@ -35,6 +35,6 @@ public class LogbackPIDConverter extends ClassicConverter {
 
     @Override
     public String convert(final ILoggingEvent event) {
-        return "" + PROCESS_ID;
+        return String.valueOf(PROCESS_ID);
     }
 }

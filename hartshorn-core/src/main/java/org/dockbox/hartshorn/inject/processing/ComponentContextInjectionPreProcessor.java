@@ -40,11 +40,11 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor
             this.validate(field, processingContext);
 
         final List<ExecutableElementView<T>> constructors = processingContext.type().constructors().injectable()
-                .stream().map(c -> (ExecutableElementView<T>) c)
+                .stream().map(constructor -> (ExecutableElementView<T>) constructor)
                 .collect(Collectors.toList());
 
         final List<ExecutableElementView<T>> methods = processingContext.type().methods().all().stream()
-                .map(m -> (ExecutableElementView<T>) m)
+                .map(method -> (ExecutableElementView<T>) method)
                 .collect(Collectors.toList());
 
         final Collection<ExecutableElementView<T>> executables = CollectionUtilities.merge(constructors, methods);

@@ -44,10 +44,12 @@ public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T
         this.size = size;
     }
 
+    @Override
     public Class<T> type() {
         return this.type;
     }
 
+    @Override
     public List<String> keys() {
         return Arrays.asList(this.keys);
     }

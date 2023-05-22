@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class StandardBiMap<K, V> extends AbstractBiMap<K, V> {
 
 
-    protected StandardBiMap(Map<K, V> forward, Map<V, K> backward) {
+    protected StandardBiMap(final Map<K, V> forward, final Map<V, K> backward) {
         super(forward, backward);
     }
 

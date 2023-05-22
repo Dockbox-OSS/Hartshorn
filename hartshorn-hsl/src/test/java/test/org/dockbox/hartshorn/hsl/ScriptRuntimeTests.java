@@ -55,7 +55,7 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> scripts() throws IOException {
         final Path resources = Paths.get("src", "test", "resources");
-        return Files.find(resources, 5, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
+        return Files.find(resources, 5, (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {
@@ -165,9 +165,9 @@ public class ScriptRuntimeTests {
 
         final Map<String, Object> results = context.interpreter().global();
         Assertions.assertFalse(results.isEmpty());
-        Assertions.assertEquals(12d, results.get("a"));
-        Assertions.assertEquals(13d, results.get("b"));
-        Assertions.assertEquals(25d, results.get("c"));
+        Assertions.assertEquals(12.0d, results.get("a"));
+        Assertions.assertEquals(13.0d, results.get("b"));
+        Assertions.assertEquals(25.0d, results.get("c"));
     }
 
     @ParameterizedTest

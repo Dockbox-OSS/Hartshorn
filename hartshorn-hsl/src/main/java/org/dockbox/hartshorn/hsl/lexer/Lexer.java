@@ -361,8 +361,8 @@ public class Lexer {
         return this.current >= this.source.length();
     }
 
-    private boolean isDigit(final char c) {
-        return c >= '0' && c <= '9';
+    private boolean isDigit(final char character) {
+        return character >= '0' && character <= '9';
     }
 
     private boolean match(final char expected) {
@@ -383,14 +383,14 @@ public class Lexer {
         return this.source.charAt(this.current + 1);
     }
 
-    private boolean isAlpha(final char c) {
-        return (c >= 'a' && c <= 'z') ||
-                (c >= 'A' && c <= 'Z') ||
-                c == '_';
+    private boolean isAlpha(final char character) {
+        return (character >= 'a' && character <= 'z') ||
+                (character >= 'A' && character <= 'Z') ||
+                character == '_';
     }
 
-    private boolean isAlphaNumeric(final char c) {
-        return this.isAlpha(c) || this.isDigit(c);
+    private boolean isAlphaNumeric(final char character) {
+        return this.isAlpha(character) || this.isDigit(character);
     }
 
     private void nextLine() {

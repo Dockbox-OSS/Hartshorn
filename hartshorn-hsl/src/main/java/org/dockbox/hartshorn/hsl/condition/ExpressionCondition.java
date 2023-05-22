@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
@@ -49,20 +50,25 @@ public class ExpressionCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElement().annotations().get(RequiresExpression.class).map(condition -> {
-            final String expression = condition.value();
-            final ValidateExpressionRuntime runtime = this.createRuntime(context);
+        return context.annotatedElement().annotations().get(RequiresExpression.class)
+                .map(condition -> this.calculateResult(context, condition))
+                .orElse(ConditionResult.invalidCondition("expression"));
+    }
 
-            try {
-                final ScriptContext scriptContext = runtime.run(expression);
-                final boolean result = ValidateExpressionRuntime.valid(scriptContext);
-                return ConditionResult.of(result);
-            }
-            catch (final ScriptEvaluationError e) {
-                context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
-                return ConditionResult.notMatched(e.getMessage());
-            }
-        }).orElse(ConditionResult.invalidCondition("expression"));
+    @NotNull
+    private ConditionResult calculateResult(ConditionContext context, RequiresExpression condition) {
+        final String expression = condition.value();
+        final ValidateExpressionRuntime runtime = this.createRuntime(context);
+
+        try {
+            final ScriptContext scriptContext = runtime.run(expression);
+            final boolean result = ValidateExpressionRuntime.valid(scriptContext);
+            return ConditionResult.of(result);
+        }
+        catch (final ScriptEvaluationError e) {
+            context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
+            return ConditionResult.notMatched(e.getMessage());
+        }
     }
 
     protected ValidateExpressionRuntime createRuntime(final ConditionContext context) {

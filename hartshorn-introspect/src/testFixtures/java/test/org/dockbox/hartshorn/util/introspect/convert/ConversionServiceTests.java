@@ -169,7 +169,7 @@ public abstract class ConversionServiceTests {
     @Test
     void testCollectionFromObject() {
         final ConversionService conversionService = this.conversionService();
-        final LinkedList<?> linkedList = conversionService.convert("test", LinkedList.class);
+        final List<?> linkedList = conversionService.convert("test", LinkedList.class);
         Assertions.assertNotNull(linkedList);
         Assertions.assertFalse(linkedList.isEmpty());
         Assertions.assertEquals("test", linkedList.get(0));

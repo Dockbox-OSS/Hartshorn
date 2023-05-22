@@ -33,7 +33,8 @@ public final class EventHandlerRegistry {
     public EventHandler handler(final TypeView<? extends Event> type) {
         EventHandler handler = this.handlers.get(type.type());
         if (null == handler) {
-            this.computeHierarchy(handler = new EventHandler(type));
+            handler = new EventHandler(type);
+            this.computeHierarchy(handler);
             this.handlers.put(type.type(), handler);
         }
         return handler;

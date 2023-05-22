@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PredefinedSetTypeReferenceCollector implements TypeReferenceCollector {
+public final class PredefinedSetTypeReferenceCollector implements TypeReferenceCollector {
 
     private final Set<TypeReference> references;
 

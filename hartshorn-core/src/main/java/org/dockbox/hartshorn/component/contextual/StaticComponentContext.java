@@ -35,7 +35,7 @@ import jakarta.inject.Inject;
 @InstallIfAbsent
 public class StaticComponentContext extends DefaultApplicationAwareContext implements StaticComponentCollector, Reportable {
 
-    public static ContextKey<StaticComponentContext> CONTEXT_KEY = ContextKey.builder(StaticComponentContext.class)
+    public static final ContextKey<StaticComponentContext> CONTEXT_KEY = ContextKey.builder(StaticComponentContext.class)
             .fallback(StaticComponentContext::new)
             .build();
 
@@ -65,7 +65,7 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
     @Override
     public <T> Set<StaticComponentContainer<T>> register(final Class<T> type, final Collection<T> components, final String id) {
         return components.stream()
-                .map(b -> this.register(b, type, id))
+                .map(component -> this.register(component, type, id))
                 .collect(Collectors.toSet());
     }
 
@@ -76,11 +76,9 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.staticComponentContainers.stream().map(componentReference -> (Reportable) c -> {
-            c.property("type").write(componentReference.type());
-            c.property("id").write(componentReference.id());
-            c.property("instance").write(componentReference.instance().toString());
-        }).toArray(Reportable[]::new);
+        final Reportable[] reporters = this.staticComponentContainers.stream()
+                .map(StaticComponentContainerReportable::new)
+                .toArray(Reportable[]::new);
         collector.property("beans").write(reporters);
     }
 }

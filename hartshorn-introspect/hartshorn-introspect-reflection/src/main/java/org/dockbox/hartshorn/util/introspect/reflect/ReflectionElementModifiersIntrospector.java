@@ -141,6 +141,6 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
 
     @Override
     public boolean isDefault() {
-        return member instanceof Method method && method.isDefault();
+        return this.member instanceof Method method && method.isDefault();
     }
 }

@@ -19,10 +19,10 @@ apply {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
+    api("org.dockbox.hartshorn:hartshorn-util")
 
-    compileOnly("com.google.auto.service:auto-service:1.0-rc7")
-    annotationProcessor("com.google.auto.service:auto-service:1.0-rc7")
+    compileOnly(libs.autoService)
+    annotationProcessor(libs.autoService)
 
     testAnnotationProcessor("org.dockbox.hartshorn:hartshorn-discovery")
 }

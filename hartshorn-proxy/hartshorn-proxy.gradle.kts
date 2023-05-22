@@ -33,8 +33,7 @@ tasks {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+    api("org.dockbox.hartshorn:hartshorn-introspect")
 
     testImplementation(libs.scala)
     testImplementation(libs.groovy)

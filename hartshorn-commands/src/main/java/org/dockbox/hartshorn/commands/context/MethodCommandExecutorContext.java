@@ -19,20 +19,15 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
-import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
-import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -40,7 +35,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -112,8 +111,6 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         return this.isChild;
     }
 
-
-
     protected ParameterLoader<CommandParameterLoaderContext> parameterLoader() {
         return this.parameterLoader;
     }
@@ -134,33 +131,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     @Override
     public CommandExecutor executor() {
         final ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
-        final TypeView<T> typeView = this.applicationContext().environment().introspect(this.key().type());
-
-        return (ctx) -> {
-            final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
-            if (before.cancelled()) {
-                this.applicationContext().log().debug("Execution cancelled for " + this.method().qualifiedName());
-                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
-                ctx.source().send(cancelled);
-                return;
-            }
-
-            final T instance = this.applicationContext().get(this.key());
-            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), typeView, null, this.applicationContext(), ctx, this);
-            final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
-
-            if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {
-                this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-                this.method().invoke(instance, arguments.toArray())
-                        .peekError(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
-                new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
-            }
-            else {
-                this.applicationContext().log().debug("Conditions didn't match for " + this.method().qualifiedName());
-                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
-                ctx.source().send(cancelled);
-            }
-        };
+        return new MethodCommandExecutor<>(conditionMatcher, this);
     }
 
     @Override

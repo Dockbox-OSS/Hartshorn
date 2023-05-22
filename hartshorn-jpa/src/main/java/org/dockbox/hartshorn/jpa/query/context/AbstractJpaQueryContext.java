@@ -93,7 +93,7 @@ public abstract class AbstractJpaQueryContext extends DefaultProvisionContext im
         this.modifyQueryFromContext(persistenceQuery);
 
         // Process parameters to modify query
-        final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
+        final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
 
         return persistenceQuery;
@@ -101,16 +101,22 @@ public abstract class AbstractJpaQueryContext extends DefaultProvisionContext im
 
     protected void modifyQueryFromContext(final Query persistenceQuery) {
         final ApplicationEnvironment environment = this.applicationContext().environment();
-        if (environment.isProxy(this.persistenceCapable)) {
-            environment.manager(this.persistenceCapable).peek(manager -> {
-                manager.first(QueryExecutionContext.class).peek(queryExecutionContext -> {
-                    final LockModeType lockMode = queryExecutionContext.lockMode(this.method);
-                    if (lockMode != null) persistenceQuery.setLockMode(lockMode);
+        if(environment.isProxy(this.persistenceCapable)) {
+            environment.manager(this.persistenceCapable)
+                    .flatMap(manager -> manager.first(QueryExecutionContext.class))
+                    .peek(queryExecutionContext -> this.configureExecutionContext(persistenceQuery, queryExecutionContext));
+        }
+    }
 
-                    final FlushModeType flushMode = queryExecutionContext.flushMode(this.method);
-                    if (flushMode != null) persistenceQuery.setFlushMode(flushMode);
-                });
-            });
+    private void configureExecutionContext(final Query persistenceQuery, final QueryExecutionContext queryExecutionContext) {
+        final LockModeType lockMode = queryExecutionContext.lockMode(this.method);
+        if(lockMode != null) {
+            persistenceQuery.setLockMode(lockMode);
+        }
+
+        final FlushModeType flushMode = queryExecutionContext.flushMode(this.method);
+        if(flushMode != null) {
+            persistenceQuery.setFlushMode(flushMode);
         }
     }
 

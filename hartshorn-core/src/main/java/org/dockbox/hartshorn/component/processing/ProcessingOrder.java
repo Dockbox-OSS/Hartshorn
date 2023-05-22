@@ -29,14 +29,14 @@ public class ProcessingOrder {
      * processors are allowed to discard existing instances and return new ones. This can be used to
      * create proxy instances.
      */
-    public static final ProcessingPhase INITIALIZING = new ProcessingPhase("Initializing", i -> i < 0, true);
+    public static final ProcessingPhase INITIALIZING = new ProcessingPhase("Initializing", order -> order < 0, true);
 
     /**
      * Indicates which service orders can be performed during phase 2. During this phase, component
      * processors are not allowed to discard existing instances and return new ones. This limits the
      * behavior of these processors to only return the same instance, albeit with different state.
      */
-    public static final ProcessingPhase MODIFYING = new ProcessingPhase("Modifying", i -> i >= 0, false);
+    public static final ProcessingPhase MODIFYING = new ProcessingPhase("Modifying", order -> order >= 0, false);
 
-    public static final ProcessingPhase[] PHASES = new ProcessingPhase[] { INITIALIZING, MODIFYING };
+    public static final ProcessingPhase[] PHASES = { INITIALIZING, MODIFYING };
 }

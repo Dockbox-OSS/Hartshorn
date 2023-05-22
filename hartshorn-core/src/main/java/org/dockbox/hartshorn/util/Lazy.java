@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.util;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 
-public class Lazy<T> {
+public final class Lazy<T> {
 
     private final ApplicationContext applicationContext;
     private final ComponentKey<T> type;

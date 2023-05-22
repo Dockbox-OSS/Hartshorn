@@ -881,7 +881,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
             }
 
-            final Map<String, FieldStatement> fields = statement.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
+            final Map<String, FieldStatement> fields = statement.fields().stream()
+                    .collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), field -> field));
 
             final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(),
                     superClassReference, constructor, this.variableScope(),
@@ -1048,15 +1049,15 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return true;
     }
 
-    private boolean isEqual(final Object a, final Object b) {
-        if (a == null && b == null) return true;
-        if (a == null) return false;
-        if (a instanceof Number na && b instanceof Number nb) {
-            final BigDecimal ba = BigDecimal.valueOf(na.doubleValue());
-            final BigDecimal bb = BigDecimal.valueOf(nb.doubleValue());
-            return ba.compareTo(bb) == 0;
+    private boolean isEqual(final Object left, final Object right) {
+        if (left == null && right == null) return true;
+        if (left == null) return false;
+        if (left instanceof Number numberLeft && right instanceof Number numberRight) {
+            final BigDecimal decimalLeft = BigDecimal.valueOf(numberLeft.doubleValue());
+            final BigDecimal decimalRight = BigDecimal.valueOf(numberRight.doubleValue());
+            return decimalLeft.compareTo(decimalRight) == 0;
         }
-        return a.equals(b);
+        return left.equals(right);
     }
 
     private Object unwrap(final Object object) {

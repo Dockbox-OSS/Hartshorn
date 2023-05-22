@@ -35,20 +35,4 @@ public interface AnnotatedElementView extends View {
      */
     ElementAnnotationsIntrospector annotations();
 
-    /**
-     * Returns the simple name of the element. For example, if the element is a field, this
-     * method will return the field's name, without further qualification.
-     *
-     * @return the simple name of the element
-     */
-    String name();
-
-    /**
-     * Returns the qualified name of the element. For example, if the element is a field,
-     * this method will return the field's name, qualified by the declaring class.
-     *
-     * @return the qualified name of the element
-     */
-    String qualifiedName();
-
 }

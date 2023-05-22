@@ -24,24 +24,24 @@ public class LongCycles {
     @Singleton
     public static class LongCycleA {
         @Inject
-        public LongCycleA(final LongCycleB b) {}
+        public LongCycleA(final LongCycleB cycle) {}
     }
 
     @Singleton
     public static class LongCycleB {
         @Inject
-        public LongCycleB(final LongCycleC c) {}
+        public LongCycleB(final LongCycleC cycle) {}
     }
 
     @Singleton
     public static class LongCycleC {
         @Inject
-        public LongCycleC(final LongCycleD d) {}
+        public LongCycleC(final LongCycleD cycle) {}
     }
 
     @Singleton
     public static class LongCycleD {
         @Inject
-        public LongCycleD(final LongCycleA a) {}
+        public LongCycleD(final LongCycleA cycle) {}
     }
 }

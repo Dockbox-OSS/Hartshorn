@@ -71,7 +71,7 @@ public class CaffeineCache<K, V> implements Cache<K, V> {
 
     @Override
     public void putIfAbsent(final K key, final V value) {
-        this.cache.get(key, k -> value);
+        this.cache.get(key, key0 -> value);
     }
 
     @Override

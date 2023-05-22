@@ -34,13 +34,13 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
     public JsonNode visit(final Node<?> node) {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
         final Object value = node.value();
-        if (value instanceof String string) return factory.textNode(string);
-        else if (value instanceof Integer integer) return factory.numberNode(integer);
-        else if (value instanceof Double dbl) return factory.numberNode(dbl);
-        else if (value instanceof Long lng) return factory.numberNode(lng);
-        else if (value instanceof Short shrt) return factory.numberNode(shrt);
-        else if (value instanceof Boolean bool) return factory.booleanNode(bool);
-        else if (value instanceof Node<?> n) return n.accept(this);
+        if (value instanceof String stringValue) return factory.textNode(stringValue);
+        else if (value instanceof Integer integerValue) return factory.numberNode(integerValue);
+        else if (value instanceof Double doubleValue) return factory.numberNode(doubleValue);
+        else if (value instanceof Long longValue) return factory.numberNode(longValue);
+        else if (value instanceof Short shortValue) return factory.numberNode(shortValue);
+        else if (value instanceof Boolean booleanValue) return factory.booleanNode(booleanValue);
+        else if (value instanceof Node<?> nodeValue) return nodeValue.accept(this);
         else throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
     }
 
@@ -59,13 +59,13 @@ class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
         final List<JsonNode> nodes = new ArrayList<>();
         for (final Object value : node.value()) {
-            if (value instanceof String string) nodes.add(factory.textNode(string));
-            else if (value instanceof Integer integer) nodes.add(factory.numberNode(integer));
-            else if (value instanceof Double dbl) nodes.add(factory.numberNode(dbl));
-            else if (value instanceof Long lng) nodes.add(factory.numberNode(lng));
-            else if (value instanceof Short shrt) nodes.add(factory.numberNode(shrt));
-            else if (value instanceof Boolean bool) nodes.add(factory.booleanNode(bool));
-            else if (value instanceof Node<?> n) nodes.add(n.accept(this));
+            if (value instanceof String stringValue) nodes.add(factory.textNode(stringValue));
+            else if (value instanceof Integer integerValue) nodes.add(factory.numberNode(integerValue));
+            else if (value instanceof Double doubleValue) nodes.add(factory.numberNode(doubleValue));
+            else if (value instanceof Long longValue) nodes.add(factory.numberNode(longValue));
+            else if (value instanceof Short shortValue) nodes.add(factory.numberNode(shortValue));
+            else if (value instanceof Boolean booleanValue) nodes.add(factory.booleanNode(booleanValue));
+            else if (value instanceof Node<?> nodeValue) nodes.add(nodeValue.accept(this));
             else throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
         }
         return factory.arrayNode().addAll(nodes);

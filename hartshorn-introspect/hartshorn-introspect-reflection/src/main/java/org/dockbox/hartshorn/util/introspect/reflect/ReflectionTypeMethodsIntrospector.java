@@ -53,8 +53,8 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
         final List<Method> methods = List.of(this.type.type().getMethods());
         if (!this.type.superClass().isVoid()) {
             final List<Method> superClassMethods = this.type.superClass().methods().all().stream()
-                    .filter(m -> m.isPublic() || m.isProtected())
-                    .flatMap(m -> m.method().stream())
+                    .filter(method -> method.modifiers().isPublic() || method.modifiers().isProtected())
+                    .flatMap(method -> method.method().stream())
                     .toList();
             allMethods.addAll(superClassMethods);
         }

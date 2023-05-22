@@ -55,6 +55,7 @@ public interface ApplicationEnvironment extends
      * {@link Introspector}, but is typically the same.
      * @return The primary {@link Introspector}
      */
+    @Override
     Introspector introspector();
 
     /**

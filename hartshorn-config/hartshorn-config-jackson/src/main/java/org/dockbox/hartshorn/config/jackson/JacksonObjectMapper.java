@@ -68,7 +68,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     @Override
     public <T> Attempt<T, ObjectMappingException> read(final String content, final Class<T> type) {
         this.context.log().debug("Reading content from string value to type " + type.getName());
-        return Attempt.<T, JsonProcessingException>of(() -> this.configureMapper().readValue(content, type), JsonProcessingException.class)
+        return Attempt.of(() -> this.configureMapper().readValue(content, type), JsonProcessingException.class)
                 .mapError(ObjectMappingException::new);
     }
 

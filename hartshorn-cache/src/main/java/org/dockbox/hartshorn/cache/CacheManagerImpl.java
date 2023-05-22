@@ -52,7 +52,7 @@ public class CacheManagerImpl implements CacheManager {
 
     @Override
     public <K, V> Option<Cache<K, V>> get(final String cache) {
-        return Option.of(this.caches.get(cache)).map(c -> (Cache<K, V>) c);
+        return Option.of(this.caches.get(cache)).map(storedCache -> (Cache<K, V>) storedCache);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CacheManagerImpl implements CacheManager {
                     this.caches.put(name, cache);
                     return cache;
                 })
-                .map(c -> (Cache<K, V>) c)
+                .map(storedCache -> (Cache<K, V>) storedCache)
                 .get();
     }
 

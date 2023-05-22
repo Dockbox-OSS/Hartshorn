@@ -35,6 +35,7 @@
 #
 # Versions in alphabetical order.
 #
+autoService = "1.0-rc7"
 antlr = "4.10.1"
 caffeine = "3.1.1"
 cglib = "3.3.0"
@@ -97,6 +98,7 @@ testContainersMssqlserver = { module = "org.testcontainers:mssqlserver", version
 # Libraries in alphabetical order
 #
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
+autoService = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 cglib = { module = "cglib:cglib", version.ref = "cglib" }
 derby = { module = "org.apache.derby:derby", version.ref = "derby" }

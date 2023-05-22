@@ -17,13 +17,14 @@
 package org.dockbox.hartshorn.reporting.component;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 public class ComponentReportingConfiguration {
 
     private ComponentAttribute groupBy = ComponentAttribute.STEREOTYPE;
     private boolean includeDependencies = true;
     private boolean includeRequiredConditions = true;
-    private final EnumMap<ComponentAttribute, Boolean> attributes = new EnumMap<>(ComponentAttribute.class);
+    private final Map<ComponentAttribute, Boolean> attributes = new EnumMap<>(ComponentAttribute.class);
 
     public ComponentReportingConfiguration() {
         // Package is included by type definition, so we don't need to include it by default
@@ -58,7 +59,7 @@ public class ComponentReportingConfiguration {
         return this;
     }
 
-    public EnumMap<ComponentAttribute, Boolean> attributes() {
+    public Map<ComponentAttribute, Boolean> attributes() {
         return this.attributes;
     }
 

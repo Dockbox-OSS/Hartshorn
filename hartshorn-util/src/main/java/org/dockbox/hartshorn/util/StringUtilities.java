@@ -41,11 +41,11 @@ public final class StringUtilities {
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-    public static boolean empty(final String value) {
+    public static boolean empty(final CharSequence value) {
         return null == value || value.isEmpty();
     }
 
-    public static boolean notEmpty(final String value) {
+    public static boolean notEmpty(final CharSequence value) {
         return null != value && !value.isEmpty();
     }
 
@@ -114,7 +114,7 @@ public final class StringUtilities {
         final Map<String, String> map = new HashMap<>();
 
         for (int i = 0; i < args.length; i++) {
-            final String arg = "" + args[i];
+            final String arg = String.valueOf(args[i]);
             map.put(String.format("{%d}", i), arg);
         }
         return StringUtilities.format(format, map);

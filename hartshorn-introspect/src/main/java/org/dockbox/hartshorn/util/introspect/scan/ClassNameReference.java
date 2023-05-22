@@ -51,10 +51,10 @@ public class ClassNameReference implements TypeReference {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final ClassNameReference that)) return false;
-        return this.name.equals(that.name);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (!(other instanceof final ClassNameReference reference)) return false;
+        return this.name.equals(reference.name);
     }
 
     @Override

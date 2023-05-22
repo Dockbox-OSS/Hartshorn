@@ -43,7 +43,7 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
         if (parameter.type().is(String.class)) {
             return body
                     .cast(parameter.type().type())
-                    .mapError(e -> e);
+                    .mapError(error -> error);
         }
 
         final MediaType mediaType = parameter.declaredBy().annotations().get(HttpRequest.class).get().consumes();
@@ -54,8 +54,8 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
         final FileFormat bodyFormat = mediaType.fileFormat().get();
         final ObjectMapper objectMapper = context.provider().get(ObjectMapper.class).fileType(bodyFormat);
         return body
-                .flatMap(b -> objectMapper.read(b, parameter.type().type()))
+                .flatMap(bodyContent -> objectMapper.read(bodyContent, parameter.type().type()))
                 .attempt(ObjectMappingException.class)
-                .mapError(e -> e);
+                .mapError(error -> error);
     }
 }

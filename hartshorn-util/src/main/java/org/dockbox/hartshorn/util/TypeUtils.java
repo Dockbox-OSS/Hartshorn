@@ -39,17 +39,17 @@ public class TypeUtils {
     );
 
     private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = Map.ofEntries(
-            Map.entry(boolean.class, s -> {
+            Map.entry(boolean.class, input -> {
                 // Boolean.valueOf only checks if the input equals 'true', and otherwise
                 // defaults to 'false'. We want to be more strict.
-                if ("true".equals(s)) return true;
-                else if ("false".equals(s)) return false;
-                else throw new TypeConversionException("Invalid boolean value: " + s);
+                if ("true".equals(input)) return true;
+                else if ("false".equals(input)) return false;
+                else throw new TypeConversionException("Invalid boolean value: " + input);
             }),
             Map.entry(byte.class, Byte::valueOf),
-            Map.entry(char.class, s -> {
-                if (s.length() == 1) return s.charAt(0);
-                else throw new TypeConversionException("Invalid char value: " + s + " (length != 1)");
+            Map.entry(char.class, input -> {
+                if (input.length() == 1) return input.charAt(0);
+                else throw new TypeConversionException("Invalid char value: " + input + " (length != 1)");
             }),
             Map.entry(double.class, Double::valueOf),
             Map.entry(float.class, Float::valueOf),
@@ -171,5 +171,15 @@ public class TypeUtils {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
+    }
+
+    public static boolean isAssignable(final Class<?> source, final Class<?> target) {
+        if (target.isAssignableFrom(source)) {
+            return true;
+        }
+        if (target.isPrimitive() && TypeUtils.isPrimitiveWrapper(source, target)) {
+            return true;
+        }
+        return source.isPrimitive() && TypeUtils.isPrimitiveWrapper(target, source);
     }
 }

@@ -22,7 +22,7 @@ public abstract class GenericEvent<T> extends ContextCarrierEvent {
 
     private final T value;
 
-    public GenericEvent(final T value) {
+    protected GenericEvent(final T value) {
         this.value = value;
     }
 

@@ -27,7 +27,7 @@ public class WildcardIntrospectorTests {
 
     @Test
     void testWildcardIsParentChildAndEqual() {
-        final WildcardTypeView view = new WildcardTypeView();
+        final TypeView<Object> view = new WildcardTypeView();
 
         Assertions.assertTrue(view.isParentOf(Object.class));
         Assertions.assertTrue(view.isChildOf(Object.class));

@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Collection;
@@ -59,21 +58,9 @@ public class ProviderContextList extends DefaultProvisionContext implements Repo
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.elements.allValues().stream().map(context -> (Reportable) c -> {
-            c.property("key").write(keyCollector -> {
-                keyCollector.property("type").write(context.key().type().getCanonicalName());
-                if (context.key().name() != null) {
-                    keyCollector.property("name").write(context.key().name());
-                }
-            });
-            c.property("phase").write(context.provider().phase());
-            c.property("lazy").write(context.provider().lazy());
-            c.property("priority").write(context.provider().priority());
-            if (StringUtilities.notEmpty(context.provider().value())) {
-                c.property("name").write(context.provider().value());
-            }
-            c.property("element").write(context.element());
-        }).toArray(Reportable[]::new);
+        final Reportable[] reporters = this.elements.allValues().stream()
+                .map(ProviderContextReportable::new)
+                .toArray(Reportable[]::new);
         collector.property("providers").write(reporters);
     }
 }

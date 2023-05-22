@@ -79,8 +79,8 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             return zeroParameterMethod.get();
         }
         final List<MethodView<Object, ?>> methods = this.type.methods().all().stream()
-                .filter(m -> m.name().equals(this.methodName))
-                .filter(m -> m.parameters().count() == arguments.size())
+                .filter(method -> method.name().equals(this.methodName))
+                .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
             throw new RuntimeError(at, "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name());
@@ -106,7 +106,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                 .mapError(error -> {
                     if (error instanceof ApplicationException ae) return ae;
                     return new ApplicationException(error);
-                }).map(o -> new ExternalInstance(o, interpreter.applicationContext().environment().introspect(o)))
+                }).map(object -> new ExternalInstance(object, interpreter.applicationContext().environment().introspect(object)))
                 .orNull();
     }
 

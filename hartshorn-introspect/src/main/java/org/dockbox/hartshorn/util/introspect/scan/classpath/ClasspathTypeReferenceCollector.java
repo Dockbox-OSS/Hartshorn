@@ -33,7 +33,7 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     private final String packageName;
     private final Set<TypeReference> cache = ConcurrentHashMap.newKeySet();
 
-    public ClasspathTypeReferenceCollector(final String packageName) {
+    protected ClasspathTypeReferenceCollector(final String packageName) {
         this.packageName = packageName;
     }
 
@@ -53,10 +53,10 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     protected abstract Set<TypeReference> createCache() throws TypeCollectionException;
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final ClasspathTypeReferenceCollector that)) return false;
-        return this.packageName.equals(that.packageName);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (!(other instanceof final ClasspathTypeReferenceCollector collector)) return false;
+        return this.packageName.equals(collector.packageName);
     }
 
     @Override

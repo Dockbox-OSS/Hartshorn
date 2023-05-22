@@ -111,11 +111,11 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     private record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
 
         @Override
-            public boolean equals(final Object o) {
-                if (this == o) return true;
-                if (o == null || this.getClass() != o.getClass()) return false;
-                final HierarchyKey that = (HierarchyKey) o;
-                return Objects.equals(this.element, that.element) && Objects.equals(this.annotationType, that.annotationType);
+            public boolean equals(final Object other) {
+                if (this == other) return true;
+                if (other == null || this.getClass() != other.getClass()) return false;
+                final HierarchyKey key = (HierarchyKey) other;
+                return Objects.equals(this.element, key.element) && Objects.equals(this.annotationType, key.annotationType);
             }
 
     }

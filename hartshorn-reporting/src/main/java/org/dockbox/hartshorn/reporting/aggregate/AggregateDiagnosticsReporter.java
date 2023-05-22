@@ -30,9 +30,9 @@ public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     public void report(final DiagnosticsPropertyCollector collector) {
         final Set<CategorizedDiagnosticsReporter> reporters = this.configuration().reporters();
 
-        collector.property("reporters").write(c -> {
+        collector.property("reporters").write(reporterCollector -> {
             for (final CategorizedDiagnosticsReporter reporter : reporters) {
-                c.property(reporter.category()).write(reporter.getClass().getCanonicalName());
+                reporterCollector.property(reporter.category()).write(reporter.getClass().getCanonicalName());
             }
         });
 

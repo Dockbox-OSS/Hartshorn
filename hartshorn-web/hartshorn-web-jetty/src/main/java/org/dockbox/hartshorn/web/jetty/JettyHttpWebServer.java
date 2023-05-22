@@ -80,10 +80,12 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
         return this.servletHandler;
     }
 
+    @Override
     public JsonInclusionRule skipBehavior() {
         return this.skipBehavior;
     }
 
+    @Override
     public JettyHttpWebServer skipBehavior(final JsonInclusionRule skipBehavior) {
         this.skipBehavior = skipBehavior;
         return this;

@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.proxy.cglib;
 import net.sf.cglib.proxy.Enhancer;
 
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.util.ApplicationException;
 
 import java.lang.reflect.Constructor;
 
@@ -40,13 +39,13 @@ public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunctio
     }
 
     @Override
-    public T create() throws ApplicationException {
+    public T create() {
         final Object instance = this.enhancer.create();
         return this.type.cast(instance);
     }
 
     @Override
-    public T create(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+    public T create(final Constructor<T> constructor, final Object[] args) {
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Object instance = this.enhancer.create(parameterTypes, args);
         return this.type.cast(instance);

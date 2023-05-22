@@ -48,7 +48,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Float> converter = factory.create(Float.class);
         final Float converted = converter.convert("1");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1F, converted);
+        Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Double> converter = factory.create(Double.class);
         final Double converted = converter.convert("1");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1D, converted);
+        Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Float> converter = factory.create(Float.class);
         final Float converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(-1F, converted);
+        Assertions.assertEquals(-1.0F, converted);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Double> converter = factory.create(Double.class);
         final Double converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(-1D, converted);
+        Assertions.assertEquals(-1.0D, converted);
     }
 
     @Test
@@ -204,7 +204,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Float> converter = factory.create(Float.class);
         final Float converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1F, converted);
+        Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
@@ -213,7 +213,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Double> converter = factory.create(Double.class);
         final Double converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1D, converted);
+        Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
@@ -258,7 +258,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Float> converter = factory.create(Float.class);
         final Float converted = converter.convert("01");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1F, converted);
+        Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
@@ -267,7 +267,7 @@ public class StringToNumberConverterFactoryTests {
         final Converter<String, Double> converter = factory.create(Double.class);
         final Double converted = converter.convert("01");
         Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1D, converted);
+        Assertions.assertEquals(1.0D, converted);
     }
 
     @Test

@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.util.option.Option;
@@ -70,7 +71,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
             return false;
         }
 
-        final ResourceLookup resourceLookup = new FallbackResourceLookup(context, new FileSystemLookupStrategy());;
+        final ResourceLookup resourceLookup = new FallbackResourceLookup(context, new FileSystemLookupStrategy());
         final Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
@@ -93,6 +94,6 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
     @Override
     public Integer order() {
         // Run before the ProviderServicePreProcessor, so this context is available for configuration objects
-        return (Integer.MIN_VALUE / 2) - 256;
+        return (Integer.MIN_VALUE / 2) - ProcessingOrder.LAST;
     }
 }

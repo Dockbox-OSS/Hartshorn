@@ -60,14 +60,14 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final ComponentKey<?> that = (ComponentKey<?>) o;
-        return this.enable == that.enable
-                && this.type.equals(that.type)
-                && Objects.equals(this.name, that.name)
-                && Objects.equals(this.scope, that.scope);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
+        return this.enable == otherComponentKey.enable
+                && this.type.equals(otherComponentKey.type)
+                && Objects.equals(this.name, otherComponentKey.name)
+                && Objects.equals(this.scope, otherComponentKey.scope);
     }
 
     @Override
@@ -75,7 +75,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         return Objects.hash(this.type, this.name, this.scope, this.enable);
     }
 
-    public static class Builder<T> {
+    public static final class Builder<T> {
 
         private Class<T> type;
         private String name;
@@ -125,7 +125,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         }
     }
 
-    public static class ComponentKeyView<T> {
+    public static final class ComponentKeyView<T> {
 
         private final Class<T> type;
         private final String name;
@@ -136,11 +136,11 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         }
 
         @Override
-        public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || this.getClass() != o.getClass()) return false;
-            final ComponentKeyView<?> that = (ComponentKeyView<?>) o;
-            return Objects.equals(this.type, that.type) && Objects.equals(this.name, that.name);
+        public boolean equals(final Object other) {
+            if (this == other) return true;
+            if (other == null || this.getClass() != other.getClass()) return false;
+            final ComponentKeyView<?> otherKeyView = (ComponentKeyView<?>) other;
+            return Objects.equals(this.type, otherKeyView.type) && Objects.equals(this.name, otherKeyView.name);
         }
 
         @Override

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -25,13 +26,17 @@ public class OptionToObjectConverterFactory implements ConverterFactory<Option<?
 
     @Override
     public <O> Converter<Option<?>, O> create(final Class<O> targetType) {
-        return input -> input.map(targetType::cast).orNull();
+        return input -> input.map(result -> (O) result).orNull();
     }
 
     @Override
     public boolean canConvert(final Object source, final Class<?> targetType) {
-        final Option<?> option = (Option<?>) source;
-        final Object value = option.orNull();
-        return value == null || targetType.isAssignableFrom(value.getClass());
+        if (source instanceof Option<?> option) {
+            final Object value = option.orNull();
+
+            if (value == null) return true;
+            return TypeUtils.isAssignable(value.getClass(), targetType);
+        }
+        return false;
     }
 }

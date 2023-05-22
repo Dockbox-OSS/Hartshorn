@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 public class JavassistApplicationProxierLoader implements ApplicationProxierLoader {
 
     @Override
-    public ApplicationProxier create(Introspector introspector) {
+    public ApplicationProxier create(final Introspector introspector) {
         return new JavassistApplicationProxier(introspector);
     }
 }

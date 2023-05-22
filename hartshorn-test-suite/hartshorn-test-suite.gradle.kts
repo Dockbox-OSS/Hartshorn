@@ -15,10 +15,7 @@
  */
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
+    api("org.dockbox.hartshorn:hartshorn-core")
 
     implementation(libs.slf4j)
     implementation(libs.logback)

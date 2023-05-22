@@ -55,13 +55,13 @@ public interface ExceptionHandler {
      * the link below for more details. The return result is only used to mimic a return value when it is needed, as the
      * {@code throws} cause is not enough to make the compiler know that the method will throw an exception.
      *
-     * @param t The exception to throw.
+     * @param throwable The exception to throw.
      * @param <T> The type of the exception.
      * @throws T The exception to throw.
      * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
      */
     @Deprecated
-    static <T extends Throwable, R> R unchecked(final Throwable t) throws T {
-        throw (T) t;
+    static <T extends Throwable, R> R unchecked(final Throwable throwable) throws T {
+        throw (T) throwable;
     }
 }

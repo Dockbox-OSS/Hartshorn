@@ -27,7 +27,7 @@ public abstract class ContextCarrierEvent extends DefaultApplicationAwareContext
 
     private ApplicationContext context;
 
-    public ContextCarrierEvent() {
+    protected ContextCarrierEvent() {
         super(null);
     }
 

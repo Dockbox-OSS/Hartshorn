@@ -24,7 +24,7 @@ public abstract class AbstractTargetEvent extends ContextCarrierEvent implements
 
     private Subject subject;
 
-    public AbstractTargetEvent(final Subject subject) {
+    protected AbstractTargetEvent(final Subject subject) {
         this.subject = subject;
     }
 

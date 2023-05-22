@@ -59,8 +59,8 @@ public class AggregateJpaQueryContextCreator implements JpaQueryContextCreator {
             }
 
             @Override
-            public int compareTo(@NonNull final PriorityEntry o) {
-                return Integer.compare(this.priority, o.priority);
+            public int compareTo(@NonNull final PriorityEntry other) {
+                return Integer.compare(this.priority, other.priority);
             }
         }
 }

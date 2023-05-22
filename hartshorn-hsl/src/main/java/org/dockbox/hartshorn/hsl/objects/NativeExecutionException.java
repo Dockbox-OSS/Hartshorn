@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @since 22.4
  */
 public class NativeExecutionException extends ApplicationException {
-    public NativeExecutionException(final String message, final Throwable e) {
-        super(message, e);
+    public NativeExecutionException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
     public NativeExecutionException(final String message) {

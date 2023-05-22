@@ -43,7 +43,7 @@ public abstract class MethodStubTests {
 
     @Test
     void testDefaultBehaviorIsDefaultOrNull() throws ApplicationException {
-        ApplicationProxier proxier = proxierLoader().create(this.introspector());
+        final ApplicationProxier proxier = this.proxierLoader().create(this.introspector());
         final ProxyFactory<StubbedInterfaceProxy> proxyFactory = proxier.factory(StubbedInterfaceProxy.class);
         final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
 
@@ -62,7 +62,7 @@ public abstract class MethodStubTests {
 
     @Test
     void testStubBehaviorCanBeChanged() throws ApplicationException {
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = proxierLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.proxierLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
 
         // Also verifies that the stub result is not cached
         final AtomicInteger integer = new AtomicInteger(0);
@@ -79,7 +79,7 @@ public abstract class MethodStubTests {
 
     @Test
     void testStubsAreObserved() throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = proxierLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.proxierLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
 
         final AtomicBoolean beforeObserved = new AtomicBoolean(false);
         final AtomicBoolean afterObserved = new AtomicBoolean(false);

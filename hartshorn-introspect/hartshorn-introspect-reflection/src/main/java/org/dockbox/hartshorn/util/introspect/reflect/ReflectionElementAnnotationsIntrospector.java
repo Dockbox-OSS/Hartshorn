@@ -63,7 +63,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     @Override
     public Set<Annotation> annotedWith(final Class<? extends Annotation> annotation) {
         return this.all().stream()
-                .filter(a -> this.introspector.introspect(a.annotationType()).annotations().has(annotation))
+                .filter(presentAnnotation -> this.introspector.introspect(presentAnnotation.annotationType()).annotations().has(annotation))
                 .collect(Collectors.toSet());
     }
 

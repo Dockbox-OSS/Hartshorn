@@ -96,7 +96,7 @@ public class LexerTests {
         final Field field = TokenConstants.class.getField(name);
         // Should be static and public
         final char constant = (char) field.get(null);
-        Assertions.assertEquals("" + constant, type.representation());
+        Assertions.assertEquals(String.valueOf(constant), type.representation());
     }
 
     @ParameterizedTest

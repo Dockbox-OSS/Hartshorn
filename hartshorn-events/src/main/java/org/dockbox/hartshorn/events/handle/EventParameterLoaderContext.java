@@ -19,16 +19,15 @@ package org.dockbox.hartshorn.events.handle;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
 public class EventParameterLoaderContext extends ApplicationBoundParameterLoaderContext {
 
     private final Event event;
 
-    public EventParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance,
+    public EventParameterLoaderContext(final ExecutableElementView<?> element, final Object instance,
                                        final ApplicationContext applicationContext, final Event event) {
-        super(method, instance, applicationContext);
+        super(element, instance, applicationContext);
         this.event = event;
     }
 

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ModifiableComponentProcessingContext;
@@ -43,6 +42,7 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -72,7 +72,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             final Option<ObjectContainer<T>> objectContainer = this.provide(key);
             if (objectContainer.present()) return objectContainer;
 
-            return this.raw(key);
+            return this.createContextualInstanceContainer(key);
         }
         catch (final ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
@@ -207,7 +207,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
     }
 
-    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
+    public <T> Option<ObjectContainer<T>> createContextualInstanceContainer(final ComponentKey<T> key) throws ApplicationException {
         return new ContextDrivenProvider<>(key).provide(this.applicationContext());
     }
 

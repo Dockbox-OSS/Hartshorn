@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
@@ -46,24 +45,7 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
         final String elementKey = cacheContext.key();
         final ConversionService conversionService = context.get(ConversionService.class);
 
-        return (interceptorContext) -> {
-            final Cache<String, Object> cache = cacheContext.cache();
-            final Option<R> content = cache.get(elementKey)
-                    .map(result -> conversionService.convert(result, interceptorContext.method().returnType().type()));
-
-            return content.orElseGet(() -> {
-                context.log().debug("Cache " + cacheContext.cacheName() + " has not been populated yet, or content has expired.");
-                try {
-                    final R out = interceptorContext.invokeDefault();
-                    cache.putIfAbsent(elementKey, out);
-                    return out;
-                }
-                catch (final Throwable e) {
-                    context.handle(e);
-                    return null;
-                }
-            });
-        };
+        return new CachedMethodInterceptor<>(cacheContext, elementKey, conversionService, context);
     }
 
     @Override

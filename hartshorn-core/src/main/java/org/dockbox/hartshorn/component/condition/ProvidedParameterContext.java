@@ -42,7 +42,11 @@ public final class ProvidedParameterContext extends DefaultProvisionContext {
             throw new IllegalArgumentException("Parameters and arguments must be of the same size");
         }
         final Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
-                .collect(HashMap::new, (m, v) -> m.put(parameters.get(v), arguments.get(v)), Map::putAll);
+                .collect(
+                        HashMap::new,
+                        (parameterViews, index) -> parameterViews.put(parameters.get(index), arguments.get(index)),
+                        Map::putAll
+                );
         return new ProvidedParameterContext(argumentMap);
     }
 

@@ -197,11 +197,13 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final ContextKey<?> that = (ContextKey<?>) o;
-        return this.requiresApplicationContext == that.requiresApplicationContext && this.type.equals(that.type) && Objects.equals(this.name, that.name);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final ContextKey<?> contextKey = (ContextKey<?>) other;
+        return this.requiresApplicationContext == contextKey.requiresApplicationContext
+                && this.type.equals(contextKey.type)
+                && Objects.equals(this.name, contextKey.name);
     }
 
     @Override

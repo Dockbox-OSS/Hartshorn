@@ -72,15 +72,15 @@ public final class CyclingConstructorAnalyzer {
             if (!path.isEmpty()) return Attempt.of(new CyclicComponentException(type, path));
         }
 
-        return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(c -> {
+        return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(constructor -> {
             // Don't store if there may be a cycle in the dependency graph
-            if (checkForCycles) cache.put(type.type(), c);
+            if (checkForCycles) cache.put(type.type(), constructor);
         });
     }
 
     public static List<TypeView<?>> findCyclicPath(final TypeView<?> type) {
-        return findConstructor(type, false).map(c -> {
-            final List<TypeView<?>> path = findCyclicPath(c, type);
+        return findConstructor(type, false).map(constructor -> {
+            final List<TypeView<?>> path = findCyclicPath(constructor, type);
             return finalizeLookup(type, path);
         }).orElseGet(ArrayList::new);
     }

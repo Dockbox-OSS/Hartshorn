@@ -53,10 +53,10 @@ public class UserWithNamedQuery {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final UserWithNamedQuery that)) return false;
-        return Objects.equals(this.name, that.name);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (!(other instanceof final UserWithNamedQuery user)) return false;
+        return Objects.equals(this.name, user.name);
     }
 
     @Override

@@ -135,7 +135,7 @@ public class CommandGatewayImpl implements CommandGateway {
     @Override
     public void accept(final CommandContext context) throws ParsingException {
         final Option<CommandExecutorContext> executor = this.get(context);
-        executor.peek(e -> this.execute(e, context))
+        executor.peek(executorContext -> this.execute(executorContext, context))
                 .orElseThrow(() -> new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size())));
     }
 
@@ -185,7 +185,7 @@ public class CommandGatewayImpl implements CommandGateway {
             for (final String contextAlias : executorContext.aliases()) {
                 if (contextAlias.startsWith(command)) {
                     final String stripped = contextAlias.replaceFirst(alias + " ", "");
-                    if (!"".equals(stripped)) suggestions.add(stripped);
+                    if (!stripped.isEmpty()) suggestions.add(stripped);
                 }
             }
         }

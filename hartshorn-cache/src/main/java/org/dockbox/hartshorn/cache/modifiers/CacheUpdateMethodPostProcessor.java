@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link UpdateCache}
@@ -46,17 +45,7 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
 
     @Override
     protected <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final CacheContext cacheContext) {
-        return interceptorContext -> {
-            try {
-                final Object o = interceptorContext.args()[0];
-                cacheContext.manager().get(cacheContext.cacheName())
-                        .peek(cache -> cache.put(cacheContext.key(), o));
-                return interceptorContext.invokeDefault();
-            } catch (final ApplicationException e) {
-                context.handle(e);
-                return interceptorContext.method().returnType().defaultOrNull();
-            }
-        };
+        return new CacheUpdateMethodInterceptor<>(cacheContext, context);
     }
 
     @Override

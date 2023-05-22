@@ -17,5 +17,6 @@
 package org.dockbox.hartshorn.util.introspect.view;
 
 public interface PackageView extends View {
+    @Override
     String name();
 }

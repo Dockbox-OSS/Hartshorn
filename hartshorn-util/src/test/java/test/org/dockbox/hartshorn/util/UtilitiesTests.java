@@ -195,8 +195,8 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("differences")
-    void testDifferenceInCollections(final Collection<String> a, final Collection<String> b, final Collection<String> expected) {
-        final Set<String> difference = CollectionUtilities.difference(a, b);
+    void testDifferenceInCollections(final Collection<String> collectionOne, final Collection<String> collectionTwo, final Collection<String> expected) {
+        final Set<String> difference = CollectionUtilities.difference(collectionOne, collectionTwo);
         Assertions.assertEquals(difference.size(), expected.size());
         Assertions.assertTrue(difference.containsAll(expected));
         Assertions.assertTrue(expected.containsAll(difference));
@@ -205,7 +205,7 @@ public class UtilitiesTests {
     @Test
     void testSplitCapitals() {
         final String input = "ThisIsAString";
-        final String[] expected = new String[]{ "This", "Is", "A", "String" };
+        final String[] expected = { "This", "Is", "A", "String" };
         final String[] actual = StringUtilities.splitCapitals(input);
         Assertions.assertArrayEquals(expected, actual);
     }
@@ -230,8 +230,8 @@ public class UtilitiesTests {
                 Arguments.of("1", long.class, 1L),
                 Arguments.of("1", short.class, (short) 1),
                 Arguments.of("1", byte.class, (byte) 1),
-                Arguments.of("1", float.class, 1f),
-                Arguments.of("1", double.class, 1d),
+                Arguments.of("1", float.class, 1.0f),
+                Arguments.of("1", double.class, 1.0d),
                 Arguments.of("true", boolean.class, true),
                 Arguments.of("1", char.class, '1'),
                 Arguments.of("ONE", TestEnum.class, TestEnum.ONE),

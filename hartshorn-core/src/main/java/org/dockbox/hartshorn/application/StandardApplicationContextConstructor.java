@@ -22,20 +22,19 @@ import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,15 +63,8 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
     protected void registerHooks(final ApplicationContext applicationContext) {
         this.logger.debug("Registering shutdown hook for application context");
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                if (!applicationContext.isClosed()) {
-                    applicationContext.close();
-                }
-            } catch (final Exception e) {
-                this.logger.error("Failed to close application context", e);
-            }
-        }, "ShutdownHook"));
+        final ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(this.logger, applicationContext);
+        Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "ShutdownHook"));
     }
 
     protected ApplicationEnvironment createEnvironment(final InitializingContext context) {
@@ -187,7 +179,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         }
 
         prefixes.stream()
-                .map(prefix -> new ClassPathScannerTypeReferenceCollector(prefix))
+                .map(ClassPathScannerTypeReferenceCollector::new)
                 .forEach(collectorContext::register);
 
         if (!builder.standaloneComponents().isEmpty()) {

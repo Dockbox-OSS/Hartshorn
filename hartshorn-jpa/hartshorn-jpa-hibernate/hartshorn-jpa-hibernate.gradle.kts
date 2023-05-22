@@ -19,12 +19,7 @@ apply {
 }
 
 dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
-    implementation("org.dockbox.hartshorn:hartshorn-util")
-    implementation("org.dockbox.hartshorn:hartshorn-proxy")
-    implementation("org.dockbox.hartshorn:hartshorn-config")
-    implementation("org.dockbox.hartshorn:hartshorn-introspect")
-    implementation("org.dockbox.hartshorn:hartshorn-jpa")
+    api("org.dockbox.hartshorn:hartshorn-jpa")
 
     implementation(libs.bundles.hibernate)
 

@@ -26,24 +26,24 @@ public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> 
 
     private final ProxyFactory<T> factory;
 
-    public StandardMethodWrapperFactory(ProxyFactory<T> factory) {
+    public StandardMethodWrapperFactory(final ProxyFactory<T> factory) {
         this.factory = factory;
     }
 
     @Override
-    public MethodWrapperFactory<T> before(ProxyCallback<T> callback) {
+    public MethodWrapperFactory<T> before(final ProxyCallback<T> callback) {
         this.before = callback;
         return this;
     }
 
     @Override
-    public MethodWrapperFactory<T> after(ProxyCallback<T> callback) {
+    public MethodWrapperFactory<T> after(final ProxyCallback<T> callback) {
         this.after = callback;
         return this;
     }
 
     @Override
-    public MethodWrapperFactory<T> onError(ProxyCallback<T> callback) {
+    public MethodWrapperFactory<T> onError(final ProxyCallback<T> callback) {
         this.onError = callback;
         return this;
     }

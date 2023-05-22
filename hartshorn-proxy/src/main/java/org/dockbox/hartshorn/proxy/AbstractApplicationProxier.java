@@ -29,7 +29,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
     private final Introspector introspector;
 
-    public AbstractApplicationProxier(Introspector introspector) {
+    protected AbstractApplicationProxier(final Introspector introspector) {
         this.introspector = introspector;
         this.registerProxyLookup(new NativeProxyLookup());
         this.registerProxyLookup(new HartshornProxyLookup());
@@ -89,7 +89,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
         return this.proxyLookups.stream().anyMatch(lookup -> lookup.isProxy(candidate));
     }
 
-    public void registerProxyLookup(final ProxyLookup proxyLookup) {
+    public final void registerProxyLookup(final ProxyLookup proxyLookup) {
         this.proxyLookups.add(proxyLookup);
     }
 }

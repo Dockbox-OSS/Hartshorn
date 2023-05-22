@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.InitializingContextBinderConfiguration;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
@@ -39,7 +40,7 @@ import java.util.Properties;
 import java.util.Set;
 
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
-        ApplicationContext, HierarchicalComponentProvider {
+        ApplicationContext {
 
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
@@ -48,7 +49,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     private boolean isClosed = false;
     protected boolean isRunning = false;
 
-    public DelegatingApplicationContext(InitializingContext context) {
+    protected DelegatingApplicationContext(InitializingContext context) {
         super(null);
         context = new InitializingContext(context.environment(), this, context.builder());
         this.add(context);
@@ -63,7 +64,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.componentProvider = context.componentProvider();
         this.locator = context.componentLocator();
 
-        context.applyTo(this);
+        final InitializingContextBinderConfiguration configuration = new InitializingContextBinderConfiguration();
+        configuration.configureBindings(context, this);
     }
 
     protected abstract void prepareInitialization();
@@ -94,13 +96,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     @Override
     public <A> Option<A> activator(final Class<A> activator) {
         return this.first(ServiceActivatorContext.class)
-                .map(c -> c.activator(activator));
+                .map(context -> context.activator(activator));
     }
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         return this.first(ServiceActivatorContext.class)
-                .map(c -> c.hasActivator(activator))
+                .map(context -> context.hasActivator(activator))
                 .orElseGet(() -> false);
     }
 

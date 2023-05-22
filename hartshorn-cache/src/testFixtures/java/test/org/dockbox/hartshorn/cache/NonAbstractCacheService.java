@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 public class NonAbstractCacheService {
 
     @UpdateCache
-    public long update(final long s) {
-        return s*2;
+    public long update(final long number) {
+        return number*2;
     }
 
     @EvictCache

@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -282,6 +283,17 @@ public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C 
     Self componentPopulator(Initializer<ComponentPopulator> componentPopulator);
 
     ComponentPopulator componentPopulator(final InitializingContext context);
+
+    /**
+     * Sets the {@link ViewContextAdapter} to use. The view context adapter is responsible for adapting various
+     * {@link org.dockbox.hartshorn.util.introspect.view.View} implementations to the application context.
+     *
+     * @param viewContextAdapter The view context adapter to use.
+     * @return The {@link ApplicationBuilder} instance.
+     */
+    Self viewContextAdapter(Initializer<ViewContextAdapter> viewContextAdapter);
+
+    ViewContextAdapter viewContextAdapter(final InitializingContext context);
 
     /**
      * Registers a custom {@link ComponentPostProcessor}. Unlike automatically activated {@link ComponentPostProcessor}s,

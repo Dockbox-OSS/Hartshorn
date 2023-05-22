@@ -25,140 +25,140 @@ public class BuiltInStringTypeAdaptersTests {
 
     @Test
     void testStringAdapterReturnsSame() {
-        Option<String> adapted = BuiltInStringTypeAdapters.STRING.adapt("test");
+        final Option<String> adapted = BuiltInStringTypeAdapters.STRING.adapt("test");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals("test", adapted.get());
     }
 
     @Test
     void testCharacterAdapterReturnsFirstCharacterIfStringOneCharacter() {
-        Option<Character> adapted = BuiltInStringTypeAdapters.CHARACTER.adapt("t");
+        final Option<Character> adapted = BuiltInStringTypeAdapters.CHARACTER.adapt("t");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals('t', adapted.get());
     }
 
     @Test
     void testCharacterAdapterReturnsEmptyIfStringNotOneCharacter() {
-        Option<Character> adapted = BuiltInStringTypeAdapters.CHARACTER.adapt("test");
+        final Option<Character> adapted = BuiltInStringTypeAdapters.CHARACTER.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testCharacterAdapterReturnsEmptyIfStringEmpty() {
-        Option<Character> adapted = BuiltInStringTypeAdapters.CHARACTER.adapt("");
+        final Option<Character> adapted = BuiltInStringTypeAdapters.CHARACTER.adapt("");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testBooleanAdapterReturnsTrueIfStringIsTrue() {
-        Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("true");
+        final Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("true");
         Assertions.assertTrue(adapted.present());
         Assertions.assertTrue(adapted.get());
     }
 
     @Test
     void testBooleanAdapterReturnsFalseIfStringIsFalse() {
-        Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("false");
+        final Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("false");
         Assertions.assertTrue(adapted.present());
         Assertions.assertFalse(adapted.get());
     }
 
     @Test
     void testBooleanAdapterReturnsTrueIfStringIsYes() {
-        Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("yes");
+        final Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("yes");
         Assertions.assertTrue(adapted.present());
         Assertions.assertTrue(adapted.get());
     }
 
     @Test
     void testBooleanAdapterReturnsFalseIfStringIsNo() {
-        Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("no");
+        final Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("no");
         Assertions.assertTrue(adapted.present());
         Assertions.assertFalse(adapted.get());
     }
 
     @Test
     void testBooleanAdapterReturnsFalseIfStringIsNotBoolean() {
-        Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("test");
+        final Option<Boolean> adapted = BuiltInStringTypeAdapters.BOOLEAN.adapt("test");
         Assertions.assertTrue(adapted.present());
         Assertions.assertFalse(adapted.get());
     }
 
     @Test
     void testDoubleAdapterReturnsDoubleIfStringIsDouble() {
-        Option<Double> adapted = BuiltInStringTypeAdapters.DOUBLE.adapt("1.0");
+        final Option<Double> adapted = BuiltInStringTypeAdapters.DOUBLE.adapt("1.0");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals(1.0, adapted.get());
     }
 
     @Test
     void testDoubleAdapterReturnsEmptyIfStringIsNotDouble() {
-        Option<Double> adapted = BuiltInStringTypeAdapters.DOUBLE.adapt("test");
+        final Option<Double> adapted = BuiltInStringTypeAdapters.DOUBLE.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testFloatAdapterReturnsFloatIfStringIsFloat() {
-        Option<Float> adapted = BuiltInStringTypeAdapters.FLOAT.adapt("1.0");
+        final Option<Float> adapted = BuiltInStringTypeAdapters.FLOAT.adapt("1.0");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals(1.0f, adapted.get());
     }
 
     @Test
     void testFloatAdapterReturnsEmptyIfStringIsNotFloat() {
-        Option<Float> adapted = BuiltInStringTypeAdapters.FLOAT.adapt("test");
+        final Option<Float> adapted = BuiltInStringTypeAdapters.FLOAT.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testIntegerAdapterReturnsIntegerIfStringIsInteger() {
-        Option<Integer> adapted = BuiltInStringTypeAdapters.INTEGER.adapt("1");
+        final Option<Integer> adapted = BuiltInStringTypeAdapters.INTEGER.adapt("1");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals(1, adapted.get());
     }
 
     @Test
     void testIntegerAdapterReturnsEmptyIfStringIsNotInteger() {
-        Option<Integer> adapted = BuiltInStringTypeAdapters.INTEGER.adapt("test");
+        final Option<Integer> adapted = BuiltInStringTypeAdapters.INTEGER.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testLongAdapterReturnsLongIfStringIsLong() {
-        Option<Long> adapted = BuiltInStringTypeAdapters.LONG.adapt("1");
+        final Option<Long> adapted = BuiltInStringTypeAdapters.LONG.adapt("1");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals(1L, adapted.get());
     }
 
     @Test
     void testLongAdapterReturnsEmptyIfStringIsNotLong() {
-        Option<Long> adapted = BuiltInStringTypeAdapters.LONG.adapt("test");
+        final Option<Long> adapted = BuiltInStringTypeAdapters.LONG.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testShortAdapterReturnsShortIfStringIsShort() {
-        Option<Short> adapted = BuiltInStringTypeAdapters.SHORT.adapt("1");
+        final Option<Short> adapted = BuiltInStringTypeAdapters.SHORT.adapt("1");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals(1, (short) adapted.get());
     }
 
     @Test
     void testShortAdapterReturnsEmptyIfStringIsNotShort() {
-        Option<Short> adapted = BuiltInStringTypeAdapters.SHORT.adapt("test");
+        final Option<Short> adapted = BuiltInStringTypeAdapters.SHORT.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 
     @Test
     void testUUIDAdapterReturnsUUIDIfStringIsUUID() {
-        Option<java.util.UUID> adapted = BuiltInStringTypeAdapters.UNIQUE_ID.adapt("00000000-0000-0000-0000-000000000000");
+        final Option<java.util.UUID> adapted = BuiltInStringTypeAdapters.UNIQUE_ID.adapt("00000000-0000-0000-0000-000000000000");
         Assertions.assertTrue(adapted.present());
         Assertions.assertEquals(java.util.UUID.fromString("00000000-0000-0000-0000-000000000000"), adapted.get());
     }
 
     @Test
     void testUUIDAdapterReturnsEmptyIfStringIsNotUUID() {
-        Option<java.util.UUID> adapted = BuiltInStringTypeAdapters.UNIQUE_ID.adapt("test");
+        final Option<java.util.UUID> adapted = BuiltInStringTypeAdapters.UNIQUE_ID.adapt("test");
         Assertions.assertFalse(adapted.present());
     }
 }

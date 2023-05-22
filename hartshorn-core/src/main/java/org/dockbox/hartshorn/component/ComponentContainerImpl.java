@@ -54,14 +54,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public String id() {
         final String id = this.annotation().id();
-        if ("".equals(id)) return ComponentUtilities.id(this.context, this.component, true);
+        if (id != null && id.isEmpty()) return ComponentUtilities.id(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
         final String name = this.annotation().name();
-        if ("".equals(name)) return ComponentUtilities.name(this.context, this.component, true);
+        if (name != null && name.isEmpty()) return ComponentUtilities.name(this.context, this.component, true);
         return name;
     }
 
@@ -96,11 +96,11 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final ComponentContainerImpl that = (ComponentContainerImpl) o;
-        return this.component.equals(that.component);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final ComponentContainerImpl container = (ComponentContainerImpl) other;
+        return this.component.equals(container.component);
     }
 
     @Override

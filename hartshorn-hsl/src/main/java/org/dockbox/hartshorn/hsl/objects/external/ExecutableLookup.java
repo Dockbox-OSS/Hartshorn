@@ -53,8 +53,8 @@ public class ExecutableLookup {
             return zeroParameterMethod.get();
         }
         final List<MethodView<T, ?>> methods = declaring.methods().all().stream()
-                .filter(m -> m.name().equals(function))
-                .filter(m -> m.parameters().count() == arguments.size())
+                .filter(method -> method.name().equals(function))
+                .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
             throw new RuntimeError(at, "Method '" + function + "' with " + arguments.size() + " parameters does not exist on external instance of type " + declaring.name());

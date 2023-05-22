@@ -27,10 +27,10 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     protected abstract Map<K, Collection<V>> map();
     protected abstract Collection<V> createEmptyCollection();
 
-    public AbstractMultiMap() {
+    protected AbstractMultiMap() {
     }
 
-    public AbstractMultiMap(MultiMap<K, V> map) {
+    protected AbstractMultiMap(final MultiMap<K, V> map) {
         this.putAll(map);
     }
 
@@ -41,7 +41,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public void putAll(final K key, final Collection<V> values) {
-        values.forEach(v -> this.put(key, v));
+        values.forEach(value -> this.put(key, value));
     }
 
     @Override
@@ -53,12 +53,12 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public void put(final K key, final V value) {
-        this.map().computeIfAbsent(key, k -> this.createEmptyCollection()).add(value);
+        this.map().computeIfAbsent(key, key0 -> this.createEmptyCollection()).add(value);
     }
 
     @Override
     public void putIfAbsent(final K key, final V value) {
-        this.map().computeIfAbsent(key, k -> this.createEmptyCollection());
+        this.map().computeIfAbsent(key, key0 -> this.createEmptyCollection());
         if (!this.map().get(key).contains(value)) {
             this.map().get(key).add(value);
         }
@@ -91,7 +91,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public boolean containsValue(final V value) {
-        return this.map().values().stream().anyMatch(v -> v.contains(value));
+        return this.map().values().stream().anyMatch(value0 -> value0.contains(value));
     }
 
     @Override
@@ -142,7 +142,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public void forEach(BiConsumer<K, V> consumer) {
-        this.map().forEach((k, v) -> v.forEach(v1 -> consumer.accept(k, v1)));
+    public void forEach(final BiConsumer<K, V> consumer) {
+        this.map().forEach((key, value) -> value.forEach(value0 -> consumer.accept(key, value0)));
     }
 }

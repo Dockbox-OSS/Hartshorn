@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util;
 
 public class TypeConversionException extends ApplicationRuntimeException {
 
-    public TypeConversionException(String message) {
+    public TypeConversionException(final String message) {
         super(message);
     }
 

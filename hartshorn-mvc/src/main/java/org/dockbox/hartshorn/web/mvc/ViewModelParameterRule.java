@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.web.mvc.model.ViewModel;
 public class ViewModelParameterRule implements ParameterLoaderRule<MvcParameterLoaderContext> {
 
     @Override
-    public boolean accepts(ParameterView<?> parameter, int index, MvcParameterLoaderContext context, Object... args) {
+    public boolean accepts(final ParameterView<?> parameter, final int index, final MvcParameterLoaderContext context, final Object... args) {
         return parameter.type().isChildOf(ViewModel.class);
     }
 

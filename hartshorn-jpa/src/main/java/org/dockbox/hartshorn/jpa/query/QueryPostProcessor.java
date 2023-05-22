@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.jpa.annotations.NamedQuery;
 import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.annotations.Query.QueryType;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
-import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
 import org.dockbox.hartshorn.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
@@ -40,8 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityManager;
-
 public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
 
     @Override
@@ -54,7 +51,7 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
         if (attempt.absent()) return Collections.emptyList();
 
         return processingContext.type().methods().declared().stream()
-                .filter(m -> attempt.get().supports(processingContext, m))
+                .filter(method -> attempt.get().supports(processingContext, method))
                 .collect(Collectors.toSet());
     }
 
@@ -76,19 +73,7 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
         final JpaQueryContextCreator contextCreator = context.get(JpaQueryContextCreator.class);
         final ConversionService conversionService = context.get(ConversionService.class);
 
-        return interceptorContext -> {
-            final T persistenceCapable = interceptorContext.instance();
-            final JpaQueryContext jpaQueryContext = contextCreator.create(context, interceptorContext, entityType, persistenceCapable)
-                    .orElseThrow(() -> new IllegalStateException("No JPA query context found for method " + method));
-
-            final EntityManager entityManager = jpaQueryContext.entityManager();
-            if (jpaQueryContext.automaticFlush() && entityManager.getTransaction().isActive())
-                entityManager.flush();
-
-            final Object result = function.execute(jpaQueryContext);
-            //noinspection unchecked
-            return (R) conversionService.convert(result, method.returnType().type());
-        };
+        return new ExecuteQueryMethodInterceptor<>(contextCreator, context, entityType, method, function, conversionService);
     }
 
     @NonNull

@@ -32,21 +32,23 @@ public class EntityElement implements Element {
         this.name = name;
     }
 
+    @Override
     public String name() {
         return this.name;
     }
 
+    @Override
     public EntityElement name(final String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final EntityElement that = (EntityElement) o;
-        return Objects.equals(this.name, that.name);
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || this.getClass() != other.getClass()) return false;
+        final EntityElement element = (EntityElement) other;
+        return Objects.equals(this.name, element.name);
     }
 
     @Override

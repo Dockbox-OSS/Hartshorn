@@ -17,13 +17,15 @@
 package test.org.dockbox.hartshorn.events.listeners;
 
 import org.dockbox.hartshorn.component.Service;
-import test.org.dockbox.hartshorn.events.SampleNamedEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
+
+import test.org.dockbox.hartshorn.events.SampleNamedEvent;
 
 @Service
 public class ConditionalEventListener {
 
+    @SuppressWarnings({ "PublicField", "StaticNonFinalField" })
     public static boolean fired;
 
     @Listener

@@ -41,7 +41,7 @@ public interface ObjectMapper {
     default <T> Attempt<T, ObjectMappingException> read(final URI uri, final Class<T> type) {
         return (Attempt<T, ObjectMappingException>) Attempt.of(() -> this.read(uri.toURL(), type), IOException.class)
                 .mapError(ObjectMappingException::new)
-                .flatMap(o -> o);
+                .flatMap(object -> object);
     }
 
     <T> Attempt<T, ObjectMappingException> read(String content, GenericType<T> type);
@@ -55,7 +55,7 @@ public interface ObjectMapper {
     default <T> Attempt<T, ObjectMappingException> read(final URI uri, final GenericType<T> type) {
         return (Attempt<T, ObjectMappingException>) Attempt.of(() -> this.read(uri.toURL(), type), IOException.class)
                 .mapError(ObjectMappingException::new)
-                .flatMap(o -> o);
+                .flatMap(object -> object);
     }
 
     <T> Attempt<T, ObjectMappingException> update(T object, String content, Class<T> type);
@@ -69,7 +69,7 @@ public interface ObjectMapper {
     default <T> Attempt<T, ObjectMappingException> update(final T object, final URI uri, final Class<T> type) {
         return (Attempt<T, ObjectMappingException>) Attempt.of(() -> this.update(object, uri.toURL(), type), IOException.class)
                 .mapError(ObjectMappingException::new)
-                .flatMap(o -> o);
+                .flatMap(updatedObject -> updatedObject);
     }
 
     Map<String, Object> flat(String content);

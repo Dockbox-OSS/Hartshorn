@@ -50,10 +50,12 @@ public abstract class CommandEvent extends AbstractTargetEvent {
             super(source, context);
         }
 
+        @Override
         public boolean cancelled() {
             return this.cancelled;
         }
 
+        @Override
         public Before cancelled(final boolean cancelled) {
             this.cancelled = cancelled;
             return this;
