@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy.cglib;
 
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.dockbox.hartshorn.proxy.Invokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyMethodHandler}.
  */
 @Deprecated(since = "22.5")
-public class CGLibProxyMethodInvokable implements Invokable {
+public class CglibProxyMethodInvokable implements Invokable {
 
     private final MethodProxy methodProxy;
     private final Object proxy;
@@ -38,7 +38,7 @@ public class CGLibProxyMethodInvokable implements Invokable {
     private final Method method;
     private final TypeView<?> returnType;
 
-    public CGLibProxyMethodInvokable(final Introspector introspector, final MethodProxy methodProxy, final Object proxy, final Method method) {
+    public CglibProxyMethodInvokable(final Introspector introspector, final MethodProxy methodProxy, final Object proxy, final Method method) {
         this.methodProxy = methodProxy;
         this.proxy = proxy;
         this.parameterTypes = method.getParameterTypes();

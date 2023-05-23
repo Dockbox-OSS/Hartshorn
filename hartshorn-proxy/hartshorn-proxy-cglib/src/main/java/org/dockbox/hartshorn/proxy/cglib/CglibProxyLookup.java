@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy.cglib;
 
 import net.sf.cglib.proxy.Enhancer;
 
-import org.dockbox.hartshorn.proxy.StandardProxyLookup;
+import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
 
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.proxy.StandardProxyLookup;
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyLookup}.
  */
 @Deprecated(since = "22.5")
-public class CglibProxyLookup implements StandardProxyLookup {
+public class CglibProxyLookup extends HartshornProxyLookup {
 
     @Override
     public boolean isProxy(final Class<?> candidate) {

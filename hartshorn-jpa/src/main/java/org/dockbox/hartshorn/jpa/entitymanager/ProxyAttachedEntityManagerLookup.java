@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.jpa.entitymanager;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.proxy.Proxy;
-import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Singleton;
@@ -40,7 +39,12 @@ public class ProxyAttachedEntityManagerLookup implements EntityManagerLookup {
 
         if (target instanceof Proxy<?> proxy) {
             return this.fromContext(proxy.manager()).orCompute(() -> {
-                final Option<JpaRepository<?, ?>> repository = TypeUtils.adjustWildcards(proxy.manager().delegate(JpaRepository.class), Option.class);
+                final Option<JpaRepository<?, ?>> repository = proxy.manager()
+                        .advisor()
+                        .resolver()
+                        .type(JpaRepository.class)
+                        .delegate().adjust(JpaRepository.class);
+
                 if (repository.present() && repository.get() instanceof EntityManagerJpaRepository<?, ?> jpaRepository) {
                     return jpaRepository.manager();
                 }

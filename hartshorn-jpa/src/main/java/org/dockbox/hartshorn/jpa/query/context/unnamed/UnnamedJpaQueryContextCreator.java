@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
-import org.dockbox.hartshorn.proxy.MethodInterceptorContext;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;

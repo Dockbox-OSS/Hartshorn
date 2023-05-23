@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.component.factory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentPostConstructor;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public abstract class ConstructorFactoryMethodInterceptor<T, R> implements MethodInterceptor<T, R> {

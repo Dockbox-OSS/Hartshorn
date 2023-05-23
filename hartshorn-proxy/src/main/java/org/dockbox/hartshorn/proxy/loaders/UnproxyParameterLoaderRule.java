@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.proxy.loaders;
 
 import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.proxy.Unproxy;
+import org.dockbox.hartshorn.proxy.lookup.Unproxy;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;

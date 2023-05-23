@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
+
 public interface ProxyObject<T> {
 
     default boolean isEqualsMethod(final Invokable invokable) {

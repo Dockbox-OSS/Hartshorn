@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
+import org.dockbox.hartshorn.proxy.lookup.NativeProxyLookup;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -63,7 +65,10 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             final ProxyManager<?> manager = proxy.manager();
-            return manager.delegate(type);
+            return manager.advisor()
+                    .resolver()
+                    .type(type)
+                    .delegate();
         }
         return Option.empty();
     }

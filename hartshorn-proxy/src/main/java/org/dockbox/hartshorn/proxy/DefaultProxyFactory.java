@@ -16,21 +16,23 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
+import org.dockbox.hartshorn.proxy.advice.registry.ConfigurationAdvisorRegistry;
+import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
+import org.dockbox.hartshorn.proxy.constraint.CollectorProxyValidator;
+import org.dockbox.hartshorn.proxy.constraint.ProxyConstraintViolation;
+import org.dockbox.hartshorn.proxy.constraint.ProxyConstraintViolationException;
+import org.dockbox.hartshorn.proxy.constraint.ProxyValidator;
+import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
+import java.lang.reflect.Constructor;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -45,7 +47,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T> {
+public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
 
     /**
      * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
@@ -67,177 +69,30 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         }
     };
 
-    private static final String GROOVY_TRAIT = "groovy.transform.Trait";
-
-    // Delegates and interceptors
-    private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
-    private final Map<Method, MethodInterceptor<T, ?>> interceptors = new ConcurrentHashMap<>();
-    private final MultiMap<Method, MethodWrapper<T>> wrappers = new ConcurrentSetMultiMap<>();
-    private final ConcurrentClassMap<Object> typeDelegates = new ConcurrentClassMap<>();
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
-    private T typeDelegate;
-    private Supplier<MethodStub<T>> defaultStub = DefaultValueResponseMethodStub::new;
-
-    // Proxy data
-    private final ProxyContextContainer contextContainer = new ProxyContextContainer(this::updateState);
-    private final Class<T> type;
+    private final ProxyContextContainer contextContainer;
     private final ApplicationProxier applicationProxier;
-
-    private boolean trackState = true;
-    private boolean modified;
+    private final StateAwareAdvisorRegistry<T> advisorRegistry;
+    private final ProxyValidator validator;
+    private final Class<T> type;
 
     protected DefaultProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
         this.type = type;
         this.applicationProxier = applicationProxier;
-        this.validate();
-    }
-
-    protected void validate() {
-        if (this.isGroovyTrait(this.type))
-            throw new IllegalArgumentException("Cannot create proxy for Groovy trait " + this.type.getName());
-    }
-
-    protected boolean isGroovyTrait(final Class<?> type) {
-        try {
-            final Class<?> groovyTrait = Class.forName(GROOVY_TRAIT);
-            return groovyTrait.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
-        }
-        catch (final ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    protected void updateState() {
-        if (this.trackState) this.modified = true;
+        this.advisorRegistry = new ConfigurationAdvisorRegistry<>(applicationProxier, this);
+        this.contextContainer = new ProxyContextContainer(() -> this.advisorRegistry.state().modify());
+        this.validator = new CollectorProxyValidator().withDefaults();
     }
 
     @Override
-    public DefaultProxyFactory<T> delegate(final T delegate) {
-        if (delegate != null) {
-            this.updateState();
-            for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                this.delegates.put(declaredMethod, delegate);
-            }
-            this.typeDelegate = delegate;
-        }
+    public StateAwareAdvisorRegistry<T> advisors() {
+        return this.advisorRegistry;
+    }
+
+    @Override
+    public StateAwareProxyFactory<T> advisors(final Consumer<? super AdvisorRegistry<T>> registryConsumer) {
+        registryConsumer.accept(this.advisorRegistry);
         return this;
-    }
-
-    @Override
-    public DefaultProxyFactory<T> delegateAbstract(final T delegate) {
-        if (delegate != null) {
-            this.updateState();
-            for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                this.delegateAbstractOverrideCandidate(delegate, declaredMethod);
-            }
-            this.typeDelegate = delegate;
-        }
-        return this;
-    }
-
-    private <S> void delegateAbstractOverrideCandidate(final S delegate, final Method declaredMethod) {
-        try {
-            final Method override = this.type().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-            if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
-                return;
-            }
-        } catch (final NoSuchMethodException e) {
-            // Ignore error, delegate is not concrete
-        }
-        this.delegates.put(declaredMethod, delegate);
-    }
-
-    @Override
-    public <S> DefaultProxyFactory<T> delegate(final Class<S> type, final S delegate) {
-        if (type.isAssignableFrom(this.type)) {
-            this.updateState();
-            for (final Method declaredMethod : type.getDeclaredMethods()) {
-                this.delegates.put(declaredMethod, delegate);
-            }
-            this.typeDelegates.put((Class<Object>) type, delegate);
-        }
-        else {
-            throw new IllegalArgumentException(this.type.getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);
-        }
-        return this;
-    }
-
-    @Override
-    public <S> DefaultProxyFactory<T> delegateAbstract(final Class<S> type, final S delegate) {
-        if (type.isAssignableFrom(this.type)) {
-            this.updateState();
-            for (final Method declaredMethod : type.getDeclaredMethods()) {
-                this.delegateAbstractOverrideCandidate(delegate, declaredMethod);
-            }
-        }
-        else {
-            throw new IllegalArgumentException(this.type.getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);
-        }
-        return this;
-    }
-
-    @Override
-    public DefaultProxyFactory<T> delegate(final Method method, final T delegate) {
-        this.updateState();
-        if (delegate == null) {
-            throw new IllegalArgumentException("Delegate cannot be null");
-        }
-        final TypeView<T> delegateType = this.applicationProxier().introspector().introspect(delegate);
-        if (!delegateType.isChildOf(method.getDeclaringClass())) {
-            throw new IllegalArgumentException("Delegate must implement- or be of type " + method.getDeclaringClass().getName());
-        }
-        this.delegates.put(method, delegate);
-        return this;
-    }
-
-    @Override
-    public DefaultProxyFactory<T> intercept(final Method method, final MethodInterceptor<T, ?> interceptor) {
-        final MethodInterceptor<T, ?> methodInterceptor;
-        if (this.interceptors.containsKey(method)) {
-            methodInterceptor = this.interceptors.get(method)
-                    .andThen(TypeUtils.adjustWildcards(interceptor, MethodInterceptor.class));
-        }
-        else {
-            methodInterceptor = interceptor;
-        }
-        this.updateState();
-        this.interceptors.put(method, methodInterceptor);
-        return this;
-    }
-
-    @Override
-    public DefaultProxyFactory<T> wrapAround(final Method method, final MethodWrapper<T> wrapper) {
-        this.updateState();
-        this.wrappers.put(method, wrapper);
-        return this;
-    }
-
-    @Override
-    public StateAwareProxyFactory<T> wrapAround(final Method method, final Consumer<MethodWrapperFactory<T>> wrapper) {
-        final StandardMethodWrapperFactory<T> factory = new StandardMethodWrapperFactory<>(this);
-        wrapper.accept(factory);
-        return this.wrapAround(method, factory.create());
-    }
-
-    @Override
-    public StateAwareProxyFactory<T> wrapAround(final MethodView<T, ?> method, final Consumer<MethodWrapperFactory<T>> wrapper) {
-        return method.method().map(jlrMethod -> this.wrapAround(jlrMethod, wrapper)).orElse(this);
-    }
-
-
-    @Override
-    public StateAwareProxyFactory<T> delegate(final MethodView<T, ?> method, final T delegate) {
-        return method.method().map(jlrMethod -> this.delegate(jlrMethod, delegate)).orElse(this);
-    }
-
-    @Override
-    public <R> StateAwareProxyFactory<T> intercept(final MethodView<T, R> method, final MethodInterceptor<T, R> interceptor) {
-        return method.method().map(jlrMethod -> this.intercept(jlrMethod, interceptor)).orElse(this);
-    }
-
-    @Override
-    public StateAwareProxyFactory<T> wrapAround(final MethodView<T, ?> method, final MethodWrapper<T> wrapper) {
-        return method.method().map(jlrMethod -> this.wrapAround(jlrMethod, wrapper)).orElse(this);
     }
 
     @Override
@@ -253,60 +108,19 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public DefaultProxyFactory<T> defaultStub(final MethodStub<T> stub) {
-        return this.defaultStub(() -> stub);
-    }
-
-    @Override
-    public DefaultProxyFactory<T> defaultStub(final Supplier<MethodStub<T>> stub) {
-        this.defaultStub = stub;
-        return this;
-    }
-
-    @Override
     public Class<T> type() {
         return this.type;
     }
 
     @Override
     public StateAwareProxyFactory<T> trackState(final boolean trackState) {
-        this.trackState = trackState;
+        this.advisorRegistry.state().trackState(trackState);
         return this;
     }
 
     @Override
     public boolean modified() {
-        return this.modified;
-    }
-
-    @Override
-    public T typeDelegate() {
-        return this.typeDelegate;
-    }
-
-    @Override
-    public Map<Method, Object> delegates() {
-        return this.delegates;
-    }
-
-    @Override
-    public Map<Method, MethodInterceptor<T, ?>> interceptors() {
-        return this.interceptors;
-    }
-
-    @Override
-    public ConcurrentClassMap<Object> typeDelegates() {
-        return this.typeDelegates;
-    }
-
-    @Override
-    public MultiMap<Method, MethodWrapper<T>> wrappers() {
-        return this.wrappers;
-    }
-
-    @Override
-    public Supplier<MethodStub<T>> defaultStub() {
-        return this.defaultStub;
+        return this.advisorRegistry.state().modified();
     }
 
     @Override
@@ -314,17 +128,49 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         return this.interfaces;
     }
 
-    /**
-     * Returns whether the factory is tracking its state.
-     * @return {@code true} if the factory is tracking its state, {@code false} otherwise.
-     */
-    public boolean trackState() {
-        return this.trackState;
-    }
-
     @Override
     public ProxyContextContainer contextContainer() {
         return this.contextContainer;
+    }
+
+    @Override
+    public final Attempt<T, Throwable> proxy() throws ApplicationException {
+        this.validateConstraints();
+        return this.createNewProxy();
+    }
+
+    protected abstract Attempt<T, Throwable> createNewProxy() throws ApplicationException;
+
+    @Override
+    public final Attempt<T, Throwable> proxy(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+        this.validateConstraints();
+        return this.createNewProxy(constructor, args);
+    }
+
+    protected abstract Attempt<T, Throwable> createNewProxy(Constructor<T> constructor, Object[] args) throws ApplicationException;
+
+    @Override
+    public final Attempt<T, Throwable> proxy(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
+        if (constructor.constructor().present()) {
+            return this.proxy(constructor.constructor().get(), args);
+        }
+        else {
+            throw new ApplicationException("Constructor " + constructor + " is not present on type " + this.type());
+        }
+    }
+
+    protected void validateConstraints() throws ProxyConstraintViolationException {
+        final TypeView<T> typeView = this.applicationProxier().introspector().introspect(this.type);
+        final Set<ProxyConstraintViolation> violations = this.validator().validate(typeView);
+
+        if (!violations.isEmpty()) {
+            throw new ProxyConstraintViolationException(violations);
+        }
+    }
+
+    @Override
+    public ProxyValidator validator() {
+        return this.validator;
     }
 
     public ApplicationProxier applicationProxier() {

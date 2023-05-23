@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
@@ -140,7 +140,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
             if (instance != null) {
                 factory.trackState(false);
-                factory.delegateAbstract(instance);
+                factory.advisors().type().delegateAbstractOnly(instance);
                 factory.trackState(true);
             }
             processingContext.put(ComponentKey.of(ProxyFactory.class), factory);

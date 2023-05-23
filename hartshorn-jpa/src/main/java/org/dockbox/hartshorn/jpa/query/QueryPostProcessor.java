@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.annotations.Query.QueryType;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;

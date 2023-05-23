@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -42,4 +42,5 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor, this.applicationProxier().introspector());
         return new JavassistProxyConstructorFunction<>(this.type(), factory, methodHandler);
     }
+
 }

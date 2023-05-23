@@ -192,7 +192,12 @@ public abstract class JpaRepositoryTests implements DataSourceConfigurationLoade
         final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
         final JpaRepository<?, ?> delegate = this.applicationContext.environment()
                 .manager(repository).get()
-                .delegate(JpaRepository.class).get();
+                .advisor()
+                .resolver()
+                .type(JpaRepository.class)
+                .delegate()
+                .adjust(JpaRepository.class)
+                .get();
 
         Assertions.assertTrue(delegate instanceof EntityManagerJpaRepository);
 

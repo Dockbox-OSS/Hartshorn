@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.ProxyAdvisorMethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -35,29 +37,19 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Attempt<T, Throwable> proxy() throws ApplicationException {
+    public Attempt<T, Throwable> createNewProxy() throws ApplicationException {
         return this.createProxy(interceptor -> this.type().isInterface()
                         ? this.interfaceProxy(interceptor)
                         : this.concreteOrAbstractProxy(interceptor));
     }
 
     @Override
-    public Attempt<T, Throwable> proxy(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+    public Attempt<T, Throwable> createNewProxy(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
         if (args.length != constructor.getParameterCount()) {
             throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
         if (this.type().isInterface()) return this.proxy(); // Cannot invoke constructor on interface
         else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
-    }
-
-    @Override
-    public Attempt<T, Throwable> proxy(final ConstructorView<T> constructor, final Object[] args) throws ApplicationException {
-        if (constructor.constructor().present()) {
-            return this.proxy(constructor.constructor().get(), args);
-        }
-        else {
-            throw new ApplicationException("Constructor " + constructor + " is not present on type " + this.type());
-        }
     }
 
     protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
@@ -66,7 +58,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         this.contextContainer().contexts().forEach(manager::add);
         this.contextContainer().namedContexts().forEach(manager::add);
 
-        final ProxyMethodInterceptor<T> interceptor = new StandardMethodInterceptor<>(manager, this.applicationProxier().introspector(), this.applicationProxier());
+        final ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.applicationProxier());
 
         final Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
 
@@ -92,7 +84,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         final ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
             final T proxy = instantiate.apply(enhancer);
-            if (this.typeDelegate() != null) this.restoreFields(this.typeDelegate(), proxy);
+            this.advisors().type().delegate().peek(delegate -> this.restoreFields(delegate, proxy));
             return Attempt.of(proxy);
         }
         catch (final RuntimeException e) {
@@ -116,9 +108,9 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     protected void restoreFields(final T existing, final T proxy) {
-        final TypeView<T> typeView = this.applicationProxier().isProxy(existing)
-                ? this.applicationProxier().introspector().introspect(this.type())
-                : this.applicationProxier().introspector().introspect(this.typeDelegate());
+        final TypeView<T> typeView = this.advisors().type().delegate()
+                .map(this.applicationProxier().introspector()::introspect)
+                .orElseGet(() -> this.applicationProxier().introspector().introspect(this.type()));
 
         for (final FieldView<T, ?> field : typeView.fields().all()) {
             if (field.modifiers().isStatic()) continue;

@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.cache.modifiers;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.proxy.MethodInterceptorContext;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.option.Option;
 
