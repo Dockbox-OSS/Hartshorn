@@ -181,7 +181,9 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
                     final Proxy<T> proxy = TypeUtils.adjustWildcards(modified, Proxy.class);
                     ok = proxy.manager().delegate().orNull() == instance;
                 }
-                if (!ok) throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
+                if (!ok) {
+                    throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
+                }
             }
             processingContext.instance(modified);
         }

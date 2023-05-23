@@ -51,7 +51,7 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
 
     @Override
     public Class<S> advisedType() {
-        return type;
+        return this.type;
     }
 
     @Override
@@ -70,6 +70,9 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
         if (delegateInstance != null) {
             for (final Method declaredMethod : this.type.getDeclaredMethods()) {
                 this.delegateAbstractOverrideCandidate(delegateInstance, declaredMethod);
+            }
+            if (this.registry.advisedType() == delegateInstance.getClass()) {
+                this.delegate = delegateInstance;
             }
         }
         return this.exit();
