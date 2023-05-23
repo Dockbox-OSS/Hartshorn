@@ -30,6 +30,17 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 
+/**
+ * A {@link ProxyFactory} implementation which uses the JDK {@link java.lang.reflect.Proxy} class to create proxies for
+ * interfaces. This implementation is not capable of creating proxies for concrete or abstract classes, as the JDK
+ * {@link java.lang.reflect.Proxy} class does not support this. Implementations of this class are expected to provide
+ * their own implementation for creating proxies for concrete or abstract classes.
+ *
+ * @param <T> The type of the proxy to create
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
 
     protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
@@ -52,6 +63,14 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
     }
 
+    /**
+     * Creates a proxy for the given type. This prepares the {@link ProxyManager} and {@link ProxyMethodInterceptor},
+     * ensuring any configured context is transferred to the proxy.
+     *
+     * @param instantiate The function to create the proxy
+     * @return The proxy
+     * @throws ApplicationException When the proxy cannot be created
+     */
     protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
@@ -66,20 +85,61 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return proxy;
     }
 
+    /**
+     * Creates an invocation handler for the given interceptor. This is used to intercept method calls on the proxy if
+     * the proxy is an interface.
+     *
+     * @param interceptor The interceptor to use
+     * @return The invocation handler
+     */
     protected InvocationHandler invocationHandler(final ProxyMethodInterceptor<T> interceptor) {
         return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationProxier().introspector()), null, args);
     }
 
+    /**
+     * Creates a {@link ProxyConstructorFunction} for the given interceptor. This is used to create the proxy if the
+     * proxy is a concrete or abstract class.
+     *
+     * @param interceptor The interceptor to use
+     * @return The constructor function
+     */
     protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor);
 
+    /**
+     * Creates a proxy if the type is a concrete or abstract class. This will attempt to use the default constructor
+     * to create the proxy. If the default constructor is not available, an exception will be thrown.
+     *
+     * @param interceptor The interceptor to use
+     * @return The proxy
+     * @throws ApplicationException When the proxy cannot be created
+     */
     protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
+    /**
+     * Creates a proxy if the type is a concrete or abstract class. This will attempt to use the given constructor to
+     * create the proxy. If the constructor is not available, an exception will be thrown.
+     *
+     * @param interceptor The interceptor to use
+     * @param constructor The constructor to use
+     * @param args The arguments to pass to the constructor
+     * @return The proxy
+     * @throws ApplicationException When the proxy cannot be created
+     */
     protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final Constructor<T> constructor, final Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 
+    /**
+     * Creates a proxy if the type is a concrete or abstract class. This will attempt to use the given construction
+     * function to create the proxy. If the construction function fails, an exception will be thrown.
+     *
+     * @param interceptor The interceptor to use
+     * @param instantiate The construction function to use
+     * @return The proxy
+     * @throws ApplicationException When the proxy cannot be created
+     */
     protected Attempt<T, Throwable> createClassProxy(final ProxyMethodInterceptor<T> interceptor, final CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
         final ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
@@ -92,6 +152,14 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         }
     }
 
+    /**
+     * Gets the interfaces which should be implemented by the proxy class. This will always include the {@link Proxy}
+     * interface. If the target type is an interface, it will also be included. Any additional interfaces configured
+     * through {@link #implement(Class[])} will be included as well.
+     *
+     * @param includeType Whether or not to include the target type
+     * @return The interfaces to implement
+     */
     protected Class<?>[] proxyInterfaces(final boolean includeType) {
         final Class<?>[] standardInterfaces = includeType
                 ? new Class<?>[] { Proxy.class, this.type() }
@@ -99,6 +167,13 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return CollectionUtilities.merge(standardInterfaces, this.interfaces().toArray(new Class[0]));
     }
 
+    /**
+     * Creates a proxy if the type is an interface. This will use the {@link java.lang.reflect.Proxy} class to create
+     * the proxy.
+     *
+     * @param interceptor The interceptor to use
+     * @return The proxy
+     */
     protected Attempt<T, Throwable> interfaceProxy(final ProxyMethodInterceptor<T> interceptor) {
         final Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
@@ -107,6 +182,13 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         return Attempt.of(this.type().cast(proxy));
     }
 
+    /**
+     * If possible, restores the fields of the delegate to the values of the proxy. This is only possible if the
+     * delegate is available.
+     *
+     * @param existing The existing delegate
+     * @param proxy The proxy
+     */
     protected void restoreFields(final T existing, final T proxy) {
         final TypeView<T> typeView = this.advisors().type().delegate()
                 .map(this.applicationProxier().introspector()::introspect)
@@ -118,6 +200,18 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         }
     }
 
+    /**
+     * Gets the default class loader to use when creating a proxy. This will attempt to use the nearest available
+     * class loader in the following order:
+     * <ol>
+     *     <li>The current thread's context class loader</li>
+     *     <li>The class loader of this factory</li>
+     *     <li>The system class loader</li>
+     *     <li>The class loader of the target type</li>
+     * </ol>
+     *
+     * @return The default class loader
+     */
     protected ClassLoader defaultClassLoader() {
         return Option.of(Thread.currentThread()::getContextClassLoader)
                 .orCompute(JDKInterfaceProxyFactory.class::getClassLoader)

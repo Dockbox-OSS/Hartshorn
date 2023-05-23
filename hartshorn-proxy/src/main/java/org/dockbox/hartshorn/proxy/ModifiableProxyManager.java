@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.proxy;
 
+/**
+ * A {@link ProxyManager} implementation which allows for modification of the delegate instance.
+ *
+ * @param <T> The type of the delegate instance
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public interface ModifiableProxyManager<T> extends ProxyManager<T> {
 
     /**

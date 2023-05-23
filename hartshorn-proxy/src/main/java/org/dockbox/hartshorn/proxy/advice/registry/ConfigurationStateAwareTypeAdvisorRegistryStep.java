@@ -22,6 +22,17 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+/**
+ * Basic implementation of {@link StateAwareTypeAdvisorRegistryStep}. This implementation is used to configure the
+ * {@link StateAwareAdvisorRegistry} by adding class and instance delegates. As both the registry and this registry
+ * step are stateful, the registry is marked as modified when this step is configured.
+ *
+ * @param <S> the advised type, which is assignable to the registry's advised type
+ * @param <T> the type of the proxy object
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements StateAwareTypeAdvisorRegistryStep<S, T> {
 
     private final StateAwareAdvisorRegistry<T> registry;

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.proxy.advice;
 
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -11,6 +27,17 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.invoke.MethodHandle;
+
+/**
+ * Standard implementation of {@link ProxyMethodInterceptHandler} that uses reflection to invoke methods on the target
+ * instance. Certain optimizations may be applied to improve performance, such as caching of {@link MethodHandle}s.
+ *
+ * @param <T> the type of the target instance
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInterceptHandler<T>, ProxyObject<T> {
 
     private final ProxyMethodInvoker<T> methodInvoker;
@@ -77,6 +104,16 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
         return result;
     }
 
+    /**
+     * Attempts to invoke a default {@link Object} method, such as {@link Object#equals(Object)}, {@link Object#hashCode()}
+     * or {@link Object#toString()}. This will delegate to the respective methods in {@link ProxyObject} to allow for
+     * custom implementations.
+     *
+     * @param self the instance on which the method is invoked
+     * @param target the method that is invoked
+     * @param args the arguments that are passed to the method
+     * @return the result of the invocation, if the method is a default method
+     */
     protected Option<Object> tryInvokeDefaultMethod(final T self, final Invokable target, final Object[] args) {
         return Option.of(() -> {
             if (this.isEqualsMethod(target)){

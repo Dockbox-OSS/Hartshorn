@@ -24,6 +24,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
+/**
+ * A registry that is aware of its state. This means that it can be queried for whether it has been modified since its
+ * initial creation. This is used to determine whether the proxy should be created. If the registry was never modified
+ * then the proxy is not required, and the original instance can be returned by the caller of the
+ * {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
+ *
+ * @param <T> the type of the target object
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public interface StateAwareAdvisorRegistry<T> extends AdvisorRegistry<T>, ProxyAdvisorResolver<T> {
 
     @Override

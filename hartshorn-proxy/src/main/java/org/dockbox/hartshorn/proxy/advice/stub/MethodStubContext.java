@@ -21,6 +21,16 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 
+/**
+ * A context type that is used to pass information to a {@link org.dockbox.hartshorn.proxy.advice.stub.MethodStub} that
+ * is being invoked. This context is used to provide information about the stub, the method that is being invoked, and
+ * the proxy instance on which the method is invoked.
+ *
+ * @param <T> The type of the proxy instance
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class MethodStubContext<T> extends DefaultContext {
 
     private final T self;
@@ -41,26 +51,59 @@ public class MethodStubContext<T> extends DefaultContext {
         this.args = args;
     }
 
+    /**
+     * Returns the proxy instance on which the method is invoked.
+     *
+     * @return The proxy instance on which the method is invoked.
+     */
     public T self() {
         return this.self;
     }
 
+    /**
+     * The real method that is being invoked. This is the method that is <b>being</b> proxied, but not the method that
+     * <b>is</b> proxied.
+     *
+     * @return The real method that is being invoked.
+     */
     public Invokable source() {
         return this.source;
     }
 
+    /**
+     * The proxy method that is being invoked. This is the method that <b>is</b> proxied, but may also be equal to the
+     * {@link #source()} if the method does not require rewriting (e.g. for concrete methods).
+     *
+     * @return The proxy method that is being invoked.
+     */
     public Invokable target() {
         return this.target;
     }
 
+    /**
+     * The interceptor that is used to invoke the method.
+     *
+     * @return The interceptor that is used to invoke the method.
+     */
     public ProxyMethodInterceptor<T> interceptor() {
         return this.interceptor;
     }
 
+    /**
+     * Returns the {@link ProxyManager} that is used to manage the proxy instance.
+     *
+     * @return The {@link ProxyManager} that is used to manage the proxy instance.
+     */
     public ProxyManager<T> manager() {
         return this.interceptor.manager();
     }
 
+    /**
+     * Returns the arguments that are passed to the method. These arguments may be equal to those provided by the
+     * original caller, or may have been modified by an advisor.
+     *
+     * @return The arguments that are passed to the method.
+     */
     public Object[] args() {
         return this.args;
     }

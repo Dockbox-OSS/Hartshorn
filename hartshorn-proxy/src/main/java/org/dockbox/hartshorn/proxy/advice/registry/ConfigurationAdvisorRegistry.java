@@ -32,6 +32,16 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+/**
+ * A registry that allows for the configuration of all aspects of an advised type. This includes the configuration of
+ * method stubs, method interceptors and type interceptors. The registry is aware of its state, and can be used as both
+ * a mutable {@link AdvisorRegistry} and an immutable {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisorResolver}.
+ *
+ * @param <T> the type of the advised object
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistry<T> {
 
     private final Map<Method, StateAwareMethodAdvisorRegistryStep<T, ?>> methodAdvisors = new ConcurrentHashMap<>();
@@ -64,8 +74,8 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
 
     @Override
     public StateAwareMethodAdvisorRegistryStep<T, Object> method(final Method method) {
-        final StateAwareMethodAdvisorRegistryStep<T, ?> registryStep = methodAdvisors.computeIfAbsent(method,
-                m -> new ConfigurationStateAwareMethodAdvisorRegistryStep<>(this, method));
+        final StateAwareMethodAdvisorRegistryStep<T, ?> registryStep = this.methodAdvisors.computeIfAbsent(method,
+                method0 -> new ConfigurationStateAwareMethodAdvisorRegistryStep<>(this, method));
 
         return TypeUtils.adjustWildcards(registryStep, StateAwareMethodAdvisorRegistryStep.class);
     }
@@ -79,8 +89,8 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
     public <S> StateAwareTypeAdvisorRegistryStep<S, T> type(final Class<S> type) {
         final Introspector introspector = this.proxier.introspector();
         if (introspector.introspect(type).isParentOf(this.advisedType())) {
-            final StateAwareTypeAdvisorRegistryStep<?, T> advisorStep = typeAdvisors.computeIfAbsent(type,
-                    t -> new ConfigurationStateAwareTypeAdvisorRegistryStep<>(this, type));
+            final StateAwareTypeAdvisorRegistryStep<?, T> advisorStep = this.typeAdvisors.computeIfAbsent(type,
+                    type0 -> new ConfigurationStateAwareTypeAdvisorRegistryStep<>(this, type));
 
             return TypeUtils.adjustWildcards(advisorStep, StateAwareTypeAdvisorRegistryStep.class);
         }

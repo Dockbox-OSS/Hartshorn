@@ -19,9 +19,15 @@ package org.dockbox.hartshorn.proxy.advice.registry;
 import org.dockbox.hartshorn.proxy.advice.MethodAdvisorResolver;
 
 /**
+ * A {@link MethodAdvisorRegistryStep} that is aware of its state. This means that it can be used to resolve the
+ * method advisors that are registered with it, and will notify the owning
+ * {@link StateAwareAdvisorRegistry} of any changes to its state.
  *
  * @param <T> The type of the proxy instance as defined by the owning {@link AdvisorRegistry}
  * @param <R> The return type of the method
+ *
+ * @since 23.1
+ * @author Guus Lieben
  */
 public interface StateAwareMethodAdvisorRegistryStep<T, R> extends MethodAdvisorRegistryStep<T, R>, MethodAdvisorResolver<T, R> {
 }

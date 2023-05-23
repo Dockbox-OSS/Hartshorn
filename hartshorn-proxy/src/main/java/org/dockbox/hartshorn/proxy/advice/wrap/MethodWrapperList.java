@@ -20,6 +20,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * A {@link MethodWrapper} that wraps multiple other {@link MethodWrapper}s. This wrapper will invoke all of the
+ * wrapped method wrappers. If the provided collection is ordered, the wrappers are invoked in the order in which they
+ * are provided.
+ *
+ * @param <T> The type of the proxy instance
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public class MethodWrapperList<T> implements MethodWrapper<T> {
 
     private final Collection<MethodWrapper<T>> wrappers;

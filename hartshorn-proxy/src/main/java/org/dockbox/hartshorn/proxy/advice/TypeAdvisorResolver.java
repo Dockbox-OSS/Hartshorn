@@ -18,9 +18,30 @@ package org.dockbox.hartshorn.proxy.advice;
 
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A resolver to look up advisors for a given type. This resolver can be used by {@link ProxyMethodInterceptHandler}s
+ * to determine which advisors should be applied to a given type. This resolver is inherently immutable, and can not
+ * be used to add or remove advisors.
+ *
+ * @param <T> The type of the proxy instance
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public interface TypeAdvisorResolver<T> {
 
+    /**
+     * Returns the delegate instance to which method calls of the advised type should be delegated. If no delegate
+     * is available, an empty {@link Option} is returned.
+     *
+     * @return The delegate instance, if available
+     */
     Option<T> delegate();
 
+    /**
+     * Returns the type that is being advised by this resolver.
+     *
+     * @return The advised type
+     */
     Class<T> advisedType();
 }

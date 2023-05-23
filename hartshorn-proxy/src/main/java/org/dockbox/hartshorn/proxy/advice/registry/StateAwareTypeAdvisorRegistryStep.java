@@ -19,9 +19,15 @@ package org.dockbox.hartshorn.proxy.advice.registry;
 import org.dockbox.hartshorn.proxy.advice.TypeAdvisorResolver;
 
 /**
+ * A {@link TypeAdvisorRegistryStep} that is aware of its state. This means that it can be used to resolve the
+ * type advisors that are registered with it, and will notify the owning
+ * {@link StateAwareAdvisorRegistry} of any changes to its state.
  *
  * @param <S> The type of the type being advised
  * @param <T> The type of the proxy instance as defined by the owning {@link AdvisorRegistry}
+ *
+ * @since 23.1
+ * @author Guus Lieben
  */
 public interface StateAwareTypeAdvisorRegistryStep<S, T> extends TypeAdvisorRegistryStep<S, T>, TypeAdvisorResolver<S> {
 }

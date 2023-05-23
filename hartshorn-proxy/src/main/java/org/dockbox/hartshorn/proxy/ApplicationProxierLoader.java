@@ -18,8 +18,20 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
+/**
+ * Service discovery interface for {@link ApplicationProxier} implementations.
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface ApplicationProxierLoader {
 
+    /**
+     * Creates a new {@link ApplicationProxier} instance.
+     *
+     * @param introspector The introspector to use for introspection
+     * @return The created {@link ApplicationProxier} instance
+     */
     ApplicationProxier create(Introspector introspector);
 }

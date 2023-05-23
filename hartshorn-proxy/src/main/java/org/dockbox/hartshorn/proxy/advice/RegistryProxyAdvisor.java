@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy.advice;
 
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapperList;
@@ -25,13 +24,19 @@ import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+/**
+ * An implementation of {@link ProxyAdvisor} that uses a {@link StateAwareAdvisorRegistry} to resolve advisors.
+ *
+ * @param <T> the type of the proxy instance
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
 
-    private final ApplicationProxier proxier;
     private final StateAwareAdvisorRegistry<T> advisors;
 
-    public RegistryProxyAdvisor(final ApplicationProxier proxier, final StateAwareAdvisorRegistry<T> advisors) {
-        this.proxier = proxier;
+    public RegistryProxyAdvisor(final StateAwareAdvisorRegistry<T> advisors) {
         this.advisors = advisors;
     }
 

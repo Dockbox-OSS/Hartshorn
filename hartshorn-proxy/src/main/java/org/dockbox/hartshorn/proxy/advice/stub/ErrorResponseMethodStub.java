@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.proxy.advice.stub;
 
+/**
+ * A {@link MethodStub} that throws an {@link AbstractMethodError} when invoked. This is used to indicate that a method
+ * is abstract, and that no advisor was found for it.
+ *
+ * @param <T> The type of the proxy instance
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class ErrorResponseMethodStub<T> implements MethodStub<T> {
 
     @Override

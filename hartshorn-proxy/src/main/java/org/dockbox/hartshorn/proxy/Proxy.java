@@ -26,6 +26,7 @@ package org.dockbox.hartshorn.proxy;
  */
 @FunctionalInterface
 public interface Proxy<T> {
+
     /**
      * Returns the {@link ProxyManager} that is responsible for this proxy.
      * @return the {@link ProxyManager} that is responsible for this proxy

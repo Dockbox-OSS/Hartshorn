@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.proxy.advice;
 
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -22,6 +38,15 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Standard implementation of {@link ProxyMethodInvoker} that uses reflection to invoke methods on the target
+ * instance. Certain optimizations may be applied to improve performance, such as caching of {@link MethodHandle}s.
+ *
+ * @param <T> the type of the target instance
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
 
     private static final Map<Invokable, MethodHandle> METHOD_HANDLE_CACHE = new ConcurrentHashMap<>();
@@ -57,10 +82,30 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
         }
     }
 
+    /**
+     * Invokes the given {@code target} method on the given {@code self} instance, using the given {@code args}. This
+     * ensures the method is accessible before invoking it.
+     *
+     * @param self the instance on which the method is invoked
+     * @param target the method that is invoked
+     * @param args the arguments that are passed to the method
+     * @return the result of the method invocation
+     */
     protected Object invokeSelf(final T self, final Invokable target, final Object[] args) {
         return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(self, interceptorArgs));
     }
 
+    /**
+     * Invokes the given {@code target} method on the given {@code self} instance, using the given {@code args}. This
+     * implementation is optimized for invoking {@code default} methods on interfaces.
+     *
+     * @param self the instance on which the method is invoked
+     * @param source the method that is invoked
+     * @param args the arguments that are passed to the method
+     * @param declaringType the type on which the method is declared
+     * @return the result of the method invocation
+     * @throws Throwable if the method invocation fails
+     */
     protected Object invokeDefault(final T self, final Invokable source, final Object[] args, final Class<T> declaringType) throws Throwable {
         final MethodHandle handle;
         if (METHOD_HANDLE_CACHE.containsKey(source)) {
@@ -78,6 +123,19 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
         return handle.invokeWithArguments(args);
     }
 
+    /**
+     * Attempts to invoke the target method on the given {@code self} instance, using the given {@code args}. If the
+     * delegate object is available, it is used to invoke the method. If the method is not available on the delegate,
+     * the method is invoked either as a default method on an interface, or using reflection. If no advisors are
+     * available, the default stub is invoked.
+     *
+     * @param self the instance on which the method is invoked
+     * @param source the method that is invoked
+     * @param target the method that is invoked
+     * @param args the arguments that are passed to the method
+     * @return the result of the method invocation
+     * @throws Throwable if the method invocation fails
+     */
     protected Object invokeTarget(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
         final Class<T> targetClass = this.manager.targetClass();
 
@@ -100,12 +158,35 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
         }
     }
 
+    /**
+     * Invokes the default stub for the current proxy. This method is invoked if no advisors are available for the
+     * current proxy.
+     *
+     * @param self the instance on which the method is invoked
+     * @param source the real method that is invoked
+     * @param target the proxied method that is invoked
+     * @param args the arguments that are passed to the method
+     * @return the result of the method invocation
+     * @throws Throwable if the method invocation fails
+     */
     protected Object invokeStub(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
         final MethodStub<T> stub = this.manager.advisor().resolver().defaultStub().get();
         final MethodStubContext<T> stubContext = new MethodStubContext<>(self, source, target, this.interceptor, args);
         return stub.invoke(stubContext);
     }
 
+    /**
+     * Ensures the given method is accessible before invoking it. If the method is a {@link MethodInvokable}, the
+     * given {@link MethodInvoker} is used to invoke the method. Otherwise, the method is invoked in whichever way
+     * the given {@link Invokable} supports. If the invocation of either option throws an exception, the default value
+     * for the method's return type is returned.
+     *
+     * @param self the instance on which the method is invoked
+     * @param target the method that is invoked
+     * @param args the arguments that are passed to the method
+     * @param function the function that is used to invoke the method
+     * @return the result of the method invocation
+     */
     protected Object invokeAccessible(final T self, final Invokable target, final Object[] args, final MethodInvoker<Object, T> function) {
         target.setAccessible(true);
 

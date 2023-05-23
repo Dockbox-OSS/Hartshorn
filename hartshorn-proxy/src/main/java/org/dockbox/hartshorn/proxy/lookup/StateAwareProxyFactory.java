@@ -31,9 +31,15 @@ import java.util.function.Consumer;
  */
 public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
 
+    /**
+     * @inheritDoc
+     */
     @Override
     StateAwareAdvisorRegistry<T> advisors();
 
+    /**
+     * @inheritDoc
+     */
     @Override
     StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer);
 

@@ -23,6 +23,9 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
  * {@link org.dockbox.hartshorn.proxy.ProxyFactory proxy factories} to intercept method invocations.
  *
  * @param <T> the type of the proxy
+ *
+ * @since 23.1
+ * @author Guus Lieben
  */
 public interface ProxyMethodInterceptor<T> {
 

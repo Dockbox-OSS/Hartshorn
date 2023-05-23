@@ -28,6 +28,17 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * Basic implementation of {@link StateAwareMethodAdvisorRegistryStep}. This implementation is used to configure the
+ * {@link StateAwareAdvisorRegistry} by adding {@link MethodInterceptor}s and {@link MethodWrapper}s. As both the
+ * registry and this registry step are stateful, the registry is marked as modified when this step is configured.
+ *
+ * @param <T> the type of the proxy object
+ * @param <R> the return type of the method
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements StateAwareMethodAdvisorRegistryStep<T, R> {
 
     private final Collection<MethodWrapper<T>> wrappers = ConcurrentHashMap.newKeySet();

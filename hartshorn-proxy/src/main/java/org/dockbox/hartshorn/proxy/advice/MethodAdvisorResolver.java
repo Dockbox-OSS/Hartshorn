@@ -22,11 +22,40 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
 
+/**
+ * A resolver to look up advisors for a given method. This resolver can be used by {@link ProxyMethodInterceptHandler}s
+ * to determine which advisors should be applied to a given method. This resolver is inherently immutable, and can not
+ * be used to add or remove advisors.
+ *
+ * @param <T> The type of the proxy instance
+ * @param <R> The type of the return value of the method
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public interface MethodAdvisorResolver<T, R> {
 
+    /**
+     * Returns the delegate instance to which the method invocation should be delegated. If no delegate is available,
+     * an empty {@link Option} is returned.
+     *
+     * @return The delegate instance, if available
+     */
     Option<T> delegate();
 
+    /**
+     * Returns the {@link MethodInterceptor} that should be applied to the method invocation. If no interceptor is
+     * available, an empty {@link Option} is returned.
+     *
+     * @return The interceptor, if available
+     */
     Option<MethodInterceptor<T, R>> interceptor();
 
+    /**
+     * Returns the {@link MethodWrapper}s that should be applied to the method invocation. If no wrappers are available,
+     * an empty {@link Collection} is returned.
+     *
+     * @return The wrappers, if available
+     */
     Collection<MethodWrapper<T>> wrappers();
 }

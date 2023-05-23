@@ -21,6 +21,9 @@ package org.dockbox.hartshorn.proxy.advice.registry;
  * initial creation. This is used to determine whether the proxy should be created. If the registry was never modified
  * then the proxy is not required, and the original instance can be returned by the caller of the
  * {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
+ *
+ * @since 23.1
+ * @author Guus Lieben
  */
 public interface AdvisorRegistryState {
 

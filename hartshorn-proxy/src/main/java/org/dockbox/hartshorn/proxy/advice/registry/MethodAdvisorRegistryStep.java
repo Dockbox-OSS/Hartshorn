@@ -19,17 +19,67 @@ package org.dockbox.hartshorn.proxy.advice.registry;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapperFactory;
+import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
 
 import java.util.function.Consumer;
 
+/**
+ * Configuration step for {@link AdvisorRegistry}s. This step is used to configure the registry by adding
+ * advisors for specific methods.
+ *
+ * @see AdvisorRegistry
+ * @param <T> the type of the proxy object
+ * @param <R> the return type of the method
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
 public interface MethodAdvisorRegistryStep<T, R> {
 
+    /**
+     * Delegates the given method to the given delegate instance. This targets a backing implementation,
+     * not the original instance.
+     *
+     * @param delegateInstance the instance to which the method is delegated
+     * @return the registry, for chaining
+     */
     AdvisorRegistry<T> delegate(T delegateInstance);
 
+    /**
+     * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
+     * already an interceptor for the given method, it will be chained, so it may be executed in series.
+     *
+     * @param interceptor the interceptor to execute
+     * @return the registry, for chaining
+     */
     AdvisorRegistry<T> intercept(MethodInterceptor<T, R> interceptor);
 
+    /**
+     * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
+     * wrapper. These phases are:
+     * <ul>
+     *     <li>{@link MethodWrapper#acceptBefore(ProxyCallbackContext)}: Before entry</li>
+     *     <li>{@link MethodWrapper#acceptAfter(ProxyCallbackContext)}: After return</li>
+     *     <li>{@link MethodWrapper#acceptError(ProxyCallbackContext)}: After exception thrown</li>
+     * </ul>
+     *
+     * @param wrapper the wrapper to execute
+     * @return the registry, for chaining
+     */
     AdvisorRegistry<T> wrapAround(MethodWrapper<T> wrapper);
 
+    /**
+     * Constructs a {@link MethodWrapper} using the given {@link MethodWrapperFactory} and calls the
+     * resulting {@link MethodWrapper} for all known phases of the wrapper. These phases are:
+     * <ul>
+     *     <li>{@link MethodWrapper#acceptBefore(ProxyCallbackContext)}: Before entry</li>
+     *     <li>{@link MethodWrapper#acceptAfter(ProxyCallbackContext)}: After return</li>
+     *     <li>{@link MethodWrapper#acceptError(ProxyCallbackContext)}: After exception thrown</li>
+     * </ul>
+     *
+     * @param wrapper the wrapper to execute
+     * @return the registry, for chaining
+     */
     AdvisorRegistry<T> wrapAround(Consumer<MethodWrapperFactory<T>> wrapper);
 
 }

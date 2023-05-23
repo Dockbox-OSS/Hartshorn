@@ -20,6 +20,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * A context type that is used to pass information to a {@link org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper} or
+ * {@link ProxyCallback} that is being invoked. This context is used to provide information about the method that is
+ * being invoked, and the proxy instance on which the method is invoked.
+ *
+ * @param <T> The type of the proxy instance
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public class ProxyCallbackContext<T> extends DefaultContext {
 
     private final T delegate;
@@ -40,28 +50,65 @@ public class ProxyCallbackContext<T> extends DefaultContext {
         this.error = error;
     }
 
+    /**
+     * The immediate delegate of the proxy. This is the object that is proxied by the proxy instance. If no delegate is
+     * available, this method returns {@code null}.
+     *
+     * @return The immediate delegate of the proxy, or {@code null} if no delegate is available.
+     */
     @Nullable
     public T delegate() {
         return this.delegate;
     }
 
+    /**
+     * Returns the proxy instance on which the method is invoked.
+     *
+     * @return The proxy instance on which the method is invoked.
+     */
     public T proxy() {
         return this.proxy;
     }
 
+    /**
+     * Returns the real method that is being invoked. This method is the method that is invoked on the delegate, and is
+     * not the method that is invoked on the proxy instance.
+     *
+     * @return The real method that is being invoked.
+     */
     public MethodView<T, ?> method() {
         return this.method;
     }
 
+    /**
+     * Returns the arguments that are passed to the method invocation. These arguments are the arguments that are passed
+     * to the method invocation on the proxy instance.
+     *
+     * @return The arguments that are passed to the method invocation.
+     */
     public Object[] args() {
         return this.args;
     }
 
+    /**
+     * Returns the error that was thrown during the method invocation. If no error was thrown, this method returns
+     * {@code null}.
+     *
+     * @return The error that was thrown during the method invocation, or {@code null} if no error was thrown.
+     */
     @Nullable
     public Throwable error() {
         return this.error;
     }
 
+    /**
+     * Sets the error that was thrown during the method invocation. This method is typically used by a
+     * {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisor} to indicate that an error was thrown during the
+     * invocation of the method on the proxy instance.
+     *
+     * @param error The error that was thrown during the method invocation.
+     * @return This context instance.
+     */
     public ProxyCallbackContext<T> acceptError(final Throwable error) {
         this.error = error;
         return this;

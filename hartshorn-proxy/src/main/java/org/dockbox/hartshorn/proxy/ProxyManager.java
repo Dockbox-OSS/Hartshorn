@@ -37,6 +37,12 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public interface ProxyManager<T> extends Context {
 
+    /**
+     * Returns the {@link ProxyAdvisor} that is responsible for this proxy. The advisor is responsible for providing
+     * the proxy with the necessary advisors to function.
+     *
+     * @return the {@link ProxyAdvisor} that is responsible for this proxy
+     */
     ProxyAdvisor<T> advisor();
 
     /**
@@ -70,5 +76,11 @@ public interface ProxyManager<T> extends Context {
      */
     Option<T> delegate();
 
+    /**
+     * Returns the {@link ApplicationProxier} that is responsible for managing the lifecycle of proxies in the current
+     * application, including the proxy managed by this manager.
+     *
+     * @return the {@link ApplicationProxier}
+     */
     ApplicationProxier applicationProxier();
 }

@@ -26,9 +26,10 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  *     <li>When a method is called, this is performed <b>before</b> the method is visited</li>
  *     <li><b>After</b> a method finished. This is performed after a method exits without errors</li>
  *     <li>When a method <b>throws an exception</b></li>
- * <ul>
+ * </ul>
  *
  * @param <T> The type of the proxy
+ *
  * @author Guus Lieben
  * @since 22.2
  */
@@ -69,32 +70,5 @@ public interface MethodWrapper<T> {
      */
     static <T> MethodWrapper<T> of(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
         return new CallbackMethodWrapper<>(before, after, afterThrowing);
-    }
-
-    class CallbackMethodWrapper<T> implements MethodWrapper<T> {
-        private final ProxyCallback<T> before;
-        private final ProxyCallback<T> after;
-        private final ProxyCallback<T> afterThrowing;
-
-        public CallbackMethodWrapper(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
-            this.before = before;
-            this.after = after;
-            this.afterThrowing = afterThrowing;
-        }
-
-        @Override
-        public void acceptBefore(final ProxyCallbackContext<T> context) {
-            if (this.before != null) this.before.accept(context);
-        }
-
-        @Override
-        public void acceptAfter(final ProxyCallbackContext<T> context) {
-            if (this.after != null) this.after.accept(context);
-        }
-
-        @Override
-        public void acceptError(final ProxyCallbackContext<T> context) {
-            if (this.afterThrowing != null) this.afterThrowing.accept(context);
-        }
     }
 }

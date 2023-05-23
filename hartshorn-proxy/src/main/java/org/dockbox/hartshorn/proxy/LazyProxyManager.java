@@ -66,10 +66,10 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
                             final StateAwareAdvisorRegistry<T> advisors) {
         this.applicationProxier = proxier;
 
-        if (applicationProxier.isProxy(targetClass)) {
+        if (this.applicationProxier.isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
-        if (proxyClass != null && !applicationProxier.isProxy(proxyClass)) {
+        if (proxyClass != null && !this.applicationProxier.isProxy(proxyClass)) {
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
@@ -77,7 +77,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         this.targetClass = targetClass;
 
         advisors.method(managerAccessor).intercept(context -> this);
-        this.advisor = new RegistryProxyAdvisor<>(proxier, advisors);
+        this.advisor = new RegistryProxyAdvisor<>(advisors);
     }
 
     public void proxy(final T proxy) {
@@ -123,12 +123,12 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
 
     @Override
     public ProxyAdvisor<T> advisor() {
-        return advisor;
+        return this.advisor;
     }
 
     @Override
     public ModifiableProxyManager<T> delegate(final T delegate) {
-        advisor.resolver().type().delegate(delegate);
+        this.advisor.resolver().type().delegate(delegate);
         return this;
     }
 }

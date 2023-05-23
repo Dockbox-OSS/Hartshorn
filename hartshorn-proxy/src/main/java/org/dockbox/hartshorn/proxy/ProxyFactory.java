@@ -186,8 +186,22 @@ import java.util.function.Consumer;
  */
 public interface ProxyFactory<T> {
 
+    /**
+     * Gets the registry of advisors that are currently active on this factory. This will return a registry
+     * that can be used to add, remove, and replace advisors.
+     *
+     * @return The registry
+     */
     AdvisorRegistry<T> advisors();
 
+    /**
+     * Applies the registry of advisors that are currently active to the given consumer. This will return
+     * this factory, for easier chaining. Any changes made to the registry will be applied to the factory
+     * either immediately or after the consumer has been executed.
+     *
+     * @param registryConsumer The consumer to apply the registry to
+     * @return This factory
+     */
     ProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer);
 
     /**
