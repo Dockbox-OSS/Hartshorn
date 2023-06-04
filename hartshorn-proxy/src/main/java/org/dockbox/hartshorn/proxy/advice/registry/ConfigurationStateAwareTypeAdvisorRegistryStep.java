@@ -30,8 +30,8 @@ import java.lang.reflect.Modifier;
  * @param <S> the advised type, which is assignable to the registry's advised type
  * @param <T> the type of the proxy object
  *
- * @since 23.1
  * @author Guus Lieben
+ * @since 23.1
  */
 public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements StateAwareTypeAdvisorRegistryStep<S, T> {
 
@@ -56,30 +56,29 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
 
     @Override
     public AdvisorRegistry<T> delegate(final S delegateInstance) {
-        if (delegateInstance != null) {
-            for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                this.addDelegateAdvice(delegateInstance, declaredMethod);
-            }
-            this.delegate = delegateInstance;
+        if (delegateInstance == null) {
+            throw new IllegalArgumentException("Delegate cannot be null");
         }
-        return this.exit();
+        for (final Method declaredMethod : this.type.getDeclaredMethods()) {
+            this.addDelegateAdvice(delegateInstance, declaredMethod);
+        }
+        this.delegate = delegateInstance;
+        this.registry.state().modify();
+        return this.registry;
     }
 
     @Override
     public AdvisorRegistry<T> delegateAbstractOnly(final S delegateInstance) {
-        if (delegateInstance != null) {
-            for (final Method declaredMethod : this.type.getDeclaredMethods()) {
-                this.delegateAbstractOverrideCandidate(delegateInstance, declaredMethod);
-            }
-            if (this.registry.advisedType() == delegateInstance.getClass()) {
-                this.delegate = delegateInstance;
-            }
+        if (delegateInstance == null) {
+            throw new IllegalArgumentException("Delegate cannot be null");
         }
-        return this.exit();
-    }
-
-    private StateAwareAdvisorRegistry<T> exit() {
-        this.registry.state().modify();
+        for (final Method declaredMethod : this.type.getDeclaredMethods()) {
+            this.delegateAbstractOverrideCandidate(delegateInstance, declaredMethod);
+        }
+        if (this.registry.advisedType() == delegateInstance.getClass()) {
+            this.delegate = delegateInstance;
+            this.registry.state().modify();
+        }
         return this.registry;
     }
 
@@ -89,7 +88,8 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
             if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
                 return;
             }
-        } catch (final NoSuchMethodException e) {
+        }
+        catch (final NoSuchMethodException e) {
             // Ignore error, delegate is not concrete
         }
         this.addDelegateAdvice(delegateInstance, declaredMethod);
@@ -98,5 +98,6 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
     private void addDelegateAdvice(final S delegateInstance, final Method declaredMethod) {
         final MethodAdvisorRegistryStep<T, ?> method = this.registry.method(declaredMethod);
         method.delegate(TypeUtils.adjustWildcards(delegateInstance, Object.class));
+        this.registry.state().modify();
     }
 }
