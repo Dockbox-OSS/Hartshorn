@@ -38,10 +38,12 @@ import jakarta.inject.Inject;
 public class DefaultTranslationBundle implements TranslationBundle {
 
     private final Map<String, Message> messages = new ConcurrentHashMap<>();
-
-    @Inject
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
     private Locale primaryLanguage = Locale.getDefault();
+
+    public DefaultTranslationBundle(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public Locale primaryLanguage() {

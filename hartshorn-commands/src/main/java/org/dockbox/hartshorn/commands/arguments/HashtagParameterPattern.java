@@ -36,8 +36,12 @@ import jakarta.inject.Inject;
 @Component
 public class HashtagParameterPattern extends PrefixedParameterPattern {
 
+    private final CommandParameterResources resources;
+
     @Inject
-    private CommandParameterResources resources;
+    public HashtagParameterPattern(final CommandParameterResources resources) {
+        this.resources = resources;
+    }
 
     @Override
     protected char opening() {

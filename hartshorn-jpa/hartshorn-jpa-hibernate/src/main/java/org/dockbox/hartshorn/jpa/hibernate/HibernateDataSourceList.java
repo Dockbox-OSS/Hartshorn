@@ -25,16 +25,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
 
 @Component(singleton = true)
 public class HibernateDataSourceList implements RefreshableDataSourceList {
 
-    @Inject
-    private HibernateDataSourceConfigurationObject sources;
-    @Inject
-    private ApplicationContext applicationContext;
     private final Map<String, DataSourceConfiguration> configurations = new ConcurrentHashMap<>();
+    private final ApplicationContext applicationContext;
+
+    private HibernateDataSourceConfigurationObject sources;
+
+    public HibernateDataSourceList(final ApplicationContext applicationContext, final HibernateDataSourceConfigurationObject sources) {
+        this.applicationContext = applicationContext;
+        this.sources = sources;
+    }
 
     @Override
     public void add(final String id, final DataSourceConfiguration configuration) {

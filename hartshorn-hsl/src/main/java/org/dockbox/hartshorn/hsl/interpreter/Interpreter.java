@@ -108,8 +108,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import jakarta.inject.Inject;
-
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
  * step by step. The interpreter is capable of handling all types of statements and expressions. The
@@ -140,15 +138,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private final Set<String> activeModules = ConcurrentHashMap.newKeySet();
 
     private final Map<String, NativeModule> externalModules;
+    private final ApplicationContext applicationContext;
     private final ResultCollector resultCollector;
 
     private VariableScope global = new VariableScope();
     private VariableScope visitingScope = this.global;
     private boolean isRunning;
     private ExecutionOptions executionOptions;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
@@ -158,6 +154,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
         this.resultCollector = resultCollector;
+        this.applicationContext = resultCollector.applicationContext();
         this.externalModules = new ConcurrentHashMap<>(externalModules);
         this.executionOptions = executionOptions;
     }

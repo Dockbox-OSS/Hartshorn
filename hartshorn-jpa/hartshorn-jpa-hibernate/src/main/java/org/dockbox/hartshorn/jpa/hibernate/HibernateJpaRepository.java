@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.jpa.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerJpaRepository;
@@ -29,35 +27,29 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 @Component
 public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T, ID> {
 
     private final DataSourceConfiguration connection;
-
-    @Inject
-    @Enable(false) // Enabling is delegated
-    @Required
-    private HibernateEntityManagerCarrier entityManager;
-    @Inject
-    private ApplicationContext applicationContext;
+    private final HibernateEntityManagerCarrier entityManager;
 
     @Bound
     public HibernateJpaRepository(final Class<T> type) {
-        this(type, null);
+        this(type, new HibernateEntityManagerCarrier());
     }
 
     @Bound
-    public HibernateJpaRepository(final Class<T> type, final DataSourceConfiguration connection) {
+    public HibernateJpaRepository(final Class<T> type, final HibernateEntityManagerCarrier entityManagerCarrier) {
         super(type);
-        this.connection = connection;
+        this.entityManager = entityManagerCarrier;
+        this.connection = entityManagerCarrier.configuration();
     }
 
     @Override
     public ApplicationContext applicationContext() {
-        return this.applicationContext;
+        return this.entityManager.applicationContext();
     }
 
     @Override

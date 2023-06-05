@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.jpa.annotations.DataSource;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerFactory;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
@@ -48,6 +50,9 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
                 .orCompute(dataSourceList::defaultConnection)
                 .orElseThrow(() -> new IllegalStateException("No data source found for repository " + repositoryType.type().getName()));
 
-        return context.get(JpaRepositoryFactory.class).repository(type, sourceConfiguration);
+        final EntityManagerCarrier entityManagerCarrier = context.get(EntityManagerFactory.class)
+                .entityManagerCarrier(sourceConfiguration);
+
+        return context.get(JpaRepositoryFactory.class).repository(type, entityManagerCarrier);
     }
 }

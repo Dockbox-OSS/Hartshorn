@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.util.List;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -44,18 +43,17 @@ public class ServletHandler {
     private final HttpMethod httpMethod;
     private final MethodView<?, ?> method;
     private final HttpRequest httpRequest;
-
-    @Inject
-    private ApplicationContext context;
-
-    @Inject
-    private ObjectMapper mapper;
+    private final ApplicationContext applicationContext;
+    private final ObjectMapper objectMapper;
 
     @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
 
     @Bound
-    public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodView<?, ?> method) {
+    public ServletHandler(final ApplicationContext applicationContext, final HttpWebServer starter,
+                          final HttpMethod httpMethod, final MethodView<?, ?> method) {
+        this.applicationContext = applicationContext;
+        this.objectMapper = applicationContext.get(ObjectMapper.class);
         this.starter = starter;
         this.httpMethod = httpMethod;
         this.method = method;
@@ -63,15 +61,15 @@ public class ServletHandler {
                 .orElseThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(method.qualifiedName())));
     }
 
-    public ObjectMapper mapper() {
-        return this.mapper;
+    public ObjectMapper objectMapper() {
+        return this.objectMapper;
     }
 
     @PostConstruct
     public void enable() throws ApplicationException {
         final MediaType mediaType = this.httpRequest.produces();
         if (!mediaType.isSerializable()) throw new ApplicationException("Provided media type '" + mediaType.value() + "' is not serializable");
-        this.mapper.fileType(mediaType.fileFormat().get());
+        this.objectMapper().fileType(mediaType.fileFormat().get());
     }
 
     public synchronized void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ApplicationException {
@@ -84,34 +82,34 @@ public class ServletHandler {
                 if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
                 final ParameterLoader<HttpRequestParameterLoaderContext> loader = this.starter.loader();
-                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), this.context, req, res);
+                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.method, this.method.declaredBy(), this.applicationContext, req, res);
                 final List<Object> arguments = loader.loadArguments(loaderContext);
-                final Object instance = this.context.get(this.method.declaredBy().type());
+                final Object instance = this.applicationContext.get(this.method.declaredBy().type());
                 final Attempt<?, Throwable> result = this.method.invoke(TypeUtils.adjustWildcards(instance, Object.class), arguments);
 
                 if (result.present()) {
-                    this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
+                    this.applicationContext.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
                         if (String.class.equals(result.map(Object::getClass).orNull())) {
                             res.setContentType(MediaType.TEXT_PLAIN.value());
-                            this.context.log().debug("Returning plain body for request %s".formatted(request));
+                            this.applicationContext.log().debug("Returning plain body for request %s".formatted(request));
                             res.getWriter().print(result.get());
                         }
                         else {
                             res.setContentType(this.httpRequest.produces().value());
-                            this.context.log().debug("Writing body to string for request %s".formatted(request));
-                            final Attempt<String, ObjectMappingException> write = this.mapper.write(result.get());
+                            this.applicationContext.log().debug("Writing body to string for request %s".formatted(request));
+                            final Attempt<String, ObjectMappingException> write = this.objectMapper().write(result.get());
                             if (write.present()) {
-                                this.context.log().debug("Printing response body to response writer");
+                                this.applicationContext.log().debug("Printing response body to response writer");
                                 res.getWriter().print(write.get());
                             }
                             else {
                                 res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                                if (write.errorPresent()) this.context.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
-                                else this.context.log().warn("Could not process response for request %s for session %s".formatted(request, sessionId));
+                                if (write.errorPresent()) this.applicationContext.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
+                                else this.applicationContext.log().warn("Could not process response for request %s for session %s".formatted(request, sessionId));
                             }
                         }
-                        this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
+                        this.applicationContext.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
                         return;
                     }
                     catch (final IOException e) {

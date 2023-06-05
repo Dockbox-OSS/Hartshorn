@@ -102,7 +102,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
     protected WebServlet servlet(final ApplicationContext applicationContext, final RequestHandlerContext context, final HttpWebServer webServer) {
         final WebServlet servlet = this.webServletFactory.webServlet(webServer, context);
         if (servlet instanceof HandleWebServlet handleWebServlet) {
-            handleWebServlet.handler().mapper().skipBehavior(webServer.skipBehavior());
+            handleWebServlet.handler().objectMapper().skipBehavior(webServer.skipBehavior());
         }
         return servlet;
     }

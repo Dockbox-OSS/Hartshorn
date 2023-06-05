@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
@@ -27,5 +28,6 @@ import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 @FunctionalInterface
 public interface ServletFactory {
     @Factory
-    ServletHandler servletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodView<?, ?> methodContext);
+    ServletHandler servletHandler(final ApplicationContext applicationContext, final HttpWebServer starter,
+                                  final HttpMethod httpMethod, final MethodView<?, ?> methodContext);
 }

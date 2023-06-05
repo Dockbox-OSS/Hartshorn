@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -25,7 +26,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @author Guus Lieben
  * @since 22.4
  */
-public interface ResultCollector {
+public interface ResultCollector extends ContextCarrier {
 
     /**
      * Adds a global result to the stack, if a global result already exists it will be
