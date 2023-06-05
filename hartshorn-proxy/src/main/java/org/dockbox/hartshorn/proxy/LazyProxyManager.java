@@ -17,18 +17,13 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.proxy.advice.RegistryProxyAdvisor;
+import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
+import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
@@ -43,7 +38,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<T>, ModifiableProxyManager<T> {
+public class LazyProxyManager<T> extends DefaultContext implements ModifiableProxyManager<T> {
 
     private static final Method managerAccessor;
 
@@ -57,49 +52,32 @@ public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<
     }
 
     private final ApplicationProxier applicationProxier;
+    private final RegistryProxyAdvisor<T> advisor;
 
     private Class<T> proxyClass;
     private final Class<T> targetClass;
     private T proxy;
 
-    private final Map<Method, ?> delegates;
-    private final ConcurrentClassMap<Object> typeDelegates;
-    private final Map<Method, MethodInterceptor<T, ?>> interceptors;
-    private final MultiMap<Method, MethodWrapper<T>> wrappers;
-    private final Supplier<MethodStub<T>> defaultStub;
-    private T delegate;
-
     public LazyProxyManager(final DefaultProxyFactory<T> proxyFactory) {
-        this(proxyFactory.applicationProxier(), null, proxyFactory.type(), proxyFactory.typeDelegate(),
-                proxyFactory.delegates(), proxyFactory.typeDelegates(),
-                proxyFactory.interceptors(), proxyFactory.wrappers(),
-                proxyFactory.defaultStub());
+        this(proxyFactory.applicationProxier(), null, proxyFactory.type(), proxyFactory.advisors());
     }
 
-    public LazyProxyManager(final ApplicationProxier applicationProxier, final Class<T> proxyClass, final Class<T> targetClass,
-                            final T delegate, final Map<Method, ?> delegates, final ConcurrentClassMap<Object> typeDelegates,
-                            final Map<Method, MethodInterceptor<T, ?>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers,
-                            final Supplier<MethodStub<T>> defaultStub) {
-        this.applicationProxier = applicationProxier;
+    public LazyProxyManager(final ApplicationProxier proxier, final Class<T> proxyClass, final Class<T> targetClass,
+                            final StateAwareAdvisorRegistry<T> advisors) {
+        this.applicationProxier = proxier;
 
-        if (applicationProxier.isProxy(targetClass)) {
+        if (this.applicationProxier.isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
-        if (proxyClass != null && !applicationProxier.isProxy(proxyClass)) {
+        if (proxyClass != null && !this.applicationProxier.isProxy(proxyClass)) {
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
         this.proxyClass = proxyClass;
         this.targetClass = targetClass;
-        this.delegate = delegate;
 
-        this.delegates = new ConcurrentHashMap<>(delegates);
-        this.typeDelegates = new ConcurrentClassMap<>(typeDelegates);
-        this.interceptors = new HashMap<>(interceptors);
-        this.wrappers = new ConcurrentSetMultiMap<>(wrappers);
-        this.defaultStub = defaultStub;
-
-        this.interceptors.put(managerAccessor, context -> this);
+        advisors.method(managerAccessor).intercept(context -> this);
+        this.advisor = new RegistryProxyAdvisor<>(advisors);
     }
 
     public void proxy(final T proxy) {
@@ -135,34 +113,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<
 
     @Override
     public Option<T> delegate() {
-        return Option.of(this.delegate);
-    }
-
-    @Override
-    public Option<?> delegate(final Method method) {
-        return Option.of(this.delegates.get(method));
-    }
-
-    @Override
-    public <S> Option<S> delegate(final Class<S> type) {
-        return Option.of(this.typeDelegates)
-                .map(map -> map.get(type))
-                .cast(type);
-    }
-
-    @Override
-    public Option<MethodInterceptor<T, ?>> interceptor(final Method method) {
-        return Option.of(this.interceptors).map(map -> map.get(method));
-    }
-
-    @Override
-    public Set<MethodWrapper<T>> wrappers(final Method method) {
-        return Set.copyOf(this.wrappers.get(method));
-    }
-
-    @Override
-    public MethodStub<T> stub() {
-        return this.defaultStub.get();
+        return this.advisor().resolver().type().delegate();
     }
 
     @Override
@@ -171,8 +122,13 @@ public class LazyProxyManager<T> extends DefaultContext implements ProxyManager<
     }
 
     @Override
-    public LazyProxyManager<T> delegate(final T delegate) {
-        this.delegate = delegate;
+    public ProxyAdvisor<T> advisor() {
+        return this.advisor;
+    }
+
+    @Override
+    public ModifiableProxyManager<T> delegate(final T delegate) {
+        this.advisor.resolver().type().delegate(delegate);
         return this;
     }
 }

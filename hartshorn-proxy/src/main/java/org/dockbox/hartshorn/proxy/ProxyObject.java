@@ -16,8 +16,26 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
+
+/**
+ * Utility interface to provide common methods for all proxies. This may be implemented by any proxy, advisor, or
+ * handler to provide common methods for proxy objects.
+ *
+ * @param <T> the type of the proxy object
+ *
+ * @since 23.1
+ * @author Guus Lieben
+ */
+@FunctionalInterface
 public interface ProxyObject<T> {
 
+    /**
+     * Returns whether the given {@link Invokable} is the {@link Object#equals(Object)} method.
+     *
+     * @param invokable the invokable to check
+     * @return whether the given {@link Invokable} is the {@link Object#equals(Object)} method
+     */
     default boolean isEqualsMethod(final Invokable invokable) {
         return "equals".equals(invokable.name())
                 && invokable.returnType().equals(boolean.class)
@@ -25,18 +43,37 @@ public interface ProxyObject<T> {
                 && invokable.parameterTypes()[0].equals(Object.class);
     }
 
+    /**
+     * Returns whether the given {@link Invokable} is the {@link Object#toString()} method.
+     *
+     * @param invokable the invokable to check
+     * @return whether the given {@link Invokable} is the {@link Object#toString()} method
+     */
     default boolean isToStringMethod(final Invokable invokable) {
         return "toString".equals(invokable.name())
                 && invokable.parameterTypes().length == 0
                 && invokable.returnType().equals(String.class);
     }
 
+    /**
+     * Returns whether the given {@link Invokable} is the {@link Object#hashCode()} method.
+     *
+     * @param invokable the invokable to check
+     * @return whether the given {@link Invokable} is the {@link Object#hashCode()} method
+     */
     default boolean isHashCodeMethod(final Invokable invokable) {
         return "hashCode".equals(invokable.name())
                 && invokable.parameterTypes().length == 0
                 && invokable.returnType().equals(int.class);
     }
 
+    /**
+     * Returns whether the given object is equal to the proxy managed by the {@link #manager()} of this
+     * proxy object.
+     *
+     * @param obj the object to compare
+     * @return whether the given object is equal to the proxy managed by the {@link #manager()}
+     */
     default boolean proxyEquals(final Object obj) {
         if (obj == null) return false;
         return Boolean.TRUE.equals(this.manager().delegate().map(delegate -> {
@@ -50,15 +87,34 @@ public interface ProxyObject<T> {
         }).orElseGet(() -> this.manager().proxy() == obj));
     }
 
+    /**
+     * Returns a logical string representation of the proxy managed by the {@link #manager()} of this
+     * proxy object.
+     *
+     * @param self the proxy to represent
+     * @return a logical string representation of the proxy managed by the {@link #manager()}
+     */
     default String proxyToString(final T self) {
         if (self == null) return "null";
         final String canonicalName = this.manager().targetClass().getCanonicalName();
         return "Proxy: " + canonicalName + "@" + Integer.toHexString(this.proxyHashCode(self));
     }
 
+    /**
+     * Returns a hash code for the proxy managed by the {@link #manager()} of this proxy object.
+     *
+     * @param self the proxy to hash
+     * @return a hash code for the proxy managed by the {@link #manager()}
+     */
     default int proxyHashCode(final T self) {
         return System.identityHashCode(self);
     }
 
+    /**
+     * Returns the {@link ProxyManager} that is responsible for the proxy which is represented by
+     * this proxy object.
+     *
+     * @return the {@link ProxyManager}
+     */
     ProxyManager<T> manager();
 }

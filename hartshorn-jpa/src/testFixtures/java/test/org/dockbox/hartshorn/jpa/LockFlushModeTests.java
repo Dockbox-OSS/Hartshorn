@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.jpa.query.context.JpaQueryContext;
 import org.dockbox.hartshorn.jpa.query.context.unnamed.UnnamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
-import org.dockbox.hartshorn.proxy.MethodInterceptorContext;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;

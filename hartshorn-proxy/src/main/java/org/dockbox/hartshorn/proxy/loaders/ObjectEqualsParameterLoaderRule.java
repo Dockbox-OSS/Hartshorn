@@ -22,6 +22,13 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A parameter loader rule that loads the first argument of an {@link Object#equals(Object)} method invocation. This
+ * will attempt to unproxy the argument, and if that fails, will return the argument as-is.
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
 
     @Override

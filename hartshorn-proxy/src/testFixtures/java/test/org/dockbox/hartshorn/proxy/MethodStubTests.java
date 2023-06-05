@@ -18,8 +18,8 @@ package test.org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
-import org.dockbox.hartshorn.proxy.DefaultValueResponseMethodStub;
-import org.dockbox.hartshorn.proxy.MethodStub;
+import org.dockbox.hartshorn.proxy.advice.stub.DefaultValueResponseMethodStub;
+import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -50,7 +50,7 @@ public abstract class MethodStubTests {
         final Option<ProxyManager<StubbedInterfaceProxy>> manager = proxier.manager(proxy);
         Assertions.assertTrue(manager.present());
 
-        final MethodStub<StubbedInterfaceProxy> methodStub = manager.get().stub();
+        final MethodStub<StubbedInterfaceProxy> methodStub = manager.get().advisor().resolver().defaultStub().get();
         Assertions.assertTrue(methodStub instanceof DefaultValueResponseMethodStub<StubbedInterfaceProxy>);
 
         final String stringValue = Assertions.assertDoesNotThrow(proxy::stringTest);
@@ -66,7 +66,7 @@ public abstract class MethodStubTests {
 
         // Also verifies that the stub result is not cached
         final AtomicInteger integer = new AtomicInteger(0);
-        proxyFactory.defaultStub(context -> integer.incrementAndGet());
+        proxyFactory.advisors().defaultStub(context -> integer.incrementAndGet());
 
         final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
 
@@ -88,7 +88,7 @@ public abstract class MethodStubTests {
         final AtomicBoolean shouldThrow = new AtomicBoolean(false);
 
         final Method stringTest = StubbedInterfaceProxy.class.getDeclaredMethod("stringTest");
-        proxyFactory.wrapAround(stringTest, wrapper -> wrapper
+        proxyFactory.advisors().method(stringTest).wrapAround(wrapper -> wrapper
                 .before(context -> beforeObserved.set(true))
                 .after(context -> afterObserved.set(true))
                 .onError(context -> errorObserved.set(true))

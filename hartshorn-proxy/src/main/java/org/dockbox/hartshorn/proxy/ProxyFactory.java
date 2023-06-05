@@ -16,20 +16,16 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.collections.ConcurrentClassMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
@@ -188,107 +184,25 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @since 22.2
  */
-public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
+public interface ProxyFactory<T> {
 
     /**
-     * Delegates all abstract methods defined by the active type to the given delegate
-     * instance. This targets a backing implementation, not the original instance. Unlike {@link #delegate(Object)}
-     * this will only delegate methods that do not already have a concrete implementation.
+     * Gets the registry of advisors that are currently active on this factory. This will return a registry
+     * that can be used to add, remove, and replace advisors.
      *
-     * @param delegate The delegate instance
-     * @return This factory
+     * @return The registry
      */
-    ProxyFactory<T> delegateAbstract(T delegate);
+    AdvisorRegistry<T> advisors();
 
     /**
-     * Delegates all methods defined by the given {@code type} to the given delegate instance. This
-     * targets a backing implementation, not the original instance.
+     * Applies the registry of advisors that are currently active to the given consumer. This will return
+     * this factory, for easier chaining. Any changes made to the registry will be applied to the factory
+     * either immediately or after the consumer has been executed.
      *
-     * @param type The type of the delegate
-     * @param delegate The delegate instance
-     * @param <S> The type of the delegate
+     * @param registryConsumer The consumer to apply the registry to
      * @return This factory
      */
-    <S> ProxyFactory<T> delegate(Class<S> type, S delegate);
-
-    /**
-     * Delegates all methods defined by the given {@code type} which are not implemented to the given
-     * delegate instance. This means any method which is still abstract at the top-level will be delegated,
-     * and any method with a concrete implementation will invoke the default method without interception.
-     * This targets a backing implementation, not the original instance.
-     *
-     * @param type The type of the delegate
-     * @param delegate The delegate instance
-     * @param <S> The type of the delegate
-     * @return This factory
-     */
-    <S> ProxyFactory<T> delegateAbstract(Class<S> type, S delegate);
-
-    /**
-     * Delegates the given method to the given delegate instance. This targets a backing implementation,
-     * not the original instance.
-     *
-     * @param method The method to delegate
-     * @param delegate The delegate instance
-     * @return This factory
-     */
-    ProxyFactory<T> delegate(MethodView<T, ?> method, T delegate);
-
-    /**
-     * Delegates the given method to the given delegate instance. This targets a backing implementation,
-     * not the original instance.
-     *
-     * @param method The method to delegate
-     * @param delegate The delegate instance
-     * @return This factory
-     */
-    ProxyFactory<T> delegate(Method method, T delegate);
-
-    /**
-     * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
-     * already an interceptor for the given method, it will be chained, so it may be executed in series.
-     *
-     * @param method The method to intercept
-     * @param interceptor The interceptor to use
-     * @return This factory
-     */
-    <R> ProxyFactory<T> intercept(MethodView<T, R> method, MethodInterceptor<T, R> interceptor);
-
-    /**
-     * Intercepts the given method and replaces it with the given {@link MethodInterceptor}. If there is
-     * already an interceptor for the given method, it will be chained, so it may be executed in series.
-     *
-     * @param method The method to intercept
-     * @param interceptor The interceptor to use
-     * @return This factory
-     */
-    ProxyFactory<T> intercept(Method method, MethodInterceptor<T, ?> interceptor);
-
-    /**
-     * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
-     * wrapper. These phases are; before entry, after return, and after exception thrown.
-     *
-     * @param method The method to intercept
-     * @param wrapper The wrapper to use
-     * @return This factory
-     * @see MethodWrapper
-     */
-    ProxyFactory<T> wrapAround(MethodView<T, ?> method, MethodWrapper<T> wrapper);
-
-    /**
-     * Intercepts the given method and calls the given {@link MethodWrapper} for all known phases of the
-     * wrapper. These phases are; before entry, after return, and after exception thrown.
-     *
-     * @param method The method to intercept
-     * @param wrapper The wrapper to use
-     * @return This factory
-     * @see MethodWrapper
-     */
-    ProxyFactory<T> wrapAround(Method method, MethodWrapper<T> wrapper);
-
-    ProxyFactory<T> wrapAround(Method method, Consumer<MethodWrapperFactory<T>> wrapper);
-
-    ProxyFactory<T> wrapAround(MethodView<T, ?> method, Consumer<MethodWrapperFactory<T>> wrapper);
+    ProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer);
 
     /**
      * Implements the given interfaces on the proxy. This will add the given interfaces to the list of
@@ -301,10 +215,6 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
      * @return This factory
      */
     ProxyFactory<T> implement(Class<?>... interfaces);
-
-    ProxyFactory<T> defaultStub(MethodStub<T> stub);
-
-    ProxyFactory<T> defaultStub(Supplier<MethodStub<T>> stub);
 
     /**
      * Creates a proxy instance of the active {@link #type()} and returns it. This will create a new proxy,
@@ -346,47 +256,6 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
     Class<T> type();
 
     /**
-     * Gets the original instance delegate, if it was set through {@link #delegate(Object)}. This will
-     * return {@code null} if no delegate was set.
-     *
-     * @return The original delegate instance, or {@code null}
-     */
-    @Nullable
-    T typeDelegate();
-
-    /**
-     * Gets all known backing implementation delegates. This will return an empty map if no delegates were
-     * set.
-     *
-     * @return All known delegates, or an empty map
-     */
-    Map<Method, Object> delegates();
-
-    /**
-     * Gets all known interceptors. This will return an empty map if no interceptors were set. If there
-     * are multiple interceptors for the same method, they will be chained together.
-     *
-     * @return All known interceptors, or an empty map
-     */
-    Map<Method, MethodInterceptor<T, ?>> interceptors();
-
-    /**
-     * Gets all known wrappers. This will return an empty map if no wrappers were set. If there are
-     * multiple wrappers for the same method, they will be separated into a single collection identified
-     * by the method as the key.
-     *
-     * @return All known wrappers, or an empty map
-     */
-    MultiMap<Method, MethodWrapper<T>> wrappers();
-
-    /**
-     * Gets all known backing implementation delegates. This will return an empty map if no delegates were
-     * set.
-     * @return All known delegates, or an empty map
-     */
-    ConcurrentClassMap<Object> typeDelegates();
-
-    /**
      * Gets all currently known interfaces. This will return an empty set if no interfaces were set. This
      * will not include {@link Proxy}.
      *
@@ -400,13 +269,4 @@ public interface ProxyFactory<T> extends ModifiableProxyManager<T> {
      * @return The temporary context
      */
     ProxyContextContainer contextContainer();
-
-    /**
-     * Gets the default {@link MethodStub} to use when a method is not implemented.
-     * @return The default method stub
-     */
-    Supplier<MethodStub<T>> defaultStub();
-
-    @Override
-    ProxyFactory<T> delegate(T delegate);
 }

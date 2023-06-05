@@ -16,8 +16,6 @@
 
 package test.org.dockbox.hartshorn;
 
-import java.lang.reflect.Method;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.proxy.Proxy;
@@ -26,6 +24,8 @@ import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
+
+import java.lang.reflect.Method;
 
 import test.org.dockbox.hartshorn.components.ContextCarrierService;
 import test.org.dockbox.hartshorn.components.IContextCarrierService;
@@ -44,7 +44,7 @@ public class ContextCarrierDelegationTests {
 
     @InjectTest
     @TestComponents(IDefaultContextCarrierService.class)
-    void testDefaultCarrrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
+    void testDefaultCarrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
         final IDefaultContextCarrierService service = applicationContext.get(IDefaultContextCarrierService.class);
         this.testDelegateAbsent(service);
         // Default method, should return null (see IDefaultContextCarrierService)
@@ -53,25 +53,38 @@ public class ContextCarrierDelegationTests {
 
     @InjectTest
     @TestComponents(IContextCarrierService.class)
-    void testCarrrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
+    void testCarrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
         final IContextCarrierService service = applicationContext.get(IContextCarrierService.class);
 
         Assertions.assertTrue(service instanceof Proxy<?>);
         final Method method = ContextCarrier.class.getMethod("applicationContext");
-        final Option<?> methodDelegate = ((Proxy<?>) service).manager().delegate(method);
+        final Option<?> methodDelegate = ((Proxy<?>) service).manager()
+                .advisor()
+                .resolver()
+                .method(method)
+                .delegate();
         Assertions.assertTrue(methodDelegate.present());
 
         Assertions.assertNotNull(service.applicationContext());
         Assertions.assertSame(service.applicationContext(), applicationContext);
     }
-    private void testDelegateAbsent(final Object object) throws NoSuchMethodException {
-        if (object instanceof Proxy<?>) {
-            final Option<ContextCarrier> delegate = ((Proxy<?>) object).manager().delegate(ContextCarrier.class);
-            Assertions.assertTrue(delegate.absent());
 
-            final Method method = ContextCarrier.class.getMethod("applicationContext");
-            final Option<?> methodDelegate = ((Proxy<?>) object).manager().delegate(method);
-            Assertions.assertTrue(methodDelegate.absent());
-        }
+    private void testDelegateAbsent(final Object object) throws NoSuchMethodException {
+        Assertions.assertTrue(object instanceof Proxy<?>);
+
+        final Option<ContextCarrier> delegate = ((Proxy<?>) object).manager()
+                .advisor()
+                .resolver()
+                .type(ContextCarrier.class)
+                .delegate();
+        Assertions.assertTrue(delegate.absent());
+
+        final Method method = ContextCarrier.class.getMethod("applicationContext");
+        final Option<?> methodDelegate = ((Proxy<?>) object).manager()
+                .advisor()
+                .resolver()
+                .method(method)
+                .delegate();
+        Assertions.assertTrue(methodDelegate.absent());
     }
 }

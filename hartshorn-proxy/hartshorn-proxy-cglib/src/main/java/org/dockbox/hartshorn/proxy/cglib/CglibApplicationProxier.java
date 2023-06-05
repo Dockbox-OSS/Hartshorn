@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.proxy.cglib;
 
 import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.slf4j.LoggerFactory;
 

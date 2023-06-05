@@ -38,12 +38,14 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
         final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
 
         if (this.skipConcreteMethods()) {
-            // Ensure we keep the original instance as delegate, to avoid losing context. This rule is defined by the finalizing process.
-            factory.delegate((P) instance);
-            factory.delegateAbstract(this.parentTarget(), concreteDelegator);
+            // Ensure we keep the original instance as delegate if possible, to avoid losing context. This rule is defined by the finalizing process.
+            if (instance != null) {
+                factory.advisors().type().delegate(this.parentTarget().cast(instance));
+            }
+            factory.advisors().type(this.parentTarget()).delegateAbstractOnly(concreteDelegator);
         }
         else {
-            factory.delegate(this.parentTarget(), concreteDelegator);
+            factory.advisors().type(this.parentTarget()).delegate(concreteDelegator);
         }
 
         return instance;

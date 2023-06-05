@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
+import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
+import org.dockbox.hartshorn.proxy.advice.registry.StateAwareTypeAdvisorRegistryStep;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * A proxy manager is responsible for managing the lifecycle of a single proxy object. How the proxy is created is
@@ -36,6 +36,14 @@ import java.util.Set;
  * @since 22.2
  */
 public interface ProxyManager<T> extends Context {
+
+    /**
+     * Returns the {@link ProxyAdvisor} that is responsible for this proxy. The advisor is responsible for providing
+     * the proxy with the necessary advisors to function.
+     *
+     * @return the {@link ProxyAdvisor} that is responsible for this proxy
+     */
+    ProxyAdvisor<T> advisor();
 
     /**
      * Returns the original type of the proxy. This is the type of the object that is proxied, but is not the proxied
@@ -63,60 +71,16 @@ public interface ProxyManager<T> extends Context {
     /**
      * Returns the original instance delegate of the proxy.
      * @return the original instance delegate of the proxy
-     * @see ProxyFactory#typeDelegate()
+     * @see StateAwareTypeAdvisorRegistryStep#delegate()
+     * @see StateAwareAdvisorRegistry#type()
      */
     Option<T> delegate();
 
     /**
-     * Returns the delegate for the given method. This method is used to obtain the delegate for the given method, which
-     * may be either a subtype of the original type, or a supertype of the original type.
+     * Returns the {@link ApplicationProxier} that is responsible for managing the lifecycle of proxies in the current
+     * application, including the proxy managed by this manager.
      *
-     * <p>Implementation note: this method does not return a parameterized type, as the type of the delegate is not
-     * guaranteed to be a subtype of the original type, as it is also possible for the delegate to be a concrete
-     * implementation of a super type- or interface of the target type.
-     *
-     * @param method the method for which to obtain the delegate
-     * @return the delegate for the given method
+     * @return the {@link ApplicationProxier}
      */
-    Option<?> delegate(Method method);
-
-    /**
-     * Returns the delegate for the given type. This method is used to obtain the delegate for the given type, which is
-     * always a subtype of the original type.
-     *
-     * @param type the type for which to obtain the delegate
-     * @param <S> the type of the delegate
-     * @return the delegate for the given type
-     */
-    <S> Option<S> delegate(Class<S> type);
-
-    /**
-     * Gets the interceptor for the given method. This method is used to obtain the interceptor for the given method,
-     * which may be a chained or single interceptor. If the method is not intercepted, this method returns {@link Option#empty()}
-     *
-     * @param method the method for which to obtain the interceptor
-     * @return the interceptor for the given method
-     */
-    Option<MethodInterceptor<T, ?>> interceptor(Method method);
-
-    /**
-     * Gets all method wrappers for the given method. If the method is not intercepted, this method returns an empty set.
-     *
-     * @param method the method for which to obtain the method wrappers
-     * @return all method wrappers for the given method
-     */
-    Set<MethodWrapper<T>> wrappers(Method method);
-
-    /**
-     * Gets the default method stub for the proxy. Stubs are used to provide a default implementation
-     * for methods that are not otherwise delegated or intercepted.
-     *
-     * @return the default method stub for the proxy
-     * @see ProxyFactory#defaultStub()
-     * @see MethodStub
-     * @see MethodStubContext
-     */
-    MethodStub<T> stub();
-
     ApplicationProxier applicationProxier();
 }

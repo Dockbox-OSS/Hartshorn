@@ -17,11 +17,18 @@
 package org.dockbox.hartshorn.proxy.loaders;
 
 import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.proxy.Unproxy;
+import org.dockbox.hartshorn.proxy.lookup.Unproxy;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A parameter loader rule that attempts to unproxy arguments if the parameter or method is annotated with
+ * {@link Unproxy}.
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public class UnproxyParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
 
     @Override

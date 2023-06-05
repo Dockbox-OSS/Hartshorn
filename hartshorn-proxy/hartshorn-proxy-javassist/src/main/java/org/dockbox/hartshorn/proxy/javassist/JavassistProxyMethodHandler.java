@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.proxy.MethodInvokable;
-import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
+import javassist.util.proxy.MethodHandler;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import java.lang.reflect.Method;
-
-import javassist.util.proxy.MethodHandler;
 
 public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector) implements MethodHandler {
 

@@ -22,6 +22,14 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Set;
 
+/**
+ * A proxy context container is a {@link Context} implementation that acts as a temporary container for
+ * contexts which are later used to create a proxy. This container is used to store the contexts that are
+ * created during the proxy creation process.
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public class ProxyContextContainer extends DefaultContext {
 
     private final Runnable onModify;

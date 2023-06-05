@@ -20,6 +20,12 @@ import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
+/**
+ * A parameter loader context that provides access to the {@link ApplicationProxier} instance.
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public class ProxyParameterLoaderContext extends ParameterLoaderContext {
 
     private final ApplicationProxier applicationProxier;

@@ -20,11 +20,11 @@ import net.sf.cglib.core.NamingPolicy;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
-import org.dockbox.hartshorn.proxy.Invokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
 import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
-import org.dockbox.hartshorn.proxy.MethodInvokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.proxy.ProxyMethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
@@ -50,9 +50,10 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
         enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> {
             final MethodInvokable realMethod = new MethodInvokable(method, this.applicationProxier().introspector());
-            final Invokable proxyMethod = new CGLibProxyMethodInvokable(this.applicationProxier().introspector(), proxy, obj, method);
+            final Invokable proxyMethod = new CglibProxyMethodInvokable(this.applicationProxier().introspector(), proxy, obj, method);
             return interceptor.intercept(obj, realMethod, proxyMethod, args);
         });
         return new CglibProxyConstructorFunction<>(this.type(), enhancer);
     }
+
 }

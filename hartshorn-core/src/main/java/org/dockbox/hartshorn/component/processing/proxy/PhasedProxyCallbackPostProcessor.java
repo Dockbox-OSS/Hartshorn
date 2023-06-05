@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.proxy.MethodWrapper;
-import org.dockbox.hartshorn.proxy.ProxyCallback;
+import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
+import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -49,7 +49,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
             final MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
-                factory.wrapAround(method, wrapper);
+                factory.advisors().method(method).wrapAround(wrapper);
             }
         }
 

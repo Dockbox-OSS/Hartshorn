@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
+import org.dockbox.hartshorn.proxy.lookup.NativeProxyLookup;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -24,6 +26,14 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A base implementation of {@link ApplicationProxier} that provides a default set of {@link ProxyLookup}s, and
+ * allows for registration of additional lookups. Lookup operations are performed with the assumption that Hartshorn's
+ * own {@link Proxy} implementation is used.
+ *
+ * @since 22.4
+ * @author Guus Lieben
+ */
 public abstract class AbstractApplicationProxier implements ApplicationProxier {
 
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
@@ -63,7 +73,10 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
         if (instance instanceof Proxy) {
             final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             final ProxyManager<?> manager = proxy.manager();
-            return manager.delegate(type);
+            return manager.advisor()
+                    .resolver()
+                    .type(type)
+                    .delegate();
         }
         return Option.empty();
     }
