@@ -40,7 +40,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,13 +48,16 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JettyErrorHandler extends ErrorHandler {
 
-    @Inject
-    private ApplicationContext context;
-    @Inject
-    private ErrorServlet errorServlet;
+    private final ApplicationContext context;
+    private final ErrorServlet errorServlet;
 
     @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
+
+    public JettyErrorHandler(final ApplicationContext context, final ErrorServlet errorServlet) {
+        this.context = context;
+        this.errorServlet = errorServlet;
+    }
 
     @Override
     protected void generateAcceptableResponse(final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response, final int code, String message, final String contentType)

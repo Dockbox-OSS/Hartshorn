@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Enumeration;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
@@ -29,7 +25,10 @@ import org.eclipse.jetty.server.ResourceService;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.resource.Resource;
 
-import jakarta.inject.Inject;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Enumeration;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,11 +36,21 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JettyResourceService extends ResourceService {
 
-    @Inject
-    private DirectoryServlet servlet;
+    private final DirectoryServlet servlet;
+    private final ApplicationContext applicationContext;
 
-    @Inject
-    private ApplicationContext applicationContext;
+    public JettyResourceService(final DirectoryServlet servlet, final ApplicationContext applicationContext) {
+        this.servlet = servlet;
+        this.applicationContext = applicationContext;
+    }
+
+    public DirectoryServlet directoryServlet() {
+        return this.servlet;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     protected void sendDirectory(final HttpServletRequest req,

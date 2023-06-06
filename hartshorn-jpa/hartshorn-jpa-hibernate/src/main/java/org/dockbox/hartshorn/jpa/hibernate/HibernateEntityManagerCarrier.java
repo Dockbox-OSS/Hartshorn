@@ -66,21 +66,20 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
     public static final String HH_HIBERNATE_DIALECT = "hartshorn.data.hibernate.dialect";
 
     private final Configuration hibernateConfiguration = new Configuration();
+    private final ApplicationContext applicationContext;
 
     private SessionFactory factory;
     private DataSourceConfiguration configuration;
     private Session session;
 
     @Inject
-    private ApplicationContext applicationContext;
-
-    @Inject
-    public HibernateEntityManagerCarrier() {
-        this(null);
+    public HibernateEntityManagerCarrier(final ApplicationContext applicationContext) {
+        this(applicationContext, null);
     }
 
     @Bound
-    public HibernateEntityManagerCarrier(final DataSourceConfiguration configuration) {
+    public HibernateEntityManagerCarrier(final ApplicationContext applicationContext, final DataSourceConfiguration configuration) {
+        this.applicationContext = applicationContext;
         this.configuration = configuration;
     }
 

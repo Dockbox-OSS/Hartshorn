@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class CollectionUtilities {
@@ -96,5 +97,12 @@ public final class CollectionUtilities {
         mergedDifference.addAll(differenceInTwo);
 
         return Set.copyOf(mergedDifference);
+    }
+
+    @SafeVarargs
+    public static <T> void forEach(final Consumer<T> consumer, final Collection<T>... collections) {
+        for (final Collection<T> collection : collections) {
+            collection.forEach(consumer);
+        }
     }
 }

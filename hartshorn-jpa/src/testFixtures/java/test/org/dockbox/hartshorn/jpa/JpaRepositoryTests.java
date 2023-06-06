@@ -167,7 +167,7 @@ public abstract class JpaRepositoryTests implements DataSourceConfigurationLoade
         if (!mySql.isRunning()) mySql.start();
 
         final JpaRepositoryFactory factory = this.applicationContext.get(JpaRepositoryFactory.class);
-        final JpaRepository<User, ?> repository = factory.repository(User.class);
+        final JpaRepository<User, ?> repository = factory.repository(User.class, this.applicationContext);
         Assertions.assertTrue(repository instanceof EntityManagerCarrier);
 
         this.applicationContext.get(LazyJdbcRepositoryConfigurationInitializer.class).initialize(mySql, MySQLContainer.MYSQL_PORT);

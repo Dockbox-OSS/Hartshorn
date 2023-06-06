@@ -21,16 +21,16 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.mvc.model.ViewModelImpl;
 import org.dockbox.hartshorn.web.mvc.template.ViewTemplate;
 import org.dockbox.hartshorn.web.servlet.WebServlet;
 
+import java.io.IOException;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -64,7 +64,6 @@ public class MvcServlet implements WebServlet {
     public void get(final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallback) throws ApplicationException {
         final ParameterLoader<MvcParameterLoaderContext> loader = this.parameterLoader;
         final ViewModelImpl viewModel = new ViewModelImpl();
-        final TypeView<ViewTemplate> typeView = this.applicationContext.environment().introspect(ViewTemplate.class);
         final MvcParameterLoaderContext loaderContext = new MvcParameterLoaderContext(this.method,
                 null, this.applicationContext, req, res, viewModel);
         final List<Object> arguments = loader.loadArguments(loaderContext);
@@ -81,7 +80,7 @@ public class MvcServlet implements WebServlet {
                     res.setStatus(HttpStatus.OK.value());
                     res.getWriter().write(content);
                     return;
-                } catch (final Exception e) {
+                } catch (final IOException e) {
                     res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                     throw new ApplicationException(e);
                 }

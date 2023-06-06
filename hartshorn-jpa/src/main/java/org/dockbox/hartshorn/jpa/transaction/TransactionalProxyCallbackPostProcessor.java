@@ -61,7 +61,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
             // Do not fail if no data source is configured, as this may be configured in a different way.
             if (sourceConfiguration != null) {
                 final EntityManagerFactory factory = context.get(EntityManagerFactory.class);
-                final EntityManagerCarrier carrier = factory.entityManagerCarrier(sourceConfiguration);
+                final EntityManagerCarrier carrier = factory.entityManagerCarrier(context, sourceConfiguration);
                 final EntityManagerContext entityManagerContext = new EntityManagerContext(carrier::manager);
                 proxyFactory.contextContainer().add(entityManagerContext);
             }

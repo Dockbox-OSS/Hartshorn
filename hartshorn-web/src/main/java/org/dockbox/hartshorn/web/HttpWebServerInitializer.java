@@ -42,19 +42,22 @@ public class HttpWebServerInitializer implements LifecycleObserver {
     public static final int DEFAULT_PORT = 8080;
 
     @Value("hartshorn.web.port")
-    private final int port = DEFAULT_PORT;
+    private int port = DEFAULT_PORT;
 
     @Value("hartshorn.web.servlet.directory")
-    private final boolean useDirectoryServlet = true;
+    private boolean useDirectoryServlet = true;
+
+    private final WebServletFactory webServletFactory;
+    private final HttpWebServer webServer;
+    private final List<WebContextLoader> contextLoaders;
 
     @Inject
-    private WebServletFactory webServletFactory;
-
-    @Inject
-    private HttpWebServer webServer;
-
-    @Inject
-    private List<WebContextLoader> contextLoaders;
+    public HttpWebServerInitializer(final WebServletFactory webServletFactory, final HttpWebServer webServer,
+                                    final List<WebContextLoader> contextLoaders) {
+        this.webServletFactory = webServletFactory;
+        this.webServer = webServer;
+        this.contextLoaders = contextLoaders;
+    }
 
     @Override
     public void onStarted(final ApplicationContext applicationContext) {

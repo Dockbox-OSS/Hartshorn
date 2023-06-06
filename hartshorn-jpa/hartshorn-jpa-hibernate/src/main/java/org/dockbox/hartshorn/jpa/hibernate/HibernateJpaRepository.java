@@ -36,8 +36,8 @@ public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T,
     private final HibernateEntityManagerCarrier entityManager;
 
     @Bound
-    public HibernateJpaRepository(final Class<T> type) {
-        this(type, new HibernateEntityManagerCarrier());
+    public HibernateJpaRepository(final Class<T> type, final ApplicationContext applicationContext) {
+        this(type, new HibernateEntityManagerCarrier(applicationContext));
     }
 
     @Bound

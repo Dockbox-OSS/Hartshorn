@@ -47,14 +47,14 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     private final ServletContextHandler contextHandler;
     private final HandlerWrapper servletHandler;
+    private final ApplicationContext applicationContext;
 
-    @Inject
-    private ApplicationContext context;
     private JsonInclusionRule skipBehavior = JsonInclusionRule.SKIP_NONE;
     private JettyServer server;
 
     @Inject
     public JettyHttpWebServer(final JettyResourceService resourceService) {
+        this.applicationContext = resourceService.applicationContext();
         this.contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         this.contextHandler.setContextPath("/");
         final URL staticContent = Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT.substring(1));
@@ -69,7 +69,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     }
 
     public ApplicationContext context() {
-        return this.context;
+        return this.applicationContext;
     }
 
     public ServletContextHandler contextHandler() {
@@ -97,13 +97,13 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
             if (this.server != null)
                 this.server.stop();
 
-            this.context.log().info("Starting service [JettyServer]");
-            this.server = this.context.get(JettyServer.class);
+            this.applicationContext.log().info("Starting service [JettyServer]");
+            this.server = this.applicationContext.get(JettyServer.class);
             this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
             this.server.setHandler(this.servletHandler);
             this.server.setErrorHandler(this.errorHandler());
             this.server.start();
-            this.context.log().info("Service [JettyServer] started on port [{}]", port);
+            this.applicationContext.log().info("Service [JettyServer] started on port [{}]", port);
         } catch (final Exception e) {
             throw new ApplicationException(e);
         }
@@ -185,6 +185,6 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     }
 
     protected ErrorHandler errorHandler() {
-        return this.context.get(JettyErrorHandler.class);
+        return this.applicationContext.get(JettyErrorHandler.class);
     }
 }

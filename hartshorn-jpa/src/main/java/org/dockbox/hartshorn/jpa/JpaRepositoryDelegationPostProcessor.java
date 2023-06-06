@@ -51,7 +51,7 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
                 .orElseThrow(() -> new IllegalStateException("No data source found for repository " + repositoryType.type().getName()));
 
         final EntityManagerCarrier entityManagerCarrier = context.get(EntityManagerFactory.class)
-                .entityManagerCarrier(sourceConfiguration);
+                .entityManagerCarrier(context, sourceConfiguration);
 
         return context.get(JpaRepositoryFactory.class).repository(type, entityManagerCarrier);
     }

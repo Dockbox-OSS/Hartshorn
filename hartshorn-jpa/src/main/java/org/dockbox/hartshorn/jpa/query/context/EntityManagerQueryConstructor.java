@@ -18,16 +18,12 @@ package org.dockbox.hartshorn.jpa.query.context;
 
 import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.query.QueryConstructor;
-import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
 
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
 public class EntityManagerQueryConstructor implements QueryConstructor {
 
-    @Inject
-    private QueryExecuteTypeLookup queryExecuteTypeLookup;
     private final EntityManager entityManager;
 
     @Bound

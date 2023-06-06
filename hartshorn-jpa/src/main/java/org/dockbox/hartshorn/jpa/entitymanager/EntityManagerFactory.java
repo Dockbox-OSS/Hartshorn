@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.jpa.entitymanager;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
@@ -27,6 +28,6 @@ import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 public interface EntityManagerFactory {
 
     @Factory
-    EntityManagerCarrier entityManagerCarrier(DataSourceConfiguration configuration);
+    EntityManagerCarrier entityManagerCarrier(ApplicationContext applicationContext, DataSourceConfiguration configuration);
 
 }

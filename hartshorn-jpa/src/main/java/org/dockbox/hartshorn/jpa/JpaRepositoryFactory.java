@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.jpa;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.factory.Factory;
@@ -59,5 +60,5 @@ public interface JpaRepositoryFactory {
      */
     @Factory
     @Enable(false)
-    <T> JpaRepository<T, ?> repository(Class<T> type);
+    <T> JpaRepository<T, ?> repository(Class<T> type, ApplicationContext applicationContext);
 }

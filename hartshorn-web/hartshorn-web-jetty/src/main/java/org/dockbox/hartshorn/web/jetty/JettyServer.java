@@ -28,18 +28,19 @@ import org.eclipse.jetty.server.Server;
 
 import java.io.IOException;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 
 @Component
 public class JettyServer extends Server {
 
-    @Inject
-    private JettyErrorHandler errorHandler;
+    private final JettyErrorHandler errorHandler;
+    private final ApplicationContext applicationContext;
 
-    @Inject
-    private ApplicationContext applicationContext;
+    public JettyServer(final JettyErrorHandler errorHandler, final ApplicationContext applicationContext) {
+        this.errorHandler = errorHandler;
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public void handle(final HttpChannel channel) throws IOException, ServletException {
