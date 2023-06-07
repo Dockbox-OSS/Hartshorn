@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -33,6 +30,9 @@ import org.dockbox.hartshorn.inject.processing.BindingProcessor;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FactoryServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
@@ -49,6 +49,7 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
             if (!"".equals(annotation.value())) componentKey = componentKey.mutable().name(annotation.value()).build();
 
             if (!lookupMatchingConstructor(context, factoryContext, (MethodView<Object, ?>) method, componentKey)) {
+                // TODO: Fix L
                 if (annotation.required()) throw new MissingFactoryConstructorException(componentKey, method);
             }
         }

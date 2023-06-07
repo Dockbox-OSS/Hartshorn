@@ -28,6 +28,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public class ReflectionExecutableParametersIntrospector implements ExecutableParametersIntrospector {
@@ -99,14 +100,29 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     }
 
     @Override
+    public boolean matchesExact(final Class<?>... parameterTypes) {
+        return this.matchesExact(Arrays.asList(parameterTypes));
+    }
+
+    @Override
+    public boolean matchesExact(final List<Class<?>> parameterTypes) {
+        return this.matches(parameterTypes, TypeView::is);
+    }
+
+    @Override
     public boolean matches(final List<Class<?>> parameterTypes) {
+        return this.matches(parameterTypes, TypeView::isParentOf);
+    }
+
+    private boolean matches(final List<Class<?>> parameterTypes, final BiPredicate<TypeView<?>, Class<?>> predicate) {
         if (parameterTypes.size() != this.count()) return false;
         final List<TypeView<?>> types = this.types();
         for (int i = 0; i < types.size(); i++) {
             final TypeView<?> type = types.get(i);
             final Class<?> expected = parameterTypes.get(i);
-            if (!type.is(expected)) return false;
+            if (!predicate.test(type, expected)) return false;
         }
         return true;
+
     }
 }

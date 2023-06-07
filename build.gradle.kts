@@ -203,7 +203,7 @@ allprojects {
 
             // Automatically generate test reports. This is not always required, but it's nice to
             // have, and makes CI integration easier.
-            finalizedBy(":jacocoMergedReport")
+//            finalizedBy(":jacocoMergedReport")
         }
 
         withType<JavaCompile> {
