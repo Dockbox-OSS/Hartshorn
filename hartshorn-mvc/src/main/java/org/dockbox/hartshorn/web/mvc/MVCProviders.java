@@ -33,8 +33,8 @@ public class MVCProviders {
     }
 
     @Binds
-    public Class<MvcServlet> mvcServlet() {
-        return MvcServlet.class;
+    public WebMvcServletFactory mvcServletFactory() {
+        return new StandardWebMvcServletFactory();
     }
 
     @StaticBinds

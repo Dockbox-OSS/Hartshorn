@@ -20,34 +20,32 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
-import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
 public class HslLanguageProviders {
 
     @Binds
-    private final Class<? extends Lexer> lexer = Lexer.class;
+    private HslLanguageFactory languageFactory() {
+        return new StandardHslLanguageFactory();
+    }
 
     @Binds
-    private final Class<? extends TokenParser> tokenParser = StandardTokenParser.class;
+    private TokenParser tokenParser() {
+        return new StandardTokenParser();
+    }
 
     @Binds
-    private final Class<? extends Resolver> resolver = Resolver.class;
+    private ExpressionParser expressionParser() {
+        return new ComplexExpressionParserAdapter();
+    }
 
-    @Binds
-    private final Class<? extends Interpreter> interpreter = Interpreter.class;
-
-    @Binds
-    private final Class<? extends ExpressionParser> expressionParser = ComplexExpressionParserAdapter.class;
 
     @Binds
     public ScriptRuntime runtime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.transaction.TransactionManager;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -27,7 +26,6 @@ public class HibernateTransactionManager implements TransactionManager {
 
     private final Session session;
 
-    @Bound
     public HibernateTransactionManager(final EntityManager entityManager) {
         if (entityManager instanceof Session session) this.session = session;
         else throw new IllegalArgumentException("EntityManager must be a Session");

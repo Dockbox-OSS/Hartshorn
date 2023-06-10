@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityContext;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.InvalidConnectionException;
@@ -77,7 +76,6 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         this(applicationContext, null);
     }
 
-    @Bound
     public HibernateEntityManagerCarrier(final ApplicationContext applicationContext, final DataSourceConfiguration configuration) {
         this.applicationContext = applicationContext;
         this.configuration = configuration;
@@ -175,7 +173,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         if (queries.isEmpty()) return;
 
         final QueryComponentFactory registryFactory = this.applicationContext().get(QueryComponentFactory.class);
-        final NamedQueryRegistry registry = registryFactory.create(this.factory);
+        final NamedQueryRegistry registry = registryFactory.queryRegistry(this.factory);
 
         // Safe to auto-close as this will be invoked before the carrier is exposed to external components. It is
         // preferred to close the EM as soon as possible here, as it is not needed again until a component requests it.

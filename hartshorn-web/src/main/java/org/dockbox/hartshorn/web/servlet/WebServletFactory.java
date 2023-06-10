@@ -16,17 +16,10 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-@Service
-@RequiresActivator(UseHttpServer.class)
 public interface WebServletFactory {
 
-    @Factory
     WebServlet webServlet(final HttpWebServer starter, final RequestHandlerContext context);
 }

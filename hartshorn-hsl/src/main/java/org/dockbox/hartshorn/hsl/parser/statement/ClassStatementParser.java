@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     private final FieldStatementParser fieldParser;
 
     @Inject
-    @Bound
     public ClassStatementParser(final FieldStatementParser fieldParser) {
         this.fieldParser = fieldParser;
     }

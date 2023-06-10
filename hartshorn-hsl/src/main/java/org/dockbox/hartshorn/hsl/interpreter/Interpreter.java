@@ -92,7 +92,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
@@ -146,12 +145,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private boolean isRunning;
     private ExecutionOptions executionOptions;
 
-    @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
         this(resultCollector, externalModules, new ExecutionOptions());
     }
 
-    @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
         this.resultCollector = resultCollector;
         this.applicationContext = resultCollector.applicationContext();

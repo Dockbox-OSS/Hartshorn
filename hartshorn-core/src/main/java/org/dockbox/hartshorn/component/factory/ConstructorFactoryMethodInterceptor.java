@@ -22,6 +22,10 @@ import org.dockbox.hartshorn.component.ComponentPostConstructor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "23.1", forRemoval = true)
 public abstract class ConstructorFactoryMethodInterceptor<T, R> implements MethodInterceptor<T, R> {
 
     protected <U> U processInstance(final ApplicationContext context, final U instance, final boolean enable) throws ApplicationException {

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.cache;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
@@ -37,7 +38,9 @@ public class CacheProviders {
      * active by default when {@link UseCaching} is used.
      */
     @Binds
-    public Class<? extends CacheManager> cacheManager = CacheManagerImpl.class;
+    public CacheManager cacheManager(final ApplicationContext applicationContext) {
+        return new CacheManagerImpl(applicationContext);
+    }
 
     /**
      * The default binding for {@link KeyGenerator}. This implementation is

@@ -17,11 +17,6 @@
 package org.dockbox.hartshorn.jpa;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 
 /**
@@ -29,8 +24,6 @@ import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
  * @author Guus Lieben
  * @since 22.3
  */
-@Service
-@RequiresActivator(UsePersistence.class)
 public interface JpaRepositoryFactory {
 
     /**
@@ -43,7 +36,6 @@ public interface JpaRepositoryFactory {
      * @param <T> The entity type
      * @since 22.4
      */
-    @Factory
     <T> JpaRepository<T, ?> repository(Class<T> type, EntityManagerCarrier entityManagerCarrier);
 
     /**
@@ -58,7 +50,5 @@ public interface JpaRepositoryFactory {
      * @param <T> The entity type
      * @since 22.3
      */
-    @Factory
-    @Enable(false)
     <T> JpaRepository<T, ?> repository(Class<T> type, ApplicationContext applicationContext);
 }

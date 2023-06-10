@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -32,9 +33,11 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseEvents.class)
 public class EventProviders {
 
-    @Singleton
     @Binds
-    public Class<? extends EventBus> eventBus = EventBusImpl.class;
+    @Singleton
+    public EventBus eventBus(final ApplicationContext applicationContext) {
+        return new EventBusImpl(applicationContext);
+    }
 
     @Binds("event_loader")
     public ParameterLoader<?> eventParameterLoader() {

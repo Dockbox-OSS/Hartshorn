@@ -135,6 +135,6 @@ public abstract class AbstractJpaQueryContext extends DefaultProvisionContext im
     }
 
     private QueryConstructor queryConstructor(final EntityManager entityManager) {
-        return this.applicationContext().get(QueryComponentFactory.class).constructor(entityManager);
+        return this.applicationContext().get(QueryComponentFactory.class).queryConstructor(entityManager);
     }
 }

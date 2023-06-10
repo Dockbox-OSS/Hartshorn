@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
-import org.dockbox.hartshorn.component.Service;
-
 /**
  * The factory for {@link Cache} implementations to allow for custom
  * {@link Expiration} values.
@@ -30,8 +25,6 @@ import org.dockbox.hartshorn.component.Service;
  * @since 21.2
  */
 @FunctionalInterface
-@Service
-@RequiresActivator(UseCaching.class)
 public interface CacheFactory {
 
     /**
@@ -41,6 +34,5 @@ public interface CacheFactory {
      * @param <K> the type of keys
      * @param <V> the type of values
      */
-    @Factory
     <K, V> Cache<K, V> cache(Expiration expiration);
 }

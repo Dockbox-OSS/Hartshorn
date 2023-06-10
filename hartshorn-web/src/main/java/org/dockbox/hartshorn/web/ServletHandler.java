@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
@@ -49,7 +48,6 @@ public class ServletHandler {
     @Value("hartshorn.web.headers.hartshorn")
     private boolean addHeader = true;
 
-    @Bound
     public ServletHandler(final ApplicationContext applicationContext, final HttpWebServer starter,
                           final HttpMethod httpMethod, final MethodView<?, ?> method) {
         this.applicationContext = applicationContext;

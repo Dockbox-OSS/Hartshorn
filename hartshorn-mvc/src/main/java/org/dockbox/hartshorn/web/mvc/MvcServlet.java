@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.web.mvc;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -55,7 +54,6 @@ public class MvcServlet implements WebServlet {
     @Named("mvc_webserver")
     private ParameterLoader<MvcParameterLoaderContext> parameterLoader;
 
-    @Bound
     public MvcServlet(final MethodView<?, ViewTemplate> method) {
         this.method = method;
     }

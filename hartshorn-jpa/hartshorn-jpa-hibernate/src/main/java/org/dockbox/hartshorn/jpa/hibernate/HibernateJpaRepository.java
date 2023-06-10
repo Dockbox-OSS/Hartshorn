@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.jpa.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
@@ -35,12 +34,10 @@ public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T,
     private final DataSourceConfiguration connection;
     private final HibernateEntityManagerCarrier entityManager;
 
-    @Bound
     public HibernateJpaRepository(final Class<T> type, final ApplicationContext applicationContext) {
         this(type, new HibernateEntityManagerCarrier(applicationContext));
     }
 
-    @Bound
     public HibernateJpaRepository(final Class<T> type, final HibernateEntityManagerCarrier entityManagerCarrier) {
         super(type);
         this.entityManager = entityManagerCarrier;

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.jpa.query.context;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.query.QueryConstructor;
 
 import jakarta.persistence.EntityManager;
@@ -26,7 +25,6 @@ public class EntityManagerQueryConstructor implements QueryConstructor {
 
     private final EntityManager entityManager;
 
-    @Bound
     public EntityManagerQueryConstructor(final EntityManager entityManager) {
         this.entityManager = entityManager;
     }

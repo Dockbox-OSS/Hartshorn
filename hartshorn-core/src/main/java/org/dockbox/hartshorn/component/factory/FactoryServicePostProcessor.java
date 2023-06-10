@@ -28,6 +28,10 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "23.1", forRemoval = true)
 public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory> {
 
     @Override

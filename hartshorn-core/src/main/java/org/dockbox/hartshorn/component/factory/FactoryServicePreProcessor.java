@@ -34,6 +34,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "23.1", forRemoval = true)
 public class FactoryServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
@@ -49,7 +53,6 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
             if (!"".equals(annotation.value())) componentKey = componentKey.mutable().name(annotation.value()).build();
 
             if (!lookupMatchingConstructor(context, factoryContext, (MethodView<Object, ?>) method, componentKey)) {
-                // TODO: Fix L
                 if (annotation.required()) throw new MissingFactoryConstructorException(componentKey, method);
             }
         }

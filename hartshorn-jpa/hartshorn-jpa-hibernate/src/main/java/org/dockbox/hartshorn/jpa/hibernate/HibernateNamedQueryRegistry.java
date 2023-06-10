@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
 import org.hibernate.Session;
 import org.hibernate.query.named.NamedObjectRepository;
@@ -31,7 +30,6 @@ public class HibernateNamedQueryRegistry implements NamedQueryRegistry {
     private final EntityManagerFactory sessionFactory;
     private final NamedObjectRepository namedObjectRepository;
 
-    @Bound
     public HibernateNamedQueryRegistry(final EntityManager entityManager) {
         this.sessionFactory = entityManager.getEntityManagerFactory();
 
@@ -46,7 +44,6 @@ public class HibernateNamedQueryRegistry implements NamedQueryRegistry {
         }
     }
 
-    @Bound
     public HibernateNamedQueryRegistry(final EntityManagerFactory entityManagerFactory) {
         this.sessionFactory = entityManagerFactory;
 

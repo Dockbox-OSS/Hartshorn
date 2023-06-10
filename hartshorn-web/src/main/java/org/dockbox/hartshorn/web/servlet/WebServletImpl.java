@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpMethod;
@@ -32,7 +31,6 @@ public class WebServletImpl implements HandleWebServlet {
 
     private final ServletHandler handler;
 
-    @Bound
     public WebServletImpl(final HttpWebServer starter, final RequestHandlerContext context) {
         this.handler = context.applicationContext().get(ServletFactory.class)
                 .servletHandler(context.applicationContext(), starter, context.httpRequest().method(), context.method());

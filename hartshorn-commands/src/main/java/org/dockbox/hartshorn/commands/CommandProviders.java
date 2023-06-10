@@ -33,18 +33,26 @@ import jakarta.inject.Singleton;
 public class CommandProviders {
 
     @Binds
-    public Class<? extends CommandListener> listener = CommandListenerImpl.class;
+    public CommandListener listener(final ApplicationContext applicationContext, final CommandGateway gateway) {
+        return new CommandListenerImpl(applicationContext, gateway);
+    }
 
     @Binds
     @Singleton
-    public Class<? extends SystemSubject> systemSubject = ApplicationSystemSubject.class;
+    public SystemSubject systemSubject(final ApplicationContext applicationContext) {
+        return new ApplicationSystemSubject(applicationContext);
+    }
 
     @Binds
     @Singleton
-    public Class<? extends CommandGateway> commandGateway = CommandGatewayImpl.class;
+    public CommandGateway commandGateway(final CommandParser parser, final CommandResources resources, final ApplicationContext context) {
+        return new CommandGatewayImpl(parser, resources, context);
+    }
 
     @Binds
-    public Class<? extends CommandParser> commandParser = CommandParserImpl.class;
+    public CommandParser commandParser(final CommandResources resources) {
+        return new CommandParserImpl(resources);
+    }
 
     @StaticBinds
     public static CooldownExtension cooldownExtension(final ApplicationContext applicationContext) {

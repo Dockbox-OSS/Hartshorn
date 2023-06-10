@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
 import test.org.dockbox.hartshorn.components.CircularConstructorA;
 import test.org.dockbox.hartshorn.components.CircularConstructorB;
@@ -59,14 +58,10 @@ import test.org.dockbox.hartshorn.components.NonComponentType;
 import test.org.dockbox.hartshorn.components.NonProcessableType;
 import test.org.dockbox.hartshorn.components.NonProcessableTypeProcessor;
 import test.org.dockbox.hartshorn.components.NonProxyComponentType;
-import test.org.dockbox.hartshorn.components.PassThroughFactory;
-import test.org.dockbox.hartshorn.components.Person;
-import test.org.dockbox.hartshorn.components.PersonProviders;
 import test.org.dockbox.hartshorn.components.PopulatedType;
 import test.org.dockbox.hartshorn.components.ProvidedInterface;
 import test.org.dockbox.hartshorn.components.ProviderService;
 import test.org.dockbox.hartshorn.components.SampleContext;
-import test.org.dockbox.hartshorn.components.SampleFactoryService;
 import test.org.dockbox.hartshorn.components.SampleField;
 import test.org.dockbox.hartshorn.components.SampleFieldImplementation;
 import test.org.dockbox.hartshorn.components.SampleImplementation;
@@ -80,7 +75,7 @@ import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithAbsentBi
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithNonRequiredAbsentBinding;
 import test.org.dockbox.hartshorn.components.TypeWithEnabledInjectField;
 import test.org.dockbox.hartshorn.components.TypeWithFailingConstructor;
-import test.org.dockbox.hartshorn.components.User;
+import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 
 @HartshornTest(includeBasePackages = false)
 @UseServiceProvision
@@ -302,23 +297,6 @@ public class ApplicationContextTests {
         final ContextInjectedType instance = this.applicationContext.get(ComponentPopulator.class).populate(new ContextInjectedType());
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals("InjectedContext", instance.anotherContext().name());
-    }
-
-    @Test
-    @TestComponents({SampleFactoryService.class, PersonProviders.class})
-    void testFactoryProviderCanProvide() {
-        final User sample = this.applicationContext.get(SampleFactoryService.class).user("Factory");
-        Assertions.assertNotNull(sample);
-        Assertions.assertNotNull(sample.name());
-        Assertions.assertEquals("Factory", sample.name());
-    }
-
-    @Test
-    @TestComponents({PassThroughFactory.class, PersonProviders.class})
-    void testFactoryAllowsPassThroughDefaults() {
-        final PassThroughFactory factoryDemo = this.applicationContext.get(PassThroughFactory.class);
-        final Person person = factoryDemo.create("Bob");
-        Assertions.assertNotNull(person);
     }
 
     @Test

@@ -22,6 +22,10 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "23.1", forRemoval = true)
 public class ConstructorFactoryAbstractMethodInterceptor<T, R> extends ConstructorFactoryMethodInterceptor<T, R> {
     private final ConstructorView<?> constructor;
     private final ConversionService conversionService;

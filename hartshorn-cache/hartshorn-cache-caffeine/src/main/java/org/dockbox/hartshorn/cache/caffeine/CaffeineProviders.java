@@ -35,12 +35,15 @@ import org.dockbox.hartshorn.component.processing.Binds;
 @RequiresClass("com.github.benmanes.caffeine.cache.Caffeine")
 public class CaffeineProviders {
 
-    /**
-     * The provider for {@link Cache} instances. This uses class-based provision
-     * to support both injected and bound provision.
-     */
     @Binds
-    public Class<? extends Cache> cache = CaffeineCache.class;
+    public Cache<?, ?> cache() {
+        return new CaffeineCache<>();
+    }
+
+    @Binds
+    public CaffeineCacheFactory cacheFactory() {
+        return new CaffeineCacheFactory();
+    }
 
     @Binds(priority = 0)
     public CacheManager cacheManager(final ApplicationContext applicationContext) {

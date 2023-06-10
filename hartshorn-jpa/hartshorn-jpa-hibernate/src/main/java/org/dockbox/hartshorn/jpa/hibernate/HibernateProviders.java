@@ -20,17 +20,15 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.jpa.JpaRepository;
+import org.dockbox.hartshorn.jpa.JpaRepositoryFactory;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
-import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
+import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerFactory;
 import org.dockbox.hartshorn.jpa.query.EntityQueryExecutor;
-import org.dockbox.hartshorn.jpa.query.NamedQueryRegistry;
+import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
 import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
 import org.dockbox.hartshorn.jpa.query.QueryExecutor;
 import org.dockbox.hartshorn.jpa.query.QueryResultTransformer;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
-import org.dockbox.hartshorn.jpa.transaction.TransactionManager;
-import org.dockbox.hartshorn.util.TypeUtils;
 
 import jakarta.inject.Singleton;
 
@@ -45,23 +43,18 @@ public class HibernateProviders {
     }
 
     @Binds
-    public Class<? extends JpaRepository<?, ?>> jpaRepository() {
-        return TypeUtils.adjustWildcards(HibernateJpaRepository.class, Class.class);
+    public JpaRepositoryFactory repositoryFactory() {
+        return new HibernateJpaRepositoryFactory();
     }
 
     @Binds
-    public Class<? extends EntityManagerCarrier> entityManagerCarrier() {
-        return HibernateEntityManagerCarrier.class;
+    public EntityManagerFactory entityManagerFactory() {
+        return new HibernateEntityManagerFactory();
     }
 
     @Binds
-    public Class<? extends TransactionManager> transactionManager() {
-        return HibernateTransactionManager.class;
-    }
-
-    @Binds
-    public Class<? extends NamedQueryRegistry> namedQueryRegistry() {
-        return HibernateNamedQueryRegistry.class;
+    public QueryComponentFactory queryComponentFactory() {
+        return new HibernateQueryComponentFactory();
     }
 
     @Binds
