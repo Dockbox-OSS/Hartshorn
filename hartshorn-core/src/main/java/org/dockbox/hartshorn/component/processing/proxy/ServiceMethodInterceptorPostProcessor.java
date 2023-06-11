@@ -18,11 +18,10 @@ package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -33,11 +32,13 @@ import java.util.Collection;
 public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
         final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
-        if (factory == null) return instance;
+        if (factory == null) {
+            return;
+        }
 
         for (final MethodView<T, ?> method : methods) {
             final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, processingContext.type(), method);
@@ -52,8 +53,6 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
                 }
             }
         }
-
-        return instance;
     }
 
     protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext);
@@ -67,7 +66,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.EARLY;
+    public int priority() {
+        return ProcessingPriority.HIGH_PRECEDENCE;
     }
 }

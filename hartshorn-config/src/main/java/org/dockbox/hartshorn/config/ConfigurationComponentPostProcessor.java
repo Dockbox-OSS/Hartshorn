@@ -32,8 +32,10 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) return instance;
+    public <T> void postConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) {
+            return;
+        }
 
         final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
         this.verifyPropertiesAvailable(context, propertyHolder);
@@ -58,7 +60,5 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
                 context.handle(e);
             }
         }
-
-        return instance;
     }
 }

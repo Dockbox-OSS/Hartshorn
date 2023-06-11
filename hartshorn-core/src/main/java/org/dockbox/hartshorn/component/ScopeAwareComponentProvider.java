@@ -116,7 +116,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
 
     @Override
     public void postProcessor(final ComponentPostProcessor postProcessor) {
-        this.postProcessors.put(postProcessor.order(), postProcessor);
+        this.postProcessors.put(postProcessor.priority(), postProcessor);
         final ComponentKey<ComponentPostProcessor> key = TypeUtils.adjustWildcards(ComponentKey.of(postProcessor.getClass()), ComponentKey.class);
         // Install to application context
         this.bind(key).singleton(postProcessor);

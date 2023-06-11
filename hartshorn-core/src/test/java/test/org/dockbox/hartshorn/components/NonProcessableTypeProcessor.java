@@ -24,10 +24,9 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (instance instanceof NonProcessableType) {
             processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
         }
-        return instance;
     }
 }

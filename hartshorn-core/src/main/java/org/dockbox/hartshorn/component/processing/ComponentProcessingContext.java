@@ -33,7 +33,6 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     protected final ComponentKey<T> key;
     private final Map<ComponentKey<?>, Object> data;
 
-    protected ProcessingPhase phase;
     protected T instance;
 
     public ComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key, final T instance) {
@@ -56,15 +55,6 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
             return this.applicationContext().environment().introspect(this.instance);
         }
         return this.applicationContext().environment().introspect(this.key.type());
-    }
-
-    public ProcessingPhase phase() {
-        return this.phase;
-    }
-
-    public ComponentProcessingContext<T> phase(final ProcessingPhase phase) {
-        this.phase = phase;
-        return this;
     }
 
     public int size() {

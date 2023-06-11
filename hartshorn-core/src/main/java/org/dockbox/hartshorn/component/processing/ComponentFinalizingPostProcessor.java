@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying()) {
             T finalizingInstance = instance;
             if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
@@ -70,7 +70,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     }
 
     @Override
-    public Integer order() {
+    public int priority() {
         // Run after all other core post processors, but permit external post processors to run after this one
         return Integer.MAX_VALUE / 2;
     }

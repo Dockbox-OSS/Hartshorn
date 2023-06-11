@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -83,7 +84,8 @@ public final class ProviderServicePreProcessor extends ComponentPreProcessor imp
     }
 
     @Override
-    public Integer order() {
-        return Integer.MIN_VALUE / 2;
+    public int priority() {
+        // +512 to allow third parties to register their own providers
+        return ProcessingPriority.HIGHEST_PRECEDENCE + 512;
     }
 }

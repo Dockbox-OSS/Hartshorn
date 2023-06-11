@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application.lifecycle;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 
 public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
@@ -31,7 +31,7 @@ public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
     }
 
     @Override
-    public Integer order() {
-        return (Integer.MIN_VALUE / 2) - (ProcessingOrder.LAST * 4);
+    public int priority() {
+        return ProcessingPriority.HIGH_PRECEDENCE - 1024;
     }
 }

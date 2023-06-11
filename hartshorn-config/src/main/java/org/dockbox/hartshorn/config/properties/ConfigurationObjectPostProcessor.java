@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(ConfigurationObject.class)) {
             final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
@@ -56,7 +56,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.FIRST;
+    public int priority() {
+        return ProcessingPriority.HIGHEST_PRECEDENCE;
     }
 }

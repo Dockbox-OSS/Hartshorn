@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.jpa;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
@@ -50,7 +50,7 @@ public class PersistenceProviders {
         return new ProxyAttachedEntityManagerLookup();
     }
 
-    @Binds(phase = ProcessingOrder.EARLY)
+    @Binds(phase = ProcessingPriority.HIGH_PRECEDENCE)
     public EntityTypeLookup entityTypeLookup() {
         return new JpaEntityTypeLookup();
     }

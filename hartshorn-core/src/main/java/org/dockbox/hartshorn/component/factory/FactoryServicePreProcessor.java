@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
@@ -80,8 +80,9 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.FIRST;
+    public int priority() {
+        // +1024 to be after the default binding processor (+512), but allow for other processors to be in between
+        return ProcessingPriority.HIGHEST_PRECEDENCE + 1024;
     }
 
     @Override

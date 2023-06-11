@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.jpa.annotations.NamedQuery;
 import org.dockbox.hartshorn.jpa.annotations.Query;
 import org.dockbox.hartshorn.jpa.annotations.Query.QueryType;
@@ -88,8 +88,8 @@ public class QueryPostProcessor extends ServiceMethodInterceptorPostProcessor {
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.LATE;
+    public int priority() {
+        return ProcessingPriority.LOW_PRECEDENCE;
     }
 
     protected TypeView<?> entityType(final ApplicationContext applicationContext, final MethodView<?, ?> context,

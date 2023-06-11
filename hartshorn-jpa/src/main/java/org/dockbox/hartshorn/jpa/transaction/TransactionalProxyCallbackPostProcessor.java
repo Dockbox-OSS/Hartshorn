@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.component.processing.proxy.PhasedProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.jpa.JpaRepository;
 import org.dockbox.hartshorn.jpa.annotations.DataSource;
@@ -128,7 +128,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.LATE + 1;
+    public int priority() {
+        return ProcessingPriority.LOW_PRECEDENCE + 128;
     }
 }

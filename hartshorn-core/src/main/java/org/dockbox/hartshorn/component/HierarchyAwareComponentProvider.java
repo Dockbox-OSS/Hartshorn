@@ -20,8 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ModifiableComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
@@ -37,7 +35,6 @@ import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
-import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -73,8 +70,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             if (objectContainer.present()) return objectContainer;
 
             return this.createContextualInstanceContainer(key);
-        }
-        catch (final ApplicationException e) {
+        } catch (final ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
         }
     }
@@ -122,12 +118,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container);
         objectContainer.processed(true);
 
-        // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
-        processingContext = this.process(ProcessingOrder.INITIALIZING, processingContext);
-
-        // Modify the instance during phase 2. This does not allow discarding the existing instance.
-        processingContext = this.process(ProcessingOrder.MODIFYING, processingContext);
-
+        processingContext = this.process(processingContext);
         return processingContext.instance();
     }
 
@@ -148,45 +139,19 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return processingContext;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> process(final ProcessingPhase phase, final ModifiableComponentProcessingContext<T> processingContext) {
+    protected <T> ModifiableComponentProcessingContext<T> process(final ModifiableComponentProcessingContext<T> processingContext) {
         final ComponentKey<T> key = processingContext.key();
-        final T instance = processingContext.instance();
-
-        processingContext.phase(phase);
 
         for (final Integer priority : this.owner.postProcessors().keySet()) {
-            if (phase.test(priority)) {
-                for (final ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
-                    final T modified = postProcessor.process(processingContext);
-
-                    if (processingContext.phase() != phase) {
-                        throw new IllegalPhaseModificationException(postProcessor, phase, processingContext.phase());
-                    }
-                    checkForModification(phase, processingContext, key, instance, priority, postProcessor, modified);
+            for (final ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
+                final T modified = postProcessor.process(processingContext);
+                if (modified != null) {
+                    processingContext.instance(modified);
                 }
             }
         }
         this.storeSingletons(key, processingContext.instance());
         return processingContext;
-    }
-
-    private static <T> void checkForModification(final ProcessingPhase phase,
-                                                 final ModifiableComponentProcessingContext<T> processingContext, final ComponentKey<T> key,
-                                                 final T instance, final Integer priority,
-                                                 final ComponentPostProcessor postProcessor, final T modified) {
-        if (instance != modified) {
-            if (!phase.modifiable()) {
-                boolean ok = false;
-                if (modified instanceof Proxy) {
-                    final Proxy<T> proxy = TypeUtils.adjustWildcards(modified, Proxy.class);
-                    ok = proxy.manager().delegate().orNull() == instance;
-                }
-                if (!ok) {
-                    throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
-                }
-            }
-            processingContext.instance(modified);
-        }
     }
 
     protected <T> void storeSingletons(final ComponentKey<T> key, final T instance) {
@@ -267,8 +232,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         if (componentKey.enable()) {
             try {
                 instance = this.owner.postConstructor().doPostConstruct(instance);
-            }
-            catch (final ApplicationException e) {
+            } catch (final ApplicationException e) {
                 throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
@@ -332,6 +296,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         final BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (adjustedHierarchy instanceof ContextWrappedHierarchy) return adjustedHierarchy;
-        else return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key.view(), updated));
+        else
+            return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key.view(), updated));
     }
 }

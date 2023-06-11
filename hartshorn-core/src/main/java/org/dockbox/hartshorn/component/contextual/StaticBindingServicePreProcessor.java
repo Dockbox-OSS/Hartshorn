@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.component.contextual;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
@@ -25,7 +23,7 @@ import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
@@ -36,6 +34,8 @@ import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.List;
 public class StaticBindingServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
@@ -87,8 +87,8 @@ public class StaticBindingServicePreProcessor extends ComponentPreProcessor impl
     }
 
     @Override
-    public Integer order() {
-        return (Integer.MIN_VALUE / 2) - (ProcessingOrder.LAST * 2);
+    public int priority() {
+        return ProcessingPriority.HIGH_PRECEDENCE - 512;
     }
 
     @Override

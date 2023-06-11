@@ -56,7 +56,7 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
         final Reportable[] reporters = processors.allValues().stream()
                 .map(processor -> (Reportable) processorCollector -> {
                     processorCollector.property("name").write(processor.getClass().getCanonicalName());
-                    processorCollector.property("order").write(processor.order());
+                    processorCollector.property("order").write(processor.priority());
                 }).toArray(Reportable[]::new);
 
         collector.property("pre").write(reporters);

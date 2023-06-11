@@ -33,9 +33,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance,
-                         final ComponentProcessingContext<T> processingContext) {
-
+    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (this.supports(processingContext)) {
             final C componentContext = processingContext.first(ContextKey.of(this.contextType))
                     .orCompute(() -> this.createContext(context, processingContext)).orNull();
@@ -55,7 +53,6 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
                 }
             }
         }
-        return instance;
     }
 
     protected abstract boolean supports(final ComponentProcessingContext<?> processingContext);

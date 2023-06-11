@@ -25,13 +25,19 @@ import org.dockbox.hartshorn.component.ComponentType;
 public abstract class FunctionalComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean isCompatible(final ComponentProcessingContext<T> processingContext) {
         final ComponentContainer container = processingContext.get(ComponentKey.of(ComponentContainer.class));
-        if (container.componentType() == ComponentType.FUNCTIONAL) {
-            return this.process(context, instance, container, processingContext);
-        }
-        return instance;
+        return container.componentType() == ComponentType.FUNCTIONAL;
     }
 
-    public abstract  <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext);
+    /**
+     * @deprecated This method is deprecated and will be removed in a future release. Instead use
+     * {@link #preConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)},
+     * {@link #postConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)} or
+     * {@link #initializeComponent(ApplicationContext, Object, ComponentProcessingContext)}
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
+    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
+        throw new UnsupportedOperationException("This method is deprecated and will be removed in a future release");
+    }
 }
