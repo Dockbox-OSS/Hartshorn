@@ -6,7 +6,7 @@ import java.util.Set;
 public abstract class BreadthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> {
 
     @Override
-    public final void iterate(final Graph<T> graph) {
+    public final void iterate(final Graph<T> graph) throws GraphException {
         final Set<GraphNode<T>> visited = new HashSet<>();
 
         Set<GraphNode<T>> nodes = graph.roots();
@@ -18,7 +18,7 @@ public abstract class BreadthFirstGraphVisitor<T> extends AbstractGraphVisitor<T
         }
     }
 
-    private Set<GraphNode<T>> visitRow(final Set<GraphNode<T>> visited, final Set<GraphNode<T>> currentRow) {
+    private Set<GraphNode<T>> visitRow(final Set<GraphNode<T>> visited, final Set<GraphNode<T>> currentRow) throws GraphException {
         final Set<GraphNode<T>> nextRow = new HashSet<>();
         for (final GraphNode<T> node : currentRow) {
             if (visited.add(node) && this.visit(node)) {

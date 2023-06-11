@@ -8,14 +8,14 @@ import java.util.Set;
 public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> {
 
     @Override
-    public void iterate(final Graph<T> graph) {
+    public void iterate(final Graph<T> graph) throws GraphException {
         final Set<GraphNode<T>> visited = new HashSet<>();
         for (final GraphNode<T> root : graph.roots()) {
             this.visitSingleRoot(visited, root);
         }
     }
 
-    private void visitSingleRoot(final Set<GraphNode<T>> visited, final GraphNode<T> root) {
+    private void visitSingleRoot(final Set<GraphNode<T>> visited, final GraphNode<T> root) throws GraphException {
         final Deque<GraphNode<T>> stack = new ArrayDeque<>();
         stack.push(root);
         boolean atNextPathStart = true;
@@ -28,11 +28,17 @@ public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> 
     }
 
     private boolean visitNextNode(final Deque<GraphNode<T>> stack, final Set<GraphNode<T>> visited, boolean atNextPathStart, final GraphNode<T> node) {
-        if (node.children().isEmpty()) {
+        // Do not use children directly, as we want to ensure they can be visited
+        // before considering them for the next node.
+        final Set<GraphNode<T>> visitableChildren = this.visitableChildren(node, visited);
+
+        if (visitableChildren.isEmpty()) {
             this.afterPathVisited();
             atNextPathStart = true;
         } else {
-            this.pushResolvedNodes(stack, visited, node);
+            for (final GraphNode<T> visitableChild : visitableChildren) {
+                stack.push(visitableChild);
+            }
             if (atNextPathStart) {
                 this.beforePathVisited();
                 atNextPathStart = false;
@@ -41,11 +47,13 @@ public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> 
         return atNextPathStart;
     }
 
-    private void pushResolvedNodes(final Deque<GraphNode<T>> stack, final Set<GraphNode<T>> visited, final GraphNode<T> node) {
+    private Set<GraphNode<T>> visitableChildren(final GraphNode<T> node, final Set<GraphNode<T>> visited) {
+        final Set<GraphNode<T>> visitableChildren = new HashSet<>();
         for (final GraphNode<T> child : node.children()) {
             if (visited.containsAll(child.parents())) {
-                stack.push(child);
+                visitableChildren.add(child);
             }
         }
+        return visitableChildren;
     }
 }

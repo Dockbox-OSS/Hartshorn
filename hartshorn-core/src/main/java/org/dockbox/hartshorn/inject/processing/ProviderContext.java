@@ -20,7 +20,12 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ProviderContext {
+
+    private final Set<ComponentKey<?>> dependencies = new HashSet<>();
 
     private final ComponentKey<?> key;
     private final AnnotatedElementView element;
@@ -30,6 +35,18 @@ public class ProviderContext {
         this.key = key;
         this.element = element;
         this.binding = binding;
+    }
+
+    public void dependency(final ComponentKey<?> key) {
+        this.dependencies.add(key);
+    }
+
+    public void dependencies(final Set<ComponentKey<?>> keys) {
+        this.dependencies.addAll(keys);
+    }
+
+    public Set<ComponentKey<?>> dependencies() {
+        return this.dependencies;
     }
 
     public ComponentKey<?> key() {
