@@ -25,14 +25,21 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
+import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.DependencyResolver;
+import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
+import java.util.Set;
 
-public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext, ObserverApplicationContext {
+public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
+    private final DependencyGraphBuilder graphBuilder = new DependencyGraphBuilder();
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
 
     public ClasspathApplicationContext(final InitializingContext context) {
@@ -69,10 +76,22 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     @Override
     public void loadContext() {
         this.checkRunning();
+
         final Collection<ComponentContainer> containers = this.locator().containers();
         this.log().debug("Located %d components".formatted(containers.size()));
+
+        this.initializeDependencyGraph(containers);
         this.processComponents(containers);
+
         this.isRunning = true;
+    }
+
+    private void initializeDependencyGraph(final Collection<ComponentContainer> containers) {
+        // TODO: Registration hooks
+        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of());
+        final Collection<DependencyContext> dependencyContexts = dependencyResolver.resolve(containers, this);
+        final Graph<DependencyContext> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
+        // TODO: Process graph
     }
 
     @Override
@@ -85,11 +104,7 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
             this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
             for (final ComponentContainer container : containers) {
-                final TypeView<?> service = container.type();
-                final ComponentKey<?> key = ComponentKey.of(service.type());
-                final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
-                this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
-                serviceProcessor.process(context);
+                this.processStandaloneComponent(container, serviceProcessor);
             }
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
                 exiting.exit(this);
@@ -97,17 +112,11 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
         }
     }
 
-    @Override
-    public void componentAdded(final ComponentContainer container) {
-        for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
-            this.log().debug("Processing standalone component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
-            final TypeView<?> service = container.type();
-            final ComponentKey<?> key = ComponentKey.of(service.type());
-            final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
-            serviceProcessor.process(context);
-            if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
-                exiting.exit(this);
-            }
-        }
+    private void processStandaloneComponent(final ComponentContainer container, final ComponentPreProcessor serviceProcessor) {
+        final TypeView<?> service = container.type();
+        final ComponentKey<?> key = ComponentKey.of(service.type());
+        final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+        this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+        serviceProcessor.process(context);
     }
 }

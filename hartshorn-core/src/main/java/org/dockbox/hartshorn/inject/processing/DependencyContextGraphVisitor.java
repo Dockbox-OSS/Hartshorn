@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.inject.processing;
 
-import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -20,13 +20,17 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-import org.dockbox.hartshorn.util.introspect.view.*;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DependencyContextGraphVisitor extends BreadthFirstGraphVisitor<ProviderContext> {
+import jakarta.inject.Singleton;
+
+public class DependencyContextGraphVisitor extends BreadthFirstGraphVisitor<DependencyContext> {
 
     private final Set<LateSingletonContext<?>> proxiesToInitialize = ConcurrentHashMap.newKeySet();
     private final ApplicationContext applicationContext;
@@ -38,24 +42,24 @@ public class DependencyContextGraphVisitor extends BreadthFirstGraphVisitor<Prov
     }
 
     @Override
-    protected boolean visit(final GraphNode<ProviderContext> node) throws GraphException {
-        final ProviderContext provider = node.value();
-
-        final ComponentKey<?> key = provider.key();
-        final AnnotatedElementView element = provider.element();
-
-        applicationContext.log().debug("Processing provider context of " + element.qualifiedName() + " for " + key + " in phase " + this.phase);
-
-        try {
-            if (element instanceof MethodView<?, ?> methodView) {
-                this.process(key, methodView, applicationContext);
-            } else if (element instanceof FieldView<?, ?> fieldView) {
-                this.process(key, fieldView, applicationContext);
-            }
-        }
-        catch (final ApplicationException e) {
-            throw new GraphException(e);
-        }
+    protected boolean visit(final GraphNode<DependencyContext> node) throws GraphException {
+//        final DependencyContext provider = node.value();
+//
+//        final ComponentKey<?> key = provider.componentKey();
+//        final AnnotatedElementView element = provider.element();
+//
+//        this.applicationContext.log().debug("Processing provider context of " + element.qualifiedName() + " for " + key + " in phase " + this.phase);
+//
+//        try {
+//            if (element instanceof MethodView<?, ?> methodView) {
+//                this.process(key, methodView, this.applicationContext);
+//            } else if (element instanceof FieldView<?, ?> fieldView) {
+//                this.process(key, fieldView, this.applicationContext);
+//            }
+//        }
+//        catch (final ApplicationException e) {
+//            throw new GraphException(e);
+//        }
         return true;
     }
 

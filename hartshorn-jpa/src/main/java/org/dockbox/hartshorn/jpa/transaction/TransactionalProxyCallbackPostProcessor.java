@@ -47,7 +47,9 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
 
     @Override
     protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T> proxyFactory) {
-        if (processingContext.type().methods().annotatedWith(Transactional.class).isEmpty()) return instance;
+        if (processingContext.type().methods().annotatedWith(Transactional.class).isEmpty()) {
+            return instance;
+        }
 
         // JpaRepository and EntityManagerCarrier expose their own EntityManager, so we don't need to do anything here.
         if (!(instance instanceof JpaRepository || instance instanceof EntityManagerCarrier)) {

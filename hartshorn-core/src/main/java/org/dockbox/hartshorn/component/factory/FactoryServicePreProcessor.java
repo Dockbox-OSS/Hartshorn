@@ -20,13 +20,10 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.inject.processing.BindingProcessor;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -38,7 +35,7 @@ import java.util.stream.Collectors;
  * @deprecated See {@link Factory}.
  */
 @Deprecated(since = "23.1", forRemoval = true)
-public class FactoryServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
+public class FactoryServicePreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -83,14 +80,5 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
     public int priority() {
         // +1024 to be after the default binding processor (+512), but allow for other processors to be in between
         return ProcessingPriority.HIGHEST_PRECEDENCE + 1024;
-    }
-
-    @Override
-    public void exit(final ApplicationContext context) {
-        try {
-            context.get(BindingProcessor.class).finalizeProxies(context);
-        } catch (final ComponentInitializationException e) {
-            context.handle(e);
-        }
     }
 }

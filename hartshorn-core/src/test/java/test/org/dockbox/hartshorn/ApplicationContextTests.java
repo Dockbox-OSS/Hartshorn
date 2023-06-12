@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
+import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -78,7 +78,7 @@ import test.org.dockbox.hartshorn.components.TypeWithFailingConstructor;
 import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 
 @HartshornTest(includeBasePackages = false)
-@UseServiceProvision
+@UseContextInjection
 public class ApplicationContextTests {
 
     @Inject

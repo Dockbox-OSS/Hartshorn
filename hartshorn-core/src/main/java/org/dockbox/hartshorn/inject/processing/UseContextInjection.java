@@ -24,17 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Service activator for {@link ProviderServicePreProcessor}.
+ * Service activator for {@link ComponentContextInjectionPreProcessor}.
  *
- * @see ProviderServicePreProcessor
+ * @see ComponentContextInjectionPreProcessor
  * @author Guus Lieben
  * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator(processors = {
-        ProviderServicePreProcessor.class,
-        ComponentContextInjectionPreProcessor.class,
-})
-public @interface UseServiceProvision {
+@ServiceActivator(processors = ComponentContextInjectionPreProcessor.class)
+public @interface UseContextInjection {
 }
