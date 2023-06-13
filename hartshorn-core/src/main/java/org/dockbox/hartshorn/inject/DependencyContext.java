@@ -2,6 +2,7 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.inject.binding.BindingFunction;
 
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public interface DependencyContext<T> {
 
     int priority();
 
-    Provider<T> provider();
-
     Class<? extends Scope> scope();
+
+    void configure(BindingFunction<T> function) throws ComponentConfigurationException;
 }

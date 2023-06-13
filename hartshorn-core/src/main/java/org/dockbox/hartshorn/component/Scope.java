@@ -44,6 +44,7 @@ package org.dockbox.hartshorn.component;
  * @since 23.1
  * @see ComponentKey#scope()
  */
+@FunctionalInterface
 public interface Scope {
 
     /**
