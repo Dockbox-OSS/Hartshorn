@@ -8,6 +8,6 @@ import java.util.Set;
 
 public interface DependencyResolver {
 
-    Set<DependencyContext> resolve(Collection<ComponentContainer> containers, ApplicationContext applicationContext);
+    Set<DependencyContext<?>> resolve(Collection<ComponentContainer> containers, ApplicationContext applicationContext);
 
 }

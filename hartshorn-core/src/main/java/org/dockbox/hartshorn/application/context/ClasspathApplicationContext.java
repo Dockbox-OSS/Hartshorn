@@ -25,13 +25,17 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
+import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.graph.Graph;
+import org.dockbox.hartshorn.util.graph.GraphException;
+import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
@@ -39,11 +43,14 @@ import java.util.Set;
 
 public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
-    private final DependencyGraphBuilder graphBuilder = new DependencyGraphBuilder();
+    private final DependencyGraphBuilder graphBuilder;
+    private final ConfigurationDependencyVisitor dependencyVisitor;
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
 
     public ClasspathApplicationContext(final InitializingContext context) {
         super(context);
+        this.graphBuilder = new DependencyGraphBuilder();
+        this.dependencyVisitor = new ConfigurationDependencyVisitor(this);
     }
 
     @Override
@@ -87,11 +94,17 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
     }
 
     private void initializeDependencyGraph(final Collection<ComponentContainer> containers) {
-        // TODO: Registration hooks
+        // TODO: Registration hooks for dependency resolvers
         final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of());
-        final Collection<DependencyContext> dependencyContexts = dependencyResolver.resolve(containers, this);
-        final Graph<DependencyContext> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
-        // TODO: Process graph
+        final Collection<DependencyContext<?>> dependencyContexts = dependencyResolver.resolve(containers, this);
+        final Graph<DependencyContext<?>> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
+        try {
+            final Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
+            this.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
+        }
+        catch (final GraphException e) {
+            throw new ComponentInitializationException("Failed to iterate dependency graph", e);
+        }
     }
 
     @Override

@@ -12,12 +12,12 @@ import java.util.Map;
 
 public class DependencyGraphBuilder {
 
-    public Graph<DependencyContext> buildDependencyGraph(final Iterable<DependencyContext> providerContexts) {
-        final Map<ComponentKey<?>, GraphNode<DependencyContext>> nodes = this.createNodeMap(providerContexts);
-        final Graph<DependencyContext> graph = new SimpleGraph<>();
+    public Graph<DependencyContext<?>> buildDependencyGraph(final Iterable<DependencyContext<?>> providerContexts) {
+        final Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> nodes = this.createNodeMap(providerContexts);
+        final Graph<DependencyContext<?>> graph = new SimpleGraph<>();
 
-        for (final DependencyContext providerContext : providerContexts) {
-            final GraphNode<DependencyContext> node = nodes.get(providerContext.componentKey());
+        for (final DependencyContext<?> providerContext : providerContexts) {
+            final GraphNode<DependencyContext<?>> node = nodes.get(providerContext.componentKey());
             graph.addRoot(node);
 
             for (final ComponentKey<?> dependency : providerContext.dependencies()) {
@@ -28,7 +28,7 @@ public class DependencyGraphBuilder {
                     continue;
                 }
 
-                final GraphNode<DependencyContext> dependencyNode = nodes.get(dependency);
+                final GraphNode<DependencyContext<?>> dependencyNode = nodes.get(dependency);
                 graph.addRoot(dependencyNode);
                 node.addParent(dependencyNode);
             }
@@ -36,10 +36,10 @@ public class DependencyGraphBuilder {
         return graph;
     }
 
-    public Map<ComponentKey<?>, GraphNode<DependencyContext>> createNodeMap(final Iterable<DependencyContext> providerContexts) {
-        final Map<ComponentKey<?>, GraphNode<DependencyContext>> nodes = new HashMap<>();
-        for (final DependencyContext providerContext : providerContexts) {
-            final GraphNode<DependencyContext> node = new SimpleGraphNode<>(providerContext);
+    public Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> createNodeMap(final Iterable<DependencyContext<?>> providerContexts) {
+        final Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> nodes = new HashMap<>();
+        for (final DependencyContext<?> providerContext : providerContexts) {
+            final GraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(providerContext);
             nodes.put(providerContext.componentKey(), node);
         }
         return nodes;

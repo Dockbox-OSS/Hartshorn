@@ -8,11 +8,12 @@ import java.util.Set;
 public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> {
 
     @Override
-    public void iterate(final Graph<T> graph) throws GraphException {
+    public Set<GraphNode<T>> iterate(final Graph<T> graph) throws GraphException {
         final Set<GraphNode<T>> visited = new HashSet<>();
         for (final GraphNode<T> root : graph.roots()) {
             this.visitSingleRoot(visited, root);
         }
+        return visited;
     }
 
     private void visitSingleRoot(final Set<GraphNode<T>> visited, final GraphNode<T> root) throws GraphException {
