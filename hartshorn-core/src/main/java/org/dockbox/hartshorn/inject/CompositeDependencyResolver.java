@@ -16,7 +16,7 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext> resolve(final Collection<ComponentContainer> containers, final ApplicationContext applicationContext) {
+    public Set<DependencyContext<?>> resolve(final Collection<ComponentContainer> containers, final ApplicationContext applicationContext) {
         return this.resolvers.stream()
                 .map(resolver -> resolver.resolve(containers, applicationContext))
                 .flatMap(Set::stream)

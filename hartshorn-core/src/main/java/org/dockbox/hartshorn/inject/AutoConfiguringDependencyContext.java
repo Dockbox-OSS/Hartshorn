@@ -3,6 +3,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 import java.util.Set;
@@ -59,11 +60,25 @@ public class AutoConfiguringDependencyContext<T> implements DependencyContext<T>
     }
 
     @Override
-    public void configure(final BindingFunction<T> function) {
-        // TODO: Configure correct binding, this should support:
-        //  - Type:type binding (ContextDrivenProvider)
-        //  - Type:supplier binding (SupplierProvider)
-        //  - Type:singleton binding (SingletonProvider)
-        //  - Type:lazy singleton binding (LazySingletonProvider)
+    public void configure(final BindingFunction<T> function) throws ComponentConfigurationException {
+        final InstanceType instanceType = this.instanceType();
+        try {
+            switch (instanceType) {
+                case SUPPLIER -> function.to(this.supplier);
+                case SINGLETON -> function.singleton(this.supplier.get());
+                case LAZY_SINGLETON -> function.lazySingleton(this.supplier);
+            }
+        }
+        catch (final ApplicationException e) {
+            throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey), e);
+        }
     }
+
+    private InstanceType instanceType() {
+        if (this.singleton && this.lazy) return InstanceType.LAZY_SINGLETON;
+        else if (this.singleton) return InstanceType.SINGLETON;
+        else return InstanceType.SUPPLIER;
+    }
+
+    enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
 }

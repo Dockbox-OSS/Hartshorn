@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
@@ -39,15 +40,16 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
-public class ClasspathApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
+public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
     private final DependencyGraphBuilder graphBuilder;
     private final ConfigurationDependencyVisitor dependencyVisitor;
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
 
-    public ClasspathApplicationContext(final InitializingContext context) {
+    public SimpleApplicationContext(final InitializingContext context) {
         super(context);
         this.graphBuilder = new DependencyGraphBuilder();
         this.dependencyVisitor = new ConfigurationDependencyVisitor(this);
@@ -95,7 +97,8 @@ public class ClasspathApplicationContext extends DelegatingApplicationContext im
 
     private void initializeDependencyGraph(final Collection<ComponentContainer> containers) {
         // TODO: Registration hooks for dependency resolvers
-        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of());
+        final DependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver();
+        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver));
         final Collection<DependencyContext<?>> dependencyContexts = dependencyResolver.resolve(containers, this);
         final Graph<DependencyContext<?>> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
         try {

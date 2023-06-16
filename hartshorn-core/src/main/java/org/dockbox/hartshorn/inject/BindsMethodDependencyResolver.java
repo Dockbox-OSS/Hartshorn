@@ -1,5 +1,7 @@
 package org.dockbox.hartshorn.inject;
 
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -21,9 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-
 public class BindsMethodDependencyResolver implements DependencyResolver {
 
     @Override
@@ -41,12 +40,31 @@ public class BindsMethodDependencyResolver implements DependencyResolver {
                 .collect(Collectors.toSet());
     }
 
-    private <T> DependencyContext<T> resolve(final MethodView<?, T> bindsMethod, final ApplicationContext applicationContext) {
+    private <T> DependencyContext<?> resolve(final MethodView<?, T> bindsMethod, final ApplicationContext applicationContext) {
         final Binds bindingDecorator = bindsMethod.annotations()
                 .get(Binds.class)
                 .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds"));
 
-        final ComponentKey<T> componentKey = this.constructComponentKey(bindsMethod, bindingDecorator);
+        // TODO: Binding strategies -> registry -> resolve
+        if (this.isClassBinding(bindsMethod)) {
+            return this.resolveClassBinding(bindsMethod, bindingDecorator, applicationContext);
+        }
+        else {
+            return this.resolveInstanceBinding(bindsMethod, bindingDecorator, applicationContext);
+        }
+    }
+
+    private <T> DependencyContext<?> resolveClassBinding(final MethodView<?, T> bindsMethod, final Binds bindingDecorator, final ApplicationContext applicationContext) {
+        final ComponentKey<?> componentKey = this.constructClassComponentKey(bindsMethod, bindingDecorator);
+        return null;
+    }
+
+    private <T> ComponentKey<?> constructClassComponentKey(MethodView<?, T> bindsMethod, Binds bindingDecorator) {
+        return null;
+    }
+
+    private <T> DependencyContext<T> resolveInstanceBinding(final MethodView<?, T> bindsMethod, final Binds bindingDecorator, final ApplicationContext applicationContext) {
+        final ComponentKey<T> componentKey = this.constructInstanceComponentKey(bindsMethod, bindingDecorator);
         final Set<ComponentKey<?>> dependencies = this.resolveDependencies(bindsMethod);
         final Class<? extends Scope> scope = this.resolveComponentScope(bindsMethod);
         final int priority = bindingDecorator.priority();
@@ -59,8 +77,6 @@ public class BindsMethodDependencyResolver implements DependencyResolver {
         final boolean lazy = bindingDecorator.lazy();
         final boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
 
-        // TODO: Include BindingType and switch to different context:
-        //  AutoConfiguringTypeDependencyContext vs AutoConfiguringInstanceDependencyContext
         return new AutoConfiguringDependencyContext<>(componentKey, dependencies, scope, priority, supplier)
                 .lazy(lazy)
                 .singleton(singleton);
@@ -100,13 +116,16 @@ public class BindsMethodDependencyResolver implements DependencyResolver {
         return keyBuilder.build();
     }
 
-    private <T> ComponentKey<T> constructComponentKey(final MethodView<?, T> bindsMethod, final Binds bindingDecorator) {
-        // TODO: If return type is Class or TypeView -> use that for componentKey and yield BindingType.CLASS. Else
-        //  yield BindingType.INSTANCE
+    private <T> ComponentKey<T> constructInstanceComponentKey(final MethodView<?, T> bindsMethod, final Binds bindingDecorator) {
         Builder<T> keyBuilder = ComponentKey.builder(bindsMethod.returnType().type());
         if (StringUtilities.notEmpty(bindingDecorator.value())) {
             keyBuilder = keyBuilder.name(bindingDecorator.value());
         }
         return keyBuilder.build();
+    }
+
+    private boolean isClassBinding(final MethodView<?, ?> bindsMethod) {
+        final TypeView<?> returnType = bindsMethod.returnType();
+        return returnType.is(Class.class) || returnType.isChildOf(TypeView.class);
     }
 }
