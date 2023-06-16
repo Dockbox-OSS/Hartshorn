@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.jpa.JpaRepositoryFactory;
 import org.dockbox.hartshorn.jpa.annotations.UsePersistence;
+import org.dockbox.hartshorn.jpa.annotations.UseTransactionManagement;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerFactory;
 import org.dockbox.hartshorn.jpa.query.EntityQueryExecutor;
 import org.dockbox.hartshorn.jpa.query.QueryComponentFactory;
@@ -30,6 +31,7 @@ import org.dockbox.hartshorn.jpa.query.QueryExecuteTypeLookup;
 import org.dockbox.hartshorn.jpa.query.QueryExecutor;
 import org.dockbox.hartshorn.jpa.query.QueryResultTransformer;
 import org.dockbox.hartshorn.jpa.remote.DataSourceList;
+import org.dockbox.hartshorn.jpa.transaction.TransactionFactory;
 
 import jakarta.inject.Singleton;
 
@@ -74,5 +76,11 @@ public class HibernateProviders {
     @Singleton
     public QueryResultTransformer queryResultTransformer() {
         return new HibernateQueryResultTransformer();
+    }
+
+    @Binds
+    @RequiresActivator(UseTransactionManagement.class)
+    public TransactionFactory transactionManager() {
+        return new HibernateTransactionFactory();
     }
 }

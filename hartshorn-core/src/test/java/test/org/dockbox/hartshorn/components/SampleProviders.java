@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.component.processing.Binds;
 public class SampleProviders {
 
     @Binds("meta")
-    public SampleInterface sampleInterface = new SampleMetaAnnotatedImplementation();
-
+    public SampleInterface sampleInterface() {
+        return new SampleMetaAnnotatedImplementation();
+    }
 }

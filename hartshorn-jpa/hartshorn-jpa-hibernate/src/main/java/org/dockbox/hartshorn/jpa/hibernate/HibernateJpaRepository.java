@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.jpa.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerCarrier;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerJpaRepository;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
@@ -28,7 +27,6 @@ import org.hibernate.Transaction;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 
-@Component
 public class HibernateJpaRepository<T, ID> extends EntityManagerJpaRepository<T, ID> {
 
     private final DataSourceConfiguration connection;

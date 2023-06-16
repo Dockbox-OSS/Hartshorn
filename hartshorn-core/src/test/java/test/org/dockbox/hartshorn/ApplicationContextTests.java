@@ -49,7 +49,6 @@ import test.org.dockbox.hartshorn.components.CircularDependencyA;
 import test.org.dockbox.hartshorn.components.CircularDependencyB;
 import test.org.dockbox.hartshorn.components.ComponentType;
 import test.org.dockbox.hartshorn.components.ContextInjectedType;
-import test.org.dockbox.hartshorn.components.FieldProviderService;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleA;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleB;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleC;
@@ -261,26 +260,6 @@ public class ApplicationContextTests {
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
-    }
-
-    @Test
-    @TestComponents(FieldProviderService.class)
-    void testFieldProviders() {
-        final ProvidedInterface field = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, "field"));
-        Assertions.assertNotNull(field);
-        Assertions.assertEquals("Field", field.name());
-    }
-
-    @Test
-    @TestComponents(FieldProviderService.class)
-    void testSingletonFieldProviders() {
-        final ProvidedInterface field = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, "singletonField"));
-        Assertions.assertNotNull(field);
-
-        final ProvidedInterface field2 = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, "singletonField"));
-        Assertions.assertNotNull(field2);
-
-        Assertions.assertSame(field, field2);
     }
 
     @Test

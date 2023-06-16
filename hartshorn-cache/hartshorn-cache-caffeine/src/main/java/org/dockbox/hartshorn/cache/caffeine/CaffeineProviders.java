@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.cache.caffeine;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.Cache;
+import org.dockbox.hartshorn.cache.CacheFactory;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.component.Service;
@@ -41,7 +42,7 @@ public class CaffeineProviders {
     }
 
     @Binds
-    public CaffeineCacheFactory cacheFactory() {
+    public CacheFactory cacheFactory() {
         return new CaffeineCacheFactory();
     }
 
