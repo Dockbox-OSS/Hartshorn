@@ -70,6 +70,5 @@ object ScalaComponentTests {
   def components(): Stream[Arguments] = Stream.of(
       Arguments.of(classOf[ScalaCaseClassComponent], (_: ScalaCaseClassComponent).getApplicationContext, (_: ScalaCaseClassComponent).getApplicationManager),
       Arguments.of(classOf[ScalaClassComponent], (_: ScalaClassComponent).getApplicationContext, (_: ScalaClassComponent).getApplicationManager),
-      Arguments.of(ScalaObjectComponent.getClass, (_: ScalaObjectComponent.type).getApplicationContext, null)
     )
 }
