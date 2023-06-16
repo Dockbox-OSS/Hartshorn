@@ -20,19 +20,25 @@ import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
+import org.dockbox.hartshorn.inject.ComponentDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
+import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
@@ -41,7 +47,15 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
 
     public SimpleApplicationContext(final InitializingContext context) {
         super(context);
-        this.dependencyGraphInitializer = new DependencyGraphInitializer(this);
+        this.dependencyGraphInitializer = this.createDependencyGraphInitializer(context.conditionMatcher());
+    }
+
+    private DependencyGraphInitializer createDependencyGraphInitializer(final ConditionMatcher conditionMatcher) {
+        // TODO: Registration hooks for dependency resolvers
+        final DependencyResolver managedComponentDependencyResolver = new ComponentDependencyResolver();
+        final DependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver(conditionMatcher);
+        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver, managedComponentDependencyResolver));
+        return new DependencyGraphInitializer(this, dependencyResolver);
     }
 
     @Override

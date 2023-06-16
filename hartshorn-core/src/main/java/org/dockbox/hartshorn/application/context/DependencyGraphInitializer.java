@@ -1,10 +1,7 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
-import org.dockbox.hartshorn.inject.ComponentDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyPresenceValidationVisitor;
@@ -23,19 +20,17 @@ public class DependencyGraphInitializer {
     private final DependencyGraphBuilder graphBuilder;
     private final ConfigurationDependencyVisitor dependencyVisitor;
     private final ApplicationContext applicationContext;
+    private final DependencyResolver dependencyResolver;
 
-    public DependencyGraphInitializer(final ApplicationContext applicationContext) {
+    public DependencyGraphInitializer(final ApplicationContext applicationContext, final DependencyResolver dependencyResolver) {
+        this.dependencyResolver = dependencyResolver;
         this.graphBuilder = new DependencyGraphBuilder();
         this.dependencyVisitor = new ConfigurationDependencyVisitor(applicationContext);
         this.applicationContext = applicationContext;
     }
 
     public void initializeDependencyGraph(final Collection<ComponentContainer> containers) throws DependencyResolutionException, GraphException {
-        // TODO: Registration hooks for dependency resolvers
-        final DependencyResolver managedComponentDependencyResolver = new ComponentDependencyResolver();
-        final DependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver();
-        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver, managedComponentDependencyResolver));
-        final Collection<DependencyContext<?>> dependencyContexts = dependencyResolver.resolve(containers, this.applicationContext);
+        final Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
         final Graph<DependencyContext<?>> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
 
         final Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);

@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ClasspathApplicationContext;
+import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
@@ -81,13 +81,13 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
     protected ApplicationContext createContext(final InitializingContext context) {
         this.logger.debug("Creating new application context with environment {}", context.environment().getClass().getSimpleName());
-        return new ClasspathApplicationContext(context);
+        return new SimpleApplicationContext(context);
     }
 
     protected void configure(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
         final ApplicationEnvironment environment = applicationContext.environment();
         final InitializingContext initializingContext = new InitializingContext(environment, applicationContext, builder);
-        final ApplicationConfigurator configurator = builder.applicationConfigurator(initializingContext);
+        final ApplicationConfigurator configurator = initializingContext.applicationConfigurator();
         this.logger.debug("Configuring application context with configurator {}", configurator.getClass().getSimpleName());
         configurator.configure(environment);
 

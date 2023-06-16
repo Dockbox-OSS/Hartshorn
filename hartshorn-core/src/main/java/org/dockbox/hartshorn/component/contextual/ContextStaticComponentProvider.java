@@ -17,21 +17,17 @@
 package org.dockbox.hartshorn.component.contextual;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.util.StringUtilities;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import jakarta.inject.Inject;
-
 public class ContextStaticComponentProvider implements StaticComponentProvider {
 
     private final StaticComponentContext staticComponentContext;
 
-    @Inject
-    public ContextStaticComponentProvider(@Context final StaticComponentContext staticComponentContext) {
+    public ContextStaticComponentProvider(final StaticComponentContext staticComponentContext) {
         this.staticComponentContext = staticComponentContext;
     }
 

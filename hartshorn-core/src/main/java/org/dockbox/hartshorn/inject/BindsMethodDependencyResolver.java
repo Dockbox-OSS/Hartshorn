@@ -6,6 +6,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentKey.Builder;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
@@ -23,11 +24,18 @@ import jakarta.inject.Singleton;
 
 public class BindsMethodDependencyResolver extends AbstractExecutableElementDependencyResolver {
 
+    private final ConditionMatcher conditionMatcher;
+
+    public BindsMethodDependencyResolver(final ConditionMatcher conditionMatcher) {
+        this.conditionMatcher = conditionMatcher;
+    }
+
     @Override
     protected Set<DependencyContext<?>> resolveSingle(final ComponentContainer componentContainer, final ApplicationContext applicationContext) {
         final TypeView<?> componentType = componentContainer.type();
         final List<? extends MethodView<?, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
         return bindsMethods.stream()
+                .filter(this.conditionMatcher::match)
                 .map(bindsMethod -> this.resolve(bindsMethod, applicationContext))
                 .collect(Collectors.toSet());
     }
