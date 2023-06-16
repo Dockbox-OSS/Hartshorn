@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.jpa.hibernate;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
@@ -38,8 +39,9 @@ import jakarta.inject.Singleton;
 public class HibernateProviders {
 
     @Binds(priority = 0)
-    public Class<? extends DataSourceList> dataSourceList() {
-        return HibernateDataSourceList.class;
+    public DataSourceList dataSourceList(final ApplicationContext applicationContext,
+                                         final HibernateDataSourceConfigurationObject sources) {
+        return new HibernateDataSourceList(applicationContext, sources);
     }
 
     @Binds

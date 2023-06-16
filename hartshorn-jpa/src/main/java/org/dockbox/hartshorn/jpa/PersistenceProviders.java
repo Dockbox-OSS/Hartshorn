@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.jpa;
 
+import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -25,16 +26,12 @@ import org.dockbox.hartshorn.jpa.entitymanager.EntityManagerLookup;
 import org.dockbox.hartshorn.jpa.entitymanager.EntityTypeLookup;
 import org.dockbox.hartshorn.jpa.entitymanager.JpaEntityTypeLookup;
 import org.dockbox.hartshorn.jpa.entitymanager.ProxyAttachedEntityManagerLookup;
-import org.dockbox.hartshorn.jpa.query.QueryConstructor;
 import org.dockbox.hartshorn.jpa.query.context.AggregateJpaQueryContextCreator;
-import org.dockbox.hartshorn.jpa.query.context.EntityManagerQueryConstructor;
-import org.dockbox.hartshorn.jpa.query.context.named.ImplicitNamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.jpa.query.context.JpaQueryContextCreator;
+import org.dockbox.hartshorn.jpa.query.context.named.ImplicitNamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.jpa.query.context.named.NamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.jpa.query.context.unnamed.UnnamedJpaQueryContextCreator;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
-
-import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UsePersistence.class)
@@ -63,10 +60,5 @@ public class PersistenceProviders {
         contextFactory.register(25, new UnnamedJpaQueryContextCreator());
         contextFactory.register(50, new NamedJpaQueryContextCreator());
         return contextFactory;
-    }
-
-    @Binds
-    public Class<? extends QueryConstructor> queryConstructor() {
-        return EntityManagerQueryConstructor.class;
     }
 }

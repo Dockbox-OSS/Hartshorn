@@ -38,7 +38,9 @@ public class DataSourceProviders {
      * implementation.
      */
     @Binds
-    public Class<? extends DataSourceList> dataSourceList = StandardDataSourceList.class;
+    public DataSourceList dataSourceList() {
+        return new StandardDataSourceList();
+    }
 
     /**
      * The default data source configuration. This is automatically selected when no
