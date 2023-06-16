@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.HslStatementStaticProviders;
@@ -42,7 +41,6 @@ import java.util.Set;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-@Component
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime, ContextCarrier {
 
     @Inject

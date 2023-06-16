@@ -25,34 +25,23 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
-import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
-import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.inject.DependencyResolver;
-import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
+import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
-import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
-    private final DependencyGraphBuilder graphBuilder;
-    private final ConfigurationDependencyVisitor dependencyVisitor;
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
+    private final DependencyGraphInitializer dependencyGraphInitializer;
 
     public SimpleApplicationContext(final InitializingContext context) {
         super(context);
-        this.graphBuilder = new DependencyGraphBuilder();
-        this.dependencyVisitor = new ConfigurationDependencyVisitor(this);
+        this.dependencyGraphInitializer = new DependencyGraphInitializer(this);
     }
 
     @Override
@@ -89,25 +78,18 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         final Collection<ComponentContainer> containers = this.locator().containers();
         this.log().debug("Located %d components".formatted(containers.size()));
 
-        this.initializeDependencyGraph(containers);
-        this.processComponents(containers);
-
-        this.isRunning = true;
-    }
-
-    private void initializeDependencyGraph(final Collection<ComponentContainer> containers) {
-        // TODO: Registration hooks for dependency resolvers
-        final DependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver();
-        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver));
-        final Collection<DependencyContext<?>> dependencyContexts = dependencyResolver.resolve(containers, this);
-        final Graph<DependencyContext<?>> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
         try {
-            final Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
-            this.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
+            this.dependencyGraphInitializer.initializeDependencyGraph(containers);
+        }
+        catch (final DependencyResolutionException e) {
+            throw new ComponentInitializationException("Failed to resolve dependencies", e);
         }
         catch (final GraphException e) {
             throw new ComponentInitializationException("Failed to iterate dependency graph", e);
         }
+        this.processComponents(containers);
+
+        this.isRunning = true;
     }
 
     @Override

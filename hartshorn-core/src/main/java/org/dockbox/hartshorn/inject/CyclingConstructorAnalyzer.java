@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -43,27 +42,17 @@ public final class CyclingConstructorAnalyzer {
         }
 
         ConstructorView<C> optimalConstructor;
-        final List<? extends ConstructorView<C>> constructors = type.constructors().injectable();
+        final List<? extends ConstructorView<C>> constructors = findAvailableConstructors(type);
         if (constructors.isEmpty()) {
-            final Option<? extends ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
-            if (defaultConstructor.absent()) {
-                if (type.constructors().annotatedWith(Bound.class).isEmpty()) {
-                    return Attempt.of(new MissingInjectConstructorException(type));
-                }
-                else {
-                    return Attempt.empty(); // No injectable constructors found, but there are bound constructors
-                }
-            }
-            else optimalConstructor = defaultConstructor.get();
+            return Attempt.of(new MissingInjectConstructorException(type));
         }
-        else {
-            // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
-            // can be satiated at once.
-            optimalConstructor = constructors.get(0);
-            for (final ConstructorView<C> constructor : constructors) {
-                if (optimalConstructor.parameters().count() < constructor.parameters().count()) {
-                    optimalConstructor = constructor;
-                }
+
+        // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
+        // can be satiated at once.
+        optimalConstructor = constructors.get(0);
+        for (final ConstructorView<C> constructor : constructors) {
+            if (optimalConstructor.parameters().count() < constructor.parameters().count()) {
+                optimalConstructor = constructor;
             }
         }
 
@@ -76,6 +65,20 @@ public final class CyclingConstructorAnalyzer {
             // Don't store if there may be a cycle in the dependency graph
             if (checkForCycles) cache.put(type.type(), constructor);
         });
+    }
+
+    private static <C> List<ConstructorView<C>> findAvailableConstructors(final TypeView<C> type) {
+        final List<ConstructorView<C>> constructors = type.constructors().injectable();
+        if (constructors.isEmpty()) {
+            final Option<ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
+            if (defaultConstructor.present()) {
+                return List.of(defaultConstructor.get());
+            }
+            else if(type.constructors().count() == 1) {
+                return List.of(type.constructors().all().get(0));
+            }
+        }
+        return constructors;
     }
 
     public static List<TypeView<?>> findCyclicPath(final TypeView<?> type) {

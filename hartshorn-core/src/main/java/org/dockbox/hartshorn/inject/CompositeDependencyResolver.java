@@ -4,8 +4,8 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CompositeDependencyResolver implements DependencyResolver {
 
@@ -16,10 +16,12 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext<?>> resolve(final Collection<ComponentContainer> containers, final ApplicationContext applicationContext) {
-        return this.resolvers.stream()
-                .map(resolver -> resolver.resolve(containers, applicationContext))
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+    public Set<DependencyContext<?>> resolve(final Collection<ComponentContainer> containers, final ApplicationContext applicationContext) throws DependencyResolutionException {
+        final Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
+        for (final DependencyResolver resolver : this.resolvers) {
+            final Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(containers, applicationContext);
+            dependencyContexts.addAll(resolvedDependencies);
+        }
+        return dependencyContexts;
     }
 }

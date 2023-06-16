@@ -1,7 +1,5 @@
 package org.dockbox.hartshorn.inject;
 
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -14,25 +12,19 @@ import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BindsMethodDependencyResolver implements DependencyResolver {
+import jakarta.inject.Singleton;
+
+public class BindsMethodDependencyResolver extends AbstractExecutableElementDependencyResolver {
 
     @Override
-    public Set<DependencyContext<?>> resolve(final Collection<ComponentContainer> containers, final ApplicationContext applicationContext) {
-        return containers.stream()
-                .flatMap((ComponentContainer componentContainer) -> this.resolveSingle(componentContainer, applicationContext).stream())
-                .collect(Collectors.toSet());
-    }
-
-    private Set<DependencyContext<?>> resolveSingle(final ComponentContainer componentContainer, final ApplicationContext applicationContext) {
+    protected Set<DependencyContext<?>> resolveSingle(final ComponentContainer componentContainer, final ApplicationContext applicationContext) {
         final TypeView<?> componentType = componentContainer.type();
         final List<? extends MethodView<?, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
         return bindsMethods.stream()
@@ -72,6 +64,7 @@ public class BindsMethodDependencyResolver implements DependencyResolver {
         final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
         final CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
                 .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
+                .rethrow()
                 .orNull();
 
         final boolean lazy = bindingDecorator.lazy();
@@ -94,26 +87,6 @@ public class BindsMethodDependencyResolver implements DependencyResolver {
         return installToCandidate.present()
                 ? installToCandidate.get().value()
                 : Scope.DEFAULT_SCOPE.installableScopeType();
-    }
-
-    private Set<ComponentKey<?>> resolveDependencies(final MethodView<?, ?> bindsMethod) {
-        return bindsMethod.parameters().all().stream()
-                .filter(parameter -> !parameter.annotations().has(HandledInjection.class))
-                .map(this::resolveComponentKey)
-                .collect(Collectors.toSet());
-    }
-
-    private <T> ComponentKey<T> resolveComponentKey(final ParameterView<T> parameter) {
-        final TypeView<T> type = parameter.genericType();
-        final Builder<T> keyBuilder = ComponentKey.builder(type.type());
-        parameter.annotations().get(Named.class)
-                .filter(qualifier -> StringUtilities.notEmpty(qualifier.value()))
-                .peek(qualifier -> {
-            if (StringUtilities.notEmpty(qualifier.value())) {
-                keyBuilder.name(qualifier);
-            }
-        });
-        return keyBuilder.build();
     }
 
     private <T> ComponentKey<T> constructInstanceComponentKey(final MethodView<?, T> bindsMethod, final Binds bindingDecorator) {

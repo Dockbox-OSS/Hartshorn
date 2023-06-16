@@ -62,11 +62,14 @@ public class AutoConfiguringDependencyContext<T> implements DependencyContext<T>
     @Override
     public void configure(final BindingFunction<T> function) throws ComponentConfigurationException {
         final InstanceType instanceType = this.instanceType();
+        final BindingFunction<T> installTo = function
+                .priority(this.priority)
+                .installTo(this.scope);
         try {
             switch (instanceType) {
-                case SUPPLIER -> function.to(this.supplier);
-                case SINGLETON -> function.singleton(this.supplier.get());
-                case LAZY_SINGLETON -> function.lazySingleton(this.supplier);
+                case SUPPLIER -> installTo.to(this.supplier);
+                case SINGLETON -> installTo.singleton(this.supplier.get());
+                case LAZY_SINGLETON -> installTo.lazySingleton(this.supplier);
             }
         }
         catch (final ApplicationException e) {
