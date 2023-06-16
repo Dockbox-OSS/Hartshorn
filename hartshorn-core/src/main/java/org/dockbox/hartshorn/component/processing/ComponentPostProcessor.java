@@ -70,6 +70,9 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
         checkForModification(processingContext, this, instance, processingContext.instance());
 
         final T updatedInstance = this.initializeComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);
+        if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
+            modifiableComponentProcessingContext.instance(updatedInstance);
+        }
 
         this.postConfigureComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);
         checkForModification(processingContext, this, updatedInstance, processingContext.instance());
