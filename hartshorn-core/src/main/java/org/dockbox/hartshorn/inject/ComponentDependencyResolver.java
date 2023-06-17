@@ -23,6 +23,9 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import jakarta.inject.Inject;
 
 public class ComponentDependencyResolver extends AbstractExecutableElementDependencyResolver {
 
@@ -37,7 +40,18 @@ public class ComponentDependencyResolver extends AbstractExecutableElementDepend
         if (constructorView == null) {
             return Set.of();
         }
-        final Set<ComponentKey<?>> dependencies = this.resolveDependencies(constructorView);
+
+        final Set<ComponentKey<?>> constructorDependencies = this.resolveDependencies(constructorView);
+        final Set<ComponentKey<?>> setterDependencies = type.methods().annotatedWith(Inject.class).stream()
+                .flatMap(method -> this.resolveDependencies(method).stream())
+                .collect(Collectors.toSet());
+        final Set<ComponentKey<?>> fieldDependencies = type.fields().annotatedWith(Inject.class).stream()
+                .map(this::resolveComponentKey)
+                .collect(Collectors.toSet());
+
+        final Set<ComponentKey<?>> dependencies = Set.of(constructorDependencies, setterDependencies, fieldDependencies).stream()
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
 
         final ComponentKey<?> componentKey = ComponentKey.of(type.type());
         return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies));

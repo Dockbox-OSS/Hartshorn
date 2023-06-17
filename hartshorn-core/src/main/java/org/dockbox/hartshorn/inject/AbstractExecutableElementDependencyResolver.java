@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentKey.Builder;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
@@ -52,10 +53,10 @@ public abstract class AbstractExecutableElementDependencyResolver implements Dep
                 .collect(Collectors.toSet());
     }
 
-    protected <T> ComponentKey<T> resolveComponentKey(final ParameterView<T> parameter) {
-        final TypeView<T> type = parameter.genericType();
+    protected <T, E extends AnnotatedElementView & GenericTypeView<T>> ComponentKey<T> resolveComponentKey(final E element) {
+        final TypeView<T> type = element.genericType();
         final Builder<T> keyBuilder = ComponentKey.builder(type.type());
-        parameter.annotations().get(Named.class)
+        element.annotations().get(Named.class)
                 .filter(qualifier -> StringUtilities.notEmpty(qualifier.value()))
                 .peek(qualifier -> {
                     if (StringUtilities.notEmpty(qualifier.value())) {
