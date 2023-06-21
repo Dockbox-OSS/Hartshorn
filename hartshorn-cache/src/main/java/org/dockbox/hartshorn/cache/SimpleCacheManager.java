@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
@@ -33,15 +32,14 @@ import jakarta.inject.Inject;
  * @author Guus Lieben
  * @since 21.2
  */
-@Component(singleton = true)
-public class CacheManagerImpl implements CacheManager {
+public class SimpleCacheManager implements CacheManager {
 
     protected final Map<String, Cache<?, ?>> caches = new ConcurrentHashMap<>();
 
     private final ApplicationContext applicationContext;
 
     @Inject
-    public CacheManagerImpl(final ApplicationContext applicationContext) {
+    public SimpleCacheManager(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

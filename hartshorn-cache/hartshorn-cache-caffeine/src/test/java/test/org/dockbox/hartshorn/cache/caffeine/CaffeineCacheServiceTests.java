@@ -18,9 +18,7 @@ package test.org.dockbox.hartshorn.cache.caffeine;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.cache.caffeine.CaffeineCacheManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 
 import test.org.dockbox.hartshorn.cache.CacheServiceTests;
 
@@ -38,7 +36,6 @@ public class CaffeineCacheServiceTests extends CacheServiceTests {
         if (this.cacheManager == null) {
             // Singleton, so expected to already be cached in the application context
             this.cacheManager = applicationContext.get(CacheManager.class);
-            Assertions.assertTrue(this.cacheManager instanceof CaffeineCacheManager);
         }
         return this.cacheManager;
     }

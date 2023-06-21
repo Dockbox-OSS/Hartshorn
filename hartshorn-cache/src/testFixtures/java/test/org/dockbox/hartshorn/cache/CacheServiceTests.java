@@ -93,12 +93,12 @@ public abstract class CacheServiceTests {
         Assertions.assertTrue(cached > 0);
 
         final CacheManager cacheManager = this.cacheManager(this.applicationContext);
-        cacheManager.get("sample").peek(cache -> cache.put("sample_key", 3L));
+        cacheManager.get(TestCacheService.CLASS_CACHE_KEY).peek(cache -> cache.put(TestCacheService.METHOD_CACHE_KEY, 3L));
 
-        final Option<Cache<String, Long>> cache = cacheManager.get("sample");
+        final Option<Cache<String, Long>> cache = cacheManager.get(TestCacheService.CLASS_CACHE_KEY);
         Assertions.assertTrue(cache.present());
 
-        final Option<Long> content = cache.get().get("sample_key");
+        final Option<Long> content = cache.get().get(TestCacheService.METHOD_CACHE_KEY);
         Assertions.assertTrue(content.present());
 
         final long object = content.get();
@@ -114,12 +114,12 @@ public abstract class CacheServiceTests {
         Assertions.assertTrue(cached > 0);
 
         final CacheManager cacheManager = this.cacheManager(this.applicationContext);
-        cacheManager.get("sample").peek(Cache::invalidate);
+        cacheManager.get(TestCacheService.CLASS_CACHE_KEY).peek(Cache::invalidate);
 
-        final Option<Cache<String, Long>> cache = cacheManager.get("sample");
+        final Option<Cache<String, Long>> cache = cacheManager.get(TestCacheService.CLASS_CACHE_KEY);
         Assertions.assertTrue(cache.present());
 
-        final Option<Long> content = cache.get().get("sample_key");
+        final Option<Long> content = cache.get().get(TestCacheService.METHOD_CACHE_KEY);
         Assertions.assertTrue(content.absent());
     }
 }

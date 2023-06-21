@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 
+import jakarta.inject.Singleton;
+
 /**
  * Default providers for cache components. This implementation is active by
  * default when {@link UseCaching} is used.
@@ -38,8 +40,9 @@ public class CacheProviders {
      * active by default when {@link UseCaching} is used.
      */
     @Binds
+    @Singleton
     public CacheManager cacheManager(final ApplicationContext applicationContext) {
-        return new CacheManagerImpl(applicationContext);
+        return new SimpleCacheManager(applicationContext);
     }
 
     /**
