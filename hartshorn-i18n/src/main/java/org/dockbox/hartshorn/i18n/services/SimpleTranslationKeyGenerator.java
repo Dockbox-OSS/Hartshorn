@@ -54,7 +54,7 @@ public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
         String methodKey = String.join(".", StringUtilities.splitCapitals(methodName)).toLowerCase();
 
         final TypeView<?> declaringType = method.declaredBy();
-        final Option<ComponentContainer> container = this.componentLocator.container(declaringType.type());
+        final Option<ComponentContainer<?>> container = this.componentLocator.container(declaringType.type());
         if (container.present()) {
             final String containerKey = container.get().id();
             if (containerKey != null) methodKey = containerKey + "." + methodKey;

@@ -70,7 +70,7 @@ public final class CollectionUtilities {
     }
 
     @SafeVarargs
-    public static <T> Collection<T> merge(final Collection<T>... collections) {
+    public static <T> Set<T> merge(final Collection<T>... collections) {
         final Set<T> merged = new HashSet<>();
         for (final Collection<T> collection : collections) {
             merged.addAll(collection);

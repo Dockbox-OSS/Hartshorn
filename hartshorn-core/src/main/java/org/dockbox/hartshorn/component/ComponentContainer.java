@@ -18,13 +18,13 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public interface ComponentContainer {
+public interface ComponentContainer<T> {
 
     String id();
 
     String name();
 
-    TypeView<?> type();
+    TypeView<T> type();
 
     boolean singleton();
 

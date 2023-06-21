@@ -24,7 +24,11 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.config.properties.*;
+import org.dockbox.hartshorn.config.properties.ConfigurationObjectPostProcessor;
+import org.dockbox.hartshorn.config.properties.PropertyHolder;
+import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
+import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
+import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
 
 @Service
 @RequiresActivator(UseConfigurations.class)

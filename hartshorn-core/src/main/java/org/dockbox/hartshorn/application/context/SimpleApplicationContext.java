@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.DependencyResolver;
+import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
@@ -53,7 +54,9 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     private DependencyGraphInitializer createDependencyGraphInitializer(final ConditionMatcher conditionMatcher) {
         // TODO: Registration hooks for dependency resolvers
         final DependencyResolver managedComponentDependencyResolver = new ComponentDependencyResolver();
-        final DependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver(conditionMatcher);
+        final BindsMethodDependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver(conditionMatcher);
+        methodDependencyResolver.registry().register(new MethodInstanceBindingStrategy());
+
         final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver, managedComponentDependencyResolver));
         return new DependencyGraphInitializer(this, dependencyResolver);
     }
@@ -89,7 +92,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     public void loadContext() {
         this.checkRunning();
 
-        final Collection<ComponentContainer> containers = this.locator().containers();
+        final Collection<ComponentContainer<?>> containers = this.locator().containers();
         this.log().debug("Located %d components".formatted(containers.size()));
 
         try {
@@ -111,11 +114,11 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         return this.preProcessors;
     }
 
-    protected void processComponents(final Collection<ComponentContainer> containers) {
+    protected void processComponents(final Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
         for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
             this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
-            for (final ComponentContainer container : containers) {
+            for (final ComponentContainer<?> container : containers) {
                 this.processStandaloneComponent(container, serviceProcessor);
             }
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
@@ -124,7 +127,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         }
     }
 
-    private void processStandaloneComponent(final ComponentContainer container, final ComponentPreProcessor serviceProcessor) {
+    private void processStandaloneComponent(final ComponentContainer<?> container, final ComponentPreProcessor serviceProcessor) {
         final TypeView<?> service = container.type();
         final ComponentKey<?> key = ComponentKey.of(service.type());
         final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);

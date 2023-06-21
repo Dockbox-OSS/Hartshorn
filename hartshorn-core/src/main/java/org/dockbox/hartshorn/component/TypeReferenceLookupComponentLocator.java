@@ -29,32 +29,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TypeReferenceLookupComponentLocator implements ComponentLocator, ContextCarrier {
 
     private final ApplicationContext applicationContext;
-    private final Set<ComponentContainer> componentContainers = ConcurrentHashMap.newKeySet();
+    private final Set<ComponentContainer<?>> componentContainers = ConcurrentHashMap.newKeySet();
 
     public TypeReferenceLookupComponentLocator(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public Collection<ComponentContainer> containers() {
+    public Collection<ComponentContainer<?>> containers() {
         if (this.componentContainers.isEmpty()) {
             this.applicationContext().environment().types(Component.class).stream()
                     .filter(type -> !type.isAnnotation()) // Filter activators
-                    .map(type -> new ComponentContainerImpl(this.applicationContext(), type.type()))
+                    .map(type -> new ComponentContainerImpl<>(this.applicationContext(), type.type()))
                     .forEach(this.componentContainers::add);
         }
         return this.componentContainers;
     }
 
     @Override
-    public Collection<ComponentContainer> containers(final ComponentType componentType) {
+    public Collection<ComponentContainer<?>> containers(final ComponentType componentType) {
         return this.containers().stream()
                 .filter(container -> container.componentType() == componentType)
                 .toList();
     }
 
     @Override
-    public Option<ComponentContainer> container(final Class<?> type) {
+    public Option<ComponentContainer<?>> container(final Class<?> type) {
         return Option.of(this.containers()
                 .stream()
                 .filter(container -> container.type().is(type))

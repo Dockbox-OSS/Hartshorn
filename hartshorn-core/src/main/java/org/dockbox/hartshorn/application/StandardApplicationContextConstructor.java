@@ -204,7 +204,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
                 observer.onStarted(applicationContext);
         }
 
-        for (final ComponentContainer container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
+        for (final ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
             this.logger.debug("Instantiating non-lazy singleton {} in application context", container.id());
             if (container.singleton() && !container.lazy()) {
                 applicationContext.get(container.type().type());

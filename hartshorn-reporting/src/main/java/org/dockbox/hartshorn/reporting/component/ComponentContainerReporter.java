@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.condition.RequiresCondition;
 import org.dockbox.hartshorn.inject.Context;
@@ -30,15 +32,12 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map.Entry;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-
 class ComponentContainerReporter implements Reportable {
     private final ComponentDiagnosticsReporter componentDiagnosticsReporter;
-    private final ComponentContainer container;
+    private final ComponentContainer<?> container;
 
     public ComponentContainerReporter(final ComponentDiagnosticsReporter componentDiagnosticsReporter,
-                                      final ComponentContainer container) {
+                                      final ComponentContainer<?> container) {
         this.componentDiagnosticsReporter = componentDiagnosticsReporter;
         this.container = container;
     }

@@ -112,7 +112,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return Option.empty();
     }
 
-    protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer container) {
+    protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer<?> container) {
         if (!container.permitsProcessing()) return objectContainer.instance();
 
         ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container);
@@ -122,7 +122,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return processingContext.instance();
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer container) {
+    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer<?> container) {
         final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(this.applicationContext(), key, instance);
         processingContext.put(ComponentKey.of(ComponentContainer.class), container);
 
@@ -213,7 +213,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
         }
 
-        final Option<ComponentContainer> container = this.owner.componentLocator().container(type);
+        final Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
         instance = container.present()
                 ? this.getManagedComponent(componentKey, objectContainer, container)
                 : this.getUnmanagedComponent(objectContainer, type);
@@ -241,7 +241,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     private <T> T getManagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer,
-                                      final Option<ComponentContainer> container) {
+                                      final Option<ComponentContainer<?>> container) {
         // Will only mark the object container as processed if the component container permits
         // processing.
         return this.process(componentKey, objectContainer, container.get());

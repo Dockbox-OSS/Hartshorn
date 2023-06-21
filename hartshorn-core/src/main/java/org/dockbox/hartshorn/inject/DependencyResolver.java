@@ -24,6 +24,6 @@ import java.util.Set;
 
 public interface DependencyResolver {
 
-    Set<DependencyContext<?>> resolve(Collection<ComponentContainer> containers, ApplicationContext applicationContext) throws DependencyResolutionException;
+    Set<DependencyContext<?>> resolve(Collection<ComponentContainer<?>> containers, ApplicationContext applicationContext) throws DependencyResolutionException;
 
 }

@@ -19,18 +19,17 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import jakarta.inject.Inject;
-
-public class ComponentDependencyResolver extends AbstractExecutableElementDependencyResolver {
+public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
     @Override
-    protected Set<DependencyContext<?>> resolveSingle(final ComponentContainer componentContainer, final ApplicationContext applicationContext) throws DependencyResolutionException {
+    protected <T> Set<DependencyContext<?>> resolveSingle(final ComponentContainer<T> componentContainer, final ApplicationContext applicationContext) throws DependencyResolutionException {
         final TypeView<?> type = componentContainer.type();
         final ConstructorView<?> constructorView = CyclingConstructorAnalyzer.findConstructor(type)
                 .mapError(DependencyResolutionException::new)
@@ -41,19 +40,12 @@ public class ComponentDependencyResolver extends AbstractExecutableElementDepend
             return Set.of();
         }
 
-        final Set<ComponentKey<?>> constructorDependencies = this.resolveDependencies(constructorView);
-        final Set<ComponentKey<?>> setterDependencies = type.methods().annotatedWith(Inject.class).stream()
-                .flatMap(method -> this.resolveDependencies(method).stream())
-                .collect(Collectors.toSet());
-        final Set<ComponentKey<?>> fieldDependencies = type.fields().annotatedWith(Inject.class).stream()
-                .map(this::resolveComponentKey)
-                .collect(Collectors.toSet());
-
-        final Set<ComponentKey<?>> dependencies = Set.of(constructorDependencies, setterDependencies, fieldDependencies).stream()
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+        final Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
+        final Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type);
 
         final ComponentKey<?> componentKey = ComponentKey.of(type.type());
+        final Set<ComponentKey<?>> dependencies = CollectionUtilities.merge(constructorDependencies, typeDependencies);
+
         return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies));
     }
 }
