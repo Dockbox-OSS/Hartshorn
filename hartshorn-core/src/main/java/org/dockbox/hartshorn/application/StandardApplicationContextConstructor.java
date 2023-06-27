@@ -142,7 +142,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     @NotNull
-    private static Set<ComponentProcessor> componentProcessors(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder, final Set<ServiceActivator> serviceActivators) {
+    protected Set<ComponentProcessor> componentProcessors(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder, final Set<ServiceActivator> serviceActivators) {
 
         final Set<Class<? extends ComponentProcessor>> processorTypes = serviceActivators.stream()
                 .flatMap(serviceActivator -> Arrays.stream(serviceActivator.processors()))

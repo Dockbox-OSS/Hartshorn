@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -161,7 +162,7 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
                 this.factory = this.hibernateConfiguration.buildSessionFactory();
                 this.factoryPostConstruct();
             }
-            catch (final Throwable e) {
+            catch (final HibernateException e) {
                 throw new ApplicationException(e);
             }
         }
