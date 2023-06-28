@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.ConfigurationObjectPostProcessor;
@@ -43,7 +42,7 @@ public class ConfigurationProviders {
      *
      * @return {@link StandardPropertyHolder}
      */
-    @Binds(phase = ProcessingPriority.HIGH_PRECEDENCE)
+    @Binds
     public PropertyHolder propertyHolder(final ApplicationContext applicationContext,
                                          final ApplicationPropertyHolder propertyHolder,
                                          final ObjectMapper objectMapper,
@@ -51,7 +50,7 @@ public class ConfigurationProviders {
         return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
     }
 
-    @Binds(phase = ProcessingPriority.HIGH_PRECEDENCE)
+    @Binds
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

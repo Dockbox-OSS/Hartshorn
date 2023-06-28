@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
@@ -32,7 +31,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Component(singleton = true)
 public class ArgumentSerializationSourceConverter implements SerializationSourceConverter {
 
     @Override

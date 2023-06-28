@@ -17,13 +17,12 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
 
 import java.util.Map;
 
@@ -41,7 +40,6 @@ import jakarta.inject.Inject;
  * @since 22.4
  * @see ExpressionConditionContext
  */
-@Component
 public class StandardRuntime extends AbstractScriptRuntime {
 
     @Inject

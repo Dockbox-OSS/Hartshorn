@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
@@ -27,7 +26,6 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
-@Component
 public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
 
     private final ComponentLocator componentLocator;

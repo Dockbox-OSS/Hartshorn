@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.jpa.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.jpa.remote.DataSourceConfiguration;
 import org.dockbox.hartshorn.jpa.remote.RefreshableDataSourceList;
 
@@ -26,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.annotation.PostConstruct;
 
-@Component(singleton = true)
 public class HibernateDataSourceList implements RefreshableDataSourceList {
 
     private final Map<String, DataSourceConfiguration> configurations = new ConcurrentHashMap<>();

@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
@@ -40,12 +39,6 @@ public class HslLanguageProviders {
     }
 
     @Binds
-    private Lexer lexer() {
-        // TODO: Assisted inject? Perhaps @Assisted String source so dependency graph knows to skip it?
-        return new Lexer(null);
-    }
-
-    @Binds
     private TokenParser tokenParser() {
         return new StandardTokenParser();
     }
@@ -58,12 +51,6 @@ public class HslLanguageProviders {
     @Binds
     private Resolver resolver(final Interpreter interpreter) {
         return new Resolver(interpreter);
-    }
-
-    @Binds
-    private Interpreter interpreter() {
-        // TODO: Assisted inject?
-        return new Interpreter(null, null);
     }
 
     @Binds

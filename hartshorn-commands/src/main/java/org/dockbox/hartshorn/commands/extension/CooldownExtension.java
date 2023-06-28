@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.Identifiable;
 
@@ -39,7 +38,6 @@ import jakarta.inject.Inject;
  * quickly. The delay between commands is defined by a {@link Cooldown}
  * decorator on the command.
  */
-@Component
 public class CooldownExtension implements CommandExecutorExtension {
 
     private final Map<Object, CooldownEntry> activeCooldowns = new ConcurrentHashMap<>();

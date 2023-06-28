@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
@@ -33,7 +32,6 @@ import jakarta.inject.Inject;
  * @author Guus Lieben
  * @since 22.4
  */
-@Component
 public class ValidateExpressionRuntime extends StandardRuntime {
 
     @Inject

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.jpa.hibernate;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -53,7 +52,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
-@Component
 public class HibernateEntityManagerCarrier implements EntityManagerCarrier, ContextCarrier {
 
     public static final String HB_USERNAME = "hibernate.connection.username";

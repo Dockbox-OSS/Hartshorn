@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
 public class ConditionMatcherEventExecutionFilter extends DefaultProvisionContext implements EventExecutionFilter {
 
     @Override

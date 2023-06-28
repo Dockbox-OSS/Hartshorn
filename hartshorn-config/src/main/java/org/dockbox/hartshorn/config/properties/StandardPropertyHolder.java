@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.config.properties;
 
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.util.GenericType;
@@ -39,7 +38,6 @@ import java.util.function.Function;
 
 import jakarta.inject.Inject;
 
-@Component(singleton = true)
 public class StandardPropertyHolder implements PropertyHolder {
 
     protected final transient Map<String, Object> properties;

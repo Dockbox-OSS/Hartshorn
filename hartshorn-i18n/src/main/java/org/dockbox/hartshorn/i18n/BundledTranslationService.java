@@ -17,10 +17,8 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.option.Option;
 
-@Component
 public class BundledTranslationService implements TranslationService {
 
     private final ApplicationContext applicationContext;

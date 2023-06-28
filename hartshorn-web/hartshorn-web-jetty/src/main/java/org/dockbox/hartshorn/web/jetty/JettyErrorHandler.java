@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.web.RequestError;
@@ -45,7 +44,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
 public class JettyErrorHandler extends ErrorHandler {
 
     private final ApplicationContext context;

@@ -46,7 +46,7 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
         final MethodView<T, ?> method = methodContext.method();
         final SerializationSourceConverter converter = method.annotations().get(SerializationSource.class)
                 .map(serializationSource -> (SerializationSourceConverter) context.get(serializationSource.converter()))
-                .orCompute(() -> context.get(ArgumentSerializationSourceConverter.class))
+                .orCompute(ArgumentSerializationSourceConverter::new)
                 .orNull();
 
         if (converter != null) {

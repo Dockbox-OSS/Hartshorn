@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.i18n.Message;
 
 import jakarta.inject.Inject;
 
-@Component
 public class ApplicationSystemSubject extends SystemSubject {
 
     @Inject

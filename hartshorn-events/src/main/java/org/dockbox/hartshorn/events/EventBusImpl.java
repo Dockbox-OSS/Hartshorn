@@ -39,7 +39,6 @@ import jakarta.inject.Inject;
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
-@Component(singleton = true)
 public class EventBusImpl implements EventBus {
 
     protected final Set<Function<MethodView<?, ?>, Attempt<Boolean, InvalidEventListenerException>>> validators = ConcurrentHashMap.newKeySet();

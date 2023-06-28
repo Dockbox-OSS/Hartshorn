@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.jpa.remote;
 
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 @ConfigurationObject(prefix = "hartshorn.data")
 public class StandardDataSourceList implements DataSourceList {
 

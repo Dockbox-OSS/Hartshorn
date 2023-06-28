@@ -41,6 +41,7 @@ import jakarta.inject.Singleton;
 public class HibernateProviders {
 
     @Binds(priority = 0)
+    @Singleton
     public DataSourceList dataSourceList(final ApplicationContext applicationContext,
                                          final HibernateDataSourceConfigurationObject sources) {
         return new HibernateDataSourceList(applicationContext, sources);
