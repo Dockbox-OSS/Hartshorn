@@ -27,30 +27,35 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
+    private final PropertyHolder propertyHolder;
+
+    public ConfigurationObjectPostProcessor(final PropertyHolder propertyHolder) {
+        this.propertyHolder = propertyHolder;
+    }
+
     @Override
     public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(ConfigurationObject.class)) {
             final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
-            final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
-            this.verifyPropertiesAvailable(context, propertyHolder);
+            this.verifyPropertiesAvailable(context, this.propertyHolder);
 
-            return this.createOrUpdate(processingContext.key(), instance, configurationObject, propertyHolder, context);
+            return this.createOrUpdate(processingContext.key(), instance, configurationObject);
         }
         return instance;
     }
 
-    private <T> T createOrUpdate(final ComponentKey<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder, final ApplicationContext applicationContext) {
+    private <T> T createOrUpdate(final ComponentKey<T> key, final T instance, final ConfigurationObject configurationObject) {
         final Option<T> configuration;
         final Class<T> type = instance == null
                 ? key.type()
                 : TypeUtils.adjustWildcards(instance.getClass(), Class.class);
 
         if (instance == null) {
-            configuration = propertyHolder.get(configurationObject.prefix(), type);
+            configuration = this.propertyHolder.get(configurationObject.prefix(), type);
         }
         else {
-            configuration = propertyHolder.update(instance, configurationObject.prefix(), type);
+            configuration = this.propertyHolder.update(instance, configurationObject.prefix(), type);
         }
         return configuration.orElse(instance);
     }
