@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ScopeAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ScopedProviderOwner {
 
@@ -48,6 +50,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private final transient ComponentPostConstructor postConstructor;
     private final Map<Scope, HierarchyAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
     private final HierarchyAwareComponentProvider applicationComponentProvider;
+    private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
     public ScopeAwareComponentProvider(final InitializingContext context) {
         this.applicationContext = context.applicationContext();
@@ -117,9 +120,20 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     @Override
     public void postProcessor(final ComponentPostProcessor postProcessor) {
         this.postProcessors.put(postProcessor.priority(), postProcessor);
+        this.uninitializedPostProcessors.remove(postProcessor.getClass());
+
         final ComponentKey<ComponentPostProcessor> key = TypeUtils.adjustWildcards(ComponentKey.of(postProcessor.getClass()), ComponentKey.class);
         // Install to application context
         this.bind(key).singleton(postProcessor);
+    }
+
+    @Override
+    public void postProcessor(final Class<? extends ComponentPostProcessor> postProcessor) {
+        final boolean alreadyInitialized = this.postProcessors.allValues().stream()
+                .anyMatch(processor -> processor.getClass().equals(postProcessor));
+        if (!alreadyInitialized) {
+            this.uninitializedPostProcessors.add(postProcessor);
+        }
     }
 
     public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
@@ -139,6 +153,11 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     @Override
     public MultiMap<Integer, ComponentPostProcessor> postProcessors() {
         return this.postProcessors;
+    }
+
+    @Override
+    public Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors() {
+        return Set.copyOf(this.uninitializedPostProcessors);
     }
 
     @Override

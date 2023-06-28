@@ -24,12 +24,10 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class CyclingConstructorAnalyzer {
 
-    private static final Map<Class<?>, ConstructorView<?>> cache = new ConcurrentHashMap<>();
+//    private static final Map<Class<?>, ConstructorView<?>> cache = new ConcurrentHashMap<>();
 
     public static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type) {
         return findConstructor(type, true);
@@ -37,9 +35,9 @@ public final class CyclingConstructorAnalyzer {
 
     private static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
         if (type.modifiers().isAbstract()) return Attempt.empty();
-        if (cache.containsKey(type.type())) {
-            return Attempt.of((ConstructorView<C>) cache.get(type.type()));
-        }
+//        if (cache.containsKey(type.type())) {
+//            return Attempt.of((ConstructorView<C>) cache.get(type.type()));
+//        }
 
         ConstructorView<C> optimalConstructor;
         final List<? extends ConstructorView<C>> constructors = findAvailableConstructors(type);
@@ -63,7 +61,7 @@ public final class CyclingConstructorAnalyzer {
 
         return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(constructor -> {
             // Don't store if there may be a cycle in the dependency graph
-            if (checkForCycles) cache.put(type.type(), constructor);
+//            if (checkForCycles) cache.put(type.type(), constructor);
         });
     }
 

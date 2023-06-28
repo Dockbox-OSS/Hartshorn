@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,14 +25,14 @@ import java.util.Set;
 public abstract class AbstractContainerDependencyResolver implements DependencyResolver {
 
     @Override
-    public Set<DependencyContext<?>> resolve(final Collection<ComponentContainer<?>> containers, final ApplicationContext applicationContext) throws DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(final Collection<DependencyDeclarationContext<?>> containers, final ApplicationContext applicationContext) throws DependencyResolutionException {
         final Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
-        for (final ComponentContainer<?> componentContainer : containers) {
+        for (final DependencyDeclarationContext<?> componentContainer : containers) {
             dependencyContexts.addAll(this.resolveSingle(componentContainer, applicationContext));
         }
         return dependencyContexts;
     }
 
-    protected abstract <T> Set<DependencyContext<?>> resolveSingle(ComponentContainer<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException;
+    protected abstract <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException;
 
 }

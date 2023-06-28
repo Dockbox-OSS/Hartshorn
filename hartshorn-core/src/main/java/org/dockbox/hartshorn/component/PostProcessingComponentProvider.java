@@ -20,11 +20,17 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
+import java.util.Set;
+
 public interface PostProcessingComponentProvider extends ContextCarrier {
 
     ComponentPostConstructor postConstructor();
 
     void postProcessor(ComponentPostProcessor postProcessor);
 
+    void postProcessor(Class<? extends ComponentPostProcessor> postProcessor);
+
     MultiMap<Integer, ComponentPostProcessor> postProcessors();
+
+    Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors();
 }

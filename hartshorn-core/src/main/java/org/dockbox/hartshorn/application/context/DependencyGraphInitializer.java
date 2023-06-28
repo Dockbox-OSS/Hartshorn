@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyPresenceValidationVisitor;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.DependencyResolver;
@@ -45,19 +45,26 @@ public class DependencyGraphInitializer {
         this.applicationContext = applicationContext;
     }
 
-    public void initializeDependencyGraph(final Collection<ComponentContainer<?>> containers) throws DependencyResolutionException, GraphException {
-        final Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
-        final Graph<DependencyContext<?>> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
-
+    public void initializeDependencyGraph(final Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException, GraphException {
+        final Graph<DependencyContext<?>> dependencyGraph = this.buildDependencyGraph(containers);
         final Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
+        this.validateDependencies(dependencyGraph, visitedDependencies);
 
+        this.applicationContext.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
+    }
+
+    private void validateDependencies(final Graph<DependencyContext<?>> dependencyGraph, final Set<GraphNode<DependencyContext<?>>> visitedDependencies) throws GraphException {
         final DependencyPresenceValidationVisitor validationVisitor = new DependencyPresenceValidationVisitor(visitedDependencies);
         validationVisitor.iterate(dependencyGraph);
         final Set<GraphNode<DependencyContext<?>>> missingDependencies = validationVisitor.missingDependencies();
         if (!missingDependencies.isEmpty()) {
             throw new ComponentInitializationException("Failed to resolve dependencies: %s".formatted(missingDependencies));
         }
+    }
 
-        this.applicationContext.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
+    private Graph<DependencyContext<?>> buildDependencyGraph(final Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
+        final Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
+        final Graph<DependencyContext<?>> dependencyGraph = this.graphBuilder.buildDependencyGraph(dependencyContexts);
+        return dependencyGraph;
     }
 }

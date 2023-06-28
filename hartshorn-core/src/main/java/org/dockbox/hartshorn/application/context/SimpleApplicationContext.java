@@ -27,19 +27,25 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
+import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComponentDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
+import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.DependencyResolver;
+import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
@@ -89,6 +95,18 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     @Override
+    public void add(final Class<? extends ComponentPostProcessor> processor) {
+        this.checkRunning();
+
+        if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
+            provider.postProcessor(processor);
+        }
+        else {
+            this.log().warn("Lazy initialization of component processors is not supported by this component provider [for " + processor.getSimpleName() + "]");
+        }
+    }
+
+    @Override
     public void loadContext() {
         this.checkRunning();
 
@@ -96,7 +114,22 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         this.log().debug("Located %d components".formatted(containers.size()));
 
         try {
-            this.dependencyGraphInitializer.initializeDependencyGraph(containers);
+            final List<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
+
+            if (this.componentProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
+                final Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider.uninitializedPostProcessors().stream()
+                        .map(this.environment()::introspect)
+                        .map(PostProcessorDependencyDeclarationContext::new)
+                        .collect(Collectors.toSet());
+                declarationContexts.addAll(uninitializedPostProcessorContexts);
+            }
+
+            final List<? extends DependencyDeclarationContext<?>> componentContexts = containers.stream()
+                    .map(ComponentContainerDependencyDeclarationContext::new)
+                    .toList();
+            declarationContexts.addAll(componentContexts);
+
+            this.dependencyGraphInitializer.initializeDependencyGraph(declarationContexts);
         }
         catch (final DependencyResolutionException e) {
             throw new ComponentInitializationException("Failed to resolve dependencies", e);
@@ -104,9 +137,19 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         catch (final GraphException e) {
             throw new ComponentInitializationException("Failed to iterate dependency graph", e);
         }
+        this.initializePostProcessors();
         this.processComponents(containers);
 
         this.isRunning = true;
+    }
+
+    private void initializePostProcessors() {
+        if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
+            for (final Class<? extends ComponentPostProcessor> uninitializedPostProcessor : provider.uninitializedPostProcessors()) {
+                final ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
+                provider.postProcessor(processor);
+            }
+        }
     }
 
     @Override

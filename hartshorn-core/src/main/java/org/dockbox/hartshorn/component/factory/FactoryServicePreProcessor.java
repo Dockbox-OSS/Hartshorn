@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +38,12 @@ import java.util.stream.Collectors;
  */
 @Deprecated(since = "23.1", forRemoval = true)
 public class FactoryServicePreProcessor extends ComponentPreProcessor {
+
+    private static final Logger FACTORY_LOGGER = LoggerFactory.getLogger(UseFactoryServices.class);
+
+    public FactoryServicePreProcessor() {
+        FACTORY_LOGGER.warn("The @Factory annotation is deprecated and will be removed in a future release. Please use dedicated factory objects or regular object binding instead.");
+    }
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {

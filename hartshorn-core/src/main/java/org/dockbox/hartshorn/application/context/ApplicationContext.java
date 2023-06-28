@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
@@ -68,6 +69,8 @@ public interface ApplicationContext extends
      * @see org.dockbox.hartshorn.component.processing.ComponentPostProcessor
      */
     void add(ComponentProcessor processor);
+
+    void add(Class<? extends ComponentPostProcessor> processor);
 
     /**
      * Gets the active {@link ApplicationEnvironment} for the application.

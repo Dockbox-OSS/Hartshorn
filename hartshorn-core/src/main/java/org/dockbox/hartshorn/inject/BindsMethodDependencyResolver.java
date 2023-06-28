@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
@@ -47,11 +46,11 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     public BindingStrategyRegistry registry() {
-        return registry;
+        return this.registry;
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(final ComponentContainer<T> componentContainer, final ApplicationContext applicationContext) {
+    protected <T> Set<DependencyContext<?>> resolveSingle(final DependencyDeclarationContext<T> componentContainer, final ApplicationContext applicationContext) {
         final TypeView<T> componentType = componentContainer.type();
         final List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
         return bindsMethods.stream()
@@ -60,7 +59,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
                 .collect(Collectors.toSet());
     }
 
-    private <T> Option<DependencyContext<?>> resolve(final ApplicationContext applicationContext, final ComponentContainer<T> componentContainer, final MethodView<T, ?> method) {
+    private <T> Option<DependencyContext<?>> resolve(final ApplicationContext applicationContext, final DependencyDeclarationContext<T> componentContainer, final MethodView<T, ?> method) {
         final BindingStrategyContext<T> strategyContext = new MethodAwareBindingStrategyContext<>(applicationContext, componentContainer, method);
         return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
     }

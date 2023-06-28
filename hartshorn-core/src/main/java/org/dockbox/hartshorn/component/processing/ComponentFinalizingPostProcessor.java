@@ -72,6 +72,6 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     @Override
     public int priority() {
         // Run after all other core post processors, but permit external post processors to run after this one
-        return Integer.MAX_VALUE / 2;
+        return ProcessingPriority.LOWEST_PRECEDENCE - 128;
     }
 }

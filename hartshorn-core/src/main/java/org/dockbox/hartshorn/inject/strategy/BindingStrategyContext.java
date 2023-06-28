@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
+import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 
 public interface BindingStrategyContext<T> extends ApplicationAwareContext {
 
-    ComponentContainer<T> componentContainer();
+    DependencyDeclarationContext<T> declarationContext();
 }
