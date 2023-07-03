@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.HashSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
@@ -148,6 +149,17 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     @Override
     public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
         return this.getOrDefaultProvider(key.scope()).hierarchy(key);
+    }
+
+    @Override
+    public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
+        final MultiMap<Scope, BindingHierarchy<?>> hierarchies = new HashSetMultiMap<>();
+        for (final HierarchyAwareComponentProvider componentProvider : this.scopedProviders.values()) {
+            final MultiMap<Scope, BindingHierarchy<?>> providerHierarchies = componentProvider.hierarchies();
+            assert providerHierarchies.keySet().size() == 1 : "Hierarchy collection from scoped provider should only contain one scope";
+            hierarchies.putAll(providerHierarchies);
+        }
+        return hierarchies;
     }
 
     @Override

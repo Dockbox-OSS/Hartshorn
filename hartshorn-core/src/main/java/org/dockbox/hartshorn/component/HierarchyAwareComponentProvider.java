@@ -42,6 +42,8 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap.HashSetMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -274,6 +276,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     @Override
     public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
         return this.hierarchy(key, false);
+    }
+
+    @Override
+    public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
+        final MultiMap<Scope, BindingHierarchy<?>> map = new HashSetMultiMap<>();
+        map.putAll(this.scope, this.hierarchies.values());
+        return map;
     }
 
     private <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key, final boolean useParentIfAbsent) {
