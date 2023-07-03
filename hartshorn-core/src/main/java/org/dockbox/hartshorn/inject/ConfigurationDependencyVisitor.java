@@ -16,7 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
 import org.dockbox.hartshorn.util.graph.GraphException;
@@ -24,10 +25,10 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 
 public class ConfigurationDependencyVisitor extends BreadthFirstGraphVisitor<DependencyContext<?>> {
 
-    private final Binder binder;
+    private final ApplicationContext applicationContext;
 
-    public ConfigurationDependencyVisitor(final Binder binder) {
-        this.binder = binder;
+    public ConfigurationDependencyVisitor(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -35,6 +36,7 @@ public class ConfigurationDependencyVisitor extends BreadthFirstGraphVisitor<Dep
         final DependencyContext<?> dependencyContext = node.value();
         try {
             this.registerProvider(dependencyContext);
+            this.doAfterRegister(dependencyContext);
             return true;
         }
         catch (final ComponentConfigurationException e) {
@@ -43,7 +45,14 @@ public class ConfigurationDependencyVisitor extends BreadthFirstGraphVisitor<Dep
     }
 
     private <T> void registerProvider(final DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
-        final BindingFunction<T> function = this.binder.bind(dependencyContext.componentKey());
+        final BindingFunction<T> function = this.applicationContext.bind(dependencyContext.componentKey());
         dependencyContext.configure(function);
+    }
+
+    private void doAfterRegister(final DependencyContext<?> dependencyContext) {
+        if (ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
+            final ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
+            this.applicationContext.add(processor);
+        }
     }
 }
