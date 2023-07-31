@@ -115,7 +115,9 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer<?> container) {
-        if (!container.permitsProcessing()) return objectContainer.instance();
+        if (container != null && !container.permitsProcessing()) {
+            return objectContainer.instance();
+        }
 
         ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container);
         objectContainer.processed(true);
@@ -126,17 +128,19 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer<?> container) {
         final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(this.applicationContext(), key, instance);
-        processingContext.put(ComponentKey.of(ComponentContainer.class), container);
 
-        if (container.permitsProxying()) {
-            final StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
+        if (container != null) {
+            processingContext.put(ComponentKey.of(ComponentContainer.class), container);
+            if (container.permitsProxying()) {
+                final StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
 
-            if (instance != null) {
-                factory.trackState(false);
-                factory.advisors().type().delegateAbstractOnly(instance);
-                factory.trackState(true);
+                if (instance != null) {
+                    factory.trackState(false);
+                    factory.advisors().type().delegateAbstractOnly(instance);
+                    factory.trackState(true);
+                }
+                processingContext.put(ComponentKey.of(ProxyFactory.class), factory);
             }
-            processingContext.put(ComponentKey.of(ProxyFactory.class), factory);
         }
         return processingContext;
     }
@@ -218,7 +222,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         final Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
         instance = container.present()
                 ? this.getManagedComponent(componentKey, objectContainer, container)
-                : this.getUnmanagedComponent(objectContainer, type);
+                : this.getUnmanagedComponent(componentKey, objectContainer, type);
 
         if (instance == null) {
             throw new ComponentResolutionException("No component found for key " + componentKey);
@@ -249,7 +253,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return this.process(componentKey, objectContainer, container.get());
     }
 
-    private <T> T getUnmanagedComponent(final ObjectContainer<T> objectContainer, final Class<? extends T> type) {
+    private <T> T getUnmanagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer, final Class<? extends T> type) {
         final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
@@ -263,8 +267,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             }
         }
 
-        objectContainer.processed(true);
-
+        this.process(componentKey, objectContainer, null);
         return instance;
     }
 

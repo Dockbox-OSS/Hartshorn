@@ -27,7 +27,7 @@ public abstract class FunctionalComponentPostProcessor extends ComponentPostProc
     @Override
     public <T> boolean isCompatible(final ComponentProcessingContext<T> processingContext) {
         final ComponentContainer<?> container = processingContext.get(ComponentKey.of(ComponentContainer.class));
-        return container.componentType() == ComponentType.FUNCTIONAL;
+        return container != null && container.componentType() == ComponentType.FUNCTIONAL;
     }
 
     /**

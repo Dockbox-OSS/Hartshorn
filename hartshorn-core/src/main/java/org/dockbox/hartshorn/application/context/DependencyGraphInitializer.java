@@ -64,6 +64,6 @@ public class DependencyGraphInitializer {
 
     private Graph<DependencyContext<?>> buildDependencyGraph(final Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
         final Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
-        return this.graphBuilder.buildDependencyGraph(this.applicationContext, dependencyContexts);
+        return this.graphBuilder.buildDependencyGraph(dependencyContexts);
     }
 }

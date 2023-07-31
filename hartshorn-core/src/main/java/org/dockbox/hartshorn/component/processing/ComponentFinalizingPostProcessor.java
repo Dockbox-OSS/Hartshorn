@@ -34,7 +34,11 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying()) {
+
+        final boolean permitsProxying = !processingContext.containsKey(ComponentKey.of(ComponentContainer.class))
+                || processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying();
+
+        if (permitsProxying) {
             T finalizingInstance = instance;
             if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
                 final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));

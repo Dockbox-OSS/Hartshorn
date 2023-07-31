@@ -102,9 +102,12 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private <T> void populateFields(final TypeView<T> type, final T instance) {
         for (final FieldView<T, ?> field : type.fields().annotatedWith(Inject.class)) {
-            if (field.type().isChildOf(Collection.class))
+            if (field.type().isChildOf(Collection.class)) {
                 this.populateBeanCollectionField(type, instance, field);
-            else this.populateObjectField(type, instance, field);
+            }
+            else {
+                this.populateObjectField(type, instance, field);
+            }
         }
         for (final FieldView<T, ?> field : type.fields().annotatedWith(org.dockbox.hartshorn.inject.Context.class)) {
             this.populateContextField(field, instance);
