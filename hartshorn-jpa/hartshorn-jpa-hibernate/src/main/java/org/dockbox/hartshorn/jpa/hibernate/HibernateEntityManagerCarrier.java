@@ -201,7 +201,8 @@ public class HibernateEntityManagerCarrier implements EntityManagerCarrier, Cont
         }
 
         return this.applicationContext()
-                .property(HH_HIBERNATE_DIALECT)
+                .get(PropertyHolder.class)
+                .get(HH_HIBERNATE_DIALECT, String.class)
                 .orElseThrow(() -> new ApplicationException("No default dialect was configured"));
     }
 

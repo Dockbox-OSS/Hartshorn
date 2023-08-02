@@ -29,6 +29,8 @@ import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
 
+import jakarta.inject.Singleton;
+
 @Service
 @RequiresActivator(UseConfigurations.class)
 @Configuration({"application", "classpath:application"})
@@ -43,6 +45,7 @@ public class ConfigurationProviders {
      * @return {@link StandardPropertyHolder}
      */
     @Binds
+    @Singleton
     public PropertyHolder propertyHolder(final ApplicationContext applicationContext,
                                          final ApplicationPropertyHolder propertyHolder,
                                          final ObjectMapper objectMapper,
