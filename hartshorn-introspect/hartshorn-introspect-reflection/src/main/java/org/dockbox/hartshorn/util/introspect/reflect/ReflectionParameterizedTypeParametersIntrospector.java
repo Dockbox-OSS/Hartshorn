@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
-import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -31,16 +31,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReflectionTypeParametersIntrospector<T> implements TypeParametersIntrospector {
+public class ReflectionParameterizedTypeParametersIntrospector<T> extends AbstractReflectionTypeParametersIntrospector {
 
     private final TypeView<T> type;
     private final ParameterizedType parameterizedType;
     private final Introspector introspector;
 
-    private List<TypeView<?>> typeParameters;
     private MultiMap<Class<?>, TypeView<?>> interfaceTypeParameters;
+    private List<TypeParameterView> parameters;
 
-    public ReflectionTypeParametersIntrospector(final TypeView<T> type, final ParameterizedType parameterizedType, final Introspector introspector) {
+    public ReflectionParameterizedTypeParametersIntrospector(final TypeView<T> type, final ParameterizedType parameterizedType, final Introspector introspector) {
         this.type = type;
         this.parameterizedType = parameterizedType;
         if (parameterizedType != null && parameterizedType.getRawType() != type.type()) {
@@ -50,13 +50,18 @@ public class ReflectionTypeParametersIntrospector<T> implements TypeParametersIn
     }
 
     @Override
-    public Option<TypeView<?>> at(final int index) {
-        final List<TypeView<?>> parameters = this.all();
-        if (parameters.size() > index) return Option.of(parameters.get(index));
-        return Option.empty();
+    public List<TypeParameterView> allInput() {
+        if (this.parameters == null) {
+            final Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
+            this.parameters = Arrays.stream(actualTypeArguments)
+                    .map(argument -> new ReflectionTypeParameterView(argument, this.type))
+                    .collect(Collectors.toList());
+        }
+        return this.parameters;
     }
 
     @Override
+    @Deprecated(forRemoval = true, since = "23.1")
     public List<TypeView<?>> from(final Class<?> fromInterface) {
         if (!fromInterface.isInterface()) throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
         if (!this.type.isChildOf(fromInterface)) throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type.name());
@@ -79,29 +84,6 @@ public class ReflectionTypeParametersIntrospector<T> implements TypeParametersIn
         return List.copyOf(this.interfaceTypeParameters.get(fromInterface));
     }
 
-    @Override
-    public List<TypeView<?>> all() {
-        if (this.typeParameters == null) {
-            if (this.parameterizedType != null) {
-                this.typeParameters = this.contextsFromParameterizedType(this.parameterizedType);
-            }
-            else {
-                final Type genericSuper = this.type.type().getGenericSuperclass();
-                if (genericSuper instanceof ParameterizedType parameterized) {
-                    this.typeParameters = this.contextsFromParameterizedType(parameterized);
-                } else {
-                    this.typeParameters = List.of();
-                }
-            }
-        }
-        return this.typeParameters;
-    }
-
-    @Override
-    public int count() {
-        return this.all().size();
-    }
-
     private List<TypeView<?>> contextsFromParameterizedType(final ParameterizedType parameterizedType) {
         final Type[] arguments = parameterizedType.getActualTypeArguments();
 
@@ -119,5 +101,10 @@ public class ReflectionTypeParametersIntrospector<T> implements TypeParametersIn
                     else return this.introspector.introspect(Void.class);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    protected TypeView<?> type() {
+        return this.type;
     }
 }

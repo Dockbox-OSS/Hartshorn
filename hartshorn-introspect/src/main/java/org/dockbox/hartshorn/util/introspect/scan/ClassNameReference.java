@@ -29,7 +29,7 @@ public class ClassNameReference implements TypeReference {
     @Override
     public Class<?> getOrLoad() throws ClassReferenceLoadException {
         try {
-            return Class.forName(this.name);
+            return Class.forName(this.name, false, Thread.currentThread().getContextClassLoader());
         } catch (final ClassNotFoundException e) {
             throw new ClassReferenceLoadException(e);
         }

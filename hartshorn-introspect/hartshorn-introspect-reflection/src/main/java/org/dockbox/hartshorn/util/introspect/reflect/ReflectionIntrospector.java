@@ -112,7 +112,7 @@ public class ReflectionIntrospector implements Introspector {
     @Override
     public TypeView<?> introspect(final String type) {
         try {
-            return this.introspect(Class.forName(type));
+            return this.introspect(Class.forName(type, false, Thread.currentThread().getContextClassLoader()));
         }
         catch (final ClassNotFoundException e) {
             return this.voidType();

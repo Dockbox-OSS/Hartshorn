@@ -16,12 +16,40 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
-public interface TypeParametersIntrospector extends TypeVariablesIntrospector {
+public interface TypeParametersIntrospector {
 
+    /**
+     * @deprecated use {@link #resolveFor(Class)} instead
+     * @param fromInterface the interface to resolve the type parameters for
+     * @return the list of type parameters
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
     List<TypeView<?>> from(final Class<?> fromInterface);
+
+    /**
+     * @deprecated use {@link #atIndex(int)} instead
+     * @param index the index of the type parameter
+     * @return the type parameter at the given index
+     */
+    @Deprecated(forRemoval = true, since = "23.1")
+    Option<TypeView<?>> at(int index);
+
+    List<TypeParameterView> resolveFor(final Class<?> fromParentType);
+
+    Option<TypeParameterView> atIndex(int index);
+
+    List<TypeParameterView> all();
+
+    List<TypeParameterView> allInput();
+
+    List<TypeParameterView> allOutput();
+
+    int count();
 
 }

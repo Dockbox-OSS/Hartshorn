@@ -78,6 +78,15 @@ public final class CollectionUtilities {
         return merged;
     }
 
+    @SafeVarargs
+    public static <T> List<T> mergeList(final Collection<T>... collections) {
+        final List<T> merged = new ArrayList<>();
+        for (final Collection<T> collection : collections) {
+            merged.addAll(collection);
+        }
+        return merged;
+    }
+
     public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
         final T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
         System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);

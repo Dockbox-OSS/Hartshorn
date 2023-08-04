@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
@@ -297,7 +298,11 @@ public abstract class ElementContextTests {
         final TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
         final TypeParametersIntrospector typeParameters = type.typeParameters();
         Assertions.assertEquals(1, typeParameters.count());
-        Assertions.assertSame(Integer.class, typeParameters.at(0).get().type());
+
+        final TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
+        final Option<TypeView<?>> upperBound = typeParameterView.upperBound();
+        Assertions.assertTrue(upperBound.present());
+        Assertions.assertSame(Integer.class, upperBound.get().type());
     }
 
     @Test
