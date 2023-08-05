@@ -22,7 +22,15 @@ import java.util.Set;
 
 public interface TypeParameterView extends View {
 
+    int index();
+
+    boolean isInputParameter();
+
+    boolean isOutputParameter();
+
     TypeView<?> declaredBy();
+
+    TypeView<?> consumedBy();
 
     Set<TypeParameterView> represents();
 
@@ -47,4 +55,6 @@ public interface TypeParameterView extends View {
     boolean isVariable();
 
     boolean isWildcard();
+
+    TypeParameterView asInputParameter();
 }

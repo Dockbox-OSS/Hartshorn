@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -131,7 +132,7 @@ public abstract class TypeParameterIntrospectionTests {
 
         final TypeParameterView representing = represents.iterator().next();
         Assertions.assertTrue(representing.isVariable());
-        Assertions.assertSame(Predicate.class, representing.declaredBy().type());
+        Assertions.assertSame(Predicate.class, representing.consumedBy().type());
     }
 
     private interface NumberFunctionAndPredicate<U extends Number> extends Function<U, U>, Predicate<U> {}
@@ -153,7 +154,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertEquals(3, represents.size());
 
         final Map<Class<?>, List<TypeParameterView>> representationsByType = represents.stream()
-                .collect(Collectors.groupingBy(typeParameterView -> typeParameterView.declaredBy().type()));
+                .collect(Collectors.groupingBy(typeParameterView -> typeParameterView.consumedBy().type()));
         Assertions.assertTrue(representationsByType.containsKey(Function.class));
         Assertions.assertTrue(representationsByType.containsKey(Predicate.class));
 
@@ -163,6 +164,94 @@ public abstract class TypeParameterIntrospectionTests {
 
         final List<TypeParameterView> predicateRepresentations = representationsByType.get(Predicate.class);
         Assertions.assertEquals(1, predicateRepresentations.size());
-        Assertions.assertTrue(predicateRepresentations.iterator().next().isVariable());
+    }
+
+    @Test
+    void testOutputToInputReferencesCorrectDeclarations() {
+        final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
+        Assertions.assertSame(NumberPredicate.class, typeView.type());
+
+        final List<TypeParameterView> outputParameters = typeView.typeParameters().allOutput();
+        Assertions.assertEquals(1, outputParameters.size());
+
+        final TypeParameterView outputParameter = outputParameters.get(0);
+        Assertions.assertTrue(outputParameter.isVariable());
+        Assertions.assertSame(NumberPredicate.class, outputParameter.declaredBy().type());
+        Assertions.assertEquals("U", outputParameter.name());
+
+        final TypeParameterView inputParameter = outputParameter.asInputParameter();
+        Assertions.assertTrue(inputParameter.isVariable());
+        Assertions.assertSame(Predicate.class, inputParameter.declaredBy().type());
+        Assertions.assertEquals("T", inputParameter.name());
+    }
+
+    @Test
+    void testInputToInputReturnsSelf() {
+        final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
+        Assertions.assertSame(NumberPredicate.class, typeView.type());
+
+        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput();
+        Assertions.assertEquals(1, inputParameters.size());
+
+        final TypeParameterView inputParameter = inputParameters.get(0);
+        Assertions.assertTrue(inputParameter.isVariable());
+        Assertions.assertSame(NumberPredicate.class, inputParameter.declaredBy().type());
+        Assertions.assertEquals("U", inputParameter.name());
+
+        final TypeParameterView asInputParameter = inputParameter.asInputParameter();
+        Assertions.assertSame(inputParameter, asInputParameter);
+    }
+
+    private interface XYtoYXFunction<X, Y> extends Function<Y, X> {}
+
+    @Test
+    void testInputToOutputCorrectlyUpdatesIndex() {
+        final TypeView<XYtoYXFunction> typeView = this.introspector().introspect(XYtoYXFunction.class);
+        Assertions.assertSame(XYtoYXFunction.class, typeView.type());
+
+        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput();
+        Assertions.assertEquals(2, inputParameters.size());
+
+        assertParameterAtIndexReferencesParameterAtIndex(typeView, 0, 1);
+        assertParameterAtIndexReferencesParameterAtIndex(typeView, 1, 0);
+    }
+
+    private static void assertParameterAtIndexReferencesParameterAtIndex(final TypeView<?> typeView, final int inputIndex, final int outputIndex) {
+        final Option<TypeParameterView> parameter = typeView.typeParameters().atIndex(inputIndex);
+        Assertions.assertTrue(parameter.present());
+        final TypeParameterView parameterView = parameter.get();
+        Assertions.assertEquals(inputIndex, parameterView.index());
+
+        final Set<TypeParameterView> parameterRepresents = parameterView.represents();
+        Assertions.assertEquals(1, parameterRepresents.size());
+
+        final TypeParameterView parameterRepresentsView = parameterRepresents.iterator().next();
+        Assertions.assertEquals(outputIndex, parameterRepresentsView.index());
+    }
+
+    @Test
+    void testInputIsInput() {
+        final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
+        Assertions.assertSame(NumberPredicate.class, typeView.type());
+
+        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput();
+        Assertions.assertEquals(1, inputParameters.size());
+
+        final TypeParameterView inputParameter = inputParameters.get(0);
+        Assertions.assertTrue(inputParameter.isInputParameter());
+        Assertions.assertFalse(inputParameter.isOutputParameter());
+    }
+
+    @Test
+    void testOutputIsOutput() {
+        final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
+        Assertions.assertSame(NumberPredicate.class, typeView.type());
+
+        final List<TypeParameterView> outputParameters = typeView.typeParameters().allOutput();
+        Assertions.assertEquals(1, outputParameters.size());
+
+        final TypeParameterView outputParameter = outputParameters.get(0);
+        Assertions.assertTrue(outputParameter.isOutputParameter());
+        Assertions.assertFalse(outputParameter.isInputParameter());
     }
 }

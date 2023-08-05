@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
@@ -35,30 +36,67 @@ import java.util.stream.Collectors;
 public class ReflectionTypeParameterView implements TypeParameterView {
 
     private final Type type;
-    private final TypeView<?> declaredBy;
+    private final TypeView<?> consumedBy;
+    private final int index;
     private final Introspector introspector;
 
     private Set<TypeParameterView> represents;
     private Set<TypeView<?>> upperBounds;
     private Option<TypeView<?>> resolvedType;
+    private TypeView<?> declaredBy;
 
-    public ReflectionTypeParameterView(final Type type, final TypeView<?> declaredBy, final Introspector introspector) {
+    public ReflectionTypeParameterView(final Type type, final TypeView<?> consumedBy, final int index, final Introspector introspector) {
         this.type = type;
-        this.declaredBy = declaredBy;
+        this.consumedBy = consumedBy;
+        this.index = index;
         this.introspector = introspector;
     }
 
     @Override
+    public int index() {
+        return this.index;
+    }
+
+    @Override
+    public boolean isInputParameter() {
+        return this.declaredBy().is(this.consumedBy().type());
+    }
+
+    @Override
+    public boolean isOutputParameter() {
+        return !this.isInputParameter();
+    }
+
+    @Override
     public TypeView<?> declaredBy() {
-        return this.declaredBy.rawType();
+        if (this.declaredBy == null) {
+            if (this.type instanceof TypeVariable<?> typeVariable) {
+                final GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
+                if (genericDeclaration instanceof Class<?> clazz) {
+                    this.declaredBy = this.introspector.introspect(clazz);
+                }
+                else {
+                    throw new IllegalStateException("Generic declaration is not a class, cannot resolve declaring type");
+                }
+            }
+            else {
+                this.declaredBy = this.consumedBy();
+            }
+        }
+        return this.declaredBy;
+    }
+
+    @Override
+    public TypeView<?> consumedBy() {
+        return this.consumedBy.rawType();
     }
 
     @Override
     public Set<TypeParameterView> represents() {
         if (this.represents == null) {
             if (this.type instanceof TypeVariable<?> typeVariable) {
-                final TypeView<?> superClass = this.declaredBy.genericSuperClass();
-                final List<TypeView<?>> genericInterfaces = this.declaredBy.genericInterfaces();
+                final TypeView<?> superClass = this.consumedBy.genericSuperClass();
+                final List<TypeView<?>> genericInterfaces = this.consumedBy.genericInterfaces();
 
                 final Set<TypeView<?>> representationCandidates = new HashSet<>();
                 representationCandidates.add(superClass);
@@ -174,6 +212,16 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     @Override
     public boolean isWildcard() {
         return this.type instanceof WildcardType;
+    }
+
+    @Override
+    public TypeParameterView asInputParameter() {
+        if (this.isInputParameter()) {
+            return this;
+        }
+        else {
+            return this.consumedBy().typeParameters().atIndex(this.index).orNull();
+        }
     }
 
     @Override

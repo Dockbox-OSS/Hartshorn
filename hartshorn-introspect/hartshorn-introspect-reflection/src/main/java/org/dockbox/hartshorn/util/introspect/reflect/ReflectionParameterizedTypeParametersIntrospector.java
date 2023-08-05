@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,10 +50,13 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     @Override
     public List<TypeParameterView> allInput() {
         if (this.parameters == null) {
+            final List<TypeParameterView> typeParameters = new ArrayList<>();
             final Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
-            this.parameters = Arrays.stream(actualTypeArguments)
-                    .map(argument -> new ReflectionTypeParameterView(argument, this.type(), this.introspector()))
-                    .collect(Collectors.toList());
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                final Type actualTypeArgument = actualTypeArguments[i];
+                typeParameters.add(new ReflectionTypeParameterView(actualTypeArgument, this.type(), i, this.introspector()));
+            }
+            this.parameters = List.copyOf(typeParameters);
         }
         return this.parameters;
     }
@@ -60,8 +64,12 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     @Override
     @Deprecated(forRemoval = true, since = "23.1")
     public List<TypeView<?>> from(final Class<?> fromInterface) {
-        if (!fromInterface.isInterface()) throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
-        if (!this.type().isChildOf(fromInterface)) throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type().name());
+        if (!fromInterface.isInterface()) {
+            throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
+        }
+        if (!this.type().isChildOf(fromInterface)) {
+            throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type().name());
+        }
 
         if (this.interfaceTypeParameters == null) {
             this.interfaceTypeParameters = new SynchronizedArrayListMultiMap<>();
@@ -87,15 +95,21 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
         return Arrays.stream(arguments)
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
-                    if (type instanceof Class<?> clazz) return this.introspector().introspect(clazz);
+                    if (type instanceof Class<?> clazz) {
+                        return this.introspector().introspect(clazz);
+                    }
                     else if (type instanceof WildcardType wildcard) {
                         if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
                             return this.introspector().introspect(wildcard.getUpperBounds()[0]);
                         }
                         return new WildcardTypeView();
                     }
-                    else if (type instanceof ParameterizedType parameterized) return this.introspector().introspect(parameterized);
-                    else return this.introspector().introspect(Void.class);
+                    else if (type instanceof ParameterizedType parameterized) {
+                        return this.introspector().introspect(parameterized);
+                    }
+                    else {
+                        return this.introspector().introspect(Void.class);
+                    }
                 })
                 .collect(Collectors.toList());
     }

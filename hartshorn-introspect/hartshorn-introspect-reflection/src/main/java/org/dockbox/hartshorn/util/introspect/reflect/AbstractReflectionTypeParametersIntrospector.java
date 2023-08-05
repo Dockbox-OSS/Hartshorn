@@ -48,7 +48,9 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     @Override
     public Option<TypeParameterView> atIndex(final int index) {
         final List<TypeParameterView> parameters = this.all();
-        if (parameters.size() > index) return Option.of(parameters.get(index));
+        if (parameters.size() > index) {
+            return Option.of(parameters.get(index));
+        }
         return Option.empty();
     }
 
