@@ -16,17 +16,18 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
-
-import java.util.Map;
-
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 
 /**
  * The default runtime implementation, which follows the evaluation phases and order as
@@ -42,10 +43,14 @@ import jakarta.inject.Inject;
  */
 public class StandardRuntime extends AbstractScriptRuntime {
 
-    @Inject
     public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
         super(applicationContext, factory);
         this.customizer(new InlineStandardLibraryCustomizer());
+    }
+
+    public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
+            Set<ASTNodeParser<? extends Statement>> statementParsers) {
+        super(applicationContext, factory, statementParsers);
     }
 
     @Override

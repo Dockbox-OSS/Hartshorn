@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.util.option.Option;
-
-import jakarta.inject.Inject;
 
 /**
  * A customized runtime specifically targeted at evaluating single expressions.
@@ -34,9 +36,13 @@ import jakarta.inject.Inject;
  */
 public class ValidateExpressionRuntime extends StandardRuntime {
 
-    @Inject
-    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+    public ValidateExpressionRuntime(ApplicationContext applicationContext, HslLanguageFactory factory) {
         super(applicationContext, factory);
+    }
+
+    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
+            final Set<ASTNodeParser<? extends Statement>> statementParsers) {
+        super(applicationContext, factory, statementParsers);
         this.customizer(new ExpressionCustomizer());
     }
 

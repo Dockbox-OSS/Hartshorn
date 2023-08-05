@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -48,9 +51,6 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import jakarta.inject.Inject;
 
 public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
@@ -69,7 +69,9 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     private <T> Option<ObjectContainer<T>> create(final ComponentKey<T> key) {
         try {
             final Option<ObjectContainer<T>> objectContainer = this.provide(key);
-            if (objectContainer.present()) return objectContainer;
+            if (objectContainer.present()) {
+                return objectContainer;
+            }
 
             return this.createContextualInstanceContainer(key);
         } catch (final ApplicationException e) {
@@ -267,8 +269,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             }
         }
 
-        this.process(componentKey, objectContainer, null);
-        return instance;
+        return this.process(componentKey, objectContainer, null);
     }
 
     @Override

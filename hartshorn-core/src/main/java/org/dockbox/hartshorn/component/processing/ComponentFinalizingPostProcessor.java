@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import java.util.Collection;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -38,7 +40,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         final boolean permitsProxying = !processingContext.containsKey(ComponentKey.of(ComponentContainer.class))
                 || processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying();
 
-        if (permitsProxying) {
+        if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
             if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
                 final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));

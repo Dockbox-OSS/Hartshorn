@@ -80,7 +80,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         this.eventParameters = method.parameters().at(0).get()
                 .type()
                 .typeParameters()
-                .all();
+                .allInput();
     }
 
     public ParameterLoader<EventParameterLoaderContext> parameterLoader() {
