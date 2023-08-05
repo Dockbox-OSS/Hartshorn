@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "InterfaceMayBeAnnotatedFunctional"})
 public abstract class TypeParameterIntrospectionTests {
 
     protected abstract Introspector introspector();
@@ -73,5 +73,41 @@ public abstract class TypeParameterIntrospectionTests {
         for (final Class<?> expectedBound : expectedBounds) {
             Assertions.assertTrue(upperBounds.stream().anyMatch(typeView -> typeView.type().equals(expectedBound)));
         }
+    }
+
+    private interface NumberPredicate<U extends Number> extends Predicate<U> {}
+    private interface IntegerPredicate extends NumberPredicate<Integer> {}
+
+    @Test
+    void testOutputParameterWithConcreteValue() {
+        final TypeView<IntegerPredicate> typeView = this.introspector().introspect(IntegerPredicate.class);
+        Assertions.assertSame(IntegerPredicate.class, typeView.type());
+
+        final List<TypeParameterView> outputTypes = typeView.typeParameters().allOutput();
+        Assertions.assertEquals(1, outputTypes.size());
+
+        final TypeParameterView parameterView = outputTypes.get(0);
+        Assertions.assertFalse(parameterView.isVariable());
+
+        final TypeView<?> resolvedType = parameterView.resolvedType().get();
+        Assertions.assertSame(Integer.class, resolvedType.type());
+    }
+
+    @Test
+    void testOutputParameterWithVariableValue() {
+        final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
+        Assertions.assertSame(NumberPredicate.class, typeView.type());
+
+        final List<TypeParameterView> outputTypes = typeView.typeParameters().allOutput();
+        Assertions.assertEquals(1, outputTypes.size());
+
+        final TypeParameterView parameterView = outputTypes.get(0);
+        Assertions.assertTrue(parameterView.isVariable());
+        Assertions.assertTrue(parameterView.resolvedType().absent());
+        Assertions.assertTrue(parameterView.isBounded());
+
+        final Set<TypeView<?>> upperBounds = parameterView.upperBounds();
+        Assertions.assertEquals(1, upperBounds.size());
+        Assertions.assertSame(Number.class, upperBounds.iterator().next().type());
     }
 }
