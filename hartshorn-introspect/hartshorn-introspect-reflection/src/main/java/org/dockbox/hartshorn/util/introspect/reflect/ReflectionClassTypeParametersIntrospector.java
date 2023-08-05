@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -11,11 +12,13 @@ import java.util.stream.Collectors;
 public class ReflectionClassTypeParametersIntrospector extends AbstractReflectionTypeParametersIntrospector {
 
     private final TypeView<?> type;
+    private final Introspector introspector;
 
     private List<TypeParameterView> inputParameters;
 
-    public ReflectionClassTypeParametersIntrospector(final TypeView<?> type) {
+    public ReflectionClassTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
         this.type = type;
+        this.introspector = introspector;
     }
 
     @Override
@@ -28,7 +31,7 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
     public List<TypeParameterView> allInput() {
         if (this.inputParameters == null) {
             this.inputParameters = Arrays.stream(this.type.type().getTypeParameters())
-                    .map(parameter -> new ReflectionTypeParameterView(parameter, this.type))
+                    .map(parameter -> new ReflectionTypeParameterView(parameter, this.type, this.introspector))
                     .collect(Collectors.toList());
         }
         return this.inputParameters;

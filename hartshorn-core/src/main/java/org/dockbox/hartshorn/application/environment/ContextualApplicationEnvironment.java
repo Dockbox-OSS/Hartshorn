@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.application.environment;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.banner.Banner;
 import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
@@ -245,6 +246,11 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
     @Override
     public TypeView<?> introspect(final ParameterizedType type) {
+        return this.introspector().introspect(type);
+    }
+
+    @Override
+    public <T> TypeView<T> introspect(final GenericType<T> type) {
         return this.introspector().introspect(type);
     }
 

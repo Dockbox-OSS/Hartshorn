@@ -300,7 +300,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public TypeParametersIntrospector typeParameters() {
         if (this.typeParametersIntrospector == null) {
             this.typeParametersIntrospector = this.parameterizedType == null
-                    ? new ReflectionClassTypeParametersIntrospector(this)
+                    ? new ReflectionClassTypeParametersIntrospector(this, this.introspector)
                     : new ReflectionParameterizedTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector);
         }
         return this.typeParametersIntrospector;

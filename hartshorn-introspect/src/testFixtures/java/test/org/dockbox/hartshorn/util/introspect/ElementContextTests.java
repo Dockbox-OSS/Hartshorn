@@ -33,6 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @HartshornTest(includeBasePackages = false)
@@ -300,9 +301,9 @@ public abstract class ElementContextTests {
         Assertions.assertEquals(1, typeParameters.count());
 
         final TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
-        final Option<TypeView<?>> upperBound = typeParameterView.upperBound();
-        Assertions.assertTrue(upperBound.present());
-        Assertions.assertSame(Integer.class, upperBound.get().type());
+        final Set<TypeView<?>> upperBound = typeParameterView.upperBounds();
+        Assertions.assertEquals(1, upperBound.size());
+        Assertions.assertSame(Integer.class, upperBound.iterator().next().type());
     }
 
     @Test

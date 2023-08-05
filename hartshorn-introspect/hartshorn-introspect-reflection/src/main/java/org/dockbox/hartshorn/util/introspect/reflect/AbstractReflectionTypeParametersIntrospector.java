@@ -34,7 +34,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
 
     @Override
     public Option<TypeView<?>> at(final int index) {
-        return this.atIndex(index).flatMap(TypeParameterView::upperBound);
+        return this.atIndex(index).flatMap(TypeParameterView::resolvedType);
     }
 
     @Override

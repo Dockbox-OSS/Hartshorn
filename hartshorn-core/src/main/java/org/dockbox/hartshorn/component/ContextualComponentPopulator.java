@@ -33,7 +33,6 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -146,10 +145,16 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     }
 
     private <T> void populateBeanCollectionField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
-        final Option<TypeView<?>> beanType = field.genericType().typeParameters().atIndex(0).flatMap(TypeParameterView::upperBound);
+        final Option<TypeView<?>> beanType = field.genericType()
+                .typeParameters()
+                .resolveFor(Collection.class)
+                .get(0) // TODO: Handle absent (perhaps throw an exception in resolveFor that can be handled? Needs resolveFor implementation)
+                .resolvedType();
+
         if (beanType.absent()) {
-            throw new IllegalStateException("Unable to determine instance type for field " + field.name() + " in " + type.name());
+            throw new ComponentPopulateException("Failed to populate field " + field.name() + " in " + type.qualifiedName() + ", could not resolve bean type", null);
         }
+
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get());
         if (field.annotations().has(Named.class))
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();

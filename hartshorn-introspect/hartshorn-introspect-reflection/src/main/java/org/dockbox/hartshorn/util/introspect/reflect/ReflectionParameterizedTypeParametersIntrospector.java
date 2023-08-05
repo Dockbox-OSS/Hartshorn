@@ -54,7 +54,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
         if (this.parameters == null) {
             final Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
             this.parameters = Arrays.stream(actualTypeArguments)
-                    .map(argument -> new ReflectionTypeParameterView(argument, this.type))
+                    .map(argument -> new ReflectionTypeParameterView(argument, this.type, this.introspector))
                     .collect(Collectors.toList());
         }
         return this.parameters;

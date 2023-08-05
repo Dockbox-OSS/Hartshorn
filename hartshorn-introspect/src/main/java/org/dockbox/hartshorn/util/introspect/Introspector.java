@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -39,6 +40,8 @@ public interface Introspector {
     TypeView<?> introspect(Type type);
 
     TypeView<?> introspect(ParameterizedType type);
+
+    <T> TypeView<T> introspect(GenericType<T> type);
 
     TypeView<?> introspect(String type);
 

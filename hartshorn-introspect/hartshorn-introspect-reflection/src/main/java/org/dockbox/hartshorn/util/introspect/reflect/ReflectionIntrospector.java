@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -107,6 +108,18 @@ public class ReflectionIntrospector implements Introspector {
     public TypeView<?> introspect(final ParameterizedType type) {
         // Do not use cache here, as the type is parameterized
         return new ReflectionTypeView<>(this, type);
+    }
+
+    @Override
+    public <T> TypeView<T> introspect(final GenericType<T> type) {
+        final Option<TypeView<T>> view = type.asClass()
+                .<Object>map(this::introspect)
+                .orCompute(() -> this.introspect(type.type()))
+                .adjust(TypeView.class);
+        if (view.present()) {
+            return view.get();
+        }
+        return this.voidType();
     }
 
     @Override

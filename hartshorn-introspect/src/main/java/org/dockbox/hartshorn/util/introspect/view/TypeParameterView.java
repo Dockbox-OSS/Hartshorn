@@ -10,15 +10,13 @@ public interface TypeParameterView extends View {
 
     Set<TypeParameterView> represents();
 
-    Option<TypeView<?>> upperBound();
+    Set<TypeView<?>> upperBounds();
+
+    Option<TypeView<?>> resolvedType();
 
     boolean isBounded();
 
     boolean isUnbounded();
-
-    boolean isExtends();
-
-    boolean isSuper();
 
     boolean isClass();
 
