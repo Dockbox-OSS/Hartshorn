@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -26,9 +27,23 @@ import java.util.List;
 
 public abstract class AbstractReflectionTypeParametersIntrospector implements TypeParametersIntrospector {
 
+    private final TypeView<?> type;
+    private final Introspector introspector;
+
     private List<TypeParameterView> outputParameters;
 
-    protected abstract TypeView<?> type();
+    protected AbstractReflectionTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
+        this.type = type;
+        this.introspector = introspector;
+    }
+
+    protected TypeView<?> type() {
+        return this.type;
+    }
+
+    protected Introspector introspector() {
+        return this.introspector;
+    }
 
     @Override
     public Option<TypeParameterView> atIndex(final int index) {
@@ -39,8 +54,16 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
 
     @Override
     public List<TypeParameterView> resolveFor(final Class<?> fromParentType) {
-        // TODO: Complex resolving, first needs .all() to be implemented
-        return null;
+        if (this.type().isChildOf(fromParentType)) {
+            final TypeView<?> parentType = this.introspector().introspect(fromParentType);
+            // No point in resolving if there are no type parameters
+            final TypeParametersIntrospector typeParameters = parentType.typeParameters();
+            if (typeParameters.count() > 0) {
+                final List<TypeParameterView> inputParameters = typeParameters.allInput();
+                // TODO: Resolve type parameters
+            }
+        }
+        return List.of();
     }
 
     @Override

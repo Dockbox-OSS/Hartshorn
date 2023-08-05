@@ -33,20 +33,17 @@ import java.util.stream.Collectors;
 
 public class ReflectionParameterizedTypeParametersIntrospector<T> extends AbstractReflectionTypeParametersIntrospector {
 
-    private final TypeView<T> type;
     private final ParameterizedType parameterizedType;
-    private final Introspector introspector;
 
     private MultiMap<Class<?>, TypeView<?>> interfaceTypeParameters;
     private List<TypeParameterView> parameters;
 
     public ReflectionParameterizedTypeParametersIntrospector(final TypeView<T> type, final ParameterizedType parameterizedType, final Introspector introspector) {
-        this.type = type;
+        super(type, introspector);
         this.parameterizedType = parameterizedType;
         if (parameterizedType != null && parameterizedType.getRawType() != type.type()) {
             throw new IllegalArgumentException("Type " + type.qualifiedName() + " is not the raw type of " + parameterizedType.getTypeName());
         }
-        this.introspector = introspector;
     }
 
     @Override
@@ -54,7 +51,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
         if (this.parameters == null) {
             final Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
             this.parameters = Arrays.stream(actualTypeArguments)
-                    .map(argument -> new ReflectionTypeParameterView(argument, this.type, this.introspector))
+                    .map(argument -> new ReflectionTypeParameterView(argument, this.type(), this.introspector()))
                     .collect(Collectors.toList());
         }
         return this.parameters;
@@ -64,14 +61,14 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     @Deprecated(forRemoval = true, since = "23.1")
     public List<TypeView<?>> from(final Class<?> fromInterface) {
         if (!fromInterface.isInterface()) throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
-        if (!this.type.isChildOf(fromInterface)) throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type.name());
+        if (!this.type().isChildOf(fromInterface)) throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type().name());
 
         if (this.interfaceTypeParameters == null) {
             this.interfaceTypeParameters = new SynchronizedArrayListMultiMap<>();
         }
 
         if (!this.interfaceTypeParameters.containsKey(fromInterface)) {
-            for (final Type genericSuper : this.type.type().getGenericInterfaces()) {
+            for (final Type genericSuper : this.type().type().getGenericInterfaces()) {
                 if (genericSuper instanceof ParameterizedType parameterized) {
                     final Type raw = parameterized.getRawType();
                     if (raw instanceof Class<?> clazz && fromInterface.equals(clazz)) {
@@ -90,21 +87,16 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
         return Arrays.stream(arguments)
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
-                    if (type instanceof Class<?> clazz) return this.introspector.introspect(clazz);
+                    if (type instanceof Class<?> clazz) return this.introspector().introspect(clazz);
                     else if (type instanceof WildcardType wildcard) {
                         if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
-                            return this.introspector.introspect(wildcard.getUpperBounds()[0]);
+                            return this.introspector().introspect(wildcard.getUpperBounds()[0]);
                         }
                         return new WildcardTypeView();
                     }
-                    else if (type instanceof ParameterizedType parameterized) return this.introspector.introspect(parameterized);
-                    else return this.introspector.introspect(Void.class);
+                    else if (type instanceof ParameterizedType parameterized) return this.introspector().introspect(parameterized);
+                    else return this.introspector().introspect(Void.class);
                 })
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    protected TypeView<?> type() {
-        return this.type;
     }
 }

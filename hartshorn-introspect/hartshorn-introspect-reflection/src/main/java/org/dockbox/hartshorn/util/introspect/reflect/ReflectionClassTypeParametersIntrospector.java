@@ -27,34 +27,25 @@ import java.util.stream.Collectors;
 
 public class ReflectionClassTypeParametersIntrospector extends AbstractReflectionTypeParametersIntrospector {
 
-    private final TypeView<?> type;
-    private final Introspector introspector;
-
     private List<TypeParameterView> inputParameters;
 
     public ReflectionClassTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
-        this.type = type;
-        this.introspector = introspector;
+        super(type, introspector);
     }
 
     @Override
+    @Deprecated(since = "23.1", forRemoval = true)
     public List<TypeView<?>> from(final Class<?> fromInterface) {
-        // TODO: Complex resolving, first needs .all() to be implemented
         return List.of();
     }
 
     @Override
     public List<TypeParameterView> allInput() {
         if (this.inputParameters == null) {
-            this.inputParameters = Arrays.stream(this.type.type().getTypeParameters())
-                    .map(parameter -> new ReflectionTypeParameterView(parameter, this.type, this.introspector))
+            this.inputParameters = Arrays.stream(this.type().type().getTypeParameters())
+                    .map(parameter -> new ReflectionTypeParameterView(parameter, this.type(), this.introspector()))
                     .collect(Collectors.toList());
         }
         return this.inputParameters;
-    }
-
-    @Override
-    protected TypeView<?> type() {
-        return this.type;
     }
 }
