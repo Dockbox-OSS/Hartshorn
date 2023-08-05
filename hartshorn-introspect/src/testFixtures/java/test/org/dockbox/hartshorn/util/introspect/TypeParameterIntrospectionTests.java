@@ -23,9 +23,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "InterfaceMayBeAnnotatedFunctional"})
 public abstract class TypeParameterIntrospectionTests {
@@ -109,5 +111,58 @@ public abstract class TypeParameterIntrospectionTests {
         final Set<TypeView<?>> upperBounds = parameterView.upperBounds();
         Assertions.assertEquals(1, upperBounds.size());
         Assertions.assertSame(Number.class, upperBounds.iterator().next().type());
+    }
+
+    @Test
+    void testInputRepresentingOutputVariable() {
+        final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
+        Assertions.assertSame(NumberPredicate.class, typeView.type());
+
+        final List<TypeParameterView> inputTypes = typeView.typeParameters().allInput();
+        Assertions.assertEquals(1, inputTypes.size());
+
+        final TypeParameterView parameterView = inputTypes.get(0);
+        Assertions.assertTrue(parameterView.isVariable());
+        Assertions.assertTrue(parameterView.resolvedType().absent());
+        Assertions.assertTrue(parameterView.isBounded());
+
+        final Set<TypeParameterView> represents = parameterView.represents();
+        Assertions.assertEquals(1, represents.size());
+
+        final TypeParameterView representing = represents.iterator().next();
+        Assertions.assertTrue(representing.isVariable());
+        Assertions.assertSame(Predicate.class, representing.declaredBy().type());
+    }
+
+    private interface NumberFunctionAndPredicate<U extends Number> extends Function<U, U>, Predicate<U> {}
+
+    @Test
+    void testInputRepresentingMultipleOutputVariables() {
+        final TypeView<NumberFunctionAndPredicate> typeView = this.introspector().introspect(NumberFunctionAndPredicate.class);
+        Assertions.assertSame(NumberFunctionAndPredicate.class, typeView.type());
+
+        final List<TypeParameterView> inputTypes = typeView.typeParameters().allInput();
+        Assertions.assertEquals(1, inputTypes.size());
+
+        final TypeParameterView parameterView = inputTypes.get(0);
+        Assertions.assertTrue(parameterView.isVariable());
+        Assertions.assertTrue(parameterView.resolvedType().absent());
+        Assertions.assertTrue(parameterView.isBounded());
+
+        final Set<TypeParameterView> represents = parameterView.represents();
+        Assertions.assertEquals(3, represents.size());
+
+        final Map<Class<?>, List<TypeParameterView>> representationsByType = represents.stream()
+                .collect(Collectors.groupingBy(typeParameterView -> typeParameterView.declaredBy().type()));
+        Assertions.assertTrue(representationsByType.containsKey(Function.class));
+        Assertions.assertTrue(representationsByType.containsKey(Predicate.class));
+
+        final List<TypeParameterView> functionRepresentations = representationsByType.get(Function.class);
+        Assertions.assertEquals(2, functionRepresentations.size());
+        Assertions.assertTrue(functionRepresentations.stream().allMatch(TypeParameterView::isVariable));
+
+        final List<TypeParameterView> predicateRepresentations = representationsByType.get(Predicate.class);
+        Assertions.assertEquals(1, predicateRepresentations.size());
+        Assertions.assertTrue(predicateRepresentations.iterator().next().isVariable());
     }
 }
