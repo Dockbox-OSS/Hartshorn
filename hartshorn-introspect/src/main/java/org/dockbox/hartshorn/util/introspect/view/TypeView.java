@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
@@ -120,4 +121,5 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
     PackageView packageInfo();
 
     TypeView<?> rawType();
+
 }

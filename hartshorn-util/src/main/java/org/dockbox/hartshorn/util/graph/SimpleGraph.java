@@ -29,19 +29,30 @@ public class SimpleGraph<T> implements Graph<T> {
 
     public SimpleGraph(final Set<GraphNode<T>> nodes) {
         this.nodes = new HashSet<>();
-        this.addRoots(nodes);
+        this.addRoots(Set.copyOf(nodes));
     }
 
     @Override
     public Set<GraphNode<T>> roots() {
         // Node could have been modified to no longer be a root, so filter out any non-root nodes
-        this.nodes.removeIf(node -> !node.isRoot());
+        this.nodes.removeIf(node -> {
+            if (node instanceof ContainableGraphNode<T> containable) {
+                return !containable.isRoot();
+            }
+            return false;
+        });
         return Set.copyOf(this.nodes);
     }
 
     @Override
     public void addRoot(final GraphNode<T> root) {
-        if (root.isRoot()) {
+        if (root instanceof ContainableGraphNode<T> containable) {
+            if (containable.isRoot()) {
+                this.nodes.add(containable);
+            }
+        }
+        else {
+            // If the node is not a ContainableGraphNode, then it is a root by default
             this.nodes.add(root);
         }
     }

@@ -67,7 +67,7 @@ public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> 
     private Set<GraphNode<T>> visitableChildren(final GraphNode<T> node, final Set<GraphNode<T>> visited) {
         final Set<GraphNode<T>> visitableChildren = new HashSet<>();
         for (final GraphNode<T> child : node.children()) {
-            if (visited.containsAll(child.parents())) {
+            if (child instanceof ContainableGraphNode<T> containable && visited.containsAll(containable.parents())) {
                 visitableChildren.add(child);
             }
         }

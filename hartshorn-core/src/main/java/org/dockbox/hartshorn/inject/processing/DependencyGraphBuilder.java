@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraph;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 
@@ -29,7 +30,7 @@ import java.util.Map;
 public class DependencyGraphBuilder {
 
     public Graph<DependencyContext<?>> buildDependencyGraph(final Iterable<DependencyContext<?>> providerContexts) {
-        final Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> nodes = this.createNodeMap(providerContexts);
+        final Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.createNodeMap(providerContexts);
         final Graph<DependencyContext<?>> graph = new SimpleGraph<>();
 
         for (final DependencyContext<?> providerContext : providerContexts) {
@@ -38,9 +39,9 @@ public class DependencyGraphBuilder {
         return graph;
     }
 
-    private static void buildSingleDependencyNode(final Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> nodes,
+    private static void buildSingleDependencyNode(final Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
                                                   final Graph<DependencyContext<?>> graph, final DependencyContext<?> providerContext) {
-        final GraphNode<DependencyContext<?>> node = nodes.get(providerContext.componentKey());
+        final MutableContainableGraphNode<DependencyContext<?>> node = nodes.get(providerContext.componentKey());
         graph.addRoot(node);
 
         for (final ComponentKey<?> dependency : providerContext.dependencies()) {
@@ -56,10 +57,10 @@ public class DependencyGraphBuilder {
         }
     }
 
-    public Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> createNodeMap(final Iterable<DependencyContext<?>> providerContexts) {
-        final Map<ComponentKey<?>, GraphNode<DependencyContext<?>>> nodes = new HashMap<>();
+    public Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> createNodeMap(final Iterable<DependencyContext<?>> providerContexts) {
+        final Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = new HashMap<>();
         for (final DependencyContext<?> providerContext : providerContexts) {
-            final GraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(providerContext);
+            final MutableContainableGraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(providerContext);
             nodes.put(providerContext.componentKey(), node);
         }
         return nodes;

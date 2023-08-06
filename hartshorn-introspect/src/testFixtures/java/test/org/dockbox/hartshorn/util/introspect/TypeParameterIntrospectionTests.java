@@ -16,13 +16,17 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -253,5 +257,47 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeParameterView outputParameter = outputParameters.get(0);
         Assertions.assertTrue(outputParameter.isOutputParameter());
         Assertions.assertFalse(outputParameter.isInputParameter());
+    }
+
+    @Test
+    void testResolveForSelfWithExplicitParameters() {
+        final TypeView<Collection<String>> typeView = this.introspector().introspect(new GenericType<>() {});
+        Assertions.assertSame(Collection.class, typeView.type());
+
+        final TypeParametersIntrospector typeParameters = typeView.typeParameters();
+        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Collection.class);
+        Assertions.assertEquals(1, collectionParameters.size());
+
+        final TypeParameterView collectionParameter = collectionParameters.get(0);
+        Assertions.assertFalse(collectionParameter.isVariable()); // Should not be 'E'
+        Assertions.assertSame(String.class, collectionParameter.resolvedType().get().type());
+    }
+
+    @Test
+    void testResolveForDirectParentWithExplicitParameters() {
+        final TypeView<Collection<String>> typeView = this.introspector().introspect(new GenericType<>() {});
+        Assertions.assertSame(Collection.class, typeView.type());
+
+        final TypeParametersIntrospector typeParameters = typeView.typeParameters();
+        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class);
+        Assertions.assertEquals(1, collectionParameters.size());
+
+        final TypeParameterView collectionParameter = collectionParameters.get(0);
+        Assertions.assertFalse(collectionParameter.isVariable()); // Should not be 'E'
+        Assertions.assertSame(String.class, collectionParameter.resolvedType().get().type());
+    }
+
+    @Test
+    void testResolveForIndirectParentWithExplicitParameters() {
+        final TypeView<LinkedList<String>> typeView = this.introspector().introspect(new GenericType<>() {});
+        Assertions.assertSame(LinkedList.class, typeView.type());
+
+        final TypeParametersIntrospector typeParameters = typeView.typeParameters();
+        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class);
+        Assertions.assertEquals(1, collectionParameters.size());
+
+        final TypeParameterView collectionParameter = collectionParameters.get(0);
+        Assertions.assertFalse(collectionParameter.isVariable()); // Should not be 'E'
+        Assertions.assertSame(String.class, collectionParameter.resolvedType().get().type());
     }
 }

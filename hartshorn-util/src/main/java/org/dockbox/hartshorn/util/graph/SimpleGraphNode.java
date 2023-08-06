@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleGraphNode<T> implements GraphNode<T> {
+public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
 
     private final T value;
     private final Set<GraphNode<T>> parents = new HashSet<>();
@@ -49,7 +49,9 @@ public class SimpleGraphNode<T> implements GraphNode<T> {
     public void addParent(final GraphNode<T> parent) {
         if (!this.parents.contains(parent)) {
             this.parents.add(parent);
-            parent.addChild(this);
+            if (parent instanceof MutableGraphNode<T> parentGraphNode) {
+                parentGraphNode.addChild(this);
+            }
         }
     }
 
@@ -62,7 +64,9 @@ public class SimpleGraphNode<T> implements GraphNode<T> {
     public void addChild(final GraphNode<T> child) {
         if (!this.children.contains(child)) {
             this.children.add(child);
-            child.addParent(this);
+            if (child instanceof MutableContainableGraphNode<T> childGraphNode) {
+                childGraphNode.addParent(this);
+            }
         }
     }
 

@@ -37,7 +37,7 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
     }
 
     @Override
-    public List<TypeParameterView> resolveFor(Class<?> fromParentType) {
+    public List<TypeParameterView> resolveInputFor(Class<?> fromParentType) {
         return Collections.emptyList();
     }
 

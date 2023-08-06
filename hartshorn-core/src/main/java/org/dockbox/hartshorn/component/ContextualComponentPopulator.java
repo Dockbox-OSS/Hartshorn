@@ -147,7 +147,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     private <T> void populateBeanCollectionField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
         final Option<TypeView<?>> beanType = field.genericType()
                 .typeParameters()
-                .resolveFor(Collection.class)
+                .resolveInputFor(Collection.class)
                 .get(0) // TODO: Handle absent (perhaps throw an exception in resolveFor that can be handled? Needs resolveFor implementation)
                 .resolvedType();
 

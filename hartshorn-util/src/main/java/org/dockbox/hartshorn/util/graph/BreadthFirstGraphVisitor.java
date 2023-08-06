@@ -50,7 +50,7 @@ public abstract class BreadthFirstGraphVisitor<T> extends AbstractGraphVisitor<T
         // Filter out nodes that have parents that haven't been visited yet, as they can't be visited yet
         // until their parents have been visited first.
         for (final GraphNode<T> node : nodes) {
-            if (!visited.containsAll(node.parents())) {
+            if (node instanceof ContainableGraphNode<T> containable && !visited.containsAll(containable.parents())) {
                 currentRow.remove(node);
             }
         }

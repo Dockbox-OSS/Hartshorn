@@ -17,8 +17,10 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.view.TypeHierarchyGraph;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -47,7 +49,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
 
     @Override
     public Option<TypeParameterView> atIndex(final int index) {
-        final List<TypeParameterView> parameters = this.all();
+        final List<TypeParameterView> parameters = this.allInput();
         if (parameters.size() > index) {
             return Option.of(parameters.get(index));
         }
@@ -55,17 +57,33 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public List<TypeParameterView> resolveFor(final Class<?> fromParentType) {
-        if (this.type().isChildOf(fromParentType)) {
+    public List<TypeParameterView> resolveInputFor(final Class<?> fromParentType) {
+        if (this.type().is(fromParentType)) {
+            return this.allInput();
+        }
+        else if (this.type().isChildOf(fromParentType)) {
             final TypeView<?> parentType = this.introspector().introspect(fromParentType);
-            // No point in resolving if there are no type parameters
             final TypeParametersIntrospector typeParameters = parentType.typeParameters();
+            // No point in resolving if there are no type parameters
             if (typeParameters.count() > 0) {
-                final List<TypeParameterView> inputParameters = typeParameters.allInput();
-                // TODO: Resolve type parameters
+                return this.tryResolveInputForParent(parentType);
             }
         }
         return List.of();
+    }
+
+    private List<TypeParameterView> tryResolveInputForParent(final TypeView<?> parent) {
+        final TypeHierarchyGraph typeHierarchy = TypeHierarchyGraph.of(this.type());
+        try {
+            final TypeParameterResolverGraphVisitor visitor = new TypeParameterResolverGraphVisitor(parent);
+            visitor.iterate(typeHierarchy);
+            return visitor.parameters();
+        }
+        catch (final GraphException e) {
+            // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
+            // it indicates something was unexpectedly modified in the implementation.
+            throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
+        }
     }
 
     @Override

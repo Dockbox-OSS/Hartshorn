@@ -60,14 +60,14 @@ public class SimpleGraphTest {
     private static Graph<String> createGraph() {
         final Graph<String> graph = new SimpleGraph<>();
 
-        final GraphNode<String> nodeA = new SimpleGraphNode<>("A");
-        final GraphNode<String> nodeB = new SimpleGraphNode<>("B");
-        final GraphNode<String> nodeC = new SimpleGraphNode<>("C");
-        final GraphNode<String> nodeD = new SimpleGraphNode<>("D");
-        final GraphNode<String> nodeE = new SimpleGraphNode<>("E");
-        final GraphNode<String> nodeF = new SimpleGraphNode<>("F");
-        final GraphNode<String> nodeG = new SimpleGraphNode<>("G");
-        final GraphNode<String> nodeH = new SimpleGraphNode<>("H");
+        final MutableContainableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
+        final MutableContainableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
+        final MutableContainableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
+        final MutableContainableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
+        final MutableContainableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
+        final MutableContainableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
+        final MutableContainableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
+        final MutableContainableGraphNode<String> nodeH = new SimpleGraphNode<>("H");
 
         nodeA.addChildren(List.of(nodeB, nodeC));
         nodeB.addChild(nodeD);
@@ -82,14 +82,14 @@ public class SimpleGraphTest {
 
     private static Graph<String> createTree() {
         final Graph<String> graph = new SimpleGraph<>();
-        final GraphNode<String> nodeA = new SimpleGraphNode<>("A");
-        final GraphNode<String> nodeB = new SimpleGraphNode<>("B");
-        final GraphNode<String> nodeC = new SimpleGraphNode<>("C");
-        final GraphNode<String> nodeD = new SimpleGraphNode<>("D");
-        final GraphNode<String> nodeE = new SimpleGraphNode<>("E");
-        final GraphNode<String> nodeF = new SimpleGraphNode<>("F");
-        final GraphNode<String> nodeG = new SimpleGraphNode<>("G");
-        final GraphNode<String> nodeH = new SimpleGraphNode<>("H");
+        final MutableContainableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
+        final MutableContainableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
+        final MutableContainableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
+        final MutableContainableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
+        final MutableContainableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
+        final MutableContainableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
+        final MutableContainableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
+        final MutableContainableGraphNode<String> nodeH = new SimpleGraphNode<>("H");
 
         nodeA.addChildren(List.of(nodeB, nodeC));
         nodeB.addChildren(List.of(nodeD, nodeE));
@@ -103,13 +103,13 @@ public class SimpleGraphTest {
 
     private static Graph<String> createUnknownRootsGraph() {
         final Graph<String> graph = new SimpleGraph<>();
-        final GraphNode<String> nodeA = new SimpleGraphNode<>("A");
-        final GraphNode<String> nodeB = new SimpleGraphNode<>("B");
-        final GraphNode<String> nodeC = new SimpleGraphNode<>("C");
-        final GraphNode<String> nodeD = new SimpleGraphNode<>("D");
-        final GraphNode<String> nodeE = new SimpleGraphNode<>("E");
-        final GraphNode<String> nodeF = new SimpleGraphNode<>("F");
-        final GraphNode<String> nodeG = new SimpleGraphNode<>("G");
+        final MutableContainableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
+        final MutableContainableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
+        final MutableContainableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
+        final MutableContainableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
+        final MutableContainableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
+        final MutableContainableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
+        final MutableContainableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
 
         nodeA.addChildren(List.of(nodeE, nodeF, nodeB));
         nodeB.addChild(nodeC);

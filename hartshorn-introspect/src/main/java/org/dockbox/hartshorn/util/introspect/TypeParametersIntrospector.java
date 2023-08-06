@@ -25,7 +25,7 @@ import java.util.List;
 public interface TypeParametersIntrospector {
 
     /**
-     * @deprecated use {@link #resolveFor(Class)} instead
+     * @deprecated use {@link #resolveInputFor(Class)} instead
      * @param fromInterface the interface to resolve the type parameters for
      * @return the list of type parameters
      */
@@ -40,7 +40,7 @@ public interface TypeParametersIntrospector {
     @Deprecated(forRemoval = true, since = "23.1")
     Option<TypeView<?>> at(int index);
 
-    List<TypeParameterView> resolveFor(final Class<?> fromParentType);
+    List<TypeParameterView> resolveInputFor(final Class<?> fromParentType);
 
     Option<TypeParameterView> atIndex(int index);
 
