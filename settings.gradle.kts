@@ -34,16 +34,7 @@ includeReconfigured(
         ":hartshorn-config",
         ":hartshorn-config:hartshorn-config-jackson",
         ":hartshorn-i18n",
-        ":hartshorn-events",
         ":hartshorn-commands",
-        ":hartshorn-cache",
-        ":hartshorn-cache:hartshorn-cache-caffeine",
-        ":hartshorn-jpa",
-        ":hartshorn-jpa:hartshorn-jpa-hibernate",
-        ":hartshorn-web",
-        ":hartshorn-web:hartshorn-web-jetty",
-        ":hartshorn-mvc",
-        ":hartshorn-mvc:hartshorn-mvc-freemarker",
         ":hartshorn-test-suite",
 )
 
