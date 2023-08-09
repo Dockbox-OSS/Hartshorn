@@ -28,7 +28,7 @@ import java.util.Set;
  * using {@link org.dockbox.hartshorn.proxy.constraint.CollectorProxyValidator#withDefaults()}. This constraint exists
  * as Groovy traits behave differently from Java interfaces, and are not supported by the proxying mechanism.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public class GroovyTraitConstraint implements ProxyConstraint {

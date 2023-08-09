@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.token;
  * metadata is immutable, as it is part of the lexical definition of a token.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class TokenMetaData {
 

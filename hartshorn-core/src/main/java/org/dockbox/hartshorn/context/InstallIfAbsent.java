@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * Other implementations may choose to ignore this annotation.
  *
  * @author Guus Lieben
- * @since 21.4
+ * @since 0.4.3
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

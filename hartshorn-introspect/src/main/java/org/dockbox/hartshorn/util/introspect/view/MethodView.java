@@ -34,7 +34,7 @@ import java.util.Collection;
  * @param <ReturnType> the type of the method's return type
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent>, GenericTypeView<ReturnType> {
 
@@ -114,28 +114,28 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isStatic();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isFinal();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isAbstract();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isDefault()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isDefault();
 
 }

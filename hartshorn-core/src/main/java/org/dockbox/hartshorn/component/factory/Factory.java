@@ -64,9 +64,9 @@ import java.lang.annotation.Target;
  *            ensures type safety.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
-@Deprecated(since = "23.1", forRemoval = true)
+@Deprecated(since = "0.5.0", forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(java.lang.annotation.ElementType.METHOD)
 public @interface Factory {

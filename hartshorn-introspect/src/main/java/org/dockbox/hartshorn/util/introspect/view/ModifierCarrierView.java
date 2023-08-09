@@ -25,7 +25,7 @@ public interface ModifierCarrierView extends View {
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isPublic()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     default boolean isPublic() {
         return this.modifiers().isPublic();
     }
@@ -34,7 +34,7 @@ public interface ModifierCarrierView extends View {
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isProtected()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     default boolean isProtected() {
         return this.modifiers().isProtected();
     }
@@ -43,7 +43,7 @@ public interface ModifierCarrierView extends View {
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isPrivate()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     default boolean isPrivate() {
         return this.modifiers().isPrivate();
     }
@@ -54,7 +54,7 @@ public interface ModifierCarrierView extends View {
      * @param modifier the modifier to check for
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean has(AccessModifier modifier);
 
     ElementModifiersIntrospector modifiers();

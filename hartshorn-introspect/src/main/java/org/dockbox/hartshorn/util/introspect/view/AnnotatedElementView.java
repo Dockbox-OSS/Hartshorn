@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
  * used to introspect the element's annotations, as well as its name and qualified name.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface AnnotatedElementView extends View {
 

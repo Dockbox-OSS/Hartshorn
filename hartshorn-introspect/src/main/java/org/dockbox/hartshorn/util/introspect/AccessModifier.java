@@ -35,7 +35,7 @@ import java.util.function.Predicate;
  * @see ModifierCarrierView
  * @see Member#getModifiers()
  * @author Guus Lieben
- * @since 21.5
+ * @since 0.4.4
  */
 public enum AccessModifier {
     /**

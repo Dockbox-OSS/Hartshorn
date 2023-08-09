@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * it is accessed for the first time.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ApplicationBoundNativeModule extends AbstractNativeModule {
 

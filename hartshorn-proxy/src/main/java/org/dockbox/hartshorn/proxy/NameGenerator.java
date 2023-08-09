@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.proxy;
  * of the {@link NameGenerator} interface.
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public interface NameGenerator {
 

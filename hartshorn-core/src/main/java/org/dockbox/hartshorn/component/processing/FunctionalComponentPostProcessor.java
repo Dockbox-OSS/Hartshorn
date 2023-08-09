@@ -36,7 +36,7 @@ public abstract class FunctionalComponentPostProcessor extends ComponentPostProc
      * {@link #postConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)} or
      * {@link #initializeComponent(ApplicationContext, Object, ComponentProcessingContext)}
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer<?> container, final ComponentProcessingContext<T> processingContext) {
         throw new UnsupportedOperationException("This method is deprecated and will be removed in a future release");
     }

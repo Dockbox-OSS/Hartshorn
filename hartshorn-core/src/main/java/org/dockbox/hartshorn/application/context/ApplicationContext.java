@@ -45,7 +45,7 @@ import org.slf4j.Logger;
  * its components. The implementation may choose to perform specific actions based on available
  * activators and properties.
  *
- * @since 21.1
+ * @since 0.4.0
  * @author Guus Lieben
  */
 @LogExclude

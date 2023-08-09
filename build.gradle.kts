@@ -46,7 +46,7 @@ apply {
     plugin("org.owasp.dependencycheck")
 }
 
-version = "22.5"
+version = "0.5.0"
 group = "org.dockbox.hartshorn"
 
 java {

@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @deprecated See {@link Factory}.
  */
-@Deprecated(since = "23.1", forRemoval = true)
+@Deprecated(since = "0.5.0", forRemoval = true)
 @InstallIfAbsent
 public class FactoryContext extends DefaultProvisionContext {
 

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * stacktraces when {@link #stacktraces()} is {@code true}.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
 

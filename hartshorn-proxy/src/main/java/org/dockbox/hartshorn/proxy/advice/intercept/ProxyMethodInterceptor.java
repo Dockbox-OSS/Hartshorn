@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
  *
  * @param <T> the type of the proxy
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface ProxyMethodInterceptor<T> {

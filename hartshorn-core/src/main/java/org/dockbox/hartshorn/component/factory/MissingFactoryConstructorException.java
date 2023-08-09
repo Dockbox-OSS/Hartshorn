@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 /**
  * @deprecated See {@link Factory}.
  */
-@Deprecated(since = "23.1", forRemoval = true)
+@Deprecated(since = "0.5.0", forRemoval = true)
 public class MissingFactoryConstructorException extends ApplicationRuntimeException {
 
     public MissingFactoryConstructorException(final ComponentKey<?> key, final ExecutableElementView<?> elementView) {

@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * parser which is able to parse complex expressions.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public class ComplexExpressionParserAdapter implements ExpressionParser {
 

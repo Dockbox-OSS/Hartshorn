@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.proxy;
  *
  * @param <T> The type of the delegate instance
  *
- * @since 22.4
+ * @since 0.4.12
  * @author Guus Lieben
  */
 public interface ModifiableProxyManager<T> extends ProxyManager<T> {

@@ -26,7 +26,7 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
  * with the {@link Level#ERROR} level.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public class LogbackErrorConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
     @Override

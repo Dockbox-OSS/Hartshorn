@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * names.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public enum StandardLibrary {
     MATH("math", MathLibrary.class),

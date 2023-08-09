@@ -90,7 +90,7 @@ import java.util.Stack;
  * found and reported early on, preventing potential runtime errors.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void> {
 

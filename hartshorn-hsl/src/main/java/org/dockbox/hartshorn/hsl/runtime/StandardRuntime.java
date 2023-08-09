@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
  * to allow each executor to be customized through standard DI principles.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  * @see ExpressionConditionContext
  */
 public class StandardRuntime extends AbstractScriptRuntime {

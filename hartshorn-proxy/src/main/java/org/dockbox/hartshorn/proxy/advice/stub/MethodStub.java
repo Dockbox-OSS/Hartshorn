@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.proxy.advice.stub;
  *
  * @param <T> The type of the proxy instance as defined by the owning {@link org.dockbox.hartshorn.proxy.ProxyFactory}
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @FunctionalInterface

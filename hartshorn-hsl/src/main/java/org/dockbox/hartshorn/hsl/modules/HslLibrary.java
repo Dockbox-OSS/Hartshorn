@@ -34,7 +34,7 @@ import java.util.Map;
  * {@link NativeFunctionStatement} or {@link ModuleStatement} is encountered.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class HslLibrary implements CallableNode {
 

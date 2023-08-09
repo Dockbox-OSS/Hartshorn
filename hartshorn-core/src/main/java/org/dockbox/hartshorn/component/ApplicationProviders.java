@@ -38,7 +38,7 @@ import jakarta.inject.Singleton;
  * for the application.
  *
  * @author Guus Lieben
- * @since 21.7
+ * @since 0.4.6
  */
 @Service
 @RequiresActivator(UseBootstrap.class)

@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * method will be cached immediately, and the same instance will be returned on subsequent calls.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })

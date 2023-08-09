@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  *             It is recommended to use Javassist instead, through the
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyMethodHandler}.
  */
-@Deprecated(since = "22.5")
+@Deprecated(since = "0.4.13")
 public class CglibProxyMethodInvokable implements Invokable {
 
     private final MethodProxy methodProxy;

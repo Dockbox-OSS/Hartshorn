@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * @param <T> The type of the value.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public class Some<T> implements Option<T> {
 

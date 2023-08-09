@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * reserved for internal use only.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public final class Null {
 

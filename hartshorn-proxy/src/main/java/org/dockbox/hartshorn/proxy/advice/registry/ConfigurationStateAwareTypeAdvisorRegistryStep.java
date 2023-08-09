@@ -31,7 +31,7 @@ import java.lang.reflect.Modifier;
  * @param <T> the type of the proxy object
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements StateAwareTypeAdvisorRegistryStep<S, T> {
 

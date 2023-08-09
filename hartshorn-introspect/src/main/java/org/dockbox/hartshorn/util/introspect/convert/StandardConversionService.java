@@ -71,7 +71,7 @@ import java.util.UUID;
  * </ul>
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public class StandardConversionService implements ConversionService, ConverterRegistry {
 

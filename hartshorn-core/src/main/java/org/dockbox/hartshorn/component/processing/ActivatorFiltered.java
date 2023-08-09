@@ -27,11 +27,11 @@ import java.lang.annotation.Annotation;
  * @param <A> The annotation which is used to indicate the activator.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  * @see ComponentPreProcessor
  * @see ComponentPostProcessor
  * @deprecated Use {@link RequiresActivator} instead
  */
-@Deprecated(forRemoval = true, since = "22.5")
+@Deprecated(forRemoval = true, since = "0.4.13")
 public interface ActivatorFiltered<A extends Annotation> {
 }

@@ -127,7 +127,7 @@ import java.util.stream.Collectors;
  * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<Void>, ContextCarrier {
 

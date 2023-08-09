@@ -41,7 +41,7 @@ package org.dockbox.hartshorn.component;
  * of scopes.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  * @see ComponentKey#scope()
  */
 @FunctionalInterface

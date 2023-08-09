@@ -30,7 +30,7 @@ import java.util.Collection;
  * @param <T> The type of the proxy instance
  * @param <R> The type of the return value of the method
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface MethodAdvisorResolver<T, R> {

@@ -27,7 +27,7 @@ import java.util.function.Function;
  *
  * @param <T> The type to convert to.
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
 

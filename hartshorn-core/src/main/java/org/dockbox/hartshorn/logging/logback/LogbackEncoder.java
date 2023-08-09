@@ -24,7 +24,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  * in the logback configuration, using the syntax {@code %process_id}.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  * @see LogbackPIDConverter
  */
 public class LogbackEncoder extends PatternLayoutEncoder {

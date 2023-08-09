@@ -27,7 +27,7 @@ import java.util.Set;
  * contexts which are later used to create a proxy. This container is used to store the contexts that are
  * created during the proxy creation process.
  *
- * @since 22.4
+ * @since 0.4.12
  * @author Guus Lieben
  */
 public class ProxyContextContainer extends DefaultContext {

@@ -22,7 +22,7 @@ import java.util.Locale;
  * Utility-class to easily build new {@link TokenMetaData} instances.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class TokenMetaDataBuilder {
 

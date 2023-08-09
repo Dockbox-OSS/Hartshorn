@@ -23,7 +23,7 @@ import java.util.Set;
  * This is useful to serve as middle layer between a {@link ConversionService} and a {@link ConverterRegistry}.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public interface ConverterCache {
 

@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
  * file target.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface File {
@@ -32,7 +32,7 @@ public @interface File {
      * The owner of the file, to act as synthetic hierarchical category.
      * @deprecated To be removed in a future release.
      */
-    @Deprecated(since = "22.4", forRemoval = true)
+    @Deprecated(since = "0.4.12", forRemoval = true)
     Class<?> owner() default Void.class;
 
     /**

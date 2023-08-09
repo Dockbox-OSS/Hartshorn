@@ -62,7 +62,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     }
 
     @Override
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     public List<TypeView<?>> from(final Class<?> fromInterface) {
         if (!fromInterface.isInterface()) {
             throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");

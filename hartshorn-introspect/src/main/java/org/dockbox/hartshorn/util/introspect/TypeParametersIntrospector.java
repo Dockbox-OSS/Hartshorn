@@ -29,7 +29,7 @@ public interface TypeParametersIntrospector {
      * @param fromInterface the interface to resolve the type parameters for
      * @return the list of type parameters
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     List<TypeView<?>> from(final Class<?> fromInterface);
 
     /**
@@ -37,7 +37,7 @@ public interface TypeParametersIntrospector {
      * @param index the index of the type parameter
      * @return the type parameter at the given index
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     Option<TypeView<?>> at(int index);
 
     List<TypeParameterView> resolveInputFor(final Class<?> fromParentType);

@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
  * {@link org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor} after the method invocation has been
  * performed. The validator is expected to return the valid result of the method invocation, or throw an exception.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @FunctionalInterface

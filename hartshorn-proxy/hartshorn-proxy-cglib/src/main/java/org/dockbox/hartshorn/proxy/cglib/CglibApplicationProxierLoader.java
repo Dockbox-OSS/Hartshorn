@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  *             It is recommended to use Javassist instead, through the
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxierLoader}.
  */
-@Deprecated(since = "23.1")
+@Deprecated(since = "0.5.0")
 @ServiceLoader(ApplicationProxierLoader.class)
 public class CglibApplicationProxierLoader implements ApplicationProxierLoader {
     @Override

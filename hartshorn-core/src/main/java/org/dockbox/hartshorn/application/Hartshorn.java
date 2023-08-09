@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.application;
  * The utility type to grant easy access to project metadata.
  *
  * @author Guus Lieben
- * @since 21.1
+ * @since 0.4.0
  */
 public final class Hartshorn {
 
@@ -28,18 +28,21 @@ public final class Hartshorn {
      * The default package prefix to use when scanning Hartshorn internals.
      */
     public static final String PACKAGE_PREFIX = "org.dockbox.hartshorn";
+
     /**
      * The (human-readable) display name of Hartshorn.
      */
     public static final String PROJECT_NAME = "Hartshorn";
+
     /**
      * The simplified identifier for Hartshorn-default identifiers.
      */
     public static final String PROJECT_ID = "hartshorn";
+
     /**
      * The semantic version of the current/latest release of Hartshorn
      */
-    public static final String VERSION = "22.5";
+    public static final String VERSION = "0.5.0";
 
     private Hartshorn() {}
 }

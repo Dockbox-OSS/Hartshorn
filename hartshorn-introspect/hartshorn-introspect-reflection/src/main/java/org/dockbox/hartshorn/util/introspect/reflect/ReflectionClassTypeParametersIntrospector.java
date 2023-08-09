@@ -34,7 +34,7 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
     }
 
     @Override
-    @Deprecated(since = "23.1", forRemoval = true)
+    @Deprecated(since = "0.5.0", forRemoval = true)
     public List<TypeView<?>> from(final Class<?> fromInterface) {
         return List.of();
     }

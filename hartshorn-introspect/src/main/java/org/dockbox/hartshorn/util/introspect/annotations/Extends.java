@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * extended annotation.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  * @see AliasFor
  */
 @Retention(RetentionPolicy.RUNTIME)

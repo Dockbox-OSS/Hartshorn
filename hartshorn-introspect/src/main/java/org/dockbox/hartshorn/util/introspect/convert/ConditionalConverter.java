@@ -25,7 +25,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * {@link DefaultValueProviderFactory} implementations.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public interface ConditionalConverter {
 

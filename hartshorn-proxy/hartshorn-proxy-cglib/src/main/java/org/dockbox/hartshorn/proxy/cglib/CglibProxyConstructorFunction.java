@@ -27,7 +27,7 @@ import java.lang.reflect.Constructor;
  *             It is recommended to use Javassist instead, through the
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyConstructorFunction}.
  */
-@Deprecated(since = "22.5")
+@Deprecated(since = "0.4.13")
 public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunction<T> {
 
     private final Class<T> type;

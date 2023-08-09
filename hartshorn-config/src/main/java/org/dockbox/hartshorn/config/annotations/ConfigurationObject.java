@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * marked with {@link Property#ignore()}, in which case the property is ignored.
  *
  * @author Guus Lieben
- * @since 22.3
+ * @since 0.4.11
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

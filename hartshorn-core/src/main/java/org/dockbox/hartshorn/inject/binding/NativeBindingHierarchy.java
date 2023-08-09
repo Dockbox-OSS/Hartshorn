@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  *
  * @param <C> The type of type to provide.
  * @author Guus Lieben
- * @since 21.4
+ * @since 0.4.3
  * @see BindingHierarchy
  */
 public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {

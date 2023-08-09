@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
  * @param <FieldType> The type of the field
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface FieldView<Parent, FieldType> extends AnnotatedElementView, ModifierCarrierView, GenericTypeView<FieldType> {
 
@@ -87,21 +87,21 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isStatic();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isFinal();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isTransient()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isTransient();
 
 }

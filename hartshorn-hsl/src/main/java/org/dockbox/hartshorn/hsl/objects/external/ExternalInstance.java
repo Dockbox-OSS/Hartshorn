@@ -37,7 +37,7 @@ import java.util.Map;
  * to the runtime.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ExternalInstance implements InstanceReference, ExternalObjectReference {
 

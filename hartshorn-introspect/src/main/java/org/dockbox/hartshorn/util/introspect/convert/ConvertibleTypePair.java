@@ -24,7 +24,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
  *
  * @see GenericConverter#convertibleTypes()
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
 

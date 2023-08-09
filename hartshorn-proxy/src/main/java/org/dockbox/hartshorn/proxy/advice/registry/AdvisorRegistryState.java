@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.proxy.advice.registry;
  * then the proxy is not required, and the original instance can be returned by the caller of the
  * {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface AdvisorRegistryState {

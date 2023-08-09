@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
  * @param <Parent> the type of the element's parent
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface ExecutableElementView<Parent> extends AnnotatedElementView, ModifierCarrierView {
 

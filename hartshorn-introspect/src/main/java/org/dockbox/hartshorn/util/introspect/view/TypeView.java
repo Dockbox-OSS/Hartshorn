@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
@@ -48,21 +47,21 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isAbstract();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isFinal();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isStatic();
 
     boolean isArray();

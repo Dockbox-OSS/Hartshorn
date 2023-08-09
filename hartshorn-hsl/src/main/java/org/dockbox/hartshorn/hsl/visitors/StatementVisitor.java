@@ -45,7 +45,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
  * @param <R> The return type for the visitor.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public interface StatementVisitor<R> {
     R visit(ExpressionStatement statement);

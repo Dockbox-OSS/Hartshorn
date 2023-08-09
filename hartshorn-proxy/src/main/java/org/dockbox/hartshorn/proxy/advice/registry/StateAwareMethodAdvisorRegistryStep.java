@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.proxy.advice.MethodAdvisorResolver;
  * @param <T> The type of the proxy instance as defined by the owning {@link AdvisorRegistry}
  * @param <R> The return type of the method
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface StateAwareMethodAdvisorRegistryStep<T, R> extends MethodAdvisorRegistryStep<T, R>, MethodAdvisorResolver<T, R> {

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  * A parameter loader that attempts to unproxy arguments for several common use cases. This loader is used by default
  * by the {@link ProxyAdvisorMethodInterceptor} and can be used as a reference for custom implementations.
  *
- * @since 22.4
+ * @since 0.4.12
  * @author Guus Lieben
  */
 public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ProxyParameterLoaderContext> {

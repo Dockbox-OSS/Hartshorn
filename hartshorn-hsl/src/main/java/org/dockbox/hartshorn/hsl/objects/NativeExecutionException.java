@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * to the active runtime.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class NativeExecutionException extends ApplicationException {
     public NativeExecutionException(final String message, final Throwable cause) {

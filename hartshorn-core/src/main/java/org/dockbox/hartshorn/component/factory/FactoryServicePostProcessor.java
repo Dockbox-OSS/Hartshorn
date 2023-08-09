@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * @deprecated See {@link Factory}.
  */
-@Deprecated(since = "23.1", forRemoval = true)
+@Deprecated(since = "0.5.0", forRemoval = true)
 public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory> {
 
     @Override

@@ -55,7 +55,7 @@ import javax.xml.transform.Result;
  * @param <T> the type of the (potential) value wrapped by the {@link Option} instance.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface Option<T> extends Iterable<T> {
 

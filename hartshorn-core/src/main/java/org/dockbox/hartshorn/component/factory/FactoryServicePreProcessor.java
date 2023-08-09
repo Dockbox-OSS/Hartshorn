@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * @deprecated See {@link Factory}.
  */
-@Deprecated(since = "23.1", forRemoval = true)
+@Deprecated(since = "0.5.0", forRemoval = true)
 public class FactoryServicePreProcessor extends ComponentPreProcessor {
 
     private static final Logger FACTORY_LOGGER = LoggerFactory.getLogger(UseFactoryServices.class);

@@ -38,7 +38,7 @@ import java.util.Map.Entry;
  *
  * @param <C> The type of type {@code C} that the hierarchy is for.
  * @author Guus Lieben
- * @since 21.4
+ * @since 0.4.3
  */
 public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>>>, ContextCarrier {
 

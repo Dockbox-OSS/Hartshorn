@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @see Extends
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface AnnotationLookup {
 

@@ -28,7 +28,7 @@ import java.util.Set;
  * the application.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public interface ClasspathResourceLocator {
 

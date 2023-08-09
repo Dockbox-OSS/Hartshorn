@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
  * {@code hartshorn.exceptions.stacktraces} property to enable or disable stacktraces.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public class EnvironmentDrivenApplicationConfigurator implements ApplicationConfigurator {
 

@@ -38,9 +38,9 @@ import java.lang.annotation.Target;
  * @see FactoryServicePostProcessor
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
-@Deprecated(since = "23.1", forRemoval = true)
+@Deprecated(since = "0.5.0", forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.CONSTRUCTOR)
 public @interface Bound {

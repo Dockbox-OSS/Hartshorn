@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
  * in the order of the specified {@link OrderedComponentProcessor#priority()} value.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public abstract non-sealed class ComponentPostProcessor implements ComponentProcessor {
 
@@ -140,7 +140,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      *             {@link #postConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)} instead
      *             of this method
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     public <T> T process(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
         throw new UnsupportedOperationException("This method is deprecated, use preConfigureComponent, initializeComponent and postConfigureComponent instead");
     }

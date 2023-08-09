@@ -31,7 +31,7 @@ import java.lang.reflect.Proxy;
  * proxies that are created through the standard Java API.
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public class NativeProxyLookup implements ProxyLookup {
 

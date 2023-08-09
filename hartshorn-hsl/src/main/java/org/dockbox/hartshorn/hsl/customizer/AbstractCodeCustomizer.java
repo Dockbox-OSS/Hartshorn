@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
  * {@link CodeCustomizer}'s {@link Phase}.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public abstract class AbstractCodeCustomizer implements CodeCustomizer {
 

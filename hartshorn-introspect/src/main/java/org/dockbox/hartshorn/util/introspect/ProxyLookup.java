@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * caution.
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public interface ProxyLookup {
 
