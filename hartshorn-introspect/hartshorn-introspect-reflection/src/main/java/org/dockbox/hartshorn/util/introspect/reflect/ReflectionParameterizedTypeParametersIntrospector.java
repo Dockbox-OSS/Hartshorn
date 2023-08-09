@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -37,7 +39,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     private final ParameterizedType parameterizedType;
 
     private MultiMap<Class<?>, TypeView<?>> interfaceTypeParameters;
-    private List<TypeParameterView> parameters;
+    private TypeParameterList parameters;
 
     public ReflectionParameterizedTypeParametersIntrospector(final TypeView<T> type, final ParameterizedType parameterizedType, final Introspector introspector) {
         super(type, introspector);
@@ -48,7 +50,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     }
 
     @Override
-    public List<TypeParameterView> allInput() {
+    public TypeParameterList allInput() {
         if (this.parameters == null) {
             final List<TypeParameterView> typeParameters = new ArrayList<>();
             final Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
@@ -56,7 +58,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
                 final Type actualTypeArgument = actualTypeArguments[i];
                 typeParameters.add(new ReflectionTypeParameterView(actualTypeArgument, this.type(), i, this.introspector()));
             }
-            this.parameters = List.copyOf(typeParameters);
+            this.parameters = new SimpleTypeParameterList(typeParameters);
         }
         return this.parameters;
     }

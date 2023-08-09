@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -37,8 +39,8 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
     }
 
     @Override
-    public List<TypeParameterView> resolveInputFor(Class<?> fromParentType) {
-        return Collections.emptyList();
+    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
+        return new SimpleTypeParameterList(List.of());
     }
 
     @Override
@@ -47,18 +49,18 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
     }
 
     @Override
-    public List<TypeParameterView> all() {
-        return Collections.emptyList();
+    public TypeParameterList all() {
+        return new SimpleTypeParameterList(List.of());
     }
 
     @Override
-    public List<TypeParameterView> allInput() {
-        return Collections.emptyList();
+    public TypeParameterList allInput() {
+        return new SimpleTypeParameterList(List.of());
     }
 
     @Override
-    public List<TypeParameterView> allOutput() {
-        return Collections.emptyList();
+    public TypeParameterList allOutput() {
+        return new SimpleTypeParameterList(List.of());
     }
 
     @Override

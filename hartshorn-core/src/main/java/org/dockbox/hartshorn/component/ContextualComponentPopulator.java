@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -148,16 +149,17 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         final Option<TypeView<?>> beanType = field.genericType()
                 .typeParameters()
                 .resolveInputFor(Collection.class)
-                .get(0) // TODO: Handle absent (perhaps throw an exception in resolveFor that can be handled? Needs resolveFor implementation)
-                .resolvedType();
+                .atIndex(0)
+                .flatMap(TypeParameterView::resolvedType);
 
         if (beanType.absent()) {
             throw new ComponentPopulateException("Failed to populate field " + field.name() + " in " + type.qualifiedName() + ", could not resolve bean type", null);
         }
 
         ComponentKey<?> beanKey = ComponentKey.of(beanType.get());
-        if (field.annotations().has(Named.class))
+        if (field.annotations().has(Named.class)) {
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
+        }
 
         final StaticComponentContext staticComponentContext = this.applicationContext().first(StaticComponentContext.CONTEXT_KEY).get();
         final List<?> beans = staticComponentContext.provider().all(beanKey);

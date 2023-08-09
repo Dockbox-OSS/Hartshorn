@@ -43,6 +43,7 @@ import org.dockbox.hartshorn.util.introspect.convert.support.StringToEnumConvert
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToPrimitiveConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -203,10 +204,15 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     protected <T, R> Class<R> getTypeParameter(final Class<T> fromType, final T converterFactory, final int parameterIndex) {
-        final List<TypeView<?>> parameters = this.introspector.introspect(converterFactory)
+        final Class<?> parameter = this.introspector.introspect(converterFactory)
                 .typeParameters()
-                .from(fromType);
-        return TypeUtils.adjustWildcards(parameters.get(parameterIndex).type(), Class.class);
+                .resolveInputFor(fromType)
+                .atIndex(parameterIndex)
+                .flatMap(TypeParameterView::resolvedType)
+                .map(TypeView::type)
+                .orElseThrow(() -> new IllegalArgumentException("Could not determine type parameter " + parameterIndex + " for " + converterFactory));
+
+        return TypeUtils.adjustWildcards(parameter, Class.class);
     }
 
     public static void registerCollectionConverters(final ConverterRegistry registry, final ConversionService service, final Introspector introspector) {

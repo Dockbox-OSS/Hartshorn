@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.view.TypeHierarchyGraph;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
@@ -32,7 +34,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     private final TypeView<?> type;
     private final Introspector introspector;
 
-    private List<TypeParameterView> outputParameters;
+    private TypeParameterList outputParameters;
 
     protected AbstractReflectionTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
         this.type = type;
@@ -49,15 +51,12 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
 
     @Override
     public Option<TypeParameterView> atIndex(final int index) {
-        final List<TypeParameterView> parameters = this.allInput();
-        if (parameters.size() > index) {
-            return Option.of(parameters.get(index));
-        }
-        return Option.empty();
+        final TypeParameterList parameters = this.allInput();
+        return parameters.atIndex(index);
     }
 
     @Override
-    public List<TypeParameterView> resolveInputFor(final Class<?> fromParentType) {
+    public TypeParameterList resolveInputFor(final Class<?> fromParentType) {
         if (this.type().is(fromParentType)) {
             return this.allInput();
         }
@@ -69,15 +68,15 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
                 return this.tryResolveInputForParent(parentType);
             }
         }
-        return List.of();
+        return new SimpleTypeParameterList(List.of());
     }
 
-    private List<TypeParameterView> tryResolveInputForParent(final TypeView<?> parent) {
+    private TypeParameterList tryResolveInputForParent(final TypeView<?> parent) {
         final TypeHierarchyGraph typeHierarchy = TypeHierarchyGraph.of(this.type());
         try {
             final TypeParameterResolverGraphVisitor visitor = new TypeParameterResolverGraphVisitor(parent);
             visitor.iterate(typeHierarchy);
-            return visitor.parameters();
+            return new SimpleTypeParameterList(visitor.parameters());
         }
         catch (final GraphException e) {
             // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
@@ -88,7 +87,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
 
     @Override
     public int count() {
-        return this.all().size();
+        return this.all().count();
     }
 
     @Override
@@ -97,20 +96,22 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public List<TypeParameterView> all() {
-        return CollectionUtilities.mergeList(this.allInput(), this.allOutput());
+    public TypeParameterList all() {
+        final List<TypeParameterView> allParameters = CollectionUtilities.mergeList(this.allInput().asList(), this.allOutput().asList());
+        return new SimpleTypeParameterList(allParameters);
     }
 
     @Override
-    public List<TypeParameterView> allOutput() {
+    public TypeParameterList allOutput() {
         if (this.outputParameters == null) {
             final TypeView<?> genericSuperClass = this.type().genericSuperClass();
-            final List<TypeParameterView> superInput = genericSuperClass.typeParameters().allInput();
+            final List<TypeParameterView> superInput = genericSuperClass.typeParameters().allInput().asList();
             final List<TypeParameterView> interfacesInput = this.type().genericInterfaces().stream()
                     .flatMap(genericInterface -> genericInterface.typeParameters().allInput().stream())
                     .toList();
 
-            this.outputParameters = CollectionUtilities.mergeList(superInput, interfacesInput);
+            final List<TypeParameterView> allInputParameters = CollectionUtilities.mergeList(superInput, interfacesInput);
+            this.outputParameters = new SimpleTypeParameterList(allInputParameters);
         }
         return this.outputParameters;
     }

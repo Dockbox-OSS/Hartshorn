@@ -427,7 +427,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
         final TypeParametersIntrospector typeParameters = this.typeParameters();
         if (typeParameters.count() > 0) {
-            collector.property("typeParameters").write(typeParameters.all().toArray(Reportable[]::new));
+            collector.property("typeParameters").write(typeParameters.all().asList().toArray(Reportable[]::new));
         }
     }
 

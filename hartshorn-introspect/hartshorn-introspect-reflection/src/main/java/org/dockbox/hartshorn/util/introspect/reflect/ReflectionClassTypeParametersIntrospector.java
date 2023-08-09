@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -27,7 +29,7 @@ import java.util.List;
 
 public class ReflectionClassTypeParametersIntrospector extends AbstractReflectionTypeParametersIntrospector {
 
-    private List<TypeParameterView> inputParameters;
+    private TypeParameterList inputParameters;
 
     public ReflectionClassTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
         super(type, introspector);
@@ -40,7 +42,7 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
     }
 
     @Override
-    public List<TypeParameterView> allInput() {
+    public TypeParameterList allInput() {
         if (this.inputParameters == null) {
             final List<TypeParameterView> parameters = new ArrayList<>();
             final TypeVariable<? extends Class<?>>[] typeParameters = this.type().type().getTypeParameters();
@@ -48,7 +50,7 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
                 final TypeVariable<?> typeParameter = typeParameters[i];
                 parameters.add(new ReflectionTypeParameterView(typeParameter, this.type(), i, this.introspector()));
             }
-            this.inputParameters = List.copyOf(parameters);
+            this.inputParameters = new SimpleTypeParameterList(parameters);
         }
         return this.inputParameters;
     }

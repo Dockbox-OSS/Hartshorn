@@ -68,7 +68,7 @@ public abstract class TypeParameterIntrospectionTests {
     }
 
     private void testVariableWithExpectedBounds(final TypeView<?> type, final Class<?>... expectedBounds) {
-        final List<TypeParameterView> inputTypes = type.typeParameters().allInput();
+        final List<TypeParameterView> inputTypes = type.typeParameters().allInput().asList();
         Assertions.assertEquals(1, inputTypes.size());
 
         final TypeParameterView parameterView = inputTypes.get(0);
@@ -90,7 +90,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<IntegerPredicate> typeView = this.introspector().introspect(IntegerPredicate.class);
         Assertions.assertSame(IntegerPredicate.class, typeView.type());
 
-        final List<TypeParameterView> outputTypes = typeView.typeParameters().allOutput();
+        final List<TypeParameterView> outputTypes = typeView.typeParameters().allOutput().asList();
         Assertions.assertEquals(1, outputTypes.size());
 
         final TypeParameterView parameterView = outputTypes.get(0);
@@ -105,7 +105,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
         Assertions.assertSame(NumberPredicate.class, typeView.type());
 
-        final List<TypeParameterView> outputTypes = typeView.typeParameters().allOutput();
+        final List<TypeParameterView> outputTypes = typeView.typeParameters().allOutput().asList();
         Assertions.assertEquals(1, outputTypes.size());
 
         final TypeParameterView parameterView = outputTypes.get(0);
@@ -123,7 +123,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
         Assertions.assertSame(NumberPredicate.class, typeView.type());
 
-        final List<TypeParameterView> inputTypes = typeView.typeParameters().allInput();
+        final List<TypeParameterView> inputTypes = typeView.typeParameters().allInput().asList();
         Assertions.assertEquals(1, inputTypes.size());
 
         final TypeParameterView parameterView = inputTypes.get(0);
@@ -146,7 +146,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberFunctionAndPredicate> typeView = this.introspector().introspect(NumberFunctionAndPredicate.class);
         Assertions.assertSame(NumberFunctionAndPredicate.class, typeView.type());
 
-        final List<TypeParameterView> inputTypes = typeView.typeParameters().allInput();
+        final List<TypeParameterView> inputTypes = typeView.typeParameters().allInput().asList();
         Assertions.assertEquals(1, inputTypes.size());
 
         final TypeParameterView parameterView = inputTypes.get(0);
@@ -175,7 +175,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
         Assertions.assertSame(NumberPredicate.class, typeView.type());
 
-        final List<TypeParameterView> outputParameters = typeView.typeParameters().allOutput();
+        final List<TypeParameterView> outputParameters = typeView.typeParameters().allOutput().asList();
         Assertions.assertEquals(1, outputParameters.size());
 
         final TypeParameterView outputParameter = outputParameters.get(0);
@@ -194,7 +194,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
         Assertions.assertSame(NumberPredicate.class, typeView.type());
 
-        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput();
+        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput().asList();
         Assertions.assertEquals(1, inputParameters.size());
 
         final TypeParameterView inputParameter = inputParameters.get(0);
@@ -213,7 +213,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<XYtoYXFunction> typeView = this.introspector().introspect(XYtoYXFunction.class);
         Assertions.assertSame(XYtoYXFunction.class, typeView.type());
 
-        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput();
+        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput().asList();
         Assertions.assertEquals(2, inputParameters.size());
 
         assertParameterAtIndexReferencesParameterAtIndex(typeView, 0, 1);
@@ -238,7 +238,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
         Assertions.assertSame(NumberPredicate.class, typeView.type());
 
-        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput();
+        final List<TypeParameterView> inputParameters = typeView.typeParameters().allInput().asList();
         Assertions.assertEquals(1, inputParameters.size());
 
         final TypeParameterView inputParameter = inputParameters.get(0);
@@ -251,7 +251,7 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeView<NumberPredicate> typeView = this.introspector().introspect(NumberPredicate.class);
         Assertions.assertSame(NumberPredicate.class, typeView.type());
 
-        final List<TypeParameterView> outputParameters = typeView.typeParameters().allOutput();
+        final List<TypeParameterView> outputParameters = typeView.typeParameters().allOutput().asList();
         Assertions.assertEquals(1, outputParameters.size());
 
         final TypeParameterView outputParameter = outputParameters.get(0);
@@ -265,7 +265,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertSame(Collection.class, typeView.type());
 
         final TypeParametersIntrospector typeParameters = typeView.typeParameters();
-        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Collection.class);
+        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Collection.class).asList();
         Assertions.assertEquals(1, collectionParameters.size());
 
         final TypeParameterView collectionParameter = collectionParameters.get(0);
@@ -279,7 +279,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertSame(Collection.class, typeView.type());
 
         final TypeParametersIntrospector typeParameters = typeView.typeParameters();
-        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class);
+        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class).asList();
         Assertions.assertEquals(1, collectionParameters.size());
 
         final TypeParameterView collectionParameter = collectionParameters.get(0);
@@ -293,7 +293,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertSame(LinkedList.class, typeView.type());
 
         final TypeParametersIntrospector typeParameters = typeView.typeParameters();
-        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class);
+        final List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class).asList();
         Assertions.assertEquals(1, collectionParameters.size());
 
         final TypeParameterView collectionParameter = collectionParameters.get(0);

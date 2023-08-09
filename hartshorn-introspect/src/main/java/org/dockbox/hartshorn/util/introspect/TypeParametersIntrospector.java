@@ -40,15 +40,15 @@ public interface TypeParametersIntrospector {
     @Deprecated(forRemoval = true, since = "0.5.0")
     Option<TypeView<?>> at(int index);
 
-    List<TypeParameterView> resolveInputFor(final Class<?> fromParentType);
+    TypeParameterList resolveInputFor(final Class<?> fromParentType);
 
     Option<TypeParameterView> atIndex(int index);
 
-    List<TypeParameterView> all();
+    TypeParameterList all();
 
-    List<TypeParameterView> allInput();
+    TypeParameterList allInput();
 
-    List<TypeParameterView> allOutput();
+    TypeParameterList allOutput();
 
     int count();
 
