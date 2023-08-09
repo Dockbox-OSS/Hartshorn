@@ -23,17 +23,15 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
-import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +43,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Simple implementation of {@link CommandExecutorContext} targeting {@link MethodView} based executors.
  */
-@Posting({ CommandEvent.Before.class, CommandEvent.After.class })
 public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {
 
     private final MethodView<T, ?> method;
