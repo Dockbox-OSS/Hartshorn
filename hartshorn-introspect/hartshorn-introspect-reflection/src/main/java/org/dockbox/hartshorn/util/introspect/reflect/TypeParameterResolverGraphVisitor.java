@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.DepthFirstGraphVisitor;
 import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -54,7 +55,7 @@ public class TypeParameterResolverGraphVisitor extends DepthFirstGraphVisitor<Ty
             return false;
         }
 
-        final List<TypeParameterView> outputParameters = type.typeParameters().allOutput();
+        final TypeParameterList outputParameters = type.typeParameters().allOutput();
         final Set<TypeParameterView> consumedByParent = outputParameters.stream()
                 .filter(parameter -> parameter.consumedBy().is(this.lookForParent.type()))
                 .collect(Collectors.toSet());

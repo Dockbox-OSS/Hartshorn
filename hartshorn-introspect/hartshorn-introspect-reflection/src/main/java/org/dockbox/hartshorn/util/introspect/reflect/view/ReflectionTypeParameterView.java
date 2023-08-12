@@ -231,11 +231,20 @@ public class ReflectionTypeParameterView implements TypeParameterView {
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-
+        // TODO: Implement me!
     }
 
     @Override
     public String name() {
         return this.type.getTypeName();
+    }
+
+    @Override
+    public String toString() {
+        String declaredBy = this.declaredBy().name();
+        String consumedBy = this.consumedBy().name();
+        String name = this.name();
+
+        return "TypeParameter(name=" + name + ", declaredBy=" + declaredBy + ", consumedBy=" + consumedBy + ")";
     }
 }

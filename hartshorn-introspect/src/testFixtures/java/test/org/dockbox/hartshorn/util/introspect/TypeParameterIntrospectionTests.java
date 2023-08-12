@@ -17,7 +17,9 @@
 package test.org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.collections.BiMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -299,5 +301,47 @@ public abstract class TypeParameterIntrospectionTests {
         final TypeParameterView collectionParameter = collectionParameters.get(0);
         Assertions.assertFalse(collectionParameter.isVariable()); // Should not be 'E'
         Assertions.assertSame(String.class, collectionParameter.resolvedType().get().type());
+    }
+
+    @Test
+    void testOutputAsMapResolvesAllToParent() {
+        final TypeView<NumberFunctionAndPredicate> typeView = this.introspector().introspect(NumberFunctionAndPredicate.class);
+        Assertions.assertSame(NumberFunctionAndPredicate.class, typeView.type());
+
+        final TypeParametersIntrospector typeParameters = typeView.typeParameters();
+        final TypeParameterList outputParameters = typeParameters.allOutput();
+        final BiMultiMap<TypeParameterView, TypeParameterView> multiMap = outputParameters.asMap();
+        // Should be 1:1 mappings, so the size should be the same
+        Assertions.assertEquals(outputParameters.count(), multiMap.size());
+
+        final Set<TypeParameterView> keys = multiMap.keySet();
+        Assertions.assertEquals(outputParameters.count(), keys.size());
+
+        final Collection<TypeParameterView> values = multiMap.allValues();
+        // Output parameters should only map to the input parameters of their target types
+        Assertions.assertEquals(outputParameters.count(), values.size());
+    }
+
+    @Test
+    void testInputAsMapResolvesAllToOutput() {
+        final TypeView<NumberFunctionAndPredicate> typeView = this.introspector().introspect(NumberFunctionAndPredicate.class);
+        Assertions.assertSame(NumberFunctionAndPredicate.class, typeView.type());
+
+        final TypeParametersIntrospector typeParameters = typeView.typeParameters();
+        final TypeParameterList inputParameters = typeParameters.allInput();
+
+        final BiMultiMap<TypeParameterView, TypeParameterView> multiMap = inputParameters.asMap();
+        final Set<TypeParameterView> keys = multiMap.keySet();
+        // Note: unline output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the number of
+        // output parameters), so the size of the map will be different, but the keys should be the same
+        Assertions.assertEquals(inputParameters.count(), keys.size());
+
+        Assertions.assertEquals(1, keys.size());
+        final Collection<TypeParameterView> values = multiMap.get(keys.iterator().next());
+        final TypeParameterList outputParameters = typeParameters.allOutput();
+        Assertions.assertEquals(outputParameters.count(), values.size());
+
+        final List<TypeParameterView> outputParametersList = outputParameters.asList();
+        Assertions.assertTrue(values.containsAll(outputParametersList));
     }
 }
