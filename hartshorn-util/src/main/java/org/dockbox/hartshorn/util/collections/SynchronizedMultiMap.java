@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> {
@@ -45,36 +43,6 @@ public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> 
 
     protected Map<K, Collection<V>> createEmptyMap() {
         return new HashMap<>();
-    }
-
-    public static class SynchronizedArrayListMultiMap<K, V> extends SynchronizedMultiMap<K, V> {
-
-        public SynchronizedArrayListMultiMap() {
-        }
-
-        public SynchronizedArrayListMultiMap(final MultiMap<K, V> map) {
-            super(map);
-        }
-
-        @Override
-        protected Collection<V> createEmptyCollection() {
-            return new ArrayList<>();
-        }
-    }
-
-    public static class SynchronizedHashSetMultiMap<K, V> extends SynchronizedMultiMap<K, V> {
-
-        public SynchronizedHashSetMultiMap() {
-        }
-
-        public SynchronizedHashSetMultiMap(final MultiMap<K, V> map) {
-            super(map);
-        }
-
-        @Override
-        protected Collection<V> createEmptyCollection() {
-            return new HashSet<>();
-        }
     }
 
 }

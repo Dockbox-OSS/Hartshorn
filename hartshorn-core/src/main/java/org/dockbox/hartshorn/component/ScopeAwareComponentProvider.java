@@ -29,8 +29,8 @@ import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.HashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 

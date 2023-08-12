@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 

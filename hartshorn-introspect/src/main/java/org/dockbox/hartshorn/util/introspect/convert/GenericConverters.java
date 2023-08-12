@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 
 import java.util.ArrayList;
 import java.util.HashSet;

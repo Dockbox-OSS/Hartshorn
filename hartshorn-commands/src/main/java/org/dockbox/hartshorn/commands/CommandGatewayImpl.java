@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;

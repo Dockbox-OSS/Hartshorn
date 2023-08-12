@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;

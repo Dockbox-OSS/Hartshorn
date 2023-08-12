@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;

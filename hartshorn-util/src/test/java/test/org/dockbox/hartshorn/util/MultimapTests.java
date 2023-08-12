@@ -17,13 +17,13 @@
 package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ArrayListMultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.HashSetMultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedArrayListMultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedMultiMap.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
