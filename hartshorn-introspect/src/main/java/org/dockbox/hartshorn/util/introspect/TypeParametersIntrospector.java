@@ -50,6 +50,8 @@ public interface TypeParametersIntrospector {
 
     TypeParameterList allOutput();
 
+    TypeParameterList outputFor(final Class<?> fromParentType);
+
     int count();
 
 }

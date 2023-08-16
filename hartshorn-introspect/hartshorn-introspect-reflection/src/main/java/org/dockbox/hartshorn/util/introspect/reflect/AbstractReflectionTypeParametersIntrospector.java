@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
+import org.dockbox.hartshorn.util.graph.GraphInverter;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -34,6 +36,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     private final TypeView<?> type;
     private final Introspector introspector;
 
+    private TypeHierarchyGraph typeHierarchy;
     private TypeParameterList outputParameters;
 
     protected AbstractReflectionTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
@@ -72,17 +75,30 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     private TypeParameterList tryResolveInputForParent(final TypeView<?> parent) {
-        final TypeHierarchyGraph typeHierarchy = TypeHierarchyGraph.of(this.type());
-        try {
-            final TypeParameterResolverGraphVisitor visitor = new TypeParameterResolverGraphVisitor(parent);
-            visitor.iterate(typeHierarchy);
-            return new SimpleTypeParameterList(visitor.parameters());
+        if (this.type.isChildOf(parent.type())) {
+            final TypeHierarchyGraph typeHierarchy = this.getTypeHierarchy();
+            try {
+                final Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(typeHierarchy, node -> node.type() == parent.type());
+                final TypeParameterResolverGraphVisitor visitor = new TypeParameterResolverGraphVisitor(parent);
+                visitor.iterate(inverted);
+                return new SimpleTypeParameterList(visitor.parameters());
+            }
+            catch (final GraphException e) {
+                // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
+                // it indicates something was unexpectedly modified in the implementation.
+                throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
+            }
         }
-        catch (final GraphException e) {
-            // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
-            // it indicates something was unexpectedly modified in the implementation.
-            throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
+        else {
+            return new SimpleTypeParameterList(List.of());
         }
+    }
+
+    private TypeHierarchyGraph getTypeHierarchy() {
+        if (this.typeHierarchy == null) {
+            this.typeHierarchy = TypeHierarchyGraph.of(this.type());
+        }
+        return this.typeHierarchy;
     }
 
     @Override
@@ -114,5 +130,16 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
             this.outputParameters = new SimpleTypeParameterList(allInputParameters);
         }
         return this.outputParameters;
+    }
+
+    @Override
+    public TypeParameterList outputFor(final Class<?> fromParentType) {
+        if (this.type().isChildOf(fromParentType)) {
+            final List<TypeParameterView> consumedByParent = this.allOutput().stream()
+                    .filter(parameter -> parameter.consumedBy().is(fromParentType))
+                    .toList();
+            return new SimpleTypeParameterList(consumedByParent);
+        }
+        return new SimpleTypeParameterList(List.of());
     }
 }

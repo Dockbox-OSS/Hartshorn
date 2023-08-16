@@ -16,30 +16,25 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.DepthFirstGraphVisitor;
+import org.dockbox.hartshorn.util.graph.Graph;
+import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TypeParameterResolverGraphVisitor extends DepthFirstGraphVisitor<TypeView<?>> {
 
     private final TypeView<?> lookForParent;
     private final TypeParameterView[] parameters;
-    private final int total;
-    private int discovered = 0;
 
     public TypeParameterResolverGraphVisitor(final TypeView<?> lookForParent) {
         this.lookForParent = lookForParent;
-        this.total = lookForParent.typeParameters().count();
-        this.parameters = new TypeParameterView[this.total];
+        this.parameters = new TypeParameterView[lookForParent.typeParameters().count()];
     }
 
     public List<TypeParameterView> parameters() {
@@ -48,48 +43,23 @@ public class TypeParameterResolverGraphVisitor extends DepthFirstGraphVisitor<Ty
     }
 
     @Override
-    protected boolean visit(final GraphNode<TypeView<?>> node) {
-        final TypeView<?> type = node.value();
-        if (!type.isChildOf(this.lookForParent.type())) {
-            // Type is not a child of the parent type, no need to continue
-            return false;
+    public Set<GraphNode<TypeView<?>>> iterate(final Graph<TypeView<?>> graph) throws GraphException {
+        final Set<GraphNode<TypeView<?>>> roots = graph.roots();
+        if (roots.size() != 1) {
+            throw new GraphException("Expected exactly one root node, found " + roots.size());
+        }
+        final GraphNode<TypeView<?>> root = roots.iterator().next();
+        // Compare type, not view, as the view is likely parameterized and thus a different non-equal instance
+        if (root.value().type() != this.lookForParent.type()) {
+            throw new GraphException("Expected root node to be " + this.lookForParent.type().getName() + ", found " + root.value().type().getName());
         }
 
-        final TypeParameterList outputParameters = type.typeParameters().allOutput();
-        final Set<TypeParameterView> consumedByParent = outputParameters.stream()
-                .filter(parameter -> parameter.consumedBy().is(this.lookForParent.type()))
-                .collect(Collectors.toSet());
+        return super.iterate(graph);
+    }
 
-        if (consumedByParent.isEmpty()) {
-            // Haven't found the type parameter yet, continue searching the graph
-            return true;
-        }
-
-        for (TypeParameterView parameterView : consumedByParent) {
-            // Don't waste time looking up the same parameter twice
-            if (this.parameters[parameterView.index()] == null) {
-                if (parameterView.isVariable()) {
-                    final Option<TypeParameterView> inputParameter = type.typeParameters().atIndex(parameterView.index());
-                    if (inputParameter.present()) {
-                        parameterView = inputParameter.get();
-                    }
-                }
-                final Option<TypeView<?>> resolvedType = parameterView.resolvedType();
-                if (resolvedType.present()) {
-                    this.parameters[parameterView.index()] = parameterView;
-                    this.discovered++;
-                }
-                else {
-                    final ContainableGraphNode<TypeView<?>> mutableContainableGraphNode = (ContainableGraphNode<TypeView<?>>) node;
-                    Set<GraphNode<TypeView<?>>> parents = mutableContainableGraphNode.parents();
-                    assert parents.size() == 1; // Can be more :) ...
-                    // TODO: Resolve first concrete parent parameter (output->input already possible, needs input->output...)
-                    // Resolve to child, as the type parameter is not declared by the current type
-                }
-            }
-        }
-
-        // If all parameters have been resolved, we can stop searching
-        return this.discovered < this.total;
+    @Override
+    protected boolean visit(final GraphNode<TypeView<?>> node) throws GraphException {
+        // TODO: Iterate through
+        return false;
     }
 }

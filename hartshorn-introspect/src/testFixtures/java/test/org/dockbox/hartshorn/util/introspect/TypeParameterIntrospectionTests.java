@@ -332,7 +332,7 @@ public abstract class TypeParameterIntrospectionTests {
 
         final BiMultiMap<TypeParameterView, TypeParameterView> multiMap = inputParameters.asMap();
         final Set<TypeParameterView> keys = multiMap.keySet();
-        // Note: unline output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the number of
+        // Note: unlike output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the number of
         // output parameters), so the size of the map will be different, but the keys should be the same
         Assertions.assertEquals(inputParameters.count(), keys.size());
 

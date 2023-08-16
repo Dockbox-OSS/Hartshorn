@@ -64,6 +64,11 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
     }
 
     @Override
+    public TypeParameterList outputFor(Class<?> fromParentType) {
+        return new SimpleTypeParameterList(List.of());
+    }
+
+    @Override
     public int count() {
         return 0;
     }
