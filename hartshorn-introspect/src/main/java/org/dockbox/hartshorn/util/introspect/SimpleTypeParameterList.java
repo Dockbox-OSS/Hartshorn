@@ -48,6 +48,11 @@ public class SimpleTypeParameterList implements TypeParameterList {
     }
 
     @Override
+    public boolean isEmpty() {
+        return this.typeParameters.isEmpty();
+    }
+
+    @Override
     public List<TypeParameterView> asList() {
         return List.copyOf(this.typeParameters);
     }

@@ -30,11 +30,15 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractReflectionTypeParametersIntrospector implements TypeParametersIntrospector {
 
     private final TypeView<?> type;
     private final Introspector introspector;
+
+    private final Map<Class<?>, TypeParameterList> resolvedParameters = new ConcurrentHashMap<>();
 
     private TypeHierarchyGraph typeHierarchy;
     private TypeParameterList outputParameters;
@@ -76,18 +80,23 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
 
     private TypeParameterList tryResolveInputForParent(final TypeView<?> parent) {
         if (this.type.isChildOf(parent.type())) {
-            final TypeHierarchyGraph typeHierarchy = this.getTypeHierarchy();
-            try {
-                final Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(typeHierarchy, node -> node.type() == parent.type());
-                final TypeParameterResolverGraphVisitor visitor = new TypeParameterResolverGraphVisitor(parent);
-                visitor.iterate(inverted);
-                return new SimpleTypeParameterList(visitor.parameters());
-            }
-            catch (final GraphException e) {
-                // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
-                // it indicates something was unexpectedly modified in the implementation.
-                throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
-            }
+            return this.resolvedParameters.computeIfAbsent(parent.type(), parentType -> {
+                final TypeHierarchyGraph typeHierarchy = this.getTypeHierarchy();
+                try {
+                    final Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(typeHierarchy, node -> node.type() == parentType);
+                    final TypeParameterResolver visitor = new TypeParameterResolver(parent);
+                    final List<TypeParameterView> parameters = visitor.tryResolveFromGraph(inverted);
+                    return new SimpleTypeParameterList(parameters);
+                }
+                catch (final GraphException e) {
+                    throw new IllegalStateException("Unexpected graph exception while inverting type hierarchy", e);
+                }
+                catch (final TypeParameterResolutionException e) {
+                    // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
+                    // it indicates something was unexpectedly modified in the implementation.
+                    throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
+                }
+            });
         }
         else {
             return new SimpleTypeParameterList(List.of());

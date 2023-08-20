@@ -29,6 +29,8 @@ public interface TypeParameterList extends Iterable<TypeParameterView> {
 
     int count();
 
+    boolean isEmpty();
+
     List<TypeParameterView> asList();
 
     /**

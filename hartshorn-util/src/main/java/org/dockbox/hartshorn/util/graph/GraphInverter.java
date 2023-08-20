@@ -39,11 +39,22 @@ public class GraphInverter {
         }
 
         // Create a parent-less copy of the found node, otherwise it is not a valid root node
-        final MutableGraphNode<T> graphNode = new SimpleGraphNode<>(foundNode.value());
-        // TODO: Invert entire graph
-//        graphNode.addChildren(foundNode.parents());
-
+        final MutableGraphNode<T> invertedOrigin = new SimpleGraphNode<>(foundNode.value());
+        final GraphNode<T> graphNode = this.invertNode(foundNode, invertedOrigin);
         inverted.addRoot(graphNode);
         return inverted;
+    }
+
+    private <T> GraphNode<T> invertNode(final GraphNode<T> originalNode, final MutableGraphNode<T> invertedNode) {
+        if (originalNode instanceof ContainableGraphNode<T> containable) {
+            for (final GraphNode<T> parent : containable.parents()) {
+                final MutableGraphNode<T> invertedParent = new SimpleGraphNode<>(parent.value());
+                // Only set children, do not set parents, as this would create relations that are not relevant
+                // considering the new graph root.
+                invertedNode.addChild(invertedParent);
+                this.invertNode(parent, invertedParent);
+            }
+        }
+        return invertedNode;
     }
 }

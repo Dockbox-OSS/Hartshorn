@@ -92,6 +92,30 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     }
 
     @Override
+    public Option<TypeParameterView> definition() {
+        if (this.isOutputParameter() && this.isVariable()) {
+            final TypeVariable<?> typeVariable = (TypeVariable<?>) this.type;
+            final TypeVariable<? extends Class<?>>[] typeParameters = this.declaredBy.type().getTypeParameters();
+            int index = -1;
+            for (int i = 0; i < typeParameters.length; i++) {
+                final TypeVariable<? extends Class<?>> typeParameter = typeParameters[i];
+                if (typeParameter == typeVariable) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) {
+                throw new IllegalStateException("Could not find type parameter " + typeVariable.getName() + " in " + this.declaredBy.name());
+            }
+            final TypeParameterView view = new ReflectionTypeParameterView(typeVariable, this.declaredBy, index, this.introspector);
+            return Option.of(view);
+        }
+        else {
+            return Option.empty();
+        }
+    }
+
+    @Override
     public Set<TypeParameterView> represents() {
         if (this.represents == null) {
             if (this.type instanceof TypeVariable<?> typeVariable) {
@@ -241,9 +265,9 @@ public class ReflectionTypeParameterView implements TypeParameterView {
 
     @Override
     public String toString() {
-        String declaredBy = this.declaredBy().name();
-        String consumedBy = this.consumedBy().name();
-        String name = this.name();
+        final String declaredBy = this.declaredBy().name();
+        final String consumedBy = this.consumedBy().name();
+        final String name = this.name();
 
         return "TypeParameter(name=" + name + ", declaredBy=" + declaredBy + ", consumedBy=" + consumedBy + ")";
     }
