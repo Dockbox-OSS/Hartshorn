@@ -369,21 +369,21 @@ public abstract class IntrospectorTests {
         final TypeView<?> first = parameter.genericType();
 
         Assertions.assertTrue(first.is(List.class));
-        Assertions.assertEquals(1, first.typeParameters().count());
+        Assertions.assertEquals(1, first.typeParameters().allInput().count());
 
         final TypeView<?> second = first.typeParameters().atIndex(0)
                 .orElseGet(Assertions::fail)
                 .resolvedType().orNull();
         Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(List.class));
-        Assertions.assertEquals(1, second.typeParameters().count());
+        Assertions.assertEquals(1, second.typeParameters().allInput().count());
 
         final TypeView<?> third = second.typeParameters().atIndex(0)
                 .orElseGet(Assertions::fail)
                 .resolvedType().orNull();
         Assertions.assertNotNull(third);
         Assertions.assertTrue(third.is(String.class));
-        Assertions.assertEquals(0, third.typeParameters().count());
+        Assertions.assertEquals(0, third.typeParameters().allInput().count());
     }
 
     @SuppressWarnings("unused") // Used by genericTypeTests
@@ -406,7 +406,7 @@ public abstract class IntrospectorTests {
         final TypeView<?> first = parameter.genericType();
 
         Assertions.assertTrue(first.is(List.class));
-        Assertions.assertEquals(1, first.typeParameters().count());
+        Assertions.assertEquals(1, first.typeParameters().allInput().count());
 
         final TypeView<?> second = first.typeParameters().atIndex(0)
                 .orElseGet(Assertions::fail)
@@ -489,7 +489,7 @@ public abstract class IntrospectorTests {
         Assertions.assertTrue(field.present());
 
         final TypeParametersIntrospector parametersIntrospector = field.get().genericType().typeParameters();
-        Assertions.assertEquals(1, parametersIntrospector.count());
+        Assertions.assertEquals(1, parametersIntrospector.allInput().count());
 
         final TypeView<?> parameter = parametersIntrospector.atIndex(0)
                 .orElseGet(Assertions::fail)

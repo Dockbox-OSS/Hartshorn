@@ -297,7 +297,7 @@ public abstract class ElementContextTests {
     void testTypeParametersWithoutSourceAreFromSuperclass() {
         final TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
         final TypeParametersIntrospector typeParameters = type.typeParameters();
-        Assertions.assertEquals(1, typeParameters.count());
+        Assertions.assertEquals(1, typeParameters.allInput().count());
 
         final TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
         final Set<TypeView<?>> upperBound = typeParameterView.upperBounds();
