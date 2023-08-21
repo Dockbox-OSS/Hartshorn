@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
@@ -176,6 +177,9 @@ public class ReflectionTypeParameterView implements TypeParameterView {
         if (this.resolvedType == null) {
             if (this.type instanceof Class<?> clazz) {
                 this.resolvedType = Option.of(this.introspector.introspect(clazz));
+            }
+            else if (this.type instanceof ParameterizedType parameterizedType) {
+                this.resolvedType = Option.of(this.introspector.introspect(parameterizedType));
             }
             else if (this.isWildcard()) {
                 this.resolvedType = Option.of(new WildcardTypeView());
