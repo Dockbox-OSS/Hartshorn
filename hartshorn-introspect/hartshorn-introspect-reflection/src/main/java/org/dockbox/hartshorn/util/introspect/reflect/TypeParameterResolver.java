@@ -35,7 +35,7 @@ public class TypeParameterResolver {
 
     public TypeParameterResolver(final TypeView<?> lookForParent) {
         this.lookForParent = lookForParent;
-        this.parameters = new TypeParameterView[lookForParent.typeParameters().count()];
+        this.parameters = new TypeParameterView[lookForParent.typeParameters().allInput().count()];
     }
 
     public List<TypeParameterView> parameters() {
