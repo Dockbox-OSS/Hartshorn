@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class TypeParameterResolver {
@@ -59,7 +58,7 @@ public class TypeParameterResolver {
         return this.parameters();
     }
 
-    private void visit(final GraphNode<TypeView<?>> node) throws TypeParameterResolutionException {
+    private void visit(final GraphNode<TypeView<?>> node) {
         final TypeView<?> currentValue = node.value();
         final TypeParameterList inputParameters = currentValue.typeParameters().allInput();
         final List<TypeParameterView> parameters = inputParameters.asList();
@@ -67,10 +66,6 @@ public class TypeParameterResolver {
         for (int i = 0; i < parameters.size(); i++) {
             final TypeParameterView parameter = parameters.get(i);
             this.parameters[i] = this.tryResolve(node, parameter);
-        }
-
-        if (Arrays.stream(this.parameters).anyMatch(Objects::isNull)) {
-            throw new TypeParameterResolutionException("Failed to resolve all type parameters");
         }
     }
 

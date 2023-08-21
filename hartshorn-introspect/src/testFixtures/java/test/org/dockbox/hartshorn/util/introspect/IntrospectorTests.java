@@ -371,12 +371,16 @@ public abstract class IntrospectorTests {
         Assertions.assertTrue(first.is(List.class));
         Assertions.assertEquals(1, first.typeParameters().count());
 
-        final TypeView<?> second = first.typeParameters().at(0).orNull();
+        final TypeView<?> second = first.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(List.class));
         Assertions.assertEquals(1, second.typeParameters().count());
 
-        final TypeView<?> third = second.typeParameters().at(0).orNull();
+        final TypeView<?> third = second.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertNotNull(third);
         Assertions.assertTrue(third.is(String.class));
         Assertions.assertEquals(0, third.typeParameters().count());
@@ -404,7 +408,9 @@ public abstract class IntrospectorTests {
         Assertions.assertTrue(first.is(List.class));
         Assertions.assertEquals(1, first.typeParameters().count());
 
-        final TypeView<?> second = first.typeParameters().at(0).orNull();
+        final TypeView<?> second = first.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(String.class));
         Assertions.assertFalse(second.isWildcard());
@@ -485,7 +491,9 @@ public abstract class IntrospectorTests {
         final TypeParametersIntrospector parametersIntrospector = field.get().genericType().typeParameters();
         Assertions.assertEquals(1, parametersIntrospector.count());
 
-        final TypeView<?> parameter = parametersIntrospector.at(0).get();
+        final TypeView<?> parameter = parametersIntrospector.atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertFalse(parameter.isWildcard());
         Assertions.assertTrue(parameter.is(Object.class));
     }

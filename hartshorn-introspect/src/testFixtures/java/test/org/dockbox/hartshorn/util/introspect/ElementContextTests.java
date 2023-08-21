@@ -32,7 +32,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -304,20 +303,6 @@ public abstract class ElementContextTests {
         final Set<TypeView<?>> upperBound = typeParameterView.upperBounds();
         Assertions.assertEquals(1, upperBound.size());
         Assertions.assertSame(Integer.class, upperBound.iterator().next().type());
-    }
-
-    @Test
-    void testTypeParametersThrowsIllegalArgumentOnNonInterface() {
-        final TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> type.typeParameters().from(Object.class));
-    }
-
-    @Test
-    void testTypeParametersWithSourceAreFromGivenSource() {
-        final TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
-        final List<TypeView<?>> typeParameters = type.typeParameters().from(InterfaceWithTP.class);
-        Assertions.assertEquals(1, typeParameters.size());
-        Assertions.assertSame(String.class, typeParameters.get(0).type());
     }
 
     @Test
