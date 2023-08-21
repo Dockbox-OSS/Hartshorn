@@ -38,7 +38,12 @@ public final class ParameterizableType<T> {
 
     public ParameterizableType(final TypeView<T> type) {
         this.type = type.type();
-        this.parameters = List.of(); // TODO: Support this scenario
+        this.parameters = type.typeParameters().allInput()
+                .asList()
+                .stream()
+                .flatMap(parameter -> parameter.resolvedType().stream())
+                .map(ParameterizableType::new)
+                .collect(Collectors.toList());
     }
 
     public void parameters(final List<ParameterizableType<?>> parameters) {
