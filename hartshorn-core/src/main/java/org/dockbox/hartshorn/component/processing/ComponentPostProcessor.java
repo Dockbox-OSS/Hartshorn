@@ -71,7 +71,12 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
 
         final T updatedInstance = this.initializeComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);
         if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
-            modifiableComponentProcessingContext.instance(updatedInstance);
+            if (!modifiableComponentProcessingContext.isInstanceLocked()) {
+                modifiableComponentProcessingContext.instance(updatedInstance);
+            }
+            else if (updatedInstance != modifiableComponentProcessingContext.instance()) {
+                throw new IllegalComponentModificationException(processingContext.key().type().getSimpleName(), this.priority(), this);
+            }
         }
 
         this.postConfigureComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);

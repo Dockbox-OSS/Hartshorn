@@ -133,10 +133,10 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         }
         catch (final ComponentResolutionException e) {
             if (required) {
-                throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required", e);
+                throw new ComponentRequiredException("Field '" + field.name() + "' in " + type.qualifiedName() + " is required", e);
             }
             else {
-                this.applicationContext().log().warn("Failed to resolve component for field " + field.name() + " in type " + type.name());
+                this.applicationContext().handle("Failed to resolve component for field '" + field.name() + "' in type " + type.name(), e);
                 return;
             }
         }

@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -45,11 +42,14 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 
@@ -110,7 +110,9 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             // Will continue going through each provider until a provider was successful or no other providers remain
             for (final Provider<T> provider : hierarchy.get().providers()) {
                 final Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
-                if (provided.present()) return provided;
+                if (provided.present()) {
+                    return provided;
+                }
             }
         }
         return Option.empty();
@@ -129,7 +131,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer<?> container) {
-        final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(this.applicationContext(), key, instance);
+        final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
+                this.applicationContext(), key, instance, latest -> this.storeSingletons(key, latest));
 
         if (container != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), container);
@@ -152,10 +155,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
         for (final Integer priority : this.owner.postProcessors().keySet()) {
             for (final ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
-                final T modified = postProcessor.process(processingContext);
-                if (modified != null) {
-                    processingContext.instance(modified);
-                }
+                postProcessor.process(processingContext);
             }
         }
         this.storeSingletons(key, processingContext.instance());
@@ -308,8 +308,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         });
         final BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (adjustedHierarchy instanceof ContextWrappedHierarchy) return adjustedHierarchy;
-        else
+        if (adjustedHierarchy instanceof ContextWrappedHierarchy) {
+            return adjustedHierarchy;
+        }
+        else {
             return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key.view(), updated));
+        }
     }
 }

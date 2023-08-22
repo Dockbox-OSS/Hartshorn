@@ -19,14 +19,33 @@ package org.dockbox.hartshorn.component.processing;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 
+import java.util.function.Consumer;
+
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
-    public ModifiableComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key, final T instance) {
+    private final Consumer<T> onLockRequested;
+    private boolean requestInstanceLock = false;
+
+    public ModifiableComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key,
+                                                final T instance, final Consumer<T> onLockRequested) {
         super(applicationContext, key, instance);
+        this.onLockRequested = onLockRequested;
     }
 
     public ModifiableComponentProcessingContext<T> instance(final T instance) {
+        if (this.requestInstanceLock) {
+            throw new IllegalStateException("Cannot modify instance after lock has been requested");
+        }
         super.instance = instance;
         return this;
+    }
+
+    public void requestInstanceLock() {
+        this.requestInstanceLock = true;
+        this.onLockRequested.accept(this.instance());
+    }
+
+    public boolean isInstanceLocked() {
+        return this.requestInstanceLock;
     }
 }

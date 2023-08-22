@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import java.util.Collection;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -31,6 +29,8 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Collection;
 
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
@@ -55,6 +55,12 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
                     throw new ApplicationRuntimeException(e);
                 }
             }
+
+            if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
+                modifiableComponentProcessingContext.instance(finalizingInstance);
+                modifiableComponentProcessingContext.requestInstanceLock();
+            }
+
             return context.get(ComponentPopulator.class).populate(finalizingInstance);
         }
         return instance;
