@@ -200,10 +200,6 @@ allprojects {
             // less than two workers available, we don't run in parallel.
             val maxWorkerCount = gradle.startParameter.maxWorkerCount
             maxParallelForks = if (maxWorkerCount < 2) 1 else maxWorkerCount / 2
-
-            // Automatically generate test reports. This is not always required, but it's nice to
-            // have, and makes CI integration easier.
-//            finalizedBy(":jacocoMergedReport")
         }
 
         withType<JavaCompile> {
