@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -32,7 +32,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.annotation.Annotation;
-import java.util.Set;
 import java.util.stream.Stream;
 
 @HartshornTest(includeBasePackages = false)
@@ -296,13 +295,18 @@ public abstract class ElementContextTests {
     @Test
     void testTypeParametersWithoutSourceAreFromSuperclass() {
         final TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
-        final TypeParametersIntrospector typeParameters = type.typeParameters();
-        Assertions.assertEquals(1, typeParameters.allInput().count());
+        assertTypeParameterForType(type, AbstractTypeWithTP.class, Integer.class);
+        assertTypeParameterForType(type, InterfaceWithTP.class, String.class);
+    }
+
+    private static void assertTypeParameterForType(final TypeView<?> type, final Class<?> forClass, final Class<?> expectedClass) {
+        final TypeParameterList typeParameters = type.typeParameters().outputFor(forClass);
+        Assertions.assertEquals(1, typeParameters.count());
 
         final TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
-        final Set<TypeView<?>> upperBound = typeParameterView.upperBounds();
-        Assertions.assertEquals(1, upperBound.size());
-        Assertions.assertSame(Integer.class, upperBound.iterator().next().type());
+        final Option<TypeView<?>> upperBound = typeParameterView.resolvedType();
+        Assertions.assertTrue(upperBound.present());
+        Assertions.assertSame(expectedClass, upperBound.get().type());
     }
 
     @Test
