@@ -44,14 +44,11 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import jakarta.inject.Inject;
 
 public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
 
@@ -260,15 +257,6 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }
-
-        final T instance = objectContainer.instance();
-        if (instance != null) {
-            final TypeView<Object> instanceType = this.applicationContext().environment().introspect(instance);
-            for (final FieldView<?, ?> field : instanceType.fields().annotatedWith(Inject.class)) {
-                this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), instanceType.name(), instanceType.name());
-            }
-        }
-
         return this.process(componentKey, objectContainer, null);
     }
 
