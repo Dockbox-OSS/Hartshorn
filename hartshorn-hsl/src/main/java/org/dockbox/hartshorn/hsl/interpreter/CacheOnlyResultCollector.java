@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
@@ -23,8 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CacheOnlyResultCollector implements ResultCollector {
 
-    private Object globalResult;
     private final Map<String, Object> results = new ConcurrentHashMap<>();
+    private final ApplicationContext applicationContext;
+    private Object globalResult;
+
+    public CacheOnlyResultCollector(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public void addResult(final Object value) {
@@ -37,17 +43,32 @@ public class CacheOnlyResultCollector implements ResultCollector {
     }
 
     @Override
-    public <T> Option<T> result() {
-        return Option.of((T) this.globalResult);
+    public <T> Option<T> result(final Class<T> type) {
+        return this.result().filter(type::isInstance).map(type::cast);
     }
 
     @Override
-    public <T> Option<T> result(final String id) {
-        return Option.of((T) this.results.get(id));
+    public Option<?> result() {
+        return Option.of(this.globalResult);
+    }
+
+    @Override
+    public <T> Option<T> result(final String id, final Class<T> type) {
+        return this.result(id).filter(type::isInstance).map(type::cast);
+    }
+
+    @Override
+    public Option<?> result(final String id) {
+        return Option.of(this.results.get(id));
     }
 
     @Override
     public void clear() {
         this.results.clear();
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 }
