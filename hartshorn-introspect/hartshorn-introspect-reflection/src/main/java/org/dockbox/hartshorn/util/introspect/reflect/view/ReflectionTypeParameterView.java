@@ -259,7 +259,11 @@ public class ReflectionTypeParameterView implements TypeParameterView {
 
     @Override
     public void report(final DiagnosticsPropertyCollector collector) {
-        // TODO: Implement me!
+        collector.property("name").write(this.name());
+        collector.property("index").write(this.index());
+        collector.property("declaredBy").write(this.declaredBy().name());
+        collector.property("consumedBy").write(this.consumedBy().name());
+        collector.property("type").write(this.isInputParameter() ? "input" : "output");
     }
 
     @Override
