@@ -27,20 +27,19 @@ import jakarta.inject.Inject;
 
 public class CommandListenerImpl implements CommandListener {
 
+    private final ApplicationContext context;
+    private final CommandGateway gateway;
+
     @Inject
-    private ApplicationContext context;
-    @Inject
-    private CommandGateway gateway;
+    public CommandListenerImpl(final ApplicationContext applicationContext, final CommandGateway gateway) {
+        this.context = applicationContext;
+        this.gateway = gateway;
+        this.source(SystemSubject.instance(applicationContext));
+    }
 
     private boolean async;
     private InputStream input = System.in;
     private CommandSource source;
-
-    @Inject
-    protected void context(final ApplicationContext applicationContext) {
-        this.context = applicationContext;
-        this.source(SystemSubject.instance(applicationContext));
-    }
 
     public boolean async() {
         return this.async;

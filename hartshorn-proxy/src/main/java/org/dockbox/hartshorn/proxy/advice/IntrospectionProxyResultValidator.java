@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * type of a method invocation. This will ensure that the result type is compatible with the return type of the method
  * that was invoked, and will throw an {@link IllegalArgumentException} if this is not the case.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public class IntrospectionProxyResultValidator implements ProxyResultValidator {

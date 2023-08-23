@@ -52,7 +52,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-@Component
+import jakarta.inject.Inject;
+
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private final ApplicationContext context;
@@ -60,6 +61,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     private ObjectMapper objectMapper;
     private JsonInclusionRule inclusionRule;
 
+    @Inject
     public JacksonObjectMapper(final ApplicationContext applicationContext) {
         super(FileFormats.JSON);
         this.context = applicationContext;

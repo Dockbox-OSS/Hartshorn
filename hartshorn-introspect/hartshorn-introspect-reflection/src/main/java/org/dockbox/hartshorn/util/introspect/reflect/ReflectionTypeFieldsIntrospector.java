@@ -105,12 +105,16 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
                 .filter(field -> field.type().is(type.asClass().get()))
                 .filter(field -> {
                     final TypeView<?> genericType = field.genericType();
-                    final List<TypeView<?>> typeParameters = genericType.typeParameters().all();
+                    final List<TypeView<?>> typeParameters = genericType.typeParameters().all().stream()
+                            .flatMap(typeParameterView -> typeParameterView.upperBounds().stream())
+                            .toList();
                     final Option<Class<F>> classType = type.asClass();
                     if (classType.absent()) return false;
 
                     final TypeView<F> targetGenericType = this.introspector.introspect(classType.get());
-                    final List<TypeView<?>> targetTypeParameters = targetGenericType.typeParameters().all();
+                    final List<TypeView<?>> targetTypeParameters = targetGenericType.typeParameters().all().stream()
+                            .flatMap(typeParameterView -> typeParameterView.upperBounds().stream())
+                            .toList();
                     if (targetTypeParameters.size() != typeParameters.size()) return false;
 
                     for (int i = 0; i < typeParameters.size(); i++) {

@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.runtime;
  * scope, even if there are more statements to evaluate.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Return extends RuntimeException {
 

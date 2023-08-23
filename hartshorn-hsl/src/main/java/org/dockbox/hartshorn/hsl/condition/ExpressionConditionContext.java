@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link ExpressionCondition} to allow for customization of the runtime.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ExpressionConditionContext extends DefaultProvisionContext implements ConditionContext {
 

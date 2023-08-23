@@ -78,7 +78,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-import org.dockbox.hartshorn.inject.binding.Bound;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +90,7 @@ import java.util.Stack;
  * found and reported early on, preventing potential runtime errors.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void> {
 
@@ -99,7 +98,6 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private final Stack<Map<String, String>> finals = new Stack<>();
 
-    @Bound
     public Resolver(final Interpreter interpreter) {
         this.interpreter = interpreter;
     }

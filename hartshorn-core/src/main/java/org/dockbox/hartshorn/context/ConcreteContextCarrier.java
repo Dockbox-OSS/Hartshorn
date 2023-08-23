@@ -17,21 +17,15 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 
 import jakarta.inject.Inject;
 
 /**
  * A concrete implementation of {@link ContextCarrier}.
  */
-@Component
-public class ConcreteContextCarrier implements ContextCarrier {
+public record ConcreteContextCarrier(ApplicationContext applicationContext) implements ContextCarrier {
 
     @Inject
-    private ApplicationContext applicationContext;
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
+    public ConcreteContextCarrier {
     }
 }

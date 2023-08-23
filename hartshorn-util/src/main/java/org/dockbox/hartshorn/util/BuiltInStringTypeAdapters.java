@@ -26,7 +26,7 @@ import java.util.UUID;
  *
  * @see StringTypeAdapter
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public final class BuiltInStringTypeAdapters {
 

@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
  * active bindings are added.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface ApplicationConfigurator {
 

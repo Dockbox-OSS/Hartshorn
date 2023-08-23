@@ -34,7 +34,7 @@ import java.util.function.Consumer;
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
  * @author Guus Lieben
- * @since 21.4
+ * @since 0.4.3
  */
 public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
 

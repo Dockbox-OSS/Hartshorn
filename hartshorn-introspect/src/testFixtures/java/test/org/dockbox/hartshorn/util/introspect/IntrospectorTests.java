@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +37,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public abstract class IntrospectorTests {
@@ -195,9 +197,13 @@ public abstract class IntrospectorTests {
         final List<MethodView<ReflectTestType, ?>> methods = type.methods().all();
         boolean fail = true;
         for (final MethodView<ReflectTestType, ?> method : methods) {
-            if ("parentMethod".equals(method.name())) fail = false;
+            if ("parentMethod".equals(method.name())) {
+                fail = false;
+            }
         }
-        if (fail) Assertions.fail("Parent types were not included");
+        if (fail) {
+            Assertions.fail("Parent types were not included");
+        }
     }
 
     @Test
@@ -297,7 +303,9 @@ public abstract class IntrospectorTests {
         boolean activated = false;
         final TypeView<ReflectTestType> type = this.introspector().introspect(ReflectTestType.class);
         for (final FieldView<ReflectTestType, ?> fieldView : type.fields().all()) {
-            if (fieldView.name().equals(field)) activated = true;
+            if (fieldView.name().equals(field)) {
+                activated = true;
+            }
         }
         Assertions.assertTrue(activated);
     }
@@ -328,7 +336,9 @@ public abstract class IntrospectorTests {
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
         for (final FieldView<ReflectTestType, ?> field : fields) {
-            if (field.modifiers().isStatic()) statics++;
+            if (field.modifiers().isStatic()) {
+                statics++;
+            }
         }
         Assertions.assertEquals(1, statics);
     }
@@ -369,17 +379,21 @@ public abstract class IntrospectorTests {
         final TypeView<?> first = parameter.genericType();
 
         Assertions.assertTrue(first.is(List.class));
-        Assertions.assertEquals(1, first.typeParameters().count());
+        Assertions.assertEquals(1, first.typeParameters().allInput().count());
 
-        final TypeView<?> second = first.typeParameters().at(0).orNull();
+        final TypeView<?> second = first.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(List.class));
-        Assertions.assertEquals(1, second.typeParameters().count());
+        Assertions.assertEquals(1, second.typeParameters().allInput().count());
 
-        final TypeView<?> third = second.typeParameters().at(0).orNull();
+        final TypeView<?> third = second.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertNotNull(third);
         Assertions.assertTrue(third.is(String.class));
-        Assertions.assertEquals(0, third.typeParameters().count());
+        Assertions.assertEquals(0, third.typeParameters().allInput().count());
     }
 
     @SuppressWarnings("unused") // Used by genericTypeTests
@@ -402,9 +416,11 @@ public abstract class IntrospectorTests {
         final TypeView<?> first = parameter.genericType();
 
         Assertions.assertTrue(first.is(List.class));
-        Assertions.assertEquals(1, first.typeParameters().count());
+        Assertions.assertEquals(1, first.typeParameters().allInput().count());
 
-        final TypeView<?> second = first.typeParameters().at(0).orNull();
+        final TypeView<?> second = first.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail)
+                .resolvedType().orNull();
         Assertions.assertNotNull(second);
         Assertions.assertTrue(second.is(String.class));
         Assertions.assertFalse(second.isWildcard());
@@ -483,11 +499,18 @@ public abstract class IntrospectorTests {
         Assertions.assertTrue(field.present());
 
         final TypeParametersIntrospector parametersIntrospector = field.get().genericType().typeParameters();
-        Assertions.assertEquals(1, parametersIntrospector.count());
+        Assertions.assertEquals(1, parametersIntrospector.allInput().count());
 
-        final TypeView<?> parameter = parametersIntrospector.at(0).get();
-        Assertions.assertFalse(parameter.isWildcard());
-        Assertions.assertTrue(parameter.is(Object.class));
+        final TypeParameterView typeParameter = parametersIntrospector.atIndex(0)
+                .orElseGet(Assertions::fail);
+
+        final TypeView<?> parameter = typeParameter
+                .resolvedType().orNull();
+        Assertions.assertTrue(parameter.isWildcard());
+
+        final Set<TypeView<?>> upperBounds = typeParameter.upperBounds();
+        Assertions.assertEquals(1, upperBounds.size());
+        Assertions.assertSame(Object.class, upperBounds.iterator().next().type());
     }
 
     @SuppressWarnings("unused") // Used by testGenericTypeWithWildcardUsesUpperbounds

@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,17 +29,16 @@ import java.lang.annotation.Target;
  * method, combined with the {@link #value()} form the {@link ComponentKey} of
  * the binding.
  *
- * <p>The use of provider methods require the presence of {@link UseServiceProvision} on the activator
- * class.
- *
  * <p>Provider methods can have parameters, which will be injected through the active
- * {@link ApplicationContext}. This includes support for {@link jakarta.inject.Named} parameters.
+ * {@link ApplicationContext}. This includes support for {@link jakarta.inject.Named} parameters, and
+ * optionally {@link org.dockbox.hartshorn.context.Context} types if
+ * {@link org.dockbox.hartshorn.inject.processing.UseContextInjection} is used.
  *
  * <p>If {@link jakarta.inject.Singleton} is used on the provider method, the result of the provider
  * method will be cached immediately, and the same instance will be returned on subsequent calls.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })

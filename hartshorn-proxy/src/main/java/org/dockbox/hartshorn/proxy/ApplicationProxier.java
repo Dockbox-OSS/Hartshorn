@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * proxying library.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface ApplicationProxier extends ProxyLookup {
 

@@ -48,7 +48,7 @@ import java.util.function.Function;
  * @param <Self> The type of the {@link ApplicationBuilder}, used to implement the fluent API.
  * @param <C> The type of the {@link ApplicationContext} that is created.
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface ApplicationBuilder<Self extends ApplicationBuilder<Self, C>, C extends ApplicationContext> extends Reportable {
 

@@ -33,7 +33,7 @@ import java.util.stream.Stream
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 @HartshornTest(includeBasePackages = false, scanPackages = ["test.org.dockbox.hartshorn.core.groovy"])
 class GroovyComponentTests {

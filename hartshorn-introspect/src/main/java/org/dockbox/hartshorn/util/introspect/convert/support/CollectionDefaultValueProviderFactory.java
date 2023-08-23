@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class CollectionDefaultValueProviderFactory implements DefaultValueProviderFactory<Collection<?>> {
@@ -59,10 +59,13 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     @Override
     public <O extends Collection<?>> DefaultValueProvider<O> create(final Class<O> targetType) {
         final TypeView<O> type = this.introspector.introspect(targetType);
-        final List<TypeView<?>> typeParameters = type.typeParameters().from(Collection.class);
-        final Class<?> componentType = typeParameters.isEmpty()
-                ? Object.class
-                : typeParameters.get(0).type();
+        final Class<?> componentType = type.typeParameters()
+                .resolveInputFor(Collection.class)
+                .atIndex(0)
+                .flatMap(TypeParameterView::resolvedType)
+                .map(TypeView::type)
+                .map(Class.class::cast)
+                .orElse(Object.class);
 
         return this.create((Class) targetType, (Class) componentType);
     }

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -110,9 +111,21 @@ public class ReflectionIntrospector implements Introspector {
     }
 
     @Override
+    public <T> TypeView<T> introspect(final GenericType<T> type) {
+        final Option<TypeView<T>> view = type.asClass()
+                .<Object>map(this::introspect)
+                .orCompute(() -> this.introspect(type.type()))
+                .adjust(TypeView.class);
+        if (view.present()) {
+            return view.get();
+        }
+        return this.voidType();
+    }
+
+    @Override
     public TypeView<?> introspect(final String type) {
         try {
-            return this.introspect(Class.forName(type));
+            return this.introspect(Class.forName(type, false, Thread.currentThread().getContextClassLoader()));
         }
         catch (final ClassNotFoundException e) {
             return this.voidType();

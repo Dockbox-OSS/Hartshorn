@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.config;
 
+import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
@@ -27,6 +28,8 @@ import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
+
+import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UseConfigurations.class)
@@ -41,12 +44,16 @@ public class ConfigurationProviders {
      *
      * @return {@link StandardPropertyHolder}
      */
-    @Binds(phase = ProcessingOrder.EARLY)
-    public Class<? extends PropertyHolder> propertyHolder() {
-        return StandardPropertyHolder.class;
+    @Binds
+    @Singleton
+    public PropertyHolder propertyHolder(final ApplicationContext applicationContext,
+                                         final ApplicationPropertyHolder propertyHolder,
+                                         final ObjectMapper objectMapper,
+                                         final ObjectMapper propertyMapper) {
+        return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
     }
 
-    @Binds(phase = ProcessingOrder.EARLY)
+    @Binds
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

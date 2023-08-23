@@ -39,7 +39,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * is actually invoked for a {@code null} input will depend on the specific implementation being used.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public interface ConversionService {
 

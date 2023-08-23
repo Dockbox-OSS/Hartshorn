@@ -36,7 +36,7 @@ import java.util.Map;
  * properties, which are not bound to a specific contract.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class VirtualInstance implements InstanceReference {
 

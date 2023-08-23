@@ -17,17 +17,17 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 
 import java.util.Map;
-
-import jakarta.inject.Inject;
+import java.util.Set;
 
 /**
  * The default runtime implementation, which follows the evaluation phases and order as
@@ -38,15 +38,18 @@ import jakarta.inject.Inject;
  * to allow each executor to be customized through standard DI principles.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  * @see ExpressionConditionContext
  */
-@Component
 public class StandardRuntime extends AbstractScriptRuntime {
 
-    @Inject
     public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
-        super(applicationContext, factory);
+        this(applicationContext, factory, Set.of());
+    }
+
+    public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
+                           final Set<ASTNodeParser<? extends Statement>> statementParsers) {
+        super(applicationContext, factory, statementParsers);
         this.customizer(new InlineStandardLibraryCustomizer());
     }
 

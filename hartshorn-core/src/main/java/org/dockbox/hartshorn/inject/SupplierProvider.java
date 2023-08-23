@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @see Provider
  * @see ContextDrivenProvider
- * @since 21.4
+ * @since 0.4.3
  */
 public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements Provider<C> {
 

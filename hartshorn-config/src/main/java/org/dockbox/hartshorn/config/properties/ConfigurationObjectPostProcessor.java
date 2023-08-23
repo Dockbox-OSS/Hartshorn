@@ -20,43 +20,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
+    private final PropertyHolder propertyHolder;
+
+    public ConfigurationObjectPostProcessor(final PropertyHolder propertyHolder) {
+        this.propertyHolder = propertyHolder;
+    }
+
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(ConfigurationObject.class)) {
             final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
-            final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
-            this.verifyPropertiesAvailable(context, propertyHolder);
+            this.verifyPropertiesAvailable(context, this.propertyHolder);
 
-            return this.createOrUpdate(processingContext.key(), instance, configurationObject, propertyHolder, context);
+            return this.createOrUpdate(processingContext.key(), instance, configurationObject);
         }
         return instance;
     }
 
-    private <T> T createOrUpdate(final ComponentKey<T> key, final T instance, final ConfigurationObject configurationObject, final PropertyHolder propertyHolder, final ApplicationContext applicationContext) {
+    private <T> T createOrUpdate(final ComponentKey<T> key, final T instance, final ConfigurationObject configurationObject) {
         final Option<T> configuration;
         final Class<T> type = instance == null
                 ? key.type()
                 : TypeUtils.adjustWildcards(instance.getClass(), Class.class);
 
         if (instance == null) {
-            configuration = propertyHolder.get(configurationObject.prefix(), type);
+            configuration = this.propertyHolder.get(configurationObject.prefix(), type);
         }
         else {
-            configuration = propertyHolder.update(instance, configurationObject.prefix(), type);
+            configuration = this.propertyHolder.update(instance, configurationObject.prefix(), type);
         }
         return configuration.orElse(instance);
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.FIRST;
+    public int priority() {
+        return ProcessingPriority.HIGHEST_PRECEDENCE;
     }
 }

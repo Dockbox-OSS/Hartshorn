@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
  *             It is recommended to use Javassist instead, through the
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyFactory}.
  */
-@Deprecated(since = "22.5")
+@Deprecated(since = "0.4.13")
 public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
     private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> nameGenerator.get(prefix);

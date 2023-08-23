@@ -24,7 +24,7 @@ import java.util.Set;
  * A proxy validator is used to validate that a proxy can be created for a given type. This can use a set of
  * {@link ProxyConstraint constraints} to validate the type.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface ProxyValidator {

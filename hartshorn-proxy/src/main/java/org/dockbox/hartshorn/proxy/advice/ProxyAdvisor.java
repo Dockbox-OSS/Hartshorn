@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
  *
  * @param <T> the type of the proxy method
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface ProxyAdvisor<T> {

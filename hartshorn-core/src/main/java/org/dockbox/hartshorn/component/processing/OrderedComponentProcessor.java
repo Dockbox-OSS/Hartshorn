@@ -22,11 +22,11 @@ package org.dockbox.hartshorn.component.processing;
 public interface OrderedComponentProcessor {
 
     /**
-     * Returns the phase of when the component should be processed.
+     * Returns the phase of when the component should be processed. Lower numbers are processed first.
      *
      * @return The phase of when the component should be processed.
      */
-    default Integer order() {
-        return ProcessingOrder.NORMAL;
+    default int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

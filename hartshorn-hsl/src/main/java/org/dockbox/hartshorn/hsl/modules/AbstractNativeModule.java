@@ -50,7 +50,7 @@ import java.util.List;
  * is {@code null}, the method must be static.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public abstract class AbstractNativeModule implements NativeModule {
 

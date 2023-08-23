@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -60,14 +59,12 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         this(new ArrayList<>(), parser, validator);
     }
 
-    @Bound
     public StandardTokenParser(final List<Token> tokens) {
         this.expressionParser = new ComplexExpressionParserAdapter();
         this.validator = new StandardTokenStepValidator(this);
         this.tokens = tokens;
     }
 
-    @Bound
     public StandardTokenParser(final List<Token> tokens, final ExpressionParser parser, final TokenStepValidator validator) {
         this.tokens = tokens;
         this.expressionParser = parser;

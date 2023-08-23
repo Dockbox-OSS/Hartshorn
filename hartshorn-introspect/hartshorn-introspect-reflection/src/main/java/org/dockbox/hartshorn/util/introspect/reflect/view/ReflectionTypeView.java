@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -35,16 +26,27 @@ import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionClassTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionParameterizedTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements ReflectionModifierCarrierView, TypeView<T> {
 
@@ -76,7 +78,9 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     private List<T> enumConstants;
     private TypeView<?> parent;
+    private TypeView<?> genericParent;
     private List<TypeView<?>> interfaces;
+    private List<TypeView<?>> genericInterfaces;
     private List<TypeView<? extends T>> permittedSubclasses;
     private Option<TypeView<?>> elementType;
 
@@ -236,12 +240,36 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
+    public List<TypeView<?>> genericInterfaces() {
+        if (this.genericInterfaces == null) {
+            this.genericInterfaces = Arrays.stream(this.type().getGenericInterfaces())
+                    .map(this.introspector::introspect)
+                    .collect(Collectors.toList());
+        }
+        return this.genericInterfaces;
+    }
+
+    @Override
     public TypeView<?> superClass() {
         if (this.parent == null) {
             final Class<? super T> parent = this.type().getSuperclass();
             this.parent = this.introspector.introspect((Class<?>) Objects.requireNonNullElse(parent, Void.class));
         }
         return this.parent;
+    }
+
+    @Override
+    public TypeView<?> genericSuperClass() {
+        if (this.genericParent == null) {
+            final Type genericSuperclass = this.type().getGenericSuperclass();
+            if (genericSuperclass != null) {
+                this.genericParent = this.introspector.introspect(genericSuperclass);
+            }
+            else {
+                this.genericParent = this.superClass();
+            }
+        }
+        return this.genericParent;
     }
 
     @Override
@@ -271,7 +299,9 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public TypeParametersIntrospector typeParameters() {
         if (this.typeParametersIntrospector == null) {
-            this.typeParametersIntrospector = new ReflectionTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector);
+            this.typeParametersIntrospector = this.parameterizedType == null
+                    ? new ReflectionClassTypeParametersIntrospector(this, this.introspector)
+                    : new ReflectionParameterizedTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector);
         }
         return this.typeParametersIntrospector;
     }
@@ -381,18 +411,33 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
+    public TypeView<?> rawType() {
+        if (this.parameterizedType == null) {
+            return this;
+        }
+        else {
+            return this.introspector.introspect(this.parameterizedType.getRawType());
+        }
+    }
+
+    @Override
     public void report(final DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
         collector.property("package").write(this.packageInfo().name());
 
         final TypeParametersIntrospector typeParameters = this.typeParameters();
         if (typeParameters.count() > 0) {
-            collector.property("typeParameters").write(typeParameters.all().toArray(Reportable[]::new));
+            collector.property("typeParameters").write(typeParameters.all().asList().toArray(Reportable[]::new));
         }
     }
 
     @Override
     public ElementModifiersIntrospector modifiers() {
         return new ReflectionElementModifiersIntrospector(this.type.getModifiers());
+    }
+
+    @Override
+    public String toString() {
+        return this.qualifiedName();
     }
 }

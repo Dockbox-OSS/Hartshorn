@@ -22,11 +22,11 @@ import java.util.Collection;
 
 public interface ComponentLocator {
 
-    Collection<ComponentContainer> containers();
+    Collection<ComponentContainer<?>> containers();
 
-    Collection<ComponentContainer> containers(ComponentType functional);
+    Collection<ComponentContainer<?>> containers(ComponentType functional);
 
-    Option<ComponentContainer> container(final Class<?> type);
+    Option<ComponentContainer<?>> container(final Class<?> type);
 
     <T> void validate(ComponentKey<T> key);
 }

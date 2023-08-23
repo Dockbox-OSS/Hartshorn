@@ -39,6 +39,10 @@ public interface ExecutableParametersIntrospector {
 
     boolean matches(Class<?>... parameterTypes);
 
+    boolean matchesExact(Class<?>... parameterTypes);
+
     boolean matches(List<Class<?>> parameterTypes);
+
+    boolean matchesExact(List<Class<?>> parameterTypes);
 
 }

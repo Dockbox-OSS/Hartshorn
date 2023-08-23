@@ -20,8 +20,6 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ModifiableComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.component.processing.ProcessingPhase;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
@@ -37,7 +35,6 @@ import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
-import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -45,14 +42,13 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import jakarta.inject.Inject;
 
 public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
 
@@ -70,11 +66,12 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     private <T> Option<ObjectContainer<T>> create(final ComponentKey<T> key) {
         try {
             final Option<ObjectContainer<T>> objectContainer = this.provide(key);
-            if (objectContainer.present()) return objectContainer;
+            if (objectContainer.present()) {
+                return objectContainer;
+            }
 
             return this.createContextualInstanceContainer(key);
-        }
-        catch (final ApplicationException e) {
+        } catch (final ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
         }
     }
@@ -110,83 +107,56 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             // Will continue going through each provider until a provider was successful or no other providers remain
             for (final Provider<T> provider : hierarchy.get().providers()) {
                 final Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
-                if (provided.present()) return provided;
+                if (provided.present()) {
+                    return provided;
+                }
             }
         }
         return Option.empty();
     }
 
-    protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer container) {
-        if (!container.permitsProcessing()) return objectContainer.instance();
+    protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer<?> container) {
+        if (container != null && !container.permitsProcessing()) {
+            return objectContainer.instance();
+        }
 
         ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container);
         objectContainer.processed(true);
 
-        // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
-        processingContext = this.process(ProcessingOrder.INITIALIZING, processingContext);
-
-        // Modify the instance during phase 2. This does not allow discarding the existing instance.
-        processingContext = this.process(ProcessingOrder.MODIFYING, processingContext);
-
+        processingContext = this.process(processingContext);
         return processingContext.instance();
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer container) {
-        final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(this.applicationContext(), key, instance);
-        processingContext.put(ComponentKey.of(ComponentContainer.class), container);
+    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer<?> container) {
+        final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
+                this.applicationContext(), key, instance, latest -> this.storeSingletons(key, latest));
 
-        if (container.permitsProxying()) {
-            final StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
+        if (container != null) {
+            processingContext.put(ComponentKey.of(ComponentContainer.class), container);
+            if (container.permitsProxying()) {
+                final StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
 
-            if (instance != null) {
-                factory.trackState(false);
-                factory.advisors().type().delegateAbstractOnly(instance);
-                factory.trackState(true);
+                if (instance != null) {
+                    factory.trackState(false);
+                    factory.advisors().type().delegateAbstractOnly(instance);
+                    factory.trackState(true);
+                }
+                processingContext.put(ComponentKey.of(ProxyFactory.class), factory);
             }
-            processingContext.put(ComponentKey.of(ProxyFactory.class), factory);
         }
         return processingContext;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> process(final ProcessingPhase phase, final ModifiableComponentProcessingContext<T> processingContext) {
+    protected <T> ModifiableComponentProcessingContext<T> process(final ModifiableComponentProcessingContext<T> processingContext) {
         final ComponentKey<T> key = processingContext.key();
-        final T instance = processingContext.instance();
-
-        processingContext.phase(phase);
 
         for (final Integer priority : this.owner.postProcessors().keySet()) {
-            if (phase.test(priority)) {
-                for (final ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
-                    final T modified = postProcessor.process(processingContext);
-
-                    if (processingContext.phase() != phase) {
-                        throw new IllegalPhaseModificationException(postProcessor, phase, processingContext.phase());
-                    }
-                    checkForModification(phase, processingContext, key, instance, priority, postProcessor, modified);
-                }
+            for (final ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
+                postProcessor.process(processingContext);
             }
         }
         this.storeSingletons(key, processingContext.instance());
         return processingContext;
-    }
-
-    private static <T> void checkForModification(final ProcessingPhase phase,
-                                                 final ModifiableComponentProcessingContext<T> processingContext, final ComponentKey<T> key,
-                                                 final T instance, final Integer priority,
-                                                 final ComponentPostProcessor postProcessor, final T modified) {
-        if (instance != modified) {
-            if (!phase.modifiable()) {
-                boolean ok = false;
-                if (modified instanceof Proxy) {
-                    final Proxy<T> proxy = TypeUtils.adjustWildcards(modified, Proxy.class);
-                    ok = proxy.manager().delegate().orNull() == instance;
-                }
-                if (!ok) {
-                    throw new IllegalComponentModificationException(key.type().getSimpleName(), priority, postProcessor);
-                }
-            }
-            processingContext.instance(modified);
-        }
     }
 
     protected <T> void storeSingletons(final ComponentKey<T> key, final T instance) {
@@ -248,10 +218,10 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
         }
 
-        final Option<ComponentContainer> container = this.owner.componentLocator().container(type);
+        final Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
         instance = container.present()
                 ? this.getManagedComponent(componentKey, objectContainer, container)
-                : this.getUnmanagedComponent(objectContainer, type);
+                : this.getUnmanagedComponent(componentKey, objectContainer, type);
 
         if (instance == null) {
             throw new ComponentResolutionException("No component found for key " + componentKey);
@@ -267,8 +237,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         if (componentKey.enable()) {
             try {
                 instance = this.owner.postConstructor().doPostConstruct(instance);
-            }
-            catch (final ApplicationException e) {
+            } catch (final ApplicationException e) {
                 throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
@@ -277,29 +246,18 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     private <T> T getManagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer,
-                                      final Option<ComponentContainer> container) {
+                                      final Option<ComponentContainer<?>> container) {
         // Will only mark the object container as processed if the component container permits
         // processing.
         return this.process(componentKey, objectContainer, container.get());
     }
 
-    private <T> T getUnmanagedComponent(final ObjectContainer<T> objectContainer, final Class<? extends T> type) {
+    private <T> T getUnmanagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer, final Class<? extends T> type) {
         final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }
-
-        final T instance = objectContainer.instance();
-        if (instance != null) {
-            final TypeView<Object> instanceType = this.applicationContext().environment().introspect(instance);
-            for (final FieldView<?, ?> field : instanceType.fields().annotatedWith(Inject.class)) {
-                this.applicationContext().log().warn("Field {} of {} is not injected, because {} is not a managed component.", field.name(), instanceType.name(), instanceType.name());
-            }
-        }
-
-        objectContainer.processed(true);
-
-        return instance;
+        return this.process(componentKey, objectContainer, null);
     }
 
     @Override
@@ -310,6 +268,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     @Override
     public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
         return this.hierarchy(key, false);
+    }
+
+    @Override
+    public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
+        final MultiMap<Scope, BindingHierarchy<?>> map = new HashSetMultiMap<>();
+        map.putAll(this.scope, this.hierarchies.values());
+        return map;
     }
 
     private <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key, final boolean useParentIfAbsent) {
@@ -331,7 +296,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         });
         final BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (adjustedHierarchy instanceof ContextWrappedHierarchy) return adjustedHierarchy;
-        else return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key.view(), updated));
+        if (adjustedHierarchy instanceof ContextWrappedHierarchy) {
+            return adjustedHierarchy;
+        }
+        else {
+            return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key.view(), updated));
+        }
     }
 }

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *             It is recommended to use Javassist instead, through the
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxier}.
  */
-@Deprecated(since = "22.5")
+@Deprecated(since = "0.4.13")
 public class CglibApplicationProxier extends AbstractApplicationProxier {
 
     public CglibApplicationProxier(final Introspector introspector) {

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandParameterResources;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 
 import jakarta.inject.Inject;
@@ -33,11 +32,14 @@ import jakarta.inject.Inject;
  * }</pre>
  * The pattern for this type is expected to be <pre>#shape[square][4]</pre>
  */
-@Component
 public class HashtagParameterPattern extends PrefixedParameterPattern {
 
+    private final CommandParameterResources resources;
+
     @Inject
-    private CommandParameterResources resources;
+    public HashtagParameterPattern(final CommandParameterResources resources) {
+        this.resources = resources;
+    }
 
     @Override
     protected char opening() {

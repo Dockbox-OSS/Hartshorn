@@ -32,7 +32,7 @@ import java.util.Objects;
  * @param <T> the type of the proxy. This is only a utility type that is used to allow the interceptor to be
  *           generic.
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 @FunctionalInterface
 public interface MethodInterceptor<T, R> {

@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  * which provides application metadata, and a set of command line arguments.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 public final class HartshornApplication {
 

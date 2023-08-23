@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * @param <E> The type of the exception
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public interface Attempt<T, E extends Throwable> extends Option<T> {
 
@@ -406,7 +406,7 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      *
      * @return the current {@link Attempt} instance.
      */
-    @Deprecated(since = "23.1", forRemoval = true)
+    @Deprecated(since = "0.5.0", forRemoval = true)
     default Attempt<T, E> rethrowUnchecked() {
         return this;
     }

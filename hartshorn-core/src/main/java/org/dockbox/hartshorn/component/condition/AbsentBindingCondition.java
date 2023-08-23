@@ -17,19 +17,18 @@
 package org.dockbox.hartshorn.component.condition;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.processing.ProviderContextList;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 
 public class AbsentBindingCondition implements Condition {
 
     @Override
     public ConditionResult matches(final ConditionContext context) {
-        final ProviderContextList listContext = context.applicationContext().first(ProviderContextList.class).orNull();
         return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
             final ComponentKey<?> key = ComponentKey.of(condition.value(), condition.name());
-            if (listContext != null && listContext.containsKey(key)) {
-                return ConditionResult.matched();
-            }
-            else return ConditionResult.notFound("Binding", String.valueOf(key));
+            final BindingHierarchy<?> hierarchy = context.applicationContext().hierarchy(key);
+            return hierarchy.size() > 0
+                    ? ConditionResult.matched()
+                    : ConditionResult.notFound("Binding", String.valueOf(key));
         }).orElse(ConditionResult.invalidCondition("absent binding"));
     }
 }

@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * allows for registration of additional lookups. Lookup operations are performed with the assumption that Hartshorn's
  * own {@link Proxy} implementation is used.
  *
- * @since 22.4
+ * @since 0.4.12
  * @author Guus Lieben
  */
 public abstract class AbstractApplicationProxier implements ApplicationProxier {

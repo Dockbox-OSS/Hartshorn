@@ -44,7 +44,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the target instance
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @SuppressWarnings({ "OverlyBroadThrowsClause", "ProhibitedExceptionDeclared" })

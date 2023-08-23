@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.ConverterException;
@@ -54,7 +55,7 @@ public class HashtagParameterPatternTests {
     }
 
     private HashtagParameterPattern pattern() {
-        return new HashtagParameterPattern() {
+        return new HashtagParameterPattern(this.applicationContext.get(CommandParameterResources.class)) {
             @Override
             protected Message wrongFormat() {
                 // Override resources as these are otherwise requested through bound resource references

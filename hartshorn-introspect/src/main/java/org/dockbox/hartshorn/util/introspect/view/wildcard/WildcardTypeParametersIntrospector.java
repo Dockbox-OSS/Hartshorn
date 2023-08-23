@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -31,13 +34,38 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
     }
 
     @Override
-    public Option<TypeView<?>> at(final int index) {
+    public Option<TypeView<?>> at(int index) {
         return Option.empty();
     }
 
     @Override
-    public List<TypeView<?>> all() {
-        return Collections.emptyList();
+    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
+        return new SimpleTypeParameterList(List.of());
+    }
+
+    @Override
+    public Option<TypeParameterView> atIndex(int index) {
+        return Option.empty();
+    }
+
+    @Override
+    public TypeParameterList all() {
+        return new SimpleTypeParameterList(List.of());
+    }
+
+    @Override
+    public TypeParameterList allInput() {
+        return new SimpleTypeParameterList(List.of());
+    }
+
+    @Override
+    public TypeParameterList allOutput() {
+        return new SimpleTypeParameterList(List.of());
+    }
+
+    @Override
+    public TypeParameterList outputFor(Class<?> fromParentType) {
+        return new SimpleTypeParameterList(List.of());
     }
 
     @Override

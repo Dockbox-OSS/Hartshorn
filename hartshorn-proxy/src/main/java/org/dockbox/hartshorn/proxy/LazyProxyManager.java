@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
  *
  * @param <T> the type of the proxy
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public class LazyProxyManager<T> extends DefaultContext implements ModifiableProxyManager<T> {
 

@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  * @param <T> The type of the proxy instance
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public class ProxyCallbackContext<T> extends DefaultContext {
 

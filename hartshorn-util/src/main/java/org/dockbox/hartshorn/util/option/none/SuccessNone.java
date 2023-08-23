@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * @param <E> The type of the exception
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public class SuccessNone<T, E extends Throwable> extends None<T> implements Attempt<T, E> {
 

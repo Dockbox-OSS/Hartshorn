@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
+import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public class StandardApplicationBuilder extends DefaultApplicationBuilder<Standa
         return this.constructor(StandardApplicationContextConstructor::new)
                 .serviceActivator(TypeUtils.annotation(UseBootstrap.class))
                 .serviceActivator(TypeUtils.annotation(UseProxying.class))
-                .serviceActivator(TypeUtils.annotation(UseServiceProvision.class))
+                .serviceActivator(TypeUtils.annotation(UseContextInjection.class))
                 .serviceActivator(TypeUtils.annotation(UseStaticBinding.class));
     }
 

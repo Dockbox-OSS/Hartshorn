@@ -27,7 +27,7 @@ import java.util.Set;
  * should be thread-safe.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public interface GenericConverter {
 

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -71,7 +72,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
                 }
                 arguments.add(this.loadDefault(parameter, i, context, args));
             }
-            catch (final Exception e) {
+            catch (final ApplicationRuntimeException e) {
                 throw new ParameterLoadException(parameter, e);
             }
         }

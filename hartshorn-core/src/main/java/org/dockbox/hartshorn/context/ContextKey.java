@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  * @param <T> The type of the value.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public final class ContextKey<T extends Context> implements ContextIdentity<T> {
 
@@ -220,7 +220,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @see ContextKey#builder(TypeView)
      *
      * @author Guus Lieben
-     * @since 23.1
+     * @since 0.5.0
      */
     public static class Builder<T extends Context> {
 

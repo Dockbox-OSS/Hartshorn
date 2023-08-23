@@ -42,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
  * active {@link ApplicationContext}. If a conflict arises a warning is logged, but the runtime will proceed as usual.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ExpressionCondition implements Condition {
 

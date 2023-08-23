@@ -26,7 +26,7 @@ import java.util.concurrent.Callable;
  * @param <E> The type of the exception
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 @FunctionalInterface
 public interface ThrowingSupplier<T, E extends Throwable> {

@@ -24,7 +24,7 @@ import java.util.Set;
  * A proxy constraint is a validation rule that can be applied to a proxy. This can be used to validate
  * that a proxy can be created for a given type.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @FunctionalInterface

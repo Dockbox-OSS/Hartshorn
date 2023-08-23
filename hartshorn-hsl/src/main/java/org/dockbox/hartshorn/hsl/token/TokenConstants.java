@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.hsl.token;
  * representation.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class TokenConstants {
     public static final char LEFT_PAREN = '(';

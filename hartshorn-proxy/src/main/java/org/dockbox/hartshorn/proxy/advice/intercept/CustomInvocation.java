@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
  * control over the invocation.
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 @FunctionalInterface
 public interface CustomInvocation<T> {

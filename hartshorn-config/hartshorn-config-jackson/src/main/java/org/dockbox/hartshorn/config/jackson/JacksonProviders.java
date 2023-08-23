@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.jackson.mapping.JavaPropsDataMapper;
@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 @RequiresClass("com.fasterxml.jackson.databind.ObjectMapper")
 public class JacksonProviders {
 
-    private static final int DATA_MAPPER_PHASE = ProcessingOrder.EARLY - 64;
+    private static final int DATA_MAPPER_PHASE = ProcessingPriority.HIGH_PRECEDENCE - 64;
 
     @Binds(value = "properties", phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")

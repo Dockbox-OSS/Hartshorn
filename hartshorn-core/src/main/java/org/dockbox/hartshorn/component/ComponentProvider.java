@@ -43,7 +43,7 @@ import jakarta.inject.Named;
  *
  * @see ComponentKey
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public interface ComponentProvider {
 

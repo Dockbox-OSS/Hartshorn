@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
@@ -28,6 +28,10 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "0.5.0", forRemoval = true)
 public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory> {
 
     @Override
@@ -70,7 +74,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.LAST;
+    public int priority() {
+        return ProcessingPriority.LOWEST_PRECEDENCE;
     }
 }

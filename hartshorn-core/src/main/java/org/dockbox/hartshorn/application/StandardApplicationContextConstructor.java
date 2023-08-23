@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ClasspathApplicationContext;
+import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
@@ -25,6 +25,8 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironm
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
@@ -81,13 +83,13 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
     protected ApplicationContext createContext(final InitializingContext context) {
         this.logger.debug("Creating new application context with environment {}", context.environment().getClass().getSimpleName());
-        return new ClasspathApplicationContext(context);
+        return new SimpleApplicationContext(context);
     }
 
     protected void configure(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
         final ApplicationEnvironment environment = applicationContext.environment();
         final InitializingContext initializingContext = new InitializingContext(environment, applicationContext, builder);
-        final ApplicationConfigurator configurator = builder.applicationConfigurator(initializingContext);
+        final ApplicationConfigurator configurator = initializingContext.applicationConfigurator();
         this.logger.debug("Configuring application context with configurator {}", configurator.getClass().getSimpleName());
         configurator.configure(environment);
 
@@ -107,12 +109,30 @@ public class StandardApplicationContextConstructor implements ApplicationContext
 
         this.logger.debug("Registering {} type reference collectors to application context", collectorContext.collectors().size());
         applicationContext.add(collectorContext);
-        final Set<ComponentProcessor> componentProcessors = componentProcessors(applicationContext, builder, serviceActivatorAnnotations);
+
+        final Set<Class<? extends ComponentProcessor>> processorTypes = serviceActivatorAnnotations.stream()
+                .flatMap(serviceActivator -> Arrays.stream(serviceActivator.processors()))
+                .collect(Collectors.toSet());
+        // Create sets for ComponentPreProcessor and ComponentPostProcessor from processorTypes
+        final Set<Class<? extends ComponentPreProcessor>> preProcessorTypes = extractProcessors(processorTypes, ComponentPreProcessor.class);
+        final Set<Class<? extends ComponentPostProcessor>> postProcessorTypes = extractProcessors(processorTypes, ComponentPostProcessor.class);
+        for (final Class<? extends ComponentPostProcessor> postProcessorType : postProcessorTypes) {
+            applicationContext.add(postProcessorType);
+        }
+
+        final Set<ComponentProcessor> componentProcessors = this.componentProcessors(applicationContext, builder, preProcessorTypes);
 
         this.logger.debug("Registering {} component processors to application context", componentProcessors.size());
         for (final ComponentProcessor componentProcessor : componentProcessors) {
             applicationContext.add(componentProcessor);
         }
+    }
+
+    private static <T extends ComponentProcessor> Set<Class<? extends T>> extractProcessors(final Set<Class<? extends ComponentProcessor>> processorTypes, final Class<T> processorClass) {
+        return processorTypes.stream()
+                .filter(processorClass::isAssignableFrom)
+                .map(type -> (Class<? extends T>) type)
+                .collect(Collectors.toSet());
     }
 
     protected Set<Annotation> serviceActivators(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
@@ -142,12 +162,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
     }
 
     @NotNull
-    private static Set<ComponentProcessor> componentProcessors(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder, final Set<ServiceActivator> serviceActivators) {
-
-        final Set<Class<? extends ComponentProcessor>> processorTypes = serviceActivators.stream()
-                .flatMap(serviceActivator -> Arrays.stream(serviceActivator.processors()))
-                .collect(Collectors.toSet());
-
+    protected Set<ComponentProcessor> componentProcessors(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder, final Set<Class<? extends ComponentPreProcessor>> processorTypes) {
         final Set<ComponentProcessor> componentProcessors = new HashSet<>();
         componentProcessors.addAll(builder.componentPreProcessors());
         componentProcessors.addAll(builder.componentPostProcessors());
@@ -204,7 +219,7 @@ public class StandardApplicationContextConstructor implements ApplicationContext
                 observer.onStarted(applicationContext);
         }
 
-        for (final ComponentContainer container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
+        for (final ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
             this.logger.debug("Instantiating non-lazy singleton {} in application context", container.id());
             if (container.singleton() && !container.lazy()) {
                 applicationContext.get(container.type().type());

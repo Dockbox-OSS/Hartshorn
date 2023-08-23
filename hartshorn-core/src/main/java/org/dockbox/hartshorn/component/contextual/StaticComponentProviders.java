@@ -19,11 +19,14 @@ package org.dockbox.hartshorn.component.contextual;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.Context;
 
 @Service
 @RequiresActivator(UseStaticBinding.class)
 public class StaticComponentProviders {
 
     @Binds
-    public final Class<? extends StaticComponentProvider> staticComponentProvider = ContextStaticComponentProvider.class;
+    public StaticComponentProvider staticComponentProvider(@Context final StaticComponentContext staticComponentContext) {
+        return new ContextStaticComponentProvider(staticComponentContext);
+    }
 }

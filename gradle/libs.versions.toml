@@ -36,34 +36,19 @@
 # Versions in alphabetical order.
 #
 autoService = "1.0-rc7"
-antlr = "4.10.1"
-caffeine = "3.1.1"
 cglib = "3.3.0"
 checker = "3.28.0"
-derby = "10.16.1.1"
-freemarker = "2.3.31"
 groovy = "4.0.2"
 hamcrest = "2.2"
-hibernate = "6.1.5.Final"
-httpclient = "4.5.13"
 jackson = "2.13.3"
 jakartaAnnotations = "2.1.1"
 jakartaInject = "2.0.1"
-jakartaPersistence = "3.1.0"
-jakartaServlet = "6.0.0"
-jetty = "11.0.11"
 junitJupiter = "5.9.0"
 javassist = "3.29.1-GA"
 logback = "1.2.11"
-mariaDb = "3.0.7"
 mockitoInline = "4.7.0"
-mssql = "11.2.0.jre17"
-mysql = "8.0.30"
-postgresql = "42.5.0"
 scala = "2.13.8"
 slf4j = "1.7.36"
-testContainers = "1.17.3"
-woodstox = "4.4.1"
 
 [libraries]
 #
@@ -77,47 +62,23 @@ jacksonDataformatYaml = { module = "com.fasterxml.jackson.dataformat:jackson-dat
 
 jakartaAnnotations = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotations" }
 jakartaInject = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakartaInject" }
-jakartaPersistence = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistence" }
-jakartaServlet = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "jakartaServlet" }
-
-jettyServlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jetty" }
-jettyServer = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
 
 junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiter" }
 junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiter" }
 junitJupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junitJupiter" }
 
-testContainers = { module = "org.testcontainers:testcontainers", version.ref = "testContainers" }
-testContainersJunit = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainers" }
-testContainersMysql = { module = "org.testcontainers:mysql", version.ref = "testContainers"}
-testContainersMariadb = { module = "org.testcontainers:mariadb", version.ref = "testContainers"}
-testContainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testContainers"}
-testContainersMssqlserver = { module = "org.testcontainers:mssqlserver", version.ref = "testContainers"}
-
 #
 # Libraries in alphabetical order
 #
-antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 autoService = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 cglib = { module = "cglib:cglib", version.ref = "cglib" }
-derby = { module = "org.apache.derby:derby", version.ref = "derby" }
-derbyTools = { module = "org.apache.derby:derbytools", version.ref = "derby" }
-freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
 groovy = { module = "org.apache.groovy:groovy-all", version.ref = "groovy" }
 hamcrest = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest" }
-hibernateCore = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpclient" }
 javassist = { module = "org.javassist:javassist", version.ref = "javassist" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-mariaDb = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariaDb" }
 mockitoInline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
-mssql = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssql" }
-mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
-postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 scala = { module = "org.scala-lang:scala-library", version.ref = "scala" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-woodstox = { module = "org.codehaus.woodstox:woodstox-core-asl", version.ref = "woodstox" }
 checkerQual = { module = "org.checkerframework:checker-qual", version.ref = "checker" }
 
 [bundles]
@@ -125,25 +86,6 @@ checkerQual = { module = "org.checkerframework:checker-qual", version.ref = "che
 # Bundles in alphabetical order.
 # Dependencies per bundle should also be in alphabetical order.
 #
-databaseDrivers = [
-    "derby",
-    "derbyTools",
-    "mariaDb",
-    "mssql",
-    "mysql",
-    "postgresql",
-]
-databaseTestContainers = [
-    "testContainersMariadb",
-    "testContainersMssqlserver",
-    "testContainersMysql",
-    "testContainersPostgresql",
-]
-hibernate = [
-    "antlr",
-    "hibernateCore",
-    "woodstox",
-]
 jackson = [
     "jacksonCore",
     "jacksonDataformatProperties",
@@ -154,19 +96,10 @@ jackson = [
 jakarta = [
     "jakartaAnnotations",
     "jakartaInject",
-    "jakartaPersistence",
-]
-jetty = [
-    "jettyServer",
-    "jettyServlet",
 ]
 test = [
     "hamcrest",
     "junitJupiterApi",
     "junitJupiterParams",
     "mockitoInline",
-]
-testContainers = [
-    "testContainers",
-    "testContainersJunit",
 ]

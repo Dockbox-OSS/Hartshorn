@@ -179,7 +179,7 @@ public final class TranslationBatchGenerator {
     public static Map<String, String> collect(final ApplicationContext context) {
         final Map<String, String> batch = new HashMap<>();
         final TranslationKeyGenerator keyGenerator = context.get(TranslationKeyGenerator.class);
-        for (final ComponentContainer container : context.get(ComponentLocator.class).containers()) {
+        for (final ComponentContainer<?> container : context.get(ComponentLocator.class).containers()) {
             final TypeView<?> type = container.type();
             final List<? extends MethodView<?, ?>> methods = type.methods().annotatedWith(InjectTranslation.class);
             for (final MethodView<?, ?> method : methods) {

@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.nio.file.Path;
@@ -32,16 +32,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import jakarta.inject.Inject;
-
-@Component
 public class DefaultTranslationBundle implements TranslationBundle {
 
     private final Map<String, Message> messages = new ConcurrentHashMap<>();
-
-    @Inject
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
     private Locale primaryLanguage = Locale.getDefault();
+
+    public DefaultTranslationBundle(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public Locale primaryLanguage() {
@@ -92,10 +91,15 @@ public class DefaultTranslationBundle implements TranslationBundle {
 
     @Override
     public TranslationBundle merge(final TranslationBundle bundle) {
-        final DefaultTranslationBundle translationBundle = new DefaultTranslationBundle().primaryLanguage(this.primaryLanguage());
+        final DefaultTranslationBundle translationBundle = new DefaultTranslationBundle(this.applicationContext)
+                .primaryLanguage(this.primaryLanguage());
+
         final Map<String, Message> messageDict = translationBundle.messages;
-        for (final Message message : this.messages()) messageDict.put(message.key(), this.mergeMessages(message, messageDict));
-        for (final Message message : bundle.messages()) messageDict.put(message.key(), this.mergeMessages(message, messageDict));
+        CollectionUtilities.forEach(
+                message -> messageDict.put(message.key(), this.mergeMessages(message, messageDict)),
+                this.messages(), bundle.messages()
+        );
+
         return translationBundle;
     }
 

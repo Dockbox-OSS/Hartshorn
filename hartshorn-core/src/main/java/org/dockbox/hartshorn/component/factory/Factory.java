@@ -59,9 +59,14 @@ import java.lang.annotation.Target;
  * are only defined as context at that point. If you wish to use scopes, you should use post-construct
  * actions to configure a scope-provided component.
  *
+ * @deprecated Use of implicit factories is discouraged. Instead, create a factory interface and
+ *            bind it to the implementation. This allows for more control over the factory, and
+ *            ensures type safety.
+ *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
+@Deprecated(since = "0.5.0", forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(java.lang.annotation.ElementType.METHOD)
 public @interface Factory {

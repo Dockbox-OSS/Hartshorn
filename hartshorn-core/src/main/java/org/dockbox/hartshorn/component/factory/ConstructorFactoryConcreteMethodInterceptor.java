@@ -22,6 +22,10 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "0.5.0", forRemoval = true)
 public class ConstructorFactoryConcreteMethodInterceptor<T, R> extends ConstructorFactoryMethodInterceptor<T, R> {
     private final MethodProxyContext<T> methodContext;
     private final ConversionService conversionService;

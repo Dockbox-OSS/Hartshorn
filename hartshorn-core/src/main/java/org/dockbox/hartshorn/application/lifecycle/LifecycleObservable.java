@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.application.lifecycle;
  * {@link LifecycleObserver} interface.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface LifecycleObservable {
 

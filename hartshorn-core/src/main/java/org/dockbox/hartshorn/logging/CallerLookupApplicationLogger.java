@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * on the current stacktrace is used.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 @LogExclude
 public abstract class CallerLookupApplicationLogger implements ApplicationLogger {

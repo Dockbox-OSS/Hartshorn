@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * yield an exception.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER, ElementType.FIELD})

@@ -52,7 +52,7 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
             collector.property("all").write(reporters);
         }
         else {
-            final Map<String, List<ComponentContainer>> groupedContainers = componentLocator.containers().stream()
+            final Map<String, List<ComponentContainer<?>>> groupedContainers = componentLocator.containers().stream()
                     .collect(Collectors.groupingBy(container -> switch (this.configuration.groupBy()) {
                         case STEREOTYPE -> stereotype(container).getCanonicalName();
                         case PACKAGE -> container.type().packageInfo().name();
@@ -66,13 +66,13 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     }
 
     @NotNull
-    private Reportable[] diagnosticsReporters(final Collection<ComponentContainer> containers) {
+    private Reportable[] diagnosticsReporters(final Collection<ComponentContainer<?>> containers) {
         return containers.stream()
                 .map(container -> (Reportable) new ComponentContainerReporter(this, container))
                 .toArray(Reportable[]::new);
     }
 
-    static Class<?> stereotype(final ComponentContainer container) {
+    static Class<?> stereotype(final ComponentContainer<?> container) {
         final Component component = container.type().annotations().get(Component.class).get();
         return component.annotationType();
     }

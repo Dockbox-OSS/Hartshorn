@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
  *
  * @param <T> the type of the proxy object
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @FunctionalInterface

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 /**
  * Service discovery interface for {@link ApplicationProxier} implementations.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @FunctionalInterface

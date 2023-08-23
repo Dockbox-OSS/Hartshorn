@@ -17,19 +17,17 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
-@Component
 public class BundledTranslationService implements TranslationService {
 
-    @Inject
-    private ApplicationContext applicationContext;
-
-    @Inject
+    private final ApplicationContext applicationContext;
     private TranslationBundle bundle;
+
+    public BundledTranslationService(final ApplicationContext applicationContext, final TranslationBundle bundle) {
+        this.applicationContext = applicationContext;
+        this.bundle = bundle;
+    }
 
     @Override
     public ApplicationContext applicationContext() {

@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  *
  * @param <T> the type of the proxy
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
 

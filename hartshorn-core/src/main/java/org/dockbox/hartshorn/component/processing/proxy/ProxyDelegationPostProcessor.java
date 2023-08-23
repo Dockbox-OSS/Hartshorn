@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
@@ -29,11 +28,15 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
     protected abstract Class<P> parentTarget();
 
     @Override
-    public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
-        if (!processingContext.type().isChildOf(this.parentTarget())) return instance;
+    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+        if (!processingContext.type().isChildOf(this.parentTarget())) {
+            return;
+        }
 
         final ProxyFactory<P> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
-        if (factory == null) return instance;
+        if (factory == null) {
+            return;
+        }
 
         final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
 
@@ -47,8 +50,6 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
         else {
             factory.advisors().type(this.parentTarget()).delegate(concreteDelegator);
         }
-
-        return instance;
     }
 
     protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P> handler, final Class<? extends P> parent) {

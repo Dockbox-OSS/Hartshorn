@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
  *             It is recommended to use Javassist instead, through the
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyLookup}.
  */
-@Deprecated(since = "22.5")
+@Deprecated(since = "0.4.13")
 public class CglibProxyLookup extends HartshornProxyLookup {
 
     @Override

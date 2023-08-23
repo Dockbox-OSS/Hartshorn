@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenConstants;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ import java.util.Map;
  * and matches them to logical {@link TokenType}s.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Lexer {
 
@@ -51,7 +50,6 @@ public class Lexer {
     private int line = 1;
     private int column = -1;
 
-    @Bound
     public Lexer(final String source) {
         this.source = source;
     }

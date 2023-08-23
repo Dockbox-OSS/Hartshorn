@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * are created through {@link ApplicationLogger#log()}.
  *
  * @author Guus Lieben
- * @since 21.5
+ * @since 0.4.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

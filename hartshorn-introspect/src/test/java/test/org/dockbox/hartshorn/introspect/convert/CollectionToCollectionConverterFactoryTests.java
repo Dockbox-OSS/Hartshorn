@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.introspect.convert;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToCollectionConverterFactory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -29,9 +30,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CollectionToCollectionConverterFactoryTests {
 
@@ -44,9 +42,9 @@ public class CollectionToCollectionConverterFactoryTests {
         final Converter<Collection<?>, ArrayList> converter = new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
         final List<Integer> output = converter.convert(input);
 
-        assertTrue(output instanceof ArrayList);
-        assertEquals(expectedOutput.size(), output.size());
-        assertTrue(output.containsAll(expectedOutput));
+        Assertions.assertTrue(output instanceof ArrayList);
+        Assertions.assertEquals(expectedOutput.size(), output.size());
+        Assertions.assertTrue(output.containsAll(expectedOutput));
     }
 
     @Test
@@ -58,9 +56,9 @@ public class CollectionToCollectionConverterFactoryTests {
         final Converter<Collection<?>, LinkedList> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
         final List<String> output = converter.convert(input);
 
-        assertTrue(output instanceof LinkedList);
-        assertEquals(expectedOutput.size(), output.size());
-        assertTrue(output.containsAll(expectedOutput));
+        Assertions.assertTrue(output instanceof LinkedList);
+        Assertions.assertEquals(expectedOutput.size(), output.size());
+        Assertions.assertTrue(output.containsAll(expectedOutput));
     }
 
     @Test
@@ -72,14 +70,14 @@ public class CollectionToCollectionConverterFactoryTests {
         final Converter<Collection<?>, LinkedHashSet> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
         final Set<?> output = converter.convert(input);
 
-        assertTrue(output instanceof LinkedHashSet);
-        assertEquals(expectedOutput.size(), output.size());
+        Assertions.assertTrue(output instanceof LinkedHashSet);
+        Assertions.assertEquals(expectedOutput.size(), output.size());
 
         // Assert order is preserved
         final List<?> outputList = new ArrayList<>(output);
         final List<?> expectedOutputList = new ArrayList<>(expectedOutput);
         for (int i = 0; i < outputList.size(); i++) {
-            assertEquals(expectedOutputList.get(i), outputList.get(i));
+            Assertions.assertEquals(expectedOutputList.get(i), outputList.get(i));
         }
     }
 }

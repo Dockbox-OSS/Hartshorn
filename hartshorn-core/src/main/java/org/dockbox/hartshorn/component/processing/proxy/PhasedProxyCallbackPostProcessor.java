@@ -18,13 +18,12 @@ package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
+import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
-import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -33,12 +32,14 @@ import java.util.Collection;
 public abstract class PhasedProxyCallbackPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
-    public final <T> T process(final ApplicationContext context, @Nullable T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
         final ComponentKey<T> key = processingContext.key();
         final Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 
         final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
-        if (factory == null) return instance;
+        if (factory == null) {
+            return;
+        }
 
         instance = this.processProxy(context, instance, processingContext, factory);
 
@@ -52,8 +53,6 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
                 factory.advisors().method(method).wrapAround(wrapper);
             }
         }
-
-        return instance;
     }
 
     protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T> proxyFactory) {

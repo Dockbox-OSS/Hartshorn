@@ -31,7 +31,7 @@ import java.util.Set;
  * method is used to further narrow the match.
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public class ConverterAdapter implements GenericConverter, ConditionalConverter {
 

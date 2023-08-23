@@ -26,7 +26,7 @@ import java.util.function.Function;
  * token type.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public enum TokenType {
     // Literals

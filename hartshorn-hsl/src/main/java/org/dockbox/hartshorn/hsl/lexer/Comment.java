@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.lexer;
  * which can be located anywhere in a script.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public record Comment(int line, String text) {
 

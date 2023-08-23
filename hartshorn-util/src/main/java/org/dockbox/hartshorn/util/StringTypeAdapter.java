@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> The type to convert to
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface StringTypeAdapter<T> {
     /**

@@ -27,12 +27,15 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
@@ -156,6 +159,14 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
             return provider.hierarchy(key);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
+    }
+
+    @Override
+    public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
+        if (this.componentProvider instanceof HierarchicalComponentProvider provider) {
+            return provider.hierarchies();
+        }
+        return new ArrayListMultiMap<>();
     }
 
     @Override

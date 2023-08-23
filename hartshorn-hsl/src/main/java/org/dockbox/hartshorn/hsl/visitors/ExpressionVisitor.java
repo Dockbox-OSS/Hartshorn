@@ -46,7 +46,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  * @param <R> The return type for the visitor.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public interface ExpressionVisitor<R> {
     R visit(BinaryExpression expr);

@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * customized during the script's execution, though some runtimes may not support this.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 

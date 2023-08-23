@@ -16,25 +16,34 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Bound;
-import org.dockbox.hartshorn.inject.processing.BindingProcessor;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class FactoryServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "0.5.0", forRemoval = true)
+public class FactoryServicePreProcessor extends ComponentPreProcessor {
+
+    private static final Logger FACTORY_LOGGER = LoggerFactory.getLogger(UseFactoryServices.class);
+
+    public FactoryServicePreProcessor() {
+        FACTORY_LOGGER.warn("The @Factory annotation is deprecated and will be removed in a future release. Please use dedicated factory objects or regular object binding instead.");
+    }
 
     @Override
     public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
@@ -76,16 +85,8 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor implements
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.FIRST;
-    }
-
-    @Override
-    public void exit(final ApplicationContext context) {
-        try {
-            context.get(BindingProcessor.class).finalizeProxies(context);
-        } catch (final ComponentInitializationException e) {
-            context.handle(e);
-        }
+    public int priority() {
+        // +1024 to be after the default binding processor (+512), but allow for other processors to be in between
+        return ProcessingPriority.HIGHEST_PRECEDENCE + 1024;
     }
 }

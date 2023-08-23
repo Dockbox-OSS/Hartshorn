@@ -28,7 +28,7 @@ import java.util.Collections;
  * @param <T> The type of the proxy instance
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public class MethodWrapperList<T> implements MethodWrapper<T> {
 

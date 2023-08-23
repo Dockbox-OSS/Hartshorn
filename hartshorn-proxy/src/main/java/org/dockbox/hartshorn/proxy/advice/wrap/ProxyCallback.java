@@ -24,7 +24,7 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  *
  * @param <T> the type of the proxy method
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 @FunctionalInterface
 public interface ProxyCallback<T> {

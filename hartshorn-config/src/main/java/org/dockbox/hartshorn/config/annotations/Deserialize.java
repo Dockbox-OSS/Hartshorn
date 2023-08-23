@@ -56,7 +56,7 @@ import java.lang.annotation.Target;
  * used through {@link #fileType()}.
  *
  * @author Guus Lieben
- * @since 21.1
+ * @since 0.4.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

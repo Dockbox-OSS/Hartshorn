@@ -40,7 +40,7 @@ public class ApplicationRuntimeException extends RuntimeException {
      *
      * @return The first cause of the exception.
      */
-    @Deprecated(forRemoval = true, since = "22.5")
+    @Deprecated(forRemoval = true, since = "0.4.13")
     public Throwable unwrap() {
         Throwable root = this;
         while (root.getCause() instanceof ApplicationRuntimeException && root.getCause() != root) {

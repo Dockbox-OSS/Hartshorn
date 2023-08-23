@@ -30,7 +30,7 @@ import java.util.List;
  * a predefined list of executables, or by matching methods with the given name and argument types.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ExecutableLookup {
 

@@ -48,11 +48,9 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
         super(introspector);
         this.field = field;
         this.introspector = introspector;
-        if (!field.trySetAccessible()) {
-            if (!"java.lang".startsWith(field.getDeclaringClass().getPackageName())) {
-                throw new IllegalIntrospectionException(this, "Unable to set field " + field.getName() + " accessible");
-            }
-        }
+        // Acceptable if the field is not accessible. If the field cannot be accessed, it is assumed this is valid
+        // and the field will only be used for introspection purposes.
+        field.trySetAccessible();
     }
 
     @Override

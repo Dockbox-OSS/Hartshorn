@@ -38,7 +38,7 @@ import java.util.List;
  * method is found, a {@link RuntimeError} is thrown.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ExternalFunction extends AbstractFinalizable implements MethodReference {
 

@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.proxy;
  * access to the proxy's {@link ProxyManager}.
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 @FunctionalInterface
 public interface Proxy<T> {

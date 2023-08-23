@@ -23,7 +23,7 @@ import java.nio.file.Path;
  * application.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 @FunctionalInterface
 public interface ApplicationFSProvider {

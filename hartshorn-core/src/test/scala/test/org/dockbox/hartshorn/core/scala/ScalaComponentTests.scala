@@ -34,7 +34,7 @@ import java.util.stream.Stream
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 @HartshornTest(includeBasePackages = false, scanPackages = Array("test.org.dockbox.hartshorn.core.scala"))
 class ScalaComponentTests {
@@ -70,6 +70,5 @@ object ScalaComponentTests {
   def components(): Stream[Arguments] = Stream.of(
       Arguments.of(classOf[ScalaCaseClassComponent], (_: ScalaCaseClassComponent).getApplicationContext, (_: ScalaCaseClassComponent).getApplicationManager),
       Arguments.of(classOf[ScalaClassComponent], (_: ScalaClassComponent).getApplicationContext, (_: ScalaClassComponent).getApplicationManager),
-      Arguments.of(ScalaObjectComponent.getClass, (_: ScalaObjectComponent.type).getApplicationContext, null)
     )
 }

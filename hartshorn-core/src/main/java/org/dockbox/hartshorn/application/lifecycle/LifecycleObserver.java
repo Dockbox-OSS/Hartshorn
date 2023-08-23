@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * application-wide logic that needs to be executed when the application starts or stops.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface LifecycleObserver extends Observer {
     /**

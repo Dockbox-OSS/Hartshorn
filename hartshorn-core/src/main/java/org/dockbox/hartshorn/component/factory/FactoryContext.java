@@ -30,7 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * The context used by the {@link FactoryServicePreProcessor} and {@link FactoryServicePostProcessor}. This context keeps track
  * of associated constructors for {@link Factory} methods. If no constructor
  * exists for a given method, an exception will be thrown by this context.
+ *
+ * @deprecated See {@link Factory}.
  */
+@Deprecated(since = "0.5.0", forRemoval = true)
 @InstallIfAbsent
 public class FactoryContext extends DefaultProvisionContext {
 

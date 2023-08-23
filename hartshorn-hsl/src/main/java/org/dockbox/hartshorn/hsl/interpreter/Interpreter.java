@@ -92,7 +92,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
@@ -107,8 +106,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import jakarta.inject.Inject;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -130,7 +127,7 @@ import jakarta.inject.Inject;
  * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<Void>, ContextCarrier {
 
@@ -140,6 +137,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private final Set<String> activeModules = ConcurrentHashMap.newKeySet();
 
     private final Map<String, NativeModule> externalModules;
+    private final ApplicationContext applicationContext;
     private final ResultCollector resultCollector;
 
     private VariableScope global = new VariableScope();
@@ -147,17 +145,13 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private boolean isRunning;
     private ExecutionOptions executionOptions;
 
-    @Inject
-    private ApplicationContext applicationContext;
-
-    @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
         this(resultCollector, externalModules, new ExecutionOptions());
     }
 
-    @Bound
     public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
         this.resultCollector = resultCollector;
+        this.applicationContext = resultCollector.applicationContext();
         this.externalModules = new ConcurrentHashMap<>(externalModules);
         this.executionOptions = executionOptions;
     }

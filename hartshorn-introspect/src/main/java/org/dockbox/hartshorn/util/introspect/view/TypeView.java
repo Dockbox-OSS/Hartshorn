@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
 
 public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 
@@ -47,21 +47,21 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isAbstract();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isFinal();
 
     /**
      * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
      * @return true if the modifier is present
      */
-    @Deprecated(forRemoval = true, since = "23.1")
+    @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isStatic();
 
     boolean isArray();
@@ -84,7 +84,11 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 
     List<TypeView<?>> interfaces();
 
+    List<TypeView<?>> genericInterfaces();
+
     TypeView<?> superClass();
+
+    TypeView<?> genericSuperClass();
 
     TypeMethodsIntrospector<T> methods();
 
@@ -114,4 +118,7 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
     }
 
     PackageView packageInfo();
+
+    TypeView<?> rawType();
+
 }

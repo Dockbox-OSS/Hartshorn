@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Service;
@@ -30,6 +31,7 @@ public class TestCommandProviders {
 
     @Binds(priority = 0)
     @Singleton
-    public Class<? extends SystemSubject> systemSubject = JUnitSystemSubject.class;
-
+    public SystemSubject systemSubject(final ApplicationContext applicationContext) {
+        return new JUnitSystemSubject(applicationContext);
+    }
 }

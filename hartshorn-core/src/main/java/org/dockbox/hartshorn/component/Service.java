@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * <p>By default all services are {@link #singleton() singletons}.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

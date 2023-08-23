@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -44,7 +43,6 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     private final CaseBodyStatementParser caseBodyStatementParser;
 
     @Inject
-    @Bound
     public SwitchStatementParser(final CaseBodyStatementParser caseBodyStatementParser) {
         this.caseBodyStatementParser = caseBodyStatementParser;
     }

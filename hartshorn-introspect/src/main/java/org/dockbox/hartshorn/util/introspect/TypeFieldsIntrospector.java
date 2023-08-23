@@ -31,8 +31,10 @@ public interface TypeFieldsIntrospector<T> {
 
     List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation);
 
+    @Deprecated(forRemoval = true, since = "0.5.0")
     <F> List<FieldView<T, ? extends F>> typed(Class<F> type);
 
+    @Deprecated(forRemoval = true, since = "0.5.0")
     <F> List<FieldView<T, ? extends F>> typed(GenericType<F> type);
 
 }

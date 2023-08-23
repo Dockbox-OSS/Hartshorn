@@ -30,11 +30,17 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.Collection;
+
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying()) {
+    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+
+        final boolean permitsProxying = !processingContext.containsKey(ComponentKey.of(ComponentContainer.class))
+                || processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying();
+
+        if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
             if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
                 final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
@@ -49,6 +55,12 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
                     throw new ApplicationRuntimeException(e);
                 }
             }
+
+            if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
+                modifiableComponentProcessingContext.instance(finalizingInstance);
+                modifiableComponentProcessingContext.requestInstanceLock();
+            }
+
             return context.get(ComponentPopulator.class).populate(finalizingInstance);
         }
         return instance;
@@ -70,8 +82,8 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     }
 
     @Override
-    public Integer order() {
+    public int priority() {
         // Run after all other core post processors, but permit external post processors to run after this one
-        return Integer.MAX_VALUE / 2;
+        return ProcessingPriority.LOWEST_PRECEDENCE - 128;
     }
 }

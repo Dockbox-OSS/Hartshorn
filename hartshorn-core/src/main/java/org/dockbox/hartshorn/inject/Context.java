@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,8 +30,9 @@ import java.lang.annotation.Target;
  * context does not exist in the active application context, the injected value will be {@code null}.
  *
  * @author Guus Lieben
- * @since 21.8
+ * @since 0.4.7
  */
+@Extends(HandledInjection.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Context {

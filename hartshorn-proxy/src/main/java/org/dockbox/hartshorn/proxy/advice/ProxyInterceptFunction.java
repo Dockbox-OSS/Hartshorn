@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.proxy.advice;
  *
  * @param <T> The type of the proxy instance on which the method is invoked.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 @FunctionalInterface

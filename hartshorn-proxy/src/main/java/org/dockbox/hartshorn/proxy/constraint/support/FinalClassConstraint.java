@@ -27,7 +27,7 @@ import java.util.Set;
  * A constraint that prevents the creation of proxies for final classes. This includes sealed classes and records.
  * This constraint is applied by default when using {@link CollectorProxyValidator#withDefaults()}.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public class FinalClassConstraint implements ProxyConstraint {

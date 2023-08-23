@@ -16,38 +16,27 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.factory.Factory;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.List;
 import java.util.Map;
 
-@Service
-@RequiresActivator(UseExpressionValidation.class)
 public interface HslLanguageFactory {
 
-    @Factory
     Lexer lexer(String source);
 
-    @Factory
     TokenParser parser(List<Token> tokens);
 
-    @Factory
     Resolver resolver(Interpreter interpreter);
 
-    @Factory
     Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules);
 
-    @Factory
     Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options);
-
 }

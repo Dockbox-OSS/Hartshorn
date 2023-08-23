@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.application.environment;
  *
  * @see ApplicationEnvironment
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface ApplicationManaged {
 

@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  * @param <T> The type of the proxy instance
  *
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public class CallbackMethodWrapper<T> implements MethodWrapper<T> {
 

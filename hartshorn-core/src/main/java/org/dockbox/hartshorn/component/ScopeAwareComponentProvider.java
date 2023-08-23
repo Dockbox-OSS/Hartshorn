@@ -29,14 +29,17 @@ import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ScopeAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ScopedProviderOwner {
 
@@ -48,6 +51,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private final transient ComponentPostConstructor postConstructor;
     private final Map<Scope, HierarchyAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
     private final HierarchyAwareComponentProvider applicationComponentProvider;
+    private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
     public ScopeAwareComponentProvider(final InitializingContext context) {
         this.applicationContext = context.applicationContext();
@@ -116,10 +120,21 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
 
     @Override
     public void postProcessor(final ComponentPostProcessor postProcessor) {
-        this.postProcessors.put(postProcessor.order(), postProcessor);
+        this.postProcessors.put(postProcessor.priority(), postProcessor);
+        this.uninitializedPostProcessors.remove(postProcessor.getClass());
+
         final ComponentKey<ComponentPostProcessor> key = TypeUtils.adjustWildcards(ComponentKey.of(postProcessor.getClass()), ComponentKey.class);
         // Install to application context
         this.bind(key).singleton(postProcessor);
+    }
+
+    @Override
+    public void postProcessor(final Class<? extends ComponentPostProcessor> postProcessor) {
+        final boolean alreadyInitialized = this.postProcessors.allValues().stream()
+                .anyMatch(processor -> processor.getClass().equals(postProcessor));
+        if (!alreadyInitialized) {
+            this.uninitializedPostProcessors.add(postProcessor);
+        }
     }
 
     public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
@@ -137,8 +152,24 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     }
 
     @Override
+    public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
+        final MultiMap<Scope, BindingHierarchy<?>> hierarchies = new HashSetMultiMap<>();
+        for (final HierarchyAwareComponentProvider componentProvider : this.scopedProviders.values()) {
+            final MultiMap<Scope, BindingHierarchy<?>> providerHierarchies = componentProvider.hierarchies();
+            assert providerHierarchies.keySet().size() == 1 : "Hierarchy collection from scoped provider should only contain one scope";
+            hierarchies.putAll(providerHierarchies);
+        }
+        return hierarchies;
+    }
+
+    @Override
     public MultiMap<Integer, ComponentPostProcessor> postProcessors() {
         return this.postProcessors;
+    }
+
+    @Override
+    public Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors() {
+        return Set.copyOf(this.uninitializedPostProcessors);
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
@@ -44,7 +45,7 @@ import org.slf4j.Logger;
  * its components. The implementation may choose to perform specific actions based on available
  * activators and properties.
  *
- * @since 21.1
+ * @since 0.4.0
  * @author Guus Lieben
  */
 @LogExclude
@@ -68,6 +69,8 @@ public interface ApplicationContext extends
      * @see org.dockbox.hartshorn.component.processing.ComponentPostProcessor
      */
     void add(ComponentProcessor processor);
+
+    void add(Class<? extends ComponentPostProcessor> processor);
 
     /**
      * Gets the active {@link ApplicationEnvironment} for the application.

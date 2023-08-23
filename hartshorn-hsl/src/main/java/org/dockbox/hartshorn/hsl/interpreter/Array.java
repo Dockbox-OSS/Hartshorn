@@ -28,7 +28,7 @@ import java.util.Iterator;
  * by the {@link Interpreter} to represent arrays in the HSL language, and access them natively.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Array implements Iterable<Object>, PropertyContainer {
 

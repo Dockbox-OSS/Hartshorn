@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayToCollectionConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayToObjectConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionDefaultValueProviderFactory;
@@ -43,10 +44,10 @@ import org.dockbox.hartshorn.util.introspect.convert.support.StringToEnumConvert
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToPrimitiveConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,7 +72,7 @@ import java.util.UUID;
  * </ul>
  *
  * @author Guus Lieben
- * @since 23.1
+ * @since 0.5.0
  */
 public class StandardConversionService implements ConversionService, ConverterRegistry {
 
@@ -103,8 +104,12 @@ public class StandardConversionService implements ConversionService, ConverterRe
     @Override
     public boolean canConvert(final Object source, final Class<?> targetType) {
         final Class<?> sourceType = source == null ? null : source.getClass();
-        if (sourceType == null || targetType == null) return false;
-        if (sourceType.equals(targetType)) return true;
+        if (sourceType == null || targetType == null) {
+            return false;
+        }
+        if (sourceType.equals(targetType)) {
+            return true;
+        }
         return this.hasConverterForInput(source, targetType);
     }
 
@@ -153,12 +158,20 @@ public class StandardConversionService implements ConversionService, ConverterRe
 
     @Override
     public <I, O> void addConverter(final Converter<I, O> converter) {
-        final List<TypeView<?>> converterParameters = this.introspector.introspect(converter)
+        final TypeParameterList converterParameters = this.introspector.introspect(converter)
                 .typeParameters()
-                .from(Converter.class);
-        final Class<I> sourceType = TypeUtils.adjustWildcards(converterParameters.get(0).type(), Class.class);
-        final Class<O> targetType = TypeUtils.adjustWildcards(converterParameters.get(1).type(), Class.class);
+                .resolveInputFor(Converter.class);
+
+        final Class<I> sourceType = TypeUtils.adjustWildcards(this.unwrapParameterAtIndex(converterParameters, 0), Class.class);
+        final Class<O> targetType = TypeUtils.adjustWildcards(this.unwrapParameterAtIndex(converterParameters, 1), Class.class);
         this.addConverter(sourceType, targetType, converter);
+    }
+
+    private Class<?> unwrapParameterAtIndex(final TypeParameterList parameters, final int index) {
+        return parameters.atIndex(index)
+                .flatMap(TypeParameterView::resolvedType)
+                .map(TypeView::type)
+                .orElseThrow(() -> new IllegalArgumentException("Could not determine type parameter " + index + " for converter"));
     }
 
     @Override
@@ -203,10 +216,12 @@ public class StandardConversionService implements ConversionService, ConverterRe
     }
 
     protected <T, R> Class<R> getTypeParameter(final Class<T> fromType, final T converterFactory, final int parameterIndex) {
-        final List<TypeView<?>> parameters = this.introspector.introspect(converterFactory)
+        final TypeParameterList typeParameters = this.introspector.introspect(converterFactory)
                 .typeParameters()
-                .from(fromType);
-        return TypeUtils.adjustWildcards(parameters.get(parameterIndex).type(), Class.class);
+                .resolveInputFor(fromType);
+
+        final Class<?> parameter = this.unwrapParameterAtIndex(typeParameters, parameterIndex);
+        return TypeUtils.adjustWildcards(parameter, Class.class);
     }
 
     public static void registerCollectionConverters(final ConverterRegistry registry, final ConversionService service, final Introspector introspector) {

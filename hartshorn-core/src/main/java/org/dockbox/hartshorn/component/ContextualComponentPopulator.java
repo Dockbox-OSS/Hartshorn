@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoadException;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -102,9 +103,12 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
     private <T> void populateFields(final TypeView<T> type, final T instance) {
         for (final FieldView<T, ?> field : type.fields().annotatedWith(Inject.class)) {
-            if (field.type().isChildOf(Collection.class))
+            if (field.type().isChildOf(Collection.class)) {
                 this.populateBeanCollectionField(type, instance, field);
-            else this.populateObjectField(type, instance, field);
+            }
+            else {
+                this.populateObjectField(type, instance, field);
+            }
         }
         for (final FieldView<T, ?> field : type.fields().annotatedWith(org.dockbox.hartshorn.inject.Context.class)) {
             this.populateContextField(field, instance);
@@ -129,10 +133,10 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         }
         catch (final ComponentResolutionException e) {
             if (required) {
-                throw new ComponentRequiredException("Field " + field.name() + " in " + type.qualifiedName() + " is required", e);
+                throw new ComponentRequiredException("Field '" + field.name() + "' in " + type.qualifiedName() + " is required", e);
             }
             else {
-                this.applicationContext().log().warn("Failed to resolve component for field " + field.name() + " in type " + type.name());
+                this.applicationContext().handle("Failed to resolve component for field '" + field.name() + "' in type " + type.name(), e);
                 return;
             }
         }
@@ -142,13 +146,20 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     }
 
     private <T> void populateBeanCollectionField(final TypeView<T> type, final T instance, final FieldView<T, ?> field) {
-        final Option<TypeView<?>> beanType = field.genericType().typeParameters().at(0);
+        final Option<TypeView<?>> beanType = field.genericType()
+                .typeParameters()
+                .resolveInputFor(Collection.class)
+                .atIndex(0)
+                .flatMap(TypeParameterView::resolvedType);
+
         if (beanType.absent()) {
-            throw new IllegalStateException("Unable to determine instance type for field " + field.name() + " in " + type.name());
+            throw new ComponentPopulateException("Failed to populate field " + field.name() + " in " + type.qualifiedName() + ", could not resolve bean type", null);
         }
-        ComponentKey<?> beanKey = ComponentKey.of(beanType.get().type());
-        if (field.annotations().has(Named.class))
+
+        ComponentKey<?> beanKey = ComponentKey.of(beanType.get());
+        if (field.annotations().has(Named.class)) {
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
+        }
 
         final StaticComponentContext staticComponentContext = this.applicationContext().first(StaticComponentContext.CONTEXT_KEY).get();
         final List<?> beans = staticComponentContext.provider().all(beanKey);

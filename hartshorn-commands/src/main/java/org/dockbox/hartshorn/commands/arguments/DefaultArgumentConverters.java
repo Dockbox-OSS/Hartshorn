@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToBooleanConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToCharacterConverter;
@@ -130,8 +131,8 @@ public class DefaultArgumentConverters {
     }
 
     @StaticBinds
-    public static ArgumentConverter<ComponentContainer> componentContainerArgumentConverter() {
-        return ArgumentConverterImpl.builder(ComponentContainer.class, "service")
+    public static ArgumentConverter<ComponentContainer<?>> componentContainerArgumentConverter() {
+        return ArgumentConverterImpl.<ComponentContainer<?>>builder(TypeUtils.adjustWildcards(ComponentContainer.class, Class.class), "service")
                 .withConverter((src, in) -> Option.of(src.applicationContext()
                         .get(ComponentLocator.class).containers().stream()
                         .filter(container -> container.id().equalsIgnoreCase(in))

@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * {@link StandardApplicationBuilder}.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

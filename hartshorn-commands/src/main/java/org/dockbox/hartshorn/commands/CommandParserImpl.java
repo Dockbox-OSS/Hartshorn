@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.option.Option;
@@ -45,15 +44,18 @@ import jakarta.inject.Inject;
 /**
  * Simple implementation of {@link CommandParser}.
  */
-@Component
 public class CommandParserImpl implements CommandParser {
 
     // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag
     // to indicate it is a single element and not part of a piece of text.
     private static final Pattern FLAG = Pattern.compile(" -(-?\\w+)(?: ([^ -]+))?");
 
+    private final CommandResources resources;
+
     @Inject
-    private CommandResources resources;
+    public CommandParserImpl(final CommandResources resources) {
+        this.resources = resources;
+    }
 
     @Override
     public Option<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {

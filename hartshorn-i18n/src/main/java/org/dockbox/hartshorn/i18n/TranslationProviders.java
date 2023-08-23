@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
@@ -29,13 +30,13 @@ import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 public class TranslationProviders {
 
     @Binds
-    public TranslationService translationService() {
-        return new BundledTranslationService();
+    public TranslationService translationService(final ApplicationContext applicationContext, final TranslationBundle bundle) {
+        return new BundledTranslationService(applicationContext, bundle);
     }
 
     @Binds
-    public TranslationBundle translationBundle() {
-        return new DefaultTranslationBundle();
+    public TranslationBundle translationBundle(final ApplicationContext applicationContext) {
+        return new DefaultTranslationBundle(applicationContext);
     }
 
     @Binds

@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the advised object
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistry<T> {

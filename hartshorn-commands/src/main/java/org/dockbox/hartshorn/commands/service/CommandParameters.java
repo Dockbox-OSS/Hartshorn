@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
@@ -53,7 +53,7 @@ public class CommandParameters extends ComponentPreProcessor {
     }
 
     @Override
-    public Integer order() {
-        return ProcessingOrder.EARLY;
+    public int priority() {
+        return ProcessingPriority.HIGH_PRECEDENCE;
     }
 }

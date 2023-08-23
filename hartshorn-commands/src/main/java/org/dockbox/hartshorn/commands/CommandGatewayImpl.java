@@ -25,11 +25,10 @@ import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -46,18 +45,21 @@ import jakarta.inject.Inject;
 /**
  * Simple implementation of {@link CommandGateway}.
  */
-@Component
 public class CommandGatewayImpl implements CommandGateway {
 
     private final transient MultiMap<String, CommandExecutorContext> contexts = new CopyOnWriteArrayListMultiMap<>();
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
 
+    private final CommandParser parser;
+    private final CommandResources resources;
+    private final ApplicationContext context;
+
     @Inject
-    private CommandParser parser;
-    @Inject
-    private CommandResources resources;
-    @Inject
-    private ApplicationContext context;
+    public CommandGatewayImpl(final CommandParser parser, final CommandResources resources, final ApplicationContext context) {
+        this.parser = parser;
+        this.resources = resources;
+        this.context = context;
+    }
 
     protected MultiMap<String, CommandExecutorContext> contexts() {
         return this.contexts;

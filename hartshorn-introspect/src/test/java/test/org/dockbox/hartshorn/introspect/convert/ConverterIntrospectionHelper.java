@@ -16,12 +16,8 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -30,6 +26,11 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
+
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class ConverterIntrospectionHelper {
 
@@ -50,7 +51,7 @@ public class ConverterIntrospectionHelper {
         }
 
         final TypeParametersIntrospector parametersIntrospector = Mockito.mock(TypeParametersIntrospector.class);
-        Mockito.when(parametersIntrospector.from(Collection.class)).thenReturn(List.of());
+        Mockito.when(parametersIntrospector.resolveInputFor(Collection.class)).thenReturn(new SimpleTypeParameterList(List.of()));
 
         final TypeView<T> typeView = Mockito.mock(TypeView.class);
         Mockito.when(typeView.constructors()).thenReturn(constructors);

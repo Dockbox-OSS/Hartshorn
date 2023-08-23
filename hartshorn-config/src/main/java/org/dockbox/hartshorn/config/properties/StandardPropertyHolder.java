@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.config.properties;
 
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.util.GenericType;
@@ -28,7 +27,6 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,7 +37,6 @@ import java.util.function.Function;
 
 import jakarta.inject.Inject;
 
-@Component(singleton = true)
 public class StandardPropertyHolder implements PropertyHolder {
 
     protected final transient Map<String, Object> properties;
@@ -88,19 +85,6 @@ public class StandardPropertyHolder implements PropertyHolder {
     @Override
     public <T> Option<T> get(final String key, final Class<T> type) {
         return this.restore(key, serialized -> this.objectMapper.read(serialized, type));
-    }
-
-    private <T> T copyOf(final T value) {
-        if (value instanceof Collection<?> collection) {
-            return (T) new ArrayList<>(collection);
-        }
-        else if (value instanceof Map<?, ?> map) {
-            return (T) new LinkedHashMap<>(map);
-        }
-        else {
-            // Primitive or String
-            return value;
-        }
     }
 
     @Override

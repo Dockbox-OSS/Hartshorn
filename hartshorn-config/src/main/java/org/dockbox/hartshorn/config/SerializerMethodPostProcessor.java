@@ -18,12 +18,13 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.config.annotations.Serialize;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
-import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 
 public class SerializerMethodPostProcessor extends AbstractSerializerPostProcessor<Serialize> {
 
@@ -47,8 +48,9 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
 
     private boolean returnsStringOrWrapper(final MethodView<?, ?> method) {
         if (method.returnType().is(String.class)) return true;
-        final TypeParametersIntrospector typeParameters = method.genericReturnType().typeParameters();
-        return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.at(0)
+        final TypeParameterList typeParameters = method.genericReturnType().typeParameters().allInput();
+        return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.atIndex(0)
+                .flatMap(TypeParameterView::resolvedType)
                 .map(type -> type.is(String.class))
                 .orElse(false));
     }

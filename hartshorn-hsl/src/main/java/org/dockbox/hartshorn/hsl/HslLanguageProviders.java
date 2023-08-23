@@ -16,41 +16,65 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
+import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+
+import jakarta.inject.Named;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
 public class HslLanguageProviders {
 
     @Binds
-    private final Class<? extends Lexer> lexer = Lexer.class;
+    private HslLanguageFactory languageFactory() {
+        return new StandardHslLanguageFactory();
+    }
 
     @Binds
-    private final Class<? extends TokenParser> tokenParser = StandardTokenParser.class;
+    private TokenParser tokenParser() {
+        return new StandardTokenParser();
+    }
 
     @Binds
-    private final Class<? extends Resolver> resolver = Resolver.class;
+    private ExpressionParser expressionParser() {
+        return new ComplexExpressionParserAdapter();
+    }
 
     @Binds
-    private final Class<? extends Interpreter> interpreter = Interpreter.class;
+    private Resolver resolver(final Interpreter interpreter) {
+        return new Resolver(interpreter);
+    }
 
     @Binds
-    private final Class<? extends ExpressionParser> expressionParser = ComplexExpressionParserAdapter.class;
+    public ScriptRuntime runtime(
+            final ApplicationContext applicationContext,
+            final HslLanguageFactory factory,
+            @Named(HslStatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+    ) {
+        return new StandardRuntime(applicationContext, factory, statementParsers);
+    }
 
     @Binds
-    public ScriptRuntime runtime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
-        return new StandardRuntime(applicationContext, factory);
+    public ValidateExpressionRuntime expressionRuntime(
+            final ApplicationContext applicationContext,
+            final HslLanguageFactory factory,
+            @Named(HslStatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+    ) {
+        return new ValidateExpressionRuntime(applicationContext, factory, statementParsers);
     }
 }

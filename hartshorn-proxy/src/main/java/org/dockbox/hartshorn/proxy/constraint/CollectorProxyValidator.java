@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * A {@link ProxyValidator} that collects multiple {@link ProxyConstraint}s and applies them all when validating a
  * type. This class is thread-safe.
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public class CollectorProxyValidator implements ProxyValidator {

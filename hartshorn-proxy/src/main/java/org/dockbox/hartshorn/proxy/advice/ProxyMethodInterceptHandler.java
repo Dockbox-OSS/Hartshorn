@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
  *
  * @param <T> the type of the target object
  *
- * @since 23.1
+ * @since 0.5.0
  * @author Guus Lieben
  */
 public interface ProxyMethodInterceptHandler<T> {

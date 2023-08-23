@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.InvalidComponentException;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.ProcessingOrder;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
@@ -64,7 +64,7 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor
     }
 
     @Override
-    public final Integer order() {
-        return ProcessingOrder.FIRST;
+    public final int priority() {
+        return ProcessingPriority.HIGHEST_PRECEDENCE;
     }
 }

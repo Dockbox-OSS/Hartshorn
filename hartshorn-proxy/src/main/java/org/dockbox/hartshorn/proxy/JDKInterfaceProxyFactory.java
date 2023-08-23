@@ -38,7 +38,7 @@ import java.lang.reflect.InvocationHandler;
  *
  * @param <T> The type of the proxy to create
  *
- * @since 22.4
+ * @since 0.4.12
  * @author Guus Lieben
  */
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {

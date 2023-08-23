@@ -16,29 +16,55 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Objects;
-
 import jakarta.inject.Named;
 
-public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean enable) {
+public final class ComponentKey<T> {
+
+    private final ParameterizableType<T> type;
+    private final String name;
+    private final Scope scope;
+    private final boolean enable;
+
+    private ComponentKey(ParameterizableType<T> type, String name, Scope scope, boolean enable) {
+        this.type = type;
+        this.name = name;
+        this.scope = scope;
+        this.enable = enable;
+    }
 
     public static <T> Builder<T> builder(final Class<T> type) {
+        return new Builder<>(new ParameterizableType<>(type));
+    }
+
+    public static <T> Builder<T> builder(final TypeView<T> type) {
+        return new Builder<>(new ParameterizableType<>(type));
+    }
+
+    public static <T> Builder<T> builder(final ParameterizableType<T> type) {
         return new Builder<>(type);
-    }
-
-    public static <T> ComponentKey<T> of(final TypeView<T> type) {
-        return ComponentKey.of(type.type());
-    }
-
-    public static <T> ComponentKey<T> of(final TypeView<T> type, final String named) {
-        return ComponentKey.of(type.type(), named);
     }
 
     public static <T> ComponentKey<T> of(final Class<T> type) {
         return ComponentKey.builder(type).build();
+    }
+
+    public static <T> ComponentKey<T> of(final TypeView<T> type) {
+        return ComponentKey.builder(type).build();
+    }
+
+    public static <T> ComponentKey<T> of(final ParameterizableType<T> type) {
+        return ComponentKey.builder(type).build();
+    }
+
+    public static <T> ComponentKey<T> of(final TypeView<T> type, final String named) {
+        return ComponentKey.of(type.type(), named);
     }
 
     public static <T> ComponentKey<T> of(final Class<T> key, final String name) {
@@ -56,13 +82,17 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
     @Override
     public String toString() {
         final String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
-        return "ComponentKey<" + this.type.getSimpleName() + nameSuffix + "> (" + this.scope.installableScopeType().getSimpleName() + ")";
+        return "ComponentKey<" + this.type + nameSuffix + "> (" + this.scope.installableScopeType().getSimpleName() + ")";
     }
 
     @Override
     public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
+        if(this == other) {
+            return true;
+        }
+        if(other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
         final ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
         return this.enable == otherComponentKey.enable
                 && this.type.equals(otherComponentKey.type)
@@ -75,9 +105,29 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         return Objects.hash(this.type, this.name, this.scope, this.enable);
     }
 
+    public Class<T> type() {
+        return type.type();
+    }
+
+    public ParameterizableType<T> parameterizedType() {
+        return this.type;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public Scope scope() {
+        return scope;
+    }
+
+    public boolean enable() {
+        return enable;
+    }
+
     public static final class Builder<T> {
 
-        private Class<T> type;
+        private ParameterizableType<T> type;
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
@@ -89,12 +139,38 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
             this.enable = key.enable;
         }
 
-        private Builder(final Class<T> type) {
+        private Builder(final ParameterizableType<T> type) {
             this.type = type;
         }
 
         public Builder<T> type(final Class<T> type) {
+            this.type = new ParameterizableType<>(type);
+            return this;
+        }
+
+        public Builder<T> type(final ParameterizableType<T> type) {
             this.type = type;
+            return this;
+        }
+
+        public Builder<T> parameterClasses(final Class<?>... parameterTypes) {
+            return this.parameterClasses(List.of(parameterTypes));
+        }
+
+        public Builder<T> parameterClasses(final List<Class<?>> parameterTypes) {
+            List<ParameterizableType<?>> types = new ArrayList<>();
+            for (Class<?> parameterType : parameterTypes) {
+                types.add(new ParameterizableType<>(parameterType));
+            }
+            return this.parameterTypes(types);
+        }
+
+        public Builder<T> parameterTypes(final ParameterizableType<?>... parameterTypes) {
+            return this.parameterTypes(List.of(parameterTypes));
+        }
+
+        public Builder<T> parameterTypes(final List<ParameterizableType<?>> parameterTypes) {
+            this.type.parameters(parameterTypes);
             return this;
         }
 
@@ -104,7 +180,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
         }
 
         public Builder<T> name(final Named named) {
-            if (named != null) {
+            if(named != null) {
                 return this.name(named.value());
             }
             return this;
@@ -127,7 +203,7 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
 
     public static final class ComponentKeyView<T> {
 
-        private final Class<T> type;
+        private final ParameterizableType<T> type;
         private final String name;
 
         private ComponentKeyView(final ComponentKey<T> key) {
@@ -137,8 +213,12 @@ public record ComponentKey<T>(Class<T> type, String name, Scope scope, boolean e
 
         @Override
         public boolean equals(final Object other) {
-            if (this == other) return true;
-            if (other == null || this.getClass() != other.getClass()) return false;
+            if(this == other) {
+                return true;
+            }
+            if(other == null || this.getClass() != other.getClass()) {
+                return false;
+            }
             final ComponentKeyView<?> otherKeyView = (ComponentKeyView<?>) other;
             return Objects.equals(this.type, otherKeyView.type) && Objects.equals(this.name, otherKeyView.name);
         }

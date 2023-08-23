@@ -31,13 +31,16 @@ import java.lang.annotation.Target;
  * arguments. This is implemented through {@link Factory}
  * services.
  *
+ * @deprecated Implicit binding is discouraged, see {@link Factory} for more information.
+ *
  * @see Factory
  * @see FactoryServicePreProcessor
  * @see FactoryServicePostProcessor
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
+@Deprecated(since = "0.5.0", forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.CONSTRUCTOR)
 public @interface Bound {

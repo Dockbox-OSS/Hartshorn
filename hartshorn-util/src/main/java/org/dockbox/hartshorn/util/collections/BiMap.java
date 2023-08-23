@@ -22,7 +22,7 @@ public interface BiMap<K, V> extends Map<K, V> {
 
     @SafeVarargs
     static <K, V> BiMap<K, V> ofEntries(final Entry<K, V>... entries) {
-        final BiMap<K, V> map = new StandardBiMap.HashBiMap<>();
+        final BiMap<K, V> map = new HashBiMap<>();
         for (final Entry<K, V> entry : entries) {
             map.put(entry.getKey(), entry.getValue());
         }

@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  *
  * @param <T> the type of the proxy object
  * @author Guus Lieben
- * @since 22.2
+ * @since 0.4.10
  */
 public class MethodInterceptorContext<T, R> {
 

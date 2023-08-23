@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserverPreProcessor;
-import org.dockbox.hartshorn.component.factory.UseFactoryServices;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
 import java.lang.annotation.ElementType;
@@ -30,13 +29,12 @@ import java.lang.annotation.Target;
  * when the application is created through {@link StandardApplicationBuilder}.
  *
  * @author Guus Lieben
- * @since 21.2
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator(processors = {
         LifecycleObserverPreProcessor.class,
 })
-@UseFactoryServices
 public @interface UseBootstrap {
 }

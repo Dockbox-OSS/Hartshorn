@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * It is executed during application construction.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 

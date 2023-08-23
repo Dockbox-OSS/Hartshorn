@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.inject.Provider;
  * have an activator annotation, and a phase at which they are performed.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public sealed interface ComponentProcessor extends OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 

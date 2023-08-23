@@ -16,11 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
-import org.dockbox.hartshorn.hsl.HslStatementStaticProviders;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
@@ -33,29 +37,23 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-
-@Component
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime, ContextCarrier {
 
-    @Inject
-    @Named(HslStatementStaticProviders.STATEMENT_BEAN)
-    private Set<ASTNodeParser<? extends Statement>> statementParsers;
+    private final Set<ASTNodeParser<? extends Statement>> statementParsers;
 
     private final ApplicationContext applicationContext;
     private final HslLanguageFactory factory;
 
     protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+        this(applicationContext, factory, Set.of());
+    }
+
+    protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
+            Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
+        this.statementParsers = statementParsers;
     }
 
     @Override
@@ -75,9 +73,15 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         try {
             // First phase always gets executed
             this.tokenize(context);
-            if (until.ordinal() >= Phase.PARSING.ordinal()) this.parse(context);
-            if (until.ordinal() >= Phase.RESOLVING.ordinal()) this.resolve(context);
-            if (until.ordinal() >= Phase.INTERPRETING.ordinal()) this.interpret(context);
+            if (until.ordinal() >= Phase.PARSING.ordinal()) {
+                this.parse(context);
+            }
+            if (until.ordinal() >= Phase.RESOLVING.ordinal()) {
+                this.resolve(context);
+            }
+            if (until.ordinal() >= Phase.INTERPRETING.ordinal()) {
+                this.interpret(context);
+            }
         }
         catch (final ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
@@ -150,8 +154,9 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
 
     protected void customizePhase(final Phase phase, final ScriptContext context) {
         for (final CodeCustomizer customizer : this.customizers()) {
-            if (customizer.phase() == phase)
+            if (customizer.phase() == phase) {
                 customizer.call(context);
+            }
         }
     }
 

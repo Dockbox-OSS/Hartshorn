@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.commands.annotations;
 import org.dockbox.hartshorn.commands.service.CommandParameters;
 import org.dockbox.hartshorn.commands.service.CommandServiceScanner;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 
 import java.lang.annotation.ElementType;
@@ -37,6 +36,5 @@ import java.lang.annotation.Target;
         CommandServiceScanner.class
 })
 @UseTranslations
-@UseEvents
 public @interface UseCommands {
 }

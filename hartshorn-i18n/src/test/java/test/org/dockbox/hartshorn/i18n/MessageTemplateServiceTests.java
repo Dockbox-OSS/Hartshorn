@@ -16,8 +16,6 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
-import java.util.Locale;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.DefaultTranslationBundle;
 import org.dockbox.hartshorn.i18n.Message;
@@ -34,6 +32,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Locale;
+
+import jakarta.inject.Inject;
+
 @HartshornTest(includeBasePackages = false)
 @UseTranslations
 public class MessageTemplateServiceTests {
@@ -41,10 +43,13 @@ public class MessageTemplateServiceTests {
     private static final Locale NL_NL = new Locale("nl", "NL");
     private static final Locale EN_US = Locale.US;
 
+    @Inject
+    private ApplicationContext applicationContext;
+
     private TranslationBundle bundle() {
         final Message english = new MessageTemplate("value", "demo", EN_US);
         final Message dutch = new MessageTemplate("waarde", "demo", NL_NL);
-        final TranslationBundle bundle = new DefaultTranslationBundle();
+        final TranslationBundle bundle = new DefaultTranslationBundle(this.applicationContext);
         bundle.register(english);
         bundle.register(dutch);
         return bundle;

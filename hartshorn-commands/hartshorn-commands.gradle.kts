@@ -20,9 +20,9 @@ apply {
 
 dependencies {
     api("org.dockbox.hartshorn:hartshorn-i18n")
-    api("org.dockbox.hartshorn:hartshorn-events")
 
     testImplementation("org.dockbox.hartshorn:hartshorn-hsl")
     testImplementation("org.dockbox.hartshorn:hartshorn-introspect-reflection")
     testImplementation("org.dockbox.hartshorn:hartshorn-proxy-javassist")
+    testImplementation("org.dockbox.hartshorn:hartshorn-config-jackson")
 }
