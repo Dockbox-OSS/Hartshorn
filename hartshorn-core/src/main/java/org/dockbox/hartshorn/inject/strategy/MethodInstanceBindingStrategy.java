@@ -80,7 +80,6 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
 
     private boolean isSingleton(final ApplicationContext applicationContext, final MethodView<?, ?> methodView,
                                 final ComponentKey<?> componentKey) {
-        // TODO: Include BindingType to check if it's a class or instance binding
         return methodView.annotations().has(Singleton.class)
                 || applicationContext.environment().singleton(componentKey.type());
     }
