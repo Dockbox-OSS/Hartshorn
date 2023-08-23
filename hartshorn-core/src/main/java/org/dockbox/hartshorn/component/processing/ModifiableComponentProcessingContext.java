@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 
 import java.util.function.Consumer;
 
@@ -34,7 +35,7 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
 
     public ModifiableComponentProcessingContext<T> instance(final T instance) {
         if (this.requestInstanceLock) {
-            throw new IllegalStateException("Cannot modify instance after lock has been requested");
+            throw new IllegalModificationException("Cannot modify instance after lock has been requested");
         }
         super.instance = instance;
         return this;
