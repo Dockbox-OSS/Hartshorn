@@ -58,7 +58,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     private DependencyGraphInitializer createDependencyGraphInitializer(final ConditionMatcher conditionMatcher) {
-        // TODO: Registration hooks for dependency resolvers
+        // TODO #979: Registration hooks for dependency resolvers
         final DependencyResolver managedComponentDependencyResolver = new ComponentDependencyResolver();
         final BindsMethodDependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver(conditionMatcher);
         methodDependencyResolver.registry().register(new MethodInstanceBindingStrategy());
