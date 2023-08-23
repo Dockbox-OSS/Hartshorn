@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.hsl.HslLanguageFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -38,7 +37,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-@Component
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers;

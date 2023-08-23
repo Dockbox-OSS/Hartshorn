@@ -30,7 +30,7 @@ public final class InterpreterTestHelper {
     private InterpreterTestHelper() {}
 
     public static InterpreterAdapter createInterpreterAdapter() {
-        final ResultCollector resultCollector = new CacheOnlyResultCollector();
+        final ResultCollector resultCollector = new CacheOnlyResultCollector(null);
         return new Interpreter(resultCollector, Map.of(), null);
     }
 
