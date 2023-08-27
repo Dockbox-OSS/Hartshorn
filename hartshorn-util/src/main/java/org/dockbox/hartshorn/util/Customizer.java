@@ -7,7 +7,7 @@ package org.dockbox.hartshorn.util;
  * @author Guus Lieben
  * @since 0.5.0
  */
-public interface Customizer<T> {
+public interface Customizer<T extends Configurer> {
 
     /**
      * Configures the given target object. Implementations of this method may access the target object directly, and
@@ -27,7 +27,7 @@ public interface Customizer<T> {
     default Customizer<T> compose(Customizer<T> before) {
         return (T target) -> {
             before.configure(target);
-            configure(target);
+            this.configure(target);
         };
     }
 
@@ -38,7 +38,7 @@ public interface Customizer<T> {
      * @return A customizer that does nothing.
      * @param <T> The type of object to customize.
      */
-    static <T> Customizer<T> useDefaults() {
+    static <T extends Configurer> Customizer<T> useDefaults() {
         return target -> {};
     }
 }

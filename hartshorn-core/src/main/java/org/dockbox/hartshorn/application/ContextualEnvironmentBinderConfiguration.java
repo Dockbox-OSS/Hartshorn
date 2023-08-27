@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 public class ContextualEnvironmentBinderConfiguration implements EnvironmentBinderConfiguration {
 
     @Override
-    public void configureBindings(final ApplicationEnvironment environment, final DefaultBindingConfigurer configurer, final Binder binder) {
+    public void configureBindings(ApplicationEnvironment environment, DefaultBindingConfigurer configurer, Binder binder) {
         // Application context
         binder.bind(ComponentProvider.class).singleton(environment.applicationContext());
         binder.bind(ExceptionHandler.class).singleton(environment.applicationContext());
@@ -56,19 +56,5 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
 
         // Custom default bindings. Runs last to allow for modification of default bindings.
         configurer.configure(binder);
-
-        // TODO: Move to configurer
-//        // Standalone components - alphabetical order
-//        binder.bind(ComponentLocator.class).singleton(context.componentLocator());
-//        binder.bind(ComponentPopulator.class).singleton(context.componentPopulator());
-//        binder.bind(ComponentPostConstructor.class).singleton(context.componentPostConstructor());
-//        binder.bind(ComponentProvider.class).singleton(context.componentProvider());
-//        binder.bind(ConditionMatcher.class).singleton(context.conditionMatcher());
-//        binder.bind(ClasspathResourceLocator.class).singleton(context.resourceLocator());
-//        binder.bind(ViewContextAdapter.class).singleton(context.viewContextAdapter());
-//
-//        // Standalone components - special behavior
-//        if (context.componentProvider() instanceof PostProcessingComponentProvider provider)
-//            binder.bind(PostProcessingComponentProvider.class).singleton(provider);
     }
 }

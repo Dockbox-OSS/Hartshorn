@@ -2,7 +2,7 @@ package org.dockbox.hartshorn.util;
 
 import java.util.List;
 
-public class LazyStreamableConfigurer<I, O> implements LazyInitializer<I, List<O>> {
+public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, List<O>> {
 
     private final StreamableConfigurer<I, O> configurer;
     private Customizer<StreamableConfigurer<I, O>> customizer = Customizer.useDefaults();

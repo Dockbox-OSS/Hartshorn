@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Initializer;
-import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 
@@ -89,9 +89,9 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         return new StandardApplicationBuilder(configurer);
     }
 
-    public static class Configurer {
+    public static class Configurer extends ApplicationConfigurer {
 
-        private LazyInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor = StandardApplicationContextConstructor.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor = StandardApplicationContextConstructor.create(Customizer.useDefaults());
         private final LazyStreamableConfigurer<Class<?>, String> arguments = LazyStreamableConfigurer.empty();
         private Initializer<Class<?>> mainClass;
 
@@ -100,10 +100,10 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         public Configurer constructor(Initializer<ApplicationContextConstructor> constructor) {
-            return this.constructor(LazyInitializer.of(constructor));
+            return this.constructor(ContextualInitializer.of(constructor));
         }
 
-        public Configurer constructor(LazyInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor) {
+        public Configurer constructor(ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor) {
             this.constructor = constructor;
             return this;
         }

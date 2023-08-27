@@ -1,14 +1,14 @@
 package org.dockbox.hartshorn.util;
 
-import java.util.HashSet;
+import org.dockbox.hartshorn.context.DefaultContext;
+
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
-public class StreamableConfigurer<I, T> {
+public class StreamableConfigurer<I, T> extends DefaultContext implements Configurer {
 
-    private final List<LazyInitializer<I, T>> objects = new CopyOnWriteArrayList<>();
+    private final List<ContextualInitializer<I, T>> objects = new CopyOnWriteArrayList<>();
 
     protected StreamableConfigurer() {
     }
@@ -29,16 +29,16 @@ public class StreamableConfigurer<I, T> {
     }
 
     public StreamableConfigurer<I, T> add(final T resolver) {
-        this.objects.add(LazyInitializer.of(resolver));
+        this.objects.add(ContextualInitializer.of(resolver));
         return this;
     }
 
     public StreamableConfigurer<I, T> add(final Initializer<T> resolver) {
-        this.objects.add(LazyInitializer.of(resolver));
+        this.objects.add(ContextualInitializer.of(resolver));
         return this;
     }
 
-    public StreamableConfigurer<I, T> add(final LazyInitializer<I, T> resolver) {
+    public StreamableConfigurer<I, T> add(final ContextualInitializer<I, T> resolver) {
         this.objects.add(resolver);
         return this;
     }
@@ -60,8 +60,8 @@ public class StreamableConfigurer<I, T> {
     }
 
     @SafeVarargs
-    public final StreamableConfigurer<I, T> addAll(final LazyInitializer<I, T>... resolvers) {
-        for (final LazyInitializer<I, T> resolver : resolvers) {
+    public final StreamableConfigurer<I, T> addAll(final ContextualInitializer<I, T>... resolvers) {
+        for (final ContextualInitializer<I, T> resolver : resolvers) {
             this.add(resolver);
         }
         return this;
@@ -74,7 +74,7 @@ public class StreamableConfigurer<I, T> {
         return this;
     }
 
-    public StreamableConfigurer<I, T> remove(final LazyInitializer<I, T> resolver) {
+    public StreamableConfigurer<I, T> remove(final ContextualInitializer<I, T> resolver) {
         this.objects.remove(resolver);
         return this;
     }
@@ -84,7 +84,7 @@ public class StreamableConfigurer<I, T> {
         return this;
     }
 
-    public Stream<LazyInitializer<I, T>> stream() {
+    public Stream<ContextualInitializer<I, T>> stream() {
         return this.objects.stream();
     }
 

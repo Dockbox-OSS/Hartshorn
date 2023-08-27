@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
@@ -164,7 +164,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         serviceProcessor.process(context);
     }
 
-    public static LazyInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
         return environment -> {
             final Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -174,13 +174,13 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
 
     public static class Configurer extends DelegatingApplicationContext.Configurer {
 
-        private LazyInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
 
         public Configurer dependencyGraphInitializer(final DependencyGraphInitializer dependencyGraphInitializer) {
-            return this.dependencyGraphInitializer(LazyInitializer.of(dependencyGraphInitializer));
+            return this.dependencyGraphInitializer(ContextualInitializer.of(dependencyGraphInitializer));
         }
 
-        public Configurer dependencyGraphInitializer(final LazyInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
+        public Configurer dependencyGraphInitializer(final ContextualInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
             this.dependencyGraphInitializer = dependencyGraphInitializer;
             return this;
         }

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Set;
 
-public interface PostProcessingComponentProvider extends ContextCarrier {
+public interface PostProcessingComponentProvider extends ComponentProvider, ContextCarrier {
 
     ComponentPostConstructor postConstructor();
 

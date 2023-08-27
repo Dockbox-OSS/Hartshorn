@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -222,7 +222,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         this.registerHooks(applicationContext);
     }
 
-    public static LazyInitializer<ApplicationBuildContext, StandardApplicationContextConstructor> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationBuildContext, StandardApplicationContextConstructor> create(Customizer<Configurer> customizer) {
         return buildContext -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -230,7 +230,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         };
     }
 
-    public static class Configurer {
+    public static class Configurer extends ApplicationConfigurer {
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
                 TypeUtils.annotation(UseBootstrap.class),
@@ -244,8 +244,8 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
 
-        private LazyInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ContextualApplicationEnvironment.create(Customizer.useDefaults());
-        private LazyInitializer<ApplicationBuildContext, Boolean> includeBasePackages = LazyInitializer.of(true);
+        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ContextualApplicationEnvironment.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages = ContextualInitializer.of(true);
 
         public Configurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
             this.activators.customizer(customizer);
@@ -273,19 +273,19 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         }
 
         public Configurer environment(ApplicationEnvironment environment) {
-            return this.environment(LazyInitializer.of(environment));
+            return this.environment(ContextualInitializer.of(environment));
         }
 
-        public Configurer environment(LazyInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment) {
+        public Configurer environment(ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment) {
             this.environment = environment;
             return this;
         }
 
         public Configurer includeBasePackages(boolean includeBasePackages) {
-            return this.includeBasePackages(LazyInitializer.of(includeBasePackages));
+            return this.includeBasePackages(ContextualInitializer.of(includeBasePackages));
         }
 
-        public Configurer includeBasePackages(LazyInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
+        public Configurer includeBasePackages(ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
             this.includeBasePackages = includeBasePackages;
             return this;
         }

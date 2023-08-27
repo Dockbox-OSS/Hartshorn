@@ -12,6 +12,6 @@ public class ApplicationBootstrapContext extends ApplicationBuildContext {
     }
 
     public boolean includeBasePackages() {
-        return includeBasePackages;
+        return this.includeBasePackages;
     }
 }

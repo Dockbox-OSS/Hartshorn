@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
@@ -221,37 +221,37 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     protected static class Configurer {
 
-        private LazyInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = TypeReferenceLookupComponentLocator::new;
-        private LazyInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
-        private LazyInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = LazyInitializer.of(DefaultBindingConfigurer::empty);
+        private ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = TypeReferenceLookupComponentLocator::new;
+        private ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
         public Configurer componentLocator(ComponentLocator componentLocator) {
-            return this.componentLocator(LazyInitializer.of(componentLocator));
+            return this.componentLocator(ContextualInitializer.of(componentLocator));
         }
 
-        public Configurer componentLocator(LazyInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator) {
+        public Configurer componentLocator(ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator) {
             this.componentLocator = componentLocator;
             return this;
         }
 
         public Configurer componentProvider(ComponentProvider componentProvider) {
-            return this.componentProvider(LazyInitializer.of(componentProvider));
+            return this.componentProvider(ContextualInitializer.of(componentProvider));
         }
 
-        public Configurer componentProvider(LazyInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider) {
+        public Configurer componentProvider(ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider) {
             this.componentProvider = componentProvider;
             return this;
         }
 
         public Configurer defaultBindings(DefaultBindingConfigurer defaultBindings) {
-            return this.defaultBindings(LazyInitializer.of(defaultBindings));
+            return this.defaultBindings(ContextualInitializer.of(defaultBindings));
         }
 
         public Configurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
             return this.defaultBindings(applicationContext -> binder -> defaultBindings.accept(applicationContext, binder));
         }
 
-        public Configurer defaultBindings(LazyInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
+        public Configurer defaultBindings(ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
             this.defaultBindings = defaultBindings;
             return this;
         }

@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -67,7 +67,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
     }
 
-    public static LazyInitializer<ConditionMatcher, DependencyResolver> create(final Customizer<BindingStrategyRegistry> customizer) {
+    public static ContextualInitializer<ConditionMatcher, DependencyResolver> create(final Customizer<BindingStrategyRegistry> customizer) {
         return conditionMatcher -> {
             final BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
             registry.register(new MethodInstanceBindingStrategy());

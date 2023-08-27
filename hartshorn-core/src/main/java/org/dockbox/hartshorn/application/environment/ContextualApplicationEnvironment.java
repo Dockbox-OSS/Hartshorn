@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
+import org.dockbox.hartshorn.application.ApplicationConfigurer;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -36,13 +37,14 @@ import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.LazyInitializer;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
@@ -137,7 +139,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
     }
 
-    private <T> T configure(LazyInitializer<ApplicationEnvironment, T> initializer) {
+    private <T> T configure(ContextualInitializer<ApplicationEnvironment, T> initializer) {
         T instance = initializer.initialize(this);
         return this.configure(instance);
     }
@@ -470,7 +472,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this.annotationLookup.annotationHierarchy(type);
     }
 
-    public static LazyInitializer<ApplicationBootstrapContext, ContextualApplicationEnvironment> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationBootstrapContext, ContextualApplicationEnvironment> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -487,128 +489,130 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this;
     }
 
-    public static class Configurer {
+    public static class Configurer extends ApplicationConfigurer {
 
-        private LazyInitializer<Properties, Boolean> enableBanner = properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true"));
-        private LazyInitializer<Properties, Boolean> enableBatchMode = properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false"));
-        private LazyInitializer<Properties, Boolean> showStacktraces = properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true"));
+        private ContextualInitializer<Properties, Boolean> enableBanner = properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true"));
+        private ContextualInitializer<Properties, Boolean> enableBatchMode = properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false"));
+        private ContextualInitializer<Properties, Boolean> showStacktraces = properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true"));
 
-        private LazyInitializer<Introspector, ? extends ApplicationProxier> applicationProxier = DefaultApplicationProxierLoader.create(Customizer.useDefaults());
-        private LazyInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider = LazyInitializer.of(ApplicationFSProviderImpl::new);
-        private LazyInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = LazyInitializer.of(LoggingExceptionHandler::new);
-        private LazyInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = LazyInitializer.of(StandardApplicationArgumentParser::new);
-        private LazyInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger = AutoSwitchingApplicationLogger.create(Customizer.useDefaults());
-        private LazyInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ClassLoaderClasspathResourceLocator::new;
-        private LazyInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = LazyInitializer.of(VirtualHierarchyAnnotationLookup::new);
-        private LazyInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationProxier> applicationProxier = DefaultApplicationProxierLoader.create(Customizer.useDefaults())::initialize;
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider = ContextualInitializer.of(ApplicationFSProviderImpl::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger = AutoSwitchingApplicationLogger.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ClassLoaderClasspathResourceLocator::new;
+        private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
 
-        public Configurer enableBanner(LazyInitializer<Properties, Boolean> enableBanner) {
+        public Configurer enableBanner(ContextualInitializer<Properties, Boolean> enableBanner) {
             this.enableBanner = enableBanner;
             return this;
         }
 
         public Configurer enableBanner() {
-            return this.enableBanner(LazyInitializer.of(true));
+            return this.enableBanner(ContextualInitializer.of(true));
         }
 
         public Configurer disableBanner() {
-            return this.enableBanner(LazyInitializer.of(false));
+            return this.enableBanner(ContextualInitializer.of(false));
         }
 
-        public Configurer enableBatchMode(LazyInitializer<Properties, Boolean> enableBatchMode) {
+        public Configurer enableBatchMode(ContextualInitializer<Properties, Boolean> enableBatchMode) {
             this.enableBatchMode = enableBatchMode;
             return this;
         }
 
         public Configurer enableBatchMode() {
-            return this.enableBatchMode(LazyInitializer.of(true));
+            return this.enableBatchMode(ContextualInitializer.of(true));
         }
 
         public Configurer disableBatchMode() {
-            return this.enableBatchMode(LazyInitializer.of(false));
+            return this.enableBatchMode(ContextualInitializer.of(false));
         }
 
-        public Configurer showStacktraces(LazyInitializer<Properties, Boolean> showStacktraces) {
+        public Configurer showStacktraces(ContextualInitializer<Properties, Boolean> showStacktraces) {
             this.showStacktraces = showStacktraces;
             return this;
         }
 
         public Configurer showStacktraces() {
-            return this.showStacktraces(LazyInitializer.of(true));
+            return this.showStacktraces(ContextualInitializer.of(true));
         }
 
         public Configurer hideStacktraces() {
-            return this.showStacktraces(LazyInitializer.of(false));
+            return this.showStacktraces(ContextualInitializer.of(false));
         }
 
         public Configurer applicationProxier(ApplicationProxier applicationProxier) {
-            return this.applicationProxier(LazyInitializer.of(applicationProxier));
+            return this.applicationProxier(ContextualInitializer.of(applicationProxier));
         }
         
-        public Configurer applicationProxier(LazyInitializer<Introspector, ? extends ApplicationProxier> applicationProxier) {
-            this.applicationProxier = applicationProxier;
+        public Configurer applicationProxier(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationProxier> applicationProxier) {
+            this.applicationProxier = applicationProxier
+                    .subscribe(this.bind(ApplicationProxier.class))
+                    .subscribe(this.bind(ProxyLookup.class));
             return this;
         }
         
         public Configurer applicationFSProvider(ApplicationFSProvider applicationFSProvider) {
-            return this.applicationFSProvider(LazyInitializer.of(applicationFSProvider));
+            return this.applicationFSProvider(ContextualInitializer.of(applicationFSProvider));
         }
         
-        public Configurer applicationFSProvider(LazyInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider) {
-            this.applicationFSProvider = applicationFSProvider;
+        public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider) {
+            this.applicationFSProvider = applicationFSProvider.subscribe(this.bind(ApplicationFSProvider.class));
             return this;
         }
         
         public Configurer exceptionHandler(ExceptionHandler exceptionHandler) {
-            return this.exceptionHandler(LazyInitializer.of(exceptionHandler));
+            return this.exceptionHandler(ContextualInitializer.of(exceptionHandler));
         }
         
-        public Configurer exceptionHandler(LazyInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
-            this.exceptionHandler = exceptionHandler;
+        public Configurer exceptionHandler(ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
+            this.exceptionHandler = exceptionHandler.subscribe(this.bind(ExceptionHandler.class));
             return this;
         }
         
         public Configurer applicationArgumentParser(ApplicationArgumentParser applicationArgumentParser) {
-            return this.applicationArgumentParser(LazyInitializer.of(applicationArgumentParser));
+            return this.applicationArgumentParser(ContextualInitializer.of(applicationArgumentParser));
         }
         
-        public Configurer applicationArgumentParser(LazyInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
-            this.applicationArgumentParser = applicationArgumentParser;
+        public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
+            this.applicationArgumentParser = applicationArgumentParser.subscribe(this.bind(ApplicationArgumentParser.class));
             return this;
         }
         
         public Configurer applicationLogger(ApplicationLogger applicationLogger) {
-            return this.applicationLogger(LazyInitializer.of(applicationLogger));
+            return this.applicationLogger(ContextualInitializer.of(applicationLogger));
         }
         
-        public Configurer applicationLogger(LazyInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger) {
-            this.applicationLogger = applicationLogger;
+        public Configurer applicationLogger(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger) {
+            this.applicationLogger = applicationLogger.subscribe(this.bind(ApplicationLogger.class));
             return this;
         }
         
         public Configurer classpathResourceLocator(ClasspathResourceLocator classpathResourceLocator) {
-            return this.classpathResourceLocator(LazyInitializer.of(classpathResourceLocator));
+            return this.classpathResourceLocator(ContextualInitializer.of(classpathResourceLocator));
         }
         
-        public Configurer classpathResourceLocator(LazyInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
-            this.classpathResourceLocator = classpathResourceLocator;
+        public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
+            this.classpathResourceLocator = classpathResourceLocator.subscribe(this.bind(ClasspathResourceLocator.class)));
             return this;
         }
 
         public Configurer annotationLookup(AnnotationLookup annotationLookup) {
-            return this.annotationLookup(LazyInitializer.of(annotationLookup));
+            return this.annotationLookup(ContextualInitializer.of(annotationLookup));
         }
 
-        public Configurer annotationLookup(LazyInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
-            this.annotationLookup = annotationLookup;
+        public Configurer annotationLookup(ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
+            this.annotationLookup = annotationLookup.subscribe(this.bind(AnnotationLookup.class));
             return this;
         }
 
         public Configurer applicationContext(ApplicationContext applicationContext) {
-            return this.applicationContext(LazyInitializer.of(applicationContext));
+            return this.applicationContext(ContextualInitializer.of(applicationContext));
         }
 
-        public Configurer applicationContext(LazyInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
+        public Configurer applicationContext(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
             this.applicationContext = applicationContext;
             return this;
         }

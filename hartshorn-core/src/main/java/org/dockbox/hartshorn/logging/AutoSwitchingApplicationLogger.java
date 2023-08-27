@@ -1,9 +1,10 @@
 package org.dockbox.hartshorn.logging;
 
+import org.dockbox.hartshorn.application.ApplicationConfigurer;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 
 public final class AutoSwitchingApplicationLogger {
 
@@ -11,7 +12,7 @@ public final class AutoSwitchingApplicationLogger {
         throw new UnsupportedOperationException();
     }
 
-    public static LazyInitializer<ApplicationEnvironment, ApplicationLogger> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationEnvironment, ApplicationLogger> create(Customizer<Configurer> customizer) {
         return environment -> {
             if (!environment.introspect("ch.qos.logback.classic.Logger").isVoid()) {
                 return new LogbackApplicationLogger();
@@ -24,15 +25,15 @@ public final class AutoSwitchingApplicationLogger {
         };
     }
 
-    public static class Configurer {
+    public static class Configurer extends ApplicationConfigurer {
 
-        private LazyInitializer<ApplicationEnvironment, ApplicationLogger> defaultFallback = LazyInitializer.of(Slf4jApplicationLogger::new);
+        private ContextualInitializer<ApplicationEnvironment, ApplicationLogger> defaultFallback = ContextualInitializer.of(Slf4jApplicationLogger::new);
 
         public Configurer defaultFallback(ApplicationLogger defaultFallback) {
-            return this.defaultFallback(LazyInitializer.of(defaultFallback));
+            return this.defaultFallback(ContextualInitializer.of(defaultFallback));
         }
 
-        public Configurer defaultFallback(LazyInitializer<ApplicationEnvironment, ApplicationLogger> defaultFallback) {
+        public Configurer defaultFallback(ContextualInitializer<ApplicationEnvironment, ApplicationLogger> defaultFallback) {
             this.defaultFallback = defaultFallback;
             return this;
         }

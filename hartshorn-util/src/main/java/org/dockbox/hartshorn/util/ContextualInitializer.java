@@ -2,6 +2,7 @@ package org.dockbox.hartshorn.util;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * A functional interface for initializing objects. This interface is similar to {@link Initializer} but
@@ -11,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <T> The type of object to initialize.
  */
 @FunctionalInterface
-public interface LazyInitializer<I, T> {
+public interface ContextualInitializer<I, T> {
 
     /**
      * Initializes the object. Implementations of this method may return the same object instance on each invocation,
@@ -23,16 +24,28 @@ public interface LazyInitializer<I, T> {
     T initialize(I input);
 
     /**
+     * Returns a map of child initializers. This is useful for initializers that require additional initializers
+     * to initialize their object. This can be used to create a dependency graph of initializers, where each
+     * initializer is invoked before the parent initializer, or simply to gather all initializers in a single
+     * location.
+     *
+     * @return A map of child initializers.
+     */
+    default Map<Class<?>, Initializer<?>> children() {
+        return Map.of();
+    }
+
+    /**
      * Returns an initializer that invokes the given initializer, ignoring the input value.
      * This is useful for initializers that do not require context to initialize, but need to be
-     * provided to a configurer that requires a {@link LazyInitializer}.
+     * provided to a configurer that requires a {@link ContextualInitializer}.
      *
      * @param initializer The initializer to invoke.
      * @return An initializer that invokes the given initializer, ignoring the input value.
      * @param <I> The type of input to initialize with.
      * @param <T> The type of object to initialize.
      */
-    static <I, T> LazyInitializer<I, T> of(final Initializer<T> initializer) {
+    static <I, T> ContextualInitializer<I, T> of(Initializer<T> initializer) {
         return input -> initializer.initialize();
     }
 
@@ -46,7 +59,7 @@ public interface LazyInitializer<I, T> {
      * @param <I> The type of input to initialize with.
      * @param <T> The type of object to initialize.
      */
-    static <I, T> LazyInitializer<I, T> of(final T object) {
+    static <I, T> ContextualInitializer<I, T> of(T object) {
         return input -> object;
     }
 
@@ -57,15 +70,31 @@ public interface LazyInitializer<I, T> {
      *
      * @return An initializer that caches the result of this initializer.
      */
-    default LazyInitializer<I, T> cached() {
-        return new LazyInitializer<>() {
+    default ContextualInitializer<I, T> cached() {
+        return new ContextualInitializer<>() {
 
             private final Map<I, T> values = new ConcurrentHashMap<>();
 
             @Override
-            public T initialize(final I input) {
-                return this.values.computeIfAbsent(input, LazyInitializer.this::initialize);
+            public T initialize(I input) {
+                return this.values.computeIfAbsent(input, ContextualInitializer.this::initialize);
             }
+        };
+    }
+
+    /**
+     * Returns an initializer that invokes this initializer, and then invokes the given consumer with the result.
+     * This is useful for listening to the result of an initializer, without needing to invoke the initializer
+     * directly.
+     *
+     * @param consumer The consumer to invoke with the result of this initializer.
+     * @return An initializer that invokes this initializer, and then invokes the given consumer with the result.
+     */
+    default ContextualInitializer<I, T> subscribe(Consumer<T> consumer) {
+        return input -> {
+            T instance = ContextualInitializer.this.initialize(input);
+            consumer.accept(instance);
+            return instance;
         };
     }
 }
