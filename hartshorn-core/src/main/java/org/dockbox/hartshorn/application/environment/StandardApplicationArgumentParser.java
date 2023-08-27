@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,11 +26,13 @@ public class StandardApplicationArgumentParser implements ApplicationArgumentPar
     private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.:_-]+)=(.+)");
 
     @Override
-    public Properties parse(final Set<String> arguments) {
+    public Properties parse(final List<String> arguments) {
         final Properties properties = new Properties();
         for (final String arg : arguments) {
             final Matcher matcher = ARGUMENTS.matcher(arg);
-            if (matcher.find()) properties.put(matcher.group(1), matcher.group(2));
+            if (matcher.find()) {
+                properties.put(matcher.group(1), matcher.group(2));
+            }
         }
         return properties;
     }

@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Collection;
 
-public interface ComponentLocator {
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.option.Option;
+
+public interface ComponentLocator extends ContextCarrier {
 
     Collection<ComponentContainer<?>> containers();
 

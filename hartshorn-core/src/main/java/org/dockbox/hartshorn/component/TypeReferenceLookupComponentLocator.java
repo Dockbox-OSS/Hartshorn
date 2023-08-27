@@ -16,17 +16,16 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TypeReferenceLookupComponentLocator implements ComponentLocator, ContextCarrier {
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
+
+public class TypeReferenceLookupComponentLocator implements ComponentLocator {
 
     private final ApplicationContext applicationContext;
     private final Set<ComponentContainer<?>> componentContainers = ConcurrentHashMap.newKeySet();

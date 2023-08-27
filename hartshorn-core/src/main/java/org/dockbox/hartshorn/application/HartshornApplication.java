@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.application.StandardApplicationBuilder.Configurer;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-
-import java.util.function.Consumer;
+import org.dockbox.hartshorn.util.Customizer;
 
 /**
  * Application starter for Hartshorn applications. This takes a single type
@@ -40,30 +40,22 @@ public final class HartshornApplication {
      * @return The application context
      */
     public static ApplicationContext create(final Class<?> mainClass, final String... args) {
-        return new StandardApplicationBuilder()
-                .loadDefaults()
-                .mainClass(mainClass)
-                .arguments(args)
-                .create();
-    }
-
-    public static ApplicationContext create(final Class<?> mainClass, final Consumer<ApplicationBuilder<?, ApplicationContext>> modifier) {
-        final ApplicationBuilder<?, ApplicationContext> builder = new StandardApplicationBuilder()
-                .loadDefaults()
-                .mainClass(mainClass);
-        modifier.accept(builder);
-        return builder.create();
+        return StandardApplicationBuilder.create(builder -> {
+            builder.mainClass(mainClass);
+            builder.arguments(args);
+        }).create();
     }
 
     public static ApplicationContext create(final String... args) {
-        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        final StackTraceElement element = stackTrace[2];
-        try {
-            final Class<?> mainClass = Class.forName(element.getClassName());
-            return create(mainClass, args);
-        }
-        catch (final ClassNotFoundException e) {
-            throw new IllegalStateException("Could not deduce main class", e);
-        }
+        return StandardApplicationBuilder.create(builder -> {
+            builder.inferMainClass();
+            builder.arguments(args);
+        }).create();
+    }
+
+    public static ApplicationContext create(final Class<?> mainClass, final Customizer<StandardApplicationBuilder.Configurer> customizer) {
+        Customizer<Configurer> defaultCustomizer = builder -> builder.mainClass(mainClass);
+        Customizer<Configurer> composedCustomizer = defaultCustomizer.compose(customizer);
+        return StandardApplicationBuilder.create(composedCustomizer).create();
     }
 }

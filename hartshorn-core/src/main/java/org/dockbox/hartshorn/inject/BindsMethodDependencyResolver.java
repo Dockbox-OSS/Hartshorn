@@ -22,7 +22,10 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
 import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
+import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyInitializer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -62,5 +65,15 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     private <T> Option<DependencyContext<?>> resolve(final ApplicationContext applicationContext, final DependencyDeclarationContext<T> componentContainer, final MethodView<T, ?> method) {
         final BindingStrategyContext<T> strategyContext = new MethodAwareBindingStrategyContext<>(applicationContext, componentContainer, method);
         return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
+    }
+
+    public static LazyInitializer<ConditionMatcher, DependencyResolver> create(final Customizer<BindingStrategyRegistry> customizer) {
+        return conditionMatcher -> {
+            final BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
+            registry.register(new MethodInstanceBindingStrategy());
+
+            customizer.configure(registry);
+            return new BindsMethodDependencyResolver(conditionMatcher, registry);
+        };
     }
 }

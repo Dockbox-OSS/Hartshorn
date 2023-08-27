@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import org.dockbox.hartshorn.application.ContextualEnvironmentBinderConfiguration;
+import org.dockbox.hartshorn.application.DefaultBindingConfigurer;
+import org.dockbox.hartshorn.application.EnvironmentBinderConfiguration;
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.InitializingContext;
-import org.dockbox.hartshorn.application.InitializingContextBinderConfiguration;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
@@ -28,19 +29,24 @@ import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
+import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.LazyInitializer;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext {
@@ -48,27 +54,27 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
     private final transient ComponentLocator locator;
+    private final transient ApplicationEnvironment environment;
 
     private boolean isClosed = false;
     protected boolean isRunning = false;
 
-    protected DelegatingApplicationContext(InitializingContext context) {
+    protected DelegatingApplicationContext(ApplicationEnvironment environment, Configurer configurer) {
         super(null);
-        context = new InitializingContext(context.environment(), this, context.builder());
-        this.add(context);
+        this.environment = environment;
 
-        if (context.environment() instanceof ModifiableContextCarrier modifiable) {
-            modifiable.applicationContext(this);
+        if (environment instanceof ModifiableContextCarrier modifiableContextCarrier) {
+            modifiableContextCarrier.applicationContext(this);
         }
 
         this.prepareInitialization();
 
-        this.environmentValues = context.argumentParser().parse(context.builder().arguments());
-        this.componentProvider = context.componentProvider();
-        this.locator = context.componentLocator();
+        this.environmentValues = environment.rawArguments();
+        this.locator = configurer.componentLocator.initialize(this);
+        this.componentProvider = configurer.componentProvider.initialize(this.locator);
 
-        final InitializingContextBinderConfiguration configuration = new InitializingContextBinderConfiguration();
-        configuration.configureBindings(context, this);
+        EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
+        configuration.configureBindings(environment, configurer.defaultBindings.initialize(this), this);
     }
 
     protected abstract void prepareInitialization();
@@ -85,7 +91,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public Option<String> property(final String key) {
+    public Option<String> property(String key) {
         return Option.of(this.environmentValues.get(key)).map(String::valueOf);
     }
 
@@ -97,49 +103,49 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public <A> Option<A> activator(final Class<A> activator) {
+    public <A> Option<A> activator(Class<A> activator) {
         return this.first(ServiceActivatorContext.class)
                 .map(context -> context.activator(activator));
     }
 
     @Override
-    public boolean hasActivator(final Class<? extends Annotation> activator) {
+    public boolean hasActivator(Class<? extends Annotation> activator) {
         return this.first(ServiceActivatorContext.class)
                 .map(context -> context.hasActivator(activator))
                 .orElseGet(() -> false);
     }
 
     @Override
-    public void handle(final Throwable throwable) {
+    public void handle(Throwable throwable) {
         this.environment().handle(throwable);
     }
 
     @Override
-    public void handle(final String message, final Throwable throwable) {
+    public void handle(String message, Throwable throwable) {
         this.environment().handle(message, throwable);
     }
 
     @Override
-    public ExceptionHandler stacktraces(final boolean stacktraces) {
+    public ExceptionHandler stacktraces(boolean stacktraces) {
         return this.environment().stacktraces(stacktraces);
     }
 
     @Override
-    public <T> T get(final ComponentKey<T> key) {
+    public <T> T get(ComponentKey<T> key) {
         return this.componentProvider.get(key);
     }
 
     @Override
-    public <C> BindingFunction<C> bind(final ComponentKey<C> key) {
+    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
         if (this.componentProvider instanceof Binder binder) {
-            final BindingFunction<C> function = binder.bind(key);
+            BindingFunction<C> function = binder.bind(key);
             return new DelegatingApplicationBindingFunction<>(this, function);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }
 
     @Override
-    public <C> Binder bind(final BindingHierarchy<C> hierarchy) {
+    public <C> Binder bind(BindingHierarchy<C> hierarchy) {
         if (this.componentProvider instanceof Binder binder) {
             return binder.bind(hierarchy);
         }
@@ -148,13 +154,11 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public ApplicationEnvironment environment() {
-        return this.first(InitializingContext.class)
-                .map(InitializingContext::environment)
-                .orNull();
+        return this.environment;
     }
 
     @Override
-    public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
+    public <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key) {
         if (this.componentProvider instanceof HierarchicalComponentProvider provider) {
             return provider.hierarchy(key);
         }
@@ -170,7 +174,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public void setDebugActive(final boolean active) {
+    public void setDebugActive(boolean active) {
         this.environment().setDebugActive(active);
     }
 
@@ -179,16 +183,16 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         if (this.isClosed()) {
             throw new ContextClosedException(ApplicationContext.class);
         }
-        final ApplicationEnvironment environment = this.environment();
+        ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            final Set<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
+            Set<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
             this.log().info("Runtime shutting down, notifying {} observers", observers.size());
-            for (final LifecycleObserver observer : observers) {
+            for (LifecycleObserver observer : observers) {
                 this.log().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 try {
                     observer.onExit(this);
                 }
-                catch (final Throwable e) {
+                catch (Throwable e) {
                     this.log().error("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
                 }
             }
@@ -213,5 +217,43 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     @Override
     public ApplicationContext applicationContext() {
         return this;
+    }
+
+    protected static class Configurer {
+
+        private LazyInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = TypeReferenceLookupComponentLocator::new;
+        private LazyInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
+        private LazyInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = LazyInitializer.of(DefaultBindingConfigurer::empty);
+
+        public Configurer componentLocator(ComponentLocator componentLocator) {
+            return this.componentLocator(LazyInitializer.of(componentLocator));
+        }
+
+        public Configurer componentLocator(LazyInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator) {
+            this.componentLocator = componentLocator;
+            return this;
+        }
+
+        public Configurer componentProvider(ComponentProvider componentProvider) {
+            return this.componentProvider(LazyInitializer.of(componentProvider));
+        }
+
+        public Configurer componentProvider(LazyInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider) {
+            this.componentProvider = componentProvider;
+            return this;
+        }
+
+        public Configurer defaultBindings(DefaultBindingConfigurer defaultBindings) {
+            return this.defaultBindings(LazyInitializer.of(defaultBindings));
+        }
+
+        public Configurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
+            return this.defaultBindings(applicationContext -> binder -> defaultBindings.accept(applicationContext, binder));
+        }
+
+        public Configurer defaultBindings(LazyInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
+            this.defaultBindings = defaultBindings;
+            return this;
+        }
     }
 }

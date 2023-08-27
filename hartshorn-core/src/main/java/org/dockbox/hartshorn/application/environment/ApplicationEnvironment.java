@@ -16,23 +16,24 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
@@ -110,4 +111,6 @@ public interface ApplicationEnvironment extends
      */
     boolean singleton(Class<?> type);
     boolean singleton(TypeView<?> type);
+
+    Properties rawArguments();
 }

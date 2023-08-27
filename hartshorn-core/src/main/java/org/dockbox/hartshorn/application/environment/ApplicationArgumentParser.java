@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 public interface ApplicationArgumentParser {
-    Properties parse(Set<String> arguments);
+    Properties parse(List<String> arguments);
 }

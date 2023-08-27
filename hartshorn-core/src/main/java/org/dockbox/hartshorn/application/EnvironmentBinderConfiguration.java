@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.binding.Binder;
 
-public interface ContextBinderConfiguration<C extends Context> {
+public interface EnvironmentBinderConfiguration {
 
-    void configureBindings(C context, Binder binder);
+    void configureBindings(final ApplicationEnvironment environment, final DefaultBindingConfigurer configurer, final Binder binder);
 }

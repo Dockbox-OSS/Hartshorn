@@ -17,30 +17,37 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
-import org.dockbox.hartshorn.inject.processing.UseContextInjection;
-import org.dockbox.hartshorn.component.UseProxying;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.Initializer;
+import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.List;
 
-public class StandardApplicationBuilder extends DefaultApplicationBuilder<StandardApplicationBuilder, ApplicationContext> {
+public final class StandardApplicationBuilder implements ApplicationBuilder<ApplicationContext> {
 
     private enum FactoryState {
         WAITING,
         CREATING,
     }
 
-    private FactoryState state = FactoryState.WAITING;
-    protected Function<Logger, ApplicationContextConstructor> constructor;
+    private final ApplicationBuildContext buildContext;
+    private final ApplicationContextConstructor applicationContextConstructor;
 
-    public StandardApplicationBuilder constructor(final Function<Logger, ApplicationContextConstructor> constructor) {
-        this.constructor = constructor;
-        return this.self();
+    private FactoryState state = FactoryState.WAITING;
+
+    private StandardApplicationBuilder(Configurer configurer) {
+        if (configurer.mainClass == null) {
+            throw new IllegalArgumentException("Main class must be provided or inferred using #inferMainClass()");
+        }
+
+        Class<?> mainClass = configurer.mainClass.initialize();
+        this.buildContext = new ApplicationBuildContext(mainClass, configurer.arguments.initialize(mainClass));
+        this.applicationContextConstructor = configurer.constructor.initialize(this.buildContext);
     }
 
     @Override
@@ -50,40 +57,93 @@ public class StandardApplicationBuilder extends DefaultApplicationBuilder<Standa
         }
         this.state = FactoryState.CREATING;
 
-        final Logger logger = LoggerFactory.getLogger(this.mainClass());
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        this.buildContext.logger().info("Starting application " + this.buildContext.mainClass().getSimpleName() + " on " + this.host(runtimeMXBean) + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
 
-        final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        logger.info("Starting application " + this.mainClass().getSimpleName() + " on " + this.host(runtimeMXBean) + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
+        long applicationStartTimestamp = System.currentTimeMillis();
+        ApplicationContext applicationContext = this.applicationContextConstructor.createContext();
+        long applicationStartedTimestamp = System.currentTimeMillis();
 
-        final long applicationStartTimestamp = System.currentTimeMillis();
-        final ApplicationContext applicationContext = this.constructor.apply(logger).createContext(this);
-        final long applicationStartedTimestamp = System.currentTimeMillis();
+        double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
+        double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
 
-        final double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
-        final double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
-
-        logger.info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
+        this.buildContext.logger().info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
 
         this.state = FactoryState.WAITING;
 
         return applicationContext;
     }
 
-    protected String host(final RuntimeMXBean runtimeMXBean) {
+    private String host(RuntimeMXBean runtimeMXBean) {
         // Alternative to InetAddress.getLocalHost().getHostName()
         return runtimeMXBean.getName().split("@")[1];
     }
 
     public StandardApplicationBuilder loadDefaults() {
-        return this.constructor(StandardApplicationContextConstructor::new)
-                .serviceActivator(TypeUtils.annotation(UseBootstrap.class))
-                .serviceActivator(TypeUtils.annotation(UseProxying.class))
-                .serviceActivator(TypeUtils.annotation(UseContextInjection.class))
-                .serviceActivator(TypeUtils.annotation(UseStaticBinding.class));
+        return this;
     }
 
-    @Override
-    public StandardApplicationBuilder self() {
-        return this;
+    public static StandardApplicationBuilder create(Customizer<Configurer> customizer) {
+        Configurer configurer = new Configurer();
+        customizer.configure(configurer);
+        return new StandardApplicationBuilder(configurer);
+    }
+
+    public static class Configurer {
+
+        private LazyInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor = StandardApplicationContextConstructor.create(Customizer.useDefaults());
+        private final LazyStreamableConfigurer<Class<?>, String> arguments = LazyStreamableConfigurer.empty();
+        private Initializer<Class<?>> mainClass;
+
+        public Configurer constructor(ApplicationContextConstructor constructor) {
+            return this.constructor(Initializer.of(constructor));
+        }
+
+        public Configurer constructor(Initializer<ApplicationContextConstructor> constructor) {
+            return this.constructor(LazyInitializer.of(constructor));
+        }
+
+        public Configurer constructor(LazyInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor) {
+            this.constructor = constructor;
+            return this;
+        }
+
+        public Configurer mainClass(Class<?> mainClass) {
+            return this.mainClass(Initializer.of(mainClass));
+        }
+
+        public Configurer inferMainClass() {
+            return this.mainClass(() -> {
+                StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+                StackTraceElement element = stackTrace[2];
+                try {
+                    return Class.forName(element.getClassName());
+                }
+                catch (ClassNotFoundException e) {
+                    throw new IllegalStateException("Could not deduce main class", e);
+                }
+            });
+        }
+
+        public Configurer mainClass(Initializer<Class<?>> mainClass) {
+            this.mainClass = mainClass;
+            return this;
+        }
+
+        public Configurer arguments(String... arguments) {
+            return this.arguments(Arrays.asList(arguments));
+        }
+
+        public Configurer arguments(List<String> arguments) {
+            return this.arguments(args -> {
+                args.clear();
+                args.addAll(arguments);
+            });
+        }
+
+        public Configurer arguments(Customizer<StreamableConfigurer<Class<?>, String>> customizer) {
+            this.arguments.customizer(customizer);
+            return this;
+        }
     }
 }

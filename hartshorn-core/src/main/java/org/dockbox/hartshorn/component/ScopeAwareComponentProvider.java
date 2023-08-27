@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
@@ -27,10 +26,12 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyInitializer;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,16 +54,19 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private final HierarchyAwareComponentProvider applicationComponentProvider;
     private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
-    public ScopeAwareComponentProvider(final InitializingContext context) {
-        this.applicationContext = context.applicationContext();
-        this.locator = context.componentLocator();
-        this.postConstructor = context.componentPostConstructor();
-        this.factory = this::raw;
+    protected ScopeAwareComponentProvider(final ComponentLocator componentLocator, final Configurer configurer) {
+        this.locator = componentLocator;
+        this.applicationContext = componentLocator.applicationContext();
+
+        this.postConstructor = configurer.componentPostConstructor.initialize(this.applicationContext);
+        this.factory = configurer.componentInstanceFactory.initialize(this.applicationContext);
         this.applicationComponentProvider = this.getOrCreateProvider(this.applicationContext);
     }
 
     private HierarchyAwareComponentProvider getOrCreateProvider(final Scope scope) {
-        if (scope == Scope.DEFAULT_SCOPE || scope == null) return this.applicationComponentProvider;
+        if (scope == Scope.DEFAULT_SCOPE || scope == null) {
+            return this.applicationComponentProvider;
+        }
         synchronized (this.scopedProviders) {
             return this.scopedProviders.computeIfAbsent(scope, this::createComponentProvider);
         }
@@ -175,5 +179,38 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     @Override
     public HierarchicalComponentProvider applicationProvider() {
         return this.applicationComponentProvider;
+    }
+
+    public static LazyInitializer<ComponentLocator, ComponentProvider> create(Customizer<Configurer> customizer) {
+        return context -> {
+            final Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new ScopeAwareComponentProvider(context, configurer);
+        };
+    }
+
+    public static class Configurer {
+
+        private LazyInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor = ComponentPostConstructorImpl.create(Customizer.useDefaults());
+        private LazyInitializer<ApplicationContext, ComponentInstanceFactory> componentInstanceFactory = ContextDrivenComponentInstanceFactory::new;
+
+        public Configurer componentPostConstructor(final ComponentPostConstructor componentPostConstructor) {
+            return this.componentPostConstructor(LazyInitializer.of(componentPostConstructor));
+        }
+
+        public Configurer componentPostConstructor(final LazyInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor) {
+            this.componentPostConstructor = componentPostConstructor;
+            return this;
+        }
+
+        public Configurer componentInstanceFactory(final ComponentInstanceFactory componentInstanceFactory) {
+            return this.componentInstanceFactory(LazyInitializer.of(componentInstanceFactory));
+        }
+
+        public Configurer componentInstanceFactory(final LazyInitializer<ApplicationContext, ComponentInstanceFactory> componentInstanceFactory) {
+            this.componentInstanceFactory = componentInstanceFactory;
+            return this;
+        }
+
     }
 }

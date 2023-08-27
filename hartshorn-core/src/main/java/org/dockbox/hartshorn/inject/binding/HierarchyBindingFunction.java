@@ -118,6 +118,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder singleton(final T instance) {
+        if (instance == null) {
+            throw new IllegalModificationException("Cannot bind null instance");
+        }
         // Set 'processed' to false to ensure that the singleton is processed the first time it is requested. As the object
         // container is reused, this will only happen once.
         return this.add(new SingletonProvider<>(instance, false));
@@ -137,6 +140,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     public Binder lazySingleton(final CheckedSupplier<T> supplier) {
         this.lazyContainerSingleton(() -> {
             final T instance = supplier.get();
+            if (instance == null) {
+                throw new IllegalModificationException("Cannot bind null instance");
+            }
             return new ObjectContainer<>(instance, false);
         });
         return this.binder();

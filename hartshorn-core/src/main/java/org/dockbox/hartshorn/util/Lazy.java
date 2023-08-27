@@ -38,6 +38,12 @@ public final class Lazy<T> {
         return new Lazy<>(applicationContext, type);
     }
 
+    public static <T> Lazy<T> ofInstance(final Class<T> type, final T instance) {
+        Lazy<T> lazy = of(null, type);
+        lazy.value = instance;
+        return lazy;
+    }
+
     public T get() {
         if (this.value == null) {
             this.value = this.applicationContext.get(this.type);

@@ -16,17 +16,17 @@
 
 package test.org.dockbox.hartshorn.components.contextual;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.contextual.StaticComponentCollector;
+import org.dockbox.hartshorn.component.contextual.StaticComponentContainer;
 import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.component.contextual.StaticComponentProvider;
-import org.dockbox.hartshorn.component.contextual.StaticComponentContainer;
 import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
@@ -43,8 +43,9 @@ import test.org.dockbox.hartshorn.components.StaticAwareComponent;
 public class StaticBindsTests {
 
     @ModifyApplication
-    public static ApplicationBuilder<?, ?> builder(final ApplicationBuilder<?, ?> builder) {
-        return builder.includeBasePackages(false).argument("--hartshorn:debug=true");
+    public static void customize() {
+        TestCustomizer.BUILDER.compose(builder -> builder.arguments("--hartshorn:debug=true"));
+        TestCustomizer.CONSTRUCTOR.compose(constructor -> constructor.includeBasePackages(false));
     }
 
     @Inject

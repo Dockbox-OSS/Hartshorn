@@ -33,12 +33,14 @@ public class ApplicationBatchingTest {
      */
     @RepeatedTest(1)
     void testApplicationContextBatching() {
-        final ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
-                HartshornApplication.create(ApplicationBatchingTest.class, builder -> builder.enableBatchMode(true).argument("--hartshorn:debug=true"))
+        ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
+                HartshornApplication.create(ApplicationBatchingTest.class, builder ->
+                        builder.arguments("--hartshorn:debug=true", "--hartshorn.batch.enabled=true")
+                )
         );
         Assertions.assertNotNull(applicationContext);
 
-        final SimpleComponent component = applicationContext.get(SimpleComponent.class);
+        SimpleComponent component = applicationContext.get(SimpleComponent.class);
         Assertions.assertNotNull(component);
         Assertions.assertSame(applicationContext, component.applicationContext());
     }

@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn.processing;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.proxy.Proxy;
@@ -24,6 +23,7 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 
@@ -31,8 +31,12 @@ import org.junit.jupiter.api.Assertions;
 public class ContextConfiguringComponentProcessorTests {
 
     @ModifyApplication
-    public static ApplicationBuilder<?, ?> builder(final ApplicationBuilder<?, ?> builder) {
-        return builder.postProcessor(new SimpleContextConfiguringComponentProcessor());
+    public static void customize() {
+        TestCustomizer.CONSTRUCTOR.compose(constructor -> {
+            constructor.componentPostProcessors(processors -> {
+                processors.add(new SimpleContextConfiguringComponentProcessor());
+            });
+        });
     }
 
     @InjectTest

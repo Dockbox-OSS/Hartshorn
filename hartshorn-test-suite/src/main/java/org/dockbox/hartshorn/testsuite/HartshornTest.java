@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -57,8 +55,8 @@ public @interface HartshornTest {
      * the test class or method. These will be added to the default set of {@link ComponentProcessor}s
      * used by the test suite, even if they are not found through prefix scanning.
      *
-     * @see ApplicationBuilder#preProcessor(ComponentPreProcessor)
-     * @see ApplicationBuilder#postProcessor(ComponentPostProcessor)
+     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#componentPreProcessors(Customizer)
+     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#componentPostProcessors(Customizer)
      */
     Class<? extends ComponentProcessor>[] processors() default  {};
 
@@ -67,15 +65,15 @@ public @interface HartshornTest {
      * for the test class or method. These will be added to the default set of packages scanned by the
      * test suite, even if they are not known to the chosen {@link #mainClass()}.
      *
-     * @see ApplicationBuilder#scanPackages(String...)
+     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#scanPackages(Customizer)
      */
     String[] scanPackages() default {};
 
     /**
      * Whether to include the base package of the main class explicitly, or to only use the prefixes provided to
-     * {@link ApplicationBuilder#scanPackages(String...)} (and overloaded methods).
+     * {@link #scanPackages()}. Defaults to {@code true}.
      *
-     * @see ApplicationBuilder#scanPackages(String...)
+     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#includeBasePackages(boolean)
      */
     boolean includeBasePackages() default true;
 
@@ -84,7 +82,7 @@ public @interface HartshornTest {
      * class to have relevant {@link ServiceActivator service activators}. Alternative metadata sources may be
      * used, depending on the application environment.
      *
-     * @see ApplicationBuilder#mainClass(Class)
+     * @see org.dockbox.hartshorn.application.StandardApplicationBuilder.Configurer#mainClass(Class)
      */
     Class<?> mainClass() default Void.class;
 }

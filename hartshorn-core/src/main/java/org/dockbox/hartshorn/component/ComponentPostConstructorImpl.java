@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.InitializingContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Lazy;
+import org.dockbox.hartshorn.util.LazyInitializer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -34,9 +35,9 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
     private final ApplicationContext applicationContext;
     private final Lazy<ViewContextAdapter> contextAdapter;
 
-    public ComponentPostConstructorImpl(final InitializingContext context) {
-        this.applicationContext = context.applicationContext();
-        this.contextAdapter = Lazy.of(this.applicationContext, ViewContextAdapter.class);
+    protected ComponentPostConstructorImpl(final ApplicationContext applicationContext, final Configurer configurer) {
+        this.applicationContext = applicationContext;
+        this.contextAdapter = configurer.viewContextAdapter.initialize(applicationContext);
     }
 
     @Override
@@ -59,5 +60,31 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
             }
         }
         return instance;
+    }
+
+    public static LazyInitializer<ApplicationContext, ComponentPostConstructor> create(final Customizer<Configurer> customizer) {
+        return context -> {
+            final Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new ComponentPostConstructorImpl(context, configurer);
+        };
+    }
+
+    public static class Configurer {
+
+        private LazyInitializer<ApplicationContext, Lazy<ViewContextAdapter>> viewContextAdapter = context -> Lazy.of(context, ViewContextAdapter.class);
+
+        public Configurer viewContextAdapter(final ViewContextAdapter viewContextAdapter) {
+            return this.viewContextAdapter(Lazy.ofInstance(ViewContextAdapter.class, viewContextAdapter));
+        }
+
+        public Configurer viewContextAdapter(final Lazy<ViewContextAdapter> lazyViewContextAdapter) {
+            return this.viewContextAdapter(LazyInitializer.of(lazyViewContextAdapter));
+        }
+
+        public Configurer viewContextAdapter(final LazyInitializer<ApplicationContext, Lazy<ViewContextAdapter>> viewContextAdapter) {
+            this.viewContextAdapter = viewContextAdapter;
+            return this;
+        }
     }
 }

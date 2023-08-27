@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+@FunctionalInterface
 public interface ApplicationContextConstructor {
-    ApplicationContext createContext(ApplicationBuilder<?, ?> builder);
+    ApplicationContext createContext();
 }

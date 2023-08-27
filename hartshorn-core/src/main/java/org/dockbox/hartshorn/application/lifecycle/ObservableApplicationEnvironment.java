@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.application.lifecycle;
 
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-
 import java.util.Set;
+
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 
 public interface ObservableApplicationEnvironment extends ApplicationEnvironment {
 

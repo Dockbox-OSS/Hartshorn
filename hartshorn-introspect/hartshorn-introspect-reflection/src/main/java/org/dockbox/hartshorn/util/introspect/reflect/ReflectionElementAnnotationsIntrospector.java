@@ -37,18 +37,18 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     private final AnnotationLookup annotationLookup;
     private Map<Class<?>, Annotation> annotationCache;
 
-    public ReflectionElementAnnotationsIntrospector(final ReflectionIntrospector introspector, final AnnotatedElement element) {
+    public ReflectionElementAnnotationsIntrospector(ReflectionIntrospector introspector, AnnotatedElement element) {
         this.introspector = introspector;
         this.element = element;
         // Could be instantiated early during application startup, so we don't want to use component provision here. This
-        // does limit it to only being able to be overridden through the application factory.
+        // does limit it to only being able to be overridden through application customizers.
         this.annotationLookup = introspector.annotationLookup();
     }
 
     protected Map<Class<?>, Annotation> annotationCache() {
         if (this.annotationCache == null) {
             this.annotationCache = new ConcurrentHashMap<>();
-            for (final Annotation annotation : this.element.getAnnotations()) {
+            for (Annotation annotation : this.element.getAnnotations()) {
                 this.annotationCache.put(annotation.annotationType(), annotation);
             }
         }
@@ -61,44 +61,51 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     }
 
     @Override
-    public Set<Annotation> annotedWith(final Class<? extends Annotation> annotation) {
+    public Set<Annotation> annotedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
                 .filter(presentAnnotation -> this.introspector.introspect(presentAnnotation.annotationType()).annotations().has(annotation))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public boolean has(final Class<? extends Annotation> annotation) {
+    public boolean has(Class<? extends Annotation> annotation) {
         return this.get(annotation).present();
     }
 
     @Override
-    public boolean hasAny(final Set<Class<? extends Annotation>> annotations) {
+    public boolean hasAny(Set<Class<? extends Annotation>> annotations) {
         return annotations.stream().anyMatch(this::has);
     }
 
     @Override
-    public boolean hasAll(final Set<Class<? extends Annotation>> annotations) {
+    public boolean hasAll(Set<Class<? extends Annotation>> annotations) {
         return annotations.stream().allMatch(this::has);
     }
 
     @Override
-    public <T extends Annotation> Option<T> get(final Class<T> annotation) {
-        if (!annotation.isAnnotation()) return Option.empty();
+    public <T extends Annotation> Option<T> get(Class<T> annotation) {
+        if (!annotation.isAnnotation()) {
+            return Option.empty();
+        }
 
-        final Map<Class<?>, Annotation> annotations = this.annotationCache();
-        if (annotations.containsKey(annotation))
+        Map<Class<?>, Annotation> annotations = this.annotationCache();
+        if (annotations.containsKey(annotation)) {
             return Option.of(() -> annotation.cast(annotations.get(annotation)));
+        }
 
-        final T virtual = this.annotationLookup.find(this.element, annotation);
-        if (virtual != null) annotations.put(annotation, virtual);
+        T virtual = this.annotationLookup.find(this.element, annotation);
+        if (virtual != null) {
+            annotations.put(annotation, virtual);
+        }
         return Option.of(virtual);
     }
 
     @Override
-    public <T extends Annotation> Set<T> all(final Class<T> annotation) {
-        if (!annotation.isAnnotation()) return Collections.emptySet();
-        final List<T> annotations = this.annotationLookup.findAll(this.element, annotation);
+    public <T extends Annotation> Set<T> all(Class<T> annotation) {
+        if (!annotation.isAnnotation()) {
+            return Collections.emptySet();
+        }
+        List<T> annotations = this.annotationLookup.findAll(this.element, annotation);
         return Set.copyOf(annotations);
     }
 

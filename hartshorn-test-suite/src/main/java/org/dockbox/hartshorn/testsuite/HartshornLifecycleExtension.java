@@ -18,15 +18,21 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
+import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
+import org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
+import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.introspect.ExecutableElementContextParameterLoader;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -63,49 +69,52 @@ public class HartshornLifecycleExtension implements
     private ApplicationContext applicationContext;
 
     @Override
-    public void beforeEach(final ExtensionContext context) throws ApplicationException {
-        final Class<?> testClass = context.getTestClass().orElse(null);
-        final Object testInstance = context.getTestInstance().orElse(null);
-        final Method testMethod = context.getTestMethod().orElse(null);
+    public void beforeEach(ExtensionContext context) throws ApplicationException {
+        Class<?> testClass = context.getTestClass().orElse(null);
+        Object testInstance = context.getTestInstance().orElse(null);
+        Method testMethod = context.getTestMethod().orElse(null);
         this.beforeLifecycle(testClass, testInstance, testMethod);
     }
 
     @Override
-    public void afterEach(final ExtensionContext context) throws ApplicationException {
+    public void afterEach(ExtensionContext context) throws ApplicationException {
         this.afterLifecycle();
     }
 
     @Override
-    public void beforeAll(final ExtensionContext context) throws ApplicationException {
+    public void beforeAll(ExtensionContext context) throws ApplicationException {
         if (this.isClassLifecycle(context)) {
-            final Class<?> testClass = context.getTestClass().orElse(null);
-            final Object testInstance = context.getTestInstance().orElse(null);
+            Class<?> testClass = context.getTestClass().orElse(null);
+            Object testInstance = context.getTestInstance().orElse(null);
             this.beforeLifecycle(testClass, testInstance);
         }
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) throws ApplicationException {
+    public void afterAll(ExtensionContext context) throws ApplicationException {
         if (this.isClassLifecycle(context)) {
             this.afterLifecycle();
         }
     }
 
-    private boolean isClassLifecycle(final ExtensionContext context) {
-        final Optional<Lifecycle> lifecycle = context.getTestInstanceLifecycle();
+    private boolean isClassLifecycle(ExtensionContext context) {
+        Optional<Lifecycle> lifecycle = context.getTestInstanceLifecycle();
         return lifecycle.isPresent() && Lifecycle.PER_CLASS == lifecycle.get();
     }
 
-    protected void beforeLifecycle(final Class<?> testClass, final Object testInstance, final AnnotatedElement... testComponentSources) throws ApplicationException {
+    protected void beforeLifecycle(Class<?> testClass, Object testInstance, AnnotatedElement... testComponentSources)
+            throws ApplicationException {
         if (testClass == null) {
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        final List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
+        List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
         elements.add(testClass);
 
-        final ApplicationBuilder<?, ?> applicationBuilder = this.prepareFactory(testClass, elements);
-        final ApplicationContext applicationContext = HartshornLifecycleExtension.createTestContext(applicationBuilder, testClass).orNull();
+        this.invokeModifiers(testClass);
+
+        ApplicationBuilder<?> applicationBuilder = this.prepareFactory(testClass, elements);
+        ApplicationContext applicationContext = applicationBuilder.create();
 
         if (applicationContext == null) {
             throw new IllegalStateException("Could not create application context");
@@ -128,142 +137,183 @@ public class HartshornLifecycleExtension implements
         }
     }
 
-    @Override
-    public boolean supportsParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) throws ParameterResolutionException {
-        final Optional<Method> testMethod = extensionContext.getTestMethod();
-        if (testMethod.isEmpty()) return false;
+    private void invokeModifiers(Class<?> testClass) throws ApplicationException {
+        List<Method> methods = Arrays.stream(testClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(ModifyApplication.class))
+                .toList();
 
-        final MethodView<?, ?> method = this.applicationContext.environment().introspect(testMethod.get());
+        for (Method factoryModifier : methods) {
+            doCheckFactoryModifierValid(factoryModifier);
+
+            if (!factoryModifier.canAccess(null)) {
+                factoryModifier.setAccessible(true);
+            }
+
+            Class<?>[] parameters = factoryModifier.getParameterTypes();
+            if (parameters.length == 0) {
+                Attempt.of(() -> (Customizer<StandardApplicationBuilder.Configurer>) factoryModifier.invoke(null), Throwable.class)
+                        .mapError(ApplicationException::new)
+                        .rethrow();
+            }
+            else {
+                throw new InvalidFactoryModifierException("Invalid parameter count for " + factoryModifier.getName() + ", expected 0, got " + parameters.length + ".");
+            }
+
+            factoryModifier.setAccessible(false);
+        }
+    }
+
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+            throws ParameterResolutionException {
+        Optional<Method> testMethod = extensionContext.getTestMethod();
+        if (testMethod.isEmpty()) {
+            return false;
+        }
+
+        MethodView<?, ?> method = this.applicationContext.environment().introspect(testMethod.get());
         return method.annotations().has(Inject.class);
     }
 
     @Override
-    public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) throws ParameterResolutionException {
-        if (this.applicationContext == null) throw new IllegalStateException("No active state present");
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+            throws ParameterResolutionException {
+        if (this.applicationContext == null) {
+            throw new IllegalStateException("No active state present");
+        }
 
-        final Optional<Method> testMethod = extensionContext.getTestMethod();
-        if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
+        Optional<Method> testMethod = extensionContext.getTestMethod();
+        if (testMethod.isEmpty()) {
+            throw new ParameterResolutionException("Test method was not provided to runner");
+        }
 
-        final ParameterLoader<ApplicationBoundParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
-        final MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
-        final ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable, extensionContext.getTestInstance().orElse(null), this.applicationContext);
+        ParameterLoader<ApplicationBoundParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
+        MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
+        ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable,
+                extensionContext.getTestInstance().orElse(null), this.applicationContext);
 
         return parameterLoader.loadArgument(parameterLoaderContext, parameterContext.getIndex());
     }
 
-    protected void populateTestInstance(final Object instance, final ApplicationContext applicationContext) {
-        final ComponentPopulator populator = applicationContext.get(ComponentPopulator.class);
+    protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
+        ComponentPopulator populator = applicationContext.get(ComponentPopulator.class);
         populator.populate(instance);
     }
 
-    public static Option<ApplicationContext> createTestContext(final ApplicationBuilder<?, ?> applicationBuilder, final Class<?> activator) {
-        Class<?> next = activator;
-        final Set<Annotation> serviceActivators = new HashSet<>();
-        while (next != null) {
-            Arrays.stream(next.getAnnotations())
-                    .filter(annotation -> annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
-                    .forEach(serviceActivators::add);
+    private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources) {
+        Customizer<StandardApplicationBuilder.Configurer> builderCustomizer = Customizer.useDefaults();
+        builderCustomizer = builderCustomizer.compose(builder -> {
+            customizeBuilderWithTestSources(testClass, testComponentSources, builder);
 
-            next = next.getSuperclass();
-        }
-        applicationBuilder.serviceActivators(serviceActivators);
+            Customizer<StandardApplicationContextConstructor.Configurer> customizer = new ContextConstructorCustomizer(testClass, testComponentSources);
+            builder.constructor(StandardApplicationContextConstructor.create(customizer.compose(TestCustomizer.CONSTRUCTOR.customizer())));
+        });
 
-        final ApplicationContext context = applicationBuilder.create();
-        return Option.of(context);
+        return StandardApplicationBuilder.create(builderCustomizer.compose(TestCustomizer.BUILDER.customizer()));
     }
 
-    private ApplicationBuilder<?, ?> prepareFactory(final Class<?> testClass, final List<AnnotatedElement> testComponentSources) throws ApplicationException {
-        ApplicationBuilder<?, ?> applicationBuilder = new StandardApplicationBuilder()
-                .loadDefaults()
-                .enableBanner(false)
-                .applicationFSProvider(ctx -> new JUnitFSProvider());
+    private static void doCheckFactoryModifierValid(Method factoryModifier) {
+        if (!Modifier.isStatic(factoryModifier.getModifiers())) {
+            throw new IllegalStateException("Expected " + factoryModifier.getName() + " to be static.");
+        }
 
-        final List<String> arguments = new ArrayList<>();
-        final ApplicationBuilder<?, ?> finalApplicationBuilder = applicationBuilder;
+        if (factoryModifier.getReturnType().equals(Void.TYPE)) {
+            throw new InvalidFactoryModifierException("Invalid return type for " + factoryModifier.getName() + ", expected void");
+        }
+    }
 
-        for (final AnnotatedElement element : testComponentSources) {
-            Option.of(element.getAnnotation(HartshornTest.class)).peek(annotation -> {
-                Arrays.stream(annotation.processors())
-                        .map(processor -> Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class)
-                                .mapError(ApplicationRuntimeException::new)
-                                .rethrow()
-                                .get()
-                        ).forEach(componentProcessor -> {
-                            if (componentProcessor instanceof ComponentPreProcessor preProcessor) {
-                                finalApplicationBuilder.preProcessor(preProcessor);
-                            }
-                            else if (componentProcessor instanceof ComponentPostProcessor postProcessor) {
-                                finalApplicationBuilder.postProcessor(postProcessor);
-                            }
-                        });
+    private static void customizeBuilderWithTestSources(Class<?> testClass, List<AnnotatedElement> testComponentSources,
+                                                        StandardApplicationBuilder.Configurer builder) {
 
-                finalApplicationBuilder
-                        .scanPackages(annotation.scanPackages())
-                        .includeBasePackages(annotation.includeBasePackages());
+        // Note: initial default, may be overwritten by test component sources below
+        builder.mainClass(testClass);
 
-                if (annotation.mainClass() != Void.class) {
-                    finalApplicationBuilder.mainClass(annotation.mainClass());
-                }
-            });
-
-            if (applicationBuilder.mainClass() == null) {
-                applicationBuilder.mainClass(testClass);
+        for (AnnotatedElement element : testComponentSources) {
+            if (element == null) {
+                continue;
             }
+
+            Option.of(element.getAnnotation(HartshornTest.class))
+                    .map(HartshornTest::mainClass)
+                    .filter(mainClass -> mainClass != Void.class)
+                    .peek(builder::mainClass);
 
             Option.of(element.getAnnotation(TestProperties.class))
-                    .peek(annotation -> arguments.addAll(Arrays.asList(annotation.value())));
+                    .map(TestProperties::value)
+                    .peek(properties -> builder.arguments(args -> args.addAll(properties)));
         }
+    }
 
-        applicationBuilder.arguments(arguments.toArray(String[]::new))
-                // Properties below are sensible defaults for testing, but can be enabled/disabled by modifying the application builder in a @ModifyApplication
-                // method if needed.
-                .enableBatchMode(true) // Enable batch mode, to make use of additional caching
-                .enableBanner(false); // Disable banner for tests
+    private record ContextConstructorCustomizer(
+            Class<?> testClass, List<AnnotatedElement> testComponentSources) implements Customizer<Configurer> {
 
-        for (final AnnotatedElement testComponentSource : testComponentSources) {
-            if (testComponentSource == null) continue;
+        @Override
+        public void configure(Configurer constructor) {
+            Customizer<ContextualApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
+                environment.enableBanner(); // Disable banner for tests, to avoid unnecessary noise
+                environment.enableBatchMode(); // Enable batch mode, to make use of additional caching
+                environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
+                environment.applicationFSProvider(new JUnitFSProvider());
 
-            if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
-                final TestComponents testComponents = testComponentSource.getAnnotation(TestComponents.class);
-                for (final Class<?> component : testComponents.value()) {
-                    applicationBuilder.standaloneComponent(component);
-                }
+                environment.applicationContext(SimpleApplicationContext.create(TestCustomizer.APPLICATION_CONTEXT.customizer()));
+            };
+            constructor.environment(ContextualApplicationEnvironment.create(environmentCustomizer.compose(TestCustomizer.ENVIRONMENT.customizer())));
+
+            for (AnnotatedElement element : this.testComponentSources) {
+                this.customizeWithComponentSource(constructor, element);
             }
         }
 
-        final List<Method> methods = Arrays.stream(testClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(ModifyApplication.class))
-                .toList();
+        private void customizeActivators(Configurer constructor) {
+            Class<?> next = this.testClass;
+            Set<Annotation> serviceActivators = new HashSet<>();
+            while (next != null) {
+                Arrays.stream(next.getAnnotations())
+                        .filter(annotation -> annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+                        .forEach(serviceActivators::add);
 
-        for (final Method factoryModifier : methods) {
-            if (!Modifier.isStatic(factoryModifier.getModifiers()))
-                throw new IllegalStateException("Expected " + factoryModifier.getName() + " to be static.");
-
-            if (!ApplicationBuilder.class.isAssignableFrom(factoryModifier.getReturnType()))
-                throw new InvalidFactoryModifierException("return type", factoryModifier.getReturnType());
-
-            if (!factoryModifier.canAccess(null))
-                factoryModifier.setAccessible(true);
-
-            final Class<?>[] parameters = factoryModifier.getParameterTypes();
-            if (parameters.length == 0) {
-                applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null), Throwable.class)
-                        .mapError(ApplicationException::new)
-                        .rethrow()
-                        .orNull();
+                next = next.getSuperclass();
             }
-            else if (ApplicationBuilder.class.isAssignableFrom(parameters[0])) {
-                final ApplicationBuilder<?, ?> factoryArg = applicationBuilder;
-                applicationBuilder = Attempt.of(() -> (ApplicationBuilder<?, ?>) factoryModifier.invoke(null, factoryArg), Throwable.class)
-                        .mapError(ApplicationException::new)
-                        .rethrow()
-                        .orNull();
-            }
-            else throw new InvalidFactoryModifierException("parameters", parameters[0]);
-
-            factoryModifier.setAccessible(false);
+            constructor.activators(activators -> {
+                activators.addAll(serviceActivators);
+            });
         }
 
-        return applicationBuilder;
+        private void customizeWithComponentSource(Configurer constructor, AnnotatedElement element) {
+            Option<HartshornTest> testDecorator = Option.of(element.getAnnotation(HartshornTest.class));
+            if (testDecorator.present()) {
+                this.registerProcessors(constructor, testDecorator);
+                constructor.scanPackages(config -> config.addAll(testDecorator.get().scanPackages()));
+                constructor.includeBasePackages(testDecorator.get().includeBasePackages());
+            }
+            registerStandaloneComponents(constructor, element);
+        }
+
+        private void registerProcessors(Configurer constructor, Option<HartshornTest> testDecorator) {
+            List<Class<? extends ComponentProcessor>> processors = List.of(testDecorator.get().processors());
+            List<ComponentPreProcessor> preProcessors = this.filterProcessors(ComponentPreProcessor.class, processors);
+            List<ComponentPostProcessor> postProcessors = this.filterProcessors(ComponentPostProcessor.class, processors);
+
+            constructor.componentPreProcessors(config -> config.addAll(preProcessors));
+            constructor.componentPostProcessors(config -> config.addAll(postProcessors));
+        }
+
+        private static void registerStandaloneComponents(Configurer constructor, AnnotatedElement element) {
+            if (element.isAnnotationPresent(TestComponents.class)) {
+                TestComponents testComponents = element.getAnnotation(TestComponents.class);
+                constructor.standaloneComponents(components -> components.addAll(testComponents.value()));
+            }
+        }
+
+        private <T extends ComponentProcessor> List<T> filterProcessors(Class<T> type, List<Class<? extends ComponentProcessor>> processors) {
+            return processors.stream()
+                    .filter(type::isAssignableFrom)
+                    .map(processor -> Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class)
+                            .mapError(ApplicationRuntimeException::new)
+                            .rethrow()
+                            .cast(type)
+                            .get())
+                    .toList();
+        }
     }
 }

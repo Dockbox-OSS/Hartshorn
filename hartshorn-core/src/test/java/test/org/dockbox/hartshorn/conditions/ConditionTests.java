@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.dockbox.hartshorn.testsuite.TestProperties;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -41,6 +42,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
@@ -58,11 +60,19 @@ public class ConditionTests {
     private ApplicationContext applicationContext;
 
     @ModifyApplication
-    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
-        return factory.arguments("--property.c=o",
-                "--property.d=d",
-                "--property.e=otherValue")
-                .serviceActivator(TypeUtils.annotation(DemoActivator.class));
+    public static void factory() {
+        TestCustomizer.BUILDER.compose(builder -> {
+            builder.arguments(List.of(
+                    "--property.c=o",
+                    "--property.d=d",
+                    "--property.e=otherValue"
+            ));
+        });
+        TestCustomizer.CONSTRUCTOR.compose(constructor -> {
+            constructor.activators(activators -> {
+                activators.add(TypeUtils.annotation(DemoActivator.class));
+            });
+        });
     }
 
     public static Stream<Arguments> properties() {

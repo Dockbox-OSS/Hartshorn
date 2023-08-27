@@ -17,25 +17,32 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
+import org.dockbox.hartshorn.component.UseProxying;
+import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.processing.UseContextInjection;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyInitializer;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -44,128 +51,118 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class StandardApplicationContextConstructor implements ApplicationContextConstructor {
+public final class StandardApplicationContextConstructor implements ApplicationContextConstructor {
 
-    private final Logger logger;
+    private final ApplicationBuildContext buildContext;
+    private final Configurer configurer;
 
-    public StandardApplicationContextConstructor(final Logger logger) {
-        this.logger = logger;
+    private StandardApplicationContextConstructor(ApplicationBuildContext buildContext, Configurer configurer) {
+        this.buildContext = buildContext;
+        this.configurer = configurer;
     }
 
     @Override
-    public ApplicationContext createContext(final ApplicationBuilder<?, ?> builder) {
-        final ApplicationContext applicationContext = this.createNewContext(builder);
+    public ApplicationContext createContext() {
+        ApplicationBootstrapContext bootstrapContext = new ApplicationBootstrapContext(
+                this.buildContext.mainClass(),
+                this.buildContext.arguments(),
+                this.configurer.includeBasePackages.initialize(this.buildContext)
+        );
 
-        this.configure(applicationContext, builder);
-        this.process(applicationContext, builder);
+        ApplicationEnvironment environment = this.configurer.environment.initialize(bootstrapContext);
+        ApplicationContext applicationContext = environment.applicationContext();
+
+        this.configure(applicationContext, bootstrapContext);
+        if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
+            activatingApplicationContext.loadContext();
+        }
         this.finalize(applicationContext);
 
         return applicationContext;
     }
 
-    protected void registerHooks(final ApplicationContext applicationContext) {
-        this.logger.debug("Registering shutdown hook for application context");
-        final ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(this.logger, applicationContext);
+    private void registerHooks(ApplicationContext applicationContext) {
+        this.buildContext.logger().debug("Registering shutdown hook for application context");
+        ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(this.buildContext.logger(), applicationContext);
         Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "ShutdownHook"));
     }
 
-    protected ApplicationEnvironment createEnvironment(final InitializingContext context) {
-        return context.applicationEnvironment();
-    }
+    private void configure(ApplicationContext applicationContext, ApplicationBootstrapContext bootstrapContext) {
+        ApplicationEnvironment environment = applicationContext.environment();
 
-    protected ApplicationContext createNewContext(@NotNull final ApplicationBuilder<?, ?> builder) {
-        InitializingContext initializingContext = new InitializingContext(null, null, builder);
-        final ApplicationEnvironment environment = this.createEnvironment(initializingContext);
+        TypeReferenceCollectorContext collectorContext = new TypeReferenceCollectorContext();
 
-        initializingContext = new InitializingContext(environment, null, builder);
-        return this.createContext(initializingContext);
-    }
+        Set<Annotation> activators = this.serviceActivators(applicationContext, bootstrapContext);
+        this.enhanceTypeReferenceCollectorContext(bootstrapContext, environment, collectorContext, activators);
 
-    protected ApplicationContext createContext(final InitializingContext context) {
-        this.logger.debug("Creating new application context with environment {}", context.environment().getClass().getSimpleName());
-        return new SimpleApplicationContext(context);
-    }
-
-    protected void configure(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
-        final ApplicationEnvironment environment = applicationContext.environment();
-        final InitializingContext initializingContext = new InitializingContext(environment, applicationContext, builder);
-        final ApplicationConfigurator configurator = initializingContext.applicationConfigurator();
-        this.logger.debug("Configuring application context with configurator {}", configurator.getClass().getSimpleName());
-        configurator.configure(environment);
-
-        final TypeReferenceCollectorContext collectorContext = new TypeReferenceCollectorContext();
-        this.enhanceTypeReferenceCollectorContext(builder, environment, collectorContext);
-
-        final Set<Annotation> activators = this.serviceActivators(applicationContext, builder);
-
-        final ServiceActivatorContext serviceActivatorContext = new ServiceActivatorContext(applicationContext, activators);
+        ServiceActivatorContext serviceActivatorContext = new ServiceActivatorContext(applicationContext, activators);
         applicationContext.add(serviceActivatorContext);
 
-        final Set<ServiceActivator> serviceActivatorAnnotations = activators.stream()
+        Set<ServiceActivator> serviceActivatorAnnotations = activators.stream()
                 .map(environment::introspect)
                 .flatMap(introspected -> introspected.annotations().all(ServiceActivator.class).stream())
                 .collect(Collectors.toSet());
 
 
-        this.logger.debug("Registering {} type reference collectors to application context", collectorContext.collectors().size());
+        this.buildContext.logger().debug("Registering {} type reference collectors to application context", collectorContext.collectors().size());
         applicationContext.add(collectorContext);
 
-        final Set<Class<? extends ComponentProcessor>> processorTypes = serviceActivatorAnnotations.stream()
+        Set<Class<? extends ComponentProcessor>> processorTypes = serviceActivatorAnnotations.stream()
                 .flatMap(serviceActivator -> Arrays.stream(serviceActivator.processors()))
                 .collect(Collectors.toSet());
         // Create sets for ComponentPreProcessor and ComponentPostProcessor from processorTypes
-        final Set<Class<? extends ComponentPreProcessor>> preProcessorTypes = extractProcessors(processorTypes, ComponentPreProcessor.class);
-        final Set<Class<? extends ComponentPostProcessor>> postProcessorTypes = extractProcessors(processorTypes, ComponentPostProcessor.class);
-        for (final Class<? extends ComponentPostProcessor> postProcessorType : postProcessorTypes) {
+        Set<Class<? extends ComponentPreProcessor>> preProcessorTypes = extractProcessors(processorTypes, ComponentPreProcessor.class);
+        Set<Class<? extends ComponentPostProcessor>> postProcessorTypes = extractProcessors(processorTypes, ComponentPostProcessor.class);
+        for (Class<? extends ComponentPostProcessor> postProcessorType : postProcessorTypes) {
             applicationContext.add(postProcessorType);
         }
 
-        final Set<ComponentProcessor> componentProcessors = this.componentProcessors(applicationContext, builder, preProcessorTypes);
+        Set<ComponentProcessor> componentProcessors = this.componentProcessors(applicationContext, bootstrapContext, preProcessorTypes);
 
-        this.logger.debug("Registering {} component processors to application context", componentProcessors.size());
-        for (final ComponentProcessor componentProcessor : componentProcessors) {
+        this.buildContext.logger().debug("Registering {} component processors to application context", componentProcessors.size());
+        for (ComponentProcessor componentProcessor : componentProcessors) {
             applicationContext.add(componentProcessor);
         }
     }
 
-    private static <T extends ComponentProcessor> Set<Class<? extends T>> extractProcessors(final Set<Class<? extends ComponentProcessor>> processorTypes, final Class<T> processorClass) {
+    private static <T extends ComponentProcessor> Set<Class<? extends T>> extractProcessors(Set<Class<? extends ComponentProcessor>> processorTypes, Class<T> processorClass) {
         return processorTypes.stream()
                 .filter(processorClass::isAssignableFrom)
                 .map(type -> (Class<? extends T>) type)
                 .collect(Collectors.toSet());
     }
 
-    protected Set<Annotation> serviceActivators(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
-        final Set<Annotation> activators = builder.serviceActivators();
-        final Set<Annotation> serviceActivators = new HashSet<>(applicationContext.environment()
-                .introspect(builder.mainClass())
+    private Set<Annotation> serviceActivators(ApplicationContext applicationContext, ApplicationBootstrapContext bootstrapContext) {
+        Set<Annotation> activators = new HashSet<>(this.configurer.activators.initialize(bootstrapContext));
+        Set<Annotation> serviceActivators = new HashSet<>(applicationContext.environment()
+                .introspect(bootstrapContext.mainClass())
                 .annotations()
                 .annotedWith(ServiceActivator.class));
         activators.addAll(serviceActivators);
 
-        for (final Annotation activator : activators) {
+        for (Annotation activator : activators) {
             activators.addAll(this.serviceActivators(applicationContext.environment(), activator));
         }
 
         return activators;
     }
 
-    protected Set<Annotation> serviceActivators(final ApplicationEnvironment environment, final Annotation annotation) {
-        final TypeView<? extends Annotation> introspected = environment.introspect(annotation.annotationType());
-        final Set<Annotation> annotations = introspected.annotations().annotedWith(ServiceActivator.class);
+    private Set<Annotation> serviceActivators(ApplicationEnvironment environment, Annotation annotation) {
+        TypeView<? extends Annotation> introspected = environment.introspect(annotation.annotationType());
+        Set<Annotation> annotations = introspected.annotations().annotedWith(ServiceActivator.class);
 
-        final Set<Annotation> activators = new HashSet<>(annotations);
-        for (final Annotation activatorAnnotation : annotations) {
+        Set<Annotation> activators = new HashSet<>(annotations);
+        for (Annotation activatorAnnotation : annotations) {
             activators.addAll(this.serviceActivators(environment, activatorAnnotation));
         }
         return activators;
     }
 
     @NotNull
-    protected Set<ComponentProcessor> componentProcessors(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder, final Set<Class<? extends ComponentPreProcessor>> processorTypes) {
-        final Set<ComponentProcessor> componentProcessors = new HashSet<>();
-        componentProcessors.addAll(builder.componentPreProcessors());
-        componentProcessors.addAll(builder.componentPostProcessors());
+    private Set<ComponentProcessor> componentProcessors(ApplicationContext applicationContext, ApplicationBootstrapContext bootstrapContext, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
+        Set<ComponentProcessor> componentProcessors = new HashSet<>();
+        componentProcessors.addAll(this.configurer.componentPreProcessors.initialize(bootstrapContext));
+        componentProcessors.addAll(this.configurer.componentPostProcessors.initialize(bootstrapContext));
 
         processorTypes.stream()
                 .map(applicationContext::get)
@@ -174,22 +171,25 @@ public class StandardApplicationContextConstructor implements ApplicationContext
         return componentProcessors;
     }
 
-    protected void enhanceTypeReferenceCollectorContext(final ApplicationBuilder<?, ?> builder, final ApplicationEnvironment environment, final TypeReferenceCollectorContext collectorContext) {
+    private void enhanceTypeReferenceCollectorContext(ApplicationBootstrapContext bootstrapContext, ApplicationEnvironment environment, TypeReferenceCollectorContext collectorContext,
+                                                      Set<Annotation> activators) {
         collectorContext.register(new ClassPathScannerTypeReferenceCollector(Hartshorn.PACKAGE_PREFIX));
-        if (builder.includeBasePackages()) {
-            collectorContext.register(new ClassPathScannerTypeReferenceCollector(builder.mainClass().getPackageName()));
+        if (bootstrapContext.includeBasePackages()) {
+            collectorContext.register(new ClassPathScannerTypeReferenceCollector(bootstrapContext.mainClass().getPackageName()));
         }
 
-        final Set<String> prefixes = new HashSet<>(builder.scanPackages());
-        for (final ServiceActivator serviceActivator : environment.introspect(builder.mainClass()).annotations().all(ServiceActivator.class)) {
+        Set<String> prefixes = new HashSet<>(this.configurer.scanPackages.initialize(bootstrapContext));
+        for (ServiceActivator serviceActivator : environment.introspect(bootstrapContext.mainClass()).annotations().all(ServiceActivator.class)) {
             prefixes.addAll(List.of(serviceActivator.scanPackages()));
         }
 
-        for (final Annotation serviceActivator : builder.serviceActivators()) {
-            final Option<ServiceActivator> activatorCandidate = environment.introspect(serviceActivator).annotations().get(ServiceActivator.class);
-            if (activatorCandidate.absent()) throw new IllegalStateException("Service activator annotation " + serviceActivator + " is not annotated with @ServiceActivator");
+        for (Annotation serviceActivator : activators) {
+            Option<ServiceActivator> activatorCandidate = environment.introspect(serviceActivator).annotations().get(ServiceActivator.class);
+            if (activatorCandidate.absent()) {
+                throw new IllegalStateException("Service activator annotation " + serviceActivator + " is not annotated with @ServiceActivator");
+            }
 
-            final ServiceActivator activator = activatorCandidate.get();
+            ServiceActivator activator = activatorCandidate.get();
             prefixes.addAll(List.of(activator.scanPackages()));
         }
 
@@ -197,35 +197,97 @@ public class StandardApplicationContextConstructor implements ApplicationContext
                 .map(ClassPathScannerTypeReferenceCollector::new)
                 .forEach(collectorContext::register);
 
-        if (!builder.standaloneComponents().isEmpty()) {
-            collectorContext.register(PredefinedSetTypeReferenceCollector.of(builder.standaloneComponents()));
+        Set<Class<?>> standaloneComponents = Set.copyOf(this.configurer.standaloneComponents.initialize(bootstrapContext));
+        if (!standaloneComponents.isEmpty()) {
+            collectorContext.register(PredefinedSetTypeReferenceCollector.of(standaloneComponents));
         }
     }
 
-    protected void process(final ApplicationContext applicationContext, final ApplicationBuilder<?, ?> builder) {
-        builder.componentPreProcessors().forEach(applicationContext::add);
-        builder.componentPostProcessors().forEach(applicationContext::add);
-
-        if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
-            activatingApplicationContext.loadContext();
-        }
-    }
-
-    protected void finalize(final ApplicationContext applicationContext) {
-        this.logger.debug("Finalizing application context before releasing to application");
+    private void finalize(ApplicationContext applicationContext) {
+        this.buildContext.logger().debug("Finalizing application context before releasing to application");
         if (applicationContext.environment() instanceof ObservableApplicationEnvironment observable) {
-            this.logger.debug("Notifying application environment observers of application context creation");
-            for (final LifecycleObserver observer : observable.observers(LifecycleObserver.class))
+            this.buildContext.logger().debug("Notifying application environment observers of application context creation");
+            for (LifecycleObserver observer : observable.observers(LifecycleObserver.class)) {
                 observer.onStarted(applicationContext);
+            }
         }
 
-        for (final ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
-            this.logger.debug("Instantiating non-lazy singleton {} in application context", container.id());
+        for (ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
+            this.buildContext.logger().debug("Instantiating non-lazy singleton {} in application context", container.id());
             if (container.singleton() && !container.lazy()) {
                 applicationContext.get(container.type().type());
             }
         }
 
         this.registerHooks(applicationContext);
+    }
+
+    public static LazyInitializer<ApplicationBuildContext, StandardApplicationContextConstructor> create(Customizer<Configurer> customizer) {
+        return buildContext -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new StandardApplicationContextConstructor(buildContext, configurer);
+        };
+    }
+
+    public static class Configurer {
+
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
+                TypeUtils.annotation(UseBootstrap.class),
+                TypeUtils.annotation(UseProxying.class),
+                TypeUtils.annotation(UseContextInjection.class),
+                TypeUtils.annotation(UseStaticBinding.class)
+        );
+
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, ComponentPostProcessor> componentPostProcessors = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
+
+        private LazyInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ContextualApplicationEnvironment.create(Customizer.useDefaults());
+        private LazyInitializer<ApplicationBuildContext, Boolean> includeBasePackages = LazyInitializer.of(true);
+
+        public Configurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
+            this.activators.customizer(customizer);
+            return this;
+        }
+
+        public Configurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationBootstrapContext, ComponentPreProcessor>> customizer) {
+            this.componentPreProcessors.customizer(customizer);
+            return this;
+        }
+
+        public Configurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationBootstrapContext, ComponentPostProcessor>> customizer) {
+            this.componentPostProcessors.customizer(customizer);
+            return this;
+        }
+
+        public Configurer standaloneComponents(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer) {
+            this.standaloneComponents.customizer(customizer);
+            return this;
+        }
+
+        public Configurer scanPackages(Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer) {
+            this.scanPackages.customizer(customizer);
+            return this;
+        }
+
+        public Configurer environment(ApplicationEnvironment environment) {
+            return this.environment(LazyInitializer.of(environment));
+        }
+
+        public Configurer environment(LazyInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment) {
+            this.environment = environment;
+            return this;
+        }
+
+        public Configurer includeBasePackages(boolean includeBasePackages) {
+            return this.includeBasePackages(LazyInitializer.of(includeBasePackages));
+        }
+
+        public Configurer includeBasePackages(LazyInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
+            this.includeBasePackages = includeBasePackages;
+            return this;
+        }
     }
 }

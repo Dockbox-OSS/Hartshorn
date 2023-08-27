@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 public class CompositeDependencyResolver implements DependencyResolver {
 

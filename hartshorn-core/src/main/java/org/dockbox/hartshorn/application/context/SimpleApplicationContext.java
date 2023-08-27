@@ -16,28 +16,24 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.ComponentDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
-import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyInitializer;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -52,19 +48,9 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     private final DependencyGraphInitializer dependencyGraphInitializer;
 
-    public SimpleApplicationContext(final InitializingContext context) {
-        super(context);
-        this.dependencyGraphInitializer = this.createDependencyGraphInitializer(context.conditionMatcher());
-    }
-
-    private DependencyGraphInitializer createDependencyGraphInitializer(final ConditionMatcher conditionMatcher) {
-        // TODO #979: Registration hooks for dependency resolvers
-        final DependencyResolver managedComponentDependencyResolver = new ComponentDependencyResolver();
-        final BindsMethodDependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver(conditionMatcher);
-        methodDependencyResolver.registry().register(new MethodInstanceBindingStrategy());
-
-        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver, managedComponentDependencyResolver));
-        return new DependencyGraphInitializer(this, dependencyResolver);
+    public SimpleApplicationContext(ApplicationEnvironment environment, Configurer configurer) {
+        super(environment, configurer);
+        this.dependencyGraphInitializer = configurer.dependencyGraphInitializer.initialize(this);
     }
 
     @Override
@@ -171,10 +157,33 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     private void processStandaloneComponent(final ComponentContainer<?> container, final ComponentPreProcessor serviceProcessor) {
-        final TypeView<?> service = container.type();
+        TypeView<?> service = container.type();
         final ComponentKey<?> key = ComponentKey.of(service.type());
         final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
         this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
         serviceProcessor.process(context);
+    }
+
+    public static LazyInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
+        return environment -> {
+            final Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new SimpleApplicationContext(environment, configurer);
+        };
+    }
+
+    public static class Configurer extends DelegatingApplicationContext.Configurer {
+
+        private LazyInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
+
+        public Configurer dependencyGraphInitializer(final DependencyGraphInitializer dependencyGraphInitializer) {
+            return this.dependencyGraphInitializer(LazyInitializer.of(dependencyGraphInitializer));
+        }
+
+        public Configurer dependencyGraphInitializer(final LazyInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
+            this.dependencyGraphInitializer = dependencyGraphInitializer;
+            return this;
+        }
+
     }
 }
