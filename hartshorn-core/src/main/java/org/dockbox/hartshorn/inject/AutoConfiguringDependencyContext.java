@@ -28,18 +28,20 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
 
     private final CheckedSupplier<T> supplier;
 
-    public AutoConfiguringDependencyContext(final ComponentKey<T> componentKey, final Set<ComponentKey<?>> dependencies,
-                                            final Class<? extends Scope> scope, final int priority,
-                                            final CheckedSupplier<T> supplier) {
+    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies,
+                                            Class<? extends Scope> scope, int priority,
+                                            CheckedSupplier<T> supplier) {
         super(componentKey, dependencies, scope, priority);
         this.supplier = supplier;
     }
 
     @Override
-    public void configure(final BindingFunction<T> function) throws ComponentConfigurationException {
-        final InstanceType instanceType = this.instanceType();
+    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
+        InstanceType instanceType = this.instanceType();
         function.priority(this.priority());
-        if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) function.installTo(this.scope());
+        if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
+            function.installTo(this.scope());
+        }
 
         try {
             switch (instanceType) {
@@ -48,15 +50,21 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
                 case LAZY_SINGLETON -> function.lazySingleton(this.supplier);
             }
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
         }
     }
 
     private InstanceType instanceType() {
-        if (this.singleton() && this.lazy()) return InstanceType.LAZY_SINGLETON;
-        else if (this.singleton()) return InstanceType.SINGLETON;
-        else return InstanceType.SUPPLIER;
+        if (this.singleton() && this.lazy()) {
+            return InstanceType.LAZY_SINGLETON;
+        }
+        else if (this.singleton()) {
+            return InstanceType.SINGLETON;
+        }
+        else {
+            return InstanceType.SUPPLIER;
+        }
     }
 
     enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }

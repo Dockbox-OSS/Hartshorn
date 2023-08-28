@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 
@@ -46,8 +47,12 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         Class<?> mainClass = configurer.mainClass.initialize();
-        this.buildContext = new ApplicationBuildContext(mainClass, configurer.arguments.initialize(mainClass));
-        this.applicationContextConstructor = configurer.constructor.initialize(this.buildContext);
+
+        InitializerContext<? extends Class<?>> initializerContext = new ApplicationInitializerContext<>(mainClass).initializeInitial();
+        this.buildContext = new ApplicationBuildContext(mainClass, configurer.arguments.initialize(initializerContext));
+
+        InitializerContext<ApplicationBuildContext> buildInitializerContext = initializerContext.transform(this.buildContext);
+        this.applicationContextConstructor = configurer.constructor.initialize(buildInitializerContext);
     }
 
     @Override

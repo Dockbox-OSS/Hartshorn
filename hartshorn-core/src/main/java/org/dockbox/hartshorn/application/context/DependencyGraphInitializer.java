@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
@@ -42,11 +43,11 @@ public class DependencyGraphInitializer {
     private final ApplicationContext applicationContext;
     private final DependencyResolver dependencyResolver;
 
-    public DependencyGraphInitializer(ApplicationContext applicationContext, Configurer configurer) {
-        this.applicationContext = applicationContext;
-        this.dependencyResolver = configurer.dependencyResolver.initialize(applicationContext);
-        this.graphBuilder = configurer.dependencyGraphBuilder.initialize(applicationContext);
-        this.dependencyVisitor = configurer.dependencyVisitor.initialize(applicationContext);
+    public DependencyGraphInitializer(InitializerContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
+        this.applicationContext = initializerContext.input();
+        this.dependencyResolver = configurer.dependencyResolver.initialize(initializerContext);
+        this.graphBuilder = configurer.dependencyGraphBuilder.initialize(initializerContext);
+        this.dependencyVisitor = configurer.dependencyVisitor.initialize(initializerContext);
     }
 
     public void initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException, GraphException {
@@ -83,7 +84,7 @@ public class DependencyGraphInitializer {
 
         private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver = ApplicationDependencyResolver.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::new);
-        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ConfigurationDependencyVisitor::new;
+        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(ConfigurationDependencyVisitor::new);
 
         public Configurer dependencyResolver(DependencyResolver dependencyResolver) {
             return this.dependencyResolver(ContextualInitializer.of(dependencyResolver));

@@ -17,12 +17,14 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.ApplicationConfigurer;
+import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -34,24 +36,24 @@ import jakarta.annotation.PostConstruct;
 public class ComponentPostConstructorImpl implements ComponentPostConstructor {
 
     private final ApplicationContext applicationContext;
-    private final Lazy<ViewContextAdapter> contextAdapter;
+    private final ViewContextAdapter contextAdapter;
 
-    protected ComponentPostConstructorImpl(final ApplicationContext applicationContext, final Configurer configurer) {
-        this.applicationContext = applicationContext;
-        this.contextAdapter = configurer.viewContextAdapter.initialize(applicationContext);
+    protected ComponentPostConstructorImpl(InitializerContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
+        this.applicationContext = initializerContext.input();
+        this.contextAdapter = configurer.viewContextAdapter.initialize(initializerContext.transform(this.applicationContext));
     }
 
     @Override
-    public <T> T doPostConstruct(final T instance) throws ApplicationException {
-        final TypeView<T> typeView = this.applicationContext.environment().introspect(instance);
-        final List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWith(PostConstruct.class);
+    public <T> T doPostConstruct(T instance) throws ApplicationException {
+        TypeView<T> typeView = this.applicationContext.environment().introspect(instance);
+        List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWith(PostConstruct.class);
 
-        for (final MethodView<T, ?> postConstructMethod : postConstructMethods) {
-            final Object[] arguments = this.contextAdapter.get().loadParameters(postConstructMethod);
-            final Attempt<?, Throwable> result = postConstructMethod.invoke(instance, arguments);
+        for (MethodView<T, ?> postConstructMethod : postConstructMethods) {
+            Object[] arguments = this.contextAdapter.loadParameters(postConstructMethod);
+            Attempt<?, Throwable> result = postConstructMethod.invoke(instance, arguments);
 
             if (result.errorPresent()) {
-                final Throwable error = result.error();
+                Throwable error = result.error();
 
                 if (error instanceof ApplicationException applicationException) {
                     throw applicationException;
@@ -63,27 +65,29 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
         return instance;
     }
 
-    public static ContextualInitializer<ApplicationContext, ComponentPostConstructor> create(final Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationContext, ComponentPostConstructor> create(Customizer<Configurer> customizer) {
         return context -> {
-            final Configurer configurer = new Configurer();
+            Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            return new ComponentPostConstructorImpl(context, configurer);
+
+            ComponentPostConstructorImpl postConstructor = new ComponentPostConstructorImpl(context, configurer);
+            DefaultBindingConfigurerContext.compose(context, binder -> {
+                binder.bind(ComponentPostConstructor.class).singleton(postConstructor);
+                binder.bind(ViewContextAdapter.class).singleton(postConstructor.contextAdapter);
+            });
+            return postConstructor;
         };
     }
 
     public static class Configurer extends ApplicationConfigurer {
 
-        private ContextualInitializer<ApplicationContext, Lazy<ViewContextAdapter>> viewContextAdapter = context -> Lazy.of(context, ViewContextAdapter.class);
+        private ContextualInitializer<ApplicationContext, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(IntrospectionViewContextAdapter::new);
 
-        public Configurer viewContextAdapter(final ViewContextAdapter viewContextAdapter) {
-            return this.viewContextAdapter(Lazy.ofInstance(ViewContextAdapter.class, viewContextAdapter));
-        }
-
-        public Configurer viewContextAdapter(final Lazy<ViewContextAdapter> lazyViewContextAdapter) {
+        public Configurer viewContextAdapter(ViewContextAdapter lazyViewContextAdapter) {
             return this.viewContextAdapter(ContextualInitializer.of(lazyViewContextAdapter));
         }
 
-        public Configurer viewContextAdapter(final ContextualInitializer<ApplicationContext, Lazy<ViewContextAdapter>> viewContextAdapter) {
+        public Configurer viewContextAdapter(ContextualInitializer<ApplicationContext, ViewContextAdapter> viewContextAdapter) {
             this.viewContextAdapter = viewContextAdapter;
             return this;
         }

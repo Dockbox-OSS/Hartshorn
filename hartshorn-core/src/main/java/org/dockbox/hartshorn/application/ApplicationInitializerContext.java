@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.AbstractInitializerContext;
+import org.dockbox.hartshorn.util.InitializerContext;
 
-/**
- * A marker interface for classes that can be configured. This interface is used to allow for
- * context-attached configurers to be used in {@link Customizer}s.
- */
-public interface Configurer extends Context {
+public class ApplicationInitializerContext<I> extends AbstractInitializerContext<I> {
+
+    public ApplicationInitializerContext(I input) {
+        super(input);
+    }
+
+    public ApplicationInitializerContext<I> initializeInitial() {
+        this.add(new DefaultBindingConfigurerContext());
+        return this;
+    }
+
+    @Override
+    protected <T> InitializerContext<T> clone(T input) {
+        return new ApplicationInitializerContext<>(input);
+    }
 }

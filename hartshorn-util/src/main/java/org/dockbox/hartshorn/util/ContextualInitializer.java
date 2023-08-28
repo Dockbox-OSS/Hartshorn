@@ -1,8 +1,25 @@
+/*
+ * Copyright 2019-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.util;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * A functional interface for initializing objects. This interface is similar to {@link Initializer} but
@@ -21,7 +38,7 @@ public interface ContextualInitializer<I, T> {
      * @param input The input to initialize with.
      * @return The initialized object.
      */
-    T initialize(I input);
+    T initialize(InitializerContext<? extends I> input);
 
     /**
      * Returns a map of child initializers. This is useful for initializers that require additional initializers
@@ -46,7 +63,21 @@ public interface ContextualInitializer<I, T> {
      * @param <T> The type of object to initialize.
      */
     static <I, T> ContextualInitializer<I, T> of(Initializer<T> initializer) {
-        return input -> initializer.initialize();
+        return (input) -> initializer.initialize();
+    }
+
+    /**
+     * Returns an initializer that invokes the given function using the contextual input, while ignoring
+     * the remaining wrapper context. This is useful for initializers that do require the input, but do
+     * not require the wrapper context to initialize.
+     *
+     * @param function The function to invoke.
+     * @return An initializer that invokes the given function, ignoring the wrapper context.
+     * @param <I> The type of input to initialize with.
+     * @param <T> The type of object to initialize.
+     */
+    static <I, T> ContextualInitializer<I, T> of(Function<I, T> function) {
+        return context -> function.apply(context.input());
     }
 
     /**
@@ -60,7 +91,7 @@ public interface ContextualInitializer<I, T> {
      * @param <T> The type of object to initialize.
      */
     static <I, T> ContextualInitializer<I, T> of(T object) {
-        return input -> object;
+        return (input) -> object;
     }
 
     /**
@@ -76,8 +107,8 @@ public interface ContextualInitializer<I, T> {
             private final Map<I, T> values = new ConcurrentHashMap<>();
 
             @Override
-            public T initialize(I input) {
-                return this.values.computeIfAbsent(input, ContextualInitializer.this::initialize);
+            public T initialize(InitializerContext<? extends I> context) {
+                return this.values.computeIfAbsent(context.input(), input -> ContextualInitializer.this.initialize(context));
             }
         };
     }
@@ -91,7 +122,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that invokes this initializer, and then invokes the given consumer with the result.
      */
     default ContextualInitializer<I, T> subscribe(Consumer<T> consumer) {
-        return input -> {
+        return (input) -> {
             T instance = ContextualInitializer.this.initialize(input);
             consumer.accept(instance);
             return instance;

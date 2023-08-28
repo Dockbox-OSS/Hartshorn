@@ -16,15 +16,23 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.binding.ConcurrentHashSingletonCache;
-import org.dockbox.hartshorn.inject.binding.SingletonCache;
 
-public class ApplicationSetupContext extends DefaultContext {
+public class DefaultBindingConfigurerContext extends DefaultContext {
 
-    private final SingletonCache cache = new ConcurrentHashSingletonCache();
+    private DefaultBindingConfigurer configurer = DefaultBindingConfigurer.empty();
 
-    public SingletonCache cache() {
-        return this.cache;
+    public DefaultBindingConfigurer configurer() {
+        return this.configurer;
+    }
+
+    public void compose(DefaultBindingConfigurer configurer) {
+        this.configurer = this.configurer.compose(configurer);
+    }
+
+    public static void compose(Context context, DefaultBindingConfigurer configurer) {
+        context.first(DefaultBindingConfigurerContext.class)
+                .peek(bindingConfigurerContext -> bindingConfigurerContext.compose(configurer));
     }
 }

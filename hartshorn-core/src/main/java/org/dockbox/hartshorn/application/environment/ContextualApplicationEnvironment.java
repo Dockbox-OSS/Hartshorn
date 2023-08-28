@@ -40,6 +40,7 @@ import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -56,10 +57,12 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -68,6 +71,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,28 +110,31 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     private ApplicationContext applicationContext;
     private Introspector introspector;
 
-    private ContextualApplicationEnvironment(ApplicationBootstrapContext context, Configurer configurer) {
-        this.exceptionHandler = this.configure(configurer.exceptionHandler);
-        this.applicationProxier = this.configure(configurer.applicationProxier.initialize(this));
-        this.annotationLookup = this.configure(configurer.annotationLookup);
-        this.applicationLogger = this.configure(configurer.applicationLogger);
-        this.applicationFSProvider = this.configure(configurer.applicationFSProvider);
-        this.argumentParser = this.configure(configurer.applicationArgumentParser);
-        this.resourceLocator = this.configure(configurer.classpathResourceLocator);
+    private ContextualApplicationEnvironment(InitializerContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
+        InitializerContext<ContextualApplicationEnvironment> environmentInitializerContext = context.transform(this);
 
-        this.arguments = this.argumentParser.parse(context.arguments());
+        this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
+        this.applicationProxier = this.configure(environmentInitializerContext, configurer.applicationProxier);
+        this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
+        this.applicationLogger = this.configure(environmentInitializerContext, configurer.applicationLogger);
+        this.applicationFSProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
+        this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
+        this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
 
-        this.stacktraces(configurer.showStacktraces.initialize(this.arguments));
-        this.isBatchMode = configurer.enableBatchMode.initialize(this.arguments);
+        this.arguments = this.argumentParser.parse(context.input().arguments());
+
+        InitializerContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
+        this.stacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
+        this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
 
         this.isCI = this.checkCI();
         this.checkForDebugging();
 
-        if (!this.isCI && configurer.enableBanner.initialize(this.arguments)) {
-            this.printBanner(context.mainClass());
+        if (!this.isCI && configurer.enableBanner.initialize(argumentsInitializerContext)) {
+            this.printBanner(context.input().mainClass());
         }
 
-        ApplicationContext initializedContext = configurer.applicationContext.initialize(this);
+        ApplicationContext initializedContext = configurer.applicationContext.initialize(environmentInitializerContext);
         // This will handle two aspects:
         // 1. If the context was not initialized through the implementation of ModifiableContextCarrier, it
         //    will be set here to the initialized context.
@@ -139,8 +146,8 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
     }
 
-    private <T> T configure(ContextualInitializer<ApplicationEnvironment, T> initializer) {
-        T instance = initializer.initialize(this);
+    private <T> T configure(InitializerContext<ContextualApplicationEnvironment> context, ContextualInitializer<ApplicationEnvironment, T> initializer) {
+        T instance = initializer.initialize(context);
         return this.configure(instance);
     }
 
@@ -489,18 +496,33 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this;
     }
 
+    @Override
+    public Attempt<Path, IOException> resource(String name) {
+        return this.resourceLocator.resource(name);
+    }
+
+    @Override
+    public Set<Path> resources(String name) {
+        return this.resourceLocator.resources(name);
+    }
+
+    @Override
+    public URI classpathUri() {
+        return this.resourceLocator.classpathUri();
+    }
+
     public static class Configurer extends ApplicationConfigurer {
 
-        private ContextualInitializer<Properties, Boolean> enableBanner = properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true"));
-        private ContextualInitializer<Properties, Boolean> enableBatchMode = properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false"));
-        private ContextualInitializer<Properties, Boolean> showStacktraces = properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true"));
+        private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
+        private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
+        private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
 
-        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationProxier> applicationProxier = DefaultApplicationProxierLoader.create(Customizer.useDefaults())::initialize;
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationProxier> applicationProxier = context -> DefaultApplicationProxierLoader.create(Customizer.useDefaults()).initialize(context);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider = ContextualInitializer.of(ApplicationFSProviderImpl::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger = AutoSwitchingApplicationLogger.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ClassLoaderClasspathResourceLocator::new;
+        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
 
@@ -595,7 +617,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
-            this.classpathResourceLocator = classpathResourceLocator.subscribe(this.bind(ClasspathResourceLocator.class)));
+            this.classpathResourceLocator = classpathResourceLocator.subscribe(this.bind(ClasspathResourceLocator.class));
             return this;
         }
 

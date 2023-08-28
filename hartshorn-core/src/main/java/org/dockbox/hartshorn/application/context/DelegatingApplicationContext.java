@@ -39,6 +39,7 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
@@ -59,22 +60,24 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     private boolean isClosed = false;
     protected boolean isRunning = false;
 
-    protected DelegatingApplicationContext(ApplicationEnvironment environment, Configurer configurer) {
+    protected DelegatingApplicationContext(InitializerContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
         super(null);
-        this.environment = environment;
+        this.environment = initializerContext.input();
 
-        if (environment instanceof ModifiableContextCarrier modifiableContextCarrier) {
+        if (this.environment instanceof ModifiableContextCarrier modifiableContextCarrier) {
             modifiableContextCarrier.applicationContext(this);
         }
 
         this.prepareInitialization();
 
-        this.environmentValues = environment.rawArguments();
-        this.locator = configurer.componentLocator.initialize(this);
-        this.componentProvider = configurer.componentProvider.initialize(this.locator);
+        this.environmentValues = this.environment.rawArguments();
+
+        InitializerContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
+        this.locator = configurer.componentLocator.initialize(applicationInitializerContext);
+        this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
 
         EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
-        configuration.configureBindings(environment, configurer.defaultBindings.initialize(this), this);
+        configuration.configureBindings(this.environment, configurer.defaultBindings.initialize(applicationInitializerContext), this);
     }
 
     protected abstract void prepareInitialization();
@@ -221,7 +224,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     protected static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = TypeReferenceLookupComponentLocator::new;
+        private ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = ContextualInitializer.of(TypeReferenceLookupComponentLocator::new);
         private ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
@@ -248,7 +251,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         }
 
         public Configurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
-            return this.defaultBindings(applicationContext -> binder -> defaultBindings.accept(applicationContext, binder));
+            return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(), binder));
         }
 
         public Configurer defaultBindings(ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {

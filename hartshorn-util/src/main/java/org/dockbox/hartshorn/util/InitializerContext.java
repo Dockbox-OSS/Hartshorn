@@ -18,9 +18,18 @@ package org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.context.Context;
 
-/**
- * A marker interface for classes that can be configured. This interface is used to allow for
- * context-attached configurers to be used in {@link Customizer}s.
- */
-public interface Configurer extends Context {
+public interface InitializerContext<I> extends Context {
+    I input();
+
+    /**
+     * Transforms the input into a new context. This is useful for when you want to keep the
+     * same context that is attached to the input, but want to change the input itself. This
+     * will return a new context with the new input, the original context will not be modified.
+     *
+     * @param input the new input
+     * @return the new context, containing the new input and a copy of the original context
+     * @param <T> the type of the new input
+     */
+    <T> InitializerContext<T> transform(T input);
+
 }

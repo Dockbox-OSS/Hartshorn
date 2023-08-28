@@ -52,7 +52,7 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> void add(final C context) {
+    public <C extends Context> void add(C context) {
         if (context instanceof NamedContext named && StringUtilities.notEmpty(named.name())) {
             this.namedContexts().put(named.name(), context);
         }
@@ -62,7 +62,7 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> void add(final String name, final C context) {
+    public <C extends Context> void add(String name, C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
             throw new IllegalArgumentException(("Context name does not match the provided name. " +
                     "Context name: %s, provided name: %s. Either use only the name of the context, " +
@@ -76,30 +76,36 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public List<Context> all() {
-        final List<Context> contexts = new ArrayList<>();
-        if (this.unnamedContexts != null) contexts.addAll(this.unnamedContexts);
-        if (this.namedContexts != null) contexts.addAll(this.namedContexts.allValues());
+        List<Context> contexts = new ArrayList<>();
+        if (this.unnamedContexts != null) {
+            contexts.addAll(this.unnamedContexts);
+        }
+        if (this.namedContexts != null) {
+            contexts.addAll(this.namedContexts.allValues());
+        }
         return Collections.unmodifiableList(contexts);
     }
 
     @Override
-    public <C extends Context> Option<C> first(final ContextIdentity<C> key) {
+    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
         return Option.of(this.stream(key).findFirst())
                 .orCompute(() -> {
-                    if (key.requiresApplicationContext()) return null;
-                    final C context = key.create();
+                    if (key.requiresApplicationContext()) {
+                        return null;
+                    }
+                    C context = key.create();
                     this.add(context);
                     return context;
                 });
     }
 
     @Override
-    public <C extends Context> List<C> all(final ContextIdentity<C> key) {
+    public <C extends Context> List<C> all(ContextIdentity<C> key) {
         return this.stream(key).toList();
     }
 
-    protected <C extends Context> Stream<C> stream(final ContextIdentity<C> key) {
-        final Stream<Context> contexts = StringUtilities.empty(key.name())
+    protected <C extends Context> Stream<C> stream(ContextIdentity<C> key) {
+        Stream<Context> contexts = StringUtilities.empty(key.name())
                 ? this.unnamedContexts().stream()
                 : this.namedContexts().get(key.name()).stream();
 
@@ -108,12 +114,18 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Option<C> first(final Class<C> context) {
+    public <C extends Context> Option<C> first(Class<C> context) {
         return this.first(new SimpleContextIdentity<>(context));
     }
 
     @Override
-    public <C extends Context> List<C> all(final Class<C> context) {
+    public <C extends Context> List<C> all(Class<C> context) {
         return this.all(new SimpleContextIdentity<>(context));
+    }
+
+    @Override
+    public void copyTo(Context context) {
+        this.unnamedContexts().forEach(context::add);
+        this.namedContexts().forEach(context::add);
     }
 }

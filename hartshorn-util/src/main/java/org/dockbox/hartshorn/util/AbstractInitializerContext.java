@@ -16,11 +16,27 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.DefaultContext;
 
-/**
- * A marker interface for classes that can be configured. This interface is used to allow for
- * context-attached configurers to be used in {@link Customizer}s.
- */
-public interface Configurer extends Context {
+public abstract class AbstractInitializerContext<I> extends DefaultContext implements InitializerContext<I> {
+
+    private final I input;
+
+    protected AbstractInitializerContext(I input) {
+        this.input = input;
+    }
+
+    @Override
+    public I input() {
+        return this.input;
+    }
+
+    @Override
+    public <T> InitializerContext<T> transform(T input) {
+        InitializerContext<T> clonedContext = this.clone(input);
+        this.copyTo(clonedContext);
+        return clonedContext;
+    }
+
+    protected abstract <T> InitializerContext<T> clone(T input);
 }
