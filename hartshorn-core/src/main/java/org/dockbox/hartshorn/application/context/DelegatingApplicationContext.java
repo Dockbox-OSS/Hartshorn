@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ContextualEnvironmentBinderConfiguration;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurer;
+import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.EnvironmentBinderConfiguration;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
@@ -77,7 +78,12 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
 
         EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
-        configuration.configureBindings(this.environment, configurer.defaultBindings.initialize(applicationInitializerContext), this);
+
+        DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings.initialize(applicationInitializerContext);
+        for (DefaultBindingConfigurerContext configurerContext : initializerContext.all(DefaultBindingConfigurerContext.class)) {
+            bindingConfigurer = bindingConfigurer.compose(configurerContext.configurer());
+        }
+        configuration.configureBindings(this.environment, bindingConfigurer, this);
     }
 
     protected abstract void prepareInitialization();
