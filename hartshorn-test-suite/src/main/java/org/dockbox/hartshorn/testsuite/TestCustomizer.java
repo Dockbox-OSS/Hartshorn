@@ -29,14 +29,14 @@ public final class TestCustomizer<T> {
     public static final TestCustomizer<StandardApplicationContextConstructor.Configurer> CONSTRUCTOR = new TestCustomizer<>();
     public static final TestCustomizer<SimpleApplicationContext.Configurer> APPLICATION_CONTEXT = new TestCustomizer<>();
 
-    private final Customizer<T> customizer = Customizer.useDefaults();
+    private Customizer<T> customizer = Customizer.useDefaults();
 
     private TestCustomizer() {
         // Private constructor, use static instances
     }
 
     public void compose(Customizer<T> customizer) {
-        this.customizer.compose(customizer);
+        this.customizer = this.customizer.compose(customizer);
     }
 
     Customizer<T> customizer() {
