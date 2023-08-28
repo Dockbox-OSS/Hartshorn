@@ -217,7 +217,7 @@ public class HartshornLifecycleExtension implements
             throw new IllegalStateException("Expected " + factoryModifier.getName() + " to be static.");
         }
 
-        if (factoryModifier.getReturnType().equals(Void.TYPE)) {
+        if (!factoryModifier.getReturnType().equals(Void.TYPE)) {
             throw new InvalidFactoryModifierException("Invalid return type for " + factoryModifier.getName() + ", expected void");
         }
     }
