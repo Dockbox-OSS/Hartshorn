@@ -26,8 +26,10 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public final class StandardApplicationBuilder implements ApplicationBuilder<ApplicationContext> {
 
@@ -35,6 +37,14 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         WAITING,
         CREATING,
     }
+
+    private static final Set<String> RESERVED_PACKAGES = Set.of(
+            "java.",
+            "javax.",
+            "sun.",
+            "com.sun.",
+            "jdk."
+    );
 
     private final ApplicationBuildContext buildContext;
     private final ApplicationContextConstructor applicationContextConstructor;
@@ -47,12 +57,35 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         Class<?> mainClass = configurer.mainClass.initialize();
+        if (!this.isValidActivator(mainClass)) {
+            throw new InvalidActivationSourceException("Main class must be a valid activator");
+        }
 
         InitializerContext<? extends Class<?>> initializerContext = new ApplicationInitializerContext<>(mainClass).initializeInitial();
         this.buildContext = new ApplicationBuildContext(mainClass, configurer.arguments.initialize(initializerContext));
 
         InitializerContext<ApplicationBuildContext> buildInitializerContext = initializerContext.transform(this.buildContext);
         this.applicationContextConstructor = configurer.constructor.initialize(buildInitializerContext);
+    }
+
+    private boolean isValidActivator(Class<?> mainClass) {
+        boolean isConcrete = !(mainClass.isPrimitive() || Modifier.isAbstract(mainClass.getModifiers()) || mainClass.isInterface() || mainClass.isArray());
+        if (!isConcrete) {
+            return false;
+        }
+
+        if (mainClass.isLocalClass() || mainClass.isMemberClass()) {
+            return false;
+        }
+
+        String packageName = mainClass.getPackageName();
+        for (String reservedPackage : RESERVED_PACKAGES) {
+            if (packageName.startsWith(reservedPackage)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
