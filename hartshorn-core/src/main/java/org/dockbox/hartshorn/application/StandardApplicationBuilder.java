@@ -17,9 +17,10 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Initializer;
-import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
@@ -153,9 +154,23 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         public Configurer inferMainClass() {
             return this.mainClass(() -> {
                 StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-                StackTraceElement element = stackTrace[2];
+                Set<String> skip = Set.of(
+                        StandardApplicationBuilder.class.getName(),
+                        Configurer.class.getName(),
+                        ApplicationBuilder.class.getName(),
+                        HartshornApplication.class.getName(),
+                        Customizer.class.getName(),
+                        Thread.class.getName()
+                );
+
+                StackTraceElement target = Arrays.stream(stackTrace)
+                        .filter(element -> !skip.contains(element.getClassName()))
+                        .filter(element -> !element.getClassName().contains("lambda$"))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("Could not deduce main class, no suitable stack trace element found"));
+
                 try {
-                    return Class.forName(element.getClassName());
+                    return Class.forName(target.getClassName());
                 }
                 catch (ClassNotFoundException e) {
                     throw new IllegalStateException("Could not deduce main class", e);
