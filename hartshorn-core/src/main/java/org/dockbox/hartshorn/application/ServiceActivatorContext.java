@@ -33,10 +33,10 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
-    public ServiceActivatorContext(final ApplicationContext applicationContext,
-                                   final Set<Annotation> serviceActivators) {
+    public ServiceActivatorContext(ApplicationContext applicationContext,
+                                   Set<Annotation> serviceActivators) {
         this.applicationContext = applicationContext;
-        for (final Annotation serviceActivator : serviceActivators) {
+        for (Annotation serviceActivator : serviceActivators) {
             if (!applicationContext.environment().introspect(serviceActivator).annotations()
                     .has(ServiceActivator.class)) {
                 throw new IllegalArgumentException("Annotation " + serviceActivator + " is not a valid service activator");
@@ -49,17 +49,18 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
         return Set.copyOf(this.activators.values());
     }
 
-    public boolean hasActivator(final Class<? extends Annotation> activator) {
-        final TypeView<? extends Annotation> activatorView = this.applicationContext.environment()
+    public boolean hasActivator(Class<? extends Annotation> activator) {
+        TypeView<? extends Annotation> activatorView = this.applicationContext.environment()
                 .introspect(activator);
-        if (!activatorView.annotations().has(ServiceActivator.class))
+        if (!activatorView.annotations().has(ServiceActivator.class)) {
             throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+        }
 
         return this.activators.containsKey(activator);
     }
 
-    public <A> A activator(final Class<A> activator) {
-        final Annotation annotation = this.activators.get(activator);
+    public <A> A activator(Class<A> activator) {
+        Annotation annotation = this.activators.get(activator);
         if (annotation != null) {
             return activator.cast(annotation);
         }
@@ -67,8 +68,8 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final String[] activators = this.activators().stream()
+    public void report(DiagnosticsPropertyCollector collector) {
+        String[] activators = this.activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").write(activators);

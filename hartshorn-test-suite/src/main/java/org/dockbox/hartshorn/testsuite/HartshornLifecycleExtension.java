@@ -262,6 +262,8 @@ public class HartshornLifecycleExtension implements
             for (AnnotatedElement element : this.testComponentSources) {
                 this.customizeWithComponentSource(constructor, element);
             }
+
+            this.customizeActivators(constructor);
         }
 
         private void customizeActivators(Configurer constructor) {

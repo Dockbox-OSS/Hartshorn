@@ -25,8 +25,8 @@ public class LifecycleObserverTests {
 
     @Test
     void testServiceLifecycleObserverIsPresentAndObserving() {
-        final ApplicationContext applicationContext = HartshornApplication.create();
-        final TestLifecycleObserver observer = applicationContext.get(TestLifecycleObserver.class);
+        ApplicationContext applicationContext = HartshornApplication.create();
+        TestLifecycleObserver observer = applicationContext.get(TestLifecycleObserver.class);
         Assertions.assertTrue(observer.started());
 
         Assertions.assertDoesNotThrow(applicationContext::close);
@@ -35,8 +35,8 @@ public class LifecycleObserverTests {
 
     @Test
     void testNonRegisteredObserverIsNotPresentOnStart() {
-        final ApplicationContext applicationContext = HartshornApplication.create();
-        final NonRegisteredObserver observer = applicationContext.get(NonRegisteredObserver.class);
+        ApplicationContext applicationContext = HartshornApplication.create();
+        NonRegisteredObserver observer = applicationContext.get(NonRegisteredObserver.class);
         Assertions.assertFalse(observer.started());
         Assertions.assertFalse(observer.stopped());
 
@@ -50,7 +50,7 @@ public class LifecycleObserverTests {
 
     @Test
     void testRegistrationFromClassIsValid() {
-        final ApplicationContext applicationContext = HartshornApplication.create();
+        ApplicationContext applicationContext = HartshornApplication.create();
         // Static as observer instance is lazily created by the observable, so we cannot
         // access it directly.
         Assertions.assertFalse(StaticNonRegisteredObserver.started());
