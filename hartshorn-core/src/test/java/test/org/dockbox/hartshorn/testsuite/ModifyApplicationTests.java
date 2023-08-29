@@ -30,13 +30,13 @@ public class ModifyApplicationTests {
     @ModifyApplication
     public static void customize() {
         TestCustomizer.BUILDER.compose(builder -> {
-            builder.arguments("--hartshorn.modified=true");
+            builder.arguments(args -> args.add("--hartshorn.modified=true"));
         });
     }
 
     @InjectTest
     void testFactoryWasModified(final ApplicationContext applicationContext) {
-        final Option<String> property = applicationContext.property("factory.modified");
+        final Option<String> property = applicationContext.property("hartshorn.modified");
         Assertions.assertTrue(property.present());
         Assertions.assertEquals("true", property.get());
     }
