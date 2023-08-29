@@ -46,9 +46,11 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -145,8 +147,12 @@ public final class StandardApplicationContextConstructor implements ApplicationC
                 .annotedWith(ServiceActivator.class));
         activators.addAll(serviceActivators);
 
-        for (Annotation activator : activators) {
-            activators.addAll(this.serviceActivators(applicationContext.environment(), activator));
+        Queue<Annotation> queue = new ArrayDeque<>(activators);
+        while(!queue.isEmpty()) {
+            Annotation activator = queue.poll();
+            Set<Annotation> inheritedActivators = this.serviceActivators(applicationContext.environment(), activator);
+            activators.addAll(inheritedActivators);
+            queue.addAll(inheritedActivators);
         }
 
         return activators;
