@@ -23,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.owasp:dependency-check-gradle:7.4.1")
+        classpath("org.owasp:dependency-check-gradle:8.4.0")
     }
 }
 
@@ -39,7 +39,7 @@ plugins {
     id("org.dockbox.hartshorn.gradle.javadoc")
 
     // Required for CI and to automatically update license headers on build
-    id("org.cadixdev.licenser") version "0.6.1"
+    id("org.cadixdev.licenser") version libs.versions.cadixdev
 }
 
 apply {
