@@ -16,11 +16,27 @@
 
 package org.dockbox.hartshorn.application.lifecycle;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 
-public interface ObservableApplicationEnvironment extends ApplicationEnvironment {
+import java.util.Set;
 
+/**
+ * An {@link ApplicationEnvironment} which can be observed by {@link Observer}s. Observers are notified of events
+ * within the environment, and can be used to react to changes in the environment. Observable events may be triggered
+ * by the environment, or by components within the environment.
+ *
+ * @since 0.4.8
+ * @author Guus Lieben
+ */
+public interface ObservableApplicationEnvironment extends ApplicationEnvironment, LifecycleObservable {
+
+    /**
+     * Gets all observers of the given type. If no observers are registered for the given type, an empty set is
+     * returned.
+     *
+     * @param type The type of observers to get
+     * @return All observers of the given type
+     * @param <T> The type of observers to get
+     */
     <T extends Observer> Set<T> observers(Class<T> type);
 }

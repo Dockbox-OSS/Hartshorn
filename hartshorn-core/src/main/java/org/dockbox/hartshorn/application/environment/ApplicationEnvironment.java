@@ -17,12 +17,9 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.UseProxying;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
@@ -31,6 +28,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -44,7 +42,6 @@ public interface ApplicationEnvironment extends
         ContextCarrier,
         ApplicationLogger,
         ApplicationProxier,
-        LifecycleObservable,
         ApplicationFSProvider,
         ExceptionHandler,
         AnnotationLookup,
@@ -69,6 +66,12 @@ public interface ApplicationEnvironment extends
      */
     boolean isCI();
 
+    /**
+     * Indicates whether the current environment is running in batch mode. Batch mode is typically used for
+     * optimizations specific to applications which will spawn multiple application contexts with shared resources.
+     *
+     * @return {@code true} if the environment is running in batch mode, {@code false} otherwise.
+     */
     boolean isBatchMode();
 
     /**
@@ -91,15 +94,45 @@ public interface ApplicationEnvironment extends
     <T> Collection<TypeView<? extends T>> children(final Class<T> parent);
 
     /**
-     * Gets annotations of the given type, which are decorated with the given annotation. For example, if the given
-     * annotation is {@link ServiceActivator} on the application
-     * activator, the results will include all service activators like {@link UseBootstrap} and {@link UseProxying}.
+     * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
+     * annotation and class below, the result of requesting annotations with {@link Documented} for {@code MyClass}
+     * would be a list containing {@code MyAnnotation}, but not {@code AnotherAnnotation}.
+     *
+     * <pre>{@code
+     * @Documented
+     * public @interface MyAnnotation { }
+     *
+     * public @interface AnotherAnnotation { }
+     *
+     * @MyAnnotation
+     * public class MyClass { }
+     * }</pre>
      *
      * @param type The type to scan for annotations
      * @param annotation The annotation expected to be present on zero or more annotations
      * @return The annotated annotations
      */
     List<Annotation> annotationsWith(final TypeView<?> type, final Class<? extends Annotation> annotation);
+
+    /**
+     * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
+     * annotation and class below, the result of requesting annotations with {@link Documented} for {@code MyClass}
+     * would be a list containing {@code MyAnnotation}, but not {@code AnotherAnnotation}.
+     *
+     * <pre>{@code
+     * @Documented
+     * public @interface MyAnnotation { }
+     *
+     * public @interface AnotherAnnotation { }
+     *
+     * @MyAnnotation
+     * public class MyClass { }
+     * }</pre>
+     *
+     * @param type The type to scan for annotations
+     * @param annotation The annotation expected to be present on zero or more annotations
+     * @return The annotated annotations
+     */
     List<Annotation> annotationsWith(final Class<?> type, final Class<? extends Annotation> annotation);
 
     /**
@@ -111,7 +144,27 @@ public interface ApplicationEnvironment extends
      * @return {@code true} if the type should be treated as a singleton, {@code false} otherwise.
      */
     boolean singleton(Class<?> type);
+
+    /**
+     * Indicates whether the given type should be treated as a singleton. How this is determined is up to the
+     * implementation, but typically this is determined by the presence of the {@link jakarta.inject.Singleton}
+     * annotation, or the value of {@link Component#singleton()}.
+     *
+     * @param type The type to check
+     * @return {@code true} if the type should be treated as a singleton, {@code false} otherwise.
+     */
     boolean singleton(TypeView<?> type);
 
+    /**
+     * Gets the raw arguments passed to the application. This is typically the arguments passed to the main method, or
+     * indirectly set in {@link org.dockbox.hartshorn.application.HartshornApplication#create(String...)}. The
+     * arguments are returned as a {@link Properties} object, where the key is the argument name, and the value is the
+     * argument value. The key/value pair is parsed by the active {@link ApplicationArgumentParser}.
+     *
+     * @see org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser
+     * @see org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
+     *
+     * @return The raw arguments
+     */
     Properties rawArguments();
 }

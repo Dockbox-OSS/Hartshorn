@@ -16,30 +16,6 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
@@ -83,6 +59,30 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import jakarta.inject.Singleton;
 
@@ -477,6 +477,13 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this.annotationLookup.annotationHierarchy(type);
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for the {@link ContextualApplicationEnvironment} using the given
+     * {@link Customizer}.
+     *
+     * @param customizer the customizer to use, if left empty the default configuration will be used
+     * @return a non-cached {@link ContextualInitializer} for the {@link ContextualApplicationEnvironment}
+     */
     public static ContextualInitializer<ApplicationBootstrapContext, ContextualApplicationEnvironment> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -524,112 +531,294 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
 
+        /**
+         * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
+         * application starts. The banner is enabled by default.
+         *
+         * @param enableBanner whether to enable or disable the banner
+         * @return the current {@link Configurer} instance
+         */
         public Configurer enableBanner(ContextualInitializer<Properties, Boolean> enableBanner) {
             this.enableBanner = enableBanner;
             return this;
         }
 
+        /**
+         * Enables the banner. If the banner is enabled, it will be printed to the console when the application
+         * starts. The banner is enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
         public Configurer enableBanner() {
             return this.enableBanner(ContextualInitializer.of(true));
         }
 
+        /**
+         * Disables the banner. If the banner is disabled, it will not be printed to the console when the application
+         * starts. The banner is enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
         public Configurer disableBanner() {
             return this.enableBanner(ContextualInitializer.of(false));
         }
 
+        /**
+         * Enables or disables batch mode. Batch mode is typically used for optimizations specific to applications
+         * which will spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+         *
+         * @param enableBatchMode whether to enable or disable batch mode
+         * @return the current {@link Configurer} instance
+         */
         public Configurer enableBatchMode(ContextualInitializer<Properties, Boolean> enableBatchMode) {
             this.enableBatchMode = enableBatchMode;
             return this;
         }
 
+        /**
+         * Enables batch mode. Batch mode is typically used for optimizations specific to applications which will
+         * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
         public Configurer enableBatchMode() {
             return this.enableBatchMode(ContextualInitializer.of(true));
         }
 
+        /**
+         * Disables batch mode. Batch mode is typically used for optimizations specific to applications which will
+         * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
         public Configurer disableBatchMode() {
             return this.enableBatchMode(ContextualInitializer.of(false));
         }
 
+        /**
+         * Enables or disables the printing of stacktraces when exceptions occur. Stacktraces are enabled by default.
+         *
+         * @param showStacktraces whether to enable or disable stacktraces
+         * @return the current {@link Configurer} instance
+         */
         public Configurer showStacktraces(ContextualInitializer<Properties, Boolean> showStacktraces) {
             this.showStacktraces = showStacktraces;
             return this;
         }
 
+        /**
+         * Enables the printing of stacktraces when exceptions occur. Stacktraces are enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
         public Configurer showStacktraces() {
             return this.showStacktraces(ContextualInitializer.of(true));
         }
 
+        /**
+         * Disables the printing of stacktraces when exceptions occur. Stacktraces are enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
         public Configurer hideStacktraces() {
             return this.showStacktraces(ContextualInitializer.of(false));
         }
 
+        /**
+         * Sets the {@link ApplicationProxier} to use. The {@link ApplicationProxier} is responsible for creating
+         * proxies for application components. The default implementation is provided by {@link DefaultApplicationProxierLoader}.
+         *
+         * @param applicationProxier the {@link ApplicationProxier} to use
+         * @see ApplicationProxier
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationProxier(ApplicationProxier applicationProxier) {
             return this.applicationProxier(ContextualInitializer.of(applicationProxier));
         }
-        
+
+        /**
+         * Sets the {@link ApplicationProxier} to use. The {@link ApplicationProxier} is responsible for creating
+         * proxies for application components. The default implementation is provided by {@link DefaultApplicationProxierLoader}.
+         *
+         * @param applicationProxier the {@link ApplicationProxier} to use
+         * @see ApplicationProxier
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationProxier(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationProxier> applicationProxier) {
             this.applicationProxier = applicationProxier;
             return this;
         }
-        
+
+        /**
+         * Sets the {@link ApplicationFSProvider} to use. The {@link ApplicationFSProvider} is responsible for
+         * providing the application's file system. The default implementation is {@link ApplicationFSProviderImpl}.
+         *
+         * @param applicationFSProvider the {@link ApplicationFSProvider} to use
+         * @see ApplicationFSProvider
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationFSProvider(ApplicationFSProvider applicationFSProvider) {
             return this.applicationFSProvider(ContextualInitializer.of(applicationFSProvider));
         }
-        
+
+        /**
+         * Sets the {@link ApplicationFSProvider} to use. The {@link ApplicationFSProvider} is responsible for
+         * providing the application's file system. The default implementation is {@link ApplicationFSProviderImpl}.
+         *
+         * @param applicationFSProvider the {@link ApplicationFSProvider} to use
+         * @see ApplicationFSProvider
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider) {
             this.applicationFSProvider = applicationFSProvider;
             return this;
         }
-        
+
+        /**
+         * Sets the {@link ExceptionHandler} to use. The {@link ExceptionHandler} is responsible for handling
+         * exceptions that occur during the application's lifecycle. The default implementation is {@link LoggingExceptionHandler}.
+         *
+         * @param exceptionHandler the {@link ExceptionHandler} to use
+         * @see ExceptionHandler
+         * @return the current {@link Configurer} instance
+         */
         public Configurer exceptionHandler(ExceptionHandler exceptionHandler) {
             return this.exceptionHandler(ContextualInitializer.of(exceptionHandler));
         }
-        
+
+        /**
+         * Sets the {@link ExceptionHandler} to use. The {@link ExceptionHandler} is responsible for handling
+         * exceptions that occur during the application's lifecycle. The default implementation is {@link LoggingExceptionHandler}.
+         *
+         * @param exceptionHandler the {@link ExceptionHandler} to use
+         * @see ExceptionHandler
+         * @return the current {@link Configurer} instance
+         */
         public Configurer exceptionHandler(ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
             this.exceptionHandler = exceptionHandler;
             return this;
         }
-        
+
+        /**
+         * Sets the {@link ApplicationArgumentParser} to use. The {@link ApplicationArgumentParser} is responsible for
+         * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
+         *
+         * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
+         * @see ApplicationArgumentParser
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationArgumentParser(ApplicationArgumentParser applicationArgumentParser) {
             return this.applicationArgumentParser(ContextualInitializer.of(applicationArgumentParser));
         }
-        
+
+        /**
+         * Sets the {@link ApplicationArgumentParser} to use. The {@link ApplicationArgumentParser} is responsible for
+         * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
+         *
+         * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
+         * @see ApplicationArgumentParser
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
             this.applicationArgumentParser = applicationArgumentParser;
             return this;
         }
-        
+
+        /**
+         * Sets the {@link ApplicationLogger} to use. The {@link ApplicationLogger} is responsible for logging
+         * messages during the application's lifecycle. The default implementation is {@link AutoSwitchingApplicationLogger}.
+         *
+         * @param applicationLogger the {@link ApplicationLogger} to use
+         * @see ApplicationLogger
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationLogger(ApplicationLogger applicationLogger) {
             return this.applicationLogger(ContextualInitializer.of(applicationLogger));
         }
-        
+
+        /**
+         * Sets the {@link ApplicationLogger} to use. The {@link ApplicationLogger} is responsible for logging
+         * messages during the application's lifecycle. The default implementation is {@link AutoSwitchingApplicationLogger}.
+         *
+         * @param applicationLogger the {@link ApplicationLogger} to use
+         * @see ApplicationLogger
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationLogger(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger) {
             this.applicationLogger = applicationLogger;
             return this;
         }
-        
+
+        /**
+         * Sets the {@link ClasspathResourceLocator} to use. The {@link ClasspathResourceLocator} is responsible for
+         * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
+         *
+         * @param classpathResourceLocator the {@link ClasspathResourceLocator} to use
+         * @see ClasspathResourceLocator
+         * @return the current {@link Configurer} instance
+         */
         public Configurer classpathResourceLocator(ClasspathResourceLocator classpathResourceLocator) {
             return this.classpathResourceLocator(ContextualInitializer.of(classpathResourceLocator));
         }
-        
+
+        /**
+         * Sets the {@link ClasspathResourceLocator} to use. The {@link ClasspathResourceLocator} is responsible for
+         * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
+         *
+         * @param classpathResourceLocator the {@link ClasspathResourceLocator} to use
+         * @see ClasspathResourceLocator
+         * @return the current {@link Configurer} instance
+         */
         public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
             this.classpathResourceLocator = classpathResourceLocator;
             return this;
         }
 
+        /**
+         * Sets the {@link AnnotationLookup} to use. The {@link AnnotationLookup} is responsible for looking up
+         * annotations on elements. The default implementation is {@link VirtualHierarchyAnnotationLookup}.
+         *
+         * @param annotationLookup the {@link AnnotationLookup} to use
+         * @see AnnotationLookup
+         * @return the current {@link Configurer} instance
+         */
         public Configurer annotationLookup(AnnotationLookup annotationLookup) {
             return this.annotationLookup(ContextualInitializer.of(annotationLookup));
         }
 
+        /**
+         * Sets the {@link AnnotationLookup} to use. The {@link AnnotationLookup} is responsible for looking up
+         * annotations on elements. The default implementation is {@link VirtualHierarchyAnnotationLookup}.
+         *
+         * @param annotationLookup the {@link AnnotationLookup} to use
+         * @see AnnotationLookup
+         * @return the current {@link Configurer} instance
+         */
         public Configurer annotationLookup(ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
             this.annotationLookup = annotationLookup;
             return this;
         }
 
+        /**
+         * Sets the {@link ApplicationContext} to use. The {@link ApplicationContext} is responsible for providing
+         * access to components and global application state. The default implementation is {@link SimpleApplicationContext}.
+         *
+         * @param applicationContext the {@link ApplicationContext} to use
+         * @see ApplicationContext
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationContext(ApplicationContext applicationContext) {
             return this.applicationContext(ContextualInitializer.of(applicationContext));
         }
 
+        /**
+         * Sets the {@link ApplicationContext} to use. The {@link ApplicationContext} is responsible for providing
+         * access to components and global application state. The default implementation is {@link SimpleApplicationContext}.
+         *
+         * @param applicationContext the {@link ApplicationContext} to use
+         * @see ApplicationContext
+         * @return the current {@link Configurer} instance
+         */
         public Configurer applicationContext(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
             this.applicationContext = applicationContext;
             return this;

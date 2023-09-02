@@ -19,6 +19,24 @@ package org.dockbox.hartshorn.application.environment;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Argument parsers are responsible for parsing the arguments passed to the application. The arguments are typically
+ * passed to the application as command line arguments, but may also be passed in other ways. The arguments are parsed
+ * into a {@link Properties} object, which is typically passed to the {@link ApplicationEnvironment} as part of the
+ * bootstrap process.
+ *
+ * @since 0.4.9
+ * @author Guus Lieben
+ */
 public interface ApplicationArgumentParser {
+
+    /**
+     * Parses the provided arguments into a {@link Properties} object. The expected form of the arguments is
+     * determined by the implementation. The returned {@link Properties} object is expected to contain the parsed
+     * arguments as key-value pairs, but can be empty if no matching arguments were provided.
+     *
+     * @param arguments The arguments to parse
+     * @return The parsed arguments
+     */
     Properties parse(List<String> arguments);
 }

@@ -71,9 +71,7 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: Class<*>? -> configurer.mainClass(deferred) }
         assertInitializer(instance) { configurer, initializer -> configurer.mainClass(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: Array<String>? ->
-            configurer.arguments(*(deferred ?: arrayOf("a")))
-        }
+        assertDeferred(instance) { configurer, deferred: Array<String>? -> configurer.arguments(*(deferred ?: arrayOf("a"))) }
         assertDeferred(instance) { configurer, deferred: List<String>? -> configurer.arguments(deferred) }
         assertCustomizer(instance) { configurer, customizer -> configurer.arguments(customizer) }
     }

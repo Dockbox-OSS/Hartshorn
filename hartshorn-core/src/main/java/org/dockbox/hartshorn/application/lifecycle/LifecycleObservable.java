@@ -32,5 +32,11 @@ public interface LifecycleObservable {
      */
     void register(Observer observer);
 
+    /**
+     * Adds a lazily instantiated lifecycle observer to this observable. The observer is instantiated when it's first
+     * needed.
+     *
+     * @param observer the observer to add
+     */
     void register(Class<? extends Observer> observer);
 }
