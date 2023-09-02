@@ -228,7 +228,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         return this;
     }
 
-    protected static class Configurer {
+    public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = ContextualInitializer.of(TypeReferenceLookupComponentLocator::new);
         private ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());

@@ -22,6 +22,7 @@ package org.dockbox.hartshorn.util;
  *
  * @param <T> The type of object to initialize.
  */
+@FunctionalInterface
 public interface Initializer<T> {
 
     /**

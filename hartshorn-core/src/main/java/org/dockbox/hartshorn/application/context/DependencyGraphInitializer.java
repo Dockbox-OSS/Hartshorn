@@ -16,7 +16,9 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.application.ApplicationConfigurer;
+import java.util.Collection;
+import java.util.Set;
+
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
@@ -26,15 +28,12 @@ import org.dockbox.hartshorn.inject.DependencyPresenceValidationVisitor;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
-import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-
-import java.util.Collection;
-import java.util.Set;
 
 public class DependencyGraphInitializer {
 
@@ -80,7 +79,7 @@ public class DependencyGraphInitializer {
         };
     }
 
-    public static class Configurer extends ApplicationConfigurer {
+    public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver = ApplicationDependencyResolver.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::new);

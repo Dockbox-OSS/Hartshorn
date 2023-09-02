@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.logging;
 
-import org.dockbox.hartshorn.application.ApplicationConfigurer;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.logging.logback.LogbackApplicationLogger;
-import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
 
 public final class AutoSwitchingApplicationLogger {
 
@@ -41,7 +40,7 @@ public final class AutoSwitchingApplicationLogger {
         };
     }
 
-    public static class Configurer extends ApplicationConfigurer {
+    public static class Configurer {
 
         private ContextualInitializer<ApplicationEnvironment, ApplicationLogger> defaultFallback = ContextualInitializer.of(Slf4jApplicationLogger::new);
 

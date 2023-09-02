@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.application;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
@@ -24,13 +31,6 @@ import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
-
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 public final class StandardApplicationBuilder implements ApplicationBuilder<ApplicationContext> {
 
@@ -128,7 +128,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         return new StandardApplicationBuilder(configurer);
     }
 
-    public static class Configurer extends ApplicationConfigurer {
+    public static class Configurer {
 
         private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor = StandardApplicationContextConstructor.create(Customizer.useDefaults());
         private final LazyStreamableConfigurer<Class<?>, String> arguments = LazyStreamableConfigurer.empty();

@@ -16,7 +16,8 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.ApplicationConfigurer;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
@@ -28,8 +29,6 @@ import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
-
-import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 
@@ -79,7 +78,7 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
         };
     }
 
-    public static class Configurer extends ApplicationConfigurer {
+    public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(IntrospectionViewContextAdapter::new);
 

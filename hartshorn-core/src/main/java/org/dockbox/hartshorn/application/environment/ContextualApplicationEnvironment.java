@@ -16,8 +16,31 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
-import org.dockbox.hartshorn.application.ApplicationConfigurer;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -45,7 +68,6 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
-import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
@@ -61,30 +83,6 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import jakarta.inject.Singleton;
 
@@ -511,7 +509,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this.resourceLocator.classpathUri();
     }
 
-    public static class Configurer extends ApplicationConfigurer {
+    public static class Configurer {
 
         private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
@@ -570,9 +568,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer applicationProxier(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationProxier> applicationProxier) {
-            this.applicationProxier = applicationProxier
-                    .subscribe(this.bind(ApplicationProxier.class))
-                    .subscribe(this.bind(ProxyLookup.class));
+            this.applicationProxier = applicationProxier;
             return this;
         }
         
@@ -581,7 +577,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider) {
-            this.applicationFSProvider = applicationFSProvider.subscribe(this.bind(ApplicationFSProvider.class));
+            this.applicationFSProvider = applicationFSProvider;
             return this;
         }
         
@@ -590,7 +586,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer exceptionHandler(ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
-            this.exceptionHandler = exceptionHandler.subscribe(this.bind(ExceptionHandler.class));
+            this.exceptionHandler = exceptionHandler;
             return this;
         }
         
@@ -599,7 +595,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
-            this.applicationArgumentParser = applicationArgumentParser.subscribe(this.bind(ApplicationArgumentParser.class));
+            this.applicationArgumentParser = applicationArgumentParser;
             return this;
         }
         
@@ -608,7 +604,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer applicationLogger(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger) {
-            this.applicationLogger = applicationLogger.subscribe(this.bind(ApplicationLogger.class));
+            this.applicationLogger = applicationLogger;
             return this;
         }
         
@@ -617,7 +613,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
         
         public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
-            this.classpathResourceLocator = classpathResourceLocator.subscribe(this.bind(ClasspathResourceLocator.class));
+            this.classpathResourceLocator = classpathResourceLocator;
             return this;
         }
 
@@ -626,7 +622,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
 
         public Configurer annotationLookup(ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
-            this.annotationLookup = annotationLookup.subscribe(this.bind(AnnotationLookup.class));
+            this.annotationLookup = annotationLookup;
             return this;
         }
 

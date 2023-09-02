@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.application.ApplicationConfigurer;
 import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
-import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 public final class DefaultApplicationProxierLoader {
@@ -39,7 +38,7 @@ public final class DefaultApplicationProxierLoader {
         };
     }
 
-    public static class Configurer extends ApplicationConfigurer {
+    public static class Configurer {
         // No-op, may be used in the future
     }
 }
