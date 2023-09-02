@@ -178,7 +178,7 @@ allprojects {
         register<Copy>("copyArtifacts") {
             val version = rootProject.version
             val destinationFolder = "$rootDir/hartshorn-assembly/distributions/$version"
-            val sourceFolder = "$buildDir/libs"
+            val sourceFolder = "${layout.buildDirectory}/libs"
 
             if (!File(destinationFolder).exists()) mkdir(destinationFolder)
 
