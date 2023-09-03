@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.component.Component
 
 @Component
-class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {
+open class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {
 
     @Inject
     private lateinit var applicationContext: ApplicationContext
