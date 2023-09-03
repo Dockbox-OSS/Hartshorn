@@ -18,6 +18,9 @@ package test.org.dockbox.hartshorn.lifecycle;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +43,10 @@ public class LifecycleObserverTests {
         Assertions.assertFalse(observer.started());
         Assertions.assertFalse(observer.stopped());
 
-        applicationContext.environment().register(observer);
+        ApplicationEnvironment environment = applicationContext.environment();
+        Assertions.assertTrue(environment instanceof ObservableApplicationEnvironment);
+
+        ((LifecycleObservable) environment).register(observer);
         Assertions.assertDoesNotThrow(applicationContext::close);
 
         // Do not late-fire events
@@ -56,7 +62,10 @@ public class LifecycleObserverTests {
         Assertions.assertFalse(StaticNonRegisteredObserver.started());
         Assertions.assertFalse(StaticNonRegisteredObserver.stopped());
 
-        applicationContext.environment().register(StaticNonRegisteredObserver.class);
+        ApplicationEnvironment environment = applicationContext.environment();
+        Assertions.assertTrue(environment instanceof ObservableApplicationEnvironment);
+
+        ((LifecycleObservable) environment).register(StaticNonRegisteredObserver.class);
         Assertions.assertDoesNotThrow(applicationContext::close);
 
         // Do not late-fire events

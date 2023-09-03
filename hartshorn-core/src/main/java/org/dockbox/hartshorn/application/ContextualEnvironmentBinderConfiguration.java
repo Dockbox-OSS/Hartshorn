@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
+import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
@@ -50,10 +51,12 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ProxyLookup.class).singleton(environment);
         binder.bind(ApplicationLogger.class).singleton(environment);
         binder.bind(ApplicationProxier.class).singleton(environment);
-        binder.bind(LifecycleObservable.class).singleton(environment);
         binder.bind(ApplicationFSProvider.class).singleton(environment);
         binder.bind(AnnotationLookup.class).singleton(environment);
         binder.bind(ClasspathResourceLocator.class).singleton(environment);
+        if (environment instanceof ObservableApplicationEnvironment observableEnvironment) {
+            binder.bind(LifecycleObservable.class).singleton(observableEnvironment);
+        }
 
         // Dynamic components
         binder.bind(Logger.class).to(environment.applicationContext()::log);

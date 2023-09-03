@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -74,14 +73,12 @@ public interface ApplicationContext extends
     void add(Class<? extends ComponentPostProcessor> processor);
 
     /**
-     * Gets the active {@link ObservableApplicationEnvironment} for the application.
+     * Gets the active {@link ApplicationEnvironment} for the application.
      *
-     * @return The active {@link ObservableApplicationEnvironment} for the application.
-     *
+     * @return The active {@link ApplicationEnvironment} for the application.
      * @see ApplicationEnvironment
-     * @see ObservableApplicationEnvironment
      */
-    ObservableApplicationEnvironment environment();
+    ApplicationEnvironment environment();
 
     @Override
     default Logger log() {
