@@ -135,6 +135,7 @@ public class HartshornLifecycleExtension implements
             this.applicationContext.close();
             this.applicationContext = null;
         }
+        TestCustomizer.resetAll();
     }
 
     private void invokeModifiers(Class<?> testClass) throws ApplicationException {

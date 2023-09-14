@@ -42,4 +42,15 @@ public final class TestCustomizer<T> {
     Customizer<T> customizer() {
         return this.customizer;
     }
+
+    public static void resetAll() {
+        BUILDER.reset();
+        ENVIRONMENT.reset();
+        CONSTRUCTOR.reset();
+        APPLICATION_CONTEXT.reset();
+    }
+
+    private void reset() {
+        this.customizer = Customizer.useDefaults();
+    }
 }
