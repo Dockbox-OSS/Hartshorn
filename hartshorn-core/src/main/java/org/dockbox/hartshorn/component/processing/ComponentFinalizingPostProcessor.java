@@ -34,24 +34,37 @@ import java.util.Collection;
 
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
-    @Override
-    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    @SuppressWarnings("rawtypes")
+    private static final ComponentKey<ComponentContainer> COMPONENT_CONTAINER = ComponentKey.of(ComponentContainer.class);
+    @SuppressWarnings("rawtypes")
+    private static final ComponentKey<ProxyFactory> PROXY_FACTORY = ComponentKey.of(ProxyFactory.class);
 
-        final boolean permitsProxying = !processingContext.containsKey(ComponentKey.of(ComponentContainer.class))
-                || processingContext.get(ComponentKey.of(ComponentContainer.class)).permitsProxying();
+    @Override
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+
+        boolean permitsProxying = !processingContext.containsKey(COMPONENT_CONTAINER)
+                || processingContext.get(COMPONENT_CONTAINER).permitsProxying();
 
         if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
-            if (processingContext.containsKey(ComponentKey.of(ProxyFactory.class))) {
-                final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+            
+            if (processingContext.containsKey(PROXY_FACTORY)) {
+                ProxyFactory<T> factory = processingContext.get(PROXY_FACTORY);
+
+                boolean isStateAwareFactory = factory instanceof StateAwareProxyFactory<?>;
+                // If not state aware, always assume state has been modified
+                boolean stateModified = !isStateAwareFactory || ((StateAwareProxyFactory<T>) factory).modified();
+                boolean noConcreteInstancePossible = instance == null && processingContext.type().modifiers().isAbstract();
                 try {
-                    final boolean stateModified = factory instanceof StateAwareProxyFactory<T> stateAwareProxyFactory && stateAwareProxyFactory.modified();
-                    final boolean noConcreteInstancePossible = instance == null && processingContext.type().modifiers().isAbstract();
                     if (stateModified || noConcreteInstancePossible) {
                         finalizingInstance = this.createProxyInstance(context, factory, instance);
                     }
                 }
-                catch (final ApplicationException e) {
+                catch (ApplicationException e) {
+                    System.out.println("Failed to create proxy instance for " + processingContext.type().name()
+                    + " isStateAware: " + isStateAwareFactory
+                    + ", stateModified: " + stateModified
+                    + ", noConcreteInstancePossible: " + noConcreteInstancePossible);
                     throw new ApplicationRuntimeException(e);
                 }
             }
@@ -66,16 +79,16 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return instance;
     }
 
-    protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T> factory, @Nullable final T instance) throws ApplicationException {
-        final TypeView<T> factoryType = context.environment().introspect(factory.type());
+    protected <T> T createProxyInstance(ApplicationContext context, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
+        TypeView<T> factoryType = context.environment().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
-            final ConstructorView<T> constructor = CyclingConstructorAnalyzer.findConstructor(factoryType)
+            ConstructorView<T> constructor = CyclingConstructorAnalyzer.findConstructor(factoryType)
                     .rethrow()
                     .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
-            final ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
-            final Object[] arguments = adapter.loadParameters(constructor);
+            ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+            Object[] arguments = adapter.loadParameters(constructor);
             return factory.proxy(constructor, arguments).orElse(instance);
         }
         return factory.proxy().orElse(instance);
