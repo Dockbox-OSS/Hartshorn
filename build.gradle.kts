@@ -52,10 +52,7 @@ group = "org.dockbox.hartshorn"
 java {
     // Development is only performed using the latest LTS Java version.
     sourceCompatibility = JavaVersion.VERSION_17
-
-    // Targeting the latest non-incubating Java version, to ensure compatibility
-    // with the latest Java version.
-    targetCompatibility = JavaVersion.VERSION_19
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 configure<DependencyCheckExtension> {
