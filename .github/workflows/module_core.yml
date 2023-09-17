@@ -41,12 +41,12 @@ jobs:
         run: ./gradlew hartshorn-core:build -x test -x copyArtifacts
   test:
     needs: [ build ]
+    name: Unit tests (JDK ${{ matrix.java }})
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         java: [ 17, 18, 19 ]
-    name: Unit tests (JDK ${{ matrix.java }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up source JDK
