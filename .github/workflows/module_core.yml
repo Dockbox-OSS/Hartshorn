@@ -21,6 +21,7 @@ jobs:
       - name: Build
         run: ./gradlew hartshorn-core:build -x test -x copyArtifacts
   compatBuild:
+    needs: [ build ]
     name: Compatibility Build (JDK 17, ${{ matrix.os }})
     strategy:
       fail-fast: false
