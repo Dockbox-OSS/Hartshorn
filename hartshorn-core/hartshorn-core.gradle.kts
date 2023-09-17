@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Copyright 2019-2023 the original author or authors.
  *

@@ -46,13 +46,17 @@ apply {
     plugin("org.owasp.dependencycheck")
 }
 
+companion object CompileJavaConfiguration {
+    // Development is only performed using the latest LTS Java version.
+    val VERSION: JavaVersion = JavaVersion.VERSION_17
+    val LANGUAGE_VERSION: JavaLanguageVersion = JavaLanguageVersion.of(VERSION.majorVersion)
+}
+
 version = "0.5.0"
 group = "org.dockbox.hartshorn"
 
 java {
-    // Development is only performed using the latest LTS Java version.
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = CompileJavaConfiguration.VERSION
 }
 
 configure<DependencyCheckExtension> {
@@ -203,8 +207,11 @@ allprojects {
             // Ensure parameter names are kept in the compiled bytecode. This is required for
             // some reflection actions to work optimally. While this is not required for
             // Hartshorn to function, it is recommended to keep this enabled.
-            options.compilerArgs.add("-parameters")
-            options.encoding = "UTF-8"
+            options.apply {
+                compilerArgs.add("-parameters")
+                encoding = "UTF-8"
+                release = CompileJavaConfiguration.LANGUAGE_VERSION.asInt()
+            }
         }
 
         withType<Javadoc> {
