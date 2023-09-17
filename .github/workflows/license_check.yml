@@ -1,0 +1,35 @@
+name: License check
+
+on: pull_request
+
+jobs:
+  license:
+    name: License check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Check license headers
+        run: ./gradlew checkLicenses
+
+  plugins:
+    name: Gradle plugin license check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gradle/plugins
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Check license headers
+        run: ./gradlew test

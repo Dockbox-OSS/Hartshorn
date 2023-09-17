@@ -1,4 +1,4 @@
-name: Hartshorn OWASP Dependency Check
+name: OWASP Dependency Check
 
 on: pull_request
 

@@ -1,0 +1,46 @@
+name: Hartshorn Discovery
+
+on:
+  pull_request:
+    paths:
+      - 'hartshorn-discovery/**'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 17, 18, 19 ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build
+        run: ./gradlew hartshorn-discovery:build -x test -x copyArtifacts
+  test:
+    needs: [ build ]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 17, 18, 19 ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    name: Unit tests (JDK ${{ matrix.java }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Test
+        run: ./gradlew hartshorn-discovery:test
