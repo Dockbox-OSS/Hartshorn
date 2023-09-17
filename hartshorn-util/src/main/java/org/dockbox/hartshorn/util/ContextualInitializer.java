@@ -41,18 +41,6 @@ public interface ContextualInitializer<I, T> {
     T initialize(InitializerContext<? extends I> input);
 
     /**
-     * Returns a map of child initializers. This is useful for initializers that require additional initializers
-     * to initialize their object. This can be used to create a dependency graph of initializers, where each
-     * initializer is invoked before the parent initializer, or simply to gather all initializers in a single
-     * location.
-     *
-     * @return A map of child initializers.
-     */
-    default Map<Class<?>, Initializer<?>> children() {
-        return Map.of();
-    }
-
-    /**
      * Returns an initializer that invokes the given initializer, ignoring the input value.
      * This is useful for initializers that do not require context to initialize, but need to be
      * provided to a configurer that requires a {@link ContextualInitializer}.

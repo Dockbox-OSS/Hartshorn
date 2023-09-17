@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.application;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
@@ -31,6 +24,13 @@ import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.InitializerContext;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public final class StandardApplicationBuilder implements ApplicationBuilder<ApplicationContext> {
 
@@ -116,10 +116,6 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
     private String host(RuntimeMXBean runtimeMXBean) {
         // Alternative to InetAddress.getLocalHost().getHostName()
         return runtimeMXBean.getName().split("@")[1];
-    }
-
-    public StandardApplicationBuilder loadDefaults() {
-        return this;
     }
 
     public static StandardApplicationBuilder create(Customizer<Configurer> customizer) {
