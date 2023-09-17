@@ -1,6 +1,9 @@
 name: Test coverage
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - 'hartshorn-*/**'
 
 jobs:
   coverage:
