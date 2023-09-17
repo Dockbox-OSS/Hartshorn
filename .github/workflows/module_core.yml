@@ -7,18 +7,32 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build (JDK 17)
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [ 17, 18, 19 ]
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 17
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build
+        run: ./gradlew hartshorn-core:build -x test -x copyArtifacts
+  compatBuild:
+    name: Compatibility Build (JDK 17, ${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
           distribution: temurin
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -30,7 +44,6 @@ jobs:
       fail-fast: false
       matrix:
         java: [ 17, 18, 19 ]
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
     name: Unit tests (JDK ${{ matrix.java }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
