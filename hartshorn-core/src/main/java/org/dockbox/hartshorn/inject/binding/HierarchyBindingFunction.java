@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
+import org.jetbrains.annotations.NotNull;
 
 public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
@@ -41,14 +42,15 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     private Class<? extends Scope> scopeModule;
     private int priority = -1;
+    private boolean processAfterInitialization = true;
 
     public HierarchyBindingFunction(
-            final BindingHierarchy<T> hierarchy,
-            final Binder binder,
-            final SingletonCache singletonCache,
-            final ComponentInstanceFactory instanceFactory,
-            final Scope scope,
-            final ScopeModuleContext moduleContext) {
+            BindingHierarchy<T> hierarchy,
+            Binder binder,
+            SingletonCache singletonCache,
+            ComponentInstanceFactory instanceFactory,
+            Scope scope,
+            ScopeModuleContext moduleContext) {
         this.hierarchy = hierarchy;
         this.binder = binder;
         this.singletonCache = singletonCache;
@@ -59,8 +61,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     protected BindingHierarchy<T> hierarchy() {
-        if (this.scopeModule != null) return this.moduleContext.hierarchy(this.scopeModule, this.hierarchy.key());
-        else return this.hierarchy;
+        if (this.scopeModule != null) {
+            return this.moduleContext.hierarchy(this.scopeModule, this.hierarchy.key());
+        }
+        else {
+            return this.hierarchy;
+        }
     }
 
     protected Binder binder() {
@@ -76,7 +82,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(final Class<? extends Scope> scope) {
+    public BindingFunction<T> installTo(Class<? extends Scope> scope) {
         if (this.scope != null && this.scope != Scope.DEFAULT_SCOPE && (!(this.scope instanceof ApplicationContext))) {
             throw new IllegalModificationException("Cannot install binding to scope " + scope.getName() + " as the binding is already installed to scope " + this.scope.getClass().getName());
         }
@@ -89,22 +95,33 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> priority(final int priority) {
+    public BindingFunction<T> priority(int priority) {
         this.priority = priority;
         return this;
     }
 
     @Override
-    public Binder to(final Class<? extends T> type) {
-        if (this.singletonCache.contains(this.hierarchy().key())) {
-            throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
-        }
-        final ComponentKey<? extends T> key = ComponentKey.builder(type).scope(this.scope).build();
-        return this.add(new ContextDrivenProvider<>(key));
+    public BindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
+        this.processAfterInitialization = processAfterInitialization;
+        return this;
     }
 
     @Override
-    public Binder to(final CheckedSupplier<T> supplier) {
+    public Binder to(Class<? extends T> type) {
+        if (this.singletonCache.contains(this.hierarchy().key())) {
+            throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
+        }
+        ComponentKey<? extends T> key = this.buildComponentKey(type);
+        return this.add(new ContextDrivenProvider<>(key));
+    }
+
+    @NotNull
+    private ComponentKey<? extends T> buildComponentKey(Class<? extends T> type) {
+        return ComponentKey.builder(type).scope(this.scope).build();
+    }
+
+    @Override
+    public Binder to(CheckedSupplier<T> supplier) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
@@ -112,47 +129,56 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public Binder to(final Provider<T> provider) {
+    public Binder to(Provider<T> provider) {
         return this.add(provider);
     }
 
     @Override
-    public Binder singleton(final T instance) {
+    public Binder singleton(T instance) {
         if (instance == null) {
             throw new IllegalModificationException("Cannot bind null instance");
         }
-        // Set 'processed' to false to ensure that the singleton is processed the first time it is requested. As the object
-        // container is reused, this will only happen once.
-        return this.add(new SingletonProvider<>(instance, false));
+        if (this.processAfterInitialization) {
+            return this.add(new SingletonProvider<>(instance));
+        }
+        else {
+            // If no processing should happen, then we can immediately cache the instance
+            this.singletonCache.put(this.hierarchy.key(), instance);
+            return this.binder();
+        }
     }
 
     @Override
-    public Binder lazySingleton(final Class<T> type) {
+    public Binder lazySingleton(Class<T> type) {
         this.lazyContainerSingleton(() -> {
-            final ComponentKey<T> key = ComponentKey.builder(type).scope(this.scope).build();
-            final Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
+            ComponentKey<T> key = ComponentKey.builder(type).scope(this.scope).build();
+            Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
             return object.orNull();
         });
         return this.binder();
     }
 
     @Override
-    public Binder lazySingleton(final CheckedSupplier<T> supplier) {
+    public Binder lazySingleton(CheckedSupplier<T> supplier) {
         this.lazyContainerSingleton(() -> {
-            final T instance = supplier.get();
+            T instance = supplier.get();
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }
-            return new ObjectContainer<>(instance, false);
+            return new ObjectContainer<>(instance);
         });
         return this.binder();
     }
 
-    public Binder lazyContainerSingleton(final CheckedSupplier<ObjectContainer<T>> supplier) {
+    protected Binder lazyContainerSingleton(CheckedSupplier<ObjectContainer<T>> supplier) {
         return this.add(new LazySingletonProvider<>(supplier));
     }
 
-    private Binder add(final Provider<T> provider) {
+    protected Binder add(Provider<T> provider) {
+        provider = provider.map(container -> {
+            container.processed(!this.processAfterInitialization);
+            return container;
+        });
         this.hierarchy().add(this.priority, provider);
         return this.binder();
     }

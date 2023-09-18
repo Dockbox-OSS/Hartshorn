@@ -26,12 +26,12 @@ public class LazySingletonProvider<T> implements Provider<T> {
     private final CheckedSupplier<ObjectContainer<T>> supplier;
     private ObjectContainer<T> container;
 
-    public LazySingletonProvider(final CheckedSupplier<ObjectContainer<T>> supplier) {
+    public LazySingletonProvider(CheckedSupplier<ObjectContainer<T>> supplier) {
         this.supplier = supplier;
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(final ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException {
         if (this.container == null) {
             this.container = this.supplier.get();
         }

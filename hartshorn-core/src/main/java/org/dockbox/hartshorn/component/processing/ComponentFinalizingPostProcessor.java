@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
@@ -29,6 +30,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -38,6 +40,8 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     private static final ComponentKey<ComponentContainer> COMPONENT_CONTAINER = ComponentKey.of(ComponentContainer.class);
     @SuppressWarnings("rawtypes")
     private static final ComponentKey<ProxyFactory> PROXY_FACTORY = ComponentKey.of(ProxyFactory.class);
+
+    private ComponentPopulator componentPopulator;
 
     @Override
     public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
@@ -61,10 +65,6 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
                     }
                 }
                 catch (ApplicationException e) {
-                    System.out.println("Failed to create proxy instance for " + processingContext.type().name()
-                    + " isStateAware: " + isStateAwareFactory
-                    + ", stateModified: " + stateModified
-                    + ", noConcreteInstancePossible: " + noConcreteInstancePossible);
                     throw new ApplicationRuntimeException(e);
                 }
             }
@@ -74,9 +74,21 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
                 modifiableComponentProcessingContext.requestInstanceLock();
             }
 
-            return context.get(ComponentPopulator.class).populate(finalizingInstance);
+            return this.getComponentPopulator(context).populate(finalizingInstance);
         }
         return instance;
+    }
+
+    protected ComponentPopulator getComponentPopulator(ApplicationContext applicationContext) {
+        if (this.componentPopulator == null) {
+            this.componentPopulator = createComponentPopulator(applicationContext);
+        }
+        return this.componentPopulator;
+    }
+
+    @NotNull
+    public static ContextualComponentPopulator createComponentPopulator(ApplicationContext applicationContext) {
+        return new ContextualComponentPopulator(applicationContext);
     }
 
     protected <T> T createProxyInstance(ApplicationContext context, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {

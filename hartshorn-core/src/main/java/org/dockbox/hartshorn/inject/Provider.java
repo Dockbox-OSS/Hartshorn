@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.function.Function;
+
 /**
  * A provider is a class that can provide an instance of a {@link ComponentKey} binding. The
  * provider is not always responsible for creating the instance, but it can be used to create
@@ -30,6 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @author Guus Lieben
  * @since 0.4.3
  */
+@FunctionalInterface
 public interface Provider<T> {
 
     /**
@@ -42,4 +45,7 @@ public interface Provider<T> {
      */
     Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException;
 
+    default Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
+        return context -> this.provide(context).map(mappingFunction);
+    }
 }

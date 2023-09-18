@@ -39,9 +39,9 @@ import java.util.function.Supplier;
 public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements Provider<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(final ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
         return Attempt.of(
-                () -> new ObjectContainer<>(this.supplier.get(), false),
+                () -> new ObjectContainer<>(this.supplier.get()),
                 ApplicationException.class
         ).rethrow();
     }

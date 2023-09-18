@@ -50,4 +50,6 @@ public @interface Binds {
     boolean lazy() default false;
 
     int phase() default 0;
+
+    boolean processAfterInitialization() default true;
 }

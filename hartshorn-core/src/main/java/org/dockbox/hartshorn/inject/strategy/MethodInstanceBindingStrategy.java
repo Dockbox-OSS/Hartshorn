@@ -38,15 +38,15 @@ import jakarta.inject.Singleton;
 public class MethodInstanceBindingStrategy implements BindingStrategy {
 
     @Override
-    public <T> boolean canHandle(final BindingStrategyContext<T> context) {
+    public <T> boolean canHandle(BindingStrategyContext<T> context) {
         return context instanceof MethodAwareBindingStrategyContext<T> methodAwareBindingStrategyContext
                 && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
     }
 
     @Override
-    public <T> DependencyContext<?> handle(final BindingStrategyContext<T> context) {
-        final MethodAwareBindingStrategyContext<T> strategyContext = (MethodAwareBindingStrategyContext<T>) context;
-        final Binds bindingDecorator = strategyContext.method().annotations()
+    public <T> DependencyContext<?> handle(BindingStrategyContext<T> context) {
+        MethodAwareBindingStrategyContext<T> strategyContext = (MethodAwareBindingStrategyContext<T>) context;
+        Binds bindingDecorator = strategyContext.method().annotations()
                 .get(Binds.class)
                 .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds"));
 
@@ -58,40 +58,42 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         return BindingStrategyPriority.LOW;
     }
 
-    private <T> DependencyContext<T> resolveInstanceBinding(final MethodView<?, T> bindsMethod, final Binds bindingDecorator, final ApplicationContext applicationContext) {
-        final ComponentKey<T> componentKey = this.constructInstanceComponentKey(bindsMethod, bindingDecorator);
-        final Set<ComponentKey<?>> dependencies = DependencyResolverUtils.resolveDependencies(bindsMethod);
-        final Class<? extends Scope> scope = this.resolveComponentScope(bindsMethod);
-        final int priority = bindingDecorator.priority();
+    private <T> DependencyContext<T> resolveInstanceBinding(MethodView<?, T> bindsMethod, Binds bindingDecorator, ApplicationContext applicationContext) {
+        ComponentKey<T> componentKey = this.constructInstanceComponentKey(bindsMethod, bindingDecorator);
+        Set<ComponentKey<?>> dependencies = DependencyResolverUtils.resolveDependencies(bindsMethod);
+        Class<? extends Scope> scope = this.resolveComponentScope(bindsMethod);
+        int priority = bindingDecorator.priority();
 
-        final ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
-        final CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
+        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
+        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
                 .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
                 .rethrow()
                 .orNull();
 
-        final boolean lazy = bindingDecorator.lazy();
-        final boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
+        boolean lazy = bindingDecorator.lazy();
+        boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
+        boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
 
         return new AutoConfiguringDependencyContext<>(componentKey, dependencies, scope, priority, supplier)
                 .lazy(lazy)
-                .singleton(singleton);
+                .singleton(singleton)
+                .processAfterInitialization(processAfterInitialization);
     }
 
-    private boolean isSingleton(final ApplicationContext applicationContext, final MethodView<?, ?> methodView,
-                                final ComponentKey<?> componentKey) {
+    private boolean isSingleton(ApplicationContext applicationContext, MethodView<?, ?> methodView,
+                                ComponentKey<?> componentKey) {
         return methodView.annotations().has(Singleton.class)
                 || applicationContext.environment().singleton(componentKey.type());
     }
 
-    private Class<? extends Scope> resolveComponentScope(final MethodView<?, ?> bindsMethod) {
-        final Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
+    private Class<? extends Scope> resolveComponentScope(MethodView<?, ?> bindsMethod) {
+        Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
         return installToCandidate.present()
                 ? installToCandidate.get().value()
                 : Scope.DEFAULT_SCOPE.installableScopeType();
     }
 
-    private <T> ComponentKey<T> constructInstanceComponentKey(final MethodView<?, T> bindsMethod, final Binds bindingDecorator) {
+    private <T> ComponentKey<T> constructInstanceComponentKey(MethodView<?, T> bindsMethod, Binds bindingDecorator) {
         ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(bindsMethod.returnType().type());
         if (StringUtilities.notEmpty(bindingDecorator.value())) {
             keyBuilder = keyBuilder.name(bindingDecorator.value());

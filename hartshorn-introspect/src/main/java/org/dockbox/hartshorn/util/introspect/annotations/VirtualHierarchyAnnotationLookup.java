@@ -35,8 +35,8 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     private static final Map<HierarchyKey, Option<Object>> cache = new ConcurrentHashMap<>();
 
     @Override
-    public <A extends Annotation> A find(final AnnotatedElement element, final Class<A> annotationType) throws DuplicateAnnotationCompositeException {
-        final List<A> allInHierarchy = this.findAll(element, annotationType);
+    public <A extends Annotation> A find(AnnotatedElement element, Class<A> annotationType) throws DuplicateAnnotationCompositeException {
+        List<A> allInHierarchy = this.findAll(element, annotationType);
         if (allInHierarchy.size() > 1) {
             throw new DuplicateAnnotationCompositeException(element, allInHierarchy);
         }
@@ -44,12 +44,12 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public <A extends Annotation> List<A> findAll(final AnnotatedElement element, final Class<A> annotationType) {
-        final HierarchyKey key = new HierarchyKey(element, annotationType);
+    public <A extends Annotation> List<A> findAll(AnnotatedElement element, Class<A> annotationType) {
+        HierarchyKey key = new HierarchyKey(element, annotationType);
         return this.fromCache(key, () -> this.annotationsOnElement(element, annotationType));
     }
 
-    protected <T> T fromCache(final HierarchyKey key, final Supplier<T> supplier) {
+    protected <T> T fromCache(HierarchyKey key, Supplier<T> supplier) {
         Option<Object> ret = cache.get(key);
         if (ret == null) {
             ret = Option.of(supplier::get);
@@ -58,22 +58,24 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         return (T) ret.get();
     }
 
-    protected <A extends Annotation> List<A> annotationsOnElement(final AnnotatedElement element, final Class<A> annotationType) {
+    protected <A extends Annotation> List<A> annotationsOnElement(AnnotatedElement element, Class<A> annotationType) {
         return Arrays.stream(element.getAnnotations())
                 .map(annotation -> this.examineAnnotation(annotation, annotationType))
                 .filter(Objects::nonNull)
                 .toList();
     }
 
-    protected <A extends Annotation> A examineAnnotation(Annotation actual, final Class<A> targetAnnotationClass) {
+    protected <A extends Annotation> A examineAnnotation(Annotation actual, Class<A> targetAnnotationClass) {
         actual = this.unproxy(actual);
-        final LinkedHashSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(actual.annotationType());
+        LinkedHashSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(actual.annotationType());
 
-        if (!hierarchy.contains(targetAnnotationClass)) return null;
+        if (!hierarchy.contains(targetAnnotationClass)) {
+            return null;
+        }
 
-        final InvocationHandler adapter = new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy, this);
-        final Class<?>[] interfaces = { targetAnnotationClass, AnnotationAdapter.class };
-        final Object proxy = Proxy.newProxyInstance(
+        InvocationHandler adapter = new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy, this);
+        Class<?>[] interfaces = { targetAnnotationClass, AnnotationAdapter.class };
+        Object proxy = Proxy.newProxyInstance(
                 VirtualHierarchyAnnotationLookup.class.getClassLoader(),
                 interfaces,
                 adapter);
@@ -82,7 +84,7 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public Annotation unproxy(final Annotation annotation) {
+    public Annotation unproxy(Annotation annotation) {
         if (annotation instanceof AnnotationAdapter) {
             return ((AnnotationAdapter) annotation).actualAnnotation();
         }
@@ -90,9 +92,9 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> type) {
+    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type) {
         Class<? extends Annotation> currentClass = type;
-        final LinkedHashSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
+        LinkedHashSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
         while (currentClass != null) {
             if (!hierarchy.add(currentClass)) {
                 throw new CircularHierarchyException(currentClass);
@@ -103,20 +105,8 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         return hierarchy;
     }
 
-    private static Class<? extends Annotation> superAnnotationOrNull(final Class<? extends Annotation> currentClass) {
-        final Extends extendsAnnotation = currentClass.getAnnotation(Extends.class);
+    private static Class<? extends Annotation> superAnnotationOrNull(Class<? extends Annotation> currentClass) {
+        Extends extendsAnnotation = currentClass.getAnnotation(Extends.class);
         return extendsAnnotation == null ? null : extendsAnnotation.value();
-    }
-
-    private record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
-
-        @Override
-            public boolean equals(final Object other) {
-                if (this == other) return true;
-                if (other == null || this.getClass() != other.getClass()) return false;
-                final HierarchyKey key = (HierarchyKey) other;
-                return Objects.equals(this.element, key.element) && Objects.equals(this.annotationType, key.annotationType);
-            }
-
     }
 }

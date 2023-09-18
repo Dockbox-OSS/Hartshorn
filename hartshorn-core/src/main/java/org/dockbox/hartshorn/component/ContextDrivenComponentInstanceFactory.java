@@ -33,6 +33,6 @@ public class ContextDrivenComponentInstanceFactory implements ComponentInstanceF
 
     @Override
     public <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(applicationContext);
+        return new ContextDrivenProvider<>(key).provide(this.applicationContext);
     }
 }

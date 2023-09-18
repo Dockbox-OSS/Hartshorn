@@ -42,6 +42,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
             function.installTo(this.scope());
         }
+        function.processAfterInitialization(this.processAfterInitialization());
 
         try {
             switch (instanceType) {

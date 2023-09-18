@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.application.StandardApplicationContextConstructor.C
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.ContextualComponentPopulator;
+import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
@@ -197,8 +198,8 @@ public class HartshornLifecycleExtension implements
     }
 
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
-        ComponentPopulator populator = applicationContext.get(ComponentPopulator.class);
-        populator.populate(instance);
+        ContextualComponentPopulator componentPopulator = ComponentFinalizingPostProcessor.createComponentPopulator(applicationContext);
+        componentPopulator.populate(instance);
     }
 
     private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources) {
