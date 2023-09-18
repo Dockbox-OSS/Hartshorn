@@ -46,6 +46,6 @@ public interface Provider<T> {
     Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException;
 
     default Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
-        return context -> this.provide(context).map(mappingFunction);
+        return new ComposedProvider<>(this, mappingFunction);
     }
 }
