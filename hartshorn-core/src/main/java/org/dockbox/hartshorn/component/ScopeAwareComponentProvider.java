@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
@@ -52,11 +52,11 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private final HierarchyAwareComponentProvider applicationComponentProvider;
     private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
-    protected ScopeAwareComponentProvider(InitializerContext<? extends ComponentLocator> initializerContext, Configurer configurer) {
+    protected ScopeAwareComponentProvider(SingleElementContext<? extends ComponentLocator> initializerContext, Configurer configurer) {
         this.locator = initializerContext.input();
         this.applicationContext = this.locator.applicationContext();
 
-        InitializerContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this.applicationContext);
+        SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this.applicationContext);
         this.postConstructor = configurer.componentPostConstructor.initialize(applicationInitializerContext);
         this.factory = configurer.componentInstanceFactory.initialize(applicationInitializerContext);
 

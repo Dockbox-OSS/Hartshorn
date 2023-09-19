@@ -16,6 +16,19 @@
 
 package org.dockbox.hartshorn.reporting;
 
+/**
+ * A {@link Reportable} which is categorized. This is used to define predictable names for {@link Reportable}
+ * instances that are used in a {@link DiagnosticsReport}.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public interface CategorizedDiagnosticsReporter extends Reportable {
+
+    /**
+     * Returns the category of this reporter. This is used to identify the reporter in a {@link DiagnosticsReport}.
+     *
+     * @return the category of this reporter
+     */
     String category();
 }

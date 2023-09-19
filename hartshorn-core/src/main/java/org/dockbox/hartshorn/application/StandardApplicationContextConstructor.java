@@ -43,7 +43,7 @@ import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -56,11 +56,11 @@ import org.jetbrains.annotations.NotNull;
 
 public final class StandardApplicationContextConstructor implements ApplicationContextConstructor {
 
-    private final InitializerContext<? extends ApplicationBuildContext> initializerContext;
+    private final SingleElementContext<? extends ApplicationBuildContext> initializerContext;
     private final ApplicationBuildContext buildContext;
     private final Configurer configurer;
 
-    private StandardApplicationContextConstructor(InitializerContext<? extends ApplicationBuildContext> initializerContext, Configurer configurer) {
+    private StandardApplicationContextConstructor(SingleElementContext<? extends ApplicationBuildContext> initializerContext, Configurer configurer) {
         this.initializerContext = initializerContext;
         this.buildContext = initializerContext.input();
         this.configurer = configurer;
@@ -74,7 +74,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
                 this.configurer.includeBasePackages.initialize(this.initializerContext)
         );
 
-        InitializerContext<ApplicationBootstrapContext> bootstrapInitializerContext = this.initializerContext.transform(bootstrapContext);
+        SingleElementContext<ApplicationBootstrapContext> bootstrapInitializerContext = this.initializerContext.transform(bootstrapContext);
 
         ApplicationEnvironment environment = this.configurer.environment.initialize(bootstrapInitializerContext);
         ApplicationContext applicationContext = environment.applicationContext();
@@ -94,7 +94,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "ShutdownHook"));
     }
 
-    private void configure(ApplicationContext applicationContext, InitializerContext<ApplicationBootstrapContext> initializerContext) {
+    private void configure(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext) {
         ApplicationEnvironment environment = applicationContext.environment();
 
         TypeReferenceCollectorContext collectorContext = new TypeReferenceCollectorContext();
@@ -139,7 +139,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
                 .collect(Collectors.toSet());
     }
 
-    private Set<Annotation> serviceActivators(ApplicationContext applicationContext, InitializerContext<ApplicationBootstrapContext> initializerContext) {
+    private Set<Annotation> serviceActivators(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext) {
         Set<Annotation> activators = new HashSet<>(this.configurer.activators.initialize(initializerContext));
         Set<Annotation> serviceActivators = new HashSet<>(applicationContext.environment()
                 .introspect(initializerContext.input().mainClass())
@@ -170,7 +170,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
     }
 
     @NotNull
-    private Set<ComponentProcessor> componentProcessors(ApplicationContext applicationContext, InitializerContext<ApplicationBootstrapContext> initializerContext, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
+    private Set<ComponentProcessor> componentProcessors(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
         Set<ComponentProcessor> componentProcessors = new HashSet<>();
 
         componentProcessors.addAll(this.configurer.componentPreProcessors.initialize(initializerContext));
@@ -183,7 +183,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         return componentProcessors;
     }
 
-    private void enhanceTypeReferenceCollectorContext(InitializerContext<ApplicationBootstrapContext> initializerContext, ApplicationEnvironment environment, TypeReferenceCollectorContext collectorContext,
+    private void enhanceTypeReferenceCollectorContext(SingleElementContext<ApplicationBootstrapContext> initializerContext, ApplicationEnvironment environment, TypeReferenceCollectorContext collectorContext,
                                                       Set<Annotation> activators) {
         collectorContext.register(new ClassPathScannerTypeReferenceCollector(Hartshorn.PACKAGE_PREFIX));
         ApplicationBootstrapContext bootstrapContext = initializerContext.input();

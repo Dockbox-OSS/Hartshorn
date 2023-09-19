@@ -19,18 +19,49 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.DefaultContext;
 
+/**
+ * Carrier context for the {@link DefaultBindingConfigurer}. This context is used to pass the
+ * {@link DefaultBindingConfigurer} through the context chain when initializing the application.
+ *
+ * @see DefaultBindingConfigurer
+ * @see ApplicationInitializerContext#initializeInitial()
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public class DefaultBindingConfigurerContext extends DefaultContext {
 
     private DefaultBindingConfigurer configurer = DefaultBindingConfigurer.empty();
 
+    /**
+     * Returns the {@link DefaultBindingConfigurer} that is currently configured. This may be empty, if no configurer
+     * has been configured yet.
+     *
+     * @return The {@link DefaultBindingConfigurer} that is currently configured.
+     */
     public DefaultBindingConfigurer configurer() {
         return this.configurer;
     }
 
+    /**
+     * Composes the given configurer with the current configurer. This is useful for composing multiple configurers
+     * together, and thus expanding the default bindings of the application.
+     *
+     * @param configurer The configurer to compose with the current configurer.
+     */
     public void compose(DefaultBindingConfigurer configurer) {
         this.configurer = this.configurer.compose(configurer);
     }
 
+    /**
+     * Utility method to access the {@link DefaultBindingConfigurerContext} from the given context. This method will
+     * immediately compose the given configurer with the configurer that is currently configured in the context, if it
+     * is present. If the context does not contain a {@link DefaultBindingConfigurerContext}, this method will do
+     * nothing.
+     *
+     * @param context The context to access the {@link DefaultBindingConfigurerContext} from.
+     * @param configurer The configurer to compose with the configurer that is currently configured in the context.
+     */
     public static void compose(Context context, DefaultBindingConfigurer configurer) {
         context.first(DefaultBindingConfigurerContext.class)
                 .peek(bindingConfigurerContext -> bindingConfigurerContext.compose(configurer));

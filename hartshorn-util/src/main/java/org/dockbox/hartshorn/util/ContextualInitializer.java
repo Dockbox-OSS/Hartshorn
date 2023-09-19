@@ -38,7 +38,7 @@ public interface ContextualInitializer<I, T> {
      * @param input The input to initialize with.
      * @return The initialized object.
      */
-    T initialize(InitializerContext<? extends I> input);
+    T initialize(SingleElementContext<? extends I> input);
 
     /**
      * Returns an initializer that invokes the given initializer, ignoring the input value.
@@ -95,7 +95,7 @@ public interface ContextualInitializer<I, T> {
             private final Map<I, T> values = new ConcurrentHashMap<>();
 
             @Override
-            public T initialize(InitializerContext<? extends I> context) {
+            public T initialize(SingleElementContext<? extends I> context) {
                 return this.values.computeIfAbsent(context.input(), input -> ContextualInitializer.this.initialize(context));
             }
         };

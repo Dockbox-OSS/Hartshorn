@@ -16,8 +16,24 @@
 
 package org.dockbox.hartshorn.reporting;
 
+/**
+ * A serializer for {@link DiagnosticsReport} instances. This is used to serialize a report into a specific format.
+ *
+ * @param <T> the type of the serialized report
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+@FunctionalInterface
 public interface ReportSerializer<T> {
 
+    /**
+     * Serializes the given {@link DiagnosticsReport} into a specific format. The returned value is expected to represent
+     * the serialized report. The returned value is not required to be thread-safe.
+     *
+     * @param report the report to serialize
+     * @return the serialized report
+     * @throws ReportSerializationException if the serialization fails
+     */
     T serialize(DiagnosticsReport report) throws ReportSerializationException;
-
 }

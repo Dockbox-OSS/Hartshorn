@@ -17,12 +17,27 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
-public class DelegatingApplicationBindingFunction<T> implements BindingFunction<T> {
+/**
+ * A {@link BindingFunction} that delegates all calls to the provided {@link BindingFunction delegate}, but returns the
+ * {@link ApplicationContext} instead of the {@link Binder} to allow for chaining. This is used to allow for the
+ * {@link ApplicationContext} to use custom binders, while still allowing for the {@link ApplicationContext} to be
+ * returned.
+ *
+ * @param <T> the type of the binding
+ *
+ * @see ApplicationContext
+ * @see BindingFunction
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+public class DelegatingApplicationBindingFunction<T> implements BindingFunction<T>, ContextCarrier {
 
     private final ApplicationContext applicationContext;
     private final BindingFunction<T> delegate;
@@ -79,6 +94,11 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     @Override
     public ApplicationContext lazySingleton(CheckedSupplier<T> supplier) {
         this.delegate.lazySingleton(supplier);
+        return this.applicationContext;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
         return this.applicationContext;
     }
 }

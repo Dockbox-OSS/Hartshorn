@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
@@ -49,7 +49,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     private final DependencyGraphInitializer dependencyGraphInitializer;
 
-    public SimpleApplicationContext(InitializerContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
+    public SimpleApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
         super(initializerContext, configurer);
         this.dependencyGraphInitializer = configurer.dependencyGraphInitializer.initialize(initializerContext.transform(this));
     }

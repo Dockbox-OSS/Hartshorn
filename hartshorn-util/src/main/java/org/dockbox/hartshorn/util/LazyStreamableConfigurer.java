@@ -34,7 +34,7 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
     }
 
     @Override
-    public List<O> initialize(InitializerContext<? extends I> input) {
+    public List<O> initialize(SingleElementContext<? extends I> input) {
         this.customizer.configure(this.configurer);
         return this.configurer.initialize(input);
     }

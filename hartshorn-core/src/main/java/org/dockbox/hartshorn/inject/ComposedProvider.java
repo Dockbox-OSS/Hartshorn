@@ -24,6 +24,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * A {@link Provider} of which the result can be mapped using a list of {@link Function}s. This
+ * can be useful to apply a set of transformations to a {@link ObjectContainer}, without having
+ * to create a new provider.
+ *
+ * @param <T> The type instance to provide.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ *
+ * @see Provider
+ * @see ObjectContainer
+ */
 public class ComposedProvider<T> implements Provider<T> {
 
     private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions = new LinkedList<>();
@@ -35,10 +48,22 @@ public class ComposedProvider<T> implements Provider<T> {
         this.functions.addAll(List.of(functions));
     }
 
+    /**
+     * Returns the provider that is used as the source of the instance. This provider is not
+     * modified by the functions that are applied to the result of the provider.
+     *
+     * @return The provider that is used as the source of the instance.
+     */
     public Provider<T> provider() {
         return this.provider;
     }
 
+    /**
+     * Returns the list of functions that are applied to the result of the provider. The list
+     * is immutable, and will be in the order in which the functions are applied.
+     *
+     * @return The list of functions that are applied to the result of the provider.
+     */
     public List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions() {
         return List.copyOf(this.functions);
     }

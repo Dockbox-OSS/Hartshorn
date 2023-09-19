@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.application;
 
+import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
@@ -23,11 +28,26 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+/**
+ * Carrier context for {@link ServiceActivator} annotations. This context is used to store all
+ * {@link ServiceActivator} annotations that are found in the application. This context is used
+ * to determine which activators are available, and to retrieve the actual annotation instance.
+ *
+ * <p>Depending on the {@link ApplicationContextConstructor} that is used to create the
+ * {@link ApplicationContext}, this context may be used to supply the {@link ServiceActivator}
+ * annotations.
+ *
+ * <p>This context should always be attached to the {@link ApplicationContext}, and yield the
+ * same result as {@link ApplicationContext#activators()}.
+ *
+ * @see ApplicationContextConstructor
+ * @see ApplicationContext#activators()
+ * @see ServiceActivator
+ * @see ActivatorHolder
+ *
+ * @author Guus Lieben
+ * @since 0.4.11
+ */
 public class ServiceActivatorContext extends DefaultProvisionContext implements Reportable {
 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
@@ -45,10 +65,27 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
         }
     }
 
+    /**
+     * Returns all {@link ServiceActivator} annotations that are available in this context. This
+     * includes all activators that are provided to this context, and will not filter out any hierarchical
+     * activators.
+     *
+     * @return All {@link ServiceActivator} annotations that are available in this context.
+     */
     public Set<Annotation> activators() {
         return Set.copyOf(this.activators.values());
     }
 
+    /**
+     * Returns whether this context contains an activator for the given {@link ServiceActivator}. This
+     * method will only return {@code true} if the given activator is directly available in this context,
+     * but not if the given activator is hierarchical through (virtual) inheritance.
+     *
+     * @param activator The activator to check for
+     * @return {@code true} if the given activator is directly available in this context, {@code false} otherwise.
+     *
+     * @see org.dockbox.hartshorn.util.introspect.annotations.Extends
+     */
     public boolean hasActivator(Class<? extends Annotation> activator) {
         TypeView<? extends Annotation> activatorView = this.applicationContext.environment()
                 .introspect(activator);
@@ -59,6 +96,16 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
         return this.activators.containsKey(activator);
     }
 
+    /**
+     * Returns the {@link ServiceActivator} annotation instance for the given activator type. This method
+     * will only return a value if the given activator is directly available in this context, but not if
+     * the given activator is hierarchical through (virtual) inheritance.
+     *
+     * @param activator The activator to retrieve
+     * @return The {@link ServiceActivator} annotation instance for the given activator type, or {@code null} if the
+     *         given activator is not directly available in this context.
+     * @param <A> The type of the activator
+     */
     public <A> A activator(Class<A> activator) {
         Annotation annotation = this.activators.get(activator);
         if (annotation != null) {

@@ -18,6 +18,18 @@ package org.dockbox.hartshorn.application;
 
 import java.util.List;
 
+/**
+ * Basic context for the application bootstrap process. This context is used to determine the main class and arguments
+ * passed to the application, as well as whether or not to include the base packages of the main class. The amount of
+ * context provided is limited at this stage, as the application bootstrap process is the first step in the application
+ * lifecycle.
+ *
+ * @see ApplicationBuildContext
+ * @see StandardApplicationContextConstructor
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public class ApplicationBootstrapContext extends ApplicationBuildContext {
 
     private final boolean includeBasePackages;
@@ -27,6 +39,11 @@ public class ApplicationBootstrapContext extends ApplicationBuildContext {
         this.includeBasePackages = includeBasePackages;
     }
 
+    /**
+     * Returns {@code true} if the base packages of the main class should be included in the application context.
+     *
+     * @return {@code true} if the base packages of the main class should be included in the application context.
+     */
     public boolean includeBasePackages() {
         return this.includeBasePackages;
     }

@@ -37,10 +37,10 @@ import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
@@ -50,6 +50,35 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+/**
+ * A {@link ApplicationContext} implementation that delegates to a {@link ComponentLocator} and {@link ComponentProvider}.
+ * This implementation is used to allow for custom implementations of these interfaces, while still allowing for the
+ * {@link ApplicationContext} to function in a predictable manner.
+ *
+ * <p>Details like component processors and context initialization are not handled as they are specific to the
+ * {@link ApplicationContext} implementation. This implementation is intended to be used as a base class for
+ * {@link ApplicationContext} implementations.
+ *
+ * <p>While the lifecycle during startup is not explicitly managed by this implementation, it does provide handling for
+ * {@link LifecycleObserver#onExit(ApplicationContext)}. This allows for the {@link ApplicationContext} to be closed
+ * in a predictable manner.
+ *
+ * <p>Bindings are configured using a {@link ContextualEnvironmentBinderConfiguration}. This configuration is used to
+ * bind all components that are provided by- and delegated to the {@link ApplicationContext}- and
+ * {@link ApplicationEnvironment} instances. Additional bindings can be added by providing a
+ * {@link DefaultBindingConfigurer} to the {@link DelegatingApplicationContext.Configurer}.
+ *
+ * @author Guus Lieben
+ *
+ * @see ApplicationContext
+ * @see ComponentLocator
+ * @see ComponentProvider
+ * @see ApplicationEnvironment
+ * @see DelegatingApplicationContext.Configurer
+ * @see ContextualEnvironmentBinderConfiguration
+ *
+ * @since 0.5.0
+ */
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext {
 
@@ -61,7 +90,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     private boolean isClosed = false;
     protected boolean isRunning = false;
 
-    protected DelegatingApplicationContext(InitializerContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
+    protected DelegatingApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
         super(null);
         this.environment = initializerContext.input();
 
@@ -73,7 +102,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
         this.environmentValues = this.environment.rawArguments();
 
-        InitializerContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
+        SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
         this.locator = configurer.componentLocator.initialize(applicationInitializerContext);
         this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
 
@@ -86,8 +115,18 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         configuration.configureBindings(this.environment, bindingConfigurer, this);
     }
 
+    /**
+     * Prepares the initialization of the {@link ApplicationContext}. This method is called before any bindings are
+     * configured. This method is intended to be overridden by implementations to perform any initialization that is
+     * required before bindings are configured.
+     */
     protected abstract void prepareInitialization();
 
+    /**
+     * Checks if the {@link ApplicationContext} is running. If it is, an {@link IllegalModificationException} is thrown.
+     * This method is intended to be called by implementations to prevent modifications to the {@link ApplicationContext}
+     * after it has been started.
+     */
     protected void checkRunning() {
         if (this.isRunning) {
             throw new IllegalModificationException("Application context cannot be modified after it has been started");
@@ -215,10 +254,16 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         return this.isClosed;
     }
 
+    /**
+     * @return the {@link ComponentLocator} that is used by this {@link ApplicationContext} to locate components
+     */
     public ComponentLocator locator() {
         return this.locator;
     }
 
+    /**
+     * @return the {@link ComponentProvider} that is used by this {@link ApplicationContext} to provide components
+     */
     public ComponentProvider componentProvider() {
         return this.componentProvider;
     }

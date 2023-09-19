@@ -34,6 +34,29 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.slf4j.Logger;
 
+/**
+ * The default {@link EnvironmentBinderConfiguration} used by the {@link DelegatingApplicationContext}. This configuration
+ * binds all components that are provided by- and delegated to the {@link ApplicationContext}- and {@link ApplicationEnvironment}
+ * instances.
+ *
+ * <p>Additional bindings can be added by providing a {@link DefaultBindingConfigurer} to the {@link DelegatingApplicationContext.Configurer}.
+ * These additional bindings are processed after the default bindings, and can be used to override default bindings. This is
+ * useful when the default bindings are not sufficient, or when the default bindings are not desired.
+ *
+ * <p>Bindings for specific implementations will optionally be registered for the following types:
+ * <ul>
+ *     <li>{@link LifecycleObservable}, if the {@link ApplicationEnvironment environment} is an instance of {@link ObservableApplicationEnvironment}</li>
+ *     <li>{@link ComponentLocator}, if the {@link ApplicationContext application context} is an instance of {@link DelegatingApplicationContext}</li>
+ * </ul>
+ *
+ * @see DefaultBindingConfigurer
+ * @see DelegatingApplicationContext.Configurer#defaultBindings(DefaultBindingConfigurer)
+ * @see ObservableApplicationEnvironment
+ * @see DelegatingApplicationContext
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 @LogExclude
 public class ContextualEnvironmentBinderConfiguration implements EnvironmentBinderConfiguration {
 

@@ -16,10 +16,28 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 
-public interface InitializerContext<I> extends Context {
-    I input();
+/**
+ * A context that contains a single element. This is useful for when you want to pass a single
+ * object through a context chain.
+ *
+ * @param <I> the type of the input object
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+public interface SingleElementContext<I> extends Context {
+
+    /**
+     * Returns the input object. This is the object that is passed through the context chain, and
+     * may be null.
+     *
+     * @return the input object
+     */
+    @Nullable I input();
 
     /**
      * Transforms the input into a new context. This is useful for when you want to keep the
@@ -30,6 +48,6 @@ public interface InitializerContext<I> extends Context {
      * @return the new context, containing the new input and a copy of the original context
      * @param <T> the type of the new input
      */
-    <T> InitializerContext<T> transform(T input);
+    <T> @NonNull SingleElementContext<@Nullable T> transform(@Nullable T input);
 
 }

@@ -104,7 +104,7 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
         return this.objects.stream();
     }
 
-    public List<T> initialize(InitializerContext<? extends I> input) {
+    public List<T> initialize(SingleElementContext<? extends I> input) {
         return this.stream()
                 .map(resolver -> resolver.initialize(input))
                 .toList();

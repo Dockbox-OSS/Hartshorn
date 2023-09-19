@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -108,8 +108,8 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     private ApplicationContext applicationContext;
     private Introspector introspector;
 
-    private ContextualApplicationEnvironment(InitializerContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
-        InitializerContext<ContextualApplicationEnvironment> environmentInitializerContext = context.transform(this);
+    private ContextualApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
+        SingleElementContext<ContextualApplicationEnvironment> environmentInitializerContext = context.transform(this);
 
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
         this.applicationProxier = this.configure(environmentInitializerContext, configurer.applicationProxier);
@@ -121,7 +121,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
         this.arguments = this.argumentParser.parse(context.input().arguments());
 
-        InitializerContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
+        SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
         this.stacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
 
@@ -144,7 +144,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
     }
 
-    private <T> T configure(InitializerContext<ContextualApplicationEnvironment> context, ContextualInitializer<ApplicationEnvironment, T> initializer) {
+    private <T> T configure(SingleElementContext<ContextualApplicationEnvironment> context, ContextualInitializer<ApplicationEnvironment, T> initializer) {
         T instance = initializer.initialize(context);
         return this.configure(instance);
     }

@@ -16,12 +16,23 @@
 
 package org.dockbox.hartshorn.application;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
+/**
+ * Basic instruction context for the application. This context is used to determine the main class and arguments
+ * passed to the application. Most likely this context is constructed based on the parameters provided to a
+ * {@link ApplicationBuilder}. The amount of context provided is limited at this stage, as the application bootstrap
+ * process is the first step in the application lifecycle.
+ *
+ * @see ApplicationBuilder
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public class ApplicationBuildContext extends DefaultContext {
 
     private final Class<?> mainClass;
@@ -36,14 +47,32 @@ public class ApplicationBuildContext extends DefaultContext {
         this.logger = LoggerFactory.getLogger(mainClass);
     }
 
+    /**
+     * Returns the main class of the application. When this context is created, the validity of the main class is
+     * verified. It is thus safe to assume that this class can be loaded, or otherwise accessed.
+     *
+     * @return The main class of the application.
+     */
     public Class<?> mainClass() {
         return this.mainClass;
     }
 
+    /**
+     * Returns the arguments that were passed to the application. These arguments have not been parsed or validated,
+     * and are provided as-is.
+     *
+     * @return The arguments that were passed to the application.
+     */
     public List<String> arguments() {
         return this.arguments;
     }
 
+    /**
+     * Returns the logger to use for the bootstrap process. This logger is based on the main class of the application,
+     * or otherwise a default logger.
+     *
+     * @return The logger to use for the bootstrap process.
+     */
     public Logger logger() {
         return this.logger;
     }

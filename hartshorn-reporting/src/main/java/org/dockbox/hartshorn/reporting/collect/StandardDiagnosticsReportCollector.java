@@ -16,15 +16,25 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
+/**
+ * A standard implementation of {@link DiagnosticsReportCollector} which uses a {@link NodeDiagnosticsReport} as the
+ * backing data structure.
+ *
+ * @see NodeDiagnosticsReport
+ * @see DiagnosticsReportCollector
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
 
     private final NodeDiagnosticsReport report = new NodeDiagnosticsReport();

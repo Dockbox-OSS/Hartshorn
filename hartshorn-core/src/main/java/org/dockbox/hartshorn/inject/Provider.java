@@ -45,6 +45,14 @@ public interface Provider<T> {
      */
     Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException;
 
+    /**
+     * Maps the result of this provider using the provided {@link Function}. The result of the
+     * function is returned as the result of the provider. This may return a new provider, or
+     * this provider.
+     *
+     * @param mappingFunction The function to apply to the result of this provider.
+     * @return A provider that applies the provided function to the result of this provider.
+     */
     default Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         return new ComposedProvider<>(this, mappingFunction);
     }

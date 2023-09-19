@@ -18,12 +18,39 @@ package org.dockbox.hartshorn.reporting;
 
 import org.dockbox.hartshorn.util.Node;
 
+/**
+ * A diagnostics report which uses a {@link Node} as its root node. A report may be used to collect
+ * diagnostics information, and serialize it to a specific format. The report itself does not
+ * provide any serialization functionality, but does provide a method to serialize itself using a
+ * {@link ReportSerializer}.
+ *
+ * @see ReportSerializer
+ * @see DiagnosticsPropertyCollector
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+@FunctionalInterface
 public interface DiagnosticsReport {
 
+    /**
+     * Returns the root node of this report. The root node is the entry point for all information
+     * that is collected by this report.
+     *
+     * @return the root node of this report
+     */
     Node<?> root();
 
+    /**
+     * Serializes this report using the given {@link ReportSerializer}. The serializer is expected
+     * to return a value that represents the serialized report.
+     *
+     * @param serializer the serializer to use
+     * @return the serialized report
+     * @param <T> the type of the serialized report
+     * @throws ReportSerializationException if the serialization fails
+     */
     default <T> T serialize(final ReportSerializer<T> serializer) throws ReportSerializationException {
         return serializer.serialize(this);
     }
-
 }

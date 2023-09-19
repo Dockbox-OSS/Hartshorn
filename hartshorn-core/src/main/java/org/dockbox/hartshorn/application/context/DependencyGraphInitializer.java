@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
@@ -42,7 +42,7 @@ public class DependencyGraphInitializer {
     private final ApplicationContext applicationContext;
     private final DependencyResolver dependencyResolver;
 
-    public DependencyGraphInitializer(InitializerContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
+    public DependencyGraphInitializer(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
         this.applicationContext = initializerContext.input();
         this.dependencyResolver = configurer.dependencyResolver.initialize(initializerContext);
         this.graphBuilder = configurer.dependencyGraphBuilder.initialize(initializerContext);

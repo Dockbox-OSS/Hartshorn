@@ -16,22 +16,37 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.util.AbstractInitializerContext;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.AbstractSingleElementContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 
-public class ApplicationInitializerContext<I> extends AbstractInitializerContext<I> {
+/**
+ * A context used to initialize the application. This context will always provide a {@link DefaultBindingConfigurerContext}
+ * as the first element, which can be used to configure the {@link DefaultBindingConfigurer} used to create the application's
+ * default bindings.
+ *
+ * @param <I> The type of the input object.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+public class ApplicationInitializerContext<I> extends AbstractSingleElementContext<I> {
 
     public ApplicationInitializerContext(I input) {
         super(input);
     }
 
+    /**
+     * Initializes the context with a {@link DefaultBindingConfigurerContext} as the first element.
+     *
+     * @return The current context.
+     */
     public ApplicationInitializerContext<I> initializeInitial() {
         this.add(new DefaultBindingConfigurerContext());
         return this;
     }
 
     @Override
-    protected <T> InitializerContext<T> clone(T input) {
+    protected <T> SingleElementContext<T> clone(T input) {
         return new ApplicationInitializerContext<>(input);
     }
 }

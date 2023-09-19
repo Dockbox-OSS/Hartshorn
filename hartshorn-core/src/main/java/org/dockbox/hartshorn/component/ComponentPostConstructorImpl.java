@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.InitializerContext;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -37,7 +37,7 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
     private final ApplicationContext applicationContext;
     private final ViewContextAdapter contextAdapter;
 
-    protected ComponentPostConstructorImpl(InitializerContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
+    protected ComponentPostConstructorImpl(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
         this.applicationContext = initializerContext.input();
         this.contextAdapter = configurer.viewContextAdapter.initialize(initializerContext.transform(this.applicationContext));
     }
