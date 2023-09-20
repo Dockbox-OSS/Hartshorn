@@ -37,13 +37,13 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     private final ApplicationContext applicationContext;
     private final Scope scope;
 
-    public IntrospectionViewContextAdapter(final ApplicationContext applicationContext, final Scope scope) {
+    public IntrospectionViewContextAdapter(ApplicationContext applicationContext, Scope scope) {
         this.applicationContext = applicationContext;
         this.scope = scope;
     }
 
     @Inject
-    public IntrospectionViewContextAdapter(final ApplicationContext applicationContext) {
+    public IntrospectionViewContextAdapter(ApplicationContext applicationContext) {
         this(applicationContext, applicationContext);
     }
 
@@ -53,52 +53,52 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     }
 
     @Override
-    public ViewContextAdapter scope(final Scope scope) {
+    public ViewContextAdapter scope(Scope scope) {
         return new IntrospectionViewContextAdapter(this.applicationContext, scope);
     }
 
     @Override
-    public <T> Attempt<T, Throwable> create(final ConstructorView<T> constructor) {
-        final Object[] parameters = this.loadParameters(constructor);
+    public <T> Attempt<T, Throwable> create(ConstructorView<T> constructor) {
+        Object[] parameters = this.loadParameters(constructor);
         return constructor.create(parameters);
     }
 
     @Override
-    public Object[] loadParameters(final ExecutableElementView<?> element) {
-        final ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
-        final ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
+    public Object[] loadParameters(ExecutableElementView<?> element) {
+        ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
+        ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
 
     @Override
-    public <P, R> Attempt<R, Throwable> invoke(final MethodView<P, R> method) {
+    public <P, R> Attempt<R, Throwable> invoke(MethodView<P, R> method) {
         if (method.modifiers().isStatic()) {
             return this.invokeStatic(method);
         }
-        final Object[] parameters = this.loadParameters(method);
-        final P instance = this.applicationContext().get(this.key(method.declaredBy().type()));
+        Object[] parameters = this.loadParameters(method);
+        P instance = this.applicationContext().get(this.key(method.declaredBy().type()));
         return method.invoke(instance, parameters);
     }
 
     @Override
-    public <P, R> Attempt<R, Throwable> invokeStatic(final MethodView<P, R> method) {
+    public <P, R> Attempt<R, Throwable> invokeStatic(MethodView<P, R> method) {
         if (!method.modifiers().isStatic()) {
             return this.invoke(method);
         }
-        final Object[] parameters = this.loadParameters(method);
+        Object[] parameters = this.loadParameters(method);
         return method.invokeStatic(parameters);
     }
 
     @Override
-    public <P, R> Attempt<R, Throwable> load(final FieldView<P, R> field) {
-        final P instance = this.applicationContext().get(this.key(field.declaredBy().type()));
+    public <P, R> Attempt<R, Throwable> load(FieldView<P, R> field) {
+        P instance = this.applicationContext().get(this.key(field.declaredBy().type()));
         return field.get(instance);
     }
 
     @Override
-    public <T> Attempt<T, Throwable> load(final GenericTypeView<T> element) {
+    public <T> Attempt<T, Throwable> load(GenericTypeView<T> element) {
         if (element instanceof TypeView<?> typeView) {
-            final ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
+            ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
             return Attempt.of(this.applicationContext().get(key));
         }
         else if (element instanceof FieldView<?, ?> fieldView) {
@@ -111,18 +111,18 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
             return this.create(TypeUtils.adjustWildcards(constructorView, ConstructorView.class));
         }
         else if (element instanceof ParameterView<?> parameterView) {
-            final ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
+            ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
             return Attempt.of(this.applicationContext().get(key));
         }
         return Attempt.of(new IllegalArgumentException("Unsupported element type: " + element.getClass().getName()));
     }
 
     @Override
-    public boolean isProxy(final TypeView<?> type) {
+    public boolean isProxy(TypeView<?> type) {
         return !type.isWildcard() && this.applicationContext().environment().isProxy(type.type());
     }
 
-    private <T> ComponentKey<T> key(final Class<T> type) {
+    private <T> ComponentKey<T> key(Class<T> type) {
         return ComponentKey.builder(type).scope(this.scope).build();
     }
 }

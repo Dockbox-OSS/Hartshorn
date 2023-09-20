@@ -30,22 +30,28 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
 
     private boolean lazy;
     private boolean singleton;
+    private boolean processAfterInitialization = true;
 
-    protected AbstractDependencyContext(final ComponentKey<T> componentKey, final Set<ComponentKey<?>> dependencies,
-                                            final Class<? extends Scope> scope, final int priority) {
+    protected AbstractDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies,
+                                        Class<? extends Scope> scope, int priority) {
         this.componentKey = componentKey;
         this.dependencies = Set.copyOf(dependencies);
         this.scope = scope;
         this.priority = priority;
     }
 
-    public AbstractDependencyContext<T> lazy(final boolean lazy) {
+    public AbstractDependencyContext<T> lazy(boolean lazy) {
         this.lazy = lazy;
         return this;
     }
 
-    public AbstractDependencyContext<T> singleton(final boolean singleton) {
+    public AbstractDependencyContext<T> singleton(boolean singleton) {
         this.singleton = singleton;
+        return this;
+    }
+
+    public AbstractDependencyContext<T> processAfterInitialization(boolean processAfterInitialization) {
+        this.processAfterInitialization = processAfterInitialization;
         return this;
     }
 
@@ -70,10 +76,14 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     public boolean lazy() {
-        return lazy;
+        return this.lazy;
     }
 
     public boolean singleton() {
-        return singleton;
+        return this.singleton;
+    }
+
+    public boolean processAfterInitialization() {
+        return this.processAfterInitialization;
     }
 }

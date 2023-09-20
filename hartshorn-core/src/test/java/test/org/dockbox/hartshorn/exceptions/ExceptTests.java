@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.exceptions;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.ModifyApplication;
+import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +34,11 @@ public class ExceptTests {
     private static TestExceptionHandle HANDLE;
 
     @ModifyApplication
-    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
-        return factory.exceptionHandler(ctx -> (HANDLE  = new TestExceptionHandle()));
+    public static void customize() {
+        TestCustomizer.ENVIRONMENT.compose(environment -> {
+            ExceptTests.HANDLE = new TestExceptionHandle();
+            environment.exceptionHandler(ExceptTests.HANDLE);
+        });
     }
 
     @Test

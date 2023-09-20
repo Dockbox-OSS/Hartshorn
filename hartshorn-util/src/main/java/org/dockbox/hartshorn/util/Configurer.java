@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.inject.binding.Binder;
 
-public interface ContextBinderConfiguration<C extends Context> {
-
-    void configureBindings(C context, Binder binder);
+/**
+ * A marker interface for classes that can be configured. This interface is used to allow for
+ * context-attached configurers to be used in {@link Customizer}s.
+ */
+public interface Configurer extends Context {
 }

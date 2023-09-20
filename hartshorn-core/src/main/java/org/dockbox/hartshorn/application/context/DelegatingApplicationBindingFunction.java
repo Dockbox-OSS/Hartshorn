@@ -17,63 +17,88 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
-public class DelegatingApplicationBindingFunction<T> implements BindingFunction<T> {
+/**
+ * A {@link BindingFunction} that delegates all calls to the provided {@link BindingFunction delegate}, but returns the
+ * {@link ApplicationContext} instead of the {@link Binder} to allow for chaining. This is used to allow for the
+ * {@link ApplicationContext} to use custom binders, while still allowing for the {@link ApplicationContext} to be
+ * returned.
+ *
+ * @param <T> the type of the binding
+ *
+ * @see ApplicationContext
+ * @see BindingFunction
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+public class DelegatingApplicationBindingFunction<T> implements BindingFunction<T>, ContextCarrier {
 
     private final ApplicationContext applicationContext;
     private final BindingFunction<T> delegate;
 
-    public DelegatingApplicationBindingFunction(final ApplicationContext applicationContext, final BindingFunction<T> delegate) {
+    public DelegatingApplicationBindingFunction(ApplicationContext applicationContext, BindingFunction<T> delegate) {
         this.applicationContext = applicationContext;
         this.delegate = delegate;
     }
 
     @Override
-    public BindingFunction<T> installTo(final Class<? extends Scope> scope) {
+    public BindingFunction<T> installTo(Class<? extends Scope> scope) {
         return this.delegate.installTo(scope);
     }
 
     @Override
-    public BindingFunction<T> priority(final int priority) {
+    public BindingFunction<T> priority(int priority) {
         return this.delegate.priority(priority);
     }
 
     @Override
-    public ApplicationContext to(final Class<? extends T> type) {
+    public BindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
+        return this.delegate.processAfterInitialization(processAfterInitialization);
+    }
+
+    @Override
+    public ApplicationContext to(Class<? extends T> type) {
         this.delegate.to(type);
         return this.applicationContext;
     }
 
     @Override
-    public ApplicationContext to(final CheckedSupplier<T> supplier) {
+    public ApplicationContext to(CheckedSupplier<T> supplier) {
         this.delegate.to(supplier);
         return this.applicationContext;
     }
 
     @Override
-    public Binder to(final Provider<T> provider) {
+    public Binder to(Provider<T> provider) {
         return this.delegate.to(provider);
     }
 
     @Override
-    public ApplicationContext singleton(final T instance) {
+    public ApplicationContext singleton(T instance) {
         this.delegate.singleton(instance);
         return this.applicationContext;
     }
 
     @Override
-    public ApplicationContext lazySingleton(final Class<T> type) {
+    public ApplicationContext lazySingleton(Class<T> type) {
         this.delegate.lazySingleton(type);
         return this.applicationContext;
     }
 
     @Override
-    public ApplicationContext lazySingleton(final CheckedSupplier<T> supplier) {
+    public ApplicationContext lazySingleton(CheckedSupplier<T> supplier) {
         this.delegate.lazySingleton(supplier);
+        return this.applicationContext;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
         return this.applicationContext;
     }
 }

@@ -22,7 +22,10 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
 import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
+import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -36,11 +39,11 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     private final ConditionMatcher conditionMatcher;
     private final BindingStrategyRegistry registry;
 
-    public BindsMethodDependencyResolver(final ConditionMatcher conditionMatcher) {
+    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher) {
         this(conditionMatcher, new SimpleBindingStrategyRegistry());
     }
 
-    public BindsMethodDependencyResolver(final ConditionMatcher conditionMatcher, final BindingStrategyRegistry registry) {
+    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, BindingStrategyRegistry registry) {
         this.conditionMatcher = conditionMatcher;
         this.registry = registry;
     }
@@ -50,17 +53,27 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(final DependencyDeclarationContext<T> componentContainer, final ApplicationContext applicationContext) {
-        final TypeView<T> componentType = componentContainer.type();
-        final List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
+    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) {
+        TypeView<T> componentType = componentContainer.type();
+        List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
         return bindsMethods.stream()
                 .filter(this.conditionMatcher::match)
                 .flatMap(bindsMethod -> this.resolve(applicationContext, componentContainer, bindsMethod).stream())
                 .collect(Collectors.toSet());
     }
 
-    private <T> Option<DependencyContext<?>> resolve(final ApplicationContext applicationContext, final DependencyDeclarationContext<T> componentContainer, final MethodView<T, ?> method) {
-        final BindingStrategyContext<T> strategyContext = new MethodAwareBindingStrategyContext<>(applicationContext, componentContainer, method);
+    private <T> Option<DependencyContext<?>> resolve(ApplicationContext applicationContext, DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
+        BindingStrategyContext<T> strategyContext = new MethodAwareBindingStrategyContext<>(applicationContext, componentContainer, method);
         return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
+    }
+
+    public static ContextualInitializer<ConditionMatcher, DependencyResolver> create(Customizer<BindingStrategyRegistry> customizer) {
+        return context -> {
+            BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
+            registry.register(new MethodInstanceBindingStrategy());
+
+            customizer.configure(registry);
+            return new BindsMethodDependencyResolver(context.input(), registry);
+        };
     }
 }

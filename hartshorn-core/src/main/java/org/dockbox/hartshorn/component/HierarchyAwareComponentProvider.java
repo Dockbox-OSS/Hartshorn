@@ -58,35 +58,35 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     private final transient SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
-    public HierarchyAwareComponentProvider(final ScopedProviderOwner owner, final Scope scope) {
+    public HierarchyAwareComponentProvider(ScopedProviderOwner owner, Scope scope) {
         this.owner = owner;
         this.scope = scope;
     }
 
-    private <T> Option<ObjectContainer<T>> create(final ComponentKey<T> key) {
+    private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key) {
         try {
-            final Option<ObjectContainer<T>> objectContainer = this.provide(key);
+            Option<ObjectContainer<T>> objectContainer = this.provide(key);
             if (objectContainer.present()) {
                 return objectContainer;
             }
 
             return this.createContextualInstanceContainer(key);
-        } catch (final ApplicationException e) {
+        } catch (ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
         }
     }
 
     @Override
-    public <C> BindingFunction<C> bind(final ComponentKey<C> key) {
+    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
         if (key.scope() != this.scope && key.scope() != Scope.DEFAULT_SCOPE) {
             throw new IllegalArgumentException("Cannot bind to a different scope");
         }
-        final BindingHierarchy<C> hierarchy = this.hierarchy(key);
+        BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
-        final ContextKey<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
+        ContextKey<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
                 .fallback(ScopeModuleContext::new)
                 .build();
-        final Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().first(scopeModuleContextKey);
+        Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().first(scopeModuleContextKey);
 
         if (scopeModuleContext.absent() && !(this.scope instanceof ApplicationContext)) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
@@ -96,17 +96,17 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     @Override
-    public <C> Binder bind(final BindingHierarchy<C> hierarchy) {
+    public <C> Binder bind(BindingHierarchy<C> hierarchy) {
         this.hierarchies.put(hierarchy.key().view(), hierarchy);
         return this;
     }
 
-    public <T> Option<ObjectContainer<T>> provide(final ComponentKey<T> key) throws ApplicationException {
-        final Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
+    public <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key) throws ApplicationException {
+        Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
         if (hierarchy.present()) {
             // Will continue going through each provider until a provider was successful or no other providers remain
-            for (final Provider<T> provider : hierarchy.get().providers()) {
-                final Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
+            for (Provider<T> provider : hierarchy.get().providers()) {
+                Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
                 if (provided.present()) {
                     return provided;
                 }
@@ -115,7 +115,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return Option.empty();
     }
 
-    protected <T> T process(final ComponentKey<T> key, final ObjectContainer<T> objectContainer, final ComponentContainer<?> container) {
+    protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, ComponentContainer<?> container) {
         if (container != null && !container.permitsProcessing()) {
             return objectContainer.instance();
         }
@@ -127,14 +127,14 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return processingContext.instance();
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(final ComponentKey<T> key, final T instance, final ComponentContainer<?> container) {
-        final ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
+    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, ComponentContainer<?> container) {
+        ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
                 this.applicationContext(), key, instance, latest -> this.storeSingletons(key, latest));
 
         if (container != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), container);
             if (container.permitsProxying()) {
-                final StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
+                StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
 
                 if (instance != null) {
                     factory.trackState(false);
@@ -147,11 +147,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return processingContext;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> process(final ModifiableComponentProcessingContext<T> processingContext) {
-        final ComponentKey<T> key = processingContext.key();
+    protected <T> ModifiableComponentProcessingContext<T> process(ModifiableComponentProcessingContext<T> processingContext) {
+        ComponentKey<T> key = processingContext.key();
 
-        for (final Integer priority : this.owner.postProcessors().keySet()) {
-            for (final ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
+        for (Integer priority : this.owner.postProcessors().keySet()) {
+            for (ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
                 postProcessor.process(processingContext);
             }
         }
@@ -159,17 +159,17 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return processingContext;
     }
 
-    protected <T> void storeSingletons(final ComponentKey<T> key, final T instance) {
+    protected <T> void storeSingletons(ComponentKey<T> key, T instance) {
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null) {
-            final TypeView<T> keyType = this.applicationContext().environment().introspect(key.type());
+            TypeView<T> keyType = this.applicationContext().environment().introspect(key.type());
             boolean isSingleton = this.applicationContext().environment().singleton(keyType);
 
             // Same effect as ||, but this is more readable. It's important to only check the instance type if the key doesn't already match,
             // as introspecting and unproxying the instance can be expensive when it's not necessary.
             if (!isSingleton) {
-                final TypeView<T> instanceType = this.applicationContext().environment().introspect(instance);
+                TypeView<T> instanceType = this.applicationContext().environment().introspect(instance);
                 isSingleton = this.applicationContext().environment().singleton(instanceType);
             }
 
@@ -179,12 +179,12 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
     }
 
-    public <T> Option<ObjectContainer<T>> createContextualInstanceContainer(final ComponentKey<T> key) throws ApplicationException {
+    public <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key) throws ApplicationException {
         return new ContextDrivenProvider<>(key).provide(this.applicationContext());
     }
 
     @Override
-    public <T> T get(final ComponentKey<T> componentKey) {
+    public <T> T get(ComponentKey<T> componentKey) {
         if (componentKey.type() == ApplicationContext.class && StringUtilities.empty(componentKey.name())) {
             return TypeUtils.adjustWildcards(this.applicationContext(), Object.class);
         }
@@ -195,10 +195,10 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
         this.owner.componentLocator().validate(componentKey);
 
-        final ObjectContainer<T> objectContainer = this.create(componentKey)
-                .orElseGet(() -> new ObjectContainer<>(null, false));
+        ObjectContainer<T> objectContainer = this.create(componentKey)
+                .orElseGet(() -> new ObjectContainer<>(null));
 
-        final T instance = objectContainer.instance();
+        T instance = objectContainer.instance();
 
         // If the object is already processed at this point, it means that the object container was
         // reused, so we don't need to process it again. Note that this is not the same as the object
@@ -212,13 +212,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return this.processInstance(componentKey, objectContainer, instance);
     }
 
-    private <T> T processInstance(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer, T instance) {
+    private <T> T processInstance(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, T instance) {
         Class<? extends T> type = componentKey.type();
         if (instance != null) {
             type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
         }
 
-        final Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
+        Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
         instance = container.present()
                 ? this.getManagedComponent(componentKey, objectContainer, container)
                 : this.getUnmanagedComponent(componentKey, objectContainer, type);
@@ -230,14 +230,14 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return this.finishComponentRequest(componentKey, instance);
     }
 
-    private <T> T finishComponentRequest(final ComponentKey<T> componentKey, T instance) {
+    private <T> T finishComponentRequest(ComponentKey<T> componentKey, T instance) {
         this.storeSingletons(componentKey, instance);
 
         // Inject properties if applicable
         if (componentKey.enable()) {
             try {
                 instance = this.owner.postConstructor().doPostConstruct(instance);
-            } catch (final ApplicationException e) {
+            } catch (ApplicationException e) {
                 throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
@@ -245,15 +245,15 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return instance;
     }
 
-    private <T> T getManagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer,
-                                      final Option<ComponentContainer<?>> container) {
+    private <T> T getManagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer,
+                                      Option<ComponentContainer<?>> container) {
         // Will only mark the object container as processed if the component container permits
         // processing.
         return this.process(componentKey, objectContainer, container.get());
     }
 
-    private <T> T getUnmanagedComponent(final ComponentKey<T> componentKey, final ObjectContainer<T> objectContainer, final Class<? extends T> type) {
-        final TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
+    private <T> T getUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type) {
+        TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }
@@ -266,18 +266,18 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     @Override
-    public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
+    public <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key) {
         return this.hierarchy(key, false);
     }
 
     @Override
     public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
-        final MultiMap<Scope, BindingHierarchy<?>> map = new HashSetMultiMap<>();
+        MultiMap<Scope, BindingHierarchy<?>> map = new HashSetMultiMap<>();
         map.putAll(this.scope, this.hierarchies.values());
         return map;
     }
 
-    private <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key, final boolean useParentIfAbsent) {
+    private <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
@@ -285,7 +285,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
-        final BindingHierarchy<?> hierarchy = this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
+        BindingHierarchy<?> hierarchy = this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
             // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
             // the application context. This is useful for components that are not explicitly scoped,
             // but are still accessed through a scope.
@@ -294,7 +294,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             }
             return new NativeBindingHierarchy<>(key, this.applicationContext());
         });
-        final BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
+        BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (adjustedHierarchy instanceof ContextWrappedHierarchy) {
             return adjustedHierarchy;

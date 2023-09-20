@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.logging;
 
-import java.util.concurrent.atomic.AtomicReference;
+public class Slf4jApplicationLogger extends CallerLookupApplicationLogger {
 
-@FunctionalInterface
-public interface Initializer<T> {
-    T initialize(InitializingContext context);
-
-    default Initializer<T> cached() {
-        final AtomicReference<T> value = new AtomicReference<>();
-        return (context) -> {
-            if (value.get() == null) {
-                value.set(this.initialize(context));
-            }
-            return value.get();
-        };
+    @Override
+    public void setDebugActive(boolean active) {
+        // Not supported by SLF4J directly, so we do nothing. Specific implementations may support this.
+        log().warn("Changing level at runtime is not supported by SLF4J, please use a different application logger");
     }
 }

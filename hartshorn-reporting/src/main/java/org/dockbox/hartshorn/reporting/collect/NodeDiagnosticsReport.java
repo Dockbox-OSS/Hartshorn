@@ -19,6 +19,12 @@ package org.dockbox.hartshorn.reporting.collect;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.util.GroupNode;
 
+/**
+ * A diagnostics report which uses a {@link GroupNode} as its root node.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public class NodeDiagnosticsReport implements DiagnosticsReport {
 
     private final GroupNode root = new GroupNode("root");

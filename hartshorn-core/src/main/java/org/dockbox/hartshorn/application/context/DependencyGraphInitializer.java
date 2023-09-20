@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import java.util.Collection;
+import java.util.Set;
+
+import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.DependencyContext;
@@ -24,12 +28,12 @@ import org.dockbox.hartshorn.inject.DependencyPresenceValidationVisitor;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-
-import java.util.Collection;
-import java.util.Set;
 
 public class DependencyGraphInitializer {
 
@@ -38,32 +42,75 @@ public class DependencyGraphInitializer {
     private final ApplicationContext applicationContext;
     private final DependencyResolver dependencyResolver;
 
-    public DependencyGraphInitializer(final ApplicationContext applicationContext, final DependencyResolver dependencyResolver) {
-        this.dependencyResolver = dependencyResolver;
-        this.graphBuilder = new DependencyGraphBuilder();
-        this.dependencyVisitor = new ConfigurationDependencyVisitor(applicationContext);
-        this.applicationContext = applicationContext;
+    public DependencyGraphInitializer(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
+        this.applicationContext = initializerContext.input();
+        this.dependencyResolver = configurer.dependencyResolver.initialize(initializerContext);
+        this.graphBuilder = configurer.dependencyGraphBuilder.initialize(initializerContext);
+        this.dependencyVisitor = configurer.dependencyVisitor.initialize(initializerContext);
     }
 
-    public void initializeDependencyGraph(final Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException, GraphException {
-        final Graph<DependencyContext<?>> dependencyGraph = this.buildDependencyGraph(containers);
-        final Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
+    public void initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException, GraphException {
+        Graph<DependencyContext<?>> dependencyGraph = this.buildDependencyGraph(containers);
+        Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
         this.validateDependencies(dependencyGraph, visitedDependencies);
 
         this.applicationContext.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
     }
 
-    private void validateDependencies(final Graph<DependencyContext<?>> dependencyGraph, final Set<GraphNode<DependencyContext<?>>> visitedDependencies) throws GraphException {
-        final DependencyPresenceValidationVisitor validationVisitor = new DependencyPresenceValidationVisitor(visitedDependencies);
+    private void validateDependencies(Graph<DependencyContext<?>> dependencyGraph, Set<GraphNode<DependencyContext<?>>> visitedDependencies) throws GraphException {
+        DependencyPresenceValidationVisitor validationVisitor = new DependencyPresenceValidationVisitor(visitedDependencies);
         validationVisitor.iterate(dependencyGraph);
-        final Set<GraphNode<DependencyContext<?>>> missingDependencies = validationVisitor.missingDependencies();
+        Set<GraphNode<DependencyContext<?>>> missingDependencies = validationVisitor.missingDependencies();
         if (!missingDependencies.isEmpty()) {
             throw new ComponentInitializationException("Failed to resolve dependencies: %s".formatted(missingDependencies));
         }
     }
 
-    private Graph<DependencyContext<?>> buildDependencyGraph(final Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
-        final Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
+    private Graph<DependencyContext<?>> buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
+        Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
         return this.graphBuilder.buildDependencyGraph(dependencyContexts);
+    }
+
+    public static ContextualInitializer<ApplicationContext, DependencyGraphInitializer> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new DependencyGraphInitializer(context, configurer);
+        };
+    }
+
+    public static class Configurer {
+
+        private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver = ApplicationDependencyResolver.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::new);
+        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(ConfigurationDependencyVisitor::new);
+
+        public Configurer dependencyResolver(DependencyResolver dependencyResolver) {
+            return this.dependencyResolver(ContextualInitializer.of(dependencyResolver));
+        }
+
+        public Configurer dependencyResolver(ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver) {
+            this.dependencyResolver = dependencyResolver;
+            return this;
+        }
+
+        public Configurer dependencyGraphBuilder(DependencyGraphBuilder dependencyGraphBuilder) {
+            return this.dependencyGraphBuilder(ContextualInitializer.of(dependencyGraphBuilder));
+        }
+
+        public Configurer dependencyGraphBuilder(ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder) {
+            this.dependencyGraphBuilder = dependencyGraphBuilder;
+            return this;
+        }
+
+        public Configurer dependencyVisitor(ConfigurationDependencyVisitor dependencyVisitor) {
+            return this.dependencyVisitor(ContextualInitializer.of(dependencyVisitor));
+        }
+
+        public Configurer dependencyVisitor(ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor) {
+            this.dependencyVisitor = dependencyVisitor;
+            return this;
+        }
+
     }
 }

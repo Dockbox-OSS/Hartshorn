@@ -16,21 +16,31 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A simple implementation of {@link ApplicationArgumentParser} that parses arguments in the form of
+ * {@code --key=value}. Keys are expected to be alphanumeric, and may contain the characters {@code .}, {@code :},
+ * {@code _} and {@code -}. Values may be any string of any length (including empty). Arguments are not trimmed.
+ *
+ * @since 0.4.11
+ * @author Guus Lieben
+ */
 public class StandardApplicationArgumentParser implements ApplicationArgumentParser {
 
-    private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.:_-]+)=(.+)");
+    private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.:_-]+)=(.*)");
 
     @Override
-    public Properties parse(final Set<String> arguments) {
+    public Properties parse(final List<String> arguments) {
         final Properties properties = new Properties();
         for (final String arg : arguments) {
             final Matcher matcher = ARGUMENTS.matcher(arg);
-            if (matcher.find()) properties.put(matcher.group(1), matcher.group(2));
+            if (matcher.find()) {
+                properties.put(matcher.group(1), matcher.group(2));
+            }
         }
         return properties;
     }

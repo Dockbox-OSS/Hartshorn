@@ -16,5 +16,12 @@
 
 package org.dockbox.hartshorn.application.lifecycle;
 
+/**
+ * A marker interface for observers. Observers are notified of events within their associated
+ * {@link LifecycleObservable}.
+ *
+ * @since 0.4.8
+ * @author Guus Lieben
+ */
 public interface Observer {
 }

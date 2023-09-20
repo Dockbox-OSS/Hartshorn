@@ -19,11 +19,10 @@ package org.dockbox.hartshorn.inject;
 public class ObjectContainer<T> {
 
     private final T instance;
-    private boolean processed;
+    private boolean processed = false;
 
-    public ObjectContainer(final T instance, final boolean processed) {
+    public ObjectContainer(T instance) {
         this.instance = instance;
-        this.processed = processed;
     }
 
     public T instance() {
@@ -34,7 +33,7 @@ public class ObjectContainer<T> {
         return this.processed;
     }
 
-    public void processed(final boolean processed) {
+    public void processed(boolean processed) {
         this.processed = processed;
     }
 }

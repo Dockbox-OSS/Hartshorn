@@ -64,4 +64,5 @@ public interface Context {
 
     <C extends Context> List<C> all(ContextIdentity<C> key);
 
+    void copyTo(Context context);
 }

@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
+import org.dockbox.hartshorn.util.Configurer;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;
 
-public interface BindingStrategyRegistry {
+public interface BindingStrategyRegistry extends Configurer {
 
     Set<BindingStrategy> strategies();
 

@@ -18,6 +18,27 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+/**
+ * A functional provider for {@link ApplicationContext} instances. This interface is often used by {@link ApplicationBuilder}
+ * implementations to create the {@link ApplicationContext} instance. Implementations may decide whether to always return
+ * the same instance, or create a new instance on each invocation.
+ *
+ * @see StandardApplicationContextConstructor
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+@FunctionalInterface
 public interface ApplicationContextConstructor {
-    ApplicationContext createContext(ApplicationBuilder<?, ?> builder);
+
+    /**
+     * Returns a {@link ApplicationContext} instance. Depending on the implementation of this method, this may be a new
+     * instance on each invocation, or always the same instance.
+     *
+     * <p>The returned instance is expected to be fully initialized, and ready for use. Implementations are expected to
+     * perform all required initialization steps, such as the creation of components, and the activation of components.
+     *
+     * @return The {@link ApplicationContext} instance.
+     */
+    ApplicationContext createContext();
 }

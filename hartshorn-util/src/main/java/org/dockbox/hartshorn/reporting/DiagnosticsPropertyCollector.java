@@ -16,7 +16,24 @@
 
 package org.dockbox.hartshorn.reporting;
 
+/**
+ * A collector for {@link Reportable} instances. This is used to collect properties of a {@link Reportable} instance.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
+@FunctionalInterface
 public interface DiagnosticsPropertyCollector {
 
+    /**
+     * Returns a {@link DiagnosticsPropertyWriter} for the given name. The returned writer can be used to write properties
+     * to the collector. The returned writer is not required to be thread-safe.
+     *
+     * <p>Note that the name of the property is not required to be unique. If multiple properties with the same name are
+     * written, it is up to the implementation of this interface to determine how to handle this.
+     *
+     * @param name the name of the property to write
+     * @return a writer for the given property name
+     */
     DiagnosticsPropertyWriter property(String name);
 }

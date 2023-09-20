@@ -16,22 +16,21 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
-import org.dockbox.hartshorn.inject.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -53,36 +52,43 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private final HierarchyAwareComponentProvider applicationComponentProvider;
     private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
-    public ScopeAwareComponentProvider(final InitializingContext context) {
-        this.applicationContext = context.applicationContext();
-        this.locator = context.componentLocator();
-        this.postConstructor = context.componentPostConstructor();
-        this.factory = this::raw;
+    protected ScopeAwareComponentProvider(SingleElementContext<? extends ComponentLocator> initializerContext, Configurer configurer) {
+        this.locator = initializerContext.input();
+        this.applicationContext = this.locator.applicationContext();
+
+        SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this.applicationContext);
+        this.postConstructor = configurer.componentPostConstructor.initialize(applicationInitializerContext);
+        this.factory = configurer.componentInstanceFactory.initialize(applicationInitializerContext);
+
         this.applicationComponentProvider = this.getOrCreateProvider(this.applicationContext);
     }
 
-    private HierarchyAwareComponentProvider getOrCreateProvider(final Scope scope) {
-        if (scope == Scope.DEFAULT_SCOPE || scope == null) return this.applicationComponentProvider;
+    private HierarchyAwareComponentProvider getOrCreateProvider(Scope scope) {
+        if (scope == Scope.DEFAULT_SCOPE || scope == null) {
+            return this.applicationComponentProvider;
+        }
         synchronized (this.scopedProviders) {
             return this.scopedProviders.computeIfAbsent(scope, this::createComponentProvider);
         }
     }
 
     @NotNull
-    private HierarchyAwareComponentProvider createComponentProvider(final Scope scope) {
-        final HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, scope);
+    private HierarchyAwareComponentProvider createComponentProvider(Scope scope) {
+        HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, scope);
         if (scope != this.applicationContext && scope != Scope.DEFAULT_SCOPE) {
-            final ScopeModuleContext scopeModuleContext = this.applicationContext.first(ScopeModuleContext.class).get();
-            final Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
-            for (final BindingHierarchy<?> hierarchy : hierarchies) {
+            ScopeModuleContext scopeModuleContext = this.applicationContext.first(ScopeModuleContext.class).get();
+            Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
+            for (BindingHierarchy<?> hierarchy : hierarchies) {
                 provider.bind(hierarchy);
             }
         }
         return provider;
     }
 
-    private HierarchyAwareComponentProvider getOrDefaultProvider(final Scope scope) {
-        if (scope == Scope.DEFAULT_SCOPE) return this.applicationComponentProvider;
+    private HierarchyAwareComponentProvider getOrDefaultProvider(Scope scope) {
+        if (scope == Scope.DEFAULT_SCOPE) {
+            return this.applicationComponentProvider;
+        }
         synchronized (this.scopedProviders) {
             return this.scopedProviders.getOrDefault(scope, this.applicationComponentProvider);
         }
@@ -109,53 +115,49 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     }
 
     @Override
-    public <C> BindingFunction<C> bind(final ComponentKey<C> key) {
+    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
         return this.getOrCreateProvider(key.scope()).bind(key);
     }
 
     @Override
-    public <C> Binder bind(final BindingHierarchy<C> hierarchy) {
+    public <C> Binder bind(BindingHierarchy<C> hierarchy) {
         return this.getOrCreateProvider(hierarchy.key().scope()).bind(hierarchy);
     }
 
     @Override
-    public void postProcessor(final ComponentPostProcessor postProcessor) {
+    public void postProcessor(ComponentPostProcessor postProcessor) {
         this.postProcessors.put(postProcessor.priority(), postProcessor);
         this.uninitializedPostProcessors.remove(postProcessor.getClass());
 
-        final ComponentKey<ComponentPostProcessor> key = TypeUtils.adjustWildcards(ComponentKey.of(postProcessor.getClass()), ComponentKey.class);
+        ComponentKey<ComponentPostProcessor> key = TypeUtils.adjustWildcards(ComponentKey.of(postProcessor.getClass()), ComponentKey.class);
         // Install to application context
         this.bind(key).singleton(postProcessor);
     }
 
     @Override
-    public void postProcessor(final Class<? extends ComponentPostProcessor> postProcessor) {
-        final boolean alreadyInitialized = this.postProcessors.allValues().stream()
+    public void postProcessor(Class<? extends ComponentPostProcessor> postProcessor) {
+        boolean alreadyInitialized = this.postProcessors.allValues().stream()
                 .anyMatch(processor -> processor.getClass().equals(postProcessor));
         if (!alreadyInitialized) {
             this.uninitializedPostProcessors.add(postProcessor);
         }
     }
 
-    public <T> Option<ObjectContainer<T>> raw(final ComponentKey<T> key) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(this.applicationContext());
-    }
-
     @Override
-    public <T> T get(final ComponentKey<T> componentKey) {
+    public <T> T get(ComponentKey<T> componentKey) {
         return this.getOrCreateProvider(componentKey.scope()).get(componentKey);
     }
 
     @Override
-    public <T> BindingHierarchy<T> hierarchy(final ComponentKey<T> key) {
+    public <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key) {
         return this.getOrDefaultProvider(key.scope()).hierarchy(key);
     }
 
     @Override
     public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
-        final MultiMap<Scope, BindingHierarchy<?>> hierarchies = new HashSetMultiMap<>();
-        for (final HierarchyAwareComponentProvider componentProvider : this.scopedProviders.values()) {
-            final MultiMap<Scope, BindingHierarchy<?>> providerHierarchies = componentProvider.hierarchies();
+        MultiMap<Scope, BindingHierarchy<?>> hierarchies = new HashSetMultiMap<>();
+        for (HierarchyAwareComponentProvider componentProvider : this.scopedProviders.values()) {
+            MultiMap<Scope, BindingHierarchy<?>> providerHierarchies = componentProvider.hierarchies();
             assert providerHierarchies.keySet().size() == 1 : "Hierarchy collection from scoped provider should only contain one scope";
             hierarchies.putAll(providerHierarchies);
         }
@@ -175,5 +177,44 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     @Override
     public HierarchicalComponentProvider applicationProvider() {
         return this.applicationComponentProvider;
+    }
+
+    public static ContextualInitializer<ComponentLocator, ComponentProvider> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+
+            ScopeAwareComponentProvider componentProvider = new ScopeAwareComponentProvider(context, configurer);
+            DefaultBindingConfigurerContext.compose(context, binder -> {
+                binder.bind(ComponentInstanceFactory.class).singleton(componentProvider.factory);
+                binder.bind(ComponentLocator.class).singleton(componentProvider.locator);
+            });
+            return componentProvider;
+        };
+    }
+
+    public static class Configurer {
+
+        private ContextualInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor = ComponentPostConstructorImpl.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ComponentInstanceFactory> componentInstanceFactory = ContextualInitializer.of(ContextDrivenComponentInstanceFactory::new);
+
+        public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
+            return this.componentPostConstructor(ContextualInitializer.of(componentPostConstructor));
+        }
+
+        public Configurer componentPostConstructor(ContextualInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor) {
+            this.componentPostConstructor = componentPostConstructor;
+            return this;
+        }
+
+        public Configurer componentInstanceFactory(ComponentInstanceFactory componentInstanceFactory) {
+            return this.componentInstanceFactory(ContextualInitializer.of(componentInstanceFactory));
+        }
+
+        public Configurer componentInstanceFactory(ContextualInitializer<ApplicationContext, ComponentInstanceFactory> componentInstanceFactory) {
+            this.componentInstanceFactory = componentInstanceFactory;
+            return this;
+        }
+
     }
 }

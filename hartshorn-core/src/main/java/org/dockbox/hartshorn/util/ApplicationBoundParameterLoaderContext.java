@@ -39,15 +39,15 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
 
     private final Context context = new DefaultProvisionContext() {};
 
-    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationContext applicationContext) {
+    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ApplicationContext applicationContext) {
         this(executable, instance, applicationContext, applicationContext);
     }
 
-    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationContext applicationContext, final Scope scope) {
+    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ApplicationContext applicationContext, Scope scope) {
         this(executable, instance, applicationContext, applicationContext, scope);
     }
 
-    public ApplicationBoundParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationContext applicationContext, final ComponentProvider provider, final Scope scope) {
+    public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ApplicationContext applicationContext, ComponentProvider provider, Scope scope) {
         super(executable, instance);
         this.applicationContext = applicationContext;
         this.provider = provider;
@@ -60,25 +60,29 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     public ComponentProvider provider() {
-        if (this.scope == this.provider) return this.provider;
+        if (this.scope == this.provider) {
+            return this.provider;
+        }
         return new ComponentProvider() {
             @Override
-            public <T> T get(final ComponentKey<T> key) {
-                final ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
+            public <T> T get(ComponentKey<T> key) {
+                ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
-                if (key.scope() == Scope.DEFAULT_SCOPE) return self.provider.get(key.mutable().scope(self.scope).build());
+                if (key.scope() == Scope.DEFAULT_SCOPE) {
+                    return self.provider.get(key.mutable().scope(self.scope).build());
+                }
                 return self.provider.get(key);
             }
         };
     }
 
     @Override
-    public <C extends Context> void add(final C context) {
+    public <C extends Context> void add(C context) {
         this.context.add(context);
     }
 
     @Override
-    public <C extends Context> void add(final String name, final C context) {
+    public <C extends Context> void add(String name, C context) {
         this.context.add(name, context);
     }
 
@@ -88,12 +92,17 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     @Override
-    public <C extends Context> Option<C> first(final ContextIdentity<C> key) {
+    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
         return this.context.first(key);
     }
 
     @Override
-    public <C extends Context> List<C> all(final ContextIdentity<C> key) {
+    public <C extends Context> List<C> all(ContextIdentity<C> key) {
         return this.context.all(key);
+    }
+
+    @Override
+    public void copyTo(Context context) {
+        this.context.copyTo(context);
     }
 }

@@ -26,22 +26,22 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
     private final Map<ComponentKey<?>, Object> cache = new ConcurrentHashMap<>();
 
     @Override
-    public <T> void put(final ComponentKey<T> key, final T instance) {
+    public <T> void put(ComponentKey<T> key, T instance) {
         this.cache.put(key, instance);
     }
 
     @Override
-    public <T> T get(final ComponentKey<T> key) {
+    public <T> T get(ComponentKey<T> key) {
         return key.type().cast(this.cache.get(key));
     }
 
     @Override
-    public <T> void remove(final ComponentKey<T> key) {
+    public <T> void remove(ComponentKey<T> key) {
         this.cache.remove(key);
     }
 
     @Override
-    public <T> boolean contains(final ComponentKey<T> key) {
+    public <T> boolean contains(ComponentKey<T> key) {
         return this.cache.containsKey(key);
     }
 

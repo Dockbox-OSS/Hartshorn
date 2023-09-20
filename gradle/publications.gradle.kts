@@ -91,8 +91,8 @@ tasks.register<Copy>("copyPublications") {
         val version = project.version
 
         val destinationFolder = "$rootDir/hartshorn-assembly/publications/$version"
-        val libsFolder = "$buildDir/libs"
-        val pomFolder = "$buildDir/publications/mavenJava"
+        val libsFolder = "${layout.buildDirectory}/libs"
+        val pomFolder = "${layout.buildDirectory}/publications/mavenJava"
 
         File(destinationFolder).mkdir()
         from(libsFolder)

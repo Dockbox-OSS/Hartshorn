@@ -35,20 +35,22 @@
 #
 # Versions in alphabetical order.
 #
-autoService = "1.0-rc7"
+autoService = "1.1.1"
+cadixdev = "0.6.1"
 cglib = "3.3.0"
-checker = "3.28.0"
-groovy = "4.0.2"
+checker = "3.37.0"
+groovy = "4.0.14"
 hamcrest = "2.2"
-jackson = "2.13.3"
+jackson = "2.15.2"
 jakartaAnnotations = "2.1.1"
 jakartaInject = "2.0.1"
-junitJupiter = "5.9.0"
+junitJupiter = "5.10.0"
 javassist = "3.29.1-GA"
-logback = "1.2.11"
-mockitoInline = "4.7.0"
-scala = "2.13.8"
-slf4j = "1.7.36"
+logback = "1.4.11"
+kotlin = "1.9.10"
+mockitoInline = "5.2.0"
+scala = "3.3.0"
+slf4j = "2.0.7"
 
 [libraries]
 #
@@ -77,7 +79,7 @@ hamcrest = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest" }
 javassist = { module = "org.javassist:javassist", version.ref = "javassist" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockitoInline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
-scala = { module = "org.scala-lang:scala-library", version.ref = "scala" }
+scala = { module = "org.scala-lang:scala3-library_3", version.ref = "scala" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 checkerQual = { module = "org.checkerframework:checker-qual", version.ref = "checker" }
 

@@ -16,28 +16,25 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.ComponentDependencyResolver;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
-import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -52,19 +49,9 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     private final DependencyGraphInitializer dependencyGraphInitializer;
 
-    public SimpleApplicationContext(final InitializingContext context) {
-        super(context);
-        this.dependencyGraphInitializer = this.createDependencyGraphInitializer(context.conditionMatcher());
-    }
-
-    private DependencyGraphInitializer createDependencyGraphInitializer(final ConditionMatcher conditionMatcher) {
-        // TODO #979: Registration hooks for dependency resolvers
-        final DependencyResolver managedComponentDependencyResolver = new ComponentDependencyResolver();
-        final BindsMethodDependencyResolver methodDependencyResolver = new BindsMethodDependencyResolver(conditionMatcher);
-        methodDependencyResolver.registry().register(new MethodInstanceBindingStrategy());
-
-        final DependencyResolver dependencyResolver = new CompositeDependencyResolver(Set.of(methodDependencyResolver, managedComponentDependencyResolver));
-        return new DependencyGraphInitializer(this, dependencyResolver);
+    public SimpleApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
+        super(initializerContext, configurer);
+        this.dependencyGraphInitializer = configurer.dependencyGraphInitializer.initialize(initializerContext.transform(this));
     }
 
     @Override
@@ -73,11 +60,11 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     @Override
-    public void add(final ComponentProcessor processor) {
+    public void add(ComponentProcessor processor) {
         this.checkRunning();
 
-        final Integer order = processor.priority();
-        final String name = processor.getClass().getSimpleName();
+        Integer order = processor.priority();
+        String name = processor.getClass().getSimpleName();
 
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof PostProcessingComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
@@ -95,7 +82,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     @Override
-    public void add(final Class<? extends ComponentPostProcessor> processor) {
+    public void add(Class<? extends ComponentPostProcessor> processor) {
         this.checkRunning();
 
         if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
@@ -110,31 +97,31 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     public void loadContext() {
         this.checkRunning();
 
-        final Collection<ComponentContainer<?>> containers = this.locator().containers();
+        Collection<ComponentContainer<?>> containers = this.locator().containers();
         this.log().debug("Located %d components".formatted(containers.size()));
 
         try {
-            final List<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
+            List<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
 
             if (this.componentProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
-                final Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider.uninitializedPostProcessors().stream()
+                Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider.uninitializedPostProcessors().stream()
                         .map(this.environment()::introspect)
                         .map(PostProcessorDependencyDeclarationContext::new)
                         .collect(Collectors.toSet());
                 declarationContexts.addAll(uninitializedPostProcessorContexts);
             }
 
-            final List<? extends DependencyDeclarationContext<?>> componentContexts = containers.stream()
+            List<? extends DependencyDeclarationContext<?>> componentContexts = containers.stream()
                     .map(ComponentContainerDependencyDeclarationContext::new)
                     .toList();
             declarationContexts.addAll(componentContexts);
 
             this.dependencyGraphInitializer.initializeDependencyGraph(declarationContexts);
         }
-        catch (final DependencyResolutionException e) {
+        catch (DependencyResolutionException e) {
             throw new ComponentInitializationException("Failed to resolve dependencies", e);
         }
-        catch (final GraphException e) {
+        catch (GraphException e) {
             throw new ComponentInitializationException("Failed to iterate dependency graph", e);
         }
         this.initializePostProcessors();
@@ -145,8 +132,8 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
 
     private void initializePostProcessors() {
         if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
-            for (final Class<? extends ComponentPostProcessor> uninitializedPostProcessor : provider.uninitializedPostProcessors()) {
-                final ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
+            for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor : provider.uninitializedPostProcessors()) {
+                ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
                 provider.postProcessor(processor);
             }
         }
@@ -157,11 +144,11 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         return this.preProcessors;
     }
 
-    protected void processComponents(final Collection<ComponentContainer<?>> containers) {
+    protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
-        for (final ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
+        for (ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
             this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
-            for (final ComponentContainer<?> container : containers) {
+            for (ComponentContainer<?> container : containers) {
                 this.processStandaloneComponent(container, serviceProcessor);
             }
             if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
@@ -170,11 +157,34 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         }
     }
 
-    private void processStandaloneComponent(final ComponentContainer<?> container, final ComponentPreProcessor serviceProcessor) {
-        final TypeView<?> service = container.type();
-        final ComponentKey<?> key = ComponentKey.of(service.type());
-        final ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+    private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
+        TypeView<?> service = container.type();
+        ComponentKey<?> key = ComponentKey.of(service.type());
+        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
         this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
         serviceProcessor.process(context);
+    }
+
+    public static ContextualInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new SimpleApplicationContext(context, configurer);
+        };
+    }
+
+    public static class Configurer extends DelegatingApplicationContext.Configurer {
+
+        private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
+
+        public Configurer dependencyGraphInitializer(DependencyGraphInitializer dependencyGraphInitializer) {
+            return this.dependencyGraphInitializer(ContextualInitializer.of(dependencyGraphInitializer));
+        }
+
+        public Configurer dependencyGraphInitializer(ContextualInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
+            this.dependencyGraphInitializer = dependencyGraphInitializer;
+            return this;
+        }
+
     }
 }

@@ -44,25 +44,27 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     private final ComponentKey<? extends C> context;
     private ConstructorView<? extends C> optimalConstructor;
 
-    public ContextDrivenProvider(final ComponentKey<? extends C> type) {
+    public ContextDrivenProvider(ComponentKey<? extends C> type) {
         this.context = type;
     }
 
     @Override
-    public final Option<ObjectContainer<C>> provide(final ApplicationContext context) throws ApplicationException {
-        final Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(context);
-        if (constructor.absent()) return Option.empty();
+    public final Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+        Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(context);
+        if (constructor.absent()) {
+            return Option.empty();
+        }
 
-        final ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+        ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
         return adapter.scope(this.context.scope()).create(constructor.get())
                 .mapError(error -> new ApplicationException("Failed to create instance of type " + this.type().getName(), error))
                 .rethrow()
                 .cast(this.type())
-                .map(instance -> new ObjectContainer<>(instance, false));
+                .map(ObjectContainer::new);
     }
 
-    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) throws ApplicationException {
-        final TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
+    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {
+        TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
         if (this.optimalConstructor == null) {
             this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(typeView)
                     .rethrow()

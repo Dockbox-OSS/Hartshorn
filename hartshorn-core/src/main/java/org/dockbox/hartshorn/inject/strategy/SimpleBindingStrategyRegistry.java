@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -25,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SimpleBindingStrategyRegistry implements BindingStrategyRegistry {
+public class SimpleBindingStrategyRegistry extends DefaultContext implements BindingStrategyRegistry {
 
     private final MultiMap<BindingStrategyPriority, BindingStrategy> strategies = MultiMap.<BindingStrategyPriority, BindingStrategy>builder()
             .mapSupplier(() -> new EnumMap<>(BindingStrategyPriority.class))

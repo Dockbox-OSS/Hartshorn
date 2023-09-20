@@ -23,16 +23,12 @@ public class SingletonProvider<T> implements Provider<T> {
 
     private final ObjectContainer<T> container;
 
-    public SingletonProvider(final T instance) {
-        this(instance, false);
-    }
-
-    public SingletonProvider(final T instance, final boolean processed) {
-        this.container = new ObjectContainer<>(instance, processed);
+    public SingletonProvider(T instance) {
+        this.container = new ObjectContainer<>(instance);
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(final ApplicationContext context) {
+    public Option<ObjectContainer<T>> provide(ApplicationContext context) {
         return Option.of(this.container);
     }
 }

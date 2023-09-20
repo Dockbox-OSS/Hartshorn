@@ -18,9 +18,9 @@ package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
+import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
@@ -221,7 +221,7 @@ public class ApplicationContextTests {
         final PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 
-        this.applicationContext.get(ComponentPopulator.class).populate(populatedType);
+        new ContextualComponentPopulator(this.applicationContext).populate(populatedType);
         Assertions.assertNotNull(populatedType.sampleInterface());
         Assertions.assertEquals("Hartshorn", populatedType.sampleInterface().name());
     }
@@ -265,7 +265,8 @@ public class ApplicationContextTests {
     @Test
     void testContextFieldsAreInjected() {
         this.applicationContext.add(new SampleContext("InjectedContext"));
-        final ContextInjectedType instance = this.applicationContext.get(ComponentPopulator.class).populate(new ContextInjectedType());
+        ContextualComponentPopulator populator = new ContextualComponentPopulator(this.applicationContext);
+        final ContextInjectedType instance = populator.populate(new ContextInjectedType());
         Assertions.assertNotNull(instance.context());
         Assertions.assertEquals("InjectedContext", instance.context().name());
     }
@@ -273,7 +274,8 @@ public class ApplicationContextTests {
     @Test
     void testNamedContextFieldsAreInjected() {
         this.applicationContext.add("another", new SampleContext("InjectedContext"));
-        final ContextInjectedType instance = this.applicationContext.get(ComponentPopulator.class).populate(new ContextInjectedType());
+        ContextualComponentPopulator populator = new ContextualComponentPopulator(this.applicationContext);
+        final ContextInjectedType instance = populator.populate(new ContextInjectedType());
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals("InjectedContext", instance.anotherContext().name());
     }

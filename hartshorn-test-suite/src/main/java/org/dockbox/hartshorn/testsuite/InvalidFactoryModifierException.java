@@ -23,4 +23,8 @@ public class InvalidFactoryModifierException extends ApplicationRuntimeException
     public InvalidFactoryModifierException(final String what, final Class<?> actual) {
         super("Invalid " + what + " for @HartshornFactory modifier, expected " + ApplicationBuilder.class.getSimpleName() + " but got " + actual.getSimpleName());
     }
+
+    public InvalidFactoryModifierException(final String message) {
+        super(message);
+    }
 }

@@ -23,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.owasp:dependency-check-gradle:7.4.1")
+        classpath("org.owasp:dependency-check-gradle:8.4.0")
     }
 }
 
@@ -39,23 +39,24 @@ plugins {
     id("org.dockbox.hartshorn.gradle.javadoc")
 
     // Required for CI and to automatically update license headers on build
-    id("org.cadixdev.licenser") version "0.6.1"
+    id("org.cadixdev.licenser") version libs.versions.cadixdev
 }
 
 apply {
     plugin("org.owasp.dependencycheck")
 }
 
+companion object CompileJavaConfiguration {
+    // Development is only performed using the latest LTS Java version.
+    val VERSION: JavaVersion = JavaVersion.VERSION_17
+    val LANGUAGE_VERSION: JavaLanguageVersion = JavaLanguageVersion.of(VERSION.majorVersion)
+}
+
 version = "0.5.0"
 group = "org.dockbox.hartshorn"
 
 java {
-    // Development is only performed using the latest LTS Java version.
-    sourceCompatibility = JavaVersion.VERSION_17
-
-    // Targeting the latest non-incubating Java version, to ensure compatibility
-    // with the latest Java version.
-    targetCompatibility = JavaVersion.VERSION_19
+    sourceCompatibility = CompileJavaConfiguration.VERSION
 }
 
 configure<DependencyCheckExtension> {
@@ -178,7 +179,7 @@ allprojects {
         register<Copy>("copyArtifacts") {
             val version = rootProject.version
             val destinationFolder = "$rootDir/hartshorn-assembly/distributions/$version"
-            val sourceFolder = "$buildDir/libs"
+            val sourceFolder = "${layout.buildDirectory}/libs"
 
             if (!File(destinationFolder).exists()) mkdir(destinationFolder)
 
@@ -206,8 +207,11 @@ allprojects {
             // Ensure parameter names are kept in the compiled bytecode. This is required for
             // some reflection actions to work optimally. While this is not required for
             // Hartshorn to function, it is recommended to keep this enabled.
-            options.compilerArgs.add("-parameters")
-            options.encoding = "UTF-8"
+            options.apply {
+                compilerArgs.add("-parameters")
+                encoding = "UTF-8"
+                release = CompileJavaConfiguration.LANGUAGE_VERSION.asInt()
+            }
         }
 
         withType<Javadoc> {

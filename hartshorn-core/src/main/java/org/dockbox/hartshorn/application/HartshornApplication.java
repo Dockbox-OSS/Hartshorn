@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.application.StandardApplicationBuilder.Configurer;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-
-import java.util.function.Consumer;
+import org.dockbox.hartshorn.util.Customizer;
 
 /**
  * Application starter for Hartshorn applications. This takes a single type
@@ -39,31 +39,41 @@ public final class HartshornApplication {
      * @param args The application arguments
      * @return The application context
      */
-    public static ApplicationContext create(final Class<?> mainClass, final String... args) {
-        return new StandardApplicationBuilder()
-                .loadDefaults()
-                .mainClass(mainClass)
-                .arguments(args)
-                .create();
+    public static ApplicationContext create(Class<?> mainClass, String... args) {
+        return StandardApplicationBuilder.create(builder -> {
+            builder.mainClass(mainClass);
+            builder.arguments(args);
+        }).create();
     }
 
-    public static ApplicationContext create(final Class<?> mainClass, final Consumer<ApplicationBuilder<?, ApplicationContext>> modifier) {
-        final ApplicationBuilder<?, ApplicationContext> builder = new StandardApplicationBuilder()
-                .loadDefaults()
-                .mainClass(mainClass);
-        modifier.accept(builder);
-        return builder.create();
+    /**
+     * Creates a new application context for the given arguments, and modifiers. This initializes the
+     * required environment and starts the application. The main class will be inferred from the stack trace.
+     * This is useful for when you want to start an application from a main method, but don't want to
+     * hard-code the main class.
+     *
+     * @param args The application arguments
+     * @return The application context
+     */
+    public static ApplicationContext create(String... args) {
+        return StandardApplicationBuilder.create(builder -> {
+            builder.inferMainClass();
+            builder.arguments(args);
+        }).create();
     }
 
-    public static ApplicationContext create(final String... args) {
-        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        final StackTraceElement element = stackTrace[2];
-        try {
-            final Class<?> mainClass = Class.forName(element.getClassName());
-            return create(mainClass, args);
-        }
-        catch (final ClassNotFoundException e) {
-            throw new IllegalStateException("Could not deduce main class", e);
-        }
+    /**
+     * Creates a new application context for the given main class, and allows for customizing the application
+     * builder. This allows complete control over the application context creation process. This initializes the
+     * required environment and starts the application.
+     *
+     * @param mainClass The main class
+     * @param customizer The application builder customizer
+     * @return The application context
+     */
+    public static ApplicationContext create(Class<?> mainClass, Customizer<StandardApplicationBuilder.Configurer> customizer) {
+        Customizer<Configurer> defaultCustomizer = builder -> builder.mainClass(mainClass);
+        Customizer<Configurer> composedCustomizer = defaultCustomizer.compose(customizer);
+        return StandardApplicationBuilder.create(composedCustomizer).create();
     }
 }

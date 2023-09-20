@@ -26,22 +26,26 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
     private final Class<?> type;
     private final Map<String, Object> values;
 
-    public MapBackedAnnotationInvocationHandler(final Class<?> type, final Map<String, Object> values) {
+    public MapBackedAnnotationInvocationHandler(Class<?> type, Map<String, Object> values) {
         this.type = type;
         this.values = this.checkValues(type, values);
     }
 
-    private Map<String, Object> checkValues(final Class<?> type, final Map<String, Object> values) {
-        if (values == null) throw new IllegalStateException("Values map is null");
-        if (type == null) throw new IllegalStateException("Type is null");
-        for (final Entry<String, Object> entry : values.entrySet()) {
+    private Map<String, Object> checkValues(Class<?> type, Map<String, Object> values) {
+        if (values == null) {
+            throw new IllegalStateException("Values map is null");
+        }
+        if (type == null) {
+            throw new IllegalStateException("Type is null");
+        }
+        for (Entry<String, Object> entry : values.entrySet()) {
             try {
-                final Method method = type.getDeclaredMethod(entry.getKey());
-                if (!method.getReturnType().isAssignableFrom(entry.getValue().getClass())) {
+                Method method = type.getDeclaredMethod(entry.getKey());
+                if (!TypeUtils.isAssignable(method.getReturnType(), entry.getValue().getClass())) {
                     throw new IllegalStateException("Value " + entry.getValue() + " is not assignable to " + method.getReturnType());
                 }
             }
-            catch (final NoSuchMethodException e) {
+            catch (NoSuchMethodException e) {
                 throw new IllegalStateException("No such method " + entry.getKey() + " on annotation " + type.getCanonicalName());
             }
         }
@@ -49,12 +53,20 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        final String methodName = method.getName();
-        if ("annotationType".equals(methodName)) return this.type;
-        if ("toString".equals(methodName)) return "@" + this.type;
-        if ("hashCode".equals(methodName)) return this.values.hashCode();
-        if ("equals".equals(methodName)) return proxy == args[0];
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        String methodName = method.getName();
+        if ("annotationType".equals(methodName)) {
+            return this.type;
+        }
+        if ("toString".equals(methodName)) {
+            return "@" + this.type;
+        }
+        if ("hashCode".equals(methodName)) {
+            return this.values.hashCode();
+        }
+        if ("equals".equals(methodName)) {
+            return proxy == args[0];
+        }
         return this.values.get(methodName);
     }
 }
