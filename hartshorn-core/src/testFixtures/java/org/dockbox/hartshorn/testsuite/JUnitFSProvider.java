@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
 
 /**
  * A {@link ApplicationFSProvider} that uses a temporary directory for the application's files.

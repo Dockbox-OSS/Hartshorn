@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-import org.dockbox.hartshorn.context.Context;
-import org.junit.jupiter.api.Test;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 

@@ -16,7 +16,9 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import java.lang.annotation.Annotation;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -31,10 +33,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.annotation.Annotation;
-import java.util.stream.Stream;
-
-@HartshornTest(includeBasePackages = false)
 public abstract class ElementContextTests {
 
     public static Stream<Arguments> primitives() {
