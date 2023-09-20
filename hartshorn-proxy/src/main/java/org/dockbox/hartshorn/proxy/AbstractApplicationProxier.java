@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
-import org.dockbox.hartshorn.proxy.lookup.NativeProxyLookup;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 

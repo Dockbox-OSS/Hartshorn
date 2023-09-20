@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
-import org.dockbox.hartshorn.proxy.lookup.NativeProxyLookup;
+import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxierLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;

@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.proxy.cglib;
 
 import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
-import org.dockbox.hartshorn.proxy.lookup.NativeProxyLookup;
+import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.proxy.cglib.CglibApplicationProxierLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
