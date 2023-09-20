@@ -25,6 +25,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -43,8 +44,8 @@ import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
@@ -52,7 +53,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 
 public final class StandardApplicationContextConstructor implements ApplicationContextConstructor {
 
@@ -169,7 +169,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         return activators;
     }
 
-    @NotNull
+    @NonNull
     private Set<ComponentProcessor> componentProcessors(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
         Set<ComponentProcessor> componentProcessors = new HashSet<>();
 

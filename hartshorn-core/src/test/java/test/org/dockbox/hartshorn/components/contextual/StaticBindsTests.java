@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.components.contextual;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.contextual.StaticComponentCollector;
 import org.dockbox.hartshorn.component.contextual.StaticComponentContainer;
@@ -28,13 +33,8 @@ import org.dockbox.hartshorn.testsuite.ModifyApplication;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.components.StaticAwareComponent;
