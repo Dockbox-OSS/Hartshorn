@@ -16,23 +16,33 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class DiscoveryService {
 
     private static final DiscoveryService DISCOVERY_SERVICE = new DiscoveryService();
 
     private final Map<Class<?>, Class<?>> types = new ConcurrentHashMap<>();
+    private final Map<String, String> overrideDiscoveryFiles = new ConcurrentHashMap<>();
+    private final Set<ClassLoader> classLoaders = new HashSet<>(List.of( // List, as context class loader may be same as service's class loader
+            Thread.currentThread().getContextClassLoader(),
+            DiscoveryService.class.getClassLoader()
+    ));
 
     private DiscoveryService() {
-        if (DISCOVERY_SERVICE != null) throw new IllegalStateException("Already instantiated");
+        if (DISCOVERY_SERVICE != null) {
+            throw new IllegalStateException("Already instantiated");
+        }
         // Check that the class is being created by itself
         final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         if (stackTrace.length < 3 || !stackTrace[2].getClassName().equals(DiscoveryService.class.getName())) {
@@ -63,27 +73,60 @@ public final class DiscoveryService {
         throw new ServiceDiscoveryException("No implementation found for type " + name);
     }
 
+    public void override(final Class<?> type, final Class<?> implementation) {
+        this.override(type, implementation.getName());
+    }
+
+    public void override(Class<?> type, String qualifiedName) {
+        this.overrideDiscoveryFiles.put(type.getName(), qualifiedName);
+    }
+
+    public void addClassLoader(final ClassLoader classLoader) {
+        this.classLoaders.add(classLoader);
+    }
+
     private <T> Class<?> tryLoadDiscoveryFile(final Class<T> type, final String name) {
         final InputStream resource = this.getClass().getClassLoader().getResourceAsStream(getDiscoveryFileName(name));
 
+        final String resourceString;
         if (resource != null) {
             try {
-                final String resourceString = new String(resource.readAllBytes());
-                final Class<?> implementationType = Class.forName(resourceString);
-
-                this.verifyRegistration(type, implementationType);
-                this.types.put(type, implementationType);
-
-                return implementationType;
+                resourceString = new String(resource.readAllBytes());
             }
             catch (final IOException e) {
                 throw new ServiceDiscoveryException("Failed to read discovery file for type " + name, e);
             }
+        }
+        else if (this.overrideDiscoveryFiles.containsKey(type.getName())) {
+            resourceString = this.overrideDiscoveryFiles.get(type.getName());
+        }
+        else {
+            return null;
+        }
+
+        try {
+            final Class<?> implementationType = tryLoadClass(resourceString);
+
+            this.verifyRegistration(type, implementationType);
+            this.types.put(type, implementationType);
+
+            return implementationType;
+        }
+        catch (final ClassNotFoundException e) {
+            throw new ServiceDiscoveryException("Failed to load implementation class for type " + name, e);
+        }
+    }
+
+    private Class<?> tryLoadClass(String resourceString) throws ClassNotFoundException {
+        for(ClassLoader classLoader : classLoaders) {
+            try {
+                return Class.forName(resourceString, true, classLoader);
+            }
             catch (final ClassNotFoundException e) {
-                throw new ServiceDiscoveryException("Failed to load implementation class for type " + name, e);
+                // Ignore
             }
         }
-        return null;
+        throw new ClassNotFoundException(resourceString);
     }
 
     private void verifyRegistration(final Class<?> type, final Class<?> implementation) {
