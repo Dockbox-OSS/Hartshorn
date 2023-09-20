@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.dockbox.hartshorn</groupId>
+    <artifactId>hartshorn</artifactId>
+    <packaging>pom</packaging>
+    <version>0.5.0</version>
+
+    <properties>
+        <hartshorn.version>0.5.0</hartshorn.version>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+    <profiles>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>hartshorn-bom</module>
+                <module>hartshorn-parent</module>
+                <module>hartshorn-util</module>
+                <module>hartshorn-discovery</module>
+                <module>hartshorn-proxy</module>
+                <module>hartshorn-proxy/hartshorn-proxy-cglib</module>
+                <module>hartshorn-proxy/hartshorn-proxy-javassist</module>
+                <module>hartshorn-introspect</module>
+                <module>hartshorn-introspect/hartshorn-introspect-reflection</module>
+                <module>hartshorn-core</module>
+                <!--                <module>hartshorn-commands</module>-->
+                <!--                <module>hartshorn-config</module>-->
+<!--                <module>hartshorn-hsl</module>-->
+<!--                <module>hartshorn-i18n</module>-->
+<!--                <module>hartshorn-proxy</module>-->
+<!--                <module>hartshorn-reporting</module>-->
+            </modules>
+        </profile>
+    </profiles>
+</project>
