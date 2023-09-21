@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -27,7 +28,6 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -129,7 +129,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         collector.property("contexts").write(reporters);
     }
 
-    @NotNull
+    @NonNull
     private static Reportable[] childReporters(final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, final Context context) {
         return context.all().stream()
                 .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))

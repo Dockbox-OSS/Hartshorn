@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -25,7 +26,6 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -65,7 +65,7 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
         }
     }
 
-    @NotNull
+    @NonNull
     private Reportable[] diagnosticsReporters(final Collection<ComponentContainer<?>> containers) {
         return containers.stream()
                 .map(container -> (Reportable) new ComponentContainerReporter(this, container))
