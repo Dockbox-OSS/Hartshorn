@@ -8,15 +8,22 @@
     <packaging>pom</packaging>
     <version>0.5.0</version>
 
+    <name>Hartshorn Framework</name>
+    <inceptionYear>2019</inceptionYear>
+    <organization>
+        <name>Dockbox OSS</name>
+        <url>https://dockbox.org/</url>
+    </organization>
+
     <properties>
         <hartshorn.version>0.5.0</hartshorn.version>
     </properties>
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>manual</distribution>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
         </license>
     </licenses>
 
@@ -47,4 +54,44 @@
             </modules>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+
+            <!-- License headers -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.2</version>
+                <configuration>
+                    <headerDefinitions>
+                        <headerDefinition>hartshorn-parent/JavaBlockStyleHeader.xml</headerDefinition>
+                    </headerDefinitions>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>hartshorn-parent/APACHE-2.txt</header>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <includes>
+                                <include>**/*.java</include>
+                                <include>**/*.kt</include>
+                                <include>**/*.groovy</include>
+                                <include>**/*.scala</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <mapping>
+                        <java>JavaBlockStyleHeader</java>
+                    </mapping>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin-git</artifactId>
+                        <!-- make sure you use the same version as license-maven-plugin -->
+                        <version>4.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 </project>
