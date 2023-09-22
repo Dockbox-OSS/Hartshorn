@@ -39,11 +39,11 @@
                 <module>hartshorn-introspect/hartshorn-introspect-reflection</module>
                 <module>hartshorn-core</module>
                 <module>hartshorn-reporting</module>
-                <!--                <module>hartshorn-commands</module>-->
-                <!--                <module>hartshorn-config</module>-->
-                <!--                <module>hartshorn-hsl</module>-->
-                <!--                <module>hartshorn-i18n</module>-->
-                <!--                <module>hartshorn-proxy</module>-->
+                <module>hartshorn-hsl</module>
+                <module>hartshorn-config</module>
+                <module>hartshorn-config/hartshorn-config-jackson</module>
+                <module>hartshorn-i18n</module>
+                <module>hartshorn-commands</module>
             </modules>
         </profile>
     </profiles>

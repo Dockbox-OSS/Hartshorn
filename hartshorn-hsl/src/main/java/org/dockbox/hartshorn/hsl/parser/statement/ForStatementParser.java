@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -30,9 +33,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
 
@@ -61,7 +61,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
         return Set.of(ForStatement.class, ForEachStatement.class);
     }
 
-    @NotNull
+    @NonNull
     private Option<BodyStatement> parseForStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
         validator.expectAfter(TokenType.SEMICOLON, "for assignment");
 
@@ -75,7 +75,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
         return Option.of(new ForStatement(initializer, condition, increment, loopBody));
     }
 
-    @NotNull
+    @NonNull
     private Option<BodyStatement> parseForEachStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
         final Expression collection = parser.expression();
         validator.expectAfter(TokenType.RIGHT_PAREN, "for collection");
