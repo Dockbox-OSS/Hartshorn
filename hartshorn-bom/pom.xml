@@ -3,7 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.dockbox.hartshorn</groupId>
+    <parent>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-staging</artifactId>
+        <version>0.5.0</version>
+        <relativePath>../staging.pom.xml</relativePath>
+    </parent>
+
     <artifactId>hartshorn-bom</artifactId>
     <packaging>pom</packaging>
     <version>0.5.0</version>

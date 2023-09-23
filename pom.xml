@@ -9,15 +9,48 @@
     <version>0.5.0</version>
 
     <name>Hartshorn Framework</name>
-    <inceptionYear>2019</inceptionYear>
+    <description>Hartshorn is a modern JVM-based full stack Java framework</description>
+    <url>https://hartshorn.dockbox.org/</url>
+
     <organization>
         <name>Dockbox OSS</name>
         <url>https://dockbox.org/</url>
     </organization>
+    <inceptionYear>2019</inceptionYear>
+
+    <scm>
+        <url>https://github.com/Dockbox-OSS/Hartshorn</url>
+        <connection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</connection>
+        <developerConnection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Guus Lieben</name>
+            <email>guuslieben@xendox.com</email>
+            <url>https://guuslieben.nl/</url>
+            <organization>Dockbox OSS</organization>
+            <organizationUrl>https://dockbox.org/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Josh Jeffers</name>
+            <url>https://www.pumbas.net/</url>
+        </developer>
+        <developer>
+            <name>Simon Bolduc</name>
+            <url>https://github.com/simbolduc</url>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://www.github.com/Dockbox-OSS/Hartshorn/issues</url>
+    </issueManagement>
 
     <properties>
         <hartshorn.version>0.5.0</hartshorn.version>
     </properties>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -52,6 +85,51 @@
                 <module>hartshorn-i18n</module>
                 <module>hartshorn-commands</module>
             </modules>
+        </profile>
+        <profile>
+            <id>staging</id>
+
+            <build>
+                <plugins>
+                    <!-- Distribution staging -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.13</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Distribution signing -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

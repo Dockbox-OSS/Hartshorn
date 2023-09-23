@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn</artifactId>
+        <artifactId>hartshorn-staging</artifactId>
         <version>0.5.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../staging.pom.xml</relativePath>
     </parent>
 
     <artifactId>hartshorn-parent</artifactId>
