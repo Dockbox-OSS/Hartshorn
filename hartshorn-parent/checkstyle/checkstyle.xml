@@ -10,7 +10,9 @@
         </module>
         <module name="UnusedImports"/>
         <module name="InvalidJavadocPosition"/>
-        <module name="AtclauseOrder"/>
+        <module name="AtclauseOrder">
+            <property name="tagOrder" value="param,throws,author,since,see"/>
+        </module>
         <module name="MissingJavadocType">
             <property name="excludeScope" value="private"/>
         </module>
