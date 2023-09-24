@@ -9,6 +9,13 @@
             <property name="allowStaticMemberImports" value="true"/>
         </module>
         <module name="UnusedImports"/>
+
+        <!--
+        Javadoc rules are disabled while #748 is open, to prevent blocking builds and
+        other PRs.
+
+        See https://github.com/Dockbox-OSS/Hartshorn/issues/985#issuecomment-1732540073
+
         <module name="InvalidJavadocPosition"/>
         <module name="AtclauseOrder">
             <property name="tagOrder" value="param,throws,author,since,see"/>
@@ -39,5 +46,6 @@
             <property name="allowMissingParamTags" value="false"/>
             <property name="allowUnknownTags" value="false"/>
         </module>
+        -->
     </module>
 </module>
