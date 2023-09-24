@@ -130,19 +130,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
-                <configuration>
-                    <!--
-                    Targets root hartshorn-assembly, so all distributions can easily be located. This deviates from the
-                    standard Maven convention of putting the JAR in the target directory of the project itself, but
-                    this is a multi-module project and we want to keep all distributions in one place.
-
-                    For reference:
-                    - project: Actual project
-                    - project.parent: hartshorn-parent
-                    - project.parent.parent: root POM
-                    -->
-                    <outputDirectory>${project.parent.parent.basedir}/hartshorn-assembly/distributions/${version}</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
