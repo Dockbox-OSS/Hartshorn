@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
