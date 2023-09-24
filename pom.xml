@@ -49,6 +49,9 @@
 
     <properties>
         <hartshorn.version>0.5.0</hartshorn.version>
+        <checkstyle.skip>false</checkstyle.skip>
+        <javadoc.skip>false</javadoc.skip>
+        <owasp.skip>false</owasp.skip>
     </properties>
 
     <licenses>
@@ -177,6 +180,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>8.4.0</version>
                 <configuration>
+                    <skip>${owasp.skip}</skip>
                     <failBuildOnCVSS>1</failBuildOnCVSS>
                     <suppressionFiles>
                         <suppressionFile>hartshorn-parent/dependency-check-suppressions.xml</suppressionFile>
@@ -198,6 +202,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
+                    <skip>${javadoc.skip}</skip>
                     <show>package</show>
                     <show>protected</show>
                     <show>public</show>
@@ -219,8 +224,8 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
+                    <skip>${checkstyle.skip}</skip>
                     <configLocation>src/checkstyle/checkstyle.xml</configLocation>
-                    <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <failOnViolation>true</failOnViolation>
