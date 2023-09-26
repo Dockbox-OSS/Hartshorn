@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store
@@ -38,15 +39,15 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
 
     @Override
     public <T> void put(ComponentKey<T> key, T instance) {
-        if (this.cache.containsKey(key)) {
+        if (this.cache.containsKey(key) && this.cache.get(key) != instance) {
             throw new IllegalModificationException("An instance is already stored for key '" + key + "'");
         }
         this.cache.put(key, instance);
     }
 
     @Override
-    public <T> T get(ComponentKey<T> key) {
-        return key.type().cast(this.cache.get(key));
+    public <T> Option<T> get(ComponentKey<T> key) {
+        return Option.of(key.type().cast(this.cache.get(key)));
     }
 
     @Override

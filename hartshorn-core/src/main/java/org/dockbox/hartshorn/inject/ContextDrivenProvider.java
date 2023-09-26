@@ -66,7 +66,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
     protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {
         TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
         if (this.optimalConstructor == null) {
-            this.optimalConstructor = CyclingConstructorAnalyzer.create(applicationContext).findConstructor(typeView)
+            this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView)
                     .rethrow()
                     .orNull();
         }

@@ -31,16 +31,16 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.Nullable;
 
-public final class CyclingConstructorAnalyzer {
+public final class ComponentConstructorResolver {
 
     private final ApplicationContext applicationContext;
 
-    private CyclingConstructorAnalyzer(ApplicationContext applicationContext) {
+    private ComponentConstructorResolver(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public static CyclingConstructorAnalyzer create(ApplicationContext applicationContext) {
-        return new CyclingConstructorAnalyzer(applicationContext);
+    public static ComponentConstructorResolver create(ApplicationContext applicationContext) {
+        return new ComponentConstructorResolver(applicationContext);
     }
 
     public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypeView<C> type) {

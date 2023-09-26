@@ -30,7 +30,7 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     @Override
     protected <T> Set<DependencyContext<?>> resolveSingle(final DependencyDeclarationContext<T> componentContainer, final ApplicationContext applicationContext) throws DependencyResolutionException {
         final TypeView<?> type = componentContainer.type();
-        final ConstructorView<?> constructorView = CyclingConstructorAnalyzer.create(applicationContext).findConstructor(type)
+        final ConstructorView<?> constructorView = ComponentConstructorResolver.create(applicationContext).findConstructor(type)
                 .mapError(DependencyResolutionException::new)
                 .rethrow()
                 .orNull();
