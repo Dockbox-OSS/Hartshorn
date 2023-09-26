@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
-
-import java.util.Collection;
-import java.util.Collections;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import jakarta.inject.Inject;
 
@@ -54,7 +54,9 @@ public class ScopeModuleContext extends DefaultApplicationAwareContext {
     }
 
     public Collection<BindingHierarchy<?>> hierarchies(final Class<? extends Scope> type) {
-        if (type == Scope.class) return Collections.emptyList();
+        if (type == Scope.class) {
+            return Collections.emptyList();
+        }
         return this.scopeModules.get(type);
     }
 }

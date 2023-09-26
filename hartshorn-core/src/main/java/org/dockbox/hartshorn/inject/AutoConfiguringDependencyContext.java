@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
-
-import java.util.Set;
 
 public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> {
 
@@ -40,7 +41,12 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         InstanceType instanceType = this.instanceType();
         function.priority(this.priority());
         if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
-            function.installTo(this.scope());
+            try {
+                function.installTo(this.scope());
+            }
+            catch (IllegalScopeException e) {
+                throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
+            }
         }
         function.processAfterInitialization(this.processAfterInitialization());
 

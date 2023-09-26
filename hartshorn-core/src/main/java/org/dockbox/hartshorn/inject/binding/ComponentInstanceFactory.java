@@ -21,7 +21,24 @@ import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A factory for creating component instances. This can be used by {@link Binder binders} to create instances
+ * of components when they are requested, but no custom provider is available.
+ *
+ * @author Guus Lieben
+ * @since 0.4.11
+ */
 public interface ComponentInstanceFactory {
 
+    /**
+     * Creates a new instance of the component identified by the given key. The key may be named or unnamed, and
+     * may contain a scope. Depending on the implementation, these attributes may be used to determine the
+     * instance that is created.
+     *
+     * @param key The key of the component to create
+     * @return The created instance
+     * @param <T> The type of the component
+     * @throws ApplicationException When the instance cannot be created
+     */
     <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key) throws ApplicationException;
 }

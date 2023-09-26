@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class LazySingletonProvider<T> implements Provider<T> {
+public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     private final CheckedSupplier<ObjectContainer<T>> supplier;
     private ObjectContainer<T> container;
@@ -37,4 +37,5 @@ public class LazySingletonProvider<T> implements Provider<T> {
         }
         return Option.of(this.container);
     }
+
 }

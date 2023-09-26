@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import java.util.Collection;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -31,8 +33,6 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
@@ -95,7 +95,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         TypeView<T> factoryType = context.environment().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
-            ConstructorView<T> constructor = CyclingConstructorAnalyzer.findConstructor(factoryType)
+            ConstructorView<? extends T> constructor = CyclingConstructorAnalyzer.create(context).findConstructor(factoryType)
                     .rethrow()
                     .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 

@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.inject.Named;
@@ -51,6 +54,14 @@ public final class ComponentKey<T> {
         return new Builder<>(type);
     }
 
+    public static <T> Builder<T> builder(ParameterView<T> parameter) {
+        Builder<T> builder = builder(parameter.genericType());
+        ElementAnnotationsIntrospector annotations = parameter.annotations();
+        annotations.get(Named.class).peek(builder::name);
+        annotations.get(Enable.class).peek(enable -> builder.enable(enable.value()));
+        return builder;
+    }
+
     public static <T> ComponentKey<T> of(final Class<T> type) {
         return ComponentKey.builder(type).build();
     }
@@ -71,6 +82,10 @@ public final class ComponentKey<T> {
         return ComponentKey.builder(key).name(name).build();
     }
 
+    public static <T> ComponentKey<T> of(final ParameterView<T> parameter) {
+        return ComponentKey.builder(parameter).build();
+    }
+
     public Builder<T> mutable() {
         return new Builder<>(this);
     }
@@ -79,10 +94,16 @@ public final class ComponentKey<T> {
         return new ComponentKeyView<>(this);
     }
 
+    public String qualifiedName(boolean qualifyType) {
+        String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
+        String scopeName = this.scope.installableScopeType().getSimpleName();
+        String typeName = qualifyType ? this.type.type().getCanonicalName() : this.type.type().getSimpleName();
+        return typeName + nameSuffix + " @ " + scopeName;
+    }
+
     @Override
     public String toString() {
-        final String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
-        return "ComponentKey<" + this.type + nameSuffix + "> (" + this.scope.installableScopeType().getSimpleName() + ")";
+        return "ComponentKey<" + this.qualifiedName(false) + ">";
     }
 
     @Override
@@ -143,14 +164,19 @@ public final class ComponentKey<T> {
             this.type = type;
         }
 
-        public Builder<T> type(final Class<T> type) {
-            this.type = new ParameterizableType<>(type);
-            return this;
+        public <U> Builder<U> type(final Class<U> type) {
+            return this.type(new ParameterizableType<>(type));
         }
 
-        public Builder<T> type(final ParameterizableType<T> type) {
-            this.type = type;
-            return this;
+        public <U> Builder<U> type(final TypeView<U> type) {
+            return this.type(new ParameterizableType<>(type));
+        }
+
+        public <U> Builder<U> type(final ParameterizableType<U> type) {
+            return builder(type)
+                    .name(name)
+                    .scope(scope)
+                    .enable(enable);
         }
 
         public Builder<T> parameterClasses(final Class<?>... parameterTypes) {

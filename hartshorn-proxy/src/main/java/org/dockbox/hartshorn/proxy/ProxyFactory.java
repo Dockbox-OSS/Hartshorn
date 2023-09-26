@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
-import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
-import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.option.Attempt;
-
 import java.lang.reflect.Constructor;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
+import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
@@ -245,9 +245,9 @@ public interface ProxyFactory<T> {
      * @return A proxy instance
      * @throws ApplicationException If the proxy could not be created
      */
-    Attempt<T, Throwable> proxy(ConstructorView<T> constructor, Object[] args) throws ApplicationException;
+    Attempt<T, Throwable> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException;
 
-    Attempt<T, Throwable> proxy(Constructor<T> constructor, Object[] args) throws ApplicationException;
+    Attempt<T, Throwable> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.

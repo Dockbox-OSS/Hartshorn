@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -46,9 +49,6 @@ import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
 
@@ -190,7 +190,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
 
         if (this.singletonCache.contains(componentKey)) {
-            return this.singletonCache.get(componentKey);
+            return this.singletonCache.get(componentKey).orNull();
         }
 
         this.owner.componentLocator().validate(componentKey);

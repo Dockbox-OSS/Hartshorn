@@ -16,31 +16,71 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.NoSuchProviderException.ProviderType;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public final class CyclingConstructorAnalyzer {
 
-//    private static final Map<Class<?>, ConstructorView<?>> cache = new ConcurrentHashMap<>();
+    private final ApplicationContext applicationContext;
 
-    public static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type) {
-        return findConstructor(type, true);
+    private CyclingConstructorAnalyzer(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
-    private static <C> Attempt<ConstructorView<C>, ? extends ApplicationException> findConstructor(final TypeView<C> type, final boolean checkForCycles) {
-        if (type.modifiers().isAbstract()) return Attempt.empty();
-//        if (cache.containsKey(type.type())) {
-//            return Attempt.of((ConstructorView<C>) cache.get(type.type()));
-//        }
+    public static CyclingConstructorAnalyzer create(ApplicationContext applicationContext) {
+        return new CyclingConstructorAnalyzer(applicationContext);
+    }
 
-        ConstructorView<C> optimalConstructor;
-        final List<? extends ConstructorView<C>> constructors = findAvailableConstructors(type);
+    public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypeView<C> type) {
+        TypePathNode<C> node = new TypePathNode<>(type, ComponentKey.of(type));
+        return findConstructor(node);
+    }
+
+    public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node) {
+        return findConstructor(node, true);
+    }
+
+    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node, boolean checkForCycles) {
+        BindingHierarchy<C> hierarchy = applicationContext.hierarchy(node.componentKey());
+        Option<Provider<C>> providerOption = hierarchy.highestPriority();
+        return providerOption.absent()
+                ? findConstructor(node, node.type(), checkForCycles)
+                : findConstructorInHierarchy(node, checkForCycles, providerOption);
+    }
+
+    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructorInHierarchy(TypePathNode<C> node,
+            boolean checkForCycles, Option<Provider<C>> providerOption) {
+        Provider<C> provider = providerOption.get();
+        if (provider instanceof ComposedProvider<C> composedProvider) {
+            provider = composedProvider.provider();
+        }
+
+        if (provider instanceof TypeAwareProvider<C> typeAwareProvider) {
+            TypeView<? extends C> typeView = applicationContext.environment().introspect(typeAwareProvider.type());
+            return findConstructor(node, typeView, checkForCycles);
+        }
+        return Attempt.of(new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey()));
+    }
+
+    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node, TypeView<? extends C> type, boolean checkForCycles) {
+        if (type.modifiers().isAbstract()) {
+            return Attempt.empty();
+        }
+
+        ConstructorView<? extends C> optimalConstructor;
+        List<? extends ConstructorView<? extends C>> constructors = findAvailableConstructors(type);
         if (constructors.isEmpty()) {
             return Attempt.of(new MissingInjectConstructorException(type));
         }
@@ -48,27 +88,26 @@ public final class CyclingConstructorAnalyzer {
         // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
         // can be satiated at once.
         optimalConstructor = constructors.get(0);
-        for (final ConstructorView<C> constructor : constructors) {
+        for (ConstructorView<? extends C> constructor : constructors) {
             if (optimalConstructor.parameters().count() < constructor.parameters().count()) {
                 optimalConstructor = constructor;
             }
         }
 
         if (checkForCycles) {
-            final List<TypeView<?>> path = findCyclicPath(optimalConstructor, type);
-            if (!path.isEmpty()) return Attempt.of(new CyclicComponentException(type, path));
+            ConstructorDiscoveryList path = findCyclicPath(optimalConstructor, node);
+            if (!path.isEmpty()) {
+                return Attempt.of(new CyclicComponentException(path));
+            }
         }
 
-        return Attempt.<ConstructorView<C>, ApplicationException>of(optimalConstructor).peek(constructor -> {
-            // Don't store if there may be a cycle in the dependency graph
-//            if (checkForCycles) cache.put(type.type(), constructor);
-        });
+        return Attempt.of(optimalConstructor);
     }
 
-    private static <C> List<ConstructorView<C>> findAvailableConstructors(final TypeView<C> type) {
-        final List<ConstructorView<C>> constructors = type.constructors().injectable();
+    private <C> List<ConstructorView<C>> findAvailableConstructors(TypeView<C> type) {
+        List<ConstructorView<C>> constructors = type.constructors().injectable();
         if (constructors.isEmpty()) {
-            final Option<ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
+            Option<ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.present()) {
                 return List.of(defaultConstructor.get());
             }
@@ -79,39 +118,65 @@ public final class CyclingConstructorAnalyzer {
         return constructors;
     }
 
-    public static List<TypeView<?>> findCyclicPath(final TypeView<?> type) {
-        return findConstructor(type, false).map(constructor -> {
-            final List<TypeView<?>> path = findCyclicPath(constructor, type);
-            return finalizeLookup(type, path);
-        }).orElseGet(ArrayList::new);
+    public <T> ConstructorDiscoveryList findCyclicPath(TypeView<T> type) {
+        TypePathNode<T> node = new TypePathNode<>(type, ComponentKey.of(type));
+        return findCyclicPath(node);
     }
 
-    private static List<TypeView<?>> finalizeLookup(final TypeView<?> source, final List<TypeView<?>> path) {
-        if (path.isEmpty()) return path;
-        path.add(0, source);
-        path.add(source);
-        return path;
+    public ConstructorDiscoveryList findCyclicPath(TypePathNode<?> node) {
+        return findConstructor(node, false)
+                .map(constructor -> findCyclicPath(constructor, node))
+                .orElse(ConstructorDiscoveryList.EMPTY);
     }
 
-    private static List<TypeView<?>> findCyclicPath(final ConstructorView<?> constructor, final TypeView<?> lookForType) {
-        final List<TypeView<?>> path = new ArrayList<>();
-        if (constructor.parameters().count() == 0) return path;
-        for (final TypeView<?> parameterType : constructor.parameters().types()) {
-            if (parameterType.equals(lookForType)) {
-                return List.of(constructor.type());
+    private ConstructorDiscoveryList findCyclicPath(ConstructorView<?> constructor, TypePathNode<?> node) {
+        ConstructorDiscoveryList discoveryList = new ConstructorDiscoveryList();
+        discoveryList.add(node, constructor);
+        return findCyclicPath(constructor, discoveryList);
+    }
+
+    private ConstructorDiscoveryList findCyclicPath(ConstructorView<?> constructor, ConstructorDiscoveryList discoveryList) {
+        if (constructor.parameters().count() == 0) {
+            return ConstructorDiscoveryList.EMPTY;
+        }
+        ConstructorDiscoveryList parameterDiscoveryList = visitParameters(constructor, discoveryList);
+        return Objects.requireNonNullElse(parameterDiscoveryList, ConstructorDiscoveryList.EMPTY);
+    }
+
+    @Nullable
+    private ConstructorDiscoveryList visitParameters(ConstructorView<?> constructor, ConstructorDiscoveryList discoveryList) {
+        for (ParameterView<?> parameterType : constructor.parameters().all()) {
+            TypePathNode<?> pathNode = createPathNode(parameterType);
+            if (discoveryList.contains(pathNode)) {
+                return discoveryList;
             }
-            final Option<? extends ConstructorView<?>> parameterConstructor = findConstructor(parameterType, false);
-            if (parameterConstructor.present()) {
-                final List<TypeView<?>> cyclicPath = findCyclicPath(parameterConstructor.get(), lookForType);
-                if (!cyclicPath.isEmpty()) {
-                    if (!(cyclicPath.size() == 1 && cyclicPath.get(0).equals(parameterType))) {
-                        path.add(parameterType);
-                    }
-                    path.addAll(cyclicPath);
-                    return path;
-                }
+
+            ConstructorDiscoveryList candidateCyclicDiscoveryList = getDiscoveryList(discoveryList, pathNode);
+            if(candidateCyclicDiscoveryList != null) {
+                return candidateCyclicDiscoveryList;
             }
         }
-        return path;
+        return null;
+    }
+
+    @Nullable
+    private ConstructorDiscoveryList getDiscoveryList(ConstructorDiscoveryList discoveryList, TypePathNode<?> pathNode) {
+        Option<? extends ConstructorView<?>> parameterConstructorOption = findConstructor(pathNode, false);
+        if (parameterConstructorOption.present()) {
+            ConstructorView<?> parameterConstructor = parameterConstructorOption.get();
+            discoveryList.add(pathNode, parameterConstructor);
+
+            ConstructorDiscoveryList candidateCyclicDiscoveryList = findCyclicPath(parameterConstructor, discoveryList);
+            if (!candidateCyclicDiscoveryList.isEmpty()) {
+                return candidateCyclicDiscoveryList;
+            }
+        }
+        return null;
+    }
+
+    private <T> TypePathNode<?> createPathNode(ParameterView<T> parameter) {
+        TypeView<T> type = parameter.genericType();
+        ComponentKey<T> componentKey = ComponentKey.of(parameter);
+        return new TypePathNode<>(type, componentKey);
     }
 }

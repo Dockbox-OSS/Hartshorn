@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link Provider} of which the result can be mapped using a list of {@link Function}s. This
@@ -37,7 +37,7 @@ import java.util.function.Function;
  * @see Provider
  * @see ObjectContainer
  */
-public class ComposedProvider<T> implements Provider<T> {
+public final class ComposedProvider<T> implements Provider<T> {
 
     private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions = new LinkedList<>();
     private final Provider<T> provider;

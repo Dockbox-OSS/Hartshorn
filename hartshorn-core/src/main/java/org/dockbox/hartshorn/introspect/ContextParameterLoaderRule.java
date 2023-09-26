@@ -43,7 +43,9 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Applicati
 
         final TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
         ContextKey<? extends org.dockbox.hartshorn.context.Context> key = ContextKey.of(type.type());
-        if (StringUtilities.notEmpty(name)) key = key.mutable().name(name).build();
+        if (StringUtilities.notEmpty(name)) {
+            key = key.mutable().name(name).build();
+        }
 
         final Option<? extends org.dockbox.hartshorn.context.Context> out = applicationContext.first(key);
 

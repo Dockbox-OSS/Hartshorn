@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
@@ -23,14 +25,12 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Set;
-
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
     @Override
     protected <T> Set<DependencyContext<?>> resolveSingle(final DependencyDeclarationContext<T> componentContainer, final ApplicationContext applicationContext) throws DependencyResolutionException {
         final TypeView<?> type = componentContainer.type();
-        final ConstructorView<?> constructorView = CyclingConstructorAnalyzer.findConstructor(type)
+        final ConstructorView<?> constructorView = CyclingConstructorAnalyzer.create(applicationContext).findConstructor(type)
                 .mapError(DependencyResolutionException::new)
                 .rethrow()
                 .orNull();

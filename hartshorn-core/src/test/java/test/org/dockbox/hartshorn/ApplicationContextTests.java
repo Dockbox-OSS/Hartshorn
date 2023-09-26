@@ -16,18 +16,24 @@
 
 package test.org.dockbox.hartshorn;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ConstructorDiscoveryList;
+import org.dockbox.hartshorn.inject.ConstructorDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
 import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
+import org.dockbox.hartshorn.testsuite.TestBinding;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -38,17 +44,20 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
+import test.org.dockbox.hartshorn.components.BoundCircularDependencyA;
+import test.org.dockbox.hartshorn.components.BoundCircularDependencyB;
 import test.org.dockbox.hartshorn.components.CircularConstructorA;
 import test.org.dockbox.hartshorn.components.CircularConstructorB;
 import test.org.dockbox.hartshorn.components.CircularDependencyA;
 import test.org.dockbox.hartshorn.components.CircularDependencyB;
 import test.org.dockbox.hartshorn.components.ComponentType;
 import test.org.dockbox.hartshorn.components.ContextInjectedType;
+import test.org.dockbox.hartshorn.components.ImplicitCircularDependencyA;
+import test.org.dockbox.hartshorn.components.ImplicitCircularDependencyB;
+import test.org.dockbox.hartshorn.components.InterfaceCircularDependencyA;
+import test.org.dockbox.hartshorn.components.InterfaceCircularDependencyB;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleA;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleB;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleC;
@@ -124,7 +133,7 @@ public class ApplicationContextTests {
         final Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertSame(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.name());
+        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
     }
 
     @Test
@@ -137,7 +146,7 @@ public class ApplicationContextTests {
         final Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertSame(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.name());
+        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
     }
 
     @Test
@@ -149,7 +158,7 @@ public class ApplicationContextTests {
         final Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertSame(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.name());
+        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
     }
 
     @Test
@@ -162,7 +171,7 @@ public class ApplicationContextTests {
         final Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertSame(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.name());
+        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
     }
 
     @Test
@@ -174,7 +183,7 @@ public class ApplicationContextTests {
         final Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertSame(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.name());
+        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
     }
 
     @Test
@@ -187,7 +196,7 @@ public class ApplicationContextTests {
         final Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertSame(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.name());
+        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
     }
 
     @Test
@@ -223,7 +232,7 @@ public class ApplicationContextTests {
 
         new ContextualComponentPopulator(this.applicationContext).populate(populatedType);
         Assertions.assertNotNull(populatedType.sampleInterface());
-        Assertions.assertEquals("Hartshorn", populatedType.sampleInterface().name());
+        Assertions.assertEquals(SampleImplementation.NAME, populatedType.sampleInterface().name());
     }
 
     @Test
@@ -336,12 +345,12 @@ public class ApplicationContextTests {
 
     public static Stream<Arguments> circular() {
         return Stream.of(
-                Arguments.of(CircularConstructorA.class, new Class<?>[] {CircularConstructorA.class, CircularConstructorB.class, CircularConstructorA.class}),
-                Arguments.of(CircularConstructorB.class, new Class<?>[] {CircularConstructorB.class, CircularConstructorA.class, CircularConstructorB.class}),
-                Arguments.of(LongCycleA.class, new Class<?>[] {LongCycleA.class, LongCycleB.class, LongCycleC.class, LongCycleD.class, LongCycleA.class}),
-                Arguments.of(LongCycleB.class, new Class<?>[] {LongCycleB.class, LongCycleC.class, LongCycleD.class, LongCycleA.class, LongCycleB.class}),
-                Arguments.of(LongCycleC.class, new Class<?>[] {LongCycleC.class, LongCycleD.class, LongCycleA.class, LongCycleB.class, LongCycleC.class}),
-                Arguments.of(LongCycleD.class, new Class<?>[] {LongCycleD.class, LongCycleA.class, LongCycleB.class, LongCycleC.class, LongCycleD.class})
+                Arguments.of(CircularConstructorA.class, new Class<?>[] {CircularConstructorA.class, CircularConstructorB.class}),
+                Arguments.of(CircularConstructorB.class, new Class<?>[] {CircularConstructorB.class, CircularConstructorA.class}),
+                Arguments.of(LongCycleA.class, new Class<?>[] {LongCycleA.class, LongCycleB.class, LongCycleC.class, LongCycleD.class}),
+                Arguments.of(LongCycleB.class, new Class<?>[] {LongCycleB.class, LongCycleC.class, LongCycleD.class, LongCycleA.class}),
+                Arguments.of(LongCycleC.class, new Class<?>[] {LongCycleC.class, LongCycleD.class, LongCycleA.class, LongCycleB.class}),
+                Arguments.of(LongCycleD.class, new Class<?>[] {LongCycleD.class, LongCycleA.class, LongCycleB.class, LongCycleC.class})
         );
     }
 
@@ -351,14 +360,15 @@ public class ApplicationContextTests {
             CircularDependencyA.class,
             CircularDependencyB.class,
     })
-    void testCircularDependencyPathCanBeDetermined(final Class<?> type, final Class<?>... expected) {
-        final TypeView<?> typeView = this.applicationContext.environment().introspect(type);
-        final List<TypeView<?>> path = CyclingConstructorAnalyzer.findCyclicPath(typeView);
+    void testCircularDependencyPathCanBeDetermined(Class<?> type, Class<?>... expected) {
+        TypeView<?> typeView = this.applicationContext.environment().introspect(type);
+        ConstructorDiscoveryList path = CyclingConstructorAnalyzer.create(applicationContext).findCyclicPath(typeView);
         
         Assertions.assertNotNull(path);
-        Assertions.assertEquals(expected.length, path.size());
+        List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
+        Assertions.assertEquals(expected.length, discoveredComponents.size());
         for (int i = 0; i < expected.length; i++) {
-            Assertions.assertSame(expected[i], path.get(i).type());
+            Assertions.assertSame(expected[i], discoveredComponents.get(i).node().type().type());
         }
     }
 
@@ -375,6 +385,40 @@ public class ApplicationContextTests {
 
     @Test
     @TestComponents({SetterInjectedComponent.class, ComponentType.class})
+    void testCircularDependencyPathOnExplicitBoundTypeCanBeDetermined() {
+        TypeView<?> typeView = this.applicationContext.environment().introspect(InterfaceCircularDependencyA.class);
+        ConstructorDiscoveryList path = CyclingConstructorAnalyzer.create(applicationContext).findCyclicPath(typeView);
+        Assertions.assertNotNull(path);
+
+        List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
+        Assertions.assertEquals(3, discoveredComponents.size());
+        Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponents.get(0).node().type().type());
+        Assertions.assertSame(BoundCircularDependencyB.class, discoveredComponents.get(1).node().type().type());
+        Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponents.get(2).node().type().type());
+    }
+
+    @Test
+    @TestComponents(bindings = {
+            @TestBinding(type = InterfaceCircularDependencyA.class, implementation = ImplicitCircularDependencyA.class),
+            @TestBinding(type = InterfaceCircularDependencyB.class, implementation = ImplicitCircularDependencyB.class)
+    })
+    void testCircularDependencyPathOnImplicitBoundTypeCanBeDetermined() {
+        TypeView<?> typeView = this.applicationContext.environment().introspect(InterfaceCircularDependencyA.class);
+        ConstructorDiscoveryList path = CyclingConstructorAnalyzer.create(applicationContext).findCyclicPath(typeView);
+        Assertions.assertNotNull(path);
+
+        List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
+        Assertions.assertEquals(2, discoveredComponents.size());
+        DiscoveredComponent componentA = discoveredComponents.get(0);
+        Assertions.assertSame(InterfaceCircularDependencyA.class, componentA.node().type().type());
+        Assertions.assertSame(ImplicitCircularDependencyA.class, componentA.actualType().type());
+
+        DiscoveredComponent componentB = discoveredComponents.get(1);
+        Assertions.assertSame(InterfaceCircularDependencyB.class, componentB.node().type().type());
+        Assertions.assertSame(ImplicitCircularDependencyB.class, componentB.actualType().type());
+    }
+
+    @Test
     void testSetterInjectionWithRegularComponent() {
         final SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
         Assertions.assertNotNull(component);

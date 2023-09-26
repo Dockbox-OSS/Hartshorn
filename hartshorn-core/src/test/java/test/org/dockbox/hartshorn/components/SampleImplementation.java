@@ -16,9 +16,14 @@
 
 package test.org.dockbox.hartshorn.components;
 
+import org.dockbox.hartshorn.application.Hartshorn;
+
 public class SampleImplementation implements SampleInterface {
+
+    public static final String NAME = Hartshorn.PROJECT_NAME;
+
     @Override
     public String name() {
-        return "Hartshorn";
+        return NAME;
     }
 }
