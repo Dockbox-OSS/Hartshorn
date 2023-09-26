@@ -36,7 +36,7 @@ public abstract class SerializationTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(PersistenceService.class)
+    @TestComponents(components = PersistenceService.class)
     void testToStringSerialization() {
         final PersistenceService service = this.applicationContext.get(PersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
@@ -47,7 +47,7 @@ public abstract class SerializationTests {
     }
 
     @Test
-    @TestComponents(PersistenceService.class)
+    @TestComponents(components = PersistenceService.class)
     void testFromStringDeserialization() {
         final PersistenceService service = this.applicationContext.get(PersistenceService.class);
         final String json = "{\"name\":\"sample\"}";
@@ -58,7 +58,7 @@ public abstract class SerializationTests {
     }
 
     @Test
-    @TestComponents(PathPersistenceService.class)
+    @TestComponents(components = PathPersistenceService.class)
     void testToPathSerialization() {
         final PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
@@ -72,7 +72,7 @@ public abstract class SerializationTests {
     }
 
     @Test
-    @TestComponents(PathPersistenceService.class)
+    @TestComponents(components = PathPersistenceService.class)
     void testFromPathDeserialization() {
         final PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
@@ -87,7 +87,7 @@ public abstract class SerializationTests {
     }
 
     @Test
-    @TestComponents(AnnotationPathPersistenceService.class)
+    @TestComponents(components = AnnotationPathPersistenceService.class)
     void testToAnnotationPathSerialization() {
         final AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
@@ -97,7 +97,7 @@ public abstract class SerializationTests {
     }
 
     @Test
-    @TestComponents(AnnotationPathPersistenceService.class)
+    @TestComponents(components = AnnotationPathPersistenceService.class)
     void testFromAnnotationPathDeserialization() {
         final AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");

@@ -159,7 +159,7 @@ public class MessageTemplateServiceTests {
     }
 
     @InjectTest
-    @TestComponents(TranslationProviderService.class)
+    @TestComponents(components = TranslationProviderService.class)
     void testTranslationProvidersGetRegistered(final ApplicationContext applicationContext) {
         final TranslationService translationService = applicationContext.get(TranslationService.class);
         final Option<Message> message = translationService.get("lang.name");

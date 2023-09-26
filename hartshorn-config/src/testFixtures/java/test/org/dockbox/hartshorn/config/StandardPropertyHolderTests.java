@@ -64,7 +64,7 @@ public abstract class StandardPropertyHolderTests {
     }
 
     @Test
-    @TestComponents(ComponentWithUserValue.class)
+    @TestComponents(components = ComponentWithUserValue.class)
     void testValueComponents() {
         final PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
         propertyHolder.set("user.name", "John Doe");

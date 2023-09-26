@@ -16,6 +16,17 @@
 
 package org.dockbox.hartshorn.testsuite;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
@@ -48,17 +59,6 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -257,7 +257,10 @@ public class HartshornLifecycleExtension implements
                 environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
                 environment.applicationFSProvider(new JUnitFSProvider());
 
-                environment.applicationContext(SimpleApplicationContext.create(TestCustomizer.APPLICATION_CONTEXT.customizer()));
+                Customizer<SimpleApplicationContext.Configurer> applicationContextCustomizer = applicationContext -> {
+                    configureDefaultBindings(applicationContext, testComponentSources);
+                };
+                environment.applicationContext(SimpleApplicationContext.create(applicationContextCustomizer.compose(TestCustomizer.APPLICATION_CONTEXT.customizer())));
             };
             constructor.environment(ContextualApplicationEnvironment.create(environmentCustomizer.compose(TestCustomizer.ENVIRONMENT.customizer())));
 
@@ -266,6 +269,20 @@ public class HartshornLifecycleExtension implements
             }
 
             this.customizeActivators(constructor);
+        }
+
+        private void configureDefaultBindings(SimpleApplicationContext.Configurer applicationContext, List<AnnotatedElement> testComponentSources) {
+            for(AnnotatedElement testComponentSource : testComponentSources) {
+                if (testComponentSource.isAnnotationPresent(TestComponents.class)) {
+                    TestBinding[] bindings = testComponentSource.getAnnotation(TestComponents.class).bindings();
+                    applicationContext.defaultBindings((context, binder) -> {
+                        for(TestBinding binding : bindings) {
+                            //noinspection unchecked
+                            binder.bind(binding.type()).to((Class) binding.implementation());
+                        }
+                    });
+                }
+            }
         }
 
         private void customizeActivators(Configurer constructor) {
@@ -305,7 +322,7 @@ public class HartshornLifecycleExtension implements
         private static void registerStandaloneComponents(Configurer constructor, AnnotatedElement element) {
             if (element.isAnnotationPresent(TestComponents.class)) {
                 TestComponents testComponents = element.getAnnotation(TestComponents.class);
-                constructor.standaloneComponents(components -> components.addAll(testComponents.value()));
+                constructor.standaloneComponents(components -> components.addAll(testComponents.components()));
             }
         }
 

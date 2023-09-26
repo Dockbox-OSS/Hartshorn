@@ -47,7 +47,7 @@ public abstract class ConfigurationManagerTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(DemoClasspathConfiguration.class)
+    @TestComponents(components = DemoClasspathConfiguration.class)
     void testClassPathConfigurations() {
         // Configuration is read from resources/junit.yml
         final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
@@ -58,7 +58,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(DemoClasspathConfiguration.class)
+    @TestComponents(components = DemoClasspathConfiguration.class)
     void testDefaultValuesAreUsedIfPropertyIsAbsent() {
         final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
@@ -68,7 +68,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(DemoClasspathConfiguration.class)
+    @TestComponents(components = DemoClasspathConfiguration.class)
     void testNumberValuesAreParsed() {
         final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
@@ -77,7 +77,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(DemoClasspathConfiguration.class)
+    @TestComponents(components = DemoClasspathConfiguration.class)
     void testCollectionsAreParsed() {
         final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
@@ -87,7 +87,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(DemoClasspathConfiguration.class)
+    @TestComponents(components = DemoClasspathConfiguration.class)
     void testCollectionsAreSorted() {
         final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
@@ -99,7 +99,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(DemoClasspathConfiguration.class)
+    @TestComponents(components = DemoClasspathConfiguration.class)
     void testCustomCollectionsAreConverted() {
         final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
@@ -110,7 +110,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(DemoFSConfiguration.class)
+    @TestComponents(components = DemoFSConfiguration.class)
     void testFsConfigurations() {
         final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().applicationPath(), "junit");
         final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
@@ -129,7 +129,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(ValueTyped.class)
+    @TestComponents(components = ValueTyped.class)
     void testNormalValuesAreAccessible() {
         this.applicationContext.get(PropertyHolder.class).set("demo", "Hartshorn");
         final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
@@ -139,7 +139,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(ValueTyped.class)
+    @TestComponents(components = ValueTyped.class)
     void testNestedValuesAreAccessible() {
         this.applicationContext.get(PropertyHolder.class).set("nested.demo", "Hartshorn");
         final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
@@ -150,7 +150,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(SampleConfigurationObject.class)
+    @TestComponents(components = SampleConfigurationObject.class)
     void testConfigurationObjects() {
         final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
@@ -163,7 +163,7 @@ public abstract class ConfigurationManagerTests {
     }
 
     @Test
-    @TestComponents(SampleSetterConfigurationObject.class)
+    @TestComponents(components = SampleSetterConfigurationObject.class)
     void testSetterConfigurationObjects() {
         final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
