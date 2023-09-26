@@ -45,19 +45,19 @@ public final class CyclingConstructorAnalyzer {
 
     public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypeView<C> type) {
         TypePathNode<C> node = new TypePathNode<>(type, ComponentKey.of(type));
-        return findConstructor(node);
+        return this.findConstructor(node);
     }
 
     public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node) {
-        return findConstructor(node, true);
+        return this.findConstructor(node, true);
     }
 
     private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node, boolean checkForCycles) {
         BindingHierarchy<C> hierarchy = applicationContext.hierarchy(node.componentKey());
         Option<Provider<C>> providerOption = hierarchy.highestPriority();
         return providerOption.absent()
-                ? findConstructor(node, node.type(), checkForCycles)
-                : findConstructorInHierarchy(node, checkForCycles, providerOption);
+                ? this.findConstructor(node, node.type(), checkForCycles)
+                : this.findConstructorInHierarchy(node, checkForCycles, providerOption);
     }
 
     private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructorInHierarchy(TypePathNode<C> node,
@@ -69,7 +69,7 @@ public final class CyclingConstructorAnalyzer {
 
         if (provider instanceof TypeAwareProvider<C> typeAwareProvider) {
             TypeView<? extends C> typeView = applicationContext.environment().introspect(typeAwareProvider.type());
-            return findConstructor(node, typeView, checkForCycles);
+            return this.findConstructor(node, typeView, checkForCycles);
         }
         return Attempt.of(new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey()));
     }
@@ -80,7 +80,7 @@ public final class CyclingConstructorAnalyzer {
         }
 
         ConstructorView<? extends C> optimalConstructor;
-        List<? extends ConstructorView<? extends C>> constructors = findAvailableConstructors(type);
+        List<? extends ConstructorView<? extends C>> constructors = this.findAvailableConstructors(type);
         if (constructors.isEmpty()) {
             return Attempt.of(new MissingInjectConstructorException(type));
         }
@@ -95,7 +95,7 @@ public final class CyclingConstructorAnalyzer {
         }
 
         if (checkForCycles) {
-            ConstructorDiscoveryList path = findCyclicPath(optimalConstructor, node);
+            ConstructorDiscoveryList path = this.findCyclicPath(optimalConstructor, node);
             if (!path.isEmpty()) {
                 return Attempt.of(new CyclicComponentException(path));
             }
@@ -120,38 +120,38 @@ public final class CyclingConstructorAnalyzer {
 
     public <T> ConstructorDiscoveryList findCyclicPath(TypeView<T> type) {
         TypePathNode<T> node = new TypePathNode<>(type, ComponentKey.of(type));
-        return findCyclicPath(node);
+        return this.findCyclicPath(node);
     }
 
     public ConstructorDiscoveryList findCyclicPath(TypePathNode<?> node) {
-        return findConstructor(node, false)
-                .map(constructor -> findCyclicPath(constructor, node))
+        return this.findConstructor(node, false)
+                .map(constructor -> this.findCyclicPath(constructor, node))
                 .orElse(ConstructorDiscoveryList.EMPTY);
     }
 
     private ConstructorDiscoveryList findCyclicPath(ConstructorView<?> constructor, TypePathNode<?> node) {
         ConstructorDiscoveryList discoveryList = new ConstructorDiscoveryList();
         discoveryList.add(node, constructor);
-        return findCyclicPath(constructor, discoveryList);
+        return this.findCyclicPath(constructor, discoveryList);
     }
 
     private ConstructorDiscoveryList findCyclicPath(ConstructorView<?> constructor, ConstructorDiscoveryList discoveryList) {
         if (constructor.parameters().count() == 0) {
             return ConstructorDiscoveryList.EMPTY;
         }
-        ConstructorDiscoveryList parameterDiscoveryList = visitParameters(constructor, discoveryList);
+        ConstructorDiscoveryList parameterDiscoveryList = this.visitParameters(constructor, discoveryList);
         return Objects.requireNonNullElse(parameterDiscoveryList, ConstructorDiscoveryList.EMPTY);
     }
 
     @Nullable
     private ConstructorDiscoveryList visitParameters(ConstructorView<?> constructor, ConstructorDiscoveryList discoveryList) {
         for (ParameterView<?> parameterType : constructor.parameters().all()) {
-            TypePathNode<?> pathNode = createPathNode(parameterType);
+            TypePathNode<?> pathNode = this.createPathNode(parameterType);
             if (discoveryList.contains(pathNode)) {
                 return discoveryList;
             }
 
-            ConstructorDiscoveryList candidateCyclicDiscoveryList = getDiscoveryList(discoveryList, pathNode);
+            ConstructorDiscoveryList candidateCyclicDiscoveryList = this.getDiscoveryList(discoveryList, pathNode);
             if(candidateCyclicDiscoveryList != null) {
                 return candidateCyclicDiscoveryList;
             }
@@ -161,12 +161,12 @@ public final class CyclingConstructorAnalyzer {
 
     @Nullable
     private ConstructorDiscoveryList getDiscoveryList(ConstructorDiscoveryList discoveryList, TypePathNode<?> pathNode) {
-        Option<? extends ConstructorView<?>> parameterConstructorOption = findConstructor(pathNode, false);
+        Option<? extends ConstructorView<?>> parameterConstructorOption = this.findConstructor(pathNode, false);
         if (parameterConstructorOption.present()) {
             ConstructorView<?> parameterConstructor = parameterConstructorOption.get();
             discoveryList.add(pathNode, parameterConstructor);
 
-            ConstructorDiscoveryList candidateCyclicDiscoveryList = findCyclicPath(parameterConstructor, discoveryList);
+            ConstructorDiscoveryList candidateCyclicDiscoveryList = this.findCyclicPath(parameterConstructor, discoveryList);
             if (!candidateCyclicDiscoveryList.isEmpty()) {
                 return candidateCyclicDiscoveryList;
             }
