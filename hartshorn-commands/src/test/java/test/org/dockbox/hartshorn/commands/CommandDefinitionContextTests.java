@@ -52,7 +52,7 @@ public class CommandDefinitionContextTests {
     private final ComponentKey<SampleCommand> typeContext = ComponentKey.of(SampleCommand.class);
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testParsingCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -60,7 +60,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
-    @TestComponents(SampleCommandExtension.class)
+    @TestComponents(components = SampleCommandExtension.class)
     void testExtensionCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -69,7 +69,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testComplexParsingCanSucceed() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -98,7 +98,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testArgumentParameters() {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
@@ -116,7 +116,7 @@ public class CommandDefinitionContextTests {
     }
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testGroups() throws ParsingException {
         final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);

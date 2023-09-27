@@ -114,4 +114,8 @@ public final class CollectionUtilities {
             collection.forEach(consumer);
         }
     }
+
+    public static <T> List<T> distinct(List<T> collection) {
+        return collection.stream().distinct().toList();
+    }
 }

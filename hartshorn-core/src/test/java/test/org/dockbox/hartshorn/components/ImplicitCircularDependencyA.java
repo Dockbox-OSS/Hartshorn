@@ -16,14 +16,15 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+public class ImplicitCircularDependencyA implements InterfaceCircularDependencyA {
 
-public class SampleImplementation implements SampleInterface {
+    private final InterfaceCircularDependencyB dependencyB;
 
-    public static final String NAME = Hartshorn.PROJECT_NAME;
+    public ImplicitCircularDependencyA(InterfaceCircularDependencyB dependencyB) {
+        this.dependencyB = dependencyB;
+    }
 
-    @Override
-    public String name() {
-        return NAME;
+    public InterfaceCircularDependencyB dependencyB() {
+        return dependencyB;
     }
 }

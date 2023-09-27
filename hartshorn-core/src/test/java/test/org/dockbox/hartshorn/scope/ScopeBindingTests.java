@@ -78,7 +78,7 @@ public class ScopeBindingTests {
     }
 
     @Test
-    @TestComponents(ScopedBindingProvider.class)
+    @TestComponents(components = ScopedBindingProvider.class)
     void name() {
         final String applicationScope = this.applicationContext.get(String.class);
         final String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class).scope(new SampleScope()).build());

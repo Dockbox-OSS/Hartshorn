@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn.conditions;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ActivatorCondition;
@@ -48,7 +47,7 @@ import java.util.stream.Stream;
 import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
-@TestComponents(ConditionalProviders.class)
+@TestComponents(components = ConditionalProviders.class)
 @TestProperties({
         "--property.c=o",
         "--property.d=d",
@@ -88,7 +87,7 @@ public class ConditionTests {
 
     @ParameterizedTest
     @MethodSource("properties")
-    @TestComponents(ConditionalProviders.class)
+    @TestComponents(components = ConditionalProviders.class)
     void testPropertyConditions(final String name, final boolean present) {
         final ComponentKey<String> key = ComponentKey.builder(String.class).name(name).build();
         final BindingHierarchy<String> hierarchy = this.applicationContext.hierarchy(key);

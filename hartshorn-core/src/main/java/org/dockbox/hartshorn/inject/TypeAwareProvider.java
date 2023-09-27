@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.Hartshorn;
-
-public class SampleImplementation implements SampleInterface {
-
-    public static final String NAME = Hartshorn.PROJECT_NAME;
-
-    @Override
-    public String name() {
-        return NAME;
-    }
+public non-sealed interface TypeAwareProvider<T> extends Provider<T> {
+    Class<? extends T> type();
 }

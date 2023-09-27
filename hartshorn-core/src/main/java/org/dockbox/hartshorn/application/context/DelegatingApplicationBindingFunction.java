@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
@@ -48,7 +49,7 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public BindingFunction<T> installTo(Class<? extends Scope> scope) {
+    public BindingFunction<T> installTo(Class<? extends Scope> scope) throws IllegalScopeException {
         return this.delegate.installTo(scope);
     }
 

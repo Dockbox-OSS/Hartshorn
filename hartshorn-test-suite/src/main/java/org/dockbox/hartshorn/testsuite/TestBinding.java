@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class SampleImplementation implements SampleInterface {
-
-    public static final String NAME = Hartshorn.PROJECT_NAME;
-
-    @Override
-    public String name() {
-        return NAME;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TestBinding {
+    Class<?> type();
+    Class<?> implementation();
 }

@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.function.Function;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.function.Function;
 
 /**
  * A provider is a class that can provide an instance of a {@link ComponentKey} binding. The
@@ -32,8 +32,7 @@ import java.util.function.Function;
  * @author Guus Lieben
  * @since 0.4.3
  */
-@FunctionalInterface
-public interface Provider<T> {
+public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvider, ComposedProvider {
 
     /**
      * Provides an instance of the {@link ComponentKey} binding. The {@link ApplicationContext} can be used

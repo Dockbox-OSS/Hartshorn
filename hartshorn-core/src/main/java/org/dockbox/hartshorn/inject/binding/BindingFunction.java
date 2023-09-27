@@ -22,10 +22,34 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 public interface BindingFunction<T> {
 
-    BindingFunction<T> installTo(Class<? extends Scope> scope);
+    /**
+     * Binds the current function to the given scope.
+     *
+     * @param scope The scope to bind to
+     * @return The binding function
+     * @throws IllegalScopeException When the scope is not valid, or cannot be modified safely
+     */
+    BindingFunction<T> installTo(Class<? extends Scope> scope) throws IllegalScopeException;
 
+    /**
+     * Sets the priority of the binding. This will determine the order in which the binding is
+     * processed. The higher the priority, the earlier the binding is processed. It remains up
+     * to the {@link org.dockbox.hartshorn.component.ComponentProvider} to determine how to
+     * process the bindings.
+     *
+     * @param priority The priority to set
+     * @return The binding function
+     */
     BindingFunction<T> priority(int priority);
 
+    /**
+     * Sets whether the result of the binding should be processed after initialization. This
+     * will determine whether the result of the binding should be enhanced by
+     * {@link org.dockbox.hartshorn.component.processing.ComponentProcessor}s.
+     *
+     * @param processAfterInitialization Whether to process after initialization
+     * @return The binding function
+     */
     BindingFunction<T> processAfterInitialization(boolean processAfterInitialization);
 
     /**
@@ -46,6 +70,13 @@ public interface BindingFunction<T> {
      */
     Binder to(CheckedSupplier<T> supplier);
 
+    /**
+     * Binds to the given provider, this will call the provider every time it is
+     * requested.
+     *
+     * @param provider The provider to bind to
+     * @return The binder
+     */
     Binder to(Provider<T> provider);
 
     /**

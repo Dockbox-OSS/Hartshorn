@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
-import net.sf.cglib.proxy.Enhancer;
+import java.lang.reflect.Constructor;
 
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 
-import java.lang.reflect.Constructor;
+import net.sf.cglib.proxy.Enhancer;
 
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
@@ -45,7 +45,7 @@ public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunctio
     }
 
     @Override
-    public T create(final Constructor<T> constructor, final Object[] args) {
+    public T create(final Constructor<? extends T> constructor, final Object[] args) {
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Object instance = this.enhancer.create(parameterTypes, args);
         return this.type.cast(instance);

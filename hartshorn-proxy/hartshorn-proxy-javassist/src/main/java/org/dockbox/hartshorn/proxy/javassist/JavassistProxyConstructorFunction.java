@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.util.ApplicationException;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -47,7 +47,7 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
     }
 
     @Override
-    public T create(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+    public T create(final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
         try {
             final Class<?>[] parameterTypes = constructor.getParameterTypes();
             return this.type.cast(this.factory.create(parameterTypes, args, this.methodHandler));

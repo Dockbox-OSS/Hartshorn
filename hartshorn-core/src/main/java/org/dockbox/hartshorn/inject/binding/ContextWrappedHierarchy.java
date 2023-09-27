@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 /**
  * A {@link ContextWrappedHierarchy} is a {@link BindingHierarchy} that wraps another {@link BindingHierarchy}
@@ -38,9 +38,10 @@ import java.util.function.Consumer;
  */
 public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
 
-    private BindingHierarchy<C> real;
     private final ApplicationContext applicationContext;
     private final Consumer<BindingHierarchy<C>> onUpdate;
+
+    private BindingHierarchy<C> real;
 
     public ContextWrappedHierarchy(final BindingHierarchy<C> real, final ApplicationContext applicationContext, final Consumer<BindingHierarchy<C>> onUpdate) {
         this.real = real;
@@ -48,7 +49,10 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
         this.onUpdate = onUpdate;
     }
 
-    public BindingHierarchy<C> real() {
+    /**
+     * @return The wrapped {@link BindingHierarchy}.
+     */
+    protected BindingHierarchy<C> real() {
         return this.real;
     }
 
@@ -94,6 +98,11 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public Option<Provider<C>> get(final int priority) {
         return this.real().get(priority);
+    }
+
+    @Override
+    public Option<Provider<C>> highestPriority() {
+        return this.real().highestPriority();
     }
 
     @Override

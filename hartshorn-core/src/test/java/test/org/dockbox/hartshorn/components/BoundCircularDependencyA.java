@@ -16,14 +16,18 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+import jakarta.inject.Inject;
 
-public class SampleImplementation implements SampleInterface {
+public class BoundCircularDependencyA implements InterfaceCircularDependencyA {
 
-    public static final String NAME = Hartshorn.PROJECT_NAME;
+    private final BoundCircularDependencyB dependencyB;
 
-    @Override
-    public String name() {
-        return NAME;
+    @Inject
+    public BoundCircularDependencyA(BoundCircularDependencyB dependencyB) {
+        this.dependencyB = dependencyB;
+    }
+
+    public BoundCircularDependencyB dependencyB() {
+        return dependencyB;
     }
 }

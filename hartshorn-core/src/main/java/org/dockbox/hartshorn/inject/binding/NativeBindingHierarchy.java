@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,6 +23,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ContextDrivenProvider;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link ComponentKey}
@@ -112,6 +112,11 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public Option<Provider<C>> get(final int priority) {
         return Option.of(this.bindings.getOrDefault(priority, null));
+    }
+
+    @Override
+    public Option<Provider<C>> highestPriority() {
+        return Option.of(this.bindings.firstEntry()).map(Entry::getValue);
     }
 
     @Override

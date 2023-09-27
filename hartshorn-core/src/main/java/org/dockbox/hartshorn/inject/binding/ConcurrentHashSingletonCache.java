@@ -16,28 +16,38 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.component.ComponentKey;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.option.Option;
+
+/**
+ * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store
+ * instances. This implementation is thread-safe.
+ *
+ * @author Guus Lieben
+ * @since 0.4.11
+ *
+ * @see SingletonCache
+ * @see ConcurrentHashMap
+ */
 public class ConcurrentHashSingletonCache implements SingletonCache {
 
     private final Map<ComponentKey<?>, Object> cache = new ConcurrentHashMap<>();
 
     @Override
     public <T> void put(ComponentKey<T> key, T instance) {
+        if (this.cache.containsKey(key) && this.cache.get(key) != instance) {
+            throw new IllegalModificationException("An instance is already stored for key '" + key + "'");
+        }
         this.cache.put(key, instance);
     }
 
     @Override
-    public <T> T get(ComponentKey<T> key) {
-        return key.type().cast(this.cache.get(key));
-    }
-
-    @Override
-    public <T> void remove(ComponentKey<T> key) {
-        this.cache.remove(key);
+    public <T> Option<T> get(ComponentKey<T> key) {
+        return Option.of(key.type().cast(this.cache.get(key)));
     }
 
     @Override
@@ -45,8 +55,4 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
         return this.cache.containsKey(key);
     }
 
-    @Override
-    public <T> void clear() {
-        this.cache.clear();
-    }
 }

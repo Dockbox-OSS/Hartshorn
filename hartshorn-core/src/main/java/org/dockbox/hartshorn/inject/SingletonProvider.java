@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class SingletonProvider<T> implements Provider<T> {
+public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     private final ObjectContainer<T> container;
 
@@ -31,4 +31,5 @@ public class SingletonProvider<T> implements Provider<T> {
     public Option<ObjectContainer<T>> provide(ApplicationContext context) {
         return Option.of(this.container);
     }
+
 }

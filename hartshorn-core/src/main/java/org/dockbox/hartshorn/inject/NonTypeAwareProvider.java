@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.Hartshorn;
-
-public class SampleImplementation implements SampleInterface {
-
-    public static final String NAME = Hartshorn.PROJECT_NAME;
-
-    @Override
-    public String name() {
-        return NAME;
-    }
+/**
+ * A {@link Provider} that is not aware of the type it provides. This is useful when the type
+ * is not known at compile time, but only at runtime (e.g. in suppliers).
+ *
+ * @param <T> The type instance to provide.
+ */
+@FunctionalInterface
+public non-sealed interface NonTypeAwareProvider<T> extends Provider<T> {
 }

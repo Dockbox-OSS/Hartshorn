@@ -33,7 +33,7 @@ public class ContextAwareTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(SampleContextAwareType.class)
+    @TestComponents(components = SampleContextAwareType.class)
     void testApplicationContextIsBound() {
         final ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);

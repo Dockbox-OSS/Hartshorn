@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.function.Supplier;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.function.Supplier;
 
 /**
  * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  * @see ContextDrivenProvider
  * @since 0.4.3
  */
-public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements Provider<C> {
+public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
 
     @Override
     public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
@@ -45,4 +45,5 @@ public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements Provid
                 ApplicationException.class
         ).rethrow();
     }
+
 }

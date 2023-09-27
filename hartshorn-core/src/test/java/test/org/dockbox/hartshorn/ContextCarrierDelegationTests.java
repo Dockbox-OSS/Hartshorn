@@ -35,7 +35,7 @@ import test.org.dockbox.hartshorn.components.IDefaultContextCarrierService;
 public class ContextCarrierDelegationTests {
 
     @InjectTest
-    @TestComponents(ContextCarrierService.class)
+    @TestComponents(components = ContextCarrierService.class)
     void testContextCarrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
         final ContextCarrierService service = applicationContext.get(ContextCarrierService.class);
         this.testDelegateAbsent(service);
@@ -43,7 +43,7 @@ public class ContextCarrierDelegationTests {
     }
 
     @InjectTest
-    @TestComponents(IDefaultContextCarrierService.class)
+    @TestComponents(components = IDefaultContextCarrierService.class)
     void testDefaultCarrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
         final IDefaultContextCarrierService service = applicationContext.get(IDefaultContextCarrierService.class);
         this.testDelegateAbsent(service);
@@ -52,7 +52,7 @@ public class ContextCarrierDelegationTests {
     }
 
     @InjectTest
-    @TestComponents(IContextCarrierService.class)
+    @TestComponents(components = IContextCarrierService.class)
     void testCarrierDelegation(final ApplicationContext applicationContext) throws NoSuchMethodException {
         final IContextCarrierService service = applicationContext.get(IContextCarrierService.class);
 

@@ -76,7 +76,7 @@ public class StaticBindsTests {
     }
 
     @Test
-    @TestComponents(StaticAwareComponent.class)
+    @TestComponents(components = StaticAwareComponent.class)
     void testComponentInjectionWithoutExplicitCollection() {
         final StaticComponentCollector beanContext = this.applicationContext.first(StaticComponentContext.CONTEXT_KEY).get();
         beanContext.register("Foo", String.class, "names");
@@ -92,7 +92,7 @@ public class StaticBindsTests {
     }
 
     @Test
-    @TestComponents(StaticAwareComponent.class)
+    @TestComponents(components = StaticAwareComponent.class)
     void testComponentInjectionWithExplicitCollection() {
         final StaticComponentContext staticComponentContext = this.applicationContext.first(StaticComponentContext.CONTEXT_KEY).get();
         staticComponentContext.register(1, Integer.class, "ages");
@@ -109,7 +109,7 @@ public class StaticBindsTests {
     }
 
     @InjectTest
-    @TestComponents(StaticComponentService.class)
+    @TestComponents(components = StaticComponentService.class)
     void testApplicationHasBeanContext(final ApplicationContext applicationContext) {
         final Option<StaticComponentContext> beanContext = applicationContext.first(StaticComponentContext.CONTEXT_KEY);
         Assertions.assertTrue(beanContext.present());
@@ -119,7 +119,7 @@ public class StaticBindsTests {
     }
 
     @InjectTest
-    @TestComponents(StaticComponentService.class)
+    @TestComponents(components = StaticComponentService.class)
     void testBeansAreCollected(@Context final StaticComponentContext staticComponentContext) {
         final StaticComponentProvider staticComponentProvider = staticComponentContext.provider();
         final List<StaticComponent> staticComponents = staticComponentProvider.all(StaticComponent.class);
@@ -136,7 +136,7 @@ public class StaticBindsTests {
     }
 
     @InjectTest
-    @TestComponents({ StaticComponentService.class, TestStaticComponentObserver.class })
+    @TestComponents(components = { StaticComponentService.class, TestStaticComponentObserver.class })
     void testBeansAreObserved(final TestStaticComponentObserver observer) {
         final List<StaticComponent> beans = observer.components();
         Assertions.assertEquals(3, beans.size());

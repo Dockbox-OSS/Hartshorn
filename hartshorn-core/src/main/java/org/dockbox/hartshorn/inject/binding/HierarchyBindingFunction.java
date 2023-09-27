@@ -31,6 +31,18 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The hierarchy is
+ * provided by the owning {@link Binder}.
+ *
+ * @param <T> The type of the component that is bound.
+ *
+ * @author Guus Lieben
+ * @since 0.4.1
+ *
+ * @see Binder
+ * @see BindingHierarchy
+ */
 public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     private final BindingHierarchy<T> hierarchy;
@@ -82,9 +94,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(Class<? extends Scope> scope) {
+    public BindingFunction<T> installTo(Class<? extends Scope> scope) throws IllegalScopeException {
         if (this.scope != null && this.scope != Scope.DEFAULT_SCOPE && (!(this.scope instanceof ApplicationContext))) {
-            throw new IllegalModificationException("Cannot install binding to scope " + scope.getName() + " as the binding is already installed to scope " + this.scope.getClass().getName());
+            throw new IllegalScopeException("Cannot install binding to scope " + scope.getName() + " as the binding is already installed to scope " + this.scope.getClass().getName());
         }
         // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
         if (this.scope instanceof ApplicationContext && !ApplicationContext.class.isAssignableFrom(scope)) {

@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyAdvisorMethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
@@ -26,9 +29,6 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
 
 /**
  * A {@link ProxyFactory} implementation which uses the JDK {@link java.lang.reflect.Proxy} class to create proxies for
@@ -55,7 +55,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Attempt<T, Throwable> createNewProxy(final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+    public Attempt<T, Throwable> createNewProxy(final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
         if (args.length != constructor.getParameterCount()) {
             throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
@@ -127,7 +127,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final Constructor<T> constructor, final Object[] args) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 

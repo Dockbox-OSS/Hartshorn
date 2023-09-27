@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public class SampleImplementation implements SampleInterface {
+public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey) {
 
-    public static final String NAME = Hartshorn.PROJECT_NAME;
-
-    @Override
-    public String name() {
-        return NAME;
+    public String qualifiedName() {
+        return componentKey.qualifiedName(true);
     }
 }

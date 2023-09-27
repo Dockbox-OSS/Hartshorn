@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import java.util.List;
+import java.util.Map.Entry;
+
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * A hierarchical representation of type providers. Each entry is represented by a {@link Entry}
@@ -102,6 +102,14 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
      * @return The provider if it exists, or {@link Option#empty()}
      */
     Option<Provider<C>> get(int priority);
+
+    /**
+     * Gets the {@link Provider} with the highest priority. If no providers are registered, an
+     * {@link Option#empty()} will be returned.
+     *
+     * @return The provider with the highest priority, or {@link Option#empty()}.
+     */
+    Option<Provider<C>> highestPriority();
 
     /**
      * Gets the {@link ComponentKey} of the current hierarchy, containing a {@link Class}

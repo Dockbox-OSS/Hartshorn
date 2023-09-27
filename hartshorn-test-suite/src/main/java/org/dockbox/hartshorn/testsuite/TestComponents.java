@@ -26,5 +26,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface TestComponents {
-    Class<?>[] value();
+    Class<?>[] components() default {};
+    TestBinding[] bindings() default {};
 }

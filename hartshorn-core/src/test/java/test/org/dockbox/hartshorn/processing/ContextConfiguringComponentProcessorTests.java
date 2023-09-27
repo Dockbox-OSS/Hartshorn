@@ -40,7 +40,7 @@ public class ContextConfiguringComponentProcessorTests {
     }
 
     @InjectTest
-    @TestComponents(EmptyComponent.class)
+    @TestComponents(components = EmptyComponent.class)
     void testNonContextComponentIsProcessed(final ApplicationContext applicationContext) {
         final EmptyComponent emptyComponent = applicationContext.get(EmptyComponent.class);
 
@@ -54,7 +54,7 @@ public class ContextConfiguringComponentProcessorTests {
     }
 
     @InjectTest
-    @TestComponents(ContextComponent.class)
+    @TestComponents(components = ContextComponent.class)
     void testContextComponentIsProcessed(final ApplicationContext applicationContext) {
         final ContextComponent contextComponent = applicationContext.get(ContextComponent.class);
 
