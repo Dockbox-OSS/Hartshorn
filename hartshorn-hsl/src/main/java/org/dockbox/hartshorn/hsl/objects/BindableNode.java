@@ -16,7 +16,32 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
+/**
+ * Represents a node that can be bound to an instance. This can be used to bind properties
+ * to specific holders or executors.
+ *
+ * @param <T> the type of the bound object
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
 public interface BindableNode<T> {
+
+    /**
+     * Creates a new instance of the node, and binds it to the given instance. The returned
+     * instance may be the same as the instance on which this method is invoked, if the current
+     * node is already bound to the given instance.
+     *
+     * @param instance the instance to bind to
+     * @return the bound instance
+     */
     T bind(InstanceReference instance);
+
+    /**
+     * Returns the instance to which this node is bound. If this node is not bound, {@code null}
+     * is returned.
+     *
+     * @return the bound instance
+     */
     InstanceReference bound();
 }

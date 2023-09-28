@@ -84,12 +84,15 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
     @Override
     public ClassReference superClass() {
         final TypeView<?> parent = this.type().superClass();
-        if (parent.isVoid()) return null;
+        if (parent.isVoid()) {
+            return null;
+        }
         return new ExternalClass<>(parent);
     }
 
     @Override
     public String name() {
+        // TODO: Return alias if imported with non-original name
         return this.type().name();
     }
 

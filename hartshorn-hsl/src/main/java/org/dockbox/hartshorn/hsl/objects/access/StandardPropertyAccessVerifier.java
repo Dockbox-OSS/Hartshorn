@@ -26,7 +26,9 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
 
     @Override
     public boolean verify(final Token at, final FieldStatement field, final InstanceReference instance, final VariableScope fromScope) {
-        if (field.isPublic()) return true;
+        if (field.isPublic()) {
+            return true;
+        }
 
         if (instance instanceof VirtualInstance virtualInstance) {
             final VariableScope classScope = virtualInstance.type().variableScope();
