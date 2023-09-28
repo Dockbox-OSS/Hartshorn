@@ -35,35 +35,35 @@ public class ArrayLiteralExpressionInterpreterTests {
 
     @Test
     void testEmptyArrayLiteralYieldsEmptyArrayObject() {
-        final ArrayLiteralExpression expression = createExpression(List.of());
+        ArrayLiteralExpression expression = createExpression(List.of());
 
-        final Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
+        Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
         Assertions.assertNotNull(interpreted);
         Assertions.assertTrue(interpreted instanceof Array);
 
-        final Array array = (Array) interpreted;
+        Array array = (Array) interpreted;
         Assertions.assertEquals(0, array.length());
     }
 
     @Test
     void testArrayLiteralYieldsArrayObject() {
-        final Token value = Token.of(TokenType.STRING).literal("test").build();
-        final LiteralExpression literalExpression = new LiteralExpression(value, value.literal());
-        final ArrayLiteralExpression expression = createExpression(List.of(literalExpression));
+        Token value = Token.of(TokenType.STRING).literal("test").build();
+        LiteralExpression literalExpression = new LiteralExpression(value, value.literal());
+        ArrayLiteralExpression expression = createExpression(List.of(literalExpression));
 
-        final Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
+        Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
         Assertions.assertNotNull(interpreted);
         Assertions.assertTrue(interpreted instanceof Array);
 
-        final Array array = (Array) interpreted;
+        Array array = (Array) interpreted;
         Assertions.assertEquals(1, array.length());
         Assertions.assertEquals("test", array.value(0));
     }
 
     @NotNull
     private static ArrayLiteralExpression createExpression(final List<Expression> expressions) {
-        final Token open = Token.of(TokenType.ARRAY_OPEN).lexeme("[").build();
-        final Token close = Token.of(TokenType.ARRAY_CLOSE).lexeme("]").build();
+        Token open = Token.of(TokenType.ARRAY_OPEN).lexeme("[").build();
+        Token close = Token.of(TokenType.ARRAY_CLOSE).lexeme("]").build();
         return new ArrayLiteralExpression(open, close, expressions);
     }
 }

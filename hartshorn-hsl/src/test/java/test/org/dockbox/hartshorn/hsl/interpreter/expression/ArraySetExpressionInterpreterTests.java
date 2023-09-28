@@ -33,46 +33,46 @@ public class ArraySetExpressionInterpreterTests {
 
     @Test
     void testSetWithinArrayRange() {
-        final Object[] realArray = { "test" };
-        final int targetIndex = 0;
+        Object[] realArray = { "test" };
+        int targetIndex = 0;
 
-        final Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
-        final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
+        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        final Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
-        final Array hslArray = new Array(realArray);
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        Array hslArray = new Array(realArray);
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         adapter.visitingScope().define(arrayIdentifier.lexeme(), hslArray);
 
-        final Token valueToken = Token.of(TokenType.STRING).literal("value").build();
-        final LiteralExpression literalExpression = new LiteralExpression(valueToken, "value");
+        Token valueToken = Token.of(TokenType.STRING).literal("value").build();
+        LiteralExpression literalExpression = new LiteralExpression(valueToken, "value");
 
-        final ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
-        final ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
+        ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
+        ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
 
-        final Object interpreted = expressionInterpreter.interpret(setExpression, adapter);
+        Object interpreted = expressionInterpreter.interpret(setExpression, adapter);
         Assertions.assertEquals(literalExpression.value(), interpreted);
         Assertions.assertEquals(literalExpression.value(), hslArray.value(targetIndex));
     }
 
     @Test
     void testSetOutsideRangeThrowsOutOfBounds() {
-        final Object[] realArray = { "test" };
-        final int targetIndex = 1;
+        Object[] realArray = { "test" };
+        int targetIndex = 1;
 
-        final Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
-        final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
+        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        final Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
-        final Array hslArray = new Array(realArray);
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        Array hslArray = new Array(realArray);
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         adapter.visitingScope().define(arrayIdentifier.lexeme(), hslArray);
 
-        final Token valueToken = Token.of(TokenType.STRING).literal("value").build();
-        final LiteralExpression literalExpression = new LiteralExpression(valueToken, "value");
+        Token valueToken = Token.of(TokenType.STRING).literal("value").build();
+        LiteralExpression literalExpression = new LiteralExpression(valueToken, "value");
 
-        final ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
-        final ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
+        ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
+        ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(setExpression, adapter));
     }

@@ -48,42 +48,42 @@ public class AssignExpressionInterpreterTests {
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
     void testAssignmentToDefinedVariable(final Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
-        final Token variableName = Token.of(TokenType.IDENTIFIER)
+        Token variableName = Token.of(TokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
 
-        final Token variableValue = Token.of(TokenType.STRING)
+        Token variableValue = Token.of(TokenType.STRING)
                 .literal("theValue")
                 .build();
 
-        final LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
-        final AssignExpression expression = new AssignExpression(variableName, literalExpression);
-        final ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+        LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
+        AssignExpression expression = new AssignExpression(variableName, literalExpression);
+        ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
 
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         variableScopeFunction.apply(adapter).define(variableName.lexeme(), "test");
 
-        final Object interpreted = Assertions.assertDoesNotThrow(() -> interpreter.interpret(expression, adapter));
+        Object interpreted = Assertions.assertDoesNotThrow(() -> interpreter.interpret(expression, adapter));
         Assertions.assertEquals(literalExpression.value(), interpreted);
     }
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        final Token variableName = Token.of(TokenType.IDENTIFIER)
+        Token variableName = Token.of(TokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
 
-        final Token variableValue = Token.of(TokenType.STRING)
+        Token variableValue = Token.of(TokenType.STRING)
                 .literal("theValue")
                 .build();
 
-        final LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
-        final AssignExpression expression = new AssignExpression(variableName, literalExpression);
-        final ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+        LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
+        AssignExpression expression = new AssignExpression(variableName, literalExpression);
+        ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
 
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
 
-        final RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> interpreter.interpret(expression, adapter));
+        RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> interpreter.interpret(expression, adapter));
         Assertions.assertSame(variableName, error.token());
     }
 }

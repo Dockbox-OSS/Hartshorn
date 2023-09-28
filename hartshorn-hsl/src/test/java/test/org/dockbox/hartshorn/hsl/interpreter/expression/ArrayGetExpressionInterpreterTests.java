@@ -33,37 +33,37 @@ public class ArrayGetExpressionInterpreterTests {
 
     @Test
     void testArrayGetExpressionCanGetIfInRange() {
-        final Object[] realArray = { "test" };
-        final int targetIndex = 0;
+        Object[] realArray = { "test" };
+        int targetIndex = 0;
 
-        final Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
-        final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
+        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        final Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
-        final ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
-        final ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
+        ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
+        ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
-        final Object interpretedValue = expressionInterpreter.interpret(getExpression, adapter);
+        Object interpretedValue = expressionInterpreter.interpret(getExpression, adapter);
         Assertions.assertEquals(realArray[targetIndex], interpretedValue);
     }
 
     @Test
     void testArrayGetExpressionThrowsIfOutOfRange() {
-        final Object[] realArray = { "test" };
-        final int targetIndex = 1;
+        Object[] realArray = { "test" };
+        int targetIndex = 1;
 
-        final Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
-        final LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
+        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        final Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
-        final ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
-        final ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
+        ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
+        ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, adapter));
     }
