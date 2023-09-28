@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -28,7 +28,7 @@ import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
-public class HslScriptTests {
+public class ExecutableScriptTests {
 
     @Inject
     private ApplicationContext context;
@@ -36,7 +36,7 @@ public class HslScriptTests {
     @Test
     void testHslScriptCanEvaluate() {
         String expression = "var a = 1";
-        HslScript script = HslScript.of(this.context, expression);
+        ExecutableScript script = ExecutableScript.of(this.context, expression);
         ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::evaluate);
         Object result = scriptContext.interpreter().global().values().get("a");
         Assertions.assertNotNull(result);
@@ -45,7 +45,7 @@ public class HslScriptTests {
     @Test
     void testHslScriptCanResolveWithoutEvaluate() {
         String expression = "var a = 1";
-        HslScript script = HslScript.of(this.context, expression);
+        ExecutableScript script = ExecutableScript.of(this.context, expression);
         ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::resolve);
         Object result = scriptContext.interpreter().global().values().get("a");
         Assertions.assertNull(result);

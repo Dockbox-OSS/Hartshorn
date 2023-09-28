@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * A common library containing multiple {@link NativeModule native modules} which can be
@@ -36,17 +36,17 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public class HslLibrary implements CallableNode {
+public class NativeLibrary implements CallableNode {
 
     private final NativeFunctionStatement declaration;
     private final Map<String, NativeModule> externalModules;
 
-    public HslLibrary(NativeFunctionStatement declaration, Map<String, NativeModule> externalModules) {
+    public NativeLibrary(NativeFunctionStatement declaration, Map<String, NativeModule> externalModules) {
         this.declaration = declaration;
         this.externalModules = externalModules;
     }
 
-    public HslLibrary(NativeFunctionStatement declaration, String moduleName, NativeModule externalModule) {
+    public NativeLibrary(NativeFunctionStatement declaration, String moduleName, NativeModule externalModule) {
         this(declaration, Map.of(moduleName, externalModule));
     }
 

@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
@@ -23,41 +26,23 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-import java.util.List;
-import java.util.Map;
-
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public class StandardHslLanguageFactory implements HslLanguageFactory {
+public interface ScriptComponentFactory {
 
-    @Override
-    public Lexer lexer(String source) {
-        return new Lexer(source);
-    }
+    Lexer lexer(String source);
 
-    @Override
-    public TokenParser parser(List<Token> tokens) {
-        return new StandardTokenParser(tokens);
-    }
+    TokenParser parser(List<Token> tokens);
 
-    @Override
-    public Resolver resolver(Interpreter interpreter) {
-        return new Resolver(interpreter);
-    }
+    Resolver resolver(Interpreter interpreter);
 
-    @Override
-    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext) {
-        return this.interpreter(resultCollector, modules, new ExecutionOptions(), applicationContext);
-    }
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext);
 
-    @Override
-    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext) {
-        return new Interpreter(resultCollector, modules, options, applicationContext);
-    }
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext);
+
 }

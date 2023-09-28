@@ -61,7 +61,7 @@ import org.dockbox.hartshorn.hsl.parser.statement.WhileStatementParser;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public class HslStatementStaticProviders {
+public class StatementStaticProviders {
 
     public static final String STATEMENT_BEAN = "statement";
     

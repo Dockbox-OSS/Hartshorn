@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
@@ -33,16 +34,30 @@ import java.util.Map;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public interface HslLanguageFactory {
+public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
-    Lexer lexer(String source);
+    @Override
+    public Lexer lexer(String source) {
+        return new Lexer(source);
+    }
 
-    TokenParser parser(List<Token> tokens);
+    @Override
+    public TokenParser parser(List<Token> tokens) {
+        return new StandardTokenParser(tokens);
+    }
 
-    Resolver resolver(Interpreter interpreter);
+    @Override
+    public Resolver resolver(Interpreter interpreter) {
+        return new Resolver(interpreter);
+    }
 
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext);
+    @Override
+    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext) {
+        return this.interpreter(resultCollector, modules, new ExecutionOptions(), applicationContext);
+    }
 
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext);
-
+    @Override
+    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext) {
+        return new Interpreter(resultCollector, modules, options, applicationContext);
+    }
 }

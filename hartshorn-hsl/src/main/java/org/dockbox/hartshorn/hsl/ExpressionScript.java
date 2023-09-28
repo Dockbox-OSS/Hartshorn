@@ -16,31 +16,31 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
+public class ExpressionScript extends ExecutableScript {
 
-public class HslExpression extends HslScript {
-
-    protected HslExpression(ApplicationContext context, String source) {
+    protected ExpressionScript(ApplicationContext context, String source) {
         super(context, source);
     }
 
-    public static HslExpression of(ApplicationContext context, String source) {
-        return new HslExpression(context, source);
+    public static ExpressionScript of(ApplicationContext context, String source) {
+        return new ExpressionScript(context, source);
     }
 
-    public static HslExpression of(ApplicationContext context, Path path) throws IOException {
+    public static ExpressionScript of(ApplicationContext context, Path path) throws IOException {
         return of(context, sourceFromPath(path));
     }
 
-    public static HslExpression of(ApplicationContext context, File file) throws IOException {
+    public static ExpressionScript of(ApplicationContext context, File file) throws IOException {
         return of(context, file.toPath());
     }
 

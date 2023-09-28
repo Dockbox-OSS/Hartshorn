@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -76,7 +76,7 @@ public class VirtualClassTests {
     @ParameterizedTest
     @MethodSource("propertyAccessors")
     void test(String modifier, String accessor, boolean shouldFail, String message) {
-        HslScript script = HslScript.of(this.applicationContext, """
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class User {
                     %s name;
                     constructor(name) {

@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -34,14 +34,14 @@ public class InterpreterTests {
 
     @Test
     void testAmbiguousExternalFunctionsAreAllowedByDefault() {
-        HslScript script = HslScript.of(this.applicationContext, "ambiguousCall()");
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         Assertions.assertDoesNotThrow(script::evaluate);
     }
 
     @Test
     void testAmbiguousExternalFunctionsAreAllowedWhenEnabled() {
-        HslScript script = HslScript.of(this.applicationContext, "ambiguousCall()");
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(true);
         Assertions.assertDoesNotThrow(script::evaluate);
@@ -49,7 +49,7 @@ public class InterpreterTests {
 
     @Test
     void testAmbiguousExternalFunctionsAreNotAllowedWhenDisabled() {
-        HslScript script = HslScript.of(this.applicationContext, "ambiguousCall()");
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(false);
         Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);

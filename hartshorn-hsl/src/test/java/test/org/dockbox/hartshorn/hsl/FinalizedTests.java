@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -35,8 +35,8 @@ public class FinalizedTests {
 
     @Test
     void cannotExtendFinalClass() {
-        HslScript script = HslScript.of(this.applicationContext, """
-                class User { }
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                final class User { }
                 class Admin extends User { }
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
@@ -48,7 +48,7 @@ public class FinalizedTests {
 
     @Test
     void canExtendExternalFinalClass() {
-        HslScript script = HslScript.of(this.applicationContext, """
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
         script.runtime().imports(User.class);
@@ -57,7 +57,7 @@ public class FinalizedTests {
 
     @Test
     void cannotExtendFinalExternalClass() {
-        HslScript script = HslScript.of(this.applicationContext, """
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
         script.runtime().imports("User", FinalUser.class);
@@ -70,8 +70,8 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalVariables() {
-        HslScript script = HslScript.of(this.applicationContext, """
-                var x = 1;
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                final var x = 1;
                 x = 2;
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
@@ -83,8 +83,8 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalFunctions() {
-        HslScript script = HslScript.of(this.applicationContext, """
-                function x() { }
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                final function x() { }
                 function x() { }
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
@@ -96,8 +96,8 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalClasses() {
-        HslScript script = HslScript.of(this.applicationContext, """
-                class User { }
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                final class User { }
                 class User { }
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
@@ -109,8 +109,8 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalNativeFunctions() {
-        HslScript script = HslScript.of(this.applicationContext, """
-                native function a.x();
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                final native function a.x();
                 function x() { }
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
