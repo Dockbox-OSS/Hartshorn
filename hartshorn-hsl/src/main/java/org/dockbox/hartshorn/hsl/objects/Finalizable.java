@@ -16,8 +16,25 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
+/**
+ * Represents an object that can be made final. This means that the object cannot be modified
+ * after it has been made final. This is useful for e.g. constants. Instances of this class
+ * are not necessarily immutable, but they are guaranteed to be unmodifiable after they have
+ * been made final.
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
 public interface Finalizable {
+
+    /**
+     * @return {@code true} if this object is final, {@code false} otherwise.
+     */
     boolean isFinal();
 
+    /**
+     * Makes this object final. After this method has been invoked, {@link #isFinal()} will
+     * return {@code true}. If this object is already final, this method has no effect.
+     */
     void makeFinal();
 }

@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
@@ -30,10 +34,6 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a class definition inside a script. The class is identified by its name, and
@@ -111,6 +111,12 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
         return this.fields;
     }
 
+    /**
+     * Looks up a field by name. If no field is found, {@code null} is returned.
+     *
+     * @param name The name of the field.
+     * @return The field, or {@code null} if no field is found.
+     */
     public FieldStatement field(String name) {
         return this.fields.get(name);
     }
@@ -156,6 +162,13 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
         return this.variableScope;
     }
 
+    /**
+     * Returns whether this class is dynamic. A dynamic class is a class that does not
+     * have strictly defined properties, but rather allows scripts to add properties
+     * at runtime.
+     *
+     * @return {@code true} if this class is dynamic, otherwise {@code false}.
+     */
     public boolean isDynamic() {
         return this.isDynamic;
     }
@@ -199,7 +212,8 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        var that = (VirtualClass) obj;
+
+        VirtualClass that = (VirtualClass) obj;
         return Objects.equals(this.name, that.name) &&
                 Objects.equals(this.superClass, that.superClass) &&
                 Objects.equals(this.constructor, that.constructor) &&
