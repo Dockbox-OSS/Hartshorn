@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -31,9 +34,6 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import test.org.dockbox.hartshorn.hsl.interpreter.ExecutionCheckStatement;
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 import test.org.dockbox.hartshorn.hsl.interpreter.JavaStatement;
@@ -44,62 +44,62 @@ public class IfStatementInterpreterTests {
 
     @Test
     void testIfStatementEvaluatesIfConditionIsTrue() {
-        final boolean literalValue = true;
+        boolean literalValue = true;
         Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
 
-        final Token conditionToken = Token.of(TokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, true);
+        Token conditionToken = Token.of(TokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, true);
 
         this.assertEvaluatesToTrue(conditionExpression);
     }
 
     @Test
     void testIfStatementEvaluatesIfConditionIsTruthy() {
-        final int literalValue = 1;
+        int literalValue = 1;
         Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
 
-        final Token conditionToken = Token.of(TokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
+        Token conditionToken = Token.of(TokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
 
         this.assertEvaluatesToTrue(conditionExpression);
     }
 
     @Test
     void testIfStatementDoesNotEvaluateIfConditionIsFalse() {
-        final boolean literalValue = false;
+        boolean literalValue = false;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
 
-        final Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, false);
+        Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, false);
 
         this.assertEvaluatesToFalse(conditionExpression);
     }
 
     @Test
     void testIfStatementDoesNotEvaluateIfConditionIsFalsy() {
-        final Object literalValue = null;
+        Object literalValue = null;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(null));
 
-        final Token conditionToken = Token.of(TokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
+        Token conditionToken = Token.of(TokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
 
         this.assertEvaluatesToFalse(conditionExpression);
     }
 
     @Test
     void testIfStatementDoesNotEvaluateOrFailIfElseBranchAbsent() {
-        final ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
-        final BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
+        ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
+        BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
-        final boolean literalValue = false;
+        boolean literalValue = false;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
 
-        final Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, false);
+        Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, false);
 
-        final IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
-        final ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
+        ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         Assertions.assertDoesNotThrow(() -> interpreter.interpret(ifStatement, adapter));
 
         Assertions.assertFalse(trueExecutionCheck.executed());
@@ -107,59 +107,59 @@ public class IfStatementInterpreterTests {
 
     @Test
     void testIfStatementUpdatesScopeInThenBranch() {
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        final AtomicBoolean executed = new AtomicBoolean(false);
-        final JavaStatement trueExecutionCheck = new JavaStatement(visitor -> {
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        AtomicBoolean executed = new AtomicBoolean(false);
+        JavaStatement trueExecutionCheck = new JavaStatement(visitor -> {
             executed.set(true);
             Assertions.assertTrue(visitor instanceof DelegatingInterpreterVisitor);
 
-            final DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
-            final InterpreterAdapter interpreterAdapter = interpreterVisitor.adapter();
-            final VariableScope currentScope = interpreterAdapter.visitingScope();
-            final VariableScope globalScope = interpreterAdapter.global();
+            DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
+            InterpreterAdapter interpreterAdapter = interpreterVisitor.adapter();
+            VariableScope currentScope = interpreterAdapter.visitingScope();
+            VariableScope globalScope = interpreterAdapter.global();
             Assertions.assertNotSame(globalScope, currentScope);
         });
-        final BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
+        BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
-        final boolean literalValue = true;
+        boolean literalValue = true;
         Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
 
-        final Token conditionToken = Token.of(TokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, true);
+        Token conditionToken = Token.of(TokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, true);
 
-        final IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
-        final ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
+        IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
+        ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
         interpreter.interpret(ifStatement, adapter);
         Assertions.assertTrue(executed.get());
     }
 
     @Test
     void testIfStatementUpdatesScopeInElseBranch() {
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        final AtomicBoolean executed = new AtomicBoolean(false);
-        final JavaStatement falseExecutionCheck = new JavaStatement(visitor -> {
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        AtomicBoolean executed = new AtomicBoolean(false);
+        JavaStatement falseExecutionCheck = new JavaStatement(visitor -> {
             executed.set(true);
             Assertions.assertTrue(visitor instanceof DelegatingInterpreterVisitor);
 
-            final DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
-            final InterpreterAdapter interpreterAdapter = interpreterVisitor.adapter();
-            final VariableScope currentScope = interpreterAdapter.visitingScope();
-            final VariableScope globalScope = interpreterAdapter.global();
+            DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
+            InterpreterAdapter interpreterAdapter = interpreterVisitor.adapter();
+            VariableScope currentScope = interpreterAdapter.visitingScope();
+            VariableScope globalScope = interpreterAdapter.global();
             Assertions.assertNotSame(globalScope, currentScope);
         });
-        final BlockStatement ifFalse = new BlockStatement(BODY_START_TOKEN, List.of(falseExecutionCheck));
+        BlockStatement ifFalse = new BlockStatement(BODY_START_TOKEN, List.of(falseExecutionCheck));
 
-        final ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
-        final BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
+        ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
+        BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
-        final boolean literalValue = false;
+        boolean literalValue = false;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
 
-        final Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
-        final Expression conditionExpression = new LiteralExpression(conditionToken, false);
+        Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
+        Expression conditionExpression = new LiteralExpression(conditionToken, false);
 
-        final IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, ifFalse);
-        final ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
+        IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, ifFalse);
+        ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
         interpreter.interpret(ifStatement, adapter);
         Assertions.assertFalse(trueExecutionCheck.executed());
         Assertions.assertTrue(executed.get());
@@ -174,15 +174,15 @@ public class IfStatementInterpreterTests {
     }
 
     private void assertEvaluatesTo(final Expression expression, final boolean evaluatesTo) {
-        final ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
-        final BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
+        ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
+        BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
-        final ExecutionCheckStatement falseExecutionCheck = new ExecutionCheckStatement();
-        final BlockStatement ifFalse = new BlockStatement(BODY_START_TOKEN, List.of(falseExecutionCheck));
+        ExecutionCheckStatement falseExecutionCheck = new ExecutionCheckStatement();
+        BlockStatement ifFalse = new BlockStatement(BODY_START_TOKEN, List.of(falseExecutionCheck));
 
-        final IfStatement ifStatement = new IfStatement(expression, ifTrue, ifFalse);
-        final ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
-        final InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        IfStatement ifStatement = new IfStatement(expression, ifTrue, ifFalse);
+        ASTNodeInterpreter<Void, IfStatement> interpreter = new IfStatementInterpreter();
+        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         interpreter.interpret(ifStatement, adapter);
 
         Assertions.assertEquals(evaluatesTo, trueExecutionCheck.executed());
