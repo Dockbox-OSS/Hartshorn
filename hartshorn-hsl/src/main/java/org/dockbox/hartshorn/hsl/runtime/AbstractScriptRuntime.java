@@ -16,8 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
@@ -31,24 +37,18 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers;
 
     private final ApplicationContext applicationContext;
-    private final HslLanguageFactory factory;
+    private final ScriptComponentFactory factory;
 
-    protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+    protected AbstractScriptRuntime(final ApplicationContext applicationContext, final ScriptComponentFactory factory) {
         this(applicationContext, factory, Set.of());
     }
 
-    protected AbstractScriptRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
+    protected AbstractScriptRuntime(final ApplicationContext applicationContext, final ScriptComponentFactory factory,
                                     final Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext);
         this.applicationContext = applicationContext;

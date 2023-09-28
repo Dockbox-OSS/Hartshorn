@@ -28,26 +28,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class HslScript extends DefaultApplicationAwareContext {
+public class ExecutableScript extends DefaultApplicationAwareContext {
 
     private final String source;
     private ScriptContext context;
     private ScriptRuntime runtime;
 
-    protected HslScript(final ApplicationContext context, final String source) {
+    protected ExecutableScript(final ApplicationContext context, final String source) {
         super(context);
         this.source = source;
     }
 
-    public static HslScript of(final ApplicationContext context, final String source) {
-        return new HslScript(context, source);
+    public static ExecutableScript of(final ApplicationContext context, final String source) {
+        return new ExecutableScript(context, source);
     }
 
-    public static HslScript of(final ApplicationContext context, final Path path) throws IOException {
+    public static ExecutableScript of(final ApplicationContext context, final Path path) throws IOException {
         return of(context, sourceFromPath(path));
     }
 
-    public static HslScript of(final ApplicationContext context, final File file) throws IOException {
+    public static ExecutableScript of(final ApplicationContext context, final File file) throws IOException {
         return of(context, file.toPath());
     }
 

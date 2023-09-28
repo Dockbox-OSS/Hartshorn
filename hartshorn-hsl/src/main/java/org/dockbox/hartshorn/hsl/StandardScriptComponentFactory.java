@@ -34,7 +34,7 @@ import java.util.Map;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public class StandardHslLanguageFactory implements HslLanguageFactory {
+public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
     public Lexer lexer(final String source) {

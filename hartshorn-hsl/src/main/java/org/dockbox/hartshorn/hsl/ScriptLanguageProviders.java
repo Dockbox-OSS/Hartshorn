@@ -38,11 +38,11 @@ import jakarta.inject.Named;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public class HslLanguageProviders {
+public class ScriptLanguageProviders {
 
     @Binds
-    private HslLanguageFactory languageFactory() {
-        return new StandardHslLanguageFactory();
+    private ScriptComponentFactory languageFactory() {
+        return new StandardScriptComponentFactory();
     }
 
     @Binds
@@ -63,8 +63,8 @@ public class HslLanguageProviders {
     @Binds
     public ScriptRuntime runtime(
             final ApplicationContext applicationContext,
-            final HslLanguageFactory factory,
-            @Named(HslStatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+            final ScriptComponentFactory factory,
+            @Named(StatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
     ) {
         return new StandardRuntime(applicationContext, factory, statementParsers);
     }
@@ -72,8 +72,8 @@ public class HslLanguageProviders {
     @Binds
     public ValidateExpressionRuntime expressionRuntime(
             final ApplicationContext applicationContext,
-            final HslLanguageFactory factory,
-            @Named(HslStatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+            final ScriptComponentFactory factory,
+            @Named(StatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
     ) {
         return new ValidateExpressionRuntime(applicationContext, factory, statementParsers);
     }

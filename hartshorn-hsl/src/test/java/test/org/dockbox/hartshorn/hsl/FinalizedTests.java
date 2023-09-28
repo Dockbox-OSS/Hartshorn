@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -35,7 +35,7 @@ public class FinalizedTests {
 
     @Test
     void cannotExtendFinalClass() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final class User { }
                 class Admin extends User { }
                 """);
@@ -48,7 +48,7 @@ public class FinalizedTests {
 
     @Test
     void canExtendExternalFinalClass() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
         script.runtime().imports(User.class);
@@ -57,7 +57,7 @@ public class FinalizedTests {
 
     @Test
     void cannotExtendFinalExternalClass() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
         script.runtime().imports("User", FinalUser.class);
@@ -70,7 +70,7 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalVariables() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final var x = 1;
                 x = 2;
                 """);
@@ -83,7 +83,7 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalFunctions() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final function x() { }
                 function x() { }
                 """);
@@ -96,7 +96,7 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalClasses() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final class User { }
                 class User { }
                 """);
@@ -109,7 +109,7 @@ public class FinalizedTests {
 
     @Test
     void testCannotReassignFinalNativeFunctions() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        final ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final native function a.x();
                 function x() { }
                 """);

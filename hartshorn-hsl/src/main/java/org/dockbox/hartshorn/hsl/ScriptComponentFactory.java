@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
@@ -28,12 +31,9 @@ import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-import java.util.List;
-import java.util.Map;
-
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public interface HslLanguageFactory {
+public interface ScriptComponentFactory {
 
     Lexer lexer(String source);
 

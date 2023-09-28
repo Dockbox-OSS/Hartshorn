@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.runtime;
 import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
@@ -36,11 +36,11 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class ValidateExpressionRuntime extends StandardRuntime {
 
-    public ValidateExpressionRuntime(ApplicationContext applicationContext, HslLanguageFactory factory) {
+    public ValidateExpressionRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
         super(applicationContext, factory);
     }
 
-    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
+    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final ScriptComponentFactory factory,
             final Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext, factory, statementParsers);
         this.customizer(new ExpressionCustomizer());
