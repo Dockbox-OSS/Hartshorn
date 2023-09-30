@@ -14,6 +14,8 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+      - name: Prepare for dependency check
+        run: mvn clean install -DskipTests -P ci,all
       - name: Analyze dependencies
         run: mvn dependency-check:check -Dowasp.skip=false -P ci,all
       - name: Archive dependency reports
