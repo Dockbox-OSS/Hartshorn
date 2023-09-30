@@ -65,23 +65,19 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Run tests
-        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all"
+        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all --fail-never"
         continue-on-error: true
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-report
-          path: ${{ github.workspace }}/hartshorn-assembly/target/site/jacoco-aggregate/
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
         with:
+          title: "Code coverage"
+          update-comment: true
+          continue-on-error: false
+          skip-if-no-changes: true
           paths: ${{ github.workspace }}/hartshorn-assembly/target/site/jacoco-aggregate/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80
           pass-emoji: ✔️
           fail-emoji: ❌
-          continue-on-error: false
-          skip-if-no-changes: true
-          update-comment: true
