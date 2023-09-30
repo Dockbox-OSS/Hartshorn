@@ -13,6 +13,7 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <jacoco.skip>false</jacoco.skip>
     </properties>
 
     <dependencyManagement>
@@ -92,6 +93,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
+                <configuration>
+                    <skip>${jacoco.skip}</skip>
+                    <dataFileIncludes>
+                        <dataFileInclude>**/jacoco.exec</dataFileInclude>
+                    </dataFileIncludes>
+                    <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
+                </configuration>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>

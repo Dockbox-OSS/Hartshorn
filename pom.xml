@@ -55,6 +55,8 @@
         <checkstyle.skip>false</checkstyle.skip>
         <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>
+        <jacoco.skip>false</jacoco.skip>
+        <coverage.skip>false</coverage.skip>
     </properties>
 
     <licenses>
@@ -75,7 +77,7 @@
 
             <modules>
                 <module>hartshorn-bom</module>
-                <module>hartshorn-assembly/pom.parent.xml</module>
+                <module>hartshorn-assembly/parent/pom.parent.xml</module>
                 <module>hartshorn-util</module>
                 <module>hartshorn-discovery</module>
                 <module>hartshorn-proxy</module>

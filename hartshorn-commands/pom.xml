@@ -7,7 +7,7 @@
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-parent</artifactId>
         <version>0.5.0</version>
-        <relativePath>../hartshorn-assembly/pom.parent.xml</relativePath>
+        <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
     </parent>
 
     <name>Hartshorn Commands</name>

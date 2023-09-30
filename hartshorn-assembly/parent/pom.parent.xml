@@ -7,7 +7,7 @@
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-staging</artifactId>
         <version>0.5.0</version>
-        <relativePath>./pom.staging.xml</relativePath>
+        <relativePath>../pom.staging.xml</relativePath>
     </parent>
 
     <name>Hartshorn parent</name>
@@ -163,6 +163,9 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
+                <configuration>
+                    <skip>${jacoco.skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -176,6 +179,28 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>check-coverage</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${coverage.skip}</skip>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.8</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
