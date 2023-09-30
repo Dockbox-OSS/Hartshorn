@@ -4,7 +4,6 @@ on: pull_request
 
 jobs:
   buildSource:
-    needs: [license]
     name: Build all (source JDK)
     runs-on: ubuntu-latest
     steps:
