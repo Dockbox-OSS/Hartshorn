@@ -67,17 +67,14 @@ jobs:
       - name: Run tests
         run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all --fail-never"
         continue-on-error: true
-      - name: Add coverage to PR
+      - name: Code coverage report
         id: jacoco
-        uses: madrapps/jacoco-report@v1.6.1
+        uses: aGallea/tests-coverage-report@v1
         with:
-          title: "Code coverage"
+          title: Code coverage
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           update-comment: true
-          continue-on-error: false
-          skip-if-no-changes: true
-          paths: ${{ github.workspace }}/hartshorn-assembly/target/site/jacoco-aggregate/jacoco.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 80
-          min-coverage-changed-files: 80
-          pass-emoji: ✔️
-          fail-emoji: ❌
+          jacoco-path: ${{ github.workspace }}/hartshorn-assembly/target/site/jacoco-aggregate/jacoco.xml
+          min-coverage-percentage: 80
+          fail-under-coverage-percentage: 80
+          override-comment: true
