@@ -3,11 +3,25 @@ name: Hartshorn
 on: pull_request
 
 jobs:
-  testSource:
+  testSourceUbuntu:
+    name: Unit tests (source JDK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+      - name: "Unit testing (OS: ubuntu-latest, source JDK)"
+        run: mvn clean test -P ci,all
+        shell: bash
+  testSourceCompat:
+    needs: [testSource]
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest, macos-latest]
     name: Unit tests (source JDK)
     runs-on: "${{ matrix.os }}"
     steps:
