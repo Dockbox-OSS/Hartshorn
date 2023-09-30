@@ -15,7 +15,7 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Analyze dependencies
-        run: mvn dependency-check:check -Dowasp.skip=false -Pci,all
+        run: mvn dependency-check:check -Dowasp.skip=false -P ci,all
       - name: Archive dependency reports
         uses: actions/upload-artifact@v2
         if: always()

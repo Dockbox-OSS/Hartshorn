@@ -18,7 +18,8 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
-        run: mvn clean test -Pci,all
+        run: mvn clean test -P ci,all
+        shell: bash
   testTarget:
     needs: [testSource]
     strategy:
@@ -36,7 +37,8 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: temurin
       - name: "Unit testing (OS: ${{ matrix.os }}, Java: ${{ matrix.java }})"
-        run: mvn clean test -Pci,all
+        run: mvn clean test -P ci,all
+        shell: bash
   coverage:
     needs: [testSource]
     name: Code coverage
@@ -49,7 +51,7 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Run tests
-        run: mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -Pci,all
+        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all"
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
         with:

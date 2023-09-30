@@ -15,7 +15,7 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: "Build (source JDK)"
-        run: mvn clean install -DskipTests -Pci,all
+        run: mvn clean install -DskipTests -P ci,all
   buildTarget:
     needs: [buildSource]
     strategy:
@@ -32,4 +32,4 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: temurin
       - name: "Build (Java ${{ matrix.java }})"
-        run: mvn clean install -DskipTests -Pci,all
+        run: mvn clean install -DskipTests -P ci,all

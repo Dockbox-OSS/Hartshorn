@@ -15,4 +15,4 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Check license headers
-        run: mvn license:check -Pci,all
+        run: mvn license:check -P ci,all

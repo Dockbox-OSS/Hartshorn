@@ -155,7 +155,6 @@
 
     <build>
         <plugins>
-
             <!-- License headers -->
             <plugin>
                 <groupId>com.mycila</groupId>
