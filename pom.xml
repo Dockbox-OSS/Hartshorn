@@ -96,6 +96,17 @@
             </modules>
         </profile>
         <profile>
+            <!-- CI profile, so we can opt-in to goals, instead of having to opt-out -->
+            <id>ci</id>
+            <properties>
+                <checkstyle.skip>true</checkstyle.skip>
+                <javadoc.skip>true</javadoc.skip>
+                <owasp.skip>true</owasp.skip>
+                <jacoco.skip>true</jacoco.skip>
+                <coverage.skip>true</coverage.skip>
+            </properties>
+        </profile>
+        <profile>
             <id>staging</id>
 
             <build>
