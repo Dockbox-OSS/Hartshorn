@@ -17,7 +17,7 @@ jobs:
         run: mvn clean test -P ci,all
         shell: bash
   testSourceCompat:
-    needs: [testSource]
+    needs: [testSourceUbuntu]
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +35,7 @@ jobs:
         run: mvn clean test -P ci,all
         shell: bash
   testTarget:
-    needs: [testSource]
+    needs: [testSourceUbuntu]
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +54,7 @@ jobs:
         run: mvn clean test -P ci,all
         shell: bash
   coverage:
-    needs: [testSource]
+    needs: [testSourceUbuntu]
     name: Code coverage
     runs-on: ubuntu-latest
     steps:
