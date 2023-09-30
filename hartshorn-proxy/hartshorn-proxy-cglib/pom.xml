@@ -7,9 +7,10 @@
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-parent</artifactId>
         <version>0.5.0</version>
-        <relativePath>../../hartshorn-parent/pom.xml</relativePath>
+        <relativePath>../../hartshorn-assembly/pom.parent.xml</relativePath>
     </parent>
 
+    <name>Hartshorn Proxy (cglib)</name>
     <artifactId>hartshorn-proxy-cglib</artifactId>
     <packaging>jar</packaging>
 

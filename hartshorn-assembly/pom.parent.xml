@@ -7,16 +7,16 @@
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-staging</artifactId>
         <version>0.5.0</version>
-        <relativePath>../staging.pom.xml</relativePath>
+        <relativePath>./pom.staging.xml</relativePath>
     </parent>
+
+    <name>Hartshorn parent</name>
+    <description>Parent pom for all public facing Hartshorn modules</description>
 
     <artifactId>hartshorn-parent</artifactId>
     <packaging>pom</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
-
         <!-- Keep in sync with hartshorn-bom -->
         <groovy.version>4.0.14</groovy.version>
         <kotlin.version>1.9.10</kotlin.version>
@@ -156,6 +156,26 @@
                                 <source>src/testFixtures/java</source>
                             </sources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

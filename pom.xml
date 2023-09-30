@@ -48,6 +48,9 @@
     </issueManagement>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+
         <hartshorn.version>0.5.0</hartshorn.version>
         <checkstyle.skip>false</checkstyle.skip>
         <javadoc.skip>false</javadoc.skip>
@@ -72,7 +75,7 @@
 
             <modules>
                 <module>hartshorn-bom</module>
-                <module>hartshorn-parent</module>
+                <module>hartshorn-assembly/pom.parent.xml</module>
                 <module>hartshorn-util</module>
                 <module>hartshorn-discovery</module>
                 <module>hartshorn-proxy</module>
@@ -146,11 +149,11 @@
                 <version>4.2</version>
                 <configuration>
                     <headerDefinitions>
-                        <headerDefinition>hartshorn-parent/JavaBlockStyleHeader.xml</headerDefinition>
+                        <headerDefinition>hartshorn-assembly/licenses/JavaBlockStyleHeader.xml</headerDefinition>
                     </headerDefinitions>
                     <licenseSets>
                         <licenseSet>
-                            <header>hartshorn-parent/APACHE-2.txt</header>
+                            <header>hartshorn-assembly/licenses/APACHE-2.txt</header>
                             <useDefaultExcludes>true</useDefaultExcludes>
                             <includes>
                                 <include>**/*.java</include>
@@ -183,7 +186,7 @@
                     <skip>${owasp.skip}</skip>
                     <failBuildOnCVSS>1</failBuildOnCVSS>
                     <suppressionFiles>
-                        <suppressionFile>hartshorn-parent/dependency-check-suppressions.xml</suppressionFile>
+                        <suppressionFile>hartshorn-assembly/dependency-check/dependency-check-suppressions.xml</suppressionFile>
                     </suppressionFiles>
                     <reportOutputDirectory>${project.build.directory}/dependency-check-report</reportOutputDirectory>
                 </configuration>
@@ -232,8 +235,8 @@
                     <violationSeverity>warning</violationSeverity>
                     <linkXRef>false</linkXRef>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <configLocation>hartshorn-parent/checkstyle/checkstyle.xml</configLocation>
-                    <suppressionsLocation>hartshorn-parent/checkstyle/suppressions.xml</suppressionsLocation>
+                    <configLocation>hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
+                    <suppressionsLocation>hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
                 </configuration>
                 <executions>
                     <execution>
