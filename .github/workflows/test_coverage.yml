@@ -76,5 +76,5 @@ jobs:
           update-comment: true
           jacoco-path: ${{ github.workspace }}/hartshorn-assembly/target/site/jacoco-aggregate/jacoco.xml
           min-coverage-percentage: 80
-          fail-under-coverage-percentage: 80
+          fail-under-coverage-percentage: true
           override-comment: true
