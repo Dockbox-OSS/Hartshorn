@@ -17,9 +17,13 @@
 package org.dockbox.hartshorn.hsl.lexer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
@@ -39,21 +43,21 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTokenSetLexer implements Lexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTokenSetLexer.class);
-    private static final Map<String, TokenType> KEYWORDS = Map.of(); // TODO
 
     private final List<Token> tokens = new ArrayList<>();
     private final List<Comment> comments = new ArrayList<>();
+    private final Map<String, TokenType> keywords = new HashMap<>();
 
     private final TokenRegistry tokenRegistry;
     private final String source;
 
-    private int start = 0;
-    private int current = 0;
+    private int start;
+    private int current;
     private int line = 1;
     private int column = -1;
 
 
-    public AbstractTokenSetLexer(String source, TokenRegistry tokenRegistry) {
+    protected AbstractTokenSetLexer(String source, TokenRegistry tokenRegistry) {
         this.source = source;
         this.tokenRegistry = tokenRegistry;
     }
@@ -92,6 +96,8 @@ public abstract class AbstractTokenSetLexer implements Lexer {
     
     @Override
     public List<Token> scanTokens() {
+        this.refreshKeywords();
+
         while (!this.isAtEnd()) {
             this.start = this.current;
             this.scanToken();
@@ -105,6 +111,15 @@ public abstract class AbstractTokenSetLexer implements Lexer {
         return this.tokens;
     }
 
+    protected void refreshKeywords() {
+        this.keywords.clear();
+
+        Map<String, TokenType> tokensByName = this.tokenRegistry.tokenTypes(TokenType::keyword)
+                .stream()
+                .collect(Collectors.toMap(TokenType::tokenName, Function.identity()));
+        this.keywords.putAll(tokensByName);
+    }
+
     protected abstract void scanToken();
 
     @Override
@@ -115,19 +130,19 @@ public abstract class AbstractTokenSetLexer implements Lexer {
     protected void scanComment() {
         StringBuilder text = new StringBuilder();
         int line = this.line;
-        while (!tokenRegistry.isLineSeparator(this.currentChar()) && !this.isAtEnd()) {
+        while (!this.tokenRegistry.isLineSeparator(this.currentChar()) && !this.isAtEnd()) {
             text.append(this.pointToNextChar().character());
         }
         this.comments.add(new Comment(line, text.toString()));
     }
 
     protected void scanNumber() {
-        while (this.currentChar().isDigit() || tokenRegistry.isNumberSeparator(this.currentChar())) {
+        while (this.currentChar().isDigit() || this.tokenRegistry.isNumberSeparator(this.currentChar())) {
             this.pointToNextChar();
         }
 
         // Look for a fractional part.
-        if (tokenRegistry.isNumberDelimiter(this.currentChar()) && this.nextChar().isDigit()) {
+        if (this.tokenRegistry.isNumberDelimiter(this.currentChar()) && this.nextChar().isDigit()) {
             // Consume the "."
             this.pointToNextChar();
             while (this.currentChar().isDigit()) {
@@ -148,18 +163,18 @@ public abstract class AbstractTokenSetLexer implements Lexer {
         // See if the scanIdentifier is a reserved word.
         String text = this.source.substring(this.start, this.current);
 
-        TokenType type = KEYWORDS.get(text);
+        TokenType type = this.keywords.get(text);
         if (type == null) {
-            type = lookupLiteralToken(text);
+            type = this.lookupLiteralToken(text);
         }
         this.addToken(type);
     }
 
     @NotNull
     private TokenType lookupLiteralToken(String text) {
-        Set<TokenType> literals = tokenRegistry.literals();
+        Set<TokenType> literals = this.tokenRegistry.literals();
         for(TokenType literal : literals) {
-            if (literal.representation() != null && literal.representation().equals(text)) {
+            if (literal.defaultLexeme() != null && literal.defaultLexeme().equals(text)) {
                 return literal;
             }
         }
@@ -170,7 +185,7 @@ public abstract class AbstractTokenSetLexer implements Lexer {
         this.current++;
         this.column++;
         char character = this.source.charAt(this.current - 1);
-        return tokenRegistry.character(character);
+        return this.tokenRegistry.character(character);
     }
 
     protected void addToken(TokenType type) {
@@ -200,7 +215,7 @@ public abstract class AbstractTokenSetLexer implements Lexer {
         if (this.isAtEnd()) {
             return false;
         }
-        if (currentChar() != expected) {
+        if (this.currentChar() != expected) {
             return false;
         }
         this.current++;
@@ -210,18 +225,18 @@ public abstract class AbstractTokenSetLexer implements Lexer {
 
     protected TokenCharacter currentChar() {
         if (this.isAtEnd()) {
-            return tokenRegistry.nullCharacter();
+            return this.tokenRegistry.nullCharacter();
         }
         char character = this.source.charAt(this.current);
-        return tokenRegistry.character(character);
+        return this.tokenRegistry.character(character);
     }
 
     protected TokenCharacter nextChar() {
         if (this.current + 1 >= this.source.length()) {
-            return tokenRegistry.nullCharacter();
+            return this.tokenRegistry.nullCharacter();
         }
         char character = this.source.charAt(this.current + 1);
-        return tokenRegistry.character(character);
+        return this.tokenRegistry.character(character);
     }
 
     protected void nextLine() {

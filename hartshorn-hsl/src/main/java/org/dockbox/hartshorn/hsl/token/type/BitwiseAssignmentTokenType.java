@@ -18,27 +18,23 @@ package org.dockbox.hartshorn.hsl.token.type;
 
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
-public enum LiteralTokenType implements EnumTokenType {
-    IDENTIFIER,
-    STRING,
-    NUMBER,
-    CHAR,
-    EOF,
-    NULL("null"),
-    TRUE("true"),
-    FALSE("false"),
+public enum BitwiseAssignmentTokenType implements EnumTokenType {
+    XOR_EQUAL(BitwiseTokenType.XOR),
+    BITWISE_AND_EQUAL(BitwiseTokenType.BITWISE_AND),
+    BITWISE_OR_EQUAL(BitwiseTokenType.BITWISE_OR),
+    COMPLEMENT_EQUAL(BitwiseTokenType.COMPLEMENT),
+    SHIFT_LEFT_EQUAL(BitwiseTokenType.SHIFT_LEFT),
+    SHIFT_RIGHT_EQUAL(BitwiseTokenType.SHIFT_RIGHT),
     ;
 
     private final TokenMetaData metaData;
 
-    LiteralTokenType(String defaultLexeme) {
-        this.metaData = TokenMetaData.builder(this).defaultLexeme(defaultLexeme).ok();
+    BitwiseAssignmentTokenType(TokenType assignsWithToken) {
+        this.metaData = TokenMetaData.builder(this)
+                .combines(assignsWithToken, BaseTokenType.EQUAL)
+                .assignsWith(assignsWithToken)
+                .ok();
     }
-
-    LiteralTokenType() {
-        this.metaData = TokenMetaData.builder(this).ok();
-    }
-
     @Override
     public TokenType delegate() {
         return this.metaData;

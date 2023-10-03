@@ -36,8 +36,4 @@ public class DefaultTokenPairList implements TokenPairList {
         return PairTokenType.ARRAY_OPEN.pair();
     }
 
-    @Override
-    public TokenTypePair generics() {
-        return PairTokenType.ANGLE_OPEN.pair();
-    }
 }

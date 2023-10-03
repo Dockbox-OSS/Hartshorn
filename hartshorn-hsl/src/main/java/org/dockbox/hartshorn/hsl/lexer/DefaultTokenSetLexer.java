@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseAssignmentTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
@@ -129,7 +130,7 @@ public class DefaultTokenSetLexer extends AbstractTokenSetLexer {
             else {
                 if(this.match(DefaultTokenCharacter.LESS)) {
                     if(this.match(DefaultTokenCharacter.EQUAL)) {
-                        this.addToken(ConditionTokenType.SHIFT_LEFT_EQUAL);
+                        this.addToken(BitwiseAssignmentTokenType.SHIFT_LEFT_EQUAL);
                     }
                     else {
                         this.addToken(BitwiseTokenType.SHIFT_LEFT);
@@ -150,7 +151,7 @@ public class DefaultTokenSetLexer extends AbstractTokenSetLexer {
                         this.addToken(BitwiseTokenType.LOGICAL_SHIFT_RIGHT);
                     }
                     else if(this.match(DefaultTokenCharacter.EQUAL)) {
-                        this.addToken(ConditionTokenType.SHIFT_RIGHT_EQUAL);
+                        this.addToken(BitwiseAssignmentTokenType.SHIFT_RIGHT_EQUAL);
                     }
                     else {
                         this.addToken(BitwiseTokenType.SHIFT_RIGHT);
@@ -177,7 +178,7 @@ public class DefaultTokenSetLexer extends AbstractTokenSetLexer {
                 this.addToken(ConditionTokenType.AND);
             }
             else if(this.match(DefaultTokenCharacter.EQUAL)) {
-                this.addToken(ConditionTokenType.BITWISE_AND_EQUAL);
+                this.addToken(BitwiseAssignmentTokenType.BITWISE_AND_EQUAL);
             }
             else {
                 this.addToken(BitwiseTokenType.BITWISE_AND);
@@ -188,7 +189,7 @@ public class DefaultTokenSetLexer extends AbstractTokenSetLexer {
                 this.addToken(ConditionTokenType.OR);
             }
             else if(this.match(DefaultTokenCharacter.EQUAL)) {
-                this.addToken(ConditionTokenType.BITWISE_OR_EQUAL);
+                this.addToken(BitwiseAssignmentTokenType.BITWISE_OR_EQUAL);
             }
             else {
                 this.addToken(BitwiseTokenType.BITWISE_OR);
@@ -196,12 +197,12 @@ public class DefaultTokenSetLexer extends AbstractTokenSetLexer {
             break;
         case CARET:
             this.addToken(this.match(DefaultTokenCharacter.EQUAL)
-                    ? ConditionTokenType.XOR_EQUAL
+                    ? BitwiseAssignmentTokenType.XOR_EQUAL
                     : BitwiseTokenType.XOR);
             break;
         case TILDE:
             this.addToken(this.match(DefaultTokenCharacter.EQUAL)
-                    ? ConditionTokenType.COMPLEMENT_EQUAL
+                    ? BitwiseAssignmentTokenType.COMPLEMENT_EQUAL
                     : BitwiseTokenType.COMPLEMENT);
             break;
         case HASH:

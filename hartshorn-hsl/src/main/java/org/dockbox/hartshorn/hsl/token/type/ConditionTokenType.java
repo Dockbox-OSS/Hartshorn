@@ -24,13 +24,6 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 import java.util.function.Consumer;
 
 public enum ConditionTokenType implements EnumTokenType {
-    XOR_EQUAL(BitwiseTokenType.XOR),
-    BITWISE_AND_EQUAL(BitwiseTokenType.BITWISE_AND),
-    BITWISE_OR_EQUAL(BitwiseTokenType.BITWISE_OR),
-    COMPLEMENT_EQUAL(BitwiseTokenType.COMPLEMENT),
-    SHIFT_LEFT_EQUAL(BitwiseTokenType.SHIFT_LEFT),
-    SHIFT_RIGHT_EQUAL(BitwiseTokenType.SHIFT_RIGHT),
-
     GREATER(DefaultTokenCharacter.GREATER),
     LESS(DefaultTokenCharacter.LESS),
 
@@ -52,11 +45,8 @@ public enum ConditionTokenType implements EnumTokenType {
         this(builder -> builder.representation(String.valueOf(character.character())));
     }
 
-    ConditionTokenType(TokenType assignsWithToken) {
-        this(builder -> builder
-                .combines(assignsWithToken, BaseTokenType.EQUAL)
-                .assignsWith(assignsWithToken)
-        );
+    ConditionTokenType(TokenType combinesWith) {
+        this(builder -> builder.combines(combinesWith, BaseTokenType.EQUAL));
     }
 
     ConditionTokenType(Consumer<TokenMetaDataBuilder> metaData) {
