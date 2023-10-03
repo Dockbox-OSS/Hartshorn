@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.statement.IfStatementInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,14 +40,14 @@ import test.org.dockbox.hartshorn.hsl.interpreter.JavaStatement;
 
 public class IfStatementInterpreterTests {
 
-    private static final Token BODY_START_TOKEN = Token.of(TokenType.LEFT_BRACE).lexeme("{").build();
+    private static final Token BODY_START_TOKEN = Token.of(InterpreterTestHelper.defaultTokenPairs().block().open()).build();
 
     @Test
     void testIfStatementEvaluatesIfConditionIsTrue() {
         boolean literalValue = true;
         Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
 
-        Token conditionToken = Token.of(TokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, true);
 
         this.assertEvaluatesToTrue(conditionExpression);
@@ -58,7 +58,7 @@ public class IfStatementInterpreterTests {
         int literalValue = 1;
         Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
 
-        Token conditionToken = Token.of(TokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
 
         this.assertEvaluatesToTrue(conditionExpression);
@@ -69,7 +69,7 @@ public class IfStatementInterpreterTests {
         boolean literalValue = false;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
 
-        Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, false);
 
         this.assertEvaluatesToFalse(conditionExpression);
@@ -80,7 +80,7 @@ public class IfStatementInterpreterTests {
         Object literalValue = null;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(null));
 
-        Token conditionToken = Token.of(TokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
 
         this.assertEvaluatesToFalse(conditionExpression);
@@ -94,7 +94,7 @@ public class IfStatementInterpreterTests {
         boolean literalValue = false;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
 
-        Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, false);
 
         IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
@@ -124,7 +124,7 @@ public class IfStatementInterpreterTests {
         boolean literalValue = true;
         Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
 
-        Token conditionToken = Token.of(TokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, true);
 
         IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
@@ -155,7 +155,7 @@ public class IfStatementInterpreterTests {
         boolean literalValue = false;
         Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
 
-        Token conditionToken = Token.of(TokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
+        Token conditionToken = Token.of(LiteralTokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, false);
 
         IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, ifFalse);

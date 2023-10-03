@@ -21,15 +21,21 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
     protected Object getBitwiseResult(final Token operator, final Object left, final Object right) {
+        TokenType type = operator.type();
+        if (!(type instanceof BitwiseTokenType bitwiseTokenType)) {
+            throw new RuntimeError(operator, "Unsupported bitwise operator.");
+        }
         if (left instanceof Number && right instanceof Number) {
             final int iLeft = ((Number) left).intValue();
             final int iRight = ((Number) right).intValue();
 
-            return switch (operator.type()) {
+            return switch(bitwiseTokenType) {
                 case SHIFT_RIGHT -> iLeft >> iRight;
                 case SHIFT_LEFT -> iLeft << iRight;
                 case LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;

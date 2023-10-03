@@ -28,7 +28,11 @@ public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestSt
     @Override
     public Void interpret(final TestStatement node, final InterpreterAdapter adapter) {
         final String name = String.valueOf(node.name().literal());
-        final VariableScope variableScope = new VariableScope(adapter.global());
+        VariableScope previousScope = adapter.visitingScope();
+
+        final VariableScope variableScope = new VariableScope(previousScope);
+        adapter.enterScope(variableScope);
+
         try {
             adapter.execute(node.body(), variableScope);
         }
@@ -36,6 +40,9 @@ public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestSt
             final Object value = r.value();
             final boolean val = InterpreterUtilities.isTruthy(value);
             adapter.interpreter().resultCollector().addResult(name, val);
+        }
+        finally {
+            adapter.enterScope(previousScope);
         }
         return null;
     }

@@ -67,7 +67,9 @@ public class VariableScope {
         }
 
         // If the variable isn’t found in this scope, we simply try the enclosing one
-        if (this.enclosing != null) return this.enclosing.get(name);
+        if (this.enclosing != null) {
+            return this.enclosing.get(name);
+        }
 
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
     }

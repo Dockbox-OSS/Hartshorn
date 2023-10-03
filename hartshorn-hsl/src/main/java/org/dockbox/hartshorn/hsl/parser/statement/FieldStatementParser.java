@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
@@ -23,25 +25,25 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
 
     @Override
     public Option<FieldStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        final Token modifier = parser.find(TokenType.PUBLIC, TokenType.PRIVATE);
-        final boolean isFinal = parser.match(TokenType.FINAL);
-        final Token name = validator.expect(TokenType.IDENTIFIER, "variable name");
+        final Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
+        final boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
+        final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
 
         Expression initializer = null;
-        if(parser.match(TokenType.EQUAL)) {
+        if(parser.match(BaseTokenType.EQUAL)) {
             initializer = parser.expression();
         }
 
-        validator.expectAfter(TokenType.SEMICOLON, "variable declaration");
+        validator.expectAfter(BaseTokenType.SEMICOLON, "variable declaration");
         final VariableStatement variable = new VariableStatement(name, initializer);
 
         return Option.of(new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal));

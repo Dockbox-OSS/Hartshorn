@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.hsl.ast.statement;
 
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 
 public interface MemberStatement {
     Token name();
@@ -25,10 +25,10 @@ public interface MemberStatement {
     Token modifier();
 
     default boolean isPublic() {
-        return this.modifier() == null || this.modifier().type() == TokenType.PUBLIC;
+        return this.modifier() == null || this.modifier().type() == MemberModifierTokenType.PUBLIC;
     }
 
     default boolean isPrivate() {
-        return this.modifier() != null && this.modifier().type() == TokenType.PRIVATE;
+        return this.modifier() != null && this.modifier().type() == MemberModifierTokenType.PRIVATE;
     }
 }

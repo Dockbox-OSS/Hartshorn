@@ -16,21 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.lexer.AbstractTokenSetLexer;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The standard context which tracks the state of the execution of a script. It is used by the
@@ -46,17 +48,18 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private static final String GLOBAL_RESULT = "$__result__$";
     protected final Map<String, Object> results = new ConcurrentHashMap<>();
 
+    private final ScriptRuntime runtime;
     private final String source;
 
+    private TokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
     private List<Token> tokens;
     private List<Statement> statements;
     private List<Comment> comments;
 
-    private Lexer lexer;
+    private AbstractTokenSetLexer lexer;
     private TokenParser parser;
     private Resolver resolver;
     private Interpreter interpreter;
-    private final ScriptRuntime runtime;
 
     public ScriptContext(final ScriptRuntime runtime, final String source) {
         super(runtime.applicationContext());
@@ -74,6 +77,15 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
 
     public ScriptContext tokens(final List<Token> tokens) {
         this.tokens = tokens;
+        return this;
+    }
+
+    public TokenRegistry tokenSet() {
+        return this.tokenRegistry;
+    }
+
+    public ScriptContext tokenSet(final TokenRegistry tokenRegistry) {
+        this.tokenRegistry = tokenRegistry;
         return this;
     }
 
@@ -95,11 +107,11 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this;
     }
 
-    public Lexer lexer() {
+    public AbstractTokenSetLexer lexer() {
         return this.lexer;
     }
 
-    public ScriptContext lexer(final Lexer lexer) {
+    public ScriptContext lexer(final AbstractTokenSetLexer lexer) {
         this.lexer = lexer;
         return this;
     }

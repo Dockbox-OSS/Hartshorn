@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
@@ -23,11 +26,8 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class InterpreterState {
 
@@ -112,7 +112,7 @@ public class InterpreterState {
     }
 
     public Object lookUpVariable(final Token name, final Expression expr) {
-        if (name.type() == TokenType.THIS) {
+        if (name.type() == ObjectTokenType.THIS) {
             return this.visitingScope().getAt(name, 1);
         }
 

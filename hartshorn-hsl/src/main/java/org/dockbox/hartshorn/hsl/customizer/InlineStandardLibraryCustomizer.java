@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-
-import java.util.List;
-import java.util.Map;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 
 public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
@@ -40,8 +40,7 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     private List<Statement> enhanceModuleStatements(final List<Statement> statements, final Map<String, NativeModule> modules) {
         for (final String module : modules.keySet()) {
-            final Token moduleToken = Token.of(TokenType.IDENTIFIER)
-                    .lexeme(module)
+            final Token moduleToken = Token.of(LiteralTokenType.IDENTIFIER, module)
                     .virtual()
                     .build();
             final ModuleStatement moduleStatement = new ModuleStatement(moduleToken);

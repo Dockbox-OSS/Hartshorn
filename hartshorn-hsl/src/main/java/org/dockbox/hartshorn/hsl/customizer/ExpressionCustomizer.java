@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -25,11 +28,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
@@ -71,8 +72,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
         if (!(lastStatement instanceof ReturnStatement)) {
             final ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            final Token returnToken = Token.of(TokenType.RETURN)
-                    .lexeme(VALIDATION_ID)
+            final Token returnToken = Token.of(ControlTokenType.RETURN, VALIDATION_ID)
                     .virtual()
                     .build();
 
@@ -80,7 +80,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
             statements.set(statements.size() - 1, returnStatement);
         }
 
-        final Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
+        final Token testToken = new Token(LiteralTokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
         final BlockStatement blockStatement = new BlockStatement(testToken, statements);
         final TestStatement testStatement = new TestStatement(testToken, blockStatement);
 

@@ -24,20 +24,21 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
+import org.dockbox.hartshorn.hsl.lexer.AbstractTokenSetLexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
 public interface ScriptComponentFactory {
 
-    Lexer lexer(String source);
+    AbstractTokenSetLexer lexer(TokenRegistry tokenRegistry, String source);
 
-    TokenParser parser(List<Token> tokens);
+    TokenParser parser(TokenRegistry tokenRegistry, List<Token> tokens);
 
     Resolver resolver(Interpreter interpreter);
 

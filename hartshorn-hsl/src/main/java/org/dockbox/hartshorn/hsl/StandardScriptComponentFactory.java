@@ -16,34 +16,36 @@
 
 package org.dockbox.hartshorn.hsl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
+import org.dockbox.hartshorn.hsl.lexer.AbstractTokenSetLexer;
+import org.dockbox.hartshorn.hsl.lexer.DefaultTokenSetLexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
-
-import java.util.List;
-import java.util.Map;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
 public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
-    public Lexer lexer(final String source) {
-        return new Lexer(source);
+    public AbstractTokenSetLexer lexer(TokenRegistry tokenRegistry, String source) {
+        return new DefaultTokenSetLexer(source, tokenRegistry);
     }
 
     @Override
-    public TokenParser parser(final List<Token> tokens) {
-        return new StandardTokenParser(tokens);
+    public TokenParser parser(TokenRegistry tokenRegistry, List<Token> tokens) {
+        return new StandardTokenParser(tokenRegistry, tokens);
     }
 
     @Override

@@ -16,24 +16,6 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.ExpressionScript;
-import org.dockbox.hartshorn.hsl.ExecutableScript;
-import org.dockbox.hartshorn.hsl.UseExpressionValidation;
-import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
-import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
-import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-import org.dockbox.hartshorn.hsl.lexer.Comment;
-import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,6 +27,25 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
+import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.lexer.Comment;
+import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import jakarta.inject.Inject;
 
@@ -67,12 +68,12 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> bitwise() {
         return Stream.of(
-                Arguments.of(TokenType.BITWISE_OR, 5, 7, 5 | 7),
-                Arguments.of(TokenType.BITWISE_AND, 5, 7, 5 & 7),
-                Arguments.of(TokenType.XOR, 5, 7, 5 ^ 7),
-                Arguments.of(TokenType.SHIFT_LEFT, 5, 7, 5 << 7),
-                Arguments.of(TokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
-                Arguments.of(TokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
+                Arguments.of(BitwiseTokenType.BITWISE_OR, 5, 7, 5 | 7),
+                Arguments.of(BitwiseTokenType.BITWISE_AND, 5, 7, 5 & 7),
+                Arguments.of(BitwiseTokenType.XOR, 5, 7, 5 ^ 7),
+                Arguments.of(BitwiseTokenType.SHIFT_LEFT, 5, 7, 5 << 7),
+                Arguments.of(BitwiseTokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
+                Arguments.of(BitwiseTokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
         );
     }
 

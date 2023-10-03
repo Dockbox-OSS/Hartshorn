@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 
 public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, PostfixExpression> {
 
@@ -30,10 +32,14 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
         final Object left = adapter.evaluate(node.leftExpression());
         InterpreterUtilities.checkNumberOperand(node.operator(), left);
 
-        final double newValue = switch (node.operator().type()) {
+        TokenType type = node.operator().type();
+        if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
+            throw new RuntimeError(node.operator(), "Invalid postfix operator " + type);
+        }
+        final double newValue = switch (arithmeticTokenType) {
             case PLUS_PLUS -> (double) left + 1;
             case MINUS_MINUS -> (double) left -1;
-            default -> throw new RuntimeError(node.operator(), "Invalid postfix operator " + node.operator().type());
+            default -> throw new RuntimeError(node.operator(), "Invalid postfix operator " + type);
         };
 
         if (node.leftExpression() instanceof VariableExpression variable) {

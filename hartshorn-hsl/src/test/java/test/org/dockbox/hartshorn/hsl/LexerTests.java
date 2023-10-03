@@ -16,68 +16,48 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.hsl.lexer.Comment;
+import org.dockbox.hartshorn.hsl.lexer.DefaultTokenSetLexer;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenConstants;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
+import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
 public class LexerTests {
 
-    private static final TokenType[] keywords = {
-            TokenType.PREFIX, TokenType.INFIX,
-            TokenType.CLASS, TokenType.EXTENDS,
-            TokenType.IF, TokenType.ELSE,
-            TokenType.FUNCTION, TokenType.RETURN, TokenType.NATIVE,
-            TokenType.TRUE, TokenType.FALSE,
-            TokenType.FOR, TokenType.DO, TokenType.WHILE, TokenType.REPEAT,
-            TokenType.BREAK, TokenType.CONTINUE,
-            TokenType.SUPER, TokenType.THIS,
-            TokenType.NULL, TokenType.TEST,
-            TokenType.VAR, TokenType.IMPORT,
-    };
+    private static final TokenType[] keywords;
+    private static final Set<TokenType> literals = Set.of(LiteralTokenType.values());
 
-    private static final List<TokenType> literals = List.of(
-            TokenType.IDENTIFIER,
-            TokenType.STRING,
-            TokenType.NUMBER,
-            TokenType.CHAR,
-            TokenType.EOF);
-
-    private static final TokenType[] singleTokens = {
-            TokenType.LEFT_PAREN, TokenType.RIGHT_PAREN,
-            TokenType.LEFT_BRACE, TokenType.RIGHT_BRACE,
-            TokenType.ARRAY_OPEN, TokenType.ARRAY_CLOSE,
-            TokenType.COMMA, TokenType.DOT,
-            TokenType.MINUS, TokenType.PLUS,
-            TokenType.SEMICOLON, TokenType.EQUAL, TokenType.BANG,
-            TokenType.MODULO, TokenType.STAR, TokenType.SLASH,
-            TokenType.GREATER, TokenType.LESS,
-            TokenType.QUESTION_MARK, TokenType.COLON,
-    };
+    static {
+        keywords = InterpreterTestHelper.defaultTokenSet().tokenTypes(TokenType::keyword).toArray(TokenType[]::new);
+    }
 
     public static Stream<Arguments> tokens() {
         final List<Arguments> arguments = new ArrayList<>();
-        for (final TokenType type : TokenType.values()) {
-            if (literals.contains(type)) continue;
+        DefaultTokenRegistry tokenSet = DefaultTokenRegistry.createDefault();
+        Set<TokenType> nonLiteralTokens = tokenSet.tokenTypes(type -> !literals.contains(type));
+        for (final TokenType type : nonLiteralTokens) {
             arguments.add(Arguments.of(type.representation(), type));
         }
-        arguments.add(Arguments.of("12.0", TokenType.NUMBER));
-        arguments.add(Arguments.of("foobar", TokenType.IDENTIFIER));
-        arguments.add(Arguments.of("\"foo\"", TokenType.STRING));
-        arguments.add(Arguments.of("'a'", TokenType.CHAR));
+        arguments.add(Arguments.of("12.0", LiteralTokenType.NUMBER));
+        arguments.add(Arguments.of("foobar", LiteralTokenType.IDENTIFIER));
+        arguments.add(Arguments.of("\"foo\"", LiteralTokenType.STRING));
+        arguments.add(Arguments.of("'a'", LiteralTokenType.CHAR));
         return arguments.stream();
     }
 
@@ -85,24 +65,11 @@ public class LexerTests {
         return Arrays.stream(keywords).map(Arguments::of);
     }
 
-    public static Stream<Arguments> singleCharacterTokens() {
-        return Arrays.stream(singleTokens).map(Arguments::of);
-    }
-
-    @ParameterizedTest
-    @MethodSource("singleCharacterTokens")
-    void testTokenTypesUseConstantsOfSameName(final TokenType type) throws IllegalAccessException, NoSuchFieldException {
-        final String name = type.name();
-        final Field field = TokenConstants.class.getField(name);
-        // Should be static and public
-        final char constant = (char) field.get(null);
-        Assertions.assertEquals(String.valueOf(constant), type.representation());
-    }
-
     @ParameterizedTest
     @MethodSource("keywords")
     void testKeywordsMatchExpectedList(final TokenType type) {
-        final Collection<TokenType> tokenTypes = TokenType.keywords().values();
+        TokenRegistry tokenRegistry = InterpreterTestHelper.defaultTokenSet();
+        final Set<TokenType> tokenTypes = tokenRegistry.tokenTypes(TokenType::keyword);
         Assertions.assertTrue(tokenTypes.contains(type));
     }
 
@@ -115,7 +82,7 @@ public class LexerTests {
     @ParameterizedTest
     @MethodSource("tokens")
     void testCorrectToken(final String text, final TokenType expected) {
-        final Lexer lexer = new Lexer(text);
+        final Lexer lexer = new DefaultTokenSetLexer(text, InterpreterTestHelper.defaultTokenSet());
         final List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -126,19 +93,19 @@ public class LexerTests {
         Assertions.assertEquals(1, token.line());
 
         final Token eof = tokens.get(1);
-        Assertions.assertEquals(TokenType.EOF, eof.type());
+        Assertions.assertEquals(LiteralTokenType.EOF, eof.type());
     }
 
     @Test
     void testSingleLineComment() {
-        final Lexer lexer = new Lexer("# Comment");
+        final Lexer lexer = new DefaultTokenSetLexer("# Comment", InterpreterTestHelper.defaultTokenSet());
         final List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
         Assertions.assertEquals(1, tokens.size());
 
         final Token token = tokens.get(0);
-        Assertions.assertEquals(TokenType.EOF, token.type());
+        Assertions.assertEquals(LiteralTokenType.EOF, token.type());
 
         final List<Comment> comments = lexer.comments();
         Assertions.assertNotNull(comments);

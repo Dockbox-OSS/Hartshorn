@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
@@ -26,17 +35,12 @@ import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapte
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
@@ -48,27 +52,23 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
     private final TokenStepValidator validator;
     private final ExpressionParser expressionParser;
+    private final TokenRegistry tokenRegistry;
 
     @Inject
-    public StandardTokenParser() {
-        this(new ArrayList<>());
+    public StandardTokenParser(TokenRegistry tokenRegistry) {
+        this(tokenRegistry, new ArrayList<>());
     }
 
-    @Inject
-    public StandardTokenParser(final ExpressionParser parser, final TokenStepValidator validator) {
-        this(new ArrayList<>(), parser, validator);
-    }
-
-    public StandardTokenParser(final List<Token> tokens) {
+    public StandardTokenParser(TokenRegistry tokenRegistry, List<Token> tokens) {
+        this.tokenRegistry = tokenRegistry;
         this.expressionParser = new ComplexExpressionParserAdapter();
         this.validator = new StandardTokenStepValidator(this);
-        this.tokens = tokens;
+        this.tokens = new LinkedList<>(tokens);
     }
 
-    public StandardTokenParser(final List<Token> tokens, final ExpressionParser parser, final TokenStepValidator validator) {
-        this.tokens = tokens;
-        this.expressionParser = parser;
-        this.validator = validator;
+    @Override
+    public TokenRegistry tokenSet() {
+        return this.tokenRegistry;
     }
 
     @Override
@@ -112,22 +112,28 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public boolean check(final TokenType... types) {
-        if (this.isAtEnd()) return false;
+        if (this.isAtEnd()) {
+            return false;
+        }
         for (final TokenType type : types) {
-            if (this.peek().type() == type) return true;
+            if (this.peek().type() == type) {
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public Token advance() {
-        if (!this.isAtEnd()) this.current++;
+        if (!this.isAtEnd()) {
+            this.current++;
+        }
         return this.previous();
     }
 
     @Override
     public boolean isAtEnd() {
-        return this.peek().type() == TokenType.EOF;
+        return this.peek().type() == LiteralTokenType.EOF;
     }
 
     @Override
@@ -142,9 +148,12 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public Token consume(final TokenType type, final String message) {
-        if (this.check(type))
+        if (this.check(type)) {
             return this.advance();
-        if (type != TokenType.SEMICOLON) throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+        }
+        if (type != BaseTokenType.SEMICOLON) {
+            throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+        }
         return null;
     }
 
@@ -154,7 +163,9 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
             final Option<? extends Statement> statement = parser.parse(this, this.validator)
                     .attempt(ScriptEvaluationError.class)
                     .rethrow();
-            if (statement.present()) return statement.get();
+            if (statement.present()) {
+                return statement.get();
+            }
         }
 
         final TokenType type = this.peek().type();
@@ -168,7 +179,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     @Override
     public ExpressionStatement expressionStatement() {
         final Expression expr = this.expression();
-        this.validator.expectAfter(TokenType.SEMICOLON, "expression");
+        this.validator.expectAfter(BaseTokenType.SEMICOLON, "expression");
         return new ExpressionStatement(expr);
     }
 

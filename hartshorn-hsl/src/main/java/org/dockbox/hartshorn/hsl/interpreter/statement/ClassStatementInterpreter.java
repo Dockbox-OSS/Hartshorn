@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
@@ -28,11 +32,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, ClassStatement> {
 
@@ -61,7 +61,7 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
     private static void visitClassScope(final ClassStatement node, final InterpreterAdapter adapter, final ClassReference superClassReference) {
         if (node.superClass() != null) {
             adapter.enterScope(new VariableScope(adapter.visitingScope()));
-            adapter.visitingScope().define(TokenType.SUPER.representation(), superClassReference);
+            adapter.visitingScope().define(ObjectTokenType.SUPER.representation(), superClassReference);
         }
 
         final Map<String, VirtualFunction> methods = new HashMap<>();

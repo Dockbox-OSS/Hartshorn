@@ -33,7 +33,9 @@ public class ForStatementInterpreter implements ASTNodeInterpreter<Void, ForStat
                     adapter.execute(node.body());
                 }
                 catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
                 adapter.execute(node.increment());
             }

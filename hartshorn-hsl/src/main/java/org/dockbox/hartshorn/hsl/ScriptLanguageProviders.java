@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 
 import jakarta.inject.Named;
 
@@ -47,7 +48,7 @@ public class ScriptLanguageProviders {
 
     @Binds
     private TokenParser tokenParser() {
-        return new StandardTokenParser();
+        return new StandardTokenParser(DefaultTokenRegistry.createDefault());
     }
 
     @Binds

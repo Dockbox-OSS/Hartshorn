@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -23,28 +27,28 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class TestStatementParser extends AbstractBodyStatementParser<TestStatement> {
 
     @Override
     public Option<TestStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        if (parser.match(TokenType.TEST)) {
-            validator.expectAfter(TokenType.LEFT_PAREN, "test statement");
+        TokenTypePair parameter = parser.tokenSet().tokenPairs().parameters();
+        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+        if (parser.match(AssertTokenType.TEST)) {
+            validator.expectAfter(parameter.open(), "test statement");
 
-            final Token name = validator.expect(TokenType.STRING, "test name");
-            validator.expectAfter(TokenType.RIGHT_PAREN, "test statement name value");
-            validator.expectBefore(TokenType.LEFT_BRACE, "test body");
+            final Token name = validator.expect(LiteralTokenType.STRING, "test name");
+            validator.expectAfter(parameter.close(), "test statement name value");
+            validator.expectBefore(block.open(), "test body");
 
             final List<Statement> statements = new ArrayList<>();
             final Token bodyStart = parser.peek();
-            while (!parser.match(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
+            while (!parser.match(block.close()) && !parser.isAtEnd()) {
                 final Statement statement = parser.statement();
                 statements.add(statement);
             }

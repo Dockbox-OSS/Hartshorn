@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class SystemLibrary {
     }
 
     public String stringify(final Object object) {
-        if (object == null) return TokenType.NULL.representation();
+        if (object == null) return LiteralTokenType.NULL.representation();
         // Hack. Work around Java adding ".0" to integer-valued doubles.
         if (object instanceof Double) {
             String text = object.toString();

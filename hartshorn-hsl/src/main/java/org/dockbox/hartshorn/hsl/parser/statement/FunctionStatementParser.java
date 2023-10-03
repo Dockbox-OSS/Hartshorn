@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
@@ -26,29 +30,28 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
 
     @Override
     public Option<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
-        if (parser.check(TokenType.PREFIX, TokenType.INFIX, TokenType.FUNCTION)) {
+        if (parser.check(FunctionTokenType.PREFIX, FunctionTokenType.INFIX, FunctionTokenType.FUNCTION)) {
             final Token functionType = parser.advance();
-            final Token functionToken = functionType.type() == TokenType.FUNCTION ? functionType : parser.advance();
-            final Token name = validator.expect(TokenType.IDENTIFIER, "function name");
+            final Token functionToken = functionType.type() == FunctionTokenType.FUNCTION ? functionType : parser.advance();
+            final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
 
             int expectedNumberOrArguments = Integer.MAX_VALUE;
 
-            if (functionType.type() == TokenType.PREFIX) {
+            if (functionType.type() == FunctionTokenType.PREFIX) {
                 this.functionParserContext(parser).addPrefixFunction(name.lexeme());
                 expectedNumberOrArguments = 1;
             }
-            else if (functionType.type() == TokenType.INFIX) {
+            else if (functionType.type() == FunctionTokenType.INFIX) {
                 this.functionParserContext(parser).addInfixFunction(name.lexeme());
                 expectedNumberOrArguments = 2;
             }
@@ -72,21 +75,22 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
     }
 
     private List<Parameter> functionParameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOrArguments, final Token token) {
-        validator.expectAfter(TokenType.LEFT_PAREN, functionName);
+        TokenTypePair parameter = parser.tokenSet().tokenPairs().parameters();
+        validator.expectAfter(parameter.open(), functionName);
         final List<Parameter> parameters = new ArrayList<>();
-        if (!parser.check(TokenType.RIGHT_PAREN)) {
+        if (!parser.check(parameter.close())) {
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
                     final String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                final Token parameterName = validator.expect(TokenType.IDENTIFIER, "parameter name");
+                final Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
-            while (parser.match(TokenType.COMMA));
+            while (parser.match(BaseTokenType.COMMA));
         }
 
-        validator.expectAfter(TokenType.RIGHT_PAREN, "parameters");
+        validator.expectAfter(parameter.close(), "parameters");
         return parameters;
     }
 

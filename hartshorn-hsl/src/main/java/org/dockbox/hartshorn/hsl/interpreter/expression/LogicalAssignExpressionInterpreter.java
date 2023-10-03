@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
@@ -34,8 +34,7 @@ public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Objec
         final TokenType bitwiseOperator = node.logicalOperator();
 
         // Virtual token to indicate the position of the operator
-        final Token token = Token.of(bitwiseOperator)
-                .lexeme(op.lexeme())
+        final Token token = Token.of(bitwiseOperator, op.lexeme())
                 .position(op)
                 .build();
         final Object result = this.getBitwiseResult(token, left, right);

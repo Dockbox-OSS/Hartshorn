@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
@@ -70,11 +72,9 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.semantic.Resolver.ClassType;
 import org.dockbox.hartshorn.hsl.semantic.Resolver.FunctionType;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.Map;
 
 public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisitor<Void> {
 
@@ -380,13 +380,13 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         // Support super keyword
         if (statement.superClass() != null) {
             this.resolver.beginScope();
-            this.resolver.peekScope().put(TokenType.SUPER.representation(), true);
-            this.resolver.peekFinal().put(TokenType.SUPER.representation(), "instance variable");
+            this.resolver.peekScope().put(ObjectTokenType.SUPER.representation(), true);
+            this.resolver.peekFinal().put(ObjectTokenType.SUPER.representation(), "instance variable");
         }
 
         this.resolver.beginScope();
-        this.resolver.peekScope().put(TokenType.THIS.representation(), true);
-        this.resolver.peekFinal().put(TokenType.THIS.representation(), "instance variable");
+        this.resolver.peekScope().put(ObjectTokenType.THIS.representation(), true);
+        this.resolver.peekFinal().put(ObjectTokenType.THIS.representation(), "instance variable");
         for (final FunctionStatement method : statement.methods()) {
             this.resolver.resolveFunction(method, FunctionType.METHOD);
         }

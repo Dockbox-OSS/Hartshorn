@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -24,16 +27,13 @@ import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods
@@ -112,15 +112,13 @@ public abstract class AbstractNativeModule implements NativeModule {
                 if (!method.modifiers().isPublic()) continue;
                 if (method.declaredBy().is(Object.class)) continue;
 
-                final Token token = Token.of(TokenType.IDENTIFIER)
-                        .lexeme(method.name())
+                final Token token = Token.of(LiteralTokenType.IDENTIFIER, method.name())
                         .virtual()
                         .build();
 
                 final List<Parameter> parameters = new ArrayList<>();
                 for (final ParameterView<?> parameter : method.parameters().all()) {
-                    final Token parameterName = Token.of(TokenType.IDENTIFIER)
-                            .lexeme(parameter.name())
+                    final Token parameterName = Token.of(LiteralTokenType.IDENTIFIER, parameter.name())
                             .virtual()
                             .build();
                     parameters.add(new Parameter(parameterName));
