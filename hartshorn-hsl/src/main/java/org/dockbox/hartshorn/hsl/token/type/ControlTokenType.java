@@ -1,0 +1,57 @@
+/*
+ * Copyright 2019-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.hsl.token.type;
+
+import org.dockbox.hartshorn.hsl.token.TokenMetaData;
+import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
+
+import java.util.function.Consumer;
+
+public enum ControlTokenType implements EnumTokenType {
+    IF(true),
+    ELSE(false),
+    SWITCH(true),
+    CASE(false),
+    BREAK(true),
+    CONTINUE(true),
+    RETURN(true),
+    YIELD(true),
+    DEFAULT(false),
+
+    ARROW(builder -> builder.combines(ArithmeticTokenType.MINUS, ConditionTokenType.GREATER).ok()),
+    ;
+
+    private final TokenMetaData metaData;
+
+    ControlTokenType(boolean standalone) {
+        this(builder -> builder
+                .standaloneStatement(standalone)
+                .keyword(true)
+        );
+    }
+
+    ControlTokenType(Consumer<TokenMetaDataBuilder> metaData) {
+        TokenMetaDataBuilder builder = TokenMetaData.builder(this);
+        metaData.accept(builder);
+        this.metaData = builder.ok();
+    }
+
+    @Override
+    public TokenType delegate() {
+        return metaData;
+    }
+}

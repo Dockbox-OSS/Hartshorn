@@ -18,10 +18,20 @@ package org.dockbox.hartshorn.hsl.token;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Represents a single token which exists within an HSL script. A token is always of
  * a valid {@link TokenType}.
+ *
+ * <p>Within the context of the HSL language, a token is a single unit of meaning. For
+ * example, the token {@code "Hello"} is a single token of type {@link LiteralTokenType#STRING}
+ * with the literal value {@code "Hello"}. Tokens are used to build up the AST of a
+ * script, which can then be parsed into a series of statements.
+ *
+ * <p>Tokens will always have a {@link TokenType} and a {@link #lexeme()}. The lexeme
+ *
  *
  * @author Guus Lieben
  * @since 0.4.12
@@ -44,7 +54,11 @@ public class Token extends ASTNode {
     }
 
     public static TokenBuilder of(TokenType type) {
-        return new TokenBuilder(type);
+        return new TokenBuilder(type).lexeme(type.defaultLexeme());
+    }
+
+    public static TokenBuilder of(TokenType type, String lexeme) {
+        return new TokenBuilder(type).lexeme(lexeme);
     }
 
     /**

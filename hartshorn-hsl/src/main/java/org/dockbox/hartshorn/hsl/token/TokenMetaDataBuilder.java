@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
-import java.util.Locale;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Utility-class to easily build new {@link TokenMetaData} instances.
@@ -32,10 +32,11 @@ public class TokenMetaDataBuilder {
     private boolean standaloneStatement;
     private boolean reserved;
     private TokenType assignsWith;
+    private String defaultLexeme;
 
     TokenMetaDataBuilder(TokenType type) {
         this.type = type;
-        this.representation = type.name().toLowerCase(Locale.ROOT);
+        this.representation = type.tokenName();
     }
 
     public TokenMetaDataBuilder representation(String representation) {
@@ -53,6 +54,19 @@ public class TokenMetaDataBuilder {
     }
 
     public TokenMetaDataBuilder repeats(TokenType type) {
+        return this.combines(type, type);
+    }
+
+    public TokenMetaDataBuilder combines(TokenCharacter... types) {
+        final StringBuilder combined = new StringBuilder();
+        for (final TokenCharacter type : types) {
+            combined.append(type.character());
+        }
+        this.representation = combined.toString();
+        return this;
+    }
+
+    public TokenMetaDataBuilder repeats(TokenCharacter type) {
         return this.combines(type, type);
     }
 
@@ -76,7 +90,12 @@ public class TokenMetaDataBuilder {
         return this;
     }
 
+    public TokenMetaDataBuilder defaultLexeme(final String defaultLexeme) {
+        this.defaultLexeme = defaultLexeme;
+        return this;
+    }
+
     public TokenMetaData ok() {
-        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith);
+        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme);
     }
 }
