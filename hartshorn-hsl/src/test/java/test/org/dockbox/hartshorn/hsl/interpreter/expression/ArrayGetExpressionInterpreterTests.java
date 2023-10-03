@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayGetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,10 +36,10 @@ public class ArrayGetExpressionInterpreterTests {
         Object[] realArray = { "test" };
         int targetIndex = 0;
 
-        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        Token indexToken = Token.of(LiteralTokenType.NUMBER).literal(targetIndex).build();
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
         InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
@@ -55,10 +55,10 @@ public class ArrayGetExpressionInterpreterTests {
         Object[] realArray = { "test" };
         int targetIndex = 1;
 
-        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        Token indexToken = Token.of(LiteralTokenType.NUMBER).literal(targetIndex).build();
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
         InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
         adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 

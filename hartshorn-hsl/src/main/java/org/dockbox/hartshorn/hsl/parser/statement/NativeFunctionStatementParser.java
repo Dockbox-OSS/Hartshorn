@@ -16,40 +16,41 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Set;
 
 public class NativeFunctionStatementParser extends AbstractBodyStatementParser<NativeFunctionStatement> implements ParametricStatementParser {
 
     @Override
-    public Option<NativeFunctionStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.NATIVE) && parser.match(TokenType.FUNCTION)) {
-            Token moduleName = validator.expect(TokenType.IDENTIFIER, "module name");
+    public Option<NativeFunctionStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        if (parser.match(FunctionTokenType.NATIVE) && parser.match(FunctionTokenType.FUNCTION)) {
+            final Token moduleName = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
 
-            while (parser.match(TokenType.COLON)) {
-                Token token = Token.of(TokenType.DOT)
-                        .lexeme(".")
+            while (parser.match(BaseTokenType.COLON)) {
+                final Token token = Token.of(BaseTokenType.DOT)
                         .position(moduleName)
                         .build();
                 moduleName.concat(token);
                 
-                Token submodule = validator.expect(TokenType.IDENTIFIER, "module name");
+                final Token submodule = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
                 moduleName.concat(submodule);
             }
 
-            validator.expectBefore(TokenType.DOT, "method body");
-            Token funcName = validator.expect(TokenType.IDENTIFIER, "function name");
-            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "method name", Integer.MAX_VALUE, TokenType.NATIVE);
+            validator.expectBefore(BaseTokenType.DOT, "method body");
+            final Token funcName = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
+            final List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "method name", Integer.MAX_VALUE, FunctionTokenType.NATIVE);
 
-            validator.expectAfter(TokenType.SEMICOLON, "value");
+            validator.expectAfter(BaseTokenType.SEMICOLON, "value");
             return Option.of(new NativeFunctionStatement(funcName, moduleName, null, parameters));
         }
         return Option.empty();

@@ -28,29 +28,30 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Option<Statement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
-        if (parser.match(TokenType.COLON)) {
-            Token colon = parser.previous();
-            List<Statement> statements = new ArrayList<>();
-            while (!parser.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
+    public Attempt<Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
+        if (parser.match(BaseTokenType.COLON)) {
+            final Token colon = parser.previous();
+            final List<Statement> statements = new ArrayList<>();
+            while (!parser.check(ControlTokenType.CASE, ControlTokenType.DEFAULT,parser.tokenSet().tokenPairs().block().close())) {
                 statements.add(parser.statement());
             }
-            return Option.of(new BlockStatement(colon, statements));
+            return Attempt.of(new BlockStatement(colon, statements));
         }
-        else if (parser.match(TokenType.ARROW)) {
-            return Option.of(parser.expressionStatement());
+        else if (parser.match(ControlTokenType.ARROW)) {
+            return Attempt.of(parser.expressionStatement());
         }
         else {
-            throw new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
-                    TokenType.COLON.representation(),
-                    TokenType.ARROW.representation()
-            ), Phase.PARSING, parser.peek());
+            return Attempt.of(new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
+                    BaseTokenType.COLON.representation(),
+                    ControlTokenType.ARROW.representation()
+            ), Phase.PARSING, parser.peek()));
         }
     }
 

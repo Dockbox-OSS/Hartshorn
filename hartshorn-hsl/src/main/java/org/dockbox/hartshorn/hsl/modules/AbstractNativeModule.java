@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -120,14 +120,13 @@ public abstract class AbstractNativeModule implements NativeModule {
                     continue;
                 }
 
-                Token token = Token.of(TokenType.IDENTIFIER)
-                        .lexeme(method.name())
+                Token token = Token.of(LiteralTokenType.IDENTIFIER, method.name())
                         .virtual()
                         .build();
 
                 List<Parameter> parameters = new ArrayList<>();
                 for (ParameterView<?> parameter : method.parameters().all()) {
-                    Token parameterName = Token.of(TokenType.IDENTIFIER)
+                    Token parameterName = Token.of(LiteralTokenType.IDENTIFIER)
                             .lexeme(parameter.name())
                             .virtual()
                             .build();

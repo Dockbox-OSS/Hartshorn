@@ -32,7 +32,9 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
@@ -42,30 +44,32 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     private final CaseBodyStatementParser caseBodyStatementParser;
 
     @Inject
-    public SwitchStatementParser(CaseBodyStatementParser caseBodyStatementParser) {
+    public SwitchStatementParser(final CaseBodyStatementParser caseBodyStatementParser) {
         this.caseBodyStatementParser = caseBodyStatementParser;
     }
 
     @Override
-    public Option<SwitchStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.SWITCH)) {
-            Token switchToken = parser.previous();
-            validator.expectAfter(TokenType.LEFT_PAREN, "switch");
-            Expression expr = parser.expression();
-            validator.expectAfter(TokenType.RIGHT_PAREN, "expression");
+    public Option<SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        TokenTypePair parameters = parser.tokenSet().tokenPairs().parameters();
+        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+        if (parser.match(ControlTokenType.SWITCH)) {
+            final Token switchToken = parser.previous();
+            validator.expectAfter(parameters.open(), "switch");
+            final Expression expr = parser.expression();
+            validator.expectAfter(parameters.close(), "expression");
 
-            validator.expectAfter(TokenType.LEFT_BRACE, "switch");
+            validator.expectAfter(block.open(), "switch");
 
             SwitchCase defaultBody = null;
-            List<SwitchCase> cases = new ArrayList<>();
-            Set<Object> matchedLiterals = new HashSet<>();
+            final List<SwitchCase> cases = new ArrayList<>();
+            final Set<Object> matchedLiterals = new HashSet<>();
 
-            while (parser.match(TokenType.CASE, TokenType.DEFAULT)) {
-                Token caseToken = parser.previous();
+            while (parser.match(ControlTokenType.CASE, ControlTokenType.DEFAULT)) {
+                final Token caseToken = parser.previous();
 
-                if (caseToken.type() == TokenType.CASE) {
-                    Expression caseExpr = parser.expression();
-                    if (!(caseExpr instanceof LiteralExpression literal)) {
+                if (caseToken.type() == ControlTokenType.CASE) {
+                    final Expression caseExpr = parser.expression();
+                    if (!(caseExpr instanceof final LiteralExpression literal)) {
                         throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
                     }
 
@@ -74,16 +78,22 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    Option<Statement> body = this.caseBodyStatementParser.parse(parser, validator);
+                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    if (body.errorPresent()) {
+                        return Attempt.of(body.error());
+                    }
                     cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    Option<Statement> body = this.caseBodyStatementParser.parse(parser, validator);
+                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    if (body.errorPresent()) {
+                        return Attempt.of(body.error());
+                    }
                     defaultBody = new SwitchCase(caseToken, body.get(), null, true);
                 }
             }
 
-            validator.expectAfter(TokenType.RIGHT_BRACE, "switch");
+            validator.expectAfter(block.close(), "switch");
 
             return Option.of(new SwitchStatement(switchToken, expr, cases, defaultBody));
         }

@@ -137,8 +137,8 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return interpreter;
     }
 
-    protected void tokenize(ScriptContext context) {
-        context.lexer(this.factory.lexer(context.source()));
+    protected void tokenize(final ScriptContext context) {
+        context.lexer(this.factory.lexer(context.tokenSet(), context.source()));
         this.customizePhase(Phase.TOKENIZING, context);
         List<Token> tokens = context.lexer().scanTokens();
         context.tokens(tokens);
@@ -146,7 +146,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void parse(ScriptContext context) {
-        TokenParser parser = this.factory.parser(context.tokens());
+        TokenParser parser = this.factory.parser(context.tokenSet(), context.tokens());
         this.parserCustomizer.configure(parser);
 
         context.parser(parser);

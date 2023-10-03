@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 
 @Configuration
 @RequiresActivator(UseExpressionValidation.class)
@@ -41,7 +42,7 @@ public class ScriptLanguageConfiguration {
 
     @Binds
     private TokenParser tokenParser() {
-        return new StandardTokenParser();
+        return new StandardTokenParser(DefaultTokenRegistry.createDefault());
     }
 
     @Binds

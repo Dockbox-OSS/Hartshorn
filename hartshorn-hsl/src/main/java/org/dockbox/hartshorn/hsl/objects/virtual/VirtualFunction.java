@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 /**
  * Represents a function definition inside a script. The function is identified by its name, and
@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
  * @since 0.4.12
  */
 public class VirtualFunction extends AbstractFinalizable implements MethodReference {
-    
+
     private final ParametricExecutableStatement declaration;
     private final VariableScope closure;
     private final InstanceReference instance;
@@ -66,7 +66,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     @Override
     public VirtualFunction bind(InstanceReference instance) {
         VariableScope variableScope = new VariableScope(this.closure);
-        variableScope.define(TokenType.THIS.representation(), instance);
+        variableScope.define(ObjectTokenType.THIS.representation(), instance);
         return new VirtualFunction(this.declaration, variableScope, this.isInitializer);
     }
 
@@ -88,12 +88,12 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         }
         catch (Return returnValue) {
             if (this.isInitializer) {
-                return this.closure.getAt(at, 0, TokenType.THIS.representation());
+                return this.closure.getAt(at, 0, ObjectTokenType.THIS.representation());
             }
             return returnValue.value();
         }
         if (this.isInitializer) {
-            return this.closure.getAt(at, 0, TokenType.THIS.representation());
+            return this.closure.getAt(at, 0, ObjectTokenType.THIS.representation());
         }
         return null;
     }

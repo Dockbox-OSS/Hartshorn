@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -24,15 +27,12 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
@@ -48,11 +48,11 @@ public class AssignExpressionInterpreterTests {
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
     void testAssignmentToDefinedVariable(Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
-        Token variableName = Token.of(TokenType.IDENTIFIER)
+        Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
 
-        Token variableValue = Token.of(TokenType.STRING)
+        Token variableValue = Token.of(LiteralTokenType.STRING)
                 .literal("theValue")
                 .build();
 
@@ -69,11 +69,11 @@ public class AssignExpressionInterpreterTests {
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        Token variableName = Token.of(TokenType.IDENTIFIER)
+        Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
 
-        Token variableValue = Token.of(TokenType.STRING)
+        Token variableValue = Token.of(LiteralTokenType.STRING)
                 .literal("theValue")
                 .build();
 

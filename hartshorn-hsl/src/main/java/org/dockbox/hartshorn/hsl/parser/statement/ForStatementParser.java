@@ -31,22 +31,23 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
 
     @Override
-    public Option<BodyStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.check(TokenType.FOR)) {
-            Token forToken = parser.advance();
-            validator.expectAfter(TokenType.LEFT_PAREN, TokenType.FOR);
+    public Option<BodyStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        if (parser.check(LoopTokenType.FOR)) {
+            final Token forToken = parser.advance();
+            validator.expectAfter(parser.tokenSet().tokenPairs().parameters().open(), LoopTokenType.FOR);
 
-            VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
+            final VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
                     .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                     .orElseThrow(() -> new ScriptEvaluationError("Expected variable statement in for-each loop", Phase.PARSING, forToken));
 
-            if (parser.match(TokenType.IN)) {
+            if (parser.match(LoopTokenType.IN)) {
                 return this.parseForEachStatement(forToken, parser, validator, initializer);
 
             } else {
@@ -62,25 +63,25 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
     }
 
     @NonNull
-    private Option<BodyStatement> parseForStatement(Token forToken, TokenParser parser, TokenStepValidator validator, VariableStatement initializer) {
-        validator.expectAfter(TokenType.SEMICOLON, "for assignment");
+    private Option<BodyStatement> parseForStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
+        validator.expectAfter(BaseTokenType.SEMICOLON, "for assignment");
 
-        Expression condition = parser.expression();
-        validator.expectAfter(TokenType.SEMICOLON, "for condition");
+        final Expression condition = parser.expression();
+        validator.expectAfter(BaseTokenType.SEMICOLON, "for condition");
 
-        Statement increment = parser.expressionStatement();
-        validator.expectAfter(TokenType.RIGHT_PAREN, "for increment");
+        final Statement increment = parser.expressionStatement();
+        validator.expectAfter(parser.tokenSet().tokenPairs().parameters().close(), "for increment");
 
-        BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
+        final BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
         return Option.of(new ForStatement(initializer, condition, increment, loopBody));
     }
 
     @NonNull
-    private Option<BodyStatement> parseForEachStatement(Token forToken, TokenParser parser, TokenStepValidator validator, VariableStatement initializer) {
-        Expression collection = parser.expression();
-        validator.expectAfter(TokenType.RIGHT_PAREN, "for collection");
+    private Option<BodyStatement> parseForEachStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
+        final Expression collection = parser.expression();
+        validator.expectAfter(parser.tokenSet().tokenPairs().parameters().close(), "for collection");
 
-        BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
+        final BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
         return Option.of(new ForEachStatement(initializer, collection, loopBody));
     }
 }

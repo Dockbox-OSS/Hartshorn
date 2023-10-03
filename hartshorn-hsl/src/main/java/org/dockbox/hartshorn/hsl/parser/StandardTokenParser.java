@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
@@ -26,17 +35,12 @@ import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapte
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
@@ -48,33 +52,29 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
     private final TokenStepValidator validator;
     private final ExpressionParser expressionParser;
+    private final TokenRegistry tokenRegistry;
 
     @Inject
-    public StandardTokenParser() {
-        this(new ArrayList<>());
+    public StandardTokenParser(TokenRegistry tokenRegistry) {
+        this(tokenRegistry, new ArrayList<>());
     }
 
-    @Inject
-    public StandardTokenParser(ExpressionParser parser, TokenStepValidator validator) {
-        this(new ArrayList<>(), parser, validator);
-    }
-
-    public StandardTokenParser(List<Token> tokens) {
+    public StandardTokenParser(TokenRegistry tokenRegistry, List<Token> tokens) {
+        this.tokenRegistry = tokenRegistry;
         this.expressionParser = new ComplexExpressionParserAdapter();
         this.validator = new StandardTokenStepValidator(this);
-        this.tokens = tokens;
-    }
-
-    public StandardTokenParser(List<Token> tokens, ExpressionParser parser, TokenStepValidator validator) {
-        this.tokens = tokens;
-        this.expressionParser = parser;
-        this.validator = validator;
+        this.tokens = new LinkedList<>(tokens);
     }
 
     @Override
-    public StandardTokenParser statementParser(ASTNodeParser<? extends Statement> parser) {
+    public TokenRegistry tokenSet() {
+        return this.tokenRegistry;
+    }
+
+    @Override
+    public StandardTokenParser statementParser(final ASTNodeParser<? extends Statement> parser) {
         if (parser != null) {
-            for(Class<? extends Statement> type : parser.types()) {
+            for(final Class<? extends Statement> type : parser.types()) {
                 if (!Statement.class.isAssignableFrom(type)) {
                     throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Statement");
                 }
@@ -86,7 +86,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public List<Statement> parse() {
-        List<Statement> statements = new ArrayList<>();
+        final List<Statement> statements = new ArrayList<>();
         while (!this.isAtEnd()) {
             statements.add(this.statement());
         }
@@ -94,15 +94,15 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     }
 
     @Override
-    public boolean match(TokenType... types) {
+    public boolean match(final TokenType... types) {
         return this.find(types) != null;
     }
 
     @Override
-    public Token find(TokenType... types) {
-        for (TokenType type : types) {
+    public Token find(final TokenType... types) {
+        for (final TokenType type : types) {
             if (this.check(type)) {
-                Token token = this.peek();
+                final Token token = this.peek();
                 this.advance();
                 return token;
             }
@@ -111,11 +111,11 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     }
 
     @Override
-    public boolean check(TokenType... types) {
+    public boolean check(final TokenType... types) {
         if (this.isAtEnd()) {
             return false;
         }
-        for (TokenType type : types) {
+        for (final TokenType type : types) {
             if (this.peek().type() == type) {
                 return true;
             }
@@ -133,7 +133,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public boolean isAtEnd() {
-        return this.peek().type() == TokenType.EOF;
+        return this.peek().type() == LiteralTokenType.EOF;
     }
 
     @Override
@@ -147,11 +147,11 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     }
 
     @Override
-    public Token consume(TokenType type, String message) {
+    public Token consume(final TokenType type, final String message) {
         if (this.check(type)) {
             return this.advance();
         }
-        if (type != TokenType.SEMICOLON) {
+        if (type != BaseTokenType.SEMICOLON) {
             throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
         }
         return null;
@@ -159,8 +159,8 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public Statement statement() {
-        for (ASTNodeParser<? extends Statement> parser : this.statementParsers) {
-            Option<? extends Statement> statement = parser.parse(this, this.validator)
+        for (final ASTNodeParser<? extends Statement> parser : this.statementParsers) {
+            final Option<? extends Statement> statement = parser.parse(this, this.validator)
                     .attempt(ScriptEvaluationError.class)
                     .rethrow();
             if (statement.present()) {
@@ -168,7 +168,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
             }
         }
 
-        TokenType type = this.peek().type();
+        final TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
             throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
         }
@@ -178,8 +178,8 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public ExpressionStatement expressionStatement() {
-        Expression expr = this.expression();
-        this.validator.expectAfter(TokenType.SEMICOLON, "expression");
+        final Expression expr = this.expression();
+        this.validator.expectAfter(BaseTokenType.SEMICOLON, "expression");
         return new ExpressionStatement(expr);
     }
 
@@ -192,24 +192,24 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     }
 
     @Override
-    public <T extends Statement> Set<ASTNodeParser<T>> compatibleParsers(Class<T> type) {
+    public <T extends Statement> Set<ASTNodeParser<T>> compatibleParsers(final Class<T> type) {
         return this.compatibleParserStream(type)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public <T extends Statement> Option<ASTNodeParser<T>> firstCompatibleParser(Class<T> type) {
+    public <T extends Statement> Option<ASTNodeParser<T>> firstCompatibleParser(final Class<T> type) {
         return Option.of(this.compatibleParserStream(type).findFirst());
     }
 
-    private <T extends Statement> Stream<ASTNodeParser<T>> compatibleParserStream(Class<T> type) {
+    private <T extends Statement> Stream<ASTNodeParser<T>> compatibleParserStream(final Class<T> type) {
         if (Statement.class.isAssignableFrom(type)) {
             return this.compatibleParserStream(this.statementParsers, type);
         }
         return Stream.empty();
     }
 
-    private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(Collection<? extends ASTNodeParser<? extends N>> parsers, Class<T> type) {
+    private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(final Collection<? extends ASTNodeParser<? extends N>> parsers, final Class<T> type) {
         return parsers.stream()
                 .filter(parser -> parser.types().contains(type))
                 .map(parser -> TypeUtils.adjustWildcards(parser, ASTNodeParser.class));

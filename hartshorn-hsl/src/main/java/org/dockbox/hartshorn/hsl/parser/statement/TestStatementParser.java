@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -23,29 +27,29 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class TestStatementParser extends AbstractBodyStatementParser<TestStatement> {
 
     @Override
-    public Option<TestStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.TEST)) {
-            validator.expectAfter(TokenType.LEFT_PAREN, "test statement");
+    public Option<TestStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        TokenTypePair parameter = parser.tokenSet().tokenPairs().parameters();
+        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+        if (parser.match(AssertTokenType.TEST)) {
+            validator.expectAfter(parameter.open(), "test statement");
 
-            Token name = validator.expect(TokenType.STRING, "test name");
-            validator.expectAfter(TokenType.RIGHT_PAREN, "test statement name value");
-            validator.expectBefore(TokenType.LEFT_BRACE, "test body");
+            final Token name = validator.expect(LiteralTokenType.STRING, "test name");
+            validator.expectAfter(parameter.close(), "test statement name value");
+            validator.expectBefore(block.open(), "test body");
 
-            List<Statement> statements = new ArrayList<>();
-            Token bodyStart = parser.peek();
-            while (!parser.match(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
-                Statement statement = parser.statement();
+            final List<Statement> statements = new ArrayList<>();
+            final Token bodyStart = parser.peek();
+            while (!parser.match(block.close()) && !parser.isAtEnd()) {
+                final Statement statement = parser.statement();
                 statements.add(statement);
             }
 
@@ -56,7 +60,7 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
                 throw new IllegalStateException("Test body must end with a return statement");
             }
 
-            BlockStatement body = new BlockStatement(bodyStart, statements);
+            final BlockStatement body = new BlockStatement(bodyStart, statements);
             return Option.of(new TestStatement(name, body));
         }
         return Option.empty();

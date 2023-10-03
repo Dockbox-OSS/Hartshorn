@@ -16,23 +16,25 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.ImportTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 public class ModuleStatementParser implements ASTNodeParser<ModuleStatement> {
 
     @Override
-    public Option<ModuleStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.IMPORT)) {
-            Token name = validator.expect(TokenType.IDENTIFIER, "module name");
-            validator.expectAfter(TokenType.SEMICOLON, TokenType.IMPORT);
+    public Option<ModuleStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        if (parser.match(ImportTokenType.IMPORT)) {
+            final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
+            validator.expectAfter(BaseTokenType.SEMICOLON, ImportTokenType.IMPORT);
             return Option.of(new ModuleStatement(name));
         }
         return Option.empty();
