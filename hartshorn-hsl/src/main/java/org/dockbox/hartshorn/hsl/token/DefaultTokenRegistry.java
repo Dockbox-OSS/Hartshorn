@@ -3,6 +3,7 @@ package org.dockbox.hartshorn.hsl.token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseAssignmentTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ClassTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
@@ -110,6 +111,7 @@ public final class DefaultTokenRegistry implements TokenRegistry {
         this.addTokens(ExceptionTokenType.values());
         this.addTokens(BaseTokenType.values());
         this.addTokens(ControlTokenType.values());
+        this.addTokens(BitwiseAssignmentTokenType.values());
         return this;
     }
 }

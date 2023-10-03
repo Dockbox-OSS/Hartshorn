@@ -41,18 +41,6 @@ public enum PairTokenType implements EnumTokenType {
             return ARRAY_OPEN;
         }
     },
-    ANGLE_OPEN(DefaultTokenCharacter.LESS, PairPosition.LEFT) {
-        @Override
-        public TokenType inverse() {
-            return ANGLE_CLOSE;
-        }
-    },
-    ANGLE_CLOSE(DefaultTokenCharacter.GREATER, PairPosition.RIGHT) {
-        @Override
-        public TokenType inverse() {
-            return ANGLE_OPEN;
-        }
-    },
     ;
 
     private final TokenMetaData metaData;

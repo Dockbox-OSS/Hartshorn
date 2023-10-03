@@ -176,7 +176,7 @@ public class ComplexExpressionParser {
             else {
                 throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, token);
             }
-        }, assignmentTokens);
+        }, this.assignmentTokens);
     }
 
     private Expression parsePrefixFunctionCall() {
@@ -252,7 +252,7 @@ public class ComplexExpressionParser {
     private Expression call() {
         Expression expr = this.primary();
         while (true) {
-            if (this.parser.match(parser.tokenSet().tokenPairs().parameters().open())) {
+            if (this.parser.match(this.parser.tokenSet().tokenPairs().parameters().open())) {
                 expr = this.finishCall(expr);
             }
             else if (this.parser.match(BaseTokenType.DOT)) {
@@ -274,7 +274,7 @@ public class ComplexExpressionParser {
         final List<Expression> arguments = new ArrayList<>();
         final Token parenOpen = this.parser.previous();
         // For zero arguments
-        if (!this.parser.check(parser.tokenSet().tokenPairs().parameters().close())) {
+        if (!this.parser.check(this.parser.tokenSet().tokenPairs().parameters().close())) {
             do {
                 if (arguments.size() >= MAX_NUM_OF_ARGUMENTS) {
                     throw new ScriptEvaluationError("Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.", Phase.PARSING, this.parser.peek());
@@ -283,7 +283,7 @@ public class ComplexExpressionParser {
             }
             while (this.parser.match(BaseTokenType.COMMA));
         }
-        final Token parenClose = this.validator.expectAfter(parser.tokenSet().tokenPairs().parameters().close(), "arguments");
+        final Token parenClose = this.validator.expectAfter(this.parser.tokenSet().tokenPairs().parameters().close(), "arguments");
         return new FunctionCallExpression(callee, parenOpen, parenClose, arguments);
     }
 
@@ -306,13 +306,13 @@ public class ComplexExpressionParser {
         if (this.parser.match(LiteralTokenType.IDENTIFIER)) {
             return this.identifierExpression();
         }
-        if (this.parser.match(parser.tokenSet().tokenPairs().parameters().open())) {
+        if (this.parser.match(this.parser.tokenSet().tokenPairs().parameters().open())) {
             return this.groupingExpression();
         }
         if (this.parser.match(ObjectTokenType.SUPER)) {
             return this.superExpression();
         }
-        if (this.parser.match(parser.tokenSet().tokenPairs().array().open())) {
+        if (this.parser.match(this.parser.tokenSet().tokenPairs().array().open())) {
             return this.complexArray();
         }
 
@@ -328,13 +328,13 @@ public class ComplexExpressionParser {
 
     private GroupingExpression groupingExpression() {
         final Expression expr = this.parse();
-        this.validator.expectAfter(parser.tokenSet().tokenPairs().parameters().close(), "expression");
+        this.validator.expectAfter(this.parser.tokenSet().tokenPairs().parameters().close(), "expression");
         return new GroupingExpression(expr);
     }
 
     private Expression identifierExpression() {
         final Token next = this.parser.peek();
-        TokenTypePair array = parser.tokenSet().tokenPairs().array();
+        TokenTypePair array = this.parser.tokenSet().tokenPairs().array();
         if (next.type() == array.open()) {
             final Token name = this.parser.previous();
             this.validator.expect(array.open());
@@ -349,7 +349,7 @@ public class ComplexExpressionParser {
         final Token open = this.parser.previous();
         final Expression expr = this.parse();
 
-        if (this.parser.match(parser.tokenSet().tokenPairs().array().close())) {
+        if (this.parser.match(this.parser.tokenSet().tokenPairs().array().close())) {
             final List<Expression> elements = new ArrayList<>();
             elements.add(expr);
             return new ArrayLiteralExpression(open, this.parser.previous(), elements);
@@ -369,7 +369,7 @@ public class ComplexExpressionParser {
             elements.add(this.parse());
         }
         while (this.parser.match(BaseTokenType.COMMA));
-        final Token close = this.validator.expectAfter(parser.tokenSet().tokenPairs().array().close(), "array");
+        final Token close = this.validator.expectAfter(this.parser.tokenSet().tokenPairs().array().close(), "array");
         return new ArrayLiteralExpression(open, close, elements);
     }
 
@@ -394,7 +394,7 @@ public class ComplexExpressionParser {
             elseExpr = this.parse();
         }
 
-        final Token close = this.validator.expectAfter(parser.tokenSet().tokenPairs().array().close(), "array");
+        final Token close = this.validator.expectAfter(this.parser.tokenSet().tokenPairs().array().close(), "array");
 
         return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
     }

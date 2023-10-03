@@ -10,6 +10,4 @@ public interface TokenPairList {
 
     TokenTypePair array();
 
-    TokenTypePair generics();
-
 }

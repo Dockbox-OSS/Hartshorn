@@ -15,16 +15,16 @@ public enum LiteralTokenType implements EnumTokenType {
 
     private final TokenMetaData metaData;
 
-    LiteralTokenType(String representation) {
-        this.metaData = TokenMetaData.builder(this).representation(representation).ok();
+    LiteralTokenType(String defaultLexeme) {
+        this.metaData = TokenMetaData.builder(this).defaultLexeme(defaultLexeme).ok();
     }
 
     LiteralTokenType() {
-        this.metaData = TokenMetaData.builder(this).representation(null).ok();
+        this.metaData = TokenMetaData.builder(this).ok();
     }
 
     @Override
     public TokenType delegate() {
-        return metaData;
+        return this.metaData;
     }
 }
