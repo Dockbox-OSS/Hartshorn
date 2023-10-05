@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
 
     @Override
-    public Option<FieldStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends FieldStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         final Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
         final boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
         final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");

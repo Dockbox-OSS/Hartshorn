@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 public interface ParametricStatementParser {
 
     default List<Parameter> parameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOfArguments, final TokenType functionType) {
-        TokenTypePair parameterTokens = parser.tokenSet().tokenPairs().parameters();
+        TokenTypePair parameterTokens = parser.tokenRegistry().tokenPairs().parameters();
         validator.expectAfter(parameterTokens.open(), functionName);
         final List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameterTokens.close())) {

@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
     @Override
-    public Option<FinalizableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends FinalizableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(MemberModifierTokenType.FINAL)) {
 
             final Token current = parser.peek();

@@ -36,9 +36,9 @@ import org.dockbox.hartshorn.util.option.Option;
 public class TestStatementParser extends AbstractBodyStatementParser<TestStatement> {
 
     @Override
-    public Option<TestStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        TokenTypePair parameter = parser.tokenSet().tokenPairs().parameters();
-        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+    public Option<? extends TestStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
+        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(AssertTokenType.TEST)) {
             validator.expectAfter(parameter.open(), "test statement");
 

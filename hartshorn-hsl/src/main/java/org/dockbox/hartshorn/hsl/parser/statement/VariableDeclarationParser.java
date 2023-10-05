@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class VariableDeclarationParser implements ASTNodeParser<VariableStatement> {
 
     @Override
-    public Option<VariableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends VariableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(VariableTokenType.VAR)) {
             final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
 

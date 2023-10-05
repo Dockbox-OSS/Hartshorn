@@ -30,10 +30,10 @@ import org.dockbox.hartshorn.util.option.Option;
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override
-    public Option<WhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends WhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(LoopTokenType.WHILE)) {
 
-            TokenTypePair parameters = parser.tokenSet().tokenPairs().parameters();
+            TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), LoopTokenType.WHILE);
             final Expression condition = parser.expression();
             validator.expectAfter(parameters.close(), "while condition");

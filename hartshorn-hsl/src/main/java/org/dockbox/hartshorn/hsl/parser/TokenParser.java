@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public interface TokenParser extends Context {
 
-    TokenRegistry tokenSet();
+    TokenRegistry tokenRegistry();
 
     TokenParser statementParser(ASTNodeParser<? extends Statement> parser);
 

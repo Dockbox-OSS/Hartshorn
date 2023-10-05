@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConstructorStatementParser extends AbstractBodyStatementParser<ConstructorStatement> implements ParametricStatementParser {
 
     @Override
-    public Option<ConstructorStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ConstructorStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         final Token keyword = parser.peek();
         if (keyword.type() == FunctionTokenType.CONSTRUCTOR) {
             parser.advance();

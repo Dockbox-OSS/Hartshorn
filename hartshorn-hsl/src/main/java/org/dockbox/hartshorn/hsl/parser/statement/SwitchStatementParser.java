@@ -49,9 +49,9 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     }
 
     @Override
-    public Option<SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        TokenTypePair parameters = parser.tokenSet().tokenPairs().parameters();
-        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+    public Option<? extends SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
+        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ControlTokenType.SWITCH)) {
             final Token switchToken = parser.previous();
             validator.expectAfter(parameters.open(), "switch");
@@ -78,14 +78,14 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    final Attempt<? extends Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.errorPresent()) {
                         return Attempt.of(body.error());
                     }
                     cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    final Attempt<? extends Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.errorPresent()) {
                         return Attempt.of(body.error());
                     }

@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
 public class RepeatStatementParser extends AbstractBodyStatementParser<RepeatStatement> {
 
     @Override
-    public Option<RepeatStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends RepeatStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(LoopTokenType.REPEAT)) {
-            TokenTypePair parameters = parser.tokenSet().tokenPairs().parameters();
+            TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), "repeat");
             final Expression value = parser.expression();
             validator.expectAfter(parameters.close(), "repeat value");
