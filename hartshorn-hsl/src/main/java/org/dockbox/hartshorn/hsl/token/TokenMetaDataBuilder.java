@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package org.dockbox.hartshorn.hsl.token;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
@@ -33,6 +36,7 @@ public class TokenMetaDataBuilder {
     private boolean reserved;
     private TokenType assignsWith;
     private String defaultLexeme;
+    private TokenCharacter[] characters = new TokenCharacter[0];
 
     TokenMetaDataBuilder(TokenType type) {
         this.type = type;
@@ -46,10 +50,21 @@ public class TokenMetaDataBuilder {
 
     public TokenMetaDataBuilder combines(TokenType... types) {
         StringBuilder combined = new StringBuilder();
-        for (TokenType type : types) {
+        List<TokenCharacter> characters = new LinkedList<>();
+        boolean inheritCharacters = true;
+        for(TokenType type : types) {
             combined.append(type.representation());
+            if(type.characters().length > 0) {
+                characters.addAll(List.of(type.characters()));
+            }
+            else {
+                inheritCharacters = false;
+            }
         }
         this.representation = combined.toString();
+        if (inheritCharacters) {
+            this.characters = characters.toArray(TokenCharacter[]::new);
+        }
         return this;
     }
 
@@ -57,12 +72,13 @@ public class TokenMetaDataBuilder {
         return this.combines(type, type);
     }
 
-    public TokenMetaDataBuilder combines(TokenCharacter... types) {
+    public TokenMetaDataBuilder combines(TokenCharacter... characters) {
         final StringBuilder combined = new StringBuilder();
-        for (final TokenCharacter type : types) {
+        for (final TokenCharacter type : characters) {
             combined.append(type.character());
         }
         this.representation = combined.toString();
+        this.characters = characters;
         return this;
     }
 
@@ -95,7 +111,19 @@ public class TokenMetaDataBuilder {
         return this;
     }
 
+    public TokenMetaDataBuilder characters(final TokenCharacter... characters) {
+        this.characters = characters;
+        if (this.representation == null) {
+            final StringBuilder builder = new StringBuilder();
+            for (final TokenCharacter character : characters) {
+                builder.append(character.character());
+            }
+            this.representation = builder.toString();
+        }
+        return this;
+    }
+
     public TokenMetaData ok() {
-        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme);
+        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme, this.characters);
     }
 }

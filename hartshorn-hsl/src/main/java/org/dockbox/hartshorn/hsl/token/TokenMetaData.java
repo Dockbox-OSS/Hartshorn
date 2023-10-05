@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,12 @@ public class TokenMetaData implements TokenType {
     private final boolean reserved;
     private final TokenType assignsWith;
     private final String defaultLexeme;
+    private final TokenCharacter[] characters;
 
     TokenMetaData(TokenType type, String representation,
             boolean keyword, boolean standaloneStatement,
             boolean reserved, TokenType assignsWith,
-            String defaultLexeme) {
+            String defaultLexeme, TokenCharacter[] characters) {
         this.type = type;
         this.representation = representation;
         this.keyword = keyword;
@@ -46,6 +47,7 @@ public class TokenMetaData implements TokenType {
         this.reserved = reserved;
         this.assignsWith = assignsWith;
         this.defaultLexeme = defaultLexeme;
+        this.characters = characters;
     }
 
     /**
@@ -113,6 +115,11 @@ public class TokenMetaData implements TokenType {
     @Override
     public String defaultLexeme() {
         return this.defaultLexeme;
+    }
+
+    @Override
+    public TokenCharacter[] characters() {
+        return this.characters;
     }
 
     /**

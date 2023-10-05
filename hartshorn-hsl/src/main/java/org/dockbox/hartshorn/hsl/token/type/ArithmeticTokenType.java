@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,10 @@ public enum ArithmeticTokenType implements EnumTokenType {
     private final TokenMetaData metaData;
 
     ArithmeticTokenType(DefaultTokenCharacter character) {
-        this(builder -> builder.representation(String.valueOf(character.character())).ok());
+        this(builder -> builder
+                .representation(String.valueOf(character.character()))
+                .characters(character)
+        );
     }
 
     ArithmeticTokenType(Customizer<TokenMetaDataBuilder> customizer) {

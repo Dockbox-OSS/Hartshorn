@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ public enum PairTokenType implements EnumTokenType {
         this.metaData = TokenMetaData.builder(this)
                 .representation(String.valueOf(character.character()))
                 .defaultLexeme(String.valueOf(character.character()))
+                .characters(character)
                 .ok();
         this.position = position;
     }

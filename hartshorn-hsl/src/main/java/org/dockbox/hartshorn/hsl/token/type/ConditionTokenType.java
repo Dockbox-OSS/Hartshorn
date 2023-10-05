@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
-
-import java.util.function.Consumer;
 
 public enum ConditionTokenType implements EnumTokenType {
     GREATER(DefaultTokenCharacter.GREATER),
@@ -42,7 +42,10 @@ public enum ConditionTokenType implements EnumTokenType {
     private final TokenMetaData metaData;
 
     ConditionTokenType(TokenCharacter character) {
-        this(builder -> builder.representation(String.valueOf(character.character())));
+        this(builder -> builder
+                .representation(String.valueOf(character.character()))
+                .characters(character)
+        );
     }
 
     ConditionTokenType(TokenType combinesWith) {

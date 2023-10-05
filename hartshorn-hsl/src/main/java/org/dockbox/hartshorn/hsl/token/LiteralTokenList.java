@@ -17,29 +17,23 @@
 package org.dockbox.hartshorn.hsl.token;
 
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
-public interface TokenRegistry {
+public interface LiteralTokenList {
 
-    Set<TokenCharacter> characters();
+    Set<TokenType> literals();
 
-    boolean isLineSeparator(TokenCharacter character);
+    TokenType eof();
 
-    TokenCharacter character(char character);
+    TokenType identifier();
 
-    TokenCharacterList characterList();
+    TokenType string();
 
-    Set<TokenType> tokenTypes();
+    TokenType character();
 
-    Set<TokenType> tokenTypes(Predicate<TokenType> predicate);
+    TokenType number();
 
-    LiteralTokenList literals();
+    TokenType nullLiteral();
 
-    CommentTokenList comments();
-
-    TokenPairList tokenPairs();
-
-    TokenGraph tokenGraph();
 }

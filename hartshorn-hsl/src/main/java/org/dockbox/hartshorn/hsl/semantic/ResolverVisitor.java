@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -350,11 +350,11 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         if (this.resolver.currentFunction() == FunctionType.NONE) {
             throw new ScriptEvaluationError("Cannot return from top-level code.", Phase.RESOLVING, statement.keyword());
         }
-        if (statement.value() != null) {
+        if (statement.expression() != null) {
             if (this.resolver.currentFunction() == FunctionType.INITIALIZER) {
                 throw new ScriptEvaluationError("Cannot return a value from an initializer.", Phase.RESOLVING, statement.keyword());
             }
-            this.resolve(statement.value());
+            this.resolve(statement.expression());
         }
         return null;
     }

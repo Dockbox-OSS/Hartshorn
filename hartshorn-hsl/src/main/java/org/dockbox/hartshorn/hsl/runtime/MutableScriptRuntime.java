@@ -14,32 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.token;
+package org.dockbox.hartshorn.hsl.runtime;
 
-import java.util.Set;
-import java.util.function.Predicate;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
+public interface MutableScriptRuntime extends ScriptRuntime {
 
-public interface TokenRegistry {
+    void expressionParser(ASTNodeParser<? extends Expression> parser);
 
-    Set<TokenCharacter> characters();
-
-    boolean isLineSeparator(TokenCharacter character);
-
-    TokenCharacter character(char character);
-
-    TokenCharacterList characterList();
-
-    Set<TokenType> tokenTypes();
-
-    Set<TokenType> tokenTypes(Predicate<TokenType> predicate);
-
-    LiteralTokenList literals();
-
-    CommentTokenList comments();
-
-    TokenPairList tokenPairs();
-
-    TokenGraph tokenGraph();
+    void statementParser(ASTNodeParser<? extends Statement> parser);
 }

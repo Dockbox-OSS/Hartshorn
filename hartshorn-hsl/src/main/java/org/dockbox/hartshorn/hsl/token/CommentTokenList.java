@@ -16,30 +16,18 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
-import java.util.Set;
-import java.util.function.Predicate;
-
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
-public interface TokenRegistry {
+public interface CommentTokenList {
 
-    Set<TokenCharacter> characters();
+    MultiMap<CommentType, TokenType> commentTypes();
 
-    boolean isLineSeparator(TokenCharacter character);
+    Option<CommentType> commentType(TokenType tokenType);
 
-    TokenCharacter character(char character);
-
-    TokenCharacterList characterList();
-
-    Set<TokenType> tokenTypes();
-
-    Set<TokenType> tokenTypes(Predicate<TokenType> predicate);
-
-    LiteralTokenList literals();
-
-    CommentTokenList comments();
-
-    TokenPairList tokenPairs();
-
-    TokenGraph tokenGraph();
+    public enum CommentType {
+        LINE,
+        BLOCK,
+    }
 }

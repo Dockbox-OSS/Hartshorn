@@ -16,26 +16,32 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
-import org.dockbox.hartshorn.hsl.token.type.PairTokenType;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+public class DefaultCharacterList implements TokenCharacterList {
 
-public class DefaultTokenPairList implements TokenPairList {
-
-    public static final DefaultTokenPairList INSTANCE = new DefaultTokenPairList();
+    public static final DefaultCharacterList INSTANCE = new DefaultCharacterList();
 
     @Override
-    public TokenTypePair block() {
-        return PairTokenType.LEFT_BRACE.pair();
+    public TokenCharacter nullCharacter() {
+        return SharedTokenCharacter.NULL;
     }
 
     @Override
-    public TokenTypePair parameters() {
-        return PairTokenType.LEFT_PAREN.pair();
+    public TokenCharacter quoteCharacter() {
+        return DefaultTokenCharacter.QUOTE;
     }
 
     @Override
-    public TokenTypePair array() {
-        return PairTokenType.ARRAY_OPEN.pair();
+    public TokenCharacter charCharacter() {
+        return DefaultTokenCharacter.SINGLE_QUOTE;
     }
 
+    @Override
+    public TokenCharacter numberSeparator() {
+        return DefaultTokenCharacter.UNDERSCORE;
+    }
+
+    @Override
+    public TokenCharacter numberDelimiter() {
+        return DefaultTokenCharacter.DOT;
+    }
 }

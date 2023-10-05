@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     private final List<Token> tokens;
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
+    private final Set<ASTNodeParser<? extends Expression>> expressionParsers = ConcurrentHashMap.newKeySet();
     private final TokenStepValidator validator;
     private final ExpressionParser expressionParser;
     private final TokenRegistry tokenRegistry;
@@ -61,27 +62,58 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     public StandardTokenParser(TokenRegistry tokenRegistry, List<Token> tokens) {
         this.tokenRegistry = tokenRegistry;
-        this.expressionParser = new ComplexExpressionParserAdapter();
+        this.expressionParser = new ComplexExpressionParserAdapter(() -> this.parseModuleExpression());
         this.validator = new StandardTokenStepValidator(this);
         this.tokens = new LinkedList<>(tokens);
     }
 
+    private Expression parseModuleExpression() {
+        for(ASTNodeParser<? extends Expression> parser : this.expressionParsers()) {
+            Option<? extends Expression> result = parser.parse(this, this.validator);
+            if (result.present()) {
+                return result.get();
+            }
+        }
+        return null;
+    }
+
     @Override
-    public TokenRegistry tokenSet() {
+    public TokenRegistry tokenRegistry() {
         return this.tokenRegistry;
     }
 
     @Override
     public StandardTokenParser statementParser(final ASTNodeParser<? extends Statement> parser) {
         if (parser != null) {
-            for(final Class<? extends Statement> type : parser.types()) {
-                if (!Statement.class.isAssignableFrom(type)) {
-                    throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Statement");
-                }
-            }
+            validateParser(parser, Statement.class);
             this.statementParsers.add(parser);
         }
         return this;
+    }
+
+    @Override
+    public TokenParser expressionParser(ASTNodeParser<? extends Expression> parser) {
+        if (parser != null) {
+            validateParser(parser, Expression.class);
+            this.expressionParsers.add(parser);
+        }
+        return this;
+    }
+
+    public Set<ASTNodeParser<? extends Statement>> statementParsers() {
+        return statementParsers;
+    }
+
+    public Set<ASTNodeParser<? extends Expression>> expressionParsers() {
+        return expressionParsers;
+    }
+
+    private static <T extends ASTNode> void validateParser(ASTNodeParser<? extends T> parser, Class<T> expectedType) {
+        for(final Class<? extends T> type : parser.types()) {
+            if (!expectedType.isAssignableFrom(type)) {
+                throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of " + expectedType.getSimpleName());
+            }
+        }
     }
 
     @Override
@@ -188,7 +220,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         return this.expressionParser.parse(this, this.validator)
                 .attempt(ScriptEvaluationError.class)
                 .rethrow()
-                .orElseThrow(() -> new ScriptEvaluationError("Unsupported expression type", Phase.PARSING, this.peek()));
+                .orElseThrow(() -> new ScriptEvaluationError("Expected expression, but found " + this.peek(), Phase.PARSING, this.peek()));
     }
 
     @Override

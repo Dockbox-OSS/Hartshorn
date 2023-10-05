@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -31,14 +33,14 @@ import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.jetbrains.annotations.NotNull;
 
-public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
+public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
     private final ParserCustomizer parserCustomizer;
-
     private final ApplicationContext applicationContext;
     private final ScriptComponentFactory factory;
 
@@ -46,7 +48,8 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         ApplicationContext applicationContext,
         ScriptComponentFactory factory
     ) {
-        this(applicationContext, factory, parser -> {});
+        this(applicationContext, factory, parser -> {
+        });
     }
 
     protected AbstractScriptRuntime(
@@ -138,7 +141,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void tokenize(final ScriptContext context) {
-        context.lexer(this.factory.lexer(context.tokenSet(), context.source()));
+        context.lexer(this.factory.lexer(context.tokenRegistry(), context.source()));
         this.customizePhase(Phase.TOKENIZING, context);
         List<Token> tokens = context.lexer().scanTokens();
         context.tokens(tokens);
@@ -146,7 +149,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void parse(ScriptContext context) {
-        TokenParser parser = this.factory.parser(context.tokenSet(), context.tokens());
+        TokenParser parser = this.factory.parser(context.tokenRegistry(), context.tokens());
         this.parserCustomizer.configure(parser);
 
         context.parser(parser);
@@ -223,5 +226,15 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         // keep the original stack trace.
         evaluationError.setStackTrace(evaluationError.getStackTrace());
         throw evaluationError;
+    }
+
+    @Override
+    public void expressionParser(ASTNodeParser<? extends Expression> expressionParser) {
+        this.parserCustomizer.compose(parser -> parser.expressionParser(expressionParser));
+    }
+
+    @Override
+    public void statementParser(ASTNodeParser<? extends Statement> statementParser) {
+        this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
     }
 }

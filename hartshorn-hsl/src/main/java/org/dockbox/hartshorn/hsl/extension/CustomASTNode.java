@@ -14,32 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.token;
+package org.dockbox.hartshorn.hsl.extension;
 
-import java.util.Set;
-import java.util.function.Predicate;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
+public sealed interface CustomASTNode<T extends ASTNode & CustomASTNode<T, R>, R> permits CustomExpression, CustomStatement {
 
-public interface TokenRegistry {
+    ASTExtensionModule<T, R> module();
 
-    Set<TokenCharacter> characters();
+    default R interpret(InterpreterAdapter adapter) {
+        return this.module().interpreter().interpret((T) this, adapter);
+    }
 
-    boolean isLineSeparator(TokenCharacter character);
-
-    TokenCharacter character(char character);
-
-    TokenCharacterList characterList();
-
-    Set<TokenType> tokenTypes();
-
-    Set<TokenType> tokenTypes(Predicate<TokenType> predicate);
-
-    LiteralTokenList literals();
-
-    CommentTokenList comments();
-
-    TokenPairList tokenPairs();
-
-    TokenGraph tokenGraph();
+    default void resolve(Resolver resolver) {
+        this.module().resolver().resolve((T) this, resolver);
+    }
 }

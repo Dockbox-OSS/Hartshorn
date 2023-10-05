@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -202,5 +203,12 @@ public final class CollectionUtilities {
         else {
             return iterable.iterator().next();
         }
+    }
+
+    public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
+        return collection.stream()
+                .map(valueMapper)
+                .map(Object::toString)
+                .reduce((a, b) -> a + ", " + b).orElse("");
     }
 }

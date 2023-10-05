@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 @RequiresActivator(UseExpressionValidation.class)
 public class ScriptLanguageConfiguration {
 
+    public static final String EXPRESSION_BEAN = "expression";
+
     @Binds
     private ScriptComponentFactory languageFactory() {
         return new StandardScriptComponentFactory();
@@ -47,7 +49,7 @@ public class ScriptLanguageConfiguration {
 
     @Binds
     private ExpressionParser expressionParser() {
-        return new ComplexExpressionParserAdapter();
+        return new ComplexExpressionParserAdapter(() -> null);
     }
 
     @Binds
