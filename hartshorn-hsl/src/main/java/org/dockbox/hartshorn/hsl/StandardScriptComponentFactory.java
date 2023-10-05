@@ -24,8 +24,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.lexer.AbstractTokenSetLexer;
-import org.dockbox.hartshorn.hsl.lexer.DefaultTokenSetLexer;
+import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -39,8 +38,8 @@ import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
-    public AbstractTokenSetLexer lexer(TokenRegistry tokenRegistry, String source) {
-        return new DefaultTokenSetLexer(source, tokenRegistry);
+    public SimpleTokenRegistryLexer lexer(TokenRegistry tokenRegistry, String source) {
+        return new SimpleTokenRegistryLexer(source, tokenRegistry);
     }
 
     @Override

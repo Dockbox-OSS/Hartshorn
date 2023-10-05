@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
@@ -33,6 +36,7 @@ public class TokenMetaDataBuilder {
     private boolean reserved;
     private TokenType assignsWith;
     private String defaultLexeme;
+    private TokenCharacter[] characters = new TokenCharacter[0];
 
     TokenMetaDataBuilder(final TokenType type) {
         this.type = type;
@@ -46,19 +50,32 @@ public class TokenMetaDataBuilder {
 
     public TokenMetaDataBuilder combines(final TokenType... types) {
         final StringBuilder combined = new StringBuilder();
-        for (final TokenType type : types) {
+        List<TokenCharacter> characters = new LinkedList<>();
+        boolean inheritCharacters = true;
+        for(int i = 0; i < types.length; i++) {
+            TokenType type = types[i];
             combined.append(type.representation());
+            if (type.characters().length > 0) {
+                characters.addAll(List.of(type.characters()));
+            }
+            else {
+                inheritCharacters = false;
+            }
         }
         this.representation = combined.toString();
+        if (inheritCharacters) {
+            this.characters = characters.toArray(TokenCharacter[]::new);
+        }
         return this;
     }
 
-    public TokenMetaDataBuilder combines(final TokenCharacter... types) {
+    public TokenMetaDataBuilder combines(final TokenCharacter... characters) {
         final StringBuilder combined = new StringBuilder();
-        for (final TokenCharacter type : types) {
+        for (final TokenCharacter type : characters) {
             combined.append(type.character());
         }
         this.representation = combined.toString();
+        this.characters = characters;
         return this;
     }
 
@@ -95,7 +112,19 @@ public class TokenMetaDataBuilder {
         return this;
     }
 
+    public TokenMetaDataBuilder characters(final TokenCharacter... characters) {
+        this.characters = characters;
+        if (this.representation == null) {
+            final StringBuilder builder = new StringBuilder();
+            for (final TokenCharacter character : characters) {
+                builder.append(character.character());
+            }
+            this.representation = builder.toString();
+        }
+        return this;
+    }
+
     public TokenMetaData ok() {
-        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme);
+        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme, this.characters);
     }
 }

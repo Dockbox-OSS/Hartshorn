@@ -26,8 +26,8 @@ public class ReturnStatementInterpreter implements ASTNodeInterpreter<Void, Retu
     @Override
     public Void interpret(final ReturnStatement node, final InterpreterAdapter adapter) {
         Object value = null;
-        if (node.value() != null) {
-            value = adapter.evaluate(node.value());
+        if (node.expression() != null) {
+            value = adapter.evaluate(node.expression());
         }
         throw new Return(value);
     }

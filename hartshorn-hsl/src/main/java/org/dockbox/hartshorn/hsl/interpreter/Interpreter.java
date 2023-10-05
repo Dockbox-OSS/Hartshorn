@@ -16,10 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.extension.CustomASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -29,9 +33,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.slf4j.Logger;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
@@ -133,13 +134,23 @@ public class Interpreter implements ContextCarrier, InterpreterAdapter {
     }
 
     @Override
-    public Object evaluate(final Expression expr) {
-        return expr.accept(this.visitor);
+    public Object evaluate(final Expression expression) {
+        if (expression instanceof CustomASTNode<?,?> customASTNode) {
+            return customASTNode.interpret(this.visitor.adapter());
+        }
+        else {
+            return expression.accept(this.visitor);
+        }
     }
 
     @Override
-    public void execute(final Statement stmt) {
-        stmt.accept(this.visitor);
+    public void execute(final Statement statement) {
+        if (statement instanceof CustomASTNode<?,?> customASTNode) {
+            customASTNode.interpret(this.visitor.adapter());
+        }
+        else {
+            statement.accept(this.visitor);
+        }
     }
 
     @Override

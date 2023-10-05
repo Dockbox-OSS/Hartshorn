@@ -20,7 +20,10 @@ public enum BitwiseTokenType implements EnumTokenType {
     private final TokenMetaData metaData;
 
     BitwiseTokenType(DefaultTokenCharacter character) {
-        this(builder -> builder.representation(String.valueOf(character.character())));
+        this(builder -> builder
+                .representation(String.valueOf(character.character()))
+                .characters(character)
+        );
     }
 
     BitwiseTokenType(Customizer<TokenMetaDataBuilder> customizer) {

@@ -1,6 +1,6 @@
 package org.dockbox.hartshorn.hsl.token.type;
 
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 
 public interface DelegateTokenType extends TokenType {
 
@@ -34,5 +34,10 @@ public interface DelegateTokenType extends TokenType {
     @Override
     default String defaultLexeme() {
         return this.delegate().defaultLexeme();
+    }
+
+    @Override
+    default TokenCharacter[] characters() {
+        return this.delegate().characters();
     }
 }

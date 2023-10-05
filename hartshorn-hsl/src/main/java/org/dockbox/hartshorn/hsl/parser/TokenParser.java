@@ -34,6 +34,8 @@ public interface TokenParser extends Context {
 
     TokenParser statementParser(ASTNodeParser<? extends Statement> parser);
 
+    TokenParser expressionParser(ASTNodeParser<? extends Expression> parser);
+
     List<Statement> parse();
 
     boolean match(TokenType... types);

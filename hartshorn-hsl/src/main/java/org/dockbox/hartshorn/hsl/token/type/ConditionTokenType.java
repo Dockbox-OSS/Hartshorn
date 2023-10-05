@@ -1,11 +1,11 @@
 package org.dockbox.hartshorn.hsl.token.type;
 
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
-
-import java.util.function.Consumer;
 
 public enum ConditionTokenType implements EnumTokenType {
     GREATER(DefaultTokenCharacter.GREATER),
@@ -26,7 +26,10 @@ public enum ConditionTokenType implements EnumTokenType {
     private final TokenMetaData metaData;
 
     ConditionTokenType(TokenCharacter character) {
-        this(builder -> builder.representation(String.valueOf(character.character())));
+        this(builder -> builder
+                .representation(String.valueOf(character.character()))
+                .characters(character)
+        );
     }
 
     ConditionTokenType(TokenType combinesWith) {

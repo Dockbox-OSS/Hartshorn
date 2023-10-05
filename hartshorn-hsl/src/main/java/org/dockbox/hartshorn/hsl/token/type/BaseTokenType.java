@@ -16,9 +16,10 @@ public enum BaseTokenType implements EnumTokenType {
 
     private final TokenMetaData metaData;
 
-    BaseTokenType(TokenCharacter representation) {
+    BaseTokenType(TokenCharacter character) {
         this.metaData = TokenMetaData.builder(this)
-                .representation(String.valueOf(representation.character()))
+                .representation(String.valueOf(character.character()))
+                .characters(character)
                 .ok();
     }
 

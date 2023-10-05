@@ -50,6 +50,7 @@ public enum PairTokenType implements EnumTokenType {
         this.metaData = TokenMetaData.builder(this)
                 .representation(String.valueOf(character.character()))
                 .defaultLexeme(String.valueOf(character.character()))
+                .characters(character)
                 .ok();
         this.position = position;
     }

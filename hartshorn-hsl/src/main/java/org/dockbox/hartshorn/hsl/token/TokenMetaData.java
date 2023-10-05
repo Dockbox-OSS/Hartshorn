@@ -34,10 +34,11 @@ public class TokenMetaData implements TokenType {
     private final boolean reserved;
     private final TokenType assignsWith;
     private final String defaultLexeme;
+    private final TokenCharacter[] characters;
 
     TokenMetaData(final TokenType type, final String representation,
             final boolean keyword, final boolean standaloneStatement, final boolean reserved,
-            final TokenType assignsWith, final String defaultLexeme) {
+            final TokenType assignsWith, final String defaultLexeme, final TokenCharacter[] characters) {
         this.type = type;
         this.representation = representation;
         this.keyword = keyword;
@@ -45,6 +46,7 @@ public class TokenMetaData implements TokenType {
         this.reserved = reserved;
         this.assignsWith = assignsWith;
         this.defaultLexeme = defaultLexeme;
+        this.characters = characters;
     }
 
     /**
@@ -112,6 +114,11 @@ public class TokenMetaData implements TokenType {
     @Override
     public String defaultLexeme() {
         return this.defaultLexeme;
+    }
+
+    @Override
+    public TokenCharacter[] characters() {
+        return this.characters;
     }
 
     /**

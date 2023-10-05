@@ -9,4 +9,6 @@ public interface TokenCharacter {
     boolean isAlpha();
 
     boolean isAlphaNumeric();
+
+    boolean isStandaloneCharacter();
 }

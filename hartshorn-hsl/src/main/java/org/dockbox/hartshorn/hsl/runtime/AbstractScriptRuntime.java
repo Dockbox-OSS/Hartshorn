@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -37,15 +39,18 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.jetbrains.annotations.NotNull;
 
-public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
+public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
-    private final Set<ASTNodeParser<? extends Statement>> statementParsers;
+    private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
+    private final Set<ASTNodeParser<? extends Expression>> expressionParsers = ConcurrentHashMap.newKeySet();
 
     private final ApplicationContext applicationContext;
     private final ScriptComponentFactory factory;
 
     protected AbstractScriptRuntime(final ApplicationContext applicationContext, final ScriptComponentFactory factory) {
-        this(applicationContext, factory, Set.of());
+        super(applicationContext);
+        this.applicationContext = applicationContext;
+        this.factory = factory;
     }
 
     protected AbstractScriptRuntime(final ApplicationContext applicationContext, final ScriptComponentFactory factory,
@@ -53,7 +58,6 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
-        this.statementParsers = statementParsers;
     }
 
     @Override
@@ -119,6 +123,16 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return context;
     }
 
+    @Override
+    public void expressionParser(ASTNodeParser<? extends Expression> parser) {
+        expressionParsers.add(parser);
+    }
+
+    @Override
+    public void statementParser(ASTNodeParser<? extends Statement> parser) {
+        statementParsers.add(parser);
+    }
+
     @NotNull
     private ScriptContext createScriptContext(final String source) {
         final ScriptContext context = new ScriptContext(this, source);
@@ -134,7 +148,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void tokenize(final ScriptContext context) {
-        context.lexer(this.factory.lexer(context.tokenSet(), context.source()));
+        context.lexer(this.factory.lexer(context.tokenRegistry(), context.source()));
         this.customizePhase(Phase.TOKENIZING, context);
         final List<Token> tokens = context.lexer().scanTokens();
         context.tokens(tokens);
@@ -142,8 +156,9 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void parse(final ScriptContext context) {
-        final TokenParser parser = this.factory.parser(context.tokenSet(), context.tokens());
+        final TokenParser parser = this.factory.parser(context.tokenRegistry(), context.tokens());
         this.statementParsers.forEach(parser::statementParser);
+        this.expressionParsers.forEach(parser::expressionParser);
 
         context.parser(parser);
         this.customizePhase(Phase.PARSING, context);

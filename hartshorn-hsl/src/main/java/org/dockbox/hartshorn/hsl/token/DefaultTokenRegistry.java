@@ -1,5 +1,14 @@
 package org.dockbox.hartshorn.hsl.token;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
@@ -19,16 +28,16 @@ import org.dockbox.hartshorn.hsl.token.type.PairTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TypeTokenType;
 import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-public final class DefaultTokenRegistry implements TokenRegistry {
+public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     private final Set<TokenType> types = new HashSet<>();
+
+    private Map<Character, TokenCharacter> characterMapping;
+    private TokenGraph tokenGraph;
 
     private DefaultTokenRegistry() {
         // Should use factory methods
@@ -38,8 +47,11 @@ public final class DefaultTokenRegistry implements TokenRegistry {
         return new DefaultTokenRegistry().loadDefaults();
     }
 
+    @Override
     public void addTokens(TokenType... types) {
         Collections.addAll(this.types, types);
+        tokenGraph = null;
+        characterMapping = null;
     }
 
     @Override
@@ -48,49 +60,91 @@ public final class DefaultTokenRegistry implements TokenRegistry {
     }
 
     @Override
-    public boolean isNumberSeparator(TokenCharacter character) {
-        return character.character() == DefaultTokenCharacter.UNDERSCORE.character();
-    }
-
-    @Override
-    public boolean isNumberDelimiter(TokenCharacter character) {
-        return character.character() == DefaultTokenCharacter.DOT.character();
-    }
-
-    @Override
     public boolean isLineSeparator(TokenCharacter character) {
-        return character.character() == DefaultTokenCharacter.NEWLINE.character();
+        return character.character() == SharedTokenCharacter.NEWLINE.character();
     }
 
     @Override
     public TokenCharacter character(char character) {
-        TokenCharacter tokenCharacter = DefaultTokenCharacter.of(character);
-        if (tokenCharacter == null) {
-            return (SimpleTokenCharacter) () -> character;
-        }
-        return tokenCharacter;
+        return characterMapping().computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
     }
 
     @Override
-    public DefaultTokenCharacter nullCharacter() {
-        return DefaultTokenCharacter.NULL;
+    public TokenCharacterList characterList() {
+        return DefaultCharacterList.INSTANCE;
+    }
+
+    @Override
+    public Set<TokenType> tokenTypes() {
+        return CollectionUtilities.merge(this.types, this.comments().commentTypes().allValues());
     }
 
     @Override
     public Set<TokenType> tokenTypes(Predicate<TokenType> predicate) {
-        return this.types.stream()
+        return this.tokenTypes().stream()
                 .filter(predicate)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public Set<TokenType> literals() {
-        return Set.of(LiteralTokenType.values());
+    public LiteralTokenList literals() {
+        return DefaultLiteralTokenList.INSTANCE;
+    }
+
+    @Override
+    public CommentTokenList comments() {
+        return DefaultCommentTokenList.INSTANCE;
     }
 
     @Override
     public TokenPairList tokenPairs() {
-        return new DefaultTokenPairList();
+        return DefaultTokenPairList.INSTANCE;
+    }
+
+    @Override
+    public TokenGraph tokenGraph() {
+        if (this.tokenGraph == null) {
+            this.tokenGraph = TokenGraph.of(this);
+        }
+        return this.tokenGraph;
+    }
+
+    private Map<Character, TokenCharacter> characterMapping() {
+        if (this.characterMapping == null) {
+            this.characterMapping = this.buildCharacterMapping();
+        }
+        return this.characterMapping;
+    }
+
+    @NotNull
+    private Map<Character, TokenCharacter> buildCharacterMapping() {
+        Map<Character, TokenCharacter> allCharacters = new HashMap<>();
+
+        // Token graph roots are the first characters of each token type
+        for(GraphNode<TokenNode> node : tokenGraph().roots()) {
+            TokenCharacter character = node.value().character();
+            allCharacters.put(character.character(), character);
+        }
+
+        // Always shared, contains basic characters such as spaces, tabs, newlines, etc
+        for(SharedTokenCharacter character : SharedTokenCharacter.values()) {
+            allCharacters.put(character.character(), character);
+        }
+
+        // Special characters, such as quotes, null, etc
+        TokenCharacterList characterList = this.characterList();
+        Set<TokenCharacter> specialCharacters = Set.of(
+                characterList.nullCharacter(),
+                characterList.charCharacter(),
+                characterList.quoteCharacter(),
+                characterList.numberDelimiter(),
+                characterList.numberSeparator()
+        );
+        for(TokenCharacter character : specialCharacters) {
+            allCharacters.put(character.character(), character);
+        }
+
+        return allCharacters;
     }
 
     public DefaultTokenRegistry loadDefaults() {

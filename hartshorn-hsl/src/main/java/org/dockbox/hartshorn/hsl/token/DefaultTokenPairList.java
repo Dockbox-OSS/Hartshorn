@@ -5,6 +5,8 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 
 public class DefaultTokenPairList implements TokenPairList {
 
+    public static final DefaultTokenPairList INSTANCE = new DefaultTokenPairList();
+
     @Override
     public TokenTypePair block() {
         return PairTokenType.LEFT_BRACE.pair();

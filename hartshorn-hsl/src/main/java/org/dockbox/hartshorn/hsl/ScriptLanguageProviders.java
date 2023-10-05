@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
@@ -41,6 +42,8 @@ import jakarta.inject.Named;
 @RequiresActivator(UseExpressionValidation.class)
 public class ScriptLanguageProviders {
 
+    public static final String EXPRESSION_BEAN = "expression";
+
     @Binds
     private ScriptComponentFactory languageFactory() {
         return new StandardScriptComponentFactory();
@@ -53,7 +56,7 @@ public class ScriptLanguageProviders {
 
     @Binds
     private ExpressionParser expressionParser() {
-        return new ComplexExpressionParserAdapter();
+        return new ComplexExpressionParserAdapter(() -> null);
     }
 
     @Binds
@@ -65,17 +68,25 @@ public class ScriptLanguageProviders {
     public ScriptRuntime runtime(
             final ApplicationContext applicationContext,
             final ScriptComponentFactory factory,
-            @Named(StatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+            @Named(StatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers,
+            @Named(ScriptLanguageProviders.EXPRESSION_BEAN) final Set<ASTNodeParser<? extends Expression>> expressionParsers
     ) {
-        return new StandardRuntime(applicationContext, factory, statementParsers);
+        StandardRuntime runtime = new StandardRuntime(applicationContext, factory);
+        statementParsers.forEach(runtime::statementParser);
+        expressionParsers.forEach(runtime::expressionParser);
+        return runtime;
     }
 
     @Binds
     public ValidateExpressionRuntime expressionRuntime(
             final ApplicationContext applicationContext,
             final ScriptComponentFactory factory,
-            @Named(StatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+            @Named(StatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers,
+            @Named(ScriptLanguageProviders.EXPRESSION_BEAN) final Set<ASTNodeParser<? extends Expression>> expressionParsers
     ) {
-        return new ValidateExpressionRuntime(applicationContext, factory, statementParsers);
+        ValidateExpressionRuntime runtime = new ValidateExpressionRuntime(applicationContext, factory);
+        statementParsers.forEach(runtime::statementParser);
+        expressionParsers.forEach(runtime::expressionParser);
+        return runtime;
     }
 }

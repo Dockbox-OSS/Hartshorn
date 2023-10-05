@@ -22,14 +22,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
-import org.dockbox.hartshorn.hsl.lexer.DefaultTokenSetLexer;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
+import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
+import org.dockbox.hartshorn.hsl.token.SimpleTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenCharacter;
+import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.EnumTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,8 +58,10 @@ public class LexerTests {
 
     public static Stream<Arguments> tokens() {
         final List<Arguments> arguments = new ArrayList<>();
-        DefaultTokenRegistry tokenSet = DefaultTokenRegistry.createDefault();
-        Set<TokenType> nonLiteralTokens = tokenSet.tokenTypes(type -> !literals.contains(type));
+        DefaultTokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
+        Set<TokenType> nonLiteralTokens = tokenRegistry.tokenTypes(type -> {
+            return !literals.contains(type) && tokenRegistry.comments().commentType(type).absent();
+        });
         for (final TokenType type : nonLiteralTokens) {
             arguments.add(Arguments.of(type.representation(), type));
         }
@@ -82,7 +93,7 @@ public class LexerTests {
     @ParameterizedTest
     @MethodSource("tokens")
     void testCorrectToken(final String text, final TokenType expected) {
-        final Lexer lexer = new DefaultTokenSetLexer(text, InterpreterTestHelper.defaultTokenSet());
+        final Lexer lexer = new SimpleTokenRegistryLexer(text, InterpreterTestHelper.defaultTokenSet());
         final List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -98,7 +109,7 @@ public class LexerTests {
 
     @Test
     void testSingleLineComment() {
-        final Lexer lexer = new DefaultTokenSetLexer("# Comment", InterpreterTestHelper.defaultTokenSet());
+        final Lexer lexer = new SimpleTokenRegistryLexer("# Comment", InterpreterTestHelper.defaultTokenSet());
         final List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -114,5 +125,66 @@ public class LexerTests {
         final Comment comment = comments.get(0);
         // Comments are not trimmed, include whitespace
         Assertions.assertEquals(" Comment", comment.text());
+    }
+
+    @Test
+    void testCombinedOperatorsAreParsedCorrectly() {
+        // No such operator (logical shift left), so should be parsed as '1 << < 2' (1 shift left, less than 2).
+        // While this isn't valid code for HSL, it's a good test to see if the lexer is working as expected.
+        final Lexer lexer = new SimpleTokenRegistryLexer("1 <<< 2", InterpreterTestHelper.defaultTokenSet());
+        List<Token> tokens = lexer.scanTokens();
+        Assertions.assertSame(5, tokens.size());
+        Assertions.assertEquals(LiteralTokenType.NUMBER, tokens.get(0).type());
+        Assertions.assertEquals(BitwiseTokenType.SHIFT_LEFT, tokens.get(1).type());
+        Assertions.assertEquals(ConditionTokenType.LESS, tokens.get(2).type());
+        Assertions.assertEquals(LiteralTokenType.NUMBER, tokens.get(3).type());
+        Assertions.assertEquals(LiteralTokenType.EOF, tokens.get(4).type());
+    }
+
+    @Test
+    void testIncompleteTokenStepsBackToParent() {
+        DefaultTokenRegistry registry = DefaultTokenRegistry.createDefault();
+        registry.addTokens(QuadrupleToken.QUADRUPLE_DASH);
+
+        // No token for triple dash, and quadruple dash is incomplete, so should match back based on parent
+        // in token graph (from most specific to least specific). This should result in two tokens, one for
+        // the double dash (MINUS_MINUS), and one for the single dash (MINUS).
+        final Lexer lexer = new SimpleTokenRegistryLexer("---", registry);
+        List<Token> tokens = lexer.scanTokens();
+
+        Assertions.assertSame(3, tokens.size());
+        Assertions.assertEquals(ArithmeticTokenType.MINUS_MINUS, tokens.get(0).type());
+        Assertions.assertEquals(ArithmeticTokenType.MINUS, tokens.get(1).type());
+        Assertions.assertEquals(LiteralTokenType.EOF, tokens.get(2).type());
+    }
+
+    @Test
+    void testIncompleteInvalidTokenFails() {
+        DefaultTokenRegistry registry = DefaultTokenRegistry.createDefault();
+        registry.addTokens(QuadrupleToken.QUADRUPLE_AT);
+
+        final Lexer lexer = new SimpleTokenRegistryLexer("@@@", registry);
+        Assertions.assertThrows(ScriptEvaluationError.class, lexer::scanTokens);
+    }
+
+    enum QuadrupleToken implements EnumTokenType {
+        // --- could still be parsed as -- and -
+        QUADRUPLE_DASH(DefaultTokenCharacter.MINUS),
+        // No token for @, @@, or @@@, so must match QUADRUPLE_AT to be valid.
+        QUADRUPLE_AT(SimpleTokenCharacter.of('@', true)),
+        ;
+
+        private final TokenCharacter character;
+
+        QuadrupleToken(TokenCharacter character) {
+            this.character = character;
+        }
+
+        @Override
+        public TokenType delegate() {
+            return TokenMetaData.builder(this)
+                    .combines(character, character, character, character)
+                    .ok();
+        }
     }
 }

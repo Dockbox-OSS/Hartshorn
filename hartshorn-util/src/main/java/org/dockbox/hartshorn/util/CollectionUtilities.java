@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class CollectionUtilities {
 
@@ -114,5 +115,12 @@ public final class CollectionUtilities {
 
     public static <T> T last(final List<T> values) {
         return values.get(values.size() - 1);
+    }
+
+    public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
+        return collection.stream()
+                .map(valueMapper)
+                .map(Object::toString)
+                .reduce((a, b) -> a + ", " + b).orElse("");
     }
 }

@@ -348,11 +348,11 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         if (this.resolver.currentFunction() == FunctionType.NONE) {
             throw new ScriptEvaluationError("Cannot return from top-level code.", Phase.RESOLVING, statement.keyword());
         }
-        if (statement.value() != null) {
+        if (statement.expression() != null) {
             if (this.resolver.currentFunction() == FunctionType.INITIALIZER) {
                 throw new ScriptEvaluationError("Cannot return a value from an initializer.", Phase.RESOLVING, statement.keyword());
             }
-            this.resolve(statement.value());
+            this.resolve(statement.expression());
         }
         return null;
     }

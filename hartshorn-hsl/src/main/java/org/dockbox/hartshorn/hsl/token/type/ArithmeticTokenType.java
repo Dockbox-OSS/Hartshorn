@@ -19,7 +19,10 @@ public enum ArithmeticTokenType implements EnumTokenType {
     private final TokenMetaData metaData;
 
     ArithmeticTokenType(DefaultTokenCharacter character) {
-        this(builder -> builder.representation(String.valueOf(character.character())).ok());
+        this(builder -> builder
+                .representation(String.valueOf(character.character()))
+                .characters(character)
+        );
     }
 
     ArithmeticTokenType(Customizer<TokenMetaDataBuilder> customizer) {

@@ -1,7 +1,21 @@
 package org.dockbox.hartshorn.hsl.token;
 
-@FunctionalInterface
 public interface SimpleTokenCharacter extends TokenCharacter {
+
+    static SimpleTokenCharacter of(char character, boolean standalone) {
+        return new SimpleTokenCharacter() {
+
+            @Override
+            public char character() {
+                return character;
+            }
+
+            @Override
+            public boolean isStandaloneCharacter() {
+                return standalone;
+            }
+        };
+    }
 
     @Override
     default boolean isDigit() {

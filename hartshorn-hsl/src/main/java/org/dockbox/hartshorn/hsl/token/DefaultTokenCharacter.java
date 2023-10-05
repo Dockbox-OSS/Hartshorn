@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
-import org.dockbox.hartshorn.hsl.lexer.AbstractTokenSetLexer;
+import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * A collection of standard token characters which can be used by the {@link AbstractTokenSetLexer}
+ * A collection of standard token characters which can be used by the {@link SimpleTokenRegistryLexer}
  * to tokenize a given HSL script. This is also used by the standard {@link TokenType}s to specify their
  * representation.
  *
@@ -50,17 +50,12 @@ public enum DefaultTokenCharacter implements SimpleTokenCharacter {
     COLON(':'),
     HASH('#'),
     QUOTE('"'),
-    SPACE(' '),
     SINGLE_QUOTE('\''),
     AMPERSAND('&'),
     PIPE('|'),
     CARET('^'),
     TILDE('~'),
     UNDERSCORE('_'),
-    TAB('\t'),
-    NEWLINE('\n'),
-    CARRIAGE_RETURN('\r'),
-    NULL('\0'),
 
     ;
 
@@ -75,12 +70,8 @@ public enum DefaultTokenCharacter implements SimpleTokenCharacter {
         return this.character;
     }
 
-    public static DefaultTokenCharacter of(char character) {
-        for (final DefaultTokenCharacter value : DefaultTokenCharacter.values()) {
-            if (value.character() == character) {
-                return value;
-            }
-        }
-        return null;
+    @Override
+    public boolean isStandaloneCharacter() {
+        return true;
     }
 }
