@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.token;
+package org.dockbox.hartshorn.hsl.extension;
 
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 
-public interface MutableTokenRegistry extends TokenRegistry {
+public non-sealed interface StatementModule<T extends Statement & CustomASTNode<T, Void>> extends ASTExtensionModule<T, Void> {
 
-    void addTokens(TokenType... types);
 }

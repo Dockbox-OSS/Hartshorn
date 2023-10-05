@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.ast.statement;
+package org.dockbox.hartshorn.hsl.extension;
 
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
-import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class ReturnStatement extends Statement {
+public abstract non-sealed class CustomStatement<T extends CustomStatement<T>> extends Statement implements CustomASTNode<T, Void> {
 
-    private final Token keyword;
-    private final Expression expression;
+    private final StatementModule<T> module;
 
-    public ReturnStatement(Token keyword, Expression expression) {
-        super(keyword);
-        this.keyword = keyword;
-        this.expression = expression;
+    protected CustomStatement(ASTNode at, StatementModule<T> module) {
+        super(at);
+        this.module = module;
     }
 
-    public Token keyword() {
-        return this.keyword;
-    }
-
-    public Expression expression() {
-        return this.expression;
+    @Override
+    public StatementModule<T> module() {
+        return this.module;
     }
 
     @Override
     public <R> R accept(StatementVisitor<R> visitor) {
-        return visitor.visit(this);
+        throw new UnsupportedOperationException();
     }
 }
