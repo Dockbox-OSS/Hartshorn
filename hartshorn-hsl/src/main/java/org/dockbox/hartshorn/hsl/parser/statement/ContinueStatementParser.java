@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ContinueStatementParser implements ASTNodeParser<ContinueStatement> {
 
     @Override
-    public Option<ContinueStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ContinueStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(ControlTokenType.CONTINUE)) {
             final Token keyword = parser.previous();
             validator.expectAfter(BaseTokenType.SEMICOLON, "value");

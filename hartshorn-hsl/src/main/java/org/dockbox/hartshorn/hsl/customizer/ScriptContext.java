@@ -80,11 +80,11 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this;
     }
 
-    public TokenRegistry tokenSet() {
+    public TokenRegistry tokenRegistry() {
         return this.tokenRegistry;
     }
 
-    public ScriptContext tokenSet(final TokenRegistry tokenRegistry) {
+    public ScriptContext tokenRegistry(final TokenRegistry tokenRegistry) {
         this.tokenRegistry = tokenRegistry;
         return this;
     }

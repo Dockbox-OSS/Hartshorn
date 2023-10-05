@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class NativeFunctionStatementParser extends AbstractBodyStatementParser<NativeFunctionStatement> implements ParametricStatementParser {
 
     @Override
-    public Option<NativeFunctionStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends NativeFunctionStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(FunctionTokenType.NATIVE) && parser.match(FunctionTokenType.FUNCTION)) {
             final Token moduleName = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
 

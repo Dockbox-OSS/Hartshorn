@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
 
     @Override
-    public Option<ReturnStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ReturnStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(ControlTokenType.RETURN)) {
             final Token keyword = parser.previous();
             Expression value = null;

@@ -35,11 +35,11 @@ import org.dockbox.hartshorn.util.option.Attempt;
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Attempt<Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Attempt<? extends Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(BaseTokenType.COLON)) {
             final Token colon = parser.previous();
             final List<Statement> statements = new ArrayList<>();
-            while (!parser.check(ControlTokenType.CASE, ControlTokenType.DEFAULT,parser.tokenSet().tokenPairs().block().close())) {
+            while (!parser.check(ControlTokenType.CASE, ControlTokenType.DEFAULT,parser.tokenRegistry().tokenPairs().block().close())) {
                 statements.add(parser.statement());
             }
             return Attempt.of(new BlockStatement(colon, statements));

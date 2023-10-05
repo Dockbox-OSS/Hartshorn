@@ -51,8 +51,8 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     }
 
     @Override
-    public Option<ClassStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+    public Option<? extends ClassStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ClassTokenType.CLASS)) {
             final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "class name");
 

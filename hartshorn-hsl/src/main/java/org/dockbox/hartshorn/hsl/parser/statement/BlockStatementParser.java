@@ -32,8 +32,8 @@ import org.dockbox.hartshorn.util.option.Option;
 public class BlockStatementParser implements ASTNodeParser<BlockStatement> {
 
     @Override
-    public Option<BlockStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        TokenTypePair block = parser.tokenSet().tokenPairs().block();
+    public Option<? extends BlockStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.check(block.open())) {
             final Token start = parser.advance();
 

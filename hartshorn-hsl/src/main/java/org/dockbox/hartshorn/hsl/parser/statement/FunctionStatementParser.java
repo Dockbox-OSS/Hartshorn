@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
 
     @Override
-    public Option<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends Function> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.check(FunctionTokenType.PREFIX, FunctionTokenType.INFIX, FunctionTokenType.FUNCTION)) {
             final Token functionType = parser.advance();
             final Token functionToken = functionType.type() == FunctionTokenType.FUNCTION ? functionType : parser.advance();
@@ -75,7 +75,7 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
     }
 
     private List<Parameter> functionParameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOrArguments, final Token token) {
-        TokenTypePair parameter = parser.tokenSet().tokenPairs().parameters();
+        TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
         validator.expectAfter(parameter.open(), functionName);
         final List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameter.close())) {

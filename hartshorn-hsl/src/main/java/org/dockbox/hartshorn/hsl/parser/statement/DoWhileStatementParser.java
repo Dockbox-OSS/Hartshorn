@@ -31,12 +31,12 @@ import org.dockbox.hartshorn.util.option.Option;
 public class DoWhileStatementParser extends AbstractBodyStatementParser<DoWhileStatement> {
 
     @Override
-    public Option<DoWhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends DoWhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(LoopTokenType.DO)) {
             final BlockStatement loopBody = this.blockStatement("do", parser.previous(), parser, validator);
             validator.expect(LoopTokenType.WHILE);
 
-            TokenTypePair parameters = parser.tokenSet().tokenPairs().parameters();
+            TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), LoopTokenType.WHILE);
             final Expression condition = parser.expression();
             validator.expectAfter(parameters.close(), "do while condition");

@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class BreakStatementParser implements ASTNodeParser<BreakStatement> {
 
     @Override
-    public Option<BreakStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends BreakStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(ControlTokenType.BREAK)) {
             final Token keyword = parser.previous();
             validator.expectAfter(BaseTokenType.SEMICOLON, "value");

@@ -36,7 +36,7 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
         }
 
         for (final ASTNodeParser<BlockStatement> nodeParser : parsers) {
-            final Option<BlockStatement> statement = nodeParser.parse(parser, validator);
+            final Option<? extends BlockStatement> statement = nodeParser.parse(parser, validator);
             if (statement.present()) {
                 return statement.get();
             }

@@ -38,10 +38,10 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ForStatementParser extends AbstractBodyStatementParser<BodyStatement> {
 
     @Override
-    public Option<BodyStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends BodyStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.check(LoopTokenType.FOR)) {
             final Token forToken = parser.advance();
-            validator.expectAfter(parser.tokenSet().tokenPairs().parameters().open(), LoopTokenType.FOR);
+            validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().open(), LoopTokenType.FOR);
 
             final VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
                     .flatMap(nodeParser -> nodeParser.parse(parser, validator))
@@ -70,7 +70,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
         validator.expectAfter(BaseTokenType.SEMICOLON, "for condition");
 
         final Statement increment = parser.expressionStatement();
-        validator.expectAfter(parser.tokenSet().tokenPairs().parameters().close(), "for increment");
+        validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "for increment");
 
         final BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
         return Option.of(new ForStatement(initializer, condition, increment, loopBody));
@@ -79,7 +79,7 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
     @NonNull
     private Option<BodyStatement> parseForEachStatement(final Token forToken, final TokenParser parser, final TokenStepValidator validator, final VariableStatement initializer) {
         final Expression collection = parser.expression();
-        validator.expectAfter(parser.tokenSet().tokenPairs().parameters().close(), "for collection");
+        validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "for collection");
 
         final BlockStatement loopBody = this.blockStatement("for", forToken, parser, validator);
         return Option.of(new ForEachStatement(initializer, collection, loopBody));

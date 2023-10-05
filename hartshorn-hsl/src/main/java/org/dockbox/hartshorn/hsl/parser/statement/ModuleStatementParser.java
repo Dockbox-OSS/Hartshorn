@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ModuleStatementParser implements ASTNodeParser<ModuleStatement> {
 
     @Override
-    public Option<ModuleStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ModuleStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(ImportTokenType.IMPORT)) {
             final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
             validator.expectAfter(BaseTokenType.SEMICOLON, ImportTokenType.IMPORT);

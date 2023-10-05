@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
 public class IfStatementParser extends AbstractBodyStatementParser<IfStatement> {
 
     @Override
-    public Option<IfStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends IfStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
         if (parser.match(ControlTokenType.IF)) {
-            TokenTypePair parameter = parser.tokenSet().tokenPairs().parameters();
+            TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameter.open(), ControlTokenType.IF);
             final Expression condition = parser.expression();
             validator.expectAfter(parameter.close(), "if condition");
