@@ -17,207 +17,49 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import java.util.List;
-import java.util.Map;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
-import org.dockbox.hartshorn.hsl.extension.CustomASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.slf4j.Logger;
 
-/**
- * Standard interpreter for HSL. This interpreter is capable of executing HSL code by visiting the AST
- * step by step. The interpreter is capable of handling all types of statements and expressions. The
- * interpreter is also capable of handling external classes and modules, as well as virtual classes and
- * functions.
- *
- * <p>During the execution of a script, the interpreter will track its global variables in a
- * {@link VariableScope}, and report any results to the configured {@link ResultCollector}.
- *
- * <p>{@code print} statements are handled by the configured {@link Logger}, and are not persisted
- * in a local state.
- *
- * <p>Any interpreter instance can only be used <b>once</b>, and should be disposed of after use. This
- * is to prevent scope pollution, and potential leaking of errors and results.
- *
- * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of statements
- * which have been previously parsed by a {@link org.dockbox.hartshorn.hsl.parser.ASTNodeParser}, and
- * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
- *
- * @author Guus Lieben
- * @since 22.4
- */
-public class Interpreter implements ContextCarrier, InterpreterAdapter {
+public interface Interpreter {
 
-    private final DelegatingInterpreterVisitor visitor = new DelegatingInterpreterVisitor(this);
+    Object evaluate(final Expression expression);
 
-    private final ApplicationContext applicationContext;
-    private final ResultCollector resultCollector;
-    private final InterpreterState state;
+    void execute(final Statement statement);
 
+    void execute(final BlockStatement blockStatement, final VariableScope localVariableScope);
 
-    private ExecutionOptions executionOptions;
-    private boolean isRunning;
+    void execute(final List<Statement> statementList, final VariableScope localVariableScope);
 
-    public Interpreter(final ResultCollector resultCollector,
-                       final Map<String, NativeModule> externalModules,
-                       final ApplicationContext applicationContext) {
-        this(resultCollector, externalModules, new ExecutionOptions(), applicationContext);
-    }
+    Object lookUpVariable(final Token name, final Expression expression);
 
-    public Interpreter(final ResultCollector resultCollector,
-                       final Map<String, NativeModule> externalModules,
-                       final ExecutionOptions executionOptions,
-                       final ApplicationContext applicationContext) {
-        this.resultCollector = resultCollector;
-        this.applicationContext = applicationContext;
-        this.state = new InterpreterState(externalModules, this);
-        this.executionOptions = executionOptions;
-    }
+    void resolve(final Expression expression, final int depth);
 
-    /**
-     * Restores the interpreter to its initial state. This is to prevent scope pollution, and potential
-     * leaking of errors and results. This does not clear the external modules and variables, nor the
-     * dynamic imports, as these can be reused safely.
-     *
-     * <p>This method should be called before starting a new runtime. This should be at least before a
-     * potential {@link org.dockbox.hartshorn.hsl.semantic.Resolver} is called, as the resolver will
-     * typically modify the {@link InterpreterState}.
-     */
-    public void restore() {
-        this.state.restore();
-        this.resultCollector.clear();
-    }
+    VariableScope visitingScope();
 
-    public InterpreterState state() {
-        return this.state;
-    }
+    VariableScope global();
 
-    public ResultCollector resultCollector() {
-        return this.resultCollector;
-    }
+    void withNextScope(final Runnable runnable);
 
-    public Interpreter executionOptions(final ExecutionOptions options) {
-        this.executionOptions = options;
-        return this;
-    }
+    void enterScope(VariableScope scope);
 
-    public ExecutionOptions executionOptions() {
-        return this.executionOptions;
-    }
+    Integer distance(final Expression expression);
 
-    public void interpret(final List<Statement> statements) {
-        if (this.isRunning) {
-            throw new IllegalAccessException("Cannot reuse the same interpreter instance for multiple executions");
-        }
-        this.isRunning = true;
-        try {
-            for (final Statement statement : statements) {
-                this.execute(statement);
-            }
-        }
-        catch (final RuntimeError error) {
-            throw new ScriptEvaluationError(error, Phase.INTERPRETING, error.token());
-        }
-        finally {
-            this.isRunning = false;
-        }
-    }
+    ApplicationContext applicationContext();
 
-    @Override
-    public Object evaluate(final Expression expression) {
-        if (expression instanceof CustomASTNode<?,?> customASTNode) {
-            return customASTNode.interpret(this.visitor.adapter());
-        }
-        else {
-            return expression.accept(this.visitor);
-        }
-    }
+    ExecutionOptions executionOptions();
 
-    @Override
-    public void execute(final Statement statement) {
-        if (statement instanceof CustomASTNode<?,?> customASTNode) {
-            customASTNode.interpret(this.visitor.adapter());
-        }
-        else {
-            statement.accept(this.visitor);
-        }
-    }
+    Interpreter executionOptions(ExecutionOptions options);
 
-    @Override
-    public void execute(final BlockStatement blockStatement, final VariableScope localVariableScope) {
-        this.execute(blockStatement.statements(), localVariableScope);
-    }
+    InterpreterState state();
 
-    @Override
-    public void execute(final List<Statement> statementList, final VariableScope localVariableScope) {
-        this.state().withScope(localVariableScope, () -> {
-            for (final Statement statement : statementList) {
-                try {
-                    this.execute(statement);
-                }
-                catch (final MoveKeyword type) {
-                    if (type.moveType() == MoveKeyword.MoveType.CONTINUE) {
-                        break;
-                    }
-                    // Handle in higher visitor call
-                    throw type;
-                }
-            }
-        });
-    }
+    ResultCollector resultCollector();
 
-    @Override
-    public Object lookUpVariable(final Token name, final Expression expr) {
-        return this.state().lookUpVariable(name, expr);
-    }
+    void interpret(List<Statement> statements);
 
-    @Override
-    public void resolve(final Expression expr, final int depth) {
-        this.state().resolve(expr, depth);
-    }
-
-    @Override
-    public VariableScope global() {
-        return this.state().global();
-    }
-
-    @Override
-    public VariableScope visitingScope() {
-        return this.state().visitingScope();
-    }
-
-    @Override
-    public void withNextScope(final Runnable runnable) {
-        this.state().withNextScope(runnable);
-    }
-
-    @Override
-    public void enterScope(final VariableScope scope) {
-        this.state().enterScope(scope);
-    }
-
-    @Override
-    public Integer distance(final Expression expr) {
-        return this.state().distance(expr);
-    }
-
-    @Override
-    public Interpreter interpreter() {
-        return this;
-    }
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
-    }
+    void restore();
 }

@@ -66,8 +66,8 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
     @Override
     public void addTokens(TokenType... types) {
         Collections.addAll(this.types, types);
-        tokenGraph = null;
-        characterMapping = null;
+        this.tokenGraph = null;
+        this.characterMapping = null;
     }
 
     @Override
@@ -82,7 +82,7 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public TokenCharacter character(char character) {
-        return characterMapping().computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
+        return this.characterMapping().computeIfAbsent(character, c -> SimpleTokenCharacter.of(character, false));
     }
 
     @Override
@@ -137,17 +137,18 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
         Map<Character, TokenCharacter> allCharacters = new HashMap<>();
 
         // Token graph roots are the first characters of each token type
-        for(GraphNode<TokenNode> node : tokenGraph().roots()) {
-            TokenCharacter character = node.value().character();
-            allCharacters.put(character.character(), character);
-        }
+        this.collectTokenGraphRoots(allCharacters);
 
         // Always shared, contains basic characters such as spaces, tabs, newlines, etc
-        for(SharedTokenCharacter character : SharedTokenCharacter.values()) {
-            allCharacters.put(character.character(), character);
-        }
+        this.collectSharedTokens(allCharacters);
 
         // Special characters, such as quotes, null, etc
+        this.collectSpecialTokens(allCharacters);
+
+        return allCharacters;
+    }
+
+    private void collectSpecialTokens(Map<Character, TokenCharacter> allCharacters) {
         TokenCharacterList characterList = this.characterList();
         Set<TokenCharacter> specialCharacters = Set.of(
                 characterList.nullCharacter(),
@@ -159,8 +160,19 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
         for(TokenCharacter character : specialCharacters) {
             allCharacters.put(character.character(), character);
         }
+    }
 
-        return allCharacters;
+    private void collectSharedTokens(Map<Character, TokenCharacter> allCharacters) {
+        for(SharedTokenCharacter character : SharedTokenCharacter.values()) {
+            allCharacters.put(character.character(), character);
+        }
+    }
+
+    private void collectTokenGraphRoots(Map<Character, TokenCharacter> allCharacters) {
+        for(GraphNode<TokenNode> node : this.tokenGraph().roots()) {
+            TokenCharacter character = node.value().character();
+            allCharacters.put(character.character(), character);
+        }
     }
 
     public DefaultTokenRegistry loadDefaults() {

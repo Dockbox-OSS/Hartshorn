@@ -18,16 +18,16 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, RangeExpression> {
 
     @Override
-    public Object interpret(final RangeExpression node, final InterpreterAdapter adapter) {
-        final Object start = InterpreterUtilities.unwrap(adapter.evaluate(node.leftExpression()));
-        final Object end = InterpreterUtilities.unwrap(adapter.evaluate(node.rightExpression()));
+    public Object interpret(final RangeExpression node, final Interpreter interpreter) {
+        final Object start = InterpreterUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
+        final Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
 
         InterpreterUtilities.checkNumberOperands(node.operator(), start, end);
 

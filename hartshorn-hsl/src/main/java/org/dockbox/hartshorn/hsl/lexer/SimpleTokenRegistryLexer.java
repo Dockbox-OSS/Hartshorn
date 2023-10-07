@@ -414,15 +414,15 @@ public class SimpleTokenRegistryLexer implements Lexer {
             this.pointToNextChar();
         }
 
-        // Unterminated scanString.
+        // Unterminated string
         if (this.isAtEnd()) {
             throw new ScriptEvaluationError("Unterminated string", Phase.TOKENIZING, this.line(), this.column());
         }
 
-        // The closing ".
+        // The closing "
         this.pointToNextChar();
 
-        // Trim the surrounding quotes.
+        // Trim the surrounding quotes
         final String value = this.source().substring(this.start() + 1, this.current() - 1);
         this.addToken(tokenRegistry().literals().string(), value);
     }

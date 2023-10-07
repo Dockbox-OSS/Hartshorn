@@ -126,8 +126,8 @@ public class Resolver {
         this.finals.pop();
     }
 
-    public void resolve(final List<Statement> stmtList) {
-        for (final Statement statement : stmtList) {
+    public void resolve(final List<Statement> statements) {
+        for (final Statement statement : statements) {
             this.resolve(statement);
         }
     }
@@ -176,7 +176,9 @@ public class Resolver {
     }
 
     public void declare(final Token name) {
-        if (this.scopes.isEmpty()) return;
+        if (this.scopes.isEmpty()) {
+            return;
+        }
 
         final Map<String, Boolean> scope = this.scopes.peek();
 
@@ -189,7 +191,9 @@ public class Resolver {
 
     public void define(final Token name) {
         // set the variable’s value in the scope map to true to mark it as fully initialized and available for use
-        if (this.scopes.isEmpty()) return;
+        if (this.scopes.isEmpty()) {
+            return;
+        }
         this.checkFinal(name);
         this.scopes.peek().put(name.lexeme(), true);
     }
@@ -203,7 +207,9 @@ public class Resolver {
 
     public <R extends Finalizable & NamedNode> void makeFinal(final R node, final String what) {
         // Unlike scopes, finals need to be tracked even in the global scope.
-        if (this.finals.isEmpty()) this.finals.push(new HashMap<>());
+        if (this.finals.isEmpty()) {
+            this.finals.push(new HashMap<>());
+        }
         this.checkFinal(node.name());
         if (node.isFinal()) {
             this.finals.peek().put(node.name().lexeme(), what);

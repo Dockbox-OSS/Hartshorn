@@ -77,8 +77,9 @@ public abstract class AbstractNativeModule implements NativeModule {
                 final String functionName = function.name().lexeme();
                 if (arguments.isEmpty()) {
                     final Option<MethodView<Object, ?>> methodViewOption = type.methods().named(functionName);
-                    if (methodViewOption.absent())
+                    if (methodViewOption.absent()) {
                         throw new NativeExecutionException("Module Loader : Can't find function with name : " + function);
+                    }
 
                     method = methodViewOption.get();
                 }
@@ -95,7 +96,9 @@ public abstract class AbstractNativeModule implements NativeModule {
                         .orNull();
 
                 return new ExternalInstance(result, TypeUtils.adjustWildcards(method.returnType(), TypeView.class));
-            } else throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
+            } else {
+                throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
+            }
         }
         catch (final Throwable e) {
             throw new RuntimeError(at, e.getMessage());
@@ -109,8 +112,12 @@ public abstract class AbstractNativeModule implements NativeModule {
 
             final TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
             for (final MethodView<?, ?> method : typeView.methods().all()) {
-                if (!method.modifiers().isPublic()) continue;
-                if (method.declaredBy().is(Object.class)) continue;
+                if (!method.modifiers().isPublic()) {
+                    continue;
+                }
+                if (method.declaredBy().is(Object.class)) {
+                    continue;
+                }
 
                 final Token token = Token.of(LiteralTokenType.IDENTIFIER, method.name())
                         .virtual()

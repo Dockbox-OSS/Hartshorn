@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
@@ -29,9 +29,9 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
 
     @Override
-    public Object interpret(final UnaryExpression node, final InterpreterAdapter adapter) {
+    public Object interpret(final UnaryExpression node, final Interpreter interpreter) {
         TokenType type = node.operator().type();
-        final Object right = adapter.evaluate(node.rightExpression());
+        final Object right = interpreter.evaluate(node.rightExpression());
 
         final Object newValue;
         if (type instanceof ArithmeticTokenType arithmeticTokenType) {
@@ -67,7 +67,7 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         }
 
         if (node.rightExpression() instanceof VariableExpression variable) {
-            adapter.visitingScope().assign(variable.name(), newValue);
+            interpreter.visitingScope().assign(variable.name(), newValue);
         }
         return newValue;
     }

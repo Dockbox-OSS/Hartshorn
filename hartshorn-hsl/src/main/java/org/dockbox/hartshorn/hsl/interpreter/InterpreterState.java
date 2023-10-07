@@ -19,12 +19,10 @@ package org.dockbox.hartshorn.hsl.interpreter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -34,15 +32,14 @@ public class InterpreterState {
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
     private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
+    private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
 
-    private final Map<String, NativeModule> externalModules;
+    private final Interpreter owner;
 
     private VariableScope global = new VariableScope();
     private VariableScope visitingScope = this.global;
-    private final Interpreter owner;
 
-    public InterpreterState(final Map<String, NativeModule> externalModules, final Interpreter owner) {
-        this.externalModules = new ConcurrentHashMap<>(externalModules);
+    public InterpreterState(Interpreter owner) {
         this.owner = owner;
     }
 
@@ -103,20 +100,20 @@ public class InterpreterState {
         this.withScope(nextScope, runnable);
     }
 
-    public Integer distance(final Expression expr) {
-        return this.locals.get(expr);
+    public Integer distance(final Expression expression) {
+        return this.locals.get(expression);
     }
 
-    public void resolve(final Expression expr, final int depth) {
-        this.locals.put(expr, depth);
+    public void resolve(final Expression expression, final int depth) {
+        this.locals.put(expression, depth);
     }
 
-    public Object lookUpVariable(final Token name, final Expression expr) {
+    public Object lookUpVariable(final Token name, final Expression expression) {
         if (name.type() == ObjectTokenType.THIS) {
             return this.visitingScope().getAt(name, 1);
         }
 
-        final Integer distance = this.locals.get(expr);
+        final Integer distance = this.locals.get(expression);
         if (distance != null) {
             // Find variable value in locales score
             return this.visitingScope().getAt(name, distance);
@@ -132,6 +129,9 @@ public class InterpreterState {
             return this.imports.get(name.lexeme());
         }
 
-        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw InterpreterErrorDefinition.UNDEFINED_VARIABLE.define()
+                .at(name)
+                .with(name.lexeme())
+                .build();
     }
 }

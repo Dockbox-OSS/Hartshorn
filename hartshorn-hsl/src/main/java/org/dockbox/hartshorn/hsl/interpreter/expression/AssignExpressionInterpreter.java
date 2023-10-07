@@ -17,23 +17,23 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 public class AssignExpressionInterpreter implements ASTNodeInterpreter<Object, AssignExpression> {
 
     @Override
-    public Object interpret(final AssignExpression node, final InterpreterAdapter adapter) {
+    public Object interpret(final AssignExpression node, final Interpreter interpreter) {
         final Token name = node.name();
-        final Object value = adapter.evaluate(node.value());
+        final Object value = interpreter.evaluate(node.value());
 
-        final Integer distance = adapter.distance(node);
+        final Integer distance = interpreter.distance(node);
         if (distance != null) {
-            adapter.visitingScope().assignAt(distance, name, value);
+            interpreter.visitingScope().assignAt(distance, name, value);
         }
         else {
-            adapter.global().assign(name, value);
+            interpreter.global().assign(name, value);
         }
         return value;
     }

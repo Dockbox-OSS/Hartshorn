@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 /**
  * Simple wrapper around an array of objects, without a specific type requirement. This is used
- * by the {@link Interpreter} to represent arrays in the HSL language, and access them natively.
+ * by the {@link SimpleVisitorInterpreter} to represent arrays in the HSL language, and access them natively.
  *
  * @author Guus Lieben
  * @since 0.4.12

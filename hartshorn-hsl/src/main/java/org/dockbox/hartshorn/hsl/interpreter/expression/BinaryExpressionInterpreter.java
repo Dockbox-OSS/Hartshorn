@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
@@ -29,9 +29,9 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
 
     @Override
-    public Object interpret(final BinaryExpression node, final InterpreterAdapter adapter) {
-        Object left = adapter.evaluate(node.leftExpression());
-        Object right = adapter.evaluate(node.rightExpression());
+    public Object interpret(final BinaryExpression node, final Interpreter interpreter) {
+        Object left = interpreter.evaluate(node.leftExpression());
+        Object right = interpreter.evaluate(node.rightExpression());
 
         left = InterpreterUtilities.unwrap(left);
         right = InterpreterUtilities.unwrap(right);

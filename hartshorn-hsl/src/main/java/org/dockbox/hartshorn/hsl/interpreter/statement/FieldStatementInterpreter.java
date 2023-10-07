@@ -18,18 +18,18 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 public class FieldStatementInterpreter implements ASTNodeInterpreter<Void, FieldStatement> {
 
     @Override
-    public Void interpret(final FieldStatement node, final InterpreterAdapter adapter) {
-        final Object value = adapter.evaluate(node.initializer());
-        final int distance = adapter.distance(node.initializer());
-        final PropertyContainer object = (PropertyContainer) adapter.visitingScope().getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
-        object.set(node.name(), value, adapter.visitingScope(), adapter.interpreter().executionOptions());
+    public Void interpret(final FieldStatement node, final Interpreter interpreter) {
+        final Object value = interpreter.evaluate(node.initializer());
+        final int distance = interpreter.distance(node.initializer());
+        final PropertyContainer object = (PropertyContainer) interpreter.visitingScope().getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
+        object.set(node.name(), value, interpreter.visitingScope(), interpreter.executionOptions());
         return null;
     }
 }

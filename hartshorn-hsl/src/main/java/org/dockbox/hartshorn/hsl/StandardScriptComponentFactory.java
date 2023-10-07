@@ -24,11 +24,11 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
@@ -54,11 +54,8 @@ public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
     public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules, final ApplicationContext applicationContext) {
-        return this.interpreter(resultCollector, modules, new ExecutionOptions(), applicationContext);
-    }
-
-    @Override
-    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules, final ExecutionOptions options, final ApplicationContext applicationContext) {
-        return new Interpreter(resultCollector, modules, options, applicationContext);
+        Interpreter interpreter = new SimpleVisitorInterpreter(resultCollector, applicationContext);
+        interpreter.state().externalModules(modules);
+        return interpreter;
     }
 }

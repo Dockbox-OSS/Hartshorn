@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 public class RepeatStatementInterpreter implements ASTNodeInterpreter<Void, RepeatStatement> {
 
     @Override
-    public Void interpret(final RepeatStatement node, final InterpreterAdapter adapter) {
-        adapter.withNextScope(() -> {
-            final Object value = adapter.evaluate(node.value());
+    public Void interpret(final RepeatStatement node, final Interpreter interpreter) {
+        interpreter.withNextScope(() -> {
+            final Object value = interpreter.evaluate(node.value());
 
             final boolean isNotNumber = !(value instanceof Number);
 
@@ -37,7 +37,7 @@ public class RepeatStatementInterpreter implements ASTNodeInterpreter<Void, Repe
             final int counter = (int) Double.parseDouble(value.toString());
             for (int i = 0; i < counter; i++) {
                 try {
-                    adapter.execute(node.body());
+                    interpreter.execute(node.body());
                 }
                 catch (final MoveKeyword moveKeyword) {
                     if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;

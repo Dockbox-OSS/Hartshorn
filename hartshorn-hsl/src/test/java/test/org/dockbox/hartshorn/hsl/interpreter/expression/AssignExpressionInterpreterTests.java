@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
@@ -40,14 +40,14 @@ public class AssignExpressionInterpreterTests {
 
     public static Stream<Arguments> variableDefinitionScopes() {
         return Stream.of(
-                Arguments.of((Function<InterpreterAdapter, VariableScope>) InterpreterAdapter::visitingScope),
-                Arguments.of((Function<InterpreterAdapter, VariableScope>) InterpreterAdapter::global)
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
         );
     }
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void testAssignmentToDefinedVariable(final Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
+    void testAssignmentToDefinedVariable(final Function<Interpreter, VariableScope> variableScopeFunction) {
         Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
@@ -58,12 +58,12 @@ public class AssignExpressionInterpreterTests {
 
         LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
         AssignExpression expression = new AssignExpression(variableName, literalExpression);
-        ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+        ASTNodeInterpreter<Object, AssignExpression> expressionInterpreter = new AssignExpressionInterpreter();
 
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        variableScopeFunction.apply(adapter).define(variableName.lexeme(), "test");
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        variableScopeFunction.apply(interpreter).define(variableName.lexeme(), "test");
 
-        Object interpreted = Assertions.assertDoesNotThrow(() -> interpreter.interpret(expression, adapter));
+        Object interpreted = Assertions.assertDoesNotThrow(() -> expressionInterpreter.interpret(expression, interpreter));
         Assertions.assertEquals(literalExpression.value(), interpreted);
     }
 
@@ -79,11 +79,11 @@ public class AssignExpressionInterpreterTests {
 
         LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
         AssignExpression expression = new AssignExpression(variableName, literalExpression);
-        ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+        ASTNodeInterpreter<Object, AssignExpression> expressionInterpreter = new AssignExpressionInterpreter();
 
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
 
-        RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> interpreter.interpret(expression, adapter));
+        RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> expressionInterpreter.interpret(expression, interpreter));
         Assertions.assertSame(variableName, error.token());
     }
 }

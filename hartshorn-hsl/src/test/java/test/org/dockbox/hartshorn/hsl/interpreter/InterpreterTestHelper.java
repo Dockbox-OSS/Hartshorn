@@ -16,13 +16,11 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.CacheOnlyResultCollector;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.TokenPairList;
@@ -32,13 +30,13 @@ public final class InterpreterTestHelper {
 
     private InterpreterTestHelper() {}
 
-    public static InterpreterAdapter createInterpreterAdapter() {
+    public static Interpreter createInterpreter() {
         final ResultCollector resultCollector = new CacheOnlyResultCollector(null);
-        return new Interpreter(resultCollector, Map.of(), null);
+        return new SimpleVisitorInterpreter(resultCollector, null);
     }
 
     public static <T extends ASTNode, R> R interpret(final T node, final ASTNodeInterpreter<R, T> interpreter) {
-        return interpreter.interpret(node, createInterpreterAdapter());
+        return interpreter.interpret(node, createInterpreter());
     }
 
     public static TokenRegistry defaultTokenSet() {

@@ -32,8 +32,8 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -55,7 +55,7 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
         if (parser.match(ControlTokenType.SWITCH)) {
             final Token switchToken = parser.previous();
             validator.expectAfter(parameters.open(), "switch");
-            final Expression expr = parser.expression();
+            final Expression expression = parser.expression();
             validator.expectAfter(parameters.close(), "expression");
 
             validator.expectAfter(block.open(), "switch");
@@ -95,7 +95,7 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
 
             validator.expectAfter(block.close(), "switch");
 
-            return Option.of(new SwitchStatement(switchToken, expr, cases, defaultBody));
+            return Option.of(new SwitchStatement(switchToken, expression, cases, defaultBody));
         }
         return Option.empty();
     }
