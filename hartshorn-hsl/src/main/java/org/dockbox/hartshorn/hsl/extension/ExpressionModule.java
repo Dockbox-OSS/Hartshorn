@@ -18,6 +18,17 @@ package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 
+/**
+ * Base module for custom expressions. This class is non-sealed to allow for custom implementations
+ * for various use cases. The {@link ExpressionModule} is used to provide access to the required
+ * token type, parser, interpreter, and resolver for a custom expression type.
+ *
+ * @param <T> The type of the custom expression.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public non-sealed interface ExpressionModule<T extends Expression & CustomASTNode<T, Object>> extends ASTExtensionModule<T, Object> {
 
 }

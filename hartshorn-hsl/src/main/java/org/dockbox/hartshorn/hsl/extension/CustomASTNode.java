@@ -17,17 +17,48 @@
 package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
+/**
+ * Represents a custom AST node, which can be interpreted and resolved. This is the base interface for
+ * {@link CustomExpression} and {@link CustomStatement}, which limit the types of nodes that can be
+ * added to a language runtime.
+ *
+ * @param <T> The type of the node.
+ * @param <R> The type of the result of interpreting the node.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public sealed interface CustomASTNode<T extends ASTNode & CustomASTNode<T, R>, R> permits CustomExpression, CustomStatement {
 
+    /**
+     * Returns the module that is responsible for interpreting and resolving this node. This is used
+     * to gain access to the appropriate token type, parser, interpreter, and resolver for the node.
+     *
+     * @return The module that is responsible for interpreting and resolving this node.
+     */
     ASTExtensionModule<T, R> module();
 
-    default R interpret(InterpreterAdapter adapter) {
-        return this.module().interpreter().interpret((T) this, adapter);
+    /**
+     * Interprets this node using the provided interpreter. The result of interpreting this node is
+     * returned.
+     *
+     * @param interpreter The interpreter to use to interpret this node.
+     * @return The result of interpreting this node.
+     */
+    default R interpret(Interpreter interpreter) {
+        return this.module().interpreter().interpret((T) this, interpreter);
     }
 
+    /**
+     * Resolves this node using the provided resolver. This is used to resolve any references that
+     * are present in the node.
+     *
+     * @param resolver The resolver to use to resolve this node.
+     */
     default void resolve(Resolver resolver) {
         this.module().resolver().resolve((T) this, resolver);
     }

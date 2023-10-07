@@ -18,6 +18,17 @@ package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 
+/**
+ * Base module for custom statements. This class is non-sealed to allow for custom implementations
+ * for various use cases. The {@link StatementModule} is used to provide access to the required
+ * token type, parser, interpreter, and resolver for a custom statement type.
+ *
+ * @param <T> The type of the custom statement.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public non-sealed interface StatementModule<T extends Statement & CustomASTNode<T, Void>> extends ASTExtensionModule<T, Void> {
 
 }

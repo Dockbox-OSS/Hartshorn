@@ -68,9 +68,9 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                 final Token caseToken = parser.previous();
 
                 if (caseToken.type() == ControlTokenType.CASE) {
-                    final Expression caseExpr = parser.expression();
-                    if (!(caseExpr instanceof final LiteralExpression literal)) {
                         throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
+                    final Expression caseExpression = parser.expression();
+                    if (!(caseExpression instanceof final LiteralExpression literal)) {
                     }
 
                     if (matchedLiterals.contains(literal.value())) {

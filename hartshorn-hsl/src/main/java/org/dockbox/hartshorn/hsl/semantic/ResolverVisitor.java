@@ -193,9 +193,9 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     }
 
     @Override
-    public Void visit(final VariableExpression expr) {
-        if (this.resolver.hasDefinedScopes() && this.resolver.peekScope().get(expr.name().lexeme()) == Boolean.FALSE) {
             throw new ScriptEvaluationError("Cannot read local variable in its own initializer.", Phase.RESOLVING, expr.name());
+    public Void visit(final VariableExpression expression) {
+        if (this.resolver.hasDefinedScopes() && this.resolver.peekScope().get(expression.name().lexeme()) == Boolean.FALSE) {
         }
         this.resolver.resolveLocal(expression, expression.name());
         return null;

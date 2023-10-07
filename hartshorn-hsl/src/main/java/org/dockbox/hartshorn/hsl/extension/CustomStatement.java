@@ -20,6 +20,17 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
+/**
+ * Base class for custom statements. This class is non-sealed to allow for custom implementations
+ * for various use cases. The {@link StatementModule} is used to provide the custom statement
+ * with the appropriate token type, parser, interpreter, and resolver.
+ *
+ * @param <T> The type of the custom statement.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract non-sealed class CustomStatement<T extends CustomStatement<T>> extends Statement implements CustomASTNode<T, Void> {
 
     private final StatementModule<T> module;
