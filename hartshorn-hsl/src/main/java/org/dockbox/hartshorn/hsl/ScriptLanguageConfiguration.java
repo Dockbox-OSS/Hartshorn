@@ -35,8 +35,6 @@ import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 @RequiresActivator(UseExpressionValidation.class)
 public class ScriptLanguageConfiguration {
 
-    public static final String EXPRESSION_BEAN = "expression";
-
     @Binds
     private ScriptComponentFactory languageFactory() {
         return new StandardScriptComponentFactory();

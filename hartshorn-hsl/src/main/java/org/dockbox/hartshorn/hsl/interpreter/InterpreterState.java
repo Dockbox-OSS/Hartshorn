@@ -34,15 +34,14 @@ public class InterpreterState {
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
     private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
+    private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
 
-    private final Map<String, NativeModule> externalModules;
+    private final Interpreter owner;
 
     private VariableScope global = new VariableScope();
     private VariableScope visitingScope = this.global;
-    private final Interpreter owner;
 
-    public InterpreterState(Map<String, NativeModule> externalModules, Interpreter owner) {
-        this.externalModules = new ConcurrentHashMap<>(externalModules);
+    public InterpreterState(Interpreter owner) {
         this.owner = owner;
     }
 
@@ -103,20 +102,20 @@ public class InterpreterState {
         this.withScope(nextScope, runnable);
     }
 
-    public Integer distance(Expression expr) {
-        return this.locals.get(expr);
+    public Integer distance(Expression expression) {
+        return this.locals.get(expression);
     }
 
-    public void resolve(Expression expr, int depth) {
-        this.locals.put(expr, depth);
+    public void resolve(Expression expression, int depth) {
+        this.locals.put(expression, depth);
     }
 
-    public Object lookUpVariable(Token name, Expression expr) {
+    public Object lookUpVariable(Token name, Expression expression) {
         if (name.type() == ObjectTokenType.THIS) {
             return this.visitingScope().getAt(name, 1);
         }
 
-        Integer distance = this.locals.get(expr);
+        Integer distance = this.locals.get(expression);
         if (distance != null) {
             // Find variable value in locales score
             return this.visitingScope().getAt(name, distance);

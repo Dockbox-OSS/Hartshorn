@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.interpreter.expression;
+package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
-import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
+import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public class ArrayGetExpressionInterpreter extends ArrayInterpreter<Object, ArrayGetExpression> {
+public interface InterpreterVisitor extends ExpressionVisitor<Object>, StatementVisitor<Void> {
 
-    @Override
-    public Object interpret(final ArrayGetExpression node, final Interpreter interpreter) {
-        return this.accessArray(interpreter, node.name(), node.index(), Array::value);
-    }
+    Interpreter interpreter();
+
 }

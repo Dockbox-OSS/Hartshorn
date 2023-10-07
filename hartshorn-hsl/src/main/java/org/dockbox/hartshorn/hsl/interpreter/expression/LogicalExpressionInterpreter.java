@@ -17,37 +17,39 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
 public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, LogicalExpression> {
 
     @Override
-    public Object interpret(LogicalExpression node, InterpreterAdapter adapter) {
-        Object left = adapter.evaluate(node.leftExpression());
-        switch (node.operator().type()) {
-            case AND -> {
-                if (!InterpreterUtilities.isTruthy(left)) {
-                    return false;
-                }
-                // Don't evaluate right if left is not truthy
-                Object right = adapter.evaluate(node.rightExpression());
-                return InterpreterUtilities.isTruthy(right);
+    public Object interpret(final LogicalExpression node, final Interpreter interpreter) {
+        final Object left = interpreter.evaluate(node.leftExpression());
+        TokenType type = node.operator().type();
+        if (type == ConditionTokenType.AND) {
+            if (!InterpreterUtilities.isTruthy(left)) {
+                return false;
             }
-            case OR -> {
-                if (InterpreterUtilities.isTruthy(left)) {
-                    return true;
-                }
-                // No need to evaluate right if left is already truthy
-                Object right = adapter.evaluate(node.rightExpression());
-                return InterpreterUtilities.isTruthy(right);
-            }
-            case XOR -> {
-                Object right = adapter.evaluate(node.rightExpression());
-                return this.xor(left, right);
-            }
-            default -> throw new RuntimeError(node.operator(), "Unsupported logical operator.");
+            // Don't evaluate right if left is not truthy
+            final Object right = interpreter.evaluate(node.rightExpression());
+            return InterpreterUtilities.isTruthy(right);
         }
+        else if (type == ConditionTokenType.OR) {
+            if (InterpreterUtilities.isTruthy(left)) {
+                return true;
+            }
+            // No need to evaluate right if left is already truthy
+            final Object right = interpreter.evaluate(node.rightExpression());
+            return InterpreterUtilities.isTruthy(right);
+        }
+        else if (type == BitwiseTokenType.XOR) {
+            final Object right = interpreter.evaluate(node.rightExpression());
+            return this.xor(left, right);
+        }
+        throw new RuntimeError(node.operator(), "Unsupported logical operator.");
     }
 }

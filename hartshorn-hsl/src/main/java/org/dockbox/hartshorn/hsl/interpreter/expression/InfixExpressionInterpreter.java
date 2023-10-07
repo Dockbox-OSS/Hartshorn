@@ -16,29 +16,29 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, InfixExpression> {
 
     @Override
-    public Object interpret(InfixExpression node, InterpreterAdapter adapter) {
-        CallableNode value = (CallableNode) adapter.visitingScope().get(node.infixOperatorName());
-        List<Object> args = new ArrayList<>();
-        args.add(adapter.evaluate(node.leftExpression()));
-        args.add(adapter.evaluate(node.rightExpression()));
+    public Object interpret(final InfixExpression node, final Interpreter interpreter) {
+        final CallableNode value = (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
+        final List<Object> args = new ArrayList<>();
+        args.add(interpreter.evaluate(node.leftExpression()));
+        args.add(interpreter.evaluate(node.rightExpression()));
 
         try {
-            return value.call(node.infixOperatorName(), adapter.interpreter(), null, args);
+            return value.call(node.infixOperatorName(), interpreter, null, args);
         }
-        catch (ApplicationException e) {
+        catch (final ApplicationException e) {
             throw new RuntimeError(node.infixOperatorName(), e.getMessage());
         }
     }

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link ScriptRuntime},
- * making them accessible to the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter}, but are
+ * making them accessible to the {@link SimpleVisitorInterpreter}, but are
  * not guaranteed to be.
  *
  * <p>The libraries in this class are sorted alphabetically by name, and should never contain duplicate

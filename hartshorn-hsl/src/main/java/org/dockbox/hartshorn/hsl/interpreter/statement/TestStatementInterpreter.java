@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.Return;
@@ -26,23 +26,23 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestStatement> {
 
     @Override
-    public Void interpret(TestStatement node, InterpreterAdapter adapter) {
-        String name = String.valueOf(node.name().literal());
-        VariableScope previousScope = adapter.visitingScope();
+    public Void interpret(final TestStatement node, final Interpreter interpreter) {
+        final String name = String.valueOf(node.name().literal());
+        VariableScope previousScope = interpreter.visitingScope();
 
         final VariableScope variableScope = new VariableScope(previousScope);
-        adapter.enterScope(variableScope);
+        interpreter.enterScope(variableScope);
 
         try {
-            adapter.execute(node.body(), variableScope);
+            interpreter.execute(node.body(), variableScope);
         }
-        catch (Return r) {
-            Object value = r.value();
-            boolean val = InterpreterUtilities.isTruthy(value);
-            adapter.interpreter().resultCollector().addResult(name, val);
+        catch (final Return r) {
+            final Object value = r.value();
+            final boolean val = InterpreterUtilities.isTruthy(value);
+            interpreter.resultCollector().addResult(name, val);
         }
         finally {
-            adapter.enterScope(previousScope);
+            interpreter.enterScope(previousScope);
         }
         return null;
     }

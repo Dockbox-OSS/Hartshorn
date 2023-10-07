@@ -22,21 +22,21 @@ import java.util.List;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 
 public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayComprehensionExpression> {
 
     @Override
-    public Object interpret(ArrayComprehensionExpression node, InterpreterAdapter adapter) {
+    public Object interpret(final ArrayComprehensionExpression node, final Interpreter interpreter) {
         List<Object> values = new ArrayList<>();
-        Object collection = adapter.evaluate(node.collection());
+        Object collection = interpreter.evaluate(node.collection());
         if (collection instanceof Iterable<?> iterable) {
 
-            adapter.withNextScope(() -> {
-                adapter.visitingScope().define(node.selector().lexeme(), null);
-                adapter.withNextScope(() -> visitIterable(node, adapter, values, iterable));
+            interpreter.withNextScope(() -> {
+                interpreter.visitingScope().define(node.selector().lexeme(), null);
+                interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));
             });
         }
         else {
@@ -45,23 +45,23 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
         return new Array(values.toArray());
     }
 
-    private static void visitIterable(ArrayComprehensionExpression node, InterpreterAdapter adapter,
-                                      List<Object> values, Iterable<?> iterable) {
-        for (Object element : iterable) {
-            adapter.visitingScope().assign(node.selector(), element);
+    private static void visitIterable(final ArrayComprehensionExpression node, final Interpreter interpreter,
+                                      final List<Object> values, final Iterable<?> iterable) {
+        for (final Object element : iterable) {
+            interpreter.visitingScope().assign(node.selector(), element);
 
             if (node.condition() != null) {
-                Object condition = adapter.evaluate(node.condition());
+                final Object condition = interpreter.evaluate(node.condition());
                 if (!InterpreterUtilities.isTruthy(condition)) {
                     if (node.elseExpression() != null) {
-                        Object elseValue = adapter.evaluate(node.elseExpression());
+                        final Object elseValue = interpreter.evaluate(node.elseExpression());
                         values.add(elseValue);
                     }
                     continue;
                 }
             }
 
-            Object result = adapter.evaluate(node.expression());
+            Object result = interpreter.evaluate(node.expression());
             values.add(result);
         }
     }

@@ -18,15 +18,15 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 
 public class NativeFunctionStatementInterpreter implements ASTNodeInterpreter<Void, NativeFunctionStatement> {
 
     @Override
-    public Void interpret(NativeFunctionStatement node, InterpreterAdapter adapter) {
-        NativeLibrary nativeLibrary = new NativeLibrary(node, adapter.interpreter().state().externalModules());
-        adapter.visitingScope().define(node.name().lexeme(), nativeLibrary);
+    public Void interpret(final NativeFunctionStatement node, final Interpreter interpreter) {
+        final NativeLibrary nativeLibrary = new NativeLibrary(node, interpreter.state().externalModules());
+        interpreter.visitingScope().define(node.name().lexeme(), nativeLibrary);
         return null;
     }
 }

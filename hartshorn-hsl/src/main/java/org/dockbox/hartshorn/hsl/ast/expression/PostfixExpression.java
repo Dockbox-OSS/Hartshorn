@@ -22,12 +22,12 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 public class PostfixExpression extends Expression {
 
     private final Token operator;
-    private final Expression leftExpr;
+    private final Expression leftExpression;
 
-    public PostfixExpression(Token operator, Expression leftExpr) {
+    public PostfixExpression(final Token operator, final Expression leftExpression) {
         super(operator);
         this.operator = operator;
-        this.leftExpr = leftExpr;
+        this.leftExpression = leftExpression;
     }
 
     public Token operator() {
@@ -35,11 +35,11 @@ public class PostfixExpression extends Expression {
     }
 
     public Expression leftExpression() {
-        return this.leftExpr;
+        return this.leftExpression;
     }
 
     @Override
-    public <R> R accept(ExpressionVisitor<R> visitor) {
+    public <R> R accept(final ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

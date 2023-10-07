@@ -18,15 +18,15 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 
 public class ConstructorStatementInterpreter implements ASTNodeInterpreter<Void, ConstructorStatement> {
 
     @Override
-    public Void interpret(ConstructorStatement node, InterpreterAdapter adapter) {
-        VirtualFunction function = new VirtualFunction(node, adapter.visitingScope(), true);
-        adapter.visitingScope().define(node.initializerIdentifier().lexeme(), function);
+    public Void interpret(final ConstructorStatement node, final Interpreter interpreter) {
+        final VirtualFunction function = new VirtualFunction(node, interpreter.visitingScope(), true);
+        interpreter.visitingScope().define(node.initializerIdentifier().lexeme(), function);
         return null;
     }
 }

@@ -22,15 +22,17 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
-    protected Object accessArray(InterpreterAdapter adapter, Token name,
-                               Expression indexExp, BiFunction<Array, Integer, Object> converter) {
-        Array array = (Array) adapter.visitingScope().get(name);
-        Number indexValue = (Number) adapter.evaluate(indexExp);
+    protected Object accessArray(
+            Interpreter interpreter, Token name, Expression indexExpression,
+            BiFunction<Array, Integer, Object> converter
+    ) {
+        Array array = (Array) interpreter.visitingScope().get(name);
+        Number indexValue = (Number) interpreter.evaluate(indexExpression);
         int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {

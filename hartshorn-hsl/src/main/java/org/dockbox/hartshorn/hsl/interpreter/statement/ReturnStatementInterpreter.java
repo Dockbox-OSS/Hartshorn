@@ -18,16 +18,16 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 
 public class ReturnStatementInterpreter implements ASTNodeInterpreter<Void, ReturnStatement> {
 
     @Override
-    public Void interpret(ReturnStatement node, InterpreterAdapter adapter) {
+    public Void interpret(final ReturnStatement node, final Interpreter interpreter) {
         Object value = null;
         if (node.expression() != null) {
-            value = adapter.evaluate(node.expression());
+            value = interpreter.evaluate(node.expression());
         }
         throw new Return(value);
     }

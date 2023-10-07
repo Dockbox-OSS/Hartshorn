@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayGetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
@@ -40,13 +40,13 @@ public class ArrayGetExpressionInterpreterTests {
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
         Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
         ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
         ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
-        Object interpretedValue = expressionInterpreter.interpret(getExpression, adapter);
+        Object interpretedValue = expressionInterpreter.interpret(getExpression, interpreter);
         Assertions.assertEquals(realArray[targetIndex], interpretedValue);
     }
 
@@ -59,12 +59,12 @@ public class ArrayGetExpressionInterpreterTests {
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
         Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
         ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
         ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, adapter));
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, interpreter));
     }
 }

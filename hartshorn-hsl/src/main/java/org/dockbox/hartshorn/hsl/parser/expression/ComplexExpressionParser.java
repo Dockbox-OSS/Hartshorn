@@ -83,40 +83,40 @@ public class ComplexExpressionParser {
     }
 
     public Expression parse() {
-        final Expression expr = this.elvisExp();
+        final Expression expression = this.elvisExp();
 
         if (this.parser.match(BaseTokenType.EQUAL)) {
             final Token equals = this.parser.previous();
             final Expression value = this.parser.expression();
 
-            if (expr instanceof VariableExpression variableExpression) {
+            if (expression instanceof VariableExpression variableExpression) {
                 final Token name = variableExpression.name();
                 return new AssignExpression(name, value);
             }
-            else if (expr instanceof final ArrayGetExpression arrayGetExpression) {
+            else if (expression instanceof final ArrayGetExpression arrayGetExpression) {
                 final Token name = arrayGetExpression.name();
                 return new ArraySetExpression(name, arrayGetExpression.index(), value);
             }
-            else if (expr instanceof final GetExpression getExpression) {
+            else if (expression instanceof final GetExpression getExpression) {
                 return new SetExpression(getExpression.object(), getExpression.name(), value);
             }
             throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, equals);
         }
-        return expr;
+        return expression;
     }
 
     private Expression elvisExp() {
-        final Expression expr = this.ternaryExp();
+        final Expression expression = this.ternaryExp();
         if (this.parser.match(ConditionTokenType.ELVIS)) {
             final Token elvis = this.parser.previous();
             final Expression rightExp = this.ternaryExp();
-            return new ElvisExpression(expr, elvis, rightExp);
+            return new ElvisExpression(expression, elvis, rightExp);
         }
-        return expr;
+        return expression;
     }
 
     private Expression ternaryExp() {
-        final Expression expr = this.bitwise();
+        final Expression expression = this.bitwise();
 
         if (this.parser.match(BaseTokenType.QUESTION_MARK)) {
             final Token question = this.parser.previous();
@@ -124,11 +124,11 @@ public class ComplexExpressionParser {
             final Token colon = this.parser.peek();
             if (this.parser.match(BaseTokenType.COLON)) {
                 final Expression secondExp = this.logical();
-                return new TernaryExpression(expr, question, firstExp, colon, secondExp);
+                return new TernaryExpression(expression, question, firstExp, colon, secondExp);
             }
             throw new ScriptEvaluationError("Expected expression after " + BaseTokenType.COLON.representation(), Phase.PARSING, colon);
         }
-        return expr;
+        return expression;
     }
 
     private Expression logicalOrBitwise(final Supplier<Expression> next, final TriFunction<Expression, Token, Expression, Expression> step, final TokenType... whileMatching) {
@@ -195,47 +195,47 @@ public class ComplexExpressionParser {
     }
 
     private Expression comparison() {
-        Expression expr = this.addition();
+        Expression expression = this.addition();
 
         while (this.parser.match(ConditionTokenType.GREATER, ConditionTokenType.GREATER_EQUAL, ConditionTokenType.LESS, ConditionTokenType.LESS_EQUAL)) {
             final Token operator = this.parser.previous();
             final Expression right = this.addition();
-            expr = new BinaryExpression(expr, operator, right);
+            expression = new BinaryExpression(expression, operator, right);
         }
 
-        return expr;
+        return expression;
     }
 
     private Expression addition() {
-        Expression expr = this.multiplication();
+        Expression expression = this.multiplication();
         while (this.parser.match(ArithmeticTokenType.MINUS, ArithmeticTokenType.PLUS)) {
             final Token operator = this.parser.previous();
             final Expression right = this.multiplication();
-            expr = new BinaryExpression(expr, operator, right);
+            expression = new BinaryExpression(expression, operator, right);
         }
-        return expr;
+        return expression;
     }
 
     private Expression multiplication() {
-        Expression expr = this.parseInfixExpressions();
+        Expression expression = this.parseInfixExpressions();
 
         while (this.parser.match(ArithmeticTokenType.SLASH, ArithmeticTokenType.STAR, ArithmeticTokenType.MODULO)) {
             final Token operator = this.parser.previous();
             final Expression right = this.parseInfixExpressions();
-            expr = new BinaryExpression(expr, operator, right);
+            expression = new BinaryExpression(expression, operator, right);
         }
-        return expr;
+        return expression;
     }
 
     private Expression parseInfixExpressions() {
-        Expression expr = this.unary();
+        Expression expression = this.unary();
 
         while (this.parser.check(LiteralTokenType.IDENTIFIER) && this.hasInfixFunction(this.parser.peek())) {
             final Token operator = this.parser.advance();
             final Expression right = this.unary();
-            expr = new InfixExpression(expr, operator, right);
+            expression = new InfixExpression(expression, operator, right);
         }
-        return expr;
+        return expression;
     }
 
     private boolean hasInfixFunction(final Token name) {
@@ -252,26 +252,26 @@ public class ComplexExpressionParser {
     }
 
     private Expression call() {
-        Expression expr = this.primary();
-        if (expr != null) {
+        Expression expression = this.primary();
+        if (expression != null) {
             while(true) {
                 if(this.parser.match(this.parser.tokenRegistry().tokenPairs().parameters().open())) {
-                    expr = this.finishCall(expr);
+                    expression = this.finishCall(expression);
                 }
                 else if(this.parser.match(BaseTokenType.DOT)) {
                     final Token name = this.parser.consume(LiteralTokenType.IDENTIFIER, "Expected property name after '.'.");
-                    expr = new GetExpression(name, expr);
+                    expression = new GetExpression(name, expression);
                 }
                 else if(this.parser.match(ArithmeticTokenType.PLUS_PLUS, ArithmeticTokenType.MINUS_MINUS)) {
                     final Token operator = this.parser.previous();
-                    expr = new PostfixExpression(operator, expr);
+                    expression = new PostfixExpression(operator, expression);
                 }
                 else {
                     break;
                 }
             }
         }
-        return expr;
+        return expression;
     }
 
     private Expression finishCall(final Expression callee) {
@@ -331,9 +331,9 @@ public class ComplexExpressionParser {
     }
 
     private GroupingExpression groupingExpression() {
-        final Expression expr = this.parser.expression();
+        final Expression expression = this.parser.expression();
         this.validator.expectAfter(this.parser.tokenRegistry().tokenPairs().parameters().close(), "expression");
-        return new GroupingExpression(expr);
+        return new GroupingExpression(expression);
     }
 
     private Expression identifierExpression() {
@@ -351,24 +351,24 @@ public class ComplexExpressionParser {
 
     private Expression complexArray() {
         final Token open = this.parser.previous();
-        final Expression expr = this.parser.expression();
+        final Expression expression = this.parser.expression();
 
         if (this.parser.match(this.parser.tokenRegistry().tokenPairs().array().close())) {
             final List<Expression> elements = new ArrayList<>();
-            elements.add(expr);
+            elements.add(expression);
             return new ArrayLiteralExpression(open, this.parser.previous(), elements);
         }
         else if (this.parser.match(BaseTokenType.COMMA)) {
-            return this.arrayLiteralExpression(open, expr);
+            return this.arrayLiteralExpression(open, expression);
         }
         else {
-            return this.arrayComprehensionExpression(open, expr);
+            return this.arrayComprehensionExpression(open, expression);
         }
     }
 
-    private ArrayLiteralExpression arrayLiteralExpression(final Token open, final Expression expr) {
+    private ArrayLiteralExpression arrayLiteralExpression(final Token open, final Expression expression) {
         final List<Expression> elements = new ArrayList<>();
-        elements.add(expr);
+        elements.add(expression);
         do {
             elements.add(this.parser.expression());
         }
@@ -377,7 +377,7 @@ public class ComplexExpressionParser {
         return new ArrayLiteralExpression(open, close, elements);
     }
 
-    private ArrayComprehensionExpression arrayComprehensionExpression(final Token open, final Expression expr) {
+    private ArrayComprehensionExpression arrayComprehensionExpression(final Token open, final Expression expression) {
         final Token forToken = this.validator.expectAfter(LoopTokenType.FOR, "expression");
         final Token name = this.validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
 
@@ -392,15 +392,15 @@ public class ComplexExpressionParser {
         }
 
         Token elseToken = null;
-        Expression elseExpr = null;
+        Expression elseExpression = null;
         if (this.parser.match(ControlTokenType.ELSE)) {
             elseToken = this.parser.previous();
-            elseExpr = this.parser.expression();
+            elseExpression = this.parser.expression();
         }
 
         final Token close = this.validator.expectAfter(this.parser.tokenRegistry().tokenPairs().array().close(), "array");
 
-        return new ArrayComprehensionExpression(iterable, expr, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpr);
+        return new ArrayComprehensionExpression(iterable, expression, name, forToken, inToken, open, close, ifToken, condition, elseToken, elseExpression);
     }
 
     private boolean containedInFunctionContext(final Function<FunctionParserContext, Boolean> rule) {

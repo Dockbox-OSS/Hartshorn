@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
@@ -43,7 +42,4 @@ public interface ScriptComponentFactory {
     Resolver resolver(Interpreter interpreter);
 
     Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext);
-
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext);
-
 }

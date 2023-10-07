@@ -126,8 +126,8 @@ public class Resolver {
         this.finals.pop();
     }
 
-    public void resolve(List<Statement> stmtList) {
-        for (Statement statement : stmtList) {
+    public void resolve(List<Statement> statements) {
+        for (Statement statement : statements) {
             this.resolve(statement);
         }
     }

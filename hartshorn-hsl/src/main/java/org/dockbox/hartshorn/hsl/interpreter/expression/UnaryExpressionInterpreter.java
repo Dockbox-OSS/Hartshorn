@@ -18,40 +18,56 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
 
     @Override
-    public Object interpret(UnaryExpression node, InterpreterAdapter adapter) {
-        Object right = adapter.evaluate(node.rightExpression());
-        Object newValue = switch (node.operator().type()) {
-            case MINUS -> {
-                InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                yield -(double) right;
-            }
-            case PLUS_PLUS -> {
-                InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                yield (double) right + 1;
-            }
-            case MINUS_MINUS -> {
-                InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                yield (double) right - 1;
-            }
-            case BANG -> !InterpreterUtilities.isTruthy(right);
-            case COMPLEMENT -> {
-                InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                int value = ((Double) right).intValue();
-                // Cast to int is redundant, but required to suppress false-positive inspections.
-                //noinspection RedundantCast
-                yield (int) ~value;
-            }
-            default -> null;
-        };
+    public Object interpret(final UnaryExpression node, final Interpreter interpreter) {
+        TokenType type = node.operator().type();
+        final Object right = interpreter.evaluate(node.rightExpression());
+
+        final Object newValue;
+        if (type instanceof ArithmeticTokenType arithmeticTokenType) {
+             newValue = switch (arithmeticTokenType) {
+                case MINUS -> {
+                    InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    yield -(double) right;
+                }
+                case PLUS_PLUS -> {
+                    InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    yield (double) right + 1;
+                }
+                case MINUS_MINUS -> {
+                    InterpreterUtilities.checkNumberOperand(node.operator(), right);
+                    yield (double) right - 1;
+                }
+                default -> null;
+            };
+        }
+        else if (type == BaseTokenType.BANG) {
+            newValue = !InterpreterUtilities.isTruthy(right);
+        }
+        else if (type == BitwiseTokenType.COMPLEMENT) {
+
+            InterpreterUtilities.checkNumberOperand(node.operator(), right);
+            final int value = ((Double) right).intValue();
+            // Cast to int is redundant, but required to suppress false-positive inspections.
+            //noinspection RedundantCast
+            newValue = (int) ~value;
+        }
+        else {
+            throw new RuntimeException("Unsupported unary operator.");
+        }
+
         if (node.rightExpression() instanceof VariableExpression variable) {
-            adapter.visitingScope().assign(variable.name(), newValue);
+            interpreter.visitingScope().assign(variable.name(), newValue);
         }
         return newValue;
     }

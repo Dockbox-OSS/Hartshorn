@@ -19,25 +19,23 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 public class DoWhileStatementInterpreter implements ASTNodeInterpreter<Void, DoWhileStatement> {
 
     @Override
-    public Void interpret(DoWhileStatement node, InterpreterAdapter adapter) {
-        adapter.withNextScope(() -> {
+    public Void interpret(final DoWhileStatement node, final Interpreter interpreter) {
+        interpreter.withNextScope(() -> {
             do {
                 try {
-                    adapter.execute(node.body());
+                    interpreter.execute(node.body());
                 }
-                catch (MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
-                        break;
-                    }
+                catch (final MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
                 }
             }
-            while (InterpreterUtilities.isTruthy(adapter.evaluate(node.condition())));
+            while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition())));
         });
         return null;
     }

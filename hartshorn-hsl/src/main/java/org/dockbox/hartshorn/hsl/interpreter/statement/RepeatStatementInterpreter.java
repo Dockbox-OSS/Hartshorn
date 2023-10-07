@@ -19,30 +19,28 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 public class RepeatStatementInterpreter implements ASTNodeInterpreter<Void, RepeatStatement> {
 
     @Override
-    public Void interpret(RepeatStatement node, InterpreterAdapter adapter) {
-        adapter.withNextScope(() -> {
-            Object value = adapter.evaluate(node.value());
+    public Void interpret(final RepeatStatement node, final Interpreter interpreter) {
+        interpreter.withNextScope(() -> {
+            final Object value = interpreter.evaluate(node.value());
 
-            boolean isNotNumber = !(value instanceof Number);
+            final boolean isNotNumber = !(value instanceof Number);
 
             if (isNotNumber) {
                 throw new RuntimeException("Repeat Counter must be number");
             }
 
-            int counter = (int) Double.parseDouble(value.toString());
+            final int counter = (int) Double.parseDouble(value.toString());
             for (int i = 0; i < counter; i++) {
                 try {
-                    adapter.execute(node.body());
+                    interpreter.execute(node.body());
                 }
-                catch (MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
-                        break;
-                    }
+                catch (final MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
                 }
             }
         });

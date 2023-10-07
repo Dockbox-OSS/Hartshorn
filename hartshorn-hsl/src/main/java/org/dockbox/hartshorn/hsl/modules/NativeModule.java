@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-
-import java.util.List;
 
 /**
  * A common library containing multiple {@link NativeFunctionStatement}s which can be

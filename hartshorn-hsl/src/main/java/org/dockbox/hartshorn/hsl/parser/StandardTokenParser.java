@@ -204,15 +204,14 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         if (type.standaloneStatement()) {
             throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
         }
-
         return this.expressionStatement();
     }
 
     @Override
     public ExpressionStatement expressionStatement() {
-        final Expression expr = this.expression();
+        final Expression expression = this.expression();
         this.validator.expectAfter(BaseTokenType.SEMICOLON, "expression");
-        return new ExpressionStatement(expr);
+        return new ExpressionStatement(expression);
     }
 
     @Override

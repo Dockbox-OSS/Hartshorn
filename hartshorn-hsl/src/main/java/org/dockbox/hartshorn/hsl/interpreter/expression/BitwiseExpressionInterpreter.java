@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 public class BitwiseExpressionInterpreter extends BitwiseInterpreter<Object, BitwiseExpression> {
 
     @Override
-    public Object interpret(BitwiseExpression node, InterpreterAdapter adapter) {
-        Object left = adapter.evaluate(node.leftExpression());
-        Object right = adapter.evaluate(node.rightExpression());
+    public Object interpret(final BitwiseExpression node, final Interpreter interpreter) {
+        final Object left = interpreter.evaluate(node.leftExpression());
+        final Object right = interpreter.evaluate(node.rightExpression());
         return this.getBitwiseResult(node.operator(), left, right);
     }
 }

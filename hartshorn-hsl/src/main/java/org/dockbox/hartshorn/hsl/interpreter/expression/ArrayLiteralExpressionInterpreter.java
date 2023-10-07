@@ -22,17 +22,17 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 public class ArrayLiteralExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
 
     @Override
-    public Object interpret(ArrayLiteralExpression node, InterpreterAdapter adapter) {
-        Object[] values = new Object[node.elements().size()];
-        List<Expression> elements = node.elements();
+    public Object interpret(final ArrayLiteralExpression node, final Interpreter interpreter) {
+        final Object[] values = new Object[node.elements().size()];
+        final List<Expression> elements = node.elements();
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
-            Expression expression = elements.get(i);
-            values[i] = adapter.evaluate(expression);
+            final Expression expression = elements.get(i);
+            values[i] = interpreter.evaluate(expression);
         }
         return new Array(values);
     }

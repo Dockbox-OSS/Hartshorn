@@ -17,18 +17,18 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
     @Override
-    public Object interpret(LogicalAssignExpression node, InterpreterAdapter adapter) {
-        Token name = node.name();
-        Object left = adapter.lookUpVariable(name, node);
+    public Object interpret(final LogicalAssignExpression node, final Interpreter interpreter) {
+        final Token name = node.name();
+        final Object left = interpreter.lookUpVariable(name, node);
 
-        Object right = adapter.evaluate(node.value());
+        final Object right = interpreter.evaluate(node.value());
 
         Token op = node.assignmentOperator();
         TokenType bitwiseOperator = node.logicalOperator();
@@ -40,12 +40,12 @@ public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Objec
                 .build();
         Object result = this.getBitwiseResult(token, left, right);
 
-        Integer distance = adapter.distance(node);
+        Integer distance = interpreter.distance(node);
         if (distance != null) {
-            adapter.visitingScope().assignAt(distance, name, result);
+            interpreter.visitingScope().assignAt(distance, name, result);
         }
         else {
-            adapter.global().assign(name, result);
+            interpreter.global().assign(name, result);
         }
         return result;
     }

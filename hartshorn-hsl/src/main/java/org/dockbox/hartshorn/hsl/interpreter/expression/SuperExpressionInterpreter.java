@@ -17,21 +17,21 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, SuperExpression> {
 
     @Override
-    public Object interpret(SuperExpression node, InterpreterAdapter adapter) {
-        int distance = adapter.distance(node);
-        ClassReference superClass = (ClassReference) adapter.visitingScope().getAt(node.method(), distance, TokenType.SUPER.representation());
-        InstanceReference object = (InstanceReference) adapter.visitingScope().getAt(node.method(), distance - 1, TokenType.THIS.representation());
+    public Object interpret(final SuperExpression node, final Interpreter interpreter) {
+        int distance = interpreter.distance(node);
+        ClassReference superClass = (ClassReference) interpreter.visitingScope().getAt(node.method(), distance, ObjectTokenType.SUPER.representation());
+        InstanceReference object = (InstanceReference) interpreter.visitingScope().getAt(node.method(), distance - 1, ObjectTokenType.THIS.representation());
         MethodReference method = superClass.method(node.method().lexeme());
 
         if (method == null) {
