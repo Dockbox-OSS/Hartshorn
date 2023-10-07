@@ -26,6 +26,23 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.MutableTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 
+/**
+ * Customizer that allows for the registration of custom statement and expression modules. Custom AST nodes are used to
+ * extend the HSL language with custom syntax. This can be used to add new expressions, statements, or even entire new
+ * languages. All custom nodes must implement the {@link CustomASTNode} interface, which ensures that the node is associated
+ * with a module that defines the required definitions for the node.
+ *
+ * <p>Custom nodes can be used in the same way as any other node, and can be used in any context where the node type is
+ * accepted. This includes expressions and statements. Note that custom nodes are not automatically resolved, if this is
+ * required the {@link ASTExtensionModule#resolver()} method must be overridden to provide a resolver.
+ *
+ * <p>The customizer is applied before tokenizing, and is thus considered mutable until the tokenization phase has been
+ * called. This allows for the registration of custom modules at (JVM) runtime, which is useful for dynamic languages.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
 
     private final Set<StatementModule<?>> statementModules = ConcurrentHashMap.newKeySet();
@@ -45,11 +62,17 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
             this.statementModules.forEach(module -> mutableScriptRuntime.statementParser(module.parser()));
             this.expressionModules.forEach(module -> mutableScriptRuntime.expressionParser(module.parser()));
         }
+        else {
+            throw new IllegalStateException("Cannot customize context, runtime is not mutable");
+        }
 
         TokenRegistry tokenRegistry = context.lexer().tokenRegistry();
         if (tokenRegistry instanceof MutableTokenRegistry mutableTokenRegistry) {
             this.statementModules.forEach(module -> mutableTokenRegistry.addTokens(module.tokenType()));
             this.expressionModules.forEach(module -> mutableTokenRegistry.addTokens(module.tokenType()));
+        }
+        else {
+            throw new IllegalStateException("Cannot customize context, token registry is not mutable");
         }
     }
 

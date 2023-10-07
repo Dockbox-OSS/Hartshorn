@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.extension;
+package org.dockbox.hartshorn.hsl.ast;
 
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+public class VirtualASTNode extends ASTNode {
 
-/**
- * Base module for custom expressions. This class is non-sealed to allow for custom implementations
- * for various use cases. The {@link ExpressionModule} is used to provide access to the required
- * token type, parser, interpreter, and resolver for a custom expression type.
- *
- * @param <T> The type of the custom expression.
- *
- * @since 0.5.0
- *
- * @author Guus Lieben
- */
-public non-sealed interface ExpressionModule<T extends Expression & CustomASTNode<T, Object>> extends ASTExtensionModule<T, Object> {
-
+    public VirtualASTNode(int line, int column) {
+        super(line, column);
+    }
 }
