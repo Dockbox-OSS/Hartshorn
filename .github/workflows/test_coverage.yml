@@ -65,16 +65,5 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Run tests
-        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all --fail-never"
-        continue-on-error: true
-      - name: Code coverage report
-        id: jacoco
-        uses: aGallea/tests-coverage-report@v1
-        with:
-          title: Code coverage
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          update-comment: true
-          jacoco-path: ${{ github.workspace }}/hartshorn-assembly/target/site/jacoco-aggregate/jacoco.xml
-          min-coverage-percentage: 80
-          fail-under-coverage-percentage: true
-          override-comment: true
+        id: test
+        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all -Djacoco.haltOnFailure=true"

@@ -99,13 +99,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
-                <configuration>
-                    <skip>${jacoco.skip}</skip>
-                    <dataFileIncludes>
-                        <dataFileInclude>**/jacoco.exec</dataFileInclude>
-                    </dataFileIncludes>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>
@@ -113,6 +106,24 @@
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>merge-results</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${basedir}/../</directory>
+                                    <includes>
+                                        <include>**/target/jacoco.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <destFile>${project.build.directory}/aggregate.exec</destFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
