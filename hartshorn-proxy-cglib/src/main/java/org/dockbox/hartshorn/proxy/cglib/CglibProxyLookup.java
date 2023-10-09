@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
-import net.sf.cglib.proxy.Enhancer;
-
 import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
+
+import net.sf.cglib.proxy.Enhancer;
 
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.

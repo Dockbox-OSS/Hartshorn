@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
+import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.lookup.StandardProxyLookup;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
 
 import javassist.util.proxy.MethodHandler;

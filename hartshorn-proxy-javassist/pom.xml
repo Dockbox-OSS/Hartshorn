@@ -7,21 +7,21 @@
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-parent</artifactId>
         <version>0.5.0</version>
-        <relativePath>../../hartshorn-assembly/parent/pom.parent.xml</relativePath>
+        <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
     </parent>
 
-    <name>Hartshorn Introspection (JDK Reflection)</name>
-    <artifactId>hartshorn-introspect-reflection</artifactId>
+    <name>Hartshorn Proxy (Javassist)</name>
+    <artifactId>hartshorn-proxy-javassist</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-util</artifactId>
+            <artifactId>hartshorn-introspect</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-introspect</artifactId>
+            <artifactId>hartshorn-proxy</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
@@ -30,10 +30,20 @@
 
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-introspect</artifactId>
+            <artifactId>hartshorn-introspect-reflection</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-proxy</artifactId>
             <version>${hartshorn.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
         </dependency>
     </dependencies>
 </project>

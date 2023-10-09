@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareTypeAdvisorRegistryStep;
+import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -35,7 +36,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @author Guus Lieben
  * @since 0.4.10
  */
-public interface ProxyManager<T> extends Context {
+public interface ProxyManager<T> extends ProxyIntrospector<T>, Context {
 
     /**
      * Returns the {@link ProxyAdvisor} that is responsible for this proxy. The advisor is responsible for providing
@@ -45,36 +46,6 @@ public interface ProxyManager<T> extends Context {
      */
     ProxyAdvisor<T> advisor();
 
-    /**
-     * Returns the original type of the proxy. This is the type of the object that is proxied, but is not the proxied
-     * type itself.
-     *
-     * @return the original type of the proxy
-     */
-    Class<T> targetClass();
-
-    /**
-     * Gets the proxied type of the proxy. This is the type of the object that is proxied, but is not the original
-     * type of the proxy.
-     *
-     * @return the proxied type of the proxy
-     */
-    Class<T> proxyClass();
-
-    /**
-     * Returns the proxy instance managed by this manager.
-     *
-     * @return the proxy instance managed by this manager
-     */
-    T proxy();
-
-    /**
-     * Returns the original instance delegate of the proxy.
-     * @return the original instance delegate of the proxy
-     * @see StateAwareTypeAdvisorRegistryStep#delegate()
-     * @see StateAwareAdvisorRegistry#type()
-     */
-    Option<T> delegate();
 
     /**
      * Returns the {@link ApplicationProxier} that is responsible for managing the lifecycle of proxies in the current
@@ -83,4 +54,13 @@ public interface ProxyManager<T> extends Context {
      * @return the {@link ApplicationProxier}
      */
     ApplicationProxier applicationProxier();
+
+    /**
+     * Returns the original instance delegate of the proxy.
+     * @return the original instance delegate of the proxy
+     * @see StateAwareTypeAdvisorRegistryStep#delegate()
+     * @see StateAwareAdvisorRegistry#type()
+     */
+    @Override
+    Option<T> delegate();
 }
