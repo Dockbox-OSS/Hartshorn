@@ -52,4 +52,16 @@ public class HartshornProxyLookup implements ProxyLookup {
     public boolean isProxy(final Class<?> candidate) {
         return Proxy.class.isAssignableFrom(candidate) && !Proxy.class.equals(candidate);
     }
+
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        if (instance instanceof Proxy<?> proxy) {
+            ProxyManager<?> manager = proxy.manager();
+            if (manager.proxy() == instance) {
+                ProxyManager<T> adjustedManager = TypeUtils.adjustWildcards(manager, ProxyManager.class);
+                return Option.of(adjustedManager);
+            }
+        }
+        return Option.empty();
+    }
 }

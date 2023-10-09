@@ -59,4 +59,10 @@ public class NativeProxyLookup implements ProxyLookup {
     public boolean isProxy(final Class<?> candidate) {
         return Proxy.isProxyClass(candidate);
     }
+
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        // TODO: Can we bind a non-managed proxy to a manager?
+        return Option.empty();
+    }
 }

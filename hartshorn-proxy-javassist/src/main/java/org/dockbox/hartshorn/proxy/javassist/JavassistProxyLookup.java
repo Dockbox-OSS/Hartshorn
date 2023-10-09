@@ -45,4 +45,19 @@ public class JavassistProxyLookup implements StandardProxyLookup {
     public boolean isProxy(final Class<?> candidate) {
         return ProxyFactory.isProxyClass(candidate);
     }
+
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        if (instance instanceof Proxy proxy) {
+            final MethodHandler handler = ProxyFactory.getHandler(proxy);
+            if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
+                ProxyManager<?> manager = javassistProxyMethodHandler.interceptor().manager();
+                if (manager.proxy() == instance) {
+                    ProxyManager<T> adjustedManager = TypeUtils.adjustWildcards(manager, ProxyManager.class);
+                    return Option.of(adjustedManager);
+                }
+            }
+        }
+        return Option.empty();
+    }
 }

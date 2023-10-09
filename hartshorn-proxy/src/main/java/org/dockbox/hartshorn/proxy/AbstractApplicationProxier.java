@@ -99,6 +99,19 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
         return this.proxyLookups.stream().anyMatch(lookup -> lookup.isProxy(candidate));
     }
 
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        for (final ProxyLookup lookup : this.proxyLookups) {
+            if (lookup.isProxy(instance)) {
+                final Option<ProxyIntrospector<T>> introspector = lookup.introspector(instance);
+                if (introspector.present()) {
+                    return introspector;
+                }
+            }
+        }
+        return Option.empty();
+    }
+
     public final void registerProxyLookup(final ProxyLookup proxyLookup) {
         this.proxyLookups.add(proxyLookup);
     }

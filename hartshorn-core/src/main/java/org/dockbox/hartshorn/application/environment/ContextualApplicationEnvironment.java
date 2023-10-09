@@ -16,6 +16,30 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
@@ -44,6 +68,7 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
+import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
@@ -59,30 +84,6 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import jakarta.inject.Singleton;
 
@@ -422,6 +423,11 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     @Override
     public boolean isProxy(Class<?> candidate) {
         return this.applicationProxier.isProxy(candidate);
+    }
+
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        return this.applicationProxier.introspector(instance);
     }
 
     @Override

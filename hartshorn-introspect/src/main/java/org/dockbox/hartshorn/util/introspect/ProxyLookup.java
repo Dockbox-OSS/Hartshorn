@@ -54,4 +54,6 @@ public interface ProxyLookup {
      */
     boolean isProxy(Class<?> candidate);
 
+    <T> Option<ProxyIntrospector<T>> introspector(T instance);
+
 }
