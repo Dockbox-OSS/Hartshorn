@@ -16,29 +16,14 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
@@ -57,30 +42,15 @@ import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.SingleElementContext;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
-import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
-import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,10 +58,11 @@ import org.slf4j.LoggerFactory;
 import jakarta.inject.Singleton;
 
 @LogExclude
-public class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
+public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
 
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
+    private final EnvironmentTypeCollector typeCollector = new EnvironmentTypeCollector(this);
 
     private final FileSystemProvider fileSystemProvider;
     private final ApplicationLogger applicationLogger;
@@ -110,7 +81,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     private Introspector introspector;
 
     private ContextualApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
-        SingleElementContext<ContextualApplicationEnvironment> environmentInitializerContext = context.transform(this);
+        SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
 
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
@@ -123,7 +94,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         this.arguments = this.argumentParser.parse(context.input().arguments());
 
         SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
-        this.stacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
+        this.printStacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
 
         this.isCI = this.checkCI();
@@ -223,41 +194,12 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
     @Override
     public <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation) {
-        return this.types(type -> type.annotations().has(annotation));
+        return this.typeCollector.types(type -> type.annotations().has(annotation));
     }
 
     @Override
     public <T> Collection<TypeView<? extends T>> children(Class<T> parent) {
-        return this.types(type -> type.isChildOf(parent) && !type.is(parent));
-    }
-
-    private <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
-        Option<TypeReferenceCollectorContext> collectorContext = this.applicationContext().first(TypeReferenceCollectorContext.class);
-        if (collectorContext.absent()) {
-            this.log().warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
-            return Collections.emptyList();
-        }
-        try {
-            return collectorContext.get().collector().collect().stream()
-                    .map(reference -> {
-                        try {
-                            return reference.getOrLoad();
-                        }
-                        catch (ClassReferenceLoadException e) {
-                            this.handle(e);
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .map(this::introspect)
-                    .filter(predicate)
-                    .map(reference -> (TypeView<T>) reference)
-                    .collect(Collectors.toSet());
-        }
-        catch (TypeCollectionException e) {
-            this.handle(e);
-            return Collections.emptyList();
-        }
+        return this.typeCollector.types(type -> type.isChildOf(parent) && !type.is(parent));
     }
 
     @Override
@@ -306,13 +248,8 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public ExceptionHandler stacktraces(boolean stacktraces) {
-        return this.exceptionHandler.stacktraces(stacktraces);
-    }
-
-    @Override
-    public Path applicationPath() {
-        return this.applicationFSProvider.applicationPath();
+    public ExceptionHandler printStacktraces(boolean stacktraces) {
+        return this.exceptionHandler.printStacktraces(stacktraces);
     }
 
     @Override
@@ -331,8 +268,8 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public void setDebugActive(boolean active) {
-        this.applicationLogger.setDebugActive(active);
+    public void enableDebugLogging(boolean active) {
+        this.applicationLogger.enableDebugLogging(active);
     }
 
     private void checkForDebugging() {
@@ -342,7 +279,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
                 .map(Boolean::valueOf)
                 .orElse(false));
 
-        this.setDebugActive(debug);
+        this.enableDebugLogging(debug);
     }
 
     @Override

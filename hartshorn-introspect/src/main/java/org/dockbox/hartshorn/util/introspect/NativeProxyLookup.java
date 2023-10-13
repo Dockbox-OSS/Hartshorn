@@ -22,6 +22,9 @@ import java.lang.reflect.Proxy;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxy;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxyIntrospector;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.annotations.PolymorphicAnnotationInvocationHandler;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -43,6 +46,9 @@ public class NativeProxyLookup implements ProxyLookup {
             if(invocationHandler instanceof PolymorphicAnnotationInvocationHandler annotationInvocationHandler) {
                 unproxied = TypeUtils.adjustWildcards(annotationInvocationHandler.annotation().annotationType(), Class.class);
             }
+            else if(invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+                unproxied = TypeUtils.adjustWildcards(adapterProxy.targetAnnotationClass(), Class.class);
+            }
         }
         if(instance instanceof Annotation annotation) {
             unproxied = TypeUtils.adjustWildcards(annotation.annotationType(), Class.class);
@@ -62,7 +68,27 @@ public class NativeProxyLookup implements ProxyLookup {
 
     @Override
     public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
-        // TODO: Can we bind a non-managed proxy to a manager?
-        return Option.empty();
+        final ProxyIntrospector<?> introspector;
+        if(Proxy.isProxyClass(instance.getClass())) {
+            final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+            if(invocationHandler instanceof PolymorphicAnnotationInvocationHandler) {
+                throw new UnsupportedOperationException("Polymorphic annotation proxies are not supported, see the documentation for more information.");
+            }
+            else if(instance instanceof Annotation annotation && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+                introspector = new AnnotationAdapterProxyIntrospector<>(
+                        annotation, adapterProxy);
+            }
+            else {
+                introspector = null;
+            }
+        }
+        else if(instance instanceof Annotation annotation) {
+            introspector = new AnnotationProxyIntrospector<>(annotation);
+        }
+        else {
+            introspector = null;
+        }
+        //noinspection unchecked
+        return Option.of((ProxyIntrospector<T>)introspector);
     }
 }

@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.util.option;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.option.none.None;
-import org.dockbox.hartshorn.util.option.some.Some;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +36,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.transform.Result;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.option.none.None;
+import org.dockbox.hartshorn.util.option.some.Some;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@link #present()} will
@@ -70,7 +70,9 @@ public interface Option<T> extends Iterable<T> {
      */
     @NonNull
     static <T> Option<T> of(final T value) {
-        if (value == null) return new None<>();
+        if (value == null) {
+            return new None<>();
+        }
         return new Some<>(value);
     }
 
@@ -86,7 +88,9 @@ public interface Option<T> extends Iterable<T> {
      */
     @NonNull
     static <T> Option<T> of(final Optional<T> optional) {
-        if (optional.isEmpty()) return new None<>();
+        if (optional.isEmpty()) {
+            return new None<>();
+        }
         return new Some<>(optional.get());
     }
 
@@ -105,7 +109,9 @@ public interface Option<T> extends Iterable<T> {
     static <T> Option<T> of(final Callable<T> supplier) {
         try {
             final T value = supplier.call();
-            if (value == null) return new None<>();
+            if (value == null) {
+                return new None<>();
+            }
             return new Some<>(value);
         }
         catch (final Exception e) {

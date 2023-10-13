@@ -16,22 +16,19 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import java.util.Objects;
+import java.util.Set;
+
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCollector {
 
     private static final MultiMap<String, TypeReference> BATCH_CACHE = new ConcurrentSetMultiMap<>();
-
     private final String packageName;
-    private final Set<TypeReference> cache = ConcurrentHashMap.newKeySet();
 
     protected ClasspathTypeReferenceCollector(final String packageName) {
         this.packageName = packageName;
@@ -54,8 +51,12 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
 
     @Override
     public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (!(other instanceof final ClasspathTypeReferenceCollector collector)) return false;
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof final ClasspathTypeReferenceCollector collector)) {
+            return false;
+        }
         return this.packageName.equals(collector.packageName);
     }
 
