@@ -38,9 +38,7 @@ import java.util.Properties;
 public interface ApplicationEnvironment extends
         ContextCarrier,
         ApplicationLogger,
-        ApplicationFSProvider,
         ExceptionHandler,
-        ClasspathResourceLocator
 {
 
     /**
@@ -52,6 +50,24 @@ public interface ApplicationEnvironment extends
      * @return The proxy orchestrator
      */
     ProxyOrchestrator proxyOrchestrator();
+
+    /**
+     * Gets the {@link FileSystemProvider file system provider} for the current environment. The provider is
+     * responsible for all file system operations within the environment. This may or may not be the same as the binding
+     * for {@link FileSystemProvider}, but is typically the same.
+     *
+     * @return The file system provider
+     */
+    FileSystemProvider fileSystem();
+
+    /**
+     * Gets the {@link ClasspathResourceLocator} for the current environment. The locator is responsible for locating
+     * resources on the classpath, and is typically used for loading configuration files and similar bundled resources.
+     * This may or may not be the same as the binding for {@link ClasspathResourceLocator}, but is typically the same.
+     *
+     * @return The classpath resource locator
+     */
+    ClasspathResourceLocator classpath();
 
     /**
      * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible

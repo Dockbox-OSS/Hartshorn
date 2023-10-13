@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 
 /**
- * A {@link ApplicationFSProvider} that uses a temporary directory for the application's files.
+ * A {@link FileSystemProvider} that uses a temporary directory for the application's files.
  */
-public class JUnitFSProvider implements ApplicationFSProvider {
+public class TemporaryFileSystemProvider implements FileSystemProvider {
 
     private final Path applicationPath;
 
@@ -34,7 +34,7 @@ public class JUnitFSProvider implements ApplicationFSProvider {
         return this.applicationPath;
     }
 
-    public JUnitFSProvider() {
+    public TemporaryFileSystemProvider() {
         try {
             this.applicationPath = Files.createTempDirectory("hartshorn");
             this.applicationPath.toFile().deleteOnExit();

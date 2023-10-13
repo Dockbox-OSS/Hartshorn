@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.config.annotations.FileSource;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,10 +34,10 @@ import jakarta.inject.Inject;
 
 public class PathSerializationSourceConverter implements SerializationSourceConverter {
 
-    private final ApplicationFSProvider fileSystem;
+    private final FileSystemProvider fileSystem;
 
     @Inject
-    public PathSerializationSourceConverter(final ApplicationFSProvider fileSystem) {
+    public PathSerializationSourceConverter(final FileSystemProvider fileSystem) {
         this.fileSystem = fileSystem;
     }
 

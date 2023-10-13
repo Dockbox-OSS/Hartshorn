@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.config;
 
+import java.nio.file.Path;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -23,8 +25,6 @@ import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
 
 import jakarta.inject.Inject;
 
@@ -68,7 +68,7 @@ public abstract class SerializationTests {
     }
 
     private Path path() {
-        return this.applicationContext.environment().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
+        return this.applicationContext.environment().fileSystem().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
     }
 
     @Test

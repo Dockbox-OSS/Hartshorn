@@ -255,7 +255,7 @@ public class HartshornLifecycleExtension implements
                 environment.enableBanner(); // Disable banner for tests, to avoid unnecessary noise
                 environment.enableBatchMode(); // Enable batch mode, to make use of additional caching
                 environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
-                environment.applicationFSProvider(new JUnitFSProvider());
+                environment.applicationFSProvider(new TemporaryFileSystemProvider());
 
                 Customizer<SimpleApplicationContext.Configurer> applicationContextCustomizer = applicationContext -> {
                     configureDefaultBindings(applicationContext, testComponentSources);

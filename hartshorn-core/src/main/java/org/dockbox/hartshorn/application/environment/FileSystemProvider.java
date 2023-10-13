@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.application.environment;
 import java.nio.file.Path;
 
 /**
- * A {@link ApplicationFSProvider} is responsible for providing the base- or working directory of an
+ * A {@link FileSystemProvider} is responsible for providing the base- or working directory of an
  * application.
  *
  * @author Guus Lieben
  * @since 0.4.8
  */
 @FunctionalInterface
-public interface ApplicationFSProvider {
+public interface FileSystemProvider {
 
     /**
      * Returns the base- or working directory of the application.

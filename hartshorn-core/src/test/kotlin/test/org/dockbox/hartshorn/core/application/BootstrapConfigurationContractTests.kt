@@ -16,25 +16,13 @@
 
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.application.ApplicationContextConstructor
-import org.dockbox.hartshorn.application.DefaultBindingConfigurer
-import org.dockbox.hartshorn.application.ExceptionHandler
-import org.dockbox.hartshorn.application.StandardApplicationBuilder
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor
+import org.dockbox.hartshorn.application.*
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext
 import org.dockbox.hartshorn.application.context.DependencyGraphInitializer
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator
-import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment
-import org.dockbox.hartshorn.component.ComponentLocator
-import org.dockbox.hartshorn.component.ComponentPostConstructor
-import org.dockbox.hartshorn.component.ComponentPostConstructorImpl
-import org.dockbox.hartshorn.component.ComponentProvider
-import org.dockbox.hartshorn.component.ScopeAwareComponentProvider
+import org.dockbox.hartshorn.application.environment.*
+import org.dockbox.hartshorn.component.*
 import org.dockbox.hartshorn.component.condition.ConditionMatcher
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
@@ -112,7 +100,7 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: ProxyOrchestrator? -> configurer.applicationOrchestrator(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationOrchestrator(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationFSProvider? -> configurer.applicationFSProvider(deferred) }
+        assertDeferred(instance) { configurer, deferred: FileSystemProvider? -> configurer.applicationFSProvider(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationFSProvider(initializer) }
 
         assertDeferred(instance) { configurer, deferred: ExceptionHandler? -> configurer.exceptionHandler(deferred) }

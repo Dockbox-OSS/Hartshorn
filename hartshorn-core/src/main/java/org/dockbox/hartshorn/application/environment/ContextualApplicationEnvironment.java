@@ -93,7 +93,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
 
-    private final ApplicationFSProvider applicationFSProvider;
+    private final FileSystemProvider fileSystemProvider;
     private final ApplicationLogger applicationLogger;
     private final ProxyOrchestrator proxyOrchestrator;
     private final ExceptionHandler exceptionHandler;
@@ -116,7 +116,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
         this.applicationLogger = this.configure(environmentInitializerContext, configurer.applicationLogger);
-        this.applicationFSProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
+        this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
         this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
         this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
 
@@ -145,7 +145,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
     }
 
-    private <T> T configure(SingleElementContext<ContextualApplicationEnvironment> context, ContextualInitializer<ApplicationEnvironment, T> initializer) {
+    private <I, T> T configure(SingleElementContext<I> context, ContextualInitializer<I, T> initializer) {
         T instance = initializer.initialize(context);
         return this.configure(instance);
     }
@@ -170,8 +170,8 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
                 || System.getenv().containsKey("APPVEYOR");
     }
 
-    public ApplicationFSProvider applicationFSProvider() {
-        return this.applicationFSProvider;
+    public FileSystemProvider applicationFSProvider() {
+        return this.fileSystemProvider;
     }
 
     public ApplicationLogger applicationLogger() {
@@ -184,6 +184,16 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
     public AnnotationLookup annotationLookup() {
         return this.annotationLookup;
+    }
+
+    @Override
+    public FileSystemProvider fileSystem() {
+        return this.fileSystemProvider;
+    }
+
+    @Override
+    public ClasspathResourceLocator classpath() {
+        return this.resourceLocator;
     }
 
     @Override
@@ -392,29 +402,15 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         return this;
     }
 
-    @Override
-    public Attempt<Path, IOException> resource(String name) {
-        return this.resourceLocator.resource(name);
-    }
-
-    @Override
-    public Set<Path> resources(String name) {
-        return this.resourceLocator.resources(name);
-    }
-
-    @Override
-    public URI classpathUri() {
-        return this.resourceLocator.classpathUri();
-    }
-
     public static class Configurer {
 
         private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
         private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
 
-        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider = ContextualInitializer.of(ApplicationFSProviderImpl::new);
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = context -> DefaultProxyOrchestratorLoader.create(Customizer.useDefaults()).initialize(context);
+        private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(
+                PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger = AutoSwitchingApplicationLogger.create(Customizer.useDefaults());
@@ -541,26 +537,26 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
         }
 
         /**
-         * Sets the {@link ApplicationFSProvider} to use. The {@link ApplicationFSProvider} is responsible for
-         * providing the application's file system. The default implementation is {@link ApplicationFSProviderImpl}.
+         * Sets the {@link FileSystemProvider} to use. The {@link FileSystemProvider} is responsible for
+         * providing the application's file system. The default implementation is {@link PathFileSystemProvider}.
          *
-         * @param applicationFSProvider the {@link ApplicationFSProvider} to use
-         * @see ApplicationFSProvider
+         * @param fileSystemProvider the {@link FileSystemProvider} to use
+         * @see FileSystemProvider
          * @return the current {@link Configurer} instance
          */
-        public Configurer applicationFSProvider(ApplicationFSProvider applicationFSProvider) {
-            return this.applicationFSProvider(ContextualInitializer.of(applicationFSProvider));
+        public Configurer applicationFSProvider(FileSystemProvider fileSystemProvider) {
+            return this.applicationFSProvider(ContextualInitializer.of(fileSystemProvider));
         }
 
         /**
-         * Sets the {@link ApplicationFSProvider} to use. The {@link ApplicationFSProvider} is responsible for
-         * providing the application's file system. The default implementation is {@link ApplicationFSProviderImpl}.
+         * Sets the {@link FileSystemProvider} to use. The {@link FileSystemProvider} is responsible for
+         * providing the application's file system. The default implementation is {@link PathFileSystemProvider}.
          *
-         * @param applicationFSProvider the {@link ApplicationFSProvider} to use
-         * @see ApplicationFSProvider
+         * @param applicationFSProvider the {@link FileSystemProvider} to use
+         * @see FileSystemProvider
          * @return the current {@link Configurer} instance
          */
-        public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationFSProvider> applicationFSProvider) {
+        public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider) {
             this.applicationFSProvider = applicationFSProvider;
             return this;
         }

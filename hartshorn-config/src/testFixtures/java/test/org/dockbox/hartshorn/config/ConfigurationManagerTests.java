@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.config;
 
+import java.nio.file.Path;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
@@ -28,9 +31,6 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import jakarta.inject.Inject;
 
@@ -112,7 +112,7 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoFSConfiguration.class)
     void testFsConfigurations() {
-        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().applicationPath(), "junit");
+        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().fileSystem().applicationPath(), "junit");
         final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
         objectMapper.write(file, """
                 junit:

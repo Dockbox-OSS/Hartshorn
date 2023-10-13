@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
@@ -79,8 +79,8 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ApplicationEnvironment.class).singleton(environment);
         binder.bind(ProxyLookup.class).singleton(environment);
         binder.bind(ApplicationLogger.class).singleton(environment);
-        binder.bind(ApplicationFSProvider.class).singleton(environment);
         binder.bind(ProxyOrchestrator.class).singleton(environment);
+        binder.bind(FileSystemProvider.class).singleton(environment);
         binder.bind(AnnotationLookup.class).singleton(environment);
         binder.bind(ClasspathResourceLocator.class).singleton(environment);
 

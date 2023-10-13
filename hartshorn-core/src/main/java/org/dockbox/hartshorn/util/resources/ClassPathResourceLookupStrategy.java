@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 
 /**
  * Looks up a resource through the classpath. The packaged resource is copied to a temporary file, created and managed
@@ -40,11 +40,11 @@ public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
     @Override
     public Set<URI> lookup(final ApplicationContext context, final String path) {
-        return context.get(ClasspathResourceLocator.class).resources(path).stream().map(Path::toUri).collect(Collectors.toSet());
+        return context.environment().classpath().resources(path).stream().map(Path::toUri).collect(Collectors.toSet());
     }
 
     @Override
     public URI baseUrl(final ApplicationContext context) {
-        return context.get(ClasspathResourceLocator.class).classpathUri();
+        return context.environment().classpath().classpathUri();
     }
 }

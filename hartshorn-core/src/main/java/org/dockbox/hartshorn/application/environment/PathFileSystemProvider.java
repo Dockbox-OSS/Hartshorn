@@ -20,12 +20,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * A {@link ApplicationFSProviderImpl} that uses the current working directory as the root.
+ * A {@link PathFileSystemProvider} that uses the current working directory as the root.
  *
  * @author Guus Lieben
  * @since 0.4.8
  */
-public class ApplicationFSProviderImpl implements ApplicationFSProvider {
+public class PathFileSystemProvider implements FileSystemProvider {
 
     @Override
     public Path applicationPath() {

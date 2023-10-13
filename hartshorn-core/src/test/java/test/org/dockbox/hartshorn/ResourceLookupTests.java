@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +38,7 @@ public class ResourceLookupTests {
     private ResourceLookup resourceLookup;
 
     @Inject
-    private ApplicationFSProvider fileSystemProvider;
+    private FileSystemProvider fileSystemProvider;
 
     @Test
     void testClasspathLookup() {
