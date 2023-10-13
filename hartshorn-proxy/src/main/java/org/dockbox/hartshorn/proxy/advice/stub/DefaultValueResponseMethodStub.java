@@ -33,7 +33,7 @@ public class DefaultValueResponseMethodStub<T> implements MethodStub<T> {
     public Object invoke(final MethodStubContext<T> stubContext) {
         final Class<?> returnType = stubContext.target().returnType();
         final TypeView<?> introspectedType = stubContext.manager()
-                .applicationProxier()
+                .orchestrator()
                 .introspector()
                 .introspect(returnType);
         return introspectedType.defaultOrNull();

@@ -77,8 +77,8 @@ public interface ProxyObject<T> {
     default boolean proxyEquals(final Object obj) {
         if (obj == null) return false;
         return Boolean.TRUE.equals(this.manager().delegate().map(delegate -> {
-            if (this.manager().applicationProxier().isProxy(obj)) {
-                return this.manager().applicationProxier().manager(obj)
+            if (this.manager().orchestrator().isProxy(obj)) {
+                return this.manager().orchestrator().manager(obj)
                         .flatMap(ProxyManager::delegate)
                         .map(delegate::equals)
                         .orElse(false);

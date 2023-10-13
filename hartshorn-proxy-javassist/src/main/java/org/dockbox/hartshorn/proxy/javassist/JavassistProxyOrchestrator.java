@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
+import org.dockbox.hartshorn.proxy.AbstractProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
-public class JavassistApplicationProxier extends AbstractApplicationProxier {
+public class JavassistProxyOrchestrator extends AbstractProxyOrchestrator {
 
-    public JavassistApplicationProxier(final Introspector introspector) {
+    public JavassistProxyOrchestrator(final Introspector introspector) {
         super(introspector);
         this.registerProxyLookup(new JavassistProxyLookup());
     }

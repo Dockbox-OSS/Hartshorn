@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.proxy.cglib;
+package org.dockbox.hartshorn.proxy.javassist;
 
 import org.dockbox.hartshorn.discovery.ServiceLoader;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
-/**
- * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
- *             It is recommended to use Javassist instead, through the
- *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxierLoader}.
- */
-@Deprecated(since = "0.5.0")
-@ServiceLoader(ApplicationProxierLoader.class)
-public class CglibApplicationProxierLoader implements ApplicationProxierLoader {
+@ServiceLoader(ProxyOrchestratorLoader.class)
+public class JavassistProxyOrchestratorLoader implements ProxyOrchestratorLoader {
+
     @Override
-    public ApplicationProxier create(final Introspector introspector) {
-        return new CglibApplicationProxier(introspector);
+    public ProxyOrchestrator create(final Introspector introspector) {
+        return new JavassistProxyOrchestrator(introspector);
     }
 }

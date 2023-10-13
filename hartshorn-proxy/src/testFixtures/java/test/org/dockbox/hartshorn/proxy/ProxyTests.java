@@ -16,11 +16,16 @@
 
 package test.org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
@@ -38,24 +43,19 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
 import test.org.dockbox.hartshorn.proxy.types.ConcreteProxyTarget;
 import test.org.dockbox.hartshorn.proxy.types.FinalProxyTarget;
 
 @SuppressWarnings("unchecked")
 public abstract class ProxyTests {
 
-    protected abstract ApplicationProxierLoader proxierLoader();
+    protected abstract ProxyOrchestratorLoader orchestratorLoader();
     protected abstract Introspector introspector();
 
     @Test
     void testConcreteMethodsCanBeProxied() throws ApplicationException, NoSuchMethodException {
         final Method name = ConcreteProxyTarget.class.getMethod("name");
-        final ProxyFactory<ConcreteProxyTarget> handler = this.proxierLoader().create(this.introspector()).factory(ConcreteProxyTarget.class);
+        final ProxyFactory<ConcreteProxyTarget> handler = this.orchestratorLoader().create(this.introspector()).factory(ConcreteProxyTarget.class);
         handler.advisors().method(name).intercept(context -> "Hartshorn");
         final ConcreteProxyTarget proxy = handler.proxy().get();
 
@@ -67,7 +67,7 @@ public abstract class ProxyTests {
     @Test
     void testFinalMethodsCanNotBeProxied() throws NoSuchMethodException {
         final Method name = FinalProxyTarget.class.getMethod("name");
-        final ProxyFactory<FinalProxyTarget> handler = this.proxierLoader()
+        final ProxyFactory<FinalProxyTarget> handler = this.orchestratorLoader()
                 .create(this.introspector())
                 .factory(FinalProxyTarget.class);
 
@@ -88,28 +88,28 @@ public abstract class ProxyTests {
     @Test
     void testRecordProxyCannotBeCreated() {
         // Records are final and cannot be proxied
-        final ProxyFactory<RecordProxy> handler = this.proxierLoader().create(this.introspector()).factory(RecordProxy.class);
+        final ProxyFactory<RecordProxy> handler = this.orchestratorLoader().create(this.introspector()).factory(RecordProxy.class);
         Assertions.assertThrows(ProxyConstraintViolationException.class, handler::proxy);
     }
 
     @Test
     void testSealedClassProxyCannotBeCreated() {
         // Sealed classes only allow for a limited number of subclasses and should not be proxied
-        final ProxyFactory<SealedProxy> handler = this.proxierLoader().create(this.introspector()).factory(SealedProxy.class);
+        final ProxyFactory<SealedProxy> handler = this.orchestratorLoader().create(this.introspector()).factory(SealedProxy.class);
         Assertions.assertThrows(ProxyConstraintViolationException.class, handler::proxy);
     }
 
     @Test
     void testFinalClassProxyCannotBeCreated() {
         // Final classes cannot be extended and should not be proxied
-        final ProxyFactory<FinalProxy> handler = this.proxierLoader().create(this.introspector()).factory(FinalProxy.class);
+        final ProxyFactory<FinalProxy> handler = this.orchestratorLoader().create(this.introspector()).factory(FinalProxy.class);
         Assertions.assertThrows(ProxyConstraintViolationException.class, handler::proxy);
     }
 
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testEmptyProxyCanCreate(final Class<? extends InterfaceProxy> proxyParent) throws ApplicationException {
-        final ProxyFactory<? extends InterfaceProxy> handler = this.proxierLoader().create(this.introspector()).factory(proxyParent);
+        final ProxyFactory<? extends InterfaceProxy> handler = this.orchestratorLoader().create(this.introspector()).factory(proxyParent);
         final InterfaceProxy proxy = handler.proxy().get();
         Assertions.assertNotNull(proxy);
     }
@@ -117,7 +117,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testMethodsCanBeDelegatedToOriginalInstance(final Class<InterfaceProxy> proxyType) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         factory.advisors().type().delegate(new ConcreteProxy());
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -128,7 +128,7 @@ public abstract class ProxyTests {
 
     @Test
     void testConcreteProxyWithNonDefaultConstructorUsesConstructor() {
-        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor> factory = this.proxierLoader().create(this.introspector()).factory(ConcreteProxyWithNonDefaultConstructor.class);
+        final StateAwareProxyFactory<ConcreteProxyWithNonDefaultConstructor> factory = this.orchestratorLoader().create(this.introspector()).factory(ConcreteProxyWithNonDefaultConstructor.class);
 
         final TypeView<ConcreteProxyWithNonDefaultConstructor> typeView = this.introspector().introspect(ConcreteProxyWithNonDefaultConstructor.class);
         final ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor = typeView.constructors().all().get(0);
@@ -142,7 +142,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testMethodsCanBeIntercepted(final Class<? extends InterfaceProxy> proxyType) throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<? extends InterfaceProxy> factory = this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<? extends InterfaceProxy> factory = this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         factory.advisors().method(proxyType.getMethod("name")).intercept(context -> "Hartshorn");
         final Option<? extends InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -154,7 +154,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testMethodsCanBeDelegated(final Class<? extends InterfaceProxy> proxyType) throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         factory.advisors().method(proxyType.getMethod("name")).delegate(new ConcreteProxy());
         final Option<? extends InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -166,7 +166,7 @@ public abstract class ProxyTests {
     @Test
     void testTypesCanBeDelegated() throws ApplicationException {
         // Use a custom interface for this type of delegation, as the other proxy types override methods from their parent
-        final ProxyFactory<NamedAgedProxy> factory = this.proxierLoader().create(this.introspector()).factory(NamedAgedProxy.class);
+        final ProxyFactory<NamedAgedProxy> factory = this.orchestratorLoader().create(this.introspector()).factory(NamedAgedProxy.class);
         factory.advisors().type(AgedProxy.class).delegate(() -> 12);
         factory.advisors().type(NamedProxy.class).delegate(() -> "NamedProxy");
         final Option<NamedAgedProxy> proxy = factory.proxy();
@@ -180,7 +180,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testWrapperInterceptionIsCorrect(final Class<? extends InterfaceProxy> proxyType) throws NoSuchMethodException, ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         final AtomicInteger count = new AtomicInteger();
         factory.advisors().method(proxyType.getMethod("name")).intercept(context -> "done");
         factory.advisors().method(proxyType.getMethod("name")).wrapAround(new MethodWrapper<>() {
@@ -211,7 +211,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testErrorWrapperInterceptionIsCorrect(final Class<? extends InterfaceProxy> proxyType) throws NoSuchMethodException, ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory((proxyType));
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory((proxyType));
         final AtomicInteger count = new AtomicInteger();
         factory.advisors().method(proxyType.getMethod("name")).intercept(context -> {
             throw new IllegalStateException("not done");
@@ -247,7 +247,7 @@ public abstract class ProxyTests {
 
     @Test
     void testProxyManagerTracksInterceptorsAndDelegates() throws NoSuchMethodException, ApplicationException {
-        final ProxyFactory<NamedAgedProxy> factory = this.proxierLoader().create(this.introspector()).factory(NamedAgedProxy.class);
+        final ProxyFactory<NamedAgedProxy> factory = this.orchestratorLoader().create(this.introspector()).factory(NamedAgedProxy.class);
 
         final AgedProxy aged = () -> 12;
         factory.advisors().type(AgedProxy.class).delegate(aged);
@@ -278,7 +278,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testProxyCanHaveExtraInterfaces(final Class<? extends InterfaceProxy> proxyType) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         factory.implement(DescribedProxy.class);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -291,7 +291,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testProxiesAlwaysImplementProxyType(final Class<? extends InterfaceProxy> proxyType) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
         final InterfaceProxy proxyInstance = proxy.get();
@@ -301,7 +301,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testProxiesExposeManager(final Class<? extends InterfaceProxy> proxyType) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -312,7 +312,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testProxyManagerExposesTargetAndProxyType(final Class<? extends InterfaceProxy> proxyType) throws ApplicationException {
-        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.proxierLoader().create(this.introspector()).factory(proxyType);
+        final ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         final Option<InterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -323,7 +323,7 @@ public abstract class ProxyTests {
         Assertions.assertNotEquals(proxyType, manager.proxyClass());
         Assertions.assertSame(proxyType, manager.targetClass());
 
-        Assertions.assertTrue(manager.applicationProxier().isProxy(manager.proxyClass()));
+        Assertions.assertTrue(manager.orchestrator().isProxy(manager.proxyClass()));
     }
 
     @Test
@@ -355,7 +355,7 @@ public abstract class ProxyTests {
 
     @Test
     public void testConcreteClassProxyWithNonEqualsImplementedDelegateDoesNotEqual() throws ApplicationException {
-        final CheckedSupplier<DemoServiceC> supplier = () -> this.proxierLoader().create(this.introspector())
+        final CheckedSupplier<DemoServiceC> supplier = () -> this.orchestratorLoader().create(this.introspector())
                 .factory(DemoServiceC.class)
                 .advisors(advisors -> advisors.type().delegate(new DemoServiceC()))
                 .proxy()
@@ -370,7 +370,7 @@ public abstract class ProxyTests {
 
     @Test
     void testConcreteClassProxyWithDelegateDoesNotEqual() throws ApplicationException {
-        final CheckedSupplier<DemoServiceD> supplier = () -> this.proxierLoader().create(this.introspector())
+        final CheckedSupplier<DemoServiceD> supplier = () -> this.orchestratorLoader().create(this.introspector())
                 .factory(DemoServiceD.class)
                 .advisors(advisors -> advisors.type().delegate(new DemoServiceD("name")))
                 .proxy()
@@ -384,7 +384,7 @@ public abstract class ProxyTests {
     }
 
     private <T> T createProxy(final Class<T> type) throws ApplicationException {
-        return this.proxierLoader().create(this.introspector()).factory(type).proxy().get();
+        return this.orchestratorLoader().create(this.introspector()).factory(type).proxy().get();
     }
 
     public interface DemoServiceA { }
@@ -402,8 +402,8 @@ public abstract class ProxyTests {
 
         @SuppressWarnings("unused")
         public DemoServiceD() {
-            // Default constructor for proxier. Note that this is typically handled by providing a constructor to the
-            // proxier factory, but this is a test, so we're not doing that.
+            // Default constructor for proxying. Note that this is typically handled by providing a constructor to the
+            // proxy factory, but this is a test, so we're not doing that.
         }
 
         @Override
@@ -417,7 +417,7 @@ public abstract class ProxyTests {
 
     @Test
     void testConcreteProxySelfEquality() throws ApplicationException {
-        final ProxyFactory<EqualProxy> factory = this.proxierLoader().create(this.introspector()).factory(EqualProxy.class);
+        final ProxyFactory<EqualProxy> factory = this.orchestratorLoader().create(this.introspector()).factory(EqualProxy.class);
         final Option<EqualProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -428,14 +428,14 @@ public abstract class ProxyTests {
 
     @Test
     void testServiceSelfEquality() throws ApplicationException {
-        final EqualServiceProxy service = this.proxierLoader().create(this.introspector()).factory(EqualServiceProxy.class).proxy().get();
+        final EqualServiceProxy service = this.orchestratorLoader().create(this.introspector()).factory(EqualServiceProxy.class).proxy().get();
         Assertions.assertEquals(service, service);
         Assertions.assertTrue(service.test(service));
     }
 
     @Test
     void testInterfaceProxySelfEquality() throws ApplicationException {
-        final ProxyFactory<EqualInterfaceProxy> factory = this.proxierLoader().create(this.introspector()).factory(EqualInterfaceProxy.class);
+        final ProxyFactory<EqualInterfaceProxy> factory = this.orchestratorLoader().create(this.introspector()).factory(EqualInterfaceProxy.class);
         final Option<EqualInterfaceProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
@@ -447,7 +447,7 @@ public abstract class ProxyTests {
     @Test
     void testLambdaCanBeProxied() throws NoSuchMethodException, ApplicationException {
         final Class<Supplier<String>> supplierClass = (Class<Supplier<String>>) (Class<?>) Supplier.class;
-        final StateAwareProxyFactory<Supplier<String>> factory = this.proxierLoader().create(this.introspector()).factory(supplierClass);
+        final StateAwareProxyFactory<Supplier<String>> factory = this.orchestratorLoader().create(this.introspector()).factory(supplierClass);
         factory.advisors().method(Supplier.class.getMethod("get")).intercept(context -> "foo");
         final Option<Supplier<String>> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
@@ -457,23 +457,23 @@ public abstract class ProxyTests {
     @Test
     void testIsProxyIsTrueIfTypeIsProxy() throws ApplicationException {
         final Introspector introspector = this.introspector();
-        final ApplicationProxier proxier = this.proxierLoader().create(introspector);
-        final ProxyFactory<?> factory = proxier.factory(Object.class);
+        final ProxyOrchestrator orchestrator = this.orchestratorLoader().create(introspector);
+        final ProxyFactory<?> factory = orchestrator.factory(Object.class);
         final Object proxy = factory.proxy().get();
 
-        final boolean instanceIsProxy = proxier.isProxy(proxy);
+        final boolean instanceIsProxy = orchestrator.isProxy(proxy);
         Assertions.assertTrue(instanceIsProxy);
 
-        final boolean typeIsProxy = proxier.isProxy(proxy.getClass());
+        final boolean typeIsProxy = orchestrator.isProxy(proxy.getClass());
         Assertions.assertTrue(typeIsProxy);
     }
 
     @Test
     void testIsProxyIsFalseIfTypeIsNormal() {
         final Introspector introspector = this.introspector();
-        final ApplicationProxier proxier = this.proxierLoader().create(introspector);
+        final ProxyOrchestrator orchestrator = this.orchestratorLoader().create(introspector);
         final TypeView<?> view = introspector.introspect(Object.class);
-        final boolean isProxy = proxier.isProxy(view);
+        final boolean isProxy = orchestrator.isProxy(view);
         Assertions.assertFalse(isProxy);
     }
 }

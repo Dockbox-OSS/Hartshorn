@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.lang.reflect.Method;
+
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.proxy.advice.RegistryProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
+import org.dockbox.hartshorn.proxy.advice.RegistryProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Method;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
@@ -51,7 +51,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         }
     }
 
-    private final ApplicationProxier applicationProxier;
+    private final ProxyOrchestrator proxyOrchestrator;
     private final RegistryProxyAdvisor<T> advisor;
 
     private Class<T> proxyClass;
@@ -59,17 +59,17 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     private T proxy;
 
     public LazyProxyManager(final DefaultProxyFactory<T> proxyFactory) {
-        this(proxyFactory.applicationProxier(), null, proxyFactory.type(), proxyFactory.advisors());
+        this(proxyFactory.orchestrator(), null, proxyFactory.type(), proxyFactory.advisors());
     }
 
-    public LazyProxyManager(final ApplicationProxier proxier, final Class<T> proxyClass, final Class<T> targetClass,
+    public LazyProxyManager(final ProxyOrchestrator proxyOrchestrator, final Class<T> proxyClass, final Class<T> targetClass,
                             final StateAwareAdvisorRegistry<T> advisors) {
-        this.applicationProxier = proxier;
+        this.proxyOrchestrator = proxyOrchestrator;
 
-        if (this.applicationProxier.isProxy(targetClass)) {
+        if (this.proxyOrchestrator.isProxy(targetClass)) {
             throw new IllegalArgumentException("Target class is already a proxy");
         }
-        if (proxyClass != null && !this.applicationProxier.isProxy(proxyClass)) {
+        if (proxyClass != null && !this.proxyOrchestrator.isProxy(proxyClass)) {
             throw new IllegalArgumentException("Proxy class is not a proxy");
         }
 
@@ -84,7 +84,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         if (this.proxy != null) {
             throw new IllegalModificationException("Proxy instance already set.");
         }
-        if (!this.applicationProxier.isProxy(proxy)) {
+        if (!this.proxyOrchestrator.isProxy(proxy)) {
             throw new IllegalArgumentException("Provided object is not a proxy");
         }
         this.proxy = proxy;
@@ -117,8 +117,8 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     }
 
     @Override
-    public ApplicationProxier applicationProxier() {
-        return this.applicationProxier;
+    public ProxyOrchestrator orchestrator() {
+        return this.proxyOrchestrator;
     }
 
     @Override

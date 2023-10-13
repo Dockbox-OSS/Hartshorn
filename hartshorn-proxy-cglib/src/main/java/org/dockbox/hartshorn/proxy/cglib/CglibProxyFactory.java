@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
+import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
+import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
+import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
+
 import net.sf.cglib.core.NamingPolicy;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
-
-import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
-import org.dockbox.hartshorn.proxy.JDKInterfaceProxyFactory;
-import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
-import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
-import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
@@ -36,8 +36,8 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
     private static final NamingPolicy NAMING_POLICY = (prefix, className, key, names) -> nameGenerator.get(prefix);
 
-    public CglibProxyFactory(final Class<T> type, final CglibApplicationProxier applicationProxier) {
-        super(type, applicationProxier);
+    public CglibProxyFactory(final Class<T> type, final CglibProxyOrchestrator proxyOrchestrator) {
+        super(type, proxyOrchestrator);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class CglibProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         enhancer.setClassLoader(this.defaultClassLoader());
 
         enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> {
-            final MethodInvokable realMethod = new MethodInvokable(method, this.applicationProxier().introspector());
-            final Invokable proxyMethod = new CglibProxyMethodInvokable(this.applicationProxier().introspector(), proxy, obj, method);
+            final MethodInvokable realMethod = new MethodInvokable(method, this.orchestrator().introspector());
+            final Invokable proxyMethod = new CglibProxyMethodInvokable(this.orchestrator().introspector(), proxy, obj, method);
             return interceptor.intercept(obj, realMethod, proxyMethod, args);
         });
         return new CglibProxyConstructorFunction<>(this.type(), enhancer);

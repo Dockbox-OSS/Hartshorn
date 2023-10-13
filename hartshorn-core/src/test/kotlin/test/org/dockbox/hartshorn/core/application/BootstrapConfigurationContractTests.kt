@@ -45,7 +45,7 @@ import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder
 import org.dockbox.hartshorn.introspect.ViewContextAdapter
 import org.dockbox.hartshorn.logging.ApplicationLogger
 import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger
-import org.dockbox.hartshorn.proxy.ApplicationProxier
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
 import org.dockbox.hartshorn.util.Initializer
@@ -109,8 +109,8 @@ class BootstrapConfigurationContractTests {
         assertCustom(instance) { configurer -> configurer.showStacktraces() }
         assertCustom(instance) { configurer -> configurer.hideStacktraces() }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationProxier? -> configurer.applicationProxier(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationProxier(initializer) }
+        assertDeferred(instance) { configurer, deferred: ProxyOrchestrator? -> configurer.applicationOrchestrator(deferred) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationOrchestrator(initializer) }
 
         assertDeferred(instance) { configurer, deferred: ApplicationFSProvider? -> configurer.applicationFSProvider(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationFSProvider(initializer) }

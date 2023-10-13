@@ -17,23 +17,23 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.discovery.DiscoveryService;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
-public final class DefaultApplicationProxierLoader {
+public final class DefaultProxyOrchestratorLoader {
 
-    private DefaultApplicationProxierLoader() {
+    private DefaultProxyOrchestratorLoader() {
         throw new UnsupportedOperationException();
     }
 
-    public static ContextualInitializer<Introspector, ApplicationProxier> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<Introspector, ProxyOrchestrator> create(Customizer<Configurer> customizer) {
         return context -> {
             // Call, but ignore the result of the customizer for now
             customizer.configure(new Configurer());
-            ApplicationProxierLoader loader = DiscoveryService.instance().discover(ApplicationProxierLoader.class);
+            ProxyOrchestratorLoader loader = DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
             return loader.create(context.input());
         };
     }

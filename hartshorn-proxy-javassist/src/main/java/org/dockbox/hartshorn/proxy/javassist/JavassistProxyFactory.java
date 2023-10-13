@@ -29,8 +29,8 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         ProxyFactory.nameGenerator = classname -> nameGenerator.get(classname);
     }
 
-    public JavassistProxyFactory(final Class<T> type, final JavassistApplicationProxier applicationProxier) {
-        super(type, applicationProxier);
+    public JavassistProxyFactory(final Class<T> type, final JavassistProxyOrchestrator proxyOrchestrator) {
+        super(type, proxyOrchestrator);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));
 
-        final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor, this.applicationProxier().introspector());
+        final MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor, this.orchestrator().introspector());
         return new JavassistProxyConstructorFunction<>(this.type(), factory, methodHandler);
     }
 

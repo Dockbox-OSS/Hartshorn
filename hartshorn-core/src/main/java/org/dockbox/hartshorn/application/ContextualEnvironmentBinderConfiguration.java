@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
@@ -79,8 +79,8 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ApplicationEnvironment.class).singleton(environment);
         binder.bind(ProxyLookup.class).singleton(environment);
         binder.bind(ApplicationLogger.class).singleton(environment);
-        binder.bind(ApplicationProxier.class).singleton(environment);
         binder.bind(ApplicationFSProvider.class).singleton(environment);
+        binder.bind(ProxyOrchestrator.class).singleton(environment);
         binder.bind(AnnotationLookup.class).singleton(environment);
         binder.bind(ClasspathResourceLocator.class).singleton(environment);
 

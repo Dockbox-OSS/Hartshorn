@@ -134,7 +134,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         if (container != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), container);
             if (container.permitsProxying()) {
-                StateAwareProxyFactory<T> factory = this.applicationContext().environment().factory(key.type());
+                StateAwareProxyFactory<T> factory = this.applicationContext().environment().proxyOrchestrator().factory(key.type());
 
                 if (instance != null) {
                     factory.trackState(false);

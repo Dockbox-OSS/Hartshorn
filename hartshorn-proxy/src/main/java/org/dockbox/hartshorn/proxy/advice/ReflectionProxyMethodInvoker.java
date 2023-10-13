@@ -56,7 +56,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
     private final ProxyMethodInterceptor<T> interceptor;
 
     public ReflectionProxyMethodInvoker(final ProxyMethodInterceptor<T> interceptor) {
-        this.introspector = interceptor.manager().applicationProxier().introspector();
+        this.introspector = interceptor.manager().orchestrator().introspector();
         this.manager = interceptor.manager();
         this.interceptor = interceptor;
     }

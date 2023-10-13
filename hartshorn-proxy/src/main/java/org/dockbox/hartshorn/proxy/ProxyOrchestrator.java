@@ -22,14 +22,14 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * The {@link ApplicationProxier} is responsible for creating proxies of components. It acts as middleware
+ * The {@link ProxyOrchestrator} is responsible for creating proxies of components. It acts as middleware
  * between the application and the lower level proxying library, allowing for easy replacement of the
  * proxying library.
  *
  * @author Guus Lieben
  * @since 0.4.8
  */
-public interface ApplicationProxier extends ProxyLookup {
+public interface ProxyOrchestrator extends ProxyLookup {
 
     /**
      * Gets the real type of the given proxy instance. If the given instance is not a proxy, the returned
@@ -77,7 +77,7 @@ public interface ApplicationProxier extends ProxyLookup {
     <T> StateAwareProxyFactory<T> factory(Class<T> type);
 
     /**
-     * Gets the {@link Introspector} that is used by this proxier.
+     * Gets the {@link Introspector} that is used by this orchestrator.
      *
      * @return The introspector.
      */

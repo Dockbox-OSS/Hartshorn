@@ -16,21 +16,21 @@
 
 package org.dockbox.hartshorn.proxy.advice.registry;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.advice.stub.DefaultValueResponseMethodStub;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 /**
  * A registry that allows for the configuration of all aspects of an advised type. This includes the configuration of
@@ -48,13 +48,13 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
     private final Map<Class<?>, StateAwareTypeAdvisorRegistryStep<?, T>> typeAdvisors = new ConcurrentHashMap<>();
 
     private final AdvisorRegistryState state = new SimpleAdvisorRegistryState();
-    private final ApplicationProxier proxier;
+    private final ProxyOrchestrator proxyOrchestrator;
     private final ProxyFactory<T> proxyFactory;
 
     private Supplier<MethodStub<T>> defaultStub = DefaultValueResponseMethodStub::new;
 
-    public ConfigurationAdvisorRegistry(final ApplicationProxier proxier, final ProxyFactory<T> proxyFactory) {
-        this.proxier = proxier;
+    public ConfigurationAdvisorRegistry(final ProxyOrchestrator proxyOrchestrator, final ProxyFactory<T> proxyFactory) {
+        this.proxyOrchestrator = proxyOrchestrator;
         this.proxyFactory = proxyFactory;
     }
 
@@ -87,7 +87,7 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
 
     @Override
     public <S> StateAwareTypeAdvisorRegistryStep<S, T> type(final Class<S> type) {
-        final Introspector introspector = this.proxier.introspector();
+        final Introspector introspector = this.proxyOrchestrator.introspector();
         if (introspector.introspect(type).isParentOf(this.advisedType())) {
             final StateAwareTypeAdvisorRegistryStep<?, T> advisorStep = this.typeAdvisors.computeIfAbsent(type,
                     type0 -> new ConfigurationStateAwareTypeAdvisorRegistryStep<>(this, type));

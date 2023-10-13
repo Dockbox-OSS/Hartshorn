@@ -16,12 +16,16 @@
 
 package test.org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
-import org.dockbox.hartshorn.proxy.advice.stub.DefaultValueResponseMethodStub;
-import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
+import org.dockbox.hartshorn.proxy.advice.stub.DefaultValueResponseMethodStub;
+import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -29,25 +33,21 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import test.org.dockbox.hartshorn.proxy.types.StubbedInterfaceProxy;
 
 public abstract class MethodStubTests {
 
-    protected abstract ApplicationProxierLoader proxierLoader();
+    protected abstract ProxyOrchestratorLoader orchestratorLoader();
 
     protected abstract Introspector introspector();
 
     @Test
     void testDefaultBehaviorIsDefaultOrNull() throws ApplicationException {
-        final ApplicationProxier proxier = this.proxierLoader().create(this.introspector());
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = proxier.factory(StubbedInterfaceProxy.class);
+        final ProxyOrchestrator orchestrator = this.orchestratorLoader().create(this.introspector());
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = orchestrator.factory(StubbedInterfaceProxy.class);
         final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
 
-        final Option<ProxyManager<StubbedInterfaceProxy>> manager = proxier.manager(proxy);
+        final Option<ProxyManager<StubbedInterfaceProxy>> manager = orchestrator.manager(proxy);
         Assertions.assertTrue(manager.present());
 
         final MethodStub<StubbedInterfaceProxy> methodStub = manager.get().advisor().resolver().defaultStub().get();
@@ -62,7 +62,7 @@ public abstract class MethodStubTests {
 
     @Test
     void testStubBehaviorCanBeChanged() throws ApplicationException {
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.proxierLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
 
         // Also verifies that the stub result is not cached
         final AtomicInteger integer = new AtomicInteger(0);
@@ -79,7 +79,7 @@ public abstract class MethodStubTests {
 
     @Test
     void testStubsAreObserved() throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.proxierLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
+        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
 
         final AtomicBoolean beforeObserved = new AtomicBoolean(false);
         final AtomicBoolean afterObserved = new AtomicBoolean(false);

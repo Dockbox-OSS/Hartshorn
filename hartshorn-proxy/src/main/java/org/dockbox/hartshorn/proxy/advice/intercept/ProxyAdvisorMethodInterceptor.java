@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.advice.IntrospectionProxyResultValidator;
 import org.dockbox.hartshorn.proxy.advice.ProxyMethodInterceptHandler;
@@ -55,13 +55,13 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
     private final ProxyMethodInvoker<T> methodInvoker;
     private final ProxyResultValidator resultValidator;
     private final ProxyMethodInterceptHandler<T> interceptHandler;
-    private final ApplicationProxier applicationProxier;
+    private final ProxyOrchestrator proxyOrchestrator;
     private final ParameterLoader<ProxyParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
 
-    public ProxyAdvisorMethodInterceptor(final ProxyManager<T> manager, final ApplicationProxier applicationProxier) {
+    public ProxyAdvisorMethodInterceptor(final ProxyManager<T> manager, final ProxyOrchestrator proxyOrchestrator) {
         this.manager = manager;
-        this.introspector = applicationProxier.introspector();
-        this.applicationProxier = applicationProxier;
+        this.introspector = proxyOrchestrator.introspector();
+        this.proxyOrchestrator = proxyOrchestrator;
         this.resultValidator = new IntrospectionProxyResultValidator(introspector);
         this.interceptHandler = new ReflectionProxyMethodInterceptHandler<>(this);
         this.methodInvoker = this.interceptHandler.methodInvoker();
@@ -120,7 +120,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
 
     protected Object[] resolveArgs(final MethodInvokable method, final Object instance, final Object[] args) {
         final MethodView<?, ?> methodView = method.toIntrospector();
-        final ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, applicationProxier);
+        final ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, proxyOrchestrator);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 

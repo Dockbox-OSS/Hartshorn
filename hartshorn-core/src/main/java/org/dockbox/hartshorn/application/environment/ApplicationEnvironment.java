@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.lang.annotation.Annotation;
@@ -39,12 +38,20 @@ import java.util.Properties;
 public interface ApplicationEnvironment extends
         ContextCarrier,
         ApplicationLogger,
-        ApplicationProxier,
         ApplicationFSProvider,
         ExceptionHandler,
-        AnnotationLookup,
         ClasspathResourceLocator
 {
+
+    /**
+     * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is responsible for all proxy
+     * operations within the environment. Proxies may be created outside of the orchestrator, and depending on the
+     * supported {@link org.dockbox.hartshorn.util.introspect.ProxyLookup proxy lookups} the orchestrator may or may not
+     * support these external proxies.
+     *
+     * @return The proxy orchestrator
+     */
+    ProxyOrchestrator proxyOrchestrator();
 
     /**
      * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible

@@ -43,8 +43,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
 
-    protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
-        super(type, applicationProxier);
+    protected JDKInterfaceProxyFactory(final Class<T> type, final ProxyOrchestrator proxyOrchestrator) {
+        super(type, proxyOrchestrator);
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         this.contextContainer().contexts().forEach(manager::add);
         this.contextContainer().namedContexts().forEach(manager::add);
 
-        final ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.applicationProxier());
+        final ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 
         final Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
 
@@ -93,7 +93,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The invocation handler
      */
     protected InvocationHandler invocationHandler(final ProxyMethodInterceptor<T> interceptor) {
-        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationProxier().introspector()), null, args);
+        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.orchestrator().introspector()), null, args);
     }
 
     /**
@@ -191,8 +191,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      */
     protected void restoreFields(final T existing, final T proxy) {
         final TypeView<T> typeView = this.advisors().type().delegate()
-                .map(this.applicationProxier().introspector()::introspect)
-                .orElseGet(() -> this.applicationProxier().introspector().introspect(this.type()));
+                .map(this.orchestrator().introspector()::introspect)
+                .orElseGet(() -> this.orchestrator().introspector().introspect(this.type()));
 
         for (final FieldView<T, ?> field : typeView.fields().all()) {
             if (field.modifiers().isStatic()) continue;

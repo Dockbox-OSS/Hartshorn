@@ -30,19 +30,19 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A base implementation of {@link ApplicationProxier} that provides a default set of {@link ProxyLookup}s, and
+ * A base implementation of {@link ProxyOrchestrator} that provides a default set of {@link ProxyLookup}s, and
  * allows for registration of additional lookups. Lookup operations are performed with the assumption that Hartshorn's
  * own {@link Proxy} implementation is used.
  *
  * @since 0.4.12
  * @author Guus Lieben
  */
-public abstract class AbstractApplicationProxier implements ApplicationProxier {
+public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
 
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
     private final Introspector introspector;
 
-    protected AbstractApplicationProxier(final Introspector introspector) {
+    protected AbstractProxyOrchestrator(final Introspector introspector) {
         this.introspector = introspector;
         this.registerProxyLookup(new NativeProxyLookup());
         this.registerProxyLookup(new HartshornProxyLookup());

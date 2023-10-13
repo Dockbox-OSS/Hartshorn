@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -31,7 +24,15 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public interface Introspector {
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+public interface Introspector extends ReferenceIntrospector {
 
     <T> TypeView<T> introspect(Class<T> type);
 
@@ -43,8 +44,6 @@ public interface Introspector {
 
     <T> TypeView<T> introspect(GenericType<T> type);
 
-    TypeView<?> introspect(String type);
-
     MethodView<?, ?> introspect(Method method);
 
     <T> ConstructorView<T> introspect(Constructor<T> method);
@@ -55,5 +54,5 @@ public interface Introspector {
 
     ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement);
 
-    IntrospectionEnvironment environment();
+    AnnotationLookup annotations();
 }

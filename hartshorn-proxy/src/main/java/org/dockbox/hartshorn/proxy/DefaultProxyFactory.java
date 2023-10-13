@@ -71,15 +71,15 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
 
     private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
     private final ProxyContextContainer contextContainer;
-    private final ApplicationProxier applicationProxier;
+    private final ProxyOrchestrator proxyOrchestrator;
     private final StateAwareAdvisorRegistry<T> advisorRegistry;
     private final ProxyValidator validator;
     private final Class<T> type;
 
-    protected DefaultProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
+    protected DefaultProxyFactory(final Class<T> type, final ProxyOrchestrator proxyOrchestrator) {
         this.type = type;
-        this.applicationProxier = applicationProxier;
-        this.advisorRegistry = new ConfigurationAdvisorRegistry<>(applicationProxier, this);
+        this.proxyOrchestrator = proxyOrchestrator;
+        this.advisorRegistry = new ConfigurationAdvisorRegistry<>(proxyOrchestrator, this);
         this.contextContainer = new ProxyContextContainer(() -> this.advisorRegistry.state().modify());
         this.validator = new CollectorProxyValidator().withDefaults();
     }
@@ -160,7 +160,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     protected void validateConstraints() throws ProxyConstraintViolationException {
-        final TypeView<T> typeView = this.applicationProxier().introspector().introspect(this.type);
+        final TypeView<T> typeView = this.orchestrator().introspector().introspect(this.type);
         final Set<ProxyConstraintViolation> violations = this.validator().validate(typeView);
 
         if (!violations.isEmpty()) {
@@ -173,7 +173,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         return this.validator;
     }
 
-    public ApplicationProxier applicationProxier() {
-        return this.applicationProxier;
+    public ProxyOrchestrator orchestrator() {
+        return this.proxyOrchestrator;
     }
 }

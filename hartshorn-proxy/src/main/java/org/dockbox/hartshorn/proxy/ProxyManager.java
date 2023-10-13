@@ -48,12 +48,12 @@ public interface ProxyManager<T> extends ProxyIntrospector<T>, Context {
 
 
     /**
-     * Returns the {@link ApplicationProxier} that is responsible for managing the lifecycle of proxies in the current
+     * Returns the {@link ProxyOrchestrator} that is responsible for managing the lifecycle of proxies in the current
      * application, including the proxy managed by this manager.
      *
-     * @return the {@link ApplicationProxier}
+     * @return the {@link ProxyOrchestrator}
      */
-    ApplicationProxier applicationProxier();
+    ProxyOrchestrator orchestrator();
 
     /**
      * Returns the original instance delegate of the proxy.

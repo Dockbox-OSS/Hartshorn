@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
-import org.dockbox.hartshorn.proxy.AbstractApplicationProxier;
+import org.dockbox.hartshorn.proxy.AbstractProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.slf4j.LoggerFactory;
@@ -24,18 +24,18 @@ import org.slf4j.LoggerFactory;
 /**
  * @deprecated CGLib is not actively maintained, and commonly causes issues with Java 9+.
  *             It is recommended to use Javassist instead, through the
- *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistApplicationProxier}.
+ *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyOrchestrator}.
  */
 @Deprecated(since = "0.4.13")
-public class CglibApplicationProxier extends AbstractApplicationProxier {
+public class CglibProxyOrchestrator extends AbstractProxyOrchestrator {
 
-    public CglibApplicationProxier(final Introspector introspector) {
+    public CglibProxyOrchestrator(final Introspector introspector) {
         super(introspector);
         this.registerProxyLookup(new CglibProxyLookup());
-        LoggerFactory.getLogger(CglibApplicationProxier.class).warn("""
+        LoggerFactory.getLogger(CglibProxyOrchestrator.class).warn("""
                 You are using CGLib, which is not actively maintained and may cause issues with Java 9+.
                 This may cause unexpected behavior or significant errors during the application runtime.
-                It is recommended to use the Javassist proxier instead.""");
+                It is recommended to use the Javassist orchestrator instead.""");
     }
 
     @Override

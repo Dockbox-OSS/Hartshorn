@@ -40,7 +40,7 @@ public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<Prox
     @Override
     public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Option<ProxyManager<Object>> handler = context.applicationProxier().manager(argument);
+        final Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
         return handler.flatMap(ProxyManager::delegate)
                 .orCompute(() -> argument)
                 .cast(parameter.type().type());
