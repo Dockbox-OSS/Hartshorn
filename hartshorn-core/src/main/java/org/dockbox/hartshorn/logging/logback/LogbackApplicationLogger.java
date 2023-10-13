@@ -34,7 +34,7 @@ public class LogbackApplicationLogger extends CallerLookupApplicationLogger {
     }
 
     @Override
-    public void setDebugActive(final boolean active) {
+    public void enableDebugLogging(final boolean active) {
         final ILoggerFactory factory = LoggerFactory.getILoggerFactory();
 
         final Level level = active ? Level.DEBUG : Level.INFO;

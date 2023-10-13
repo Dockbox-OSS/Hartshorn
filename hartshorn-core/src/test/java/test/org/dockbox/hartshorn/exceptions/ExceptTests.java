@@ -43,7 +43,7 @@ public class ExceptTests {
 
     @Test
     public void testExceptKeepsPreferences() {
-        this.applicationContext.environment().stacktraces(true);
+        this.applicationContext.environment().printStacktraces(true);
 
         final Throwable throwable = new Exception("Test");
         this.applicationContext.handle("Test", throwable);

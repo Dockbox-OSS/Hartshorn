@@ -36,7 +36,7 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     private ApplicationEnvironment environment;
 
     @Override
-    public LoggingExceptionHandler stacktraces(final boolean stacktraces) {
+    public LoggingExceptionHandler printStacktraces(final boolean stacktraces) {
         this.stacktraces = stacktraces;
         this.findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabled" : "Disabled");
         return this;

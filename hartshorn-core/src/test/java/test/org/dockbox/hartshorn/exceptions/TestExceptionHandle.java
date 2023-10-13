@@ -31,7 +31,7 @@ public class TestExceptionHandle extends LoggingExceptionHandler {
     }
 
     @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
+    public TestExceptionHandle printStacktraces(final boolean stacktraces) {
         this.stacktrace = stacktraces;
         return this;
     }

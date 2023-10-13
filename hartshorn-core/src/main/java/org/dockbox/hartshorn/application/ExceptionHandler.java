@@ -47,7 +47,7 @@ public interface ExceptionHandler {
      * @param stacktraces Whether to use stacktraces.
      * @return Itself, for chaining.
      */
-    ExceptionHandler stacktraces(boolean stacktraces);
+    ExceptionHandler printStacktraces(boolean stacktraces);
 
     /**
      * Throw the provided {@link Throwable} as if it were unchecked. This treats the exception as if it were unchecked,
