@@ -22,6 +22,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dockbox.hartshorn.util.MapBackedAnnotationInvocationHandler;
+
+/**
+ * @deprecated Use {@link MapBackedAnnotationInvocationHandler} or {@link AnnotationAdapterProxy} instead.
+ */
+@Deprecated(forRemoval = true, since = "0.5.0")
 public class PolymorphicAnnotationInvocationHandler implements InvocationHandler {
 
     final Map<String, Object> cache;
@@ -52,8 +58,8 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
         }
 
         for (final Method methodInCompositeAnnotation : this.annotation.annotationType().getMethods()) {
-            final AliasFor aliasFor = methodInCompositeAnnotation.getAnnotation(AliasFor.class);
-            if (aliasFor != null && (this.directAlias(aliasFor, method) || this.indirectAlias(aliasFor, method))) {
+            final AttributeAlias attributeAlias = methodInCompositeAnnotation.getAnnotation(AttributeAlias.class);
+            if (attributeAlias != null && (this.directAlias(attributeAlias, method) || this.indirectAlias(attributeAlias, method))) {
                 result = methodInCompositeAnnotation.invoke(this.annotation);
                 this.cache.put(method.getName(), result);
                 return result;
@@ -72,15 +78,15 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
         }
     }
 
-    private boolean directAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-        return aliasFor.target() == this.type && aliasFor.value().equals(methodBeingInvoked.getName());
+    private boolean directAlias(final AttributeAlias attributeAlias, final Method methodBeingInvoked) {
+        return attributeAlias.target() == this.type && attributeAlias.value().equals(methodBeingInvoked.getName());
     }
 
-    private boolean indirectAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-        if (aliasFor.target() != this.type) {
+    private boolean indirectAlias(final AttributeAlias attributeAlias, final Method methodBeingInvoked) {
+        if (attributeAlias.target() != this.type) {
             return false;
         }
-        final AliasFor redirect = methodBeingInvoked.getAnnotation(AliasFor.class);
-        return redirect != null && redirect.target() == AliasFor.DefaultThis.class && redirect.value().equals(aliasFor.value());
+        final AttributeAlias redirect = methodBeingInvoked.getAnnotation(AttributeAlias.class);
+        return redirect != null && redirect.target() == Void.class && redirect.value().equals(attributeAlias.value());
     }
 }

@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Objects;
 
-record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
+public record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
 
     @Override
     public boolean equals(Object other) {

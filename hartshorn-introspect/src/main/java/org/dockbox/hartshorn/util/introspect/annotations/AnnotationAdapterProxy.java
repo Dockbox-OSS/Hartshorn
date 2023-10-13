@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -27,6 +23,10 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A proxy implementation of {@link Annotation} which allows for the creation of
@@ -176,13 +176,25 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     @NonNull
     private Option<Object> searchAlias(final Annotation actual, final Class<? extends Annotation> targetAnnotationClass, final Method proxyMethod, final String name) {
         for (final Method method : actual.annotationType().getMethods()) {
-            final AliasFor aliasFor = method.getAnnotation(AliasFor.class);
-            if (aliasFor == null) continue;
+            Option<Object> result = searchAttributeAlias(actual, targetAnnotationClass, proxyMethod, name, method);
 
-            if ((aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
-                this.checkAliasType(proxyMethod, method);
-                return Option.of(this.safeInvokeAnnotationMethod(method, actual));
+            if(result.present()) {
+                return result;
             }
+        }
+        return Option.empty();
+    }
+
+    private Option<Object> searchAttributeAlias(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Method proxyMethod, String name,
+            Method method) {
+        final AttributeAlias attributeAlias = method.getAnnotation(AttributeAlias.class);
+        if (attributeAlias == null) {
+            return Option.empty();
+        }
+
+        if ((attributeAlias.target() == Void.class || attributeAlias.target() == targetAnnotationClass) && name.equals(attributeAlias.value())) {
+            this.checkAliasType(proxyMethod, method);
+            return Option.of(this.safeInvokeAnnotationMethod(method, actual));
         }
         return Option.empty();
     }

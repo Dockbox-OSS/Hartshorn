@@ -16,19 +16,19 @@
 
 package test.org.dockbox.hartshorn.introspect.annotations;
 
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GetJson {
-    @AliasFor(value = "path", target = Get.class)
+    @AttributeAlias(value = "path", target = Get.class)
     String path() default "";
 
-    @AliasFor(value = "regex", target = Get.class)
+    @AttributeAlias(value = "regex", target = Get.class)
     String regex() default "";
 
-    @AliasFor(value = "pretty", target = Json.class)
+    @AttributeAlias(value = "pretty", target = Json.class)
     boolean pretty() default false;
 }

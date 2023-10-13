@@ -36,25 +36,22 @@ import java.lang.annotation.Target;
  * <pre>{@code
  * @Extends(Foo.class)
  * public @interface Bar {
- *     @AliasFor("bar")
+ *     @AttributeAlias("bar")
  *     String baz();
  * }
  * }</pre>
  *
  * <p>If {@code Bar} extends other annotations with an attribute called {@code baz}, then the alias
- * will default to alias for all annotations in the hierarchy. If you want to alias for a specific
- * annotation, then you can use the {@link AliasFor#target()} attribute.
+ * will be the default alias for all annotations in the hierarchy. If you want to alias for a specific
+ * annotation, then you can use the {@link AttributeAlias#target()} attribute.
  *
  * @author Guus Lieben
- * @since 0.4.1
+ * @since 0.5.0
  * @see Extends
- *
- * @deprecated since 0.5.0, use {@link AttributeAlias} instead.
  */
-@Deprecated(forRemoval = true, since = "0.5.0")
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface AliasFor {
+public @interface AttributeAlias {
 
     /**
      * The name of the attribute to be aliased.
@@ -66,8 +63,5 @@ public @interface AliasFor {
      * The target annotation for which the alias is defined.
      * @return the target annotation for which the alias is defined.
      */
-    Class<?> target() default DefaultThis.class;
-
-    final class DefaultThis {
-    }
+    Class<?> target() default Void.class;
 }

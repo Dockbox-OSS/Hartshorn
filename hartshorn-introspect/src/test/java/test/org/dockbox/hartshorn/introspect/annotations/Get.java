@@ -16,16 +16,17 @@
 
 package test.org.dockbox.hartshorn.introspect.annotations;
 
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(Route.class)
 public @interface Get {
-    @AliasFor("path")
+
+    @AttributeAlias("path")
     String value() default "";
 
     String regex() default "";
