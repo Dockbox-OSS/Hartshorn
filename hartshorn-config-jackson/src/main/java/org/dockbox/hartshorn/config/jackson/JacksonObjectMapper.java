@@ -251,7 +251,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private ObjectWriter writer(final Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        final TypeView<Object> typeView = this.context.environment().introspect(content);
+        final TypeView<Object> typeView = this.context.environment().introspector().introspect(content);
         final Option<Component> annotated = typeView.annotations().get(Component.class);
 
         // Currently, only XML supports changing the root name, if XML is used we can change the

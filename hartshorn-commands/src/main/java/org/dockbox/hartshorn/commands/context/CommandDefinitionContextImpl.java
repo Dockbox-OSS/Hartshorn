@@ -225,7 +225,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
             return new CommandElementImpl<>(converter.get(), name, optional, converter.get().size());
         }
         else {
-            final TypeView<?> lookup = this.context.environment().introspect(type);
+            final TypeView<?> lookup = this.context.environment().introspector().introspect(type);
             if (lookup.isVoid()) {
                 this.context.log().error("No argument of type '" + type + "' can be read");
                 return null;

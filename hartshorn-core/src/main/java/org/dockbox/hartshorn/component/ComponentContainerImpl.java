@@ -30,7 +30,7 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     private final ApplicationContext context;
 
     public ComponentContainerImpl(final ApplicationContext context, final Class<T> component) {
-        this.introspectedComponent = context.environment().introspect(component);
+        this.introspectedComponent = context.environment().introspector().introspect(component);
         final Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
         if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
 

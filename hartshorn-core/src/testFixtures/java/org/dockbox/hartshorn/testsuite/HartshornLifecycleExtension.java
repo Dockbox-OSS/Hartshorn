@@ -173,7 +173,7 @@ public class HartshornLifecycleExtension implements
             return false;
         }
 
-        MethodView<?, ?> method = this.applicationContext.environment().introspect(testMethod.get());
+        MethodView<?, ?> method = this.applicationContext.environment().introspector().introspect(testMethod.get());
         return method.annotations().has(Inject.class);
     }
 
@@ -190,7 +190,7 @@ public class HartshornLifecycleExtension implements
         }
 
         ParameterLoader<ApplicationBoundParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
-        MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
+        MethodView<?, ?> executable = this.applicationContext.environment().introspector().introspect(testMethod.get());
         ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable,
                 extensionContext.getTestInstance().orElse(null), this.applicationContext);
 

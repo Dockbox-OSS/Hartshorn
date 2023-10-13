@@ -26,7 +26,7 @@ public class CommandContextParameterRule implements ParameterLoaderRule<CommandP
 
     @Override
     public boolean accepts(final ParameterView<?> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        final TypeView<CommandContext> typeView = context.applicationContext().environment().introspect(context.commandContext());
+        final TypeView<CommandContext> typeView = context.applicationContext().environment().introspector().introspect(context.commandContext());
         return typeView.isChildOf(parameter.type().type());
     }
 

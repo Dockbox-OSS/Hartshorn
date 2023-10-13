@@ -36,7 +36,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
         String prefix = String.valueOf(this.prefix());
         if (this.requiresTypeName()) {
             final ApplicationContext applicationContext = source.applicationContext();
-            final TypeView<T> typeView = applicationContext.environment().introspect(type);
+            final TypeView<T> typeView = applicationContext.environment().introspector().introspect(type);
             final String parameterName = typeView.annotations().get(Parameter.class).get().value();
             prefix = this.prefix() + parameterName;
         }

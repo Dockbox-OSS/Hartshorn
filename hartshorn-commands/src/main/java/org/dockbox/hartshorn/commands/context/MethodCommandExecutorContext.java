@@ -64,7 +64,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         this.method = method;
         this.key = key;
         this.command = annotated.get();
-        this.type = context.environment().introspect(key.type());
+        this.type = context.environment().introspector().introspect(key.type());
 
         final Option<Command> annotation = this.type.annotations().get(Command.class);
         final Command parent;

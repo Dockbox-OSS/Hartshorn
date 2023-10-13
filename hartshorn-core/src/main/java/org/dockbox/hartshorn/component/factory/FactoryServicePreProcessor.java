@@ -71,7 +71,7 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor {
 
         for (final Provider<?> provider : context.hierarchy(componentKey).providers()) {
             if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
-                final TypeView<?> typeContext = context.environment().introspect(contextDrivenProvider.type());
+                final TypeView<?> typeContext = context.environment().introspector().introspect(contextDrivenProvider.type());
 
                 for (final ConstructorView<?> constructor : typeContext.constructors().annotatedWith(Bound.class)) {
                     if (constructor.parameters().matches(methodParameters)) {

@@ -125,7 +125,7 @@ public class ConditionTests {
 
     @Test
     void testClassConditions() {
-        final TypeView<ConditionTests> type = this.applicationContext.environment().introspect(ConditionTests.class);
+        final TypeView<ConditionTests> type = this.applicationContext.environment().introspector().introspect(ConditionTests.class);
         final Condition condition = new ClassCondition();
 
         final MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();

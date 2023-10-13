@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 
@@ -27,13 +30,22 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
     public boolean parameterNamesAvailable() {
         if (this.parameterNamesAvailable == Tristate.UNDEFINED) {
             try {
-                IntrospectionEnvironment.class.getDeclaredMethod("parameterNamesAvailable");
-                this.parameterNamesAvailable = Tristate.TRUE;
+                Method method = ReflectionIntrospectionEnvironment.class.getDeclaredMethod("$__hartshorn$__ignore",
+                        Object.class);
+                Parameter[] parameters = method.getParameters();
+                String name = parameters[0].getName();
+                this.parameterNamesAvailable = "parameterCheck".equals(name)
+                        ? Tristate.TRUE
+                        : Tristate.FALSE;
             }
             catch (final NoSuchMethodException e) {
                 this.parameterNamesAvailable = Tristate.FALSE;
             }
         }
         return this.parameterNamesAvailable.booleanValue();
+    }
+
+    private void $__hartshorn$__ignore(Object parameterCheck) {
+        throw new UnsupportedOperationException("This method is a placeholder used to discover whether parameter names are available. It should never be called.");
     }
 }

@@ -71,7 +71,7 @@ public abstract class AbstractNativeModule implements NativeModule {
     @Override
     public Object call(final Token at, final Interpreter interpreter, final NativeFunctionStatement function, final List<Object> arguments) throws NativeExecutionException {
         try {
-            final TypeView<Object> type = TypeUtils.adjustWildcards(this.applicationContext().environment().introspect(this.moduleClass()), TypeView.class);
+            final TypeView<Object> type = TypeUtils.adjustWildcards(this.applicationContext().environment().introspector().introspect(this.moduleClass()), TypeView.class);
             final MethodView<Object, ?> method;
             if (function.method() == null) {
                 final String functionName = function.name().lexeme();
@@ -107,7 +107,7 @@ public abstract class AbstractNativeModule implements NativeModule {
         if (this.supportedFunctions == null) {
             final List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
-            final TypeView<?> typeView = this.applicationContext().environment().introspect(this.moduleClass());
+            final TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
             for (final MethodView<?, ?> method : typeView.methods().all()) {
                 if (!method.modifiers().isPublic()) continue;
                 if (method.declaredBy().is(Object.class)) continue;

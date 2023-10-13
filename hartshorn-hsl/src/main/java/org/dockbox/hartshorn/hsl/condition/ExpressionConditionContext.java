@@ -131,7 +131,7 @@ public class ExpressionConditionContext extends DefaultProvisionContext implemen
      */
     @Override
     public void imports(final String name, final Class<?> type) {
-        this.imports.put(name, this.applicationContext.environment().introspect(type));
+        this.imports.put(name, this.applicationContext.environment().introspector().introspect(type));
     }
 
     @Override

@@ -52,9 +52,9 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     
     public TypeView<T> type() {
         if (this.instance != null) {
-            return this.applicationContext().environment().introspect(this.instance);
+            return this.applicationContext().environment().introspector().introspect(this.instance);
         }
-        return this.applicationContext().environment().introspect(this.key.type());
+        return this.applicationContext().environment().introspector().introspect(this.key.type());
     }
 
     public int size() {

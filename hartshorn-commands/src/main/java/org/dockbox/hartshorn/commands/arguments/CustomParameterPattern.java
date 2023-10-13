@@ -48,7 +48,7 @@ public interface CustomParameterPattern {
      */
     default <T> Attempt<T, ConverterException> request(final Class<T> type, final CommandSource source, final String raw) {
         final ApplicationContext context = source.applicationContext();
-        final TypeView<T> typeView = context.environment().introspect(type);
+        final TypeView<T> typeView = context.environment().introspector().introspect(type);
 
         final Attempt<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
         if (preconditionsMatch.errorPresent()) {

@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
@@ -27,22 +37,14 @@ import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionParameterView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeView;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ReflectionIntrospector implements Introspector {
 
@@ -73,8 +75,9 @@ public class ReflectionIntrospector implements Introspector {
         if (type == null) {
             return this.voidType();
         }
-        if (this.typeViewCache.containsKey(type))
+        if (this.typeViewCache.containsKey(type)) {
             return (TypeView<T>) this.typeViewCache.get(type);
+        }
 
         final TypeView<T> context = new ReflectionTypeView<>(this, type);
         this.typeViewCache.put(type, context);
@@ -99,8 +102,12 @@ public class ReflectionIntrospector implements Introspector {
 
     @Override
     public TypeView<?> introspect(final Type type) {
-        if (type instanceof Class<?> clazz) return this.introspect(clazz);
-        if (type instanceof ParameterizedType parameterizedType) return this.introspect(parameterizedType);
+        if (type instanceof Class<?> clazz) {
+            return this.introspect(clazz);
+        }
+        if (type instanceof ParameterizedType parameterizedType) {
+            return this.introspect(parameterizedType);
+        }
         throw new RuntimeException("Unexpected type " + type);
     }
 
@@ -128,6 +135,16 @@ public class ReflectionIntrospector implements Introspector {
             return this.introspect(Class.forName(type, false, Thread.currentThread().getContextClassLoader()));
         }
         catch (final ClassNotFoundException e) {
+            return this.voidType();
+        }
+    }
+
+    @Override
+    public TypeView<?> introspect(TypeReference reference) {
+        try {
+            return this.introspect(reference.getOrLoad());
+        }
+        catch(ClassReferenceLoadException e) {
             return this.voidType();
         }
     }
@@ -162,11 +179,8 @@ public class ReflectionIntrospector implements Introspector {
         return this.environment;
     }
 
-    public ProxyLookup proxyLookup() {
-        return this.proxyLookup;
-    }
-
-    public AnnotationLookup annotationLookup() {
+    @Override
+    public AnnotationLookup annotations() {
         return this.annotationLookup;
     }
 }

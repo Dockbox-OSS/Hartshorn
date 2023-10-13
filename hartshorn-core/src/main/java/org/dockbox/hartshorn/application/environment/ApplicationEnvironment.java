@@ -37,7 +37,6 @@ import java.util.Properties;
  * and will never be bound to multiple contexts at the same time.
  */
 public interface ApplicationEnvironment extends
-        Introspector,
         ContextCarrier,
         ApplicationLogger,
         ApplicationProxier,
@@ -53,7 +52,6 @@ public interface ApplicationEnvironment extends
      * {@link Introspector}, but is typically the same.
      * @return The primary {@link Introspector}
      */
-    @Override
     Introspector introspector();
 
     /**

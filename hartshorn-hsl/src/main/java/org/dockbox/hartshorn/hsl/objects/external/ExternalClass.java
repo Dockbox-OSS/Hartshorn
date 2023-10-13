@@ -61,7 +61,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
                     .mapError(ApplicationException::new)
                     .rethrow()
                     .orNull();
-            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspect(objectInstance));
+            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspector().introspect(objectInstance));
         }
         throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
     }

@@ -143,7 +143,7 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public <T> void register(final ComponentKey<T> key) {
-        final TypeView<T> typeView = this.context.environment().introspect(key.type());
+        final TypeView<T> typeView = this.context.environment().introspector().introspect(key.type());
         for (final MethodView<T, ?> method : typeView.methods().annotatedWith(Command.class)) {
             this.register(method, key);
         }

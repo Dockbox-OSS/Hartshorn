@@ -56,7 +56,7 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
 
     @Override
     public <T> StaticComponentContainer<T> register(final T instance, final Class<T> type, final String id) {
-        final TypeView<T> typeView = this.applicationContext().environment().introspect(type);
+        final TypeView<T> typeView = this.applicationContext().environment().introspector().introspect(type);
         final StaticComponentContainer<T> componentReference = new StaticComponentContainer<>(instance, typeView, id);
         this.staticComponentContainers.add(componentReference);
         return componentReference;

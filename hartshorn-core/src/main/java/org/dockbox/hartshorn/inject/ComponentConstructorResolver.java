@@ -68,7 +68,7 @@ public final class ComponentConstructorResolver {
         }
 
         if (provider instanceof TypeAwareProvider<C> typeAwareProvider) {
-            TypeView<? extends C> typeView = applicationContext.environment().introspect(typeAwareProvider.type());
+            TypeView<? extends C> typeView = applicationContext.environment().introspector().introspect(typeAwareProvider.type());
             return this.findConstructor(node, typeView, checkForCycles);
         }
         return Attempt.of(new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey()));

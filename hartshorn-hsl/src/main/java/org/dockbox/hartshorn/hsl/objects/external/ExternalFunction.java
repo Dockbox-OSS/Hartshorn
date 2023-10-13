@@ -106,7 +106,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                 .mapError(error -> {
                     if (error instanceof ApplicationException ae) return ae;
                     return new ApplicationException(error);
-                }).map(object -> new ExternalInstance(object, interpreter.applicationContext().environment().introspect(object)))
+                }).map(object -> new ExternalInstance(object, interpreter.applicationContext().environment().introspector().introspect(object)))
                 .orNull();
     }
 

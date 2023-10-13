@@ -163,13 +163,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null) {
-            TypeView<T> keyType = this.applicationContext().environment().introspect(key.type());
+            TypeView<T> keyType = this.applicationContext().environment().introspector().introspect(key.type());
             boolean isSingleton = this.applicationContext().environment().singleton(keyType);
 
             // Same effect as ||, but this is more readable. It's important to only check the instance type if the key doesn't already match,
             // as introspecting and unproxying the instance can be expensive when it's not necessary.
             if (!isSingleton) {
-                TypeView<T> instanceType = this.applicationContext().environment().introspect(instance);
+                TypeView<T> instanceType = this.applicationContext().environment().introspector().introspect(instance);
                 isSingleton = this.applicationContext().environment().singleton(instanceType);
             }
 
@@ -253,7 +253,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     private <T> T getUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type) {
-        TypeView<? extends T> typeView = this.applicationContext().environment().introspect(type);
+        TypeView<? extends T> typeView = this.applicationContext().environment().introspector().introspect(type);
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }

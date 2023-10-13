@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
@@ -29,6 +24,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class ReflectionElementAnnotationsIntrospector implements ElementAnnotationsIntrospector {
 
@@ -42,7 +42,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
         this.element = element;
         // Could be instantiated early during application startup, so we don't want to use component provision here. This
         // does limit it to only being able to be overridden through application customizers.
-        this.annotationLookup = introspector.annotationLookup();
+        this.annotationLookup = introspector.annotations();
     }
 
     protected Map<Class<?>, Annotation> annotationCache() {

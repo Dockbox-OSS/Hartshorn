@@ -45,7 +45,9 @@ public class ConditionMatcher {
 
     public boolean match(final AnnotatedElementView element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
         final ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
-        for (final Context child : contexts) context.add(child);
+        for (final Context child : contexts) {
+            context.add(child);
+        }
         final ConditionResult result = condition.matches(context);
         if (!result.matches() && requiresCondition.failOnNoMatch()) {
             throw new ConditionFailedException(condition, result);

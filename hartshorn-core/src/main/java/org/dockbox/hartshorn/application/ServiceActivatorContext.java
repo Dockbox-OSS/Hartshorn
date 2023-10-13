@@ -57,7 +57,7 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
                                    Set<Annotation> serviceActivators) {
         this.applicationContext = applicationContext;
         for (Annotation serviceActivator : serviceActivators) {
-            if (!applicationContext.environment().introspect(serviceActivator).annotations()
+            if (!applicationContext.environment().introspector().introspect(serviceActivator).annotations()
                     .has(ServiceActivator.class)) {
                 throw new IllegalArgumentException("Annotation " + serviceActivator + " is not a valid service activator");
             }

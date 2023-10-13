@@ -1138,7 +1138,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
 
     public void global(final Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
-            final TypeView<Object> typeView = this.applicationContext().environment().introspect(instance);
+            final TypeView<Object> typeView = this.applicationContext().environment().introspector().introspect(instance);
             this.externalVariables.put(name, new ExternalInstance(instance, typeView));
         });
     }

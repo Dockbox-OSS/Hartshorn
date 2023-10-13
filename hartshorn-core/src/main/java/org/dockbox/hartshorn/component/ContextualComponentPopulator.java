@@ -65,7 +65,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
                         .flatMap(ProxyManager::delegate)
                         .orElse(modifiableInstance);
             }
-            TypeView<T> typeView = this.applicationContext.environment().introspect(modifiableInstance);
+            TypeView<T> typeView = this.applicationContext.environment().introspector().introspect(modifiableInstance);
             if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::fields).orElse(true))) {
                 this.populateFields(typeView, modifiableInstance);
             }

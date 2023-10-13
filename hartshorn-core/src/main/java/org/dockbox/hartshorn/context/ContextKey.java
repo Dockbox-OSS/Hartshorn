@@ -110,7 +110,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
         if (this.fallback != null) {
             contextInstance = this.fallback.apply(context);
         }
-        else if (context != null && context.environment().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
+        else if (context != null && context.environment().introspector().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
             contextInstance = context.get(this.componentKey(scope));
         }
         else {

@@ -21,8 +21,6 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
  * A lifecycle observer that validates the parameter names of the {@link org.dockbox.hartshorn.commands.annotations.Command}
@@ -45,14 +43,12 @@ public class CommandParameterValidator implements LifecycleObserver {
 
     @Override
     public void onStarted(ApplicationContext applicationContext) {
-        // Use current class to get the method, as this class is guaranteed to have a method with an expected signature.
-        MethodView<CommandParameterValidator, ?> method = applicationContext.environment()
-                .introspect(this)
-                .methods().named("onStarted", ApplicationContext.class)
-                .get();
+        boolean namesAvailable = applicationContext.environment()
+                .introspector()
+                .environment()
+                .parameterNamesAvailable();
 
-        ParameterView<?> parameter = method.parameters().at(0).get();
-        if (!"applicationContext".equals(parameter.name())) {
+        if (namesAvailable) {
             applicationContext.log().warn("Parameter names are obfuscated, this will cause commands with @Parameter to be unable to inject arguments.");
             applicationContext.log().warn("   Add -parameters to your compiler args to keep parameter names.");
             applicationContext.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");

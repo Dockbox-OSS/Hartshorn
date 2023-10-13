@@ -62,8 +62,8 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
 
     protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ApplicationContext context, final ComponentKey<T> key, @Nullable final T instance) {
         final TypeView<T> typeView = instance == null
-                ? context.environment().introspect(key.type())
-                : context.environment().introspect(instance);
+                ? context.environment().introspector().introspect(key.type())
+                : context.environment().introspector().introspect(instance);
 
         return typeView.methods().all()
                 .stream().filter(method -> this.wraps(context, method, key, instance))

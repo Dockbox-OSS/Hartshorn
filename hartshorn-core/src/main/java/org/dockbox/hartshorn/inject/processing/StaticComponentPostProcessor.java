@@ -39,7 +39,7 @@ public class StaticComponentPostProcessor extends ComponentPostProcessor {
         final ComponentKey<T> componentKey = processingContext.key();
 
         if (Collection.class.isAssignableFrom(componentKey.type())) {
-            final TypeView<T> componentType = context.environment().introspect(componentKey.type());
+            final TypeView<T> componentType = context.environment().introspector().introspect(componentKey.type());
             final List<ParameterizableType<?>> parameters = componentKey.parameterizedType().parameters();
             final ParameterizableType<?> elementType;
             if(parameters.size() == 1) {

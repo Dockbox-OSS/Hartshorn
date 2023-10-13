@@ -249,7 +249,7 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     public List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation) {
         Collection<Annotation> annotations = new ArrayList<>();
         for (Annotation typeAnnotation : type.annotations().all()) {
-            if (this.introspect(typeAnnotation.annotationType()).annotations().has(annotation)) {
+            if (this.introspector().introspect(typeAnnotation.annotationType()).annotations().has(annotation)) {
                 annotations.add(typeAnnotation);
             }
         }
@@ -258,12 +258,12 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
     @Override
     public List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation) {
-        return this.annotationsWith(this.introspect(type), annotation);
+        return this.annotationsWith(this.introspector().introspect(type), annotation);
     }
 
     @Override
     public boolean singleton(Class<?> type) {
-        TypeView<?> typeView = this.introspect(type);
+        TypeView<?> typeView = this.introspector().introspect(type);
         return this.singleton(typeView);
     }
 
@@ -276,68 +276,8 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public <T> TypeView<T> introspect(Class<T> type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public <T> TypeView<T> introspect(T instance) {
-        return this.introspector().introspect(instance);
-    }
-
-    @Override
-    public TypeView<?> introspect(Type type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public TypeView<?> introspect(ParameterizedType type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public <T> TypeView<T> introspect(GenericType<T> type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public TypeView<?> introspect(String type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public MethodView<?, ?> introspect(Method method) {
-        return this.introspector().introspect(method);
-    }
-
-    @Override
-    public <T> ConstructorView<T> introspect(Constructor<T> method) {
-        return this.introspector().introspect(method);
-    }
-
-    @Override
-    public FieldView<?, ?> introspect(Field field) {
-        return this.introspector().introspect(field);
-    }
-
-    @Override
-    public ParameterView<?> introspect(Parameter parameter) {
-        return this.introspector().introspect(parameter);
-    }
-
-    @Override
-    public ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement) {
-        return this.introspector().introspect(annotatedElement);
-    }
-
-    @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
-    }
-
-    @Override
-    public IntrospectionEnvironment environment() {
-        return this.introspector().environment();
     }
 
     @Override
