@@ -23,13 +23,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
-import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
@@ -46,24 +45,59 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class ReflectionIntrospector implements Introspector {
+/**
+ * Introspector implementation based on the {@link java.lang.reflect} package. This implementation
+ * is typically the default introspector for applications, and provides complete coverage of the
+ * entire introspection API.
+ *
+ * <p>Individual views are cached to prevent the context from leaking across application instances
+ * when used in batching or consecutive mode. The cache is not synchronized, as it is not expected
+ * that the same type is introspected concurrently. If this is the case, the cache will not be
+ * populated multiple times, but the cache will be overwritten. This is typically won't cause any
+ * issues, as the cache is populated with the same effective value.
+ *
+ * <p>While caches are application specific and non-static by default, this implementation is
+ * suitable for multi-application environments. If shared caching is desired (e.g. to reduce
+ * memory footprint), a shared cache can be enabled by {@link #enableBatchMode(boolean) enabling
+ * batch mode}. Note that this will need to be enabled for all applications.
+ *
+ * <p>This implementation is proxy-aware, meaning that calls to {@link #introspect(Object)} will
+ * return the introspection view of the unproxied type. This is done by using the provided
+ * {@link ProxyLookup}. Note that {@link #introspect(Type)} and {@link #introspect(Class)} will
+ * return the proxy type, to allow for introspection of proxy types.
+ *
+ * @author Guus Lieben
+ * @since 0.4.13
+ */
+public class ReflectionIntrospector implements BatchCapableIntrospector {
 
-    // Caches are not static, as application context is passed to views and associated introspectors.
-    // Making these static would cause the context to leak across instances (when used in batching or
-    // consecutive mode).
-    private final Map<Class<?>, TypeView<?>> typeViewCache = new ConcurrentHashMap<>();
-    private final Map<Method, MethodView<?, ?>> methodViewCache = new ConcurrentHashMap<>();
-    private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
-    private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
-    private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
+    private static final ConcurrentIntrospectionViewCache SHARED_CACHE = new ConcurrentIntrospectionViewCache();
+
+    private final ConcurrentIntrospectionViewCache viewCache = new ConcurrentIntrospectionViewCache();
     private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
 
     private final ProxyLookup proxyLookup;
     private final AnnotationLookup annotationLookup;
 
+    private boolean batchModeEnabled = false;
+
     public ReflectionIntrospector(final ProxyLookup proxyLookup, final AnnotationLookup annotationLookup) {
         this.proxyLookup = proxyLookup;
         this.annotationLookup = annotationLookup;
+    }
+
+    @Override
+    public boolean batchModeEnabled() {
+        return batchModeEnabled;
+    }
+
+    @Override
+    public void enableBatchMode(boolean enable) {
+        this.batchModeEnabled = enable;
+    }
+
+    protected ConcurrentIntrospectionViewCache viewCache() {
+        return this.batchModeEnabled ? SHARED_CACHE : this.viewCache;
     }
 
     private <T> TypeView<T> voidType() {
@@ -75,13 +109,7 @@ public class ReflectionIntrospector implements Introspector {
         if (type == null) {
             return this.voidType();
         }
-        if (this.typeViewCache.containsKey(type)) {
-            return (TypeView<T>) this.typeViewCache.get(type);
-        }
-
-        final TypeView<T> context = new ReflectionTypeView<>(this, type);
-        this.typeViewCache.put(type, context);
-        return context;
+        return this.viewCache().computeIfAbsent(type, () -> new ReflectionTypeView<>(this, type));
     }
 
     @Override
@@ -151,22 +179,22 @@ public class ReflectionIntrospector implements Introspector {
 
     @Override
     public MethodView<?, ?> introspect(final Method method) {
-        return this.methodViewCache.computeIfAbsent(method, key0 -> new ReflectionMethodView<>(this, method));
+        return this.viewCache().computeIfAbsent(method, () -> new ReflectionMethodView<>(this, method));
     }
 
     @Override
     public <T> ConstructorView<T> introspect(final Constructor<T> method) {
-        return (ConstructorView<T>) this.constructorViewCache.computeIfAbsent(method, key0 -> new ReflectionConstructorView<>(this, method));
+        return this.viewCache().computeIfAbsent(method, () -> new ReflectionConstructorView<>(this, method));
     }
 
     @Override
     public FieldView<?, ?> introspect(final Field field) {
-        return this.fieldViewCache.computeIfAbsent(field, fieldKey -> new ReflectionFieldView<>(this, field));
+        return this.viewCache().computeIfAbsent(field, () -> new ReflectionFieldView<>(this, field));
     }
 
     @Override
     public ParameterView<?> introspect(final Parameter parameter) {
-        return this.parameterViewCache.computeIfAbsent(parameter, fieldKey -> new ReflectionParameterView<>(this, parameter));
+        return this.viewCache().computeIfAbsent(parameter, () -> new ReflectionParameterView<>(this, parameter));
     }
 
     @Override

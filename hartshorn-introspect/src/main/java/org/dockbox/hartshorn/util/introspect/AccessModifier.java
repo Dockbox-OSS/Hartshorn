@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
-
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+
+import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 
 /**
  * The access modifier of a class, method, or other {@link ModifierCarrierView}. This is a basic mirror
@@ -101,6 +101,10 @@ public enum AccessModifier {
     VOLATILE(Modifier::isVolatile),
     ;
 
+    /**
+     * Static cache of all {@link AccessModifier}s, to avoid creating a new array every time
+     * {@link #values()} is called.
+     */
     public static final AccessModifier[] VALUES = AccessModifier.values();
 
     private final Predicate<Integer> predicate;
@@ -109,6 +113,12 @@ public enum AccessModifier {
         this.predicate = predicate;
     }
 
+    /**
+     * Returns whether or not this {@link AccessModifier} is set in the given {@code modifiers}.
+     *
+     * @param modifiers The modifiers to check
+     * @return Whether or not this {@link AccessModifier} is set in the given {@code modifiers}.
+     */
     public boolean test(final int modifiers) {
         return this.predicate.test(modifiers);
     }
@@ -123,7 +133,9 @@ public enum AccessModifier {
     public static List<AccessModifier> from(final int mod) {
         final List<AccessModifier> modifiers = new ArrayList<>();
         for (final AccessModifier modifier : VALUES) {
-            if (modifier.predicate.test(mod)) modifiers.add(modifier);
+            if (modifier.predicate.test(mod)) {
+                modifiers.add(modifier);
+            }
         }
         return Collections.unmodifiableList(modifiers);
     }

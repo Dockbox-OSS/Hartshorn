@@ -32,6 +32,23 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * An introspector is a utility that can be used to introspect types, methods, fields, parameters,
+ * and constructors. This can be used to retrieve information about the introspected element, such
+ * as its name, annotations, or modifiers.
+ *
+ * <p>Within the scope of an application, introspectors can be used to gain insight into the items
+ * that are available to the application. This can be used to implement features such as dependency
+ * injection, or to implement custom serialization and deserialization.
+ *
+ * <p>Introspectors provide immutable views of the introspected elements. Executable elements, such
+ * as methods and constructors, can be usually be invoked through the introspector. This is not
+ * always possible, as some elements may not be accessible to the application. In such cases, the
+ * implementation may decide how to proceed.
+ *
+ * @author Guus Lieben
+ * @since 0.4.13
+ */
 public interface Introspector extends ReferenceIntrospector {
 
     <T> TypeView<T> introspect(Class<T> type);
