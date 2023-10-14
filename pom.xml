@@ -132,22 +132,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
-                    <!-- Distribution signing -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -260,6 +244,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <!-- Skip root pom, re-enabled in hartshorn-assembly/pom.staging.xml -->
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
