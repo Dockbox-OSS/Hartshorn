@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.processing;
 
 import java.util.Collection;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -32,7 +33,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.jetbrains.annotations.NotNull;
 
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
@@ -86,7 +86,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return this.componentPopulator;
     }
 
-    @NotNull
+    @NonNull
     public static ContextualComponentPopulator createComponentPopulator(ApplicationContext applicationContext) {
         return new ContextualComponentPopulator(applicationContext);
     }

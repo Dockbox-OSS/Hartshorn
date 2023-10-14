@@ -16,15 +16,18 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
-import org.dockbox.hartshorn.proxy.lookup.NativeProxyLookup;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.ProxyLookup;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
+import org.dockbox.hartshorn.proxy.advice.TypeAdvisorResolver;
+import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
+import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A base implementation of {@link ApplicationProxier} that provides a default set of {@link ProxyLookup}s, and
@@ -52,11 +55,7 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
 
     @Override
     public <T> Option<Class<T>> real(final T instance) {
-        if (instance instanceof Proxy) {
-            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
-            return Option.of(proxy.manager().targetClass());
-        }
-        return Option.empty();
+        return this.manager(instance).map(ProxyManager::targetClass);
     }
 
     @Override
@@ -70,15 +69,11 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
 
     @Override
     public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
-        if (instance instanceof Proxy) {
-            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
-            final ProxyManager<?> manager = proxy.manager();
-            return manager.advisor()
-                    .resolver()
-                    .type(type)
-                    .delegate();
-        }
-        return Option.empty();
+        return this.manager(instance)
+                .map(ProxyManager::advisor)
+                .map(ProxyAdvisor::resolver)
+                .map(resolver -> resolver.type(type))
+                .flatMap(TypeAdvisorResolver::delegate);
     }
 
     @Override
@@ -86,7 +81,9 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
         for (final ProxyLookup lookup : this.proxyLookups) {
             if (lookup.isProxy(instance)) {
                 final Option<Class<T>> unproxied = lookup.unproxy(instance);
-                if (unproxied.present()) return unproxied;
+                if (unproxied.present()) {
+                    return unproxied;
+                }
             }
         }
         return Option.empty();
@@ -100,6 +97,19 @@ public abstract class AbstractApplicationProxier implements ApplicationProxier {
     @Override
     public boolean isProxy(final Class<?> candidate) {
         return this.proxyLookups.stream().anyMatch(lookup -> lookup.isProxy(candidate));
+    }
+
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        for (final ProxyLookup lookup : this.proxyLookups) {
+            if (lookup.isProxy(instance)) {
+                final Option<ProxyIntrospector<T>> introspector = lookup.introspector(instance);
+                if (introspector.present()) {
+                    return introspector;
+                }
+            }
+        }
+        return Option.empty();
     }
 
     public final void registerProxyLookup(final ProxyLookup proxyLookup) {

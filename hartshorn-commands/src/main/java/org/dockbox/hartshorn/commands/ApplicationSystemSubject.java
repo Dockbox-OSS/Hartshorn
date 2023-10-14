@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
 
 import jakarta.inject.Inject;

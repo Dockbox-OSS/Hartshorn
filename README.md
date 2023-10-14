@@ -1,7 +1,16 @@
-<img alt="Hartshorn" src="./hartshorn-assembly/images/hartshorn-banner.png" style="max-height: 125px" />
-<p><img src="https://img.shields.io/badge/JDK%20source-17-white"> <img src="https://img.shields.io/badge/JDK%20target-19-white"> <img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"></p>
+<p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/hartshorn-icon.png" height="125" /></p>
+<h1 align="center">Hartshorn Framework</h1>
+<p align="center">
+<img src="https://img.shields.io/badge/JDK%20source-17-438EAA?style=for-the-badge">
+<img src="https://img.shields.io/badge/JDK%20target-19-438EAA?style=for-the-badge">
+<img src="https://img.shields.io/github/v/release/Dockbox-OSS/Hartshorn?style=for-the-badge&color=438EAA">
+</p>
+
+<hr>
 
 [Hartshorn](https://hartshorn.dockbox.org/) is a cutting-edge Java framework built on the JVM platform that offers comprehensive support for modular, scalable, and testable application development using Java and other JVM-based languages. Its main objective is to simplify the creation and administration of intricate JVM applications by providing developers with the necessary tools. To learn more about Hartshorn's fundamental technologies and principles, you can refer to the dedicated topic on [core technologies](https://hartshorn.dockbox.org/core/cdi/).
+
+<hr>
 
 ## Getting started
 
@@ -82,13 +91,10 @@ Once you've taken your first steps with Hartshorn, it's essential to expand your
 
 If you want to build Hartshorn yourself, either to access pre-release versions or to customize the framework, the guide below explains how to build usable JAR artifacts.
 
-Please note that you will need a Java installation with JDK 17 or a more recent version for all platforms.
+> [!IMPORTANT]
+> Note that you will need a Java installation with JDK 17 or a more recent version for all platforms.
 
-Hartshorn uses Gradle to automate builds, performing several steps before and after a build has completed. Depending on your IDE, the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or `gradlew.bat` for Windows systems instead of any `gradle` command.
-
-To build all Hartshorn modules at once, run `gradle build`. To build specific modules, run `gradle :hartshorn-$module:build`.
-
-Once the build is complete, the project distribution archives will be installed at `/hartshorn-assembly/distributions` in the base directory. Builds are versioned by release versions, with the artifact following the format `hartshorn-$module-$version.jar`. This will also generate appropriate `javadoc` and `sources` artifacts.
+Hartshorn uses Maven to automate builds, performing several steps before and after a build has completed. To build all Hartshorn modules at once, run `mvn clean install` in the base directory. This will build all modules and run all tests. If you want to skip tests, you can use the `-DskipTests` flag.
 
 ## Contributing
 
@@ -99,3 +105,7 @@ At Dockbox, we value our community of contributors and strive to maintain an ope
 If you're looking for ways to contribute, we have plenty of opportunities available. You can help us by reporting bugs, reviewing code, writing documentation, or even contributing your own code changes. No contribution is too small, and we welcome all levels of experience.
 
 We also welcome QA testers who try out Hartshorn in their own projects to see what works and what doesn't. Your feedback can help us improve the quality of the framework and make it even more valuable for our users.
+
+## License
+
+Hartshorn is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).

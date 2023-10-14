@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.proxy.lookup;
 
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
-
-import java.util.function.Consumer;
 
 /**
  * A specific {@link ProxyFactory} that is aware of its own state, and exposes it to the outside world.
@@ -31,15 +31,9 @@ import java.util.function.Consumer;
  */
 public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
 
-    /**
-     * @inheritDoc
-     */
     @Override
     StateAwareAdvisorRegistry<T> advisors();
 
-    /**
-     * @inheritDoc
-     */
     @Override
     StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer);
 
@@ -62,10 +56,6 @@ public interface StateAwareProxyFactory<T> extends ProxyFactory<T> {
      */
     boolean modified();
 
-    /**
-     * @inheritDoc
-     */
     @Override
     StateAwareProxyFactory<T> implement(Class<?>... interfaces);
-
 }

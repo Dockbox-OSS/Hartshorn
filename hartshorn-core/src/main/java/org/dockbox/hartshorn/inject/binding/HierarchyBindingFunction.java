@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -29,7 +30,6 @@ import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The hierarchy is
@@ -127,7 +127,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
         return this.add(new ContextDrivenProvider<>(key));
     }
 
-    @NotNull
+    @NonNull
     private ComponentKey<? extends T> buildComponentKey(Class<? extends T> type) {
         return ComponentKey.builder(type).scope(this.scope).build();
     }

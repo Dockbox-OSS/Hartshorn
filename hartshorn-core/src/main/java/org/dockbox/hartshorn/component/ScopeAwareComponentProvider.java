@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -31,14 +39,6 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ScopeAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ScopedProviderOwner {
 
@@ -72,7 +72,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
         }
     }
 
-    @NotNull
+    @NonNull
     private HierarchyAwareComponentProvider createComponentProvider(Scope scope) {
         HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, scope);
         if (scope != this.applicationContext && scope != Scope.DEFAULT_SCOPE) {

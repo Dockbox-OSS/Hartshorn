@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -28,9 +31,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
@@ -49,16 +49,6 @@ import java.util.Map;
  * @since 0.4.12
  */
 public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
-
-    /**
-     * Gets the {@link TypeView} represented by this instance.
-     *
-     * @return The {@link TypeView} represented by this instance.
-     */
-    @Override
-    public TypeView<T> type() {
-        return this.type;
-    }
 
     @Override
     public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {

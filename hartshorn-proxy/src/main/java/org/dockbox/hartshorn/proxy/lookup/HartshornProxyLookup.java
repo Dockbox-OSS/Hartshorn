@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.proxy.lookup;
 
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
+import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -49,5 +51,17 @@ public class HartshornProxyLookup implements ProxyLookup {
     @Override
     public boolean isProxy(final Class<?> candidate) {
         return Proxy.class.isAssignableFrom(candidate) && !Proxy.class.equals(candidate);
+    }
+
+    @Override
+    public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
+        if (instance instanceof Proxy<?> proxy) {
+            ProxyManager<?> manager = proxy.manager();
+            if (manager.proxy() == instance) {
+                ProxyManager<T> adjustedManager = TypeUtils.adjustWildcards(manager, ProxyManager.class);
+                return Option.of(adjustedManager);
+            }
+        }
+        return Option.empty();
     }
 }

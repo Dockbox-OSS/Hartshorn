@@ -18,5 +18,5 @@ package org.dockbox.hartshorn.discovery;
 
 @FunctionalInterface
 public interface HelloWorldService {
-    void doHelloWorld();
+    String getHelloWorld();
 }

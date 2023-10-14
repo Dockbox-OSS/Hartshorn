@@ -5,6 +5,7 @@ lib
 out
 hartshorn-assembly/publications
 */generated
+target
 
 # Project specifics
 .gradle/

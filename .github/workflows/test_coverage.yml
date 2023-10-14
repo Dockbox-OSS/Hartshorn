@@ -1,0 +1,55 @@
+name: Hartshorn
+
+on: pull_request
+
+jobs:
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+      - name: Run tests
+        id: test
+        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all -Djacoco.haltOnFailure=true"
+  testSourceCompat:
+    needs: [coverage]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    name: Unit tests (JDK 17, ${{ matrix.os }})
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+      - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
+        run: mvn clean test -P ci,all
+        shell: bash
+  testTarget:
+    needs: [coverage]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: [18, 19]
+    name: Unit tests (JDK ${{ matrix.java }}, ${{ matrix.os }})
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+      - name: "Unit testing (OS: ${{ matrix.os }}, Java: ${{ matrix.java }})"
+        run: mvn clean test -P ci,all
+        shell: bash

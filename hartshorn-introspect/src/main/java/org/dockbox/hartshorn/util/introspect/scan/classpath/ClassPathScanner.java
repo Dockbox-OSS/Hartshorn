@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,6 +31,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 public final class ClassPathScanner {
 
     private final Set<String> classNames = new HashSet<>();
@@ -42,6 +42,7 @@ public final class ClassPathScanner {
     private boolean resourcesOnly = false;
     private boolean classesOnly = true;
     private boolean excludeInnerClasses = false;
+    private boolean excludePackageInfo = true;
     private long scanTime = -1;
 
     private ClassPathScanner() {
@@ -59,9 +60,13 @@ public final class ClassPathScanner {
         }
 
         for (final String path : value.split(String.valueOf(File.pathSeparatorChar), -1)) {
-            if (path == null || path.trim().isEmpty()) continue;
+            if (path == null || path.trim().isEmpty()) {
+                continue;
+            }
             final File file = new File(path);
-            if (!file.exists()) continue;
+            if (!file.exists()) {
+                continue;
+            }
 
             try {
                 final URL url = file.toURI().toURL();
@@ -142,21 +147,36 @@ public final class ClassPathScanner {
     }
 
     public void processPathResource(final ResourceHandler handler, final URLClassLoader classLoader, final String resourceName, final Path path) {
-        if (handler == null) return;
+        if (handler == null) {
+            return;
+        }
 
         final boolean isClassResource = resourceName.toLowerCase().endsWith(".class");
         final String checkedResourceName = !isClassResource
                 ? resourceName
                 : this.resourceToCanonicalName(resourceName);
 
-        if (isClassResource && this.classesOnly && this.classNames.contains(checkedResourceName)) return;
+        if (isClassResource && this.classesOnly && this.classNames.contains(checkedResourceName)) {
+            return;
+        }
 
-        if (this.classesOnly && !isClassResource) return;
-        if (this.resourcesOnly && isClassResource) return;
-        if (this.excludeInnerClasses && isClassResource && checkedResourceName.indexOf('$') > -1) return;
+        if (this.classesOnly && !isClassResource) {
+            return;
+        }
+        if (this.resourcesOnly && isClassResource) {
+            return;
+        }
+        if (this.excludeInnerClasses && isClassResource && checkedResourceName.indexOf('$') > -1) {
+            return;
+        }
+        if (this.excludePackageInfo && isClassResource && checkedResourceName.endsWith("package-info")) {
+            return;
+        }
 
         for (final String beginFilterName : this.prefixFilters) {
-            if (!checkedResourceName.startsWith(beginFilterName)) return;
+            if (!checkedResourceName.startsWith(beginFilterName)) {
+                return;
+            }
         }
 
         final ClassPathResource resource = new ClassCandidateResource(classLoader, path, checkedResourceName, isClassResource);
@@ -196,6 +216,11 @@ public final class ClassPathScanner {
 
     public ClassPathScanner excludeInnerClasses() {
         this.excludeInnerClasses = true;
+        return this;
+    }
+
+    public ClassPathScanner includePackageInfo() {
+        this.excludePackageInfo = false;
         return this;
     }
 

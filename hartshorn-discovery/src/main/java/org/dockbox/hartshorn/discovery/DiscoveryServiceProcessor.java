@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import com.google.auto.service.AutoService;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Set;
@@ -35,6 +33,8 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+import com.google.auto.service.AutoService;
+
 @SupportedAnnotationTypes("org.dockbox.hartshorn.discovery.ServiceLoader")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
@@ -44,7 +44,9 @@ public class DiscoveryServiceProcessor extends AbstractProcessor {
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnvironment) {
         final Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(ServiceLoader.class);
-        if (elements.isEmpty()) return true;
+        if (elements.isEmpty()) {
+            return true;
+        }
 
         for (final Element element : elements) {
             final ServiceLoader annotation = element.getAnnotation(ServiceLoader.class);
@@ -53,7 +55,9 @@ public class DiscoveryServiceProcessor extends AbstractProcessor {
             final TypeMirror targetType = getTargetType(annotation);
 
             final FileObject resource = this.createResource(targetType.toString());
-            if (resource == null) continue;
+            if (resource == null) {
+                continue;
+            }
 
             try {
                 final Writer writer = resource.openWriter();
@@ -83,12 +87,13 @@ public class DiscoveryServiceProcessor extends AbstractProcessor {
 
     private static TypeMirror getTargetType(final ServiceLoader annotation) {
         try {
+            //noinspection ResultOfMethodCallIgnored
             annotation.value();
+            assert false : "This code should not be executed, because the annotation processor should have thrown an exception";
+            return null;
         }
         catch (final MirroredTypeException mirroredTypeException) {
             return mirroredTypeException.getTypeMirror();
         }
-        assert false : "This code should not be executed, because the annotation processor should have thrown an exception";
-        return null;
     }
 }

@@ -41,11 +41,11 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * can be used to modify the proxy object before it is created. This includes the delegation and
  * interception of methods.
  *
- * <h1>Interception</h1>
+ * <p><b>Interception</b>
  * <p>Interception indicates the method is replaced by whichever implementation is chosen. Interception
  * can be done in two ways; full replacement, and wrapping.
  *
- * <h2>Full replacement interception</h2>
+ * <p><b>Full replacement interception</b>
  * <p>A full replacement is done using a custom
  * {@link MethodInterceptor}, which accepts a {@link MethodInterceptorContext} to execute given functionality.
  * Within an interceptor it is possible to access all required information about the intercepted method,
@@ -62,7 +62,7 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * final String greeting = user.greeting(); // Returns 'Hello world!'
  * }</pre>
  *
- * <h2>Wrapping interception</h2>
+ * <p><b>Wrapping interception</b>
  * <p>Wrapping interception is similar to the pre-existing method phasing
  * approach. It allows for specific callbacks to be executed before a method is performed, after it is finished,
  * and when an exception is thrown during the execution of the method. Wrappers will always be executed, even
@@ -105,12 +105,12 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * After method!
  * }</pre>
  *
- * <h1>Delegation</h1>
+ * <p><b>Delegation</b>
  * <p>Like interception, delegation replaces the implementation of a proxy object. However, it does not carry the proxy's
  * context down to the implementation. Instead, it redirects the method call to another object. Delegation knows two different
  * delegate types; original instance, and backing implementations.
  *
- * <h2>Original instance delegation</h2>
+ * <p><b>Original instance delegation</b>
  * <p>Original instance delegation indicates that the delegate is of the exact same type as the proxy type, or a sub-type of that
  * type. This allows all functionality to be delegated to this instance.
  *
@@ -132,7 +132,7 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * user.greeting(); // Returns 'Hello implementation!'
  * }</pre>
  *
- * <h2>Backing implementation delegation</h2>
+ * <p><b>Backing implementation delegation</b>
  * <p>Backing implementations follow the opposite rule of original instance delegation. Instead of requiring the exact type or a subtype to
  * be implemented, backing implementations delegate the behavior of a given parent of the type. This allows types like {@code JpaRepository}
  * implementations to specifically delegate to e.g. {@code HibernateJpaRepository}.

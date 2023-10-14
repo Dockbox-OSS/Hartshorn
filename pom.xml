@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.dockbox.hartshorn</groupId>
+    <artifactId>hartshorn</artifactId>
+    <packaging>pom</packaging>
+    <version>0.5.0</version>
+
+    <name>Hartshorn Framework</name>
+    <description>Hartshorn is a modern JVM-based full stack Java framework</description>
+    <url>https://hartshorn.dockbox.org/</url>
+
+    <organization>
+        <name>Dockbox OSS</name>
+        <url>https://dockbox.org/</url>
+    </organization>
+    <inceptionYear>2019</inceptionYear>
+
+    <scm>
+        <url>https://github.com/Dockbox-OSS/Hartshorn</url>
+        <connection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</connection>
+        <developerConnection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Guus Lieben</name>
+            <email>guuslieben@xendox.com</email>
+            <url>https://guuslieben.nl/</url>
+            <organization>Dockbox OSS</organization>
+            <organizationUrl>https://dockbox.org/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Josh Jeffers</name>
+            <url>https://www.pumbas.net/</url>
+        </developer>
+        <developer>
+            <name>Simon Bolduc</name>
+            <url>https://github.com/simbolduc</url>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://www.github.com/Dockbox-OSS/Hartshorn/issues</url>
+    </issueManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+
+        <hartshorn.version>0.5.0</hartshorn.version>
+        <checkstyle.skip>false</checkstyle.skip>
+        <javadoc.skip>false</javadoc.skip>
+        <owasp.skip>false</owasp.skip>
+        <jacoco.skip>false</jacoco.skip>
+        <coverage.skip>false</coverage.skip>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <profiles>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>hartshorn-bom</module>
+                <module>hartshorn-assembly/parent/pom.parent.xml</module>
+                <module>hartshorn-util</module>
+                <module>hartshorn-discovery</module>
+                <module>hartshorn-proxy</module>
+                <module>hartshorn-proxy-cglib</module>
+                <module>hartshorn-proxy-javassist</module>
+                <module>hartshorn-introspect</module>
+                <module>hartshorn-introspect-reflection</module>
+                <module>hartshorn-core</module>
+                <module>hartshorn-reporting</module>
+                <module>hartshorn-hsl</module>
+                <module>hartshorn-config</module>
+                <module>hartshorn-config-jackson</module>
+                <module>hartshorn-i18n</module>
+                <module>hartshorn-commands</module>
+                <module>hartshorn-assembly/pom.assembly.xml</module>
+            </modules>
+        </profile>
+        <profile>
+            <!-- CI profile, so we can opt-in to goals, instead of having to opt-out -->
+            <id>ci</id>
+            <properties>
+                <checkstyle.skip>true</checkstyle.skip>
+                <javadoc.skip>true</javadoc.skip>
+                <owasp.skip>true</owasp.skip>
+                <jacoco.skip>true</jacoco.skip>
+                <coverage.skip>true</coverage.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>staging</id>
+
+            <build>
+                <plugins>
+                    <!-- Distribution staging -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.13</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <!-- License headers -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.2</version>
+                <configuration>
+                    <headerDefinitions>
+                        <headerDefinition>hartshorn-assembly/licenses/JavaBlockStyleHeader.xml</headerDefinition>
+                    </headerDefinitions>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>hartshorn-assembly/licenses/APACHE-2.txt</header>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <includes>
+                                <include>**/*.java</include>
+                                <include>**/*.kt</include>
+                                <include>**/*.groovy</include>
+                                <include>**/*.scala</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <mapping>
+                        <java>JavaBlockStyleHeader</java>
+                    </mapping>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin-git</artifactId>
+                        <!-- make sure you use the same version as license-maven-plugin -->
+                        <version>4.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- OWASP Dependency check, to ensure no vulnerabilities are present in the dependencies -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>8.4.0</version>
+                <configuration>
+                    <skip>${owasp.skip}</skip>
+                    <failBuildOnCVSS>1</failBuildOnCVSS>
+                    <suppressionFiles>
+                        <suppressionFile>hartshorn-assembly/dependency-check/dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
+                    <reportOutputDirectory>${project.build.directory}/dependency-check-report</reportOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JavaDoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <skip>${javadoc.skip}</skip>
+                    <show>package</show>
+                    <show>protected</show>
+                    <show>public</show>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Code style -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <skip>${checkstyle.skip}</skip>
+                    <configLocation>src/checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <failOnViolation>true</failOnViolation>
+                    <violationSeverity>warning</violationSeverity>
+                    <linkXRef>false</linkXRef>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <configLocation>hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
+                    <suppressionsLocation>hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <!-- Skip root pom, re-enabled in hartshorn-assembly/pom.staging.xml -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

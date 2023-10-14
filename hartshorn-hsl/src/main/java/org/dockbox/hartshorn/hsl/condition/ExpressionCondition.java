@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.Condition;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
@@ -25,7 +26,6 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
@@ -55,7 +55,7 @@ public class ExpressionCondition implements Condition {
                 .orElse(ConditionResult.invalidCondition("expression"));
     }
 
-    @NotNull
+    @NonNull
     private ConditionResult calculateResult(ConditionContext context, RequiresExpression condition) {
         final String expression = condition.value();
         final ValidateExpressionRuntime runtime = this.createRuntime(context);

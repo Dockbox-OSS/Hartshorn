@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<additionalHeaders>
+    <!--
+    Custom Java block-comment style header definition.
+    Main changes compared to the default JAVADOC_STYLE:
+     - firstLine: /* instead of /**
+     - endLine: */EOL instead of */ (adding additional newline between license and package definition)
+     - allowBlankLines: true instead of false (to allow newline for endLine)
+    -->
+    <JavaBlockStyleHeader>
+        <firstLine>/*</firstLine>
+        <beforeEachLine> * </beforeEachLine>
+        <endLine> */EOL</endLine>
+        <firstLineDetectionPattern>.*^/\*.*$</firstLineDetectionPattern>
+        <lastLineDetectionPattern>\*/EOL"</lastLineDetectionPattern>
+        <allowBlankLines>true</allowBlankLines>
+        <multiLine>true</multiLine>
+        <padLines>false</padLines>
+    </JavaBlockStyleHeader>
+</additionalHeaders>
