@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.context;
 
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link Context}
@@ -71,6 +71,9 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
 
     @Override
     public T create() {
+        if (this.requiresApplicationContext()) {
+            throw new IllegalStateException("Cannot create context value without an application context");
+        }
         return this.create(null);
     }
 
@@ -129,7 +132,9 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      */
     public ComponentKey<T> componentKey(final Scope scope) {
         final ComponentKey.Builder<T> builder = ComponentKey.builder(this.type).scope(scope);
-        if (this.name != null) builder.name(this.name);
+        if (this.name != null) {
+            builder.name(this.name);
+        }
         return builder.build();
     }
 
@@ -198,8 +203,12 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
 
     @Override
     public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
         final ContextKey<?> contextKey = (ContextKey<?>) other;
         return this.requiresApplicationContext == contextKey.requiresApplicationContext
                 && this.type.equals(contextKey.type)

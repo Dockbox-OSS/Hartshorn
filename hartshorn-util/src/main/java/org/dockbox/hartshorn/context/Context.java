@@ -16,13 +16,16 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.List;
+
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A context is a collection of objects that can be used to share data between different parts of the application. This
  * is the interface for any context which is capable of storing other contexts.
+ *
+ * @author Guus Lieben
+ * @since 0.4.1
  */
 public interface Context {
 
@@ -58,11 +61,40 @@ public interface Context {
      */
     <C extends Context> Option<C> first(final Class<C> context);
 
+    /**
+     * Returns all contexts of the given type. If no contexts of the given type are found, an empty list is returned.
+     *
+     * @param context The type of the context.
+     * @return All contexts of the given type.
+     * @param <C> The type of the context.
+     */
     <C extends Context> List<C> all(final Class<C> context);
 
+    /**
+     * Returns the first context matching the given identity. If no context is found, an attempt may be made to create
+     * a new context using the fallback function of the identity. If no fallback function is present, or it is not
+     * compatible with the current context, an empty option is returned.
+     *
+     * @param key The identity of the context.
+     * @return The first context matching the given identity.
+     * @param <C> The type of the context.
+     */
     <C extends Context> Option<C> first(ContextIdentity<C> key);
 
+    /**
+     * Returns all contexts matching the given identity. If no contexts are found, an empty list is returned.
+     *
+     * @param key The identity of the context.
+     * @return All contexts matching the given identity.
+     * @param <C> The type of the context.
+     */
     <C extends Context> List<C> all(ContextIdentity<C> key);
 
+    /**
+     * Copies all child contexts from the current context to the given context. This will not copy the current context
+     * itself.
+     *
+     * @param context The context to copy to.
+     */
     void copyTo(Context context);
 }

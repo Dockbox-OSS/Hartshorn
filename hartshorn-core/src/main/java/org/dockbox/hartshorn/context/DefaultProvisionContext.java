@@ -16,10 +16,21 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.List;
 
+import org.dockbox.hartshorn.util.option.Option;
+
+/**
+ * A default implementation of {@link ProvisionContext}. This implementation overrides the
+ * default behavior of {@link DefaultContext} to use {@link ContextKey}s instead of
+ * {@link SimpleContextIdentity simple identities}.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ *
+ * @see DefaultContext
+ * @see ProvisionContext
+ */
 public abstract class DefaultProvisionContext extends DefaultContext implements ProvisionContext {
 
     @Override
