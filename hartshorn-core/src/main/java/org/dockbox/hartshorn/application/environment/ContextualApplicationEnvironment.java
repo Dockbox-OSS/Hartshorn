@@ -84,8 +84,9 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
 
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
-        this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
+        /// TODO: Fix circular dependency between proxy orchestrator and introspector
+        this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
         this.applicationLogger = this.configure(environmentInitializerContext, configurer.applicationLogger);
         this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
         this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);

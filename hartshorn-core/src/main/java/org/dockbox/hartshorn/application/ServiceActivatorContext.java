@@ -88,6 +88,7 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
      */
     public boolean hasActivator(Class<? extends Annotation> activator) {
         TypeView<? extends Annotation> activatorView = this.applicationContext.environment()
+                .introspector()
                 .introspect(activator);
         if (!activatorView.annotations().has(ServiceActivator.class)) {
             throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");

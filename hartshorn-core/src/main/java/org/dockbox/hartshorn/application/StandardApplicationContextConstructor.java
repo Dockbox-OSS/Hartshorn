@@ -48,6 +48,7 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
@@ -106,7 +107,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         applicationContext.add(serviceActivatorContext);
 
         Set<ServiceActivator> serviceActivatorAnnotations = activators.stream()
-                .map(environment::introspect)
+                .map(environment.introspector()::introspect)
                 .flatMap(introspected -> introspected.annotations().all(ServiceActivator.class).stream())
                 .collect(Collectors.toSet());
 
@@ -142,6 +143,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
     private Set<Annotation> serviceActivators(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext) {
         Set<Annotation> activators = new HashSet<>(this.configurer.activators.initialize(initializerContext));
         Set<Annotation> serviceActivators = new HashSet<>(applicationContext.environment()
+                .introspector()
                 .introspect(initializerContext.input().mainClass())
                 .annotations()
                 .annotedWith(ServiceActivator.class));
@@ -159,7 +161,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
     }
 
     private Set<Annotation> serviceActivators(ApplicationEnvironment environment, Annotation annotation) {
-        TypeView<? extends Annotation> introspected = environment.introspect(annotation.annotationType());
+        TypeView<? extends Annotation> introspected = environment.introspector().introspect(annotation.annotationType());
         Set<Annotation> annotations = introspected.annotations().annotedWith(ServiceActivator.class);
 
         Set<Annotation> activators = new HashSet<>(annotations);
@@ -192,12 +194,13 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         }
 
         Set<String> prefixes = new HashSet<>(this.configurer.scanPackages.initialize(initializerContext));
-        for (ServiceActivator serviceActivator : environment.introspect(bootstrapContext.mainClass()).annotations().all(ServiceActivator.class)) {
+        Introspector introspector = environment.introspector();
+        for (ServiceActivator serviceActivator : introspector.introspect(bootstrapContext.mainClass()).annotations().all(ServiceActivator.class)) {
             prefixes.addAll(List.of(serviceActivator.scanPackages()));
         }
 
         for (Annotation serviceActivator : activators) {
-            Option<ServiceActivator> activatorCandidate = environment.introspect(serviceActivator).annotations().get(ServiceActivator.class);
+            Option<ServiceActivator> activatorCandidate = introspector.introspect(serviceActivator).annotations().get(ServiceActivator.class);
             if (activatorCandidate.absent()) {
                 throw new IllegalStateException("Service activator annotation " + serviceActivator + " is not annotated with @ServiceActivator");
             }

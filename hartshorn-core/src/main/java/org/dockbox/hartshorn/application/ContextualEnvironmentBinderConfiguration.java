@@ -75,14 +75,14 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         }
 
         // Application environment
-        binder.bind(Introspector.class).singleton(environment);
+        binder.bind(Introspector.class).singleton(environment.introspector());
         binder.bind(ApplicationEnvironment.class).singleton(environment);
-        binder.bind(ProxyLookup.class).singleton(environment);
+        binder.bind(ProxyLookup.class).singleton(environment.proxyOrchestrator());
         binder.bind(ApplicationLogger.class).singleton(environment);
-        binder.bind(ProxyOrchestrator.class).singleton(environment);
-        binder.bind(FileSystemProvider.class).singleton(environment);
-        binder.bind(AnnotationLookup.class).singleton(environment);
-        binder.bind(ClasspathResourceLocator.class).singleton(environment);
+        binder.bind(ProxyOrchestrator.class).singleton(environment.proxyOrchestrator());
+        binder.bind(FileSystemProvider.class).singleton(environment.fileSystem());
+        binder.bind(AnnotationLookup.class).singleton(environment.introspector().annotations());
+        binder.bind(ClasspathResourceLocator.class).singleton(environment.classpath());
 
         if (environment instanceof ObservableApplicationEnvironment observableEnvironment) {
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);

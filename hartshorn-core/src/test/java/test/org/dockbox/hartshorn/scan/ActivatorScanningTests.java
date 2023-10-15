@@ -60,6 +60,6 @@ public class ActivatorScanningTests {
     void testServicesFromActivatorPrefixArePresent(final ApplicationContext applicationContext) {
         final DemoService demoService = applicationContext.get(DemoService.class);
         Assertions.assertNotNull(demoService);
-        Assertions.assertTrue(applicationContext.environment().isProxy(demoService));
+        Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(demoService));
     }
 }

@@ -107,6 +107,7 @@ public class ConditionTests {
         Assertions.assertTrue(this.applicationContext.hasActivator(DemoActivator.class));
 
         final MethodView<ConditionTests, ?> method = this.applicationContext.environment()
+                .introspector()
                 .introspect(ConditionTests.class)
                 .methods()
                 .named("requiresActivator")

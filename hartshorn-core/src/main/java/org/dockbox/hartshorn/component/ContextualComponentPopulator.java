@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -61,8 +62,9 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     public <T> T populate(T instance) {
         if (null != instance) {
             T modifiableInstance = instance;
-            if (this.applicationContext().environment().isProxy(instance)) {
-                modifiableInstance = this.applicationContext().environment()
+            ProxyOrchestrator orchestrator = this.applicationContext().environment().proxyOrchestrator();
+            if (orchestrator.isProxy(instance)) {
+                modifiableInstance = orchestrator
                         .manager(instance)
                         .flatMap(ProxyManager::delegate)
                         .orElse(modifiableInstance);

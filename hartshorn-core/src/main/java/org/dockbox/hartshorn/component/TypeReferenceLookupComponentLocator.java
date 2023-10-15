@@ -63,7 +63,7 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator {
 
     @Override
     public <T> void validate(final ComponentKey<T> key) {
-        final Introspector introspector = this.applicationContext().environment();
+        final Introspector introspector = this.applicationContext().environment().introspector();
         final TypeView<T> contract = introspector.introspect(key.type());
 
         if (contract.annotations().has(Component.class) && this.container(contract.type()).absent()) {
