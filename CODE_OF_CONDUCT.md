@@ -1,4 +1,4 @@
-# Hartshorn Open Source Project Code of Conduct
+# Contributor Code of Conduct
 ## Introduction
 We are committed to providing a friendly, inclusive, and welcoming environment for all contributors, regardless of their background or experience level. To ensure a positive and constructive community, we have established this Code of Conduct to govern our interactions.
 
