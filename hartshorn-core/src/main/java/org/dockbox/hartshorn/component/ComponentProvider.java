@@ -53,7 +53,7 @@ public interface ComponentProvider {
      * @param <T> The type of the component to return.
      * @return The component for the given key.
      */
-    <T> T get(final ComponentKey<T> key);
+    <T> T get(ComponentKey<T> key);
 
     /**
      * Returns the component for the given type and name metadata. If {@code named} is null, the given
@@ -63,8 +63,8 @@ public interface ComponentProvider {
      * @param <T> The type of the component to return.
      * @return The component for the given type and name metadata.
      */
-    default <T> T get(final Class<T> type, final Named named) {
-        final ComponentKey<T> key = ComponentKey.builder(type).name(named).build();
+    default <T> T get(Class<T> type, Named named) {
+        ComponentKey<T> key = ComponentKey.builder(type).name(named).build();
         return this.get(key);
     }
 
@@ -74,8 +74,8 @@ public interface ComponentProvider {
      * @param <T> The type of the component to return.
      * @return The component for the given type.
      */
-    default <T> T get(final Class<T> type) {
-        final ComponentKey<T> key = ComponentKey.of(type);
+    default <T> T get(Class<T> type) {
+        ComponentKey<T> key = ComponentKey.of(type);
         return this.get(key);
     }
 }

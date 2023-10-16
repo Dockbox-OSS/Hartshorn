@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 @Deprecated(since = "0.5.0", forRemoval = true)
 public class MissingFactoryConstructorException extends ApplicationRuntimeException {
 
-    public MissingFactoryConstructorException(final ComponentKey<?> key, final ExecutableElementView<?> elementView) {
+    public MissingFactoryConstructorException(ComponentKey<?> key, ExecutableElementView<?> elementView) {
         super("No matching bound constructor found for %s with parameters: %s"
                 .formatted(key, elementView.parameters().types().stream().map(TypeView::name).toList()));
     }

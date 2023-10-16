@@ -35,25 +35,25 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
     private final ComponentProcessorReportingConfiguration configuration = new ComponentProcessorReportingConfiguration();
     private final ApplicationContext applicationContext;
 
-    public ComponentProcessorDiagnosticsReporter(final ApplicationContext applicationContext) {
+    public ComponentProcessorDiagnosticsReporter(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         if (this.applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
             this.reportPreProcessors(collector, processableApplicationContext);
         }
-        final ComponentProvider componentProvider = this.applicationContext.get(ComponentProvider.class);
+        ComponentProvider componentProvider = this.applicationContext.get(ComponentProvider.class);
         if (componentProvider instanceof PostProcessingComponentProvider provider) {
             this.reportPostProcessors(collector, provider);
         }
     }
 
-    private void reportPreProcessors(final DiagnosticsPropertyCollector collector,
-                                     final ProcessableApplicationContext processableApplicationContext) {
-        final MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.processors();
-        final Reportable[] reporters = processors.allValues().stream()
+    private void reportPreProcessors(DiagnosticsPropertyCollector collector,
+                                     ProcessableApplicationContext processableApplicationContext) {
+        MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.processors();
+        Reportable[] reporters = processors.allValues().stream()
                 .map(processor -> (Reportable) processorCollector -> {
                     processorCollector.property("name").write(processor.getClass().getCanonicalName());
                     processorCollector.property("order").write(processor.priority());
@@ -62,9 +62,9 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
         collector.property("pre").write(reporters);
     }
 
-    private void reportPostProcessors(final DiagnosticsPropertyCollector collector,
-                                      final PostProcessingComponentProvider standardComponentProvider) {
-        final MultiMap<Integer, ComponentPostProcessor> processors = standardComponentProvider.postProcessors();
+    private void reportPostProcessors(DiagnosticsPropertyCollector collector,
+                                      PostProcessingComponentProvider standardComponentProvider) {
+        MultiMap<Integer, ComponentPostProcessor> processors = standardComponentProvider.postProcessors();
         collector.property("post").write(new ComponentProcessorsReportable(processors));
     }
 

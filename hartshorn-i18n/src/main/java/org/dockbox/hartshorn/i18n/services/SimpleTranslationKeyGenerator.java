@@ -31,31 +31,35 @@ public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
     private final ComponentLocator componentLocator;
 
     @Inject
-    public SimpleTranslationKeyGenerator(final ComponentLocator componentLocator) {
+    public SimpleTranslationKeyGenerator(ComponentLocator componentLocator) {
         this.componentLocator = componentLocator;
     }
 
     @Override
-    public String key(final TypeView<?> type, final MethodView<?, ?> method) {
-        final Option<InjectTranslation> resource = method.annotations().get(InjectTranslation.class);
+    public String key(TypeView<?> type, MethodView<?, ?> method) {
+        Option<InjectTranslation> resource = method.annotations().get(InjectTranslation.class);
 
         // If the method has an explicit key, use that without further processing
         if (resource.present()) {
-            final String resourceKey = resource.get().key();
+            String resourceKey = resource.get().key();
             if (StringUtilities.notEmpty(resourceKey)) {
                 return resourceKey;
             }
         }
 
         String methodName = method.name();
-        if (methodName.startsWith("get")) methodName = methodName.substring(3);
+        if (methodName.startsWith("get")) {
+            methodName = methodName.substring(3);
+        }
         String methodKey = String.join(".", StringUtilities.splitCapitals(methodName)).toLowerCase();
 
-        final TypeView<?> declaringType = method.declaredBy();
-        final Option<ComponentContainer<?>> container = this.componentLocator.container(declaringType.type());
+        TypeView<?> declaringType = method.declaredBy();
+        Option<ComponentContainer<?>> container = this.componentLocator.container(declaringType.type());
         if (container.present()) {
-            final String containerKey = container.get().id();
-            if (containerKey != null) methodKey = containerKey + "." + methodKey;
+            String containerKey = container.get().id();
+            if (containerKey != null) {
+                methodKey = containerKey + "." + methodKey;
+            }
         }
 
         return methodKey;

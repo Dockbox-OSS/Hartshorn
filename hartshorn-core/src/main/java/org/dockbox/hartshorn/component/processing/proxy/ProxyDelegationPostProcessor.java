@@ -28,17 +28,17 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
     protected abstract Class<P> parentTarget();
 
     @Override
-    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (!processingContext.type().isChildOf(this.parentTarget())) {
             return;
         }
 
-        final ProxyFactory<P> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        ProxyFactory<P> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) {
             return;
         }
 
-        final P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
+        P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
 
         if (this.skipConcreteMethods()) {
             // Ensure we keep the original instance as delegate if possible, to avoid losing context. This rule is defined by the finalizing process.
@@ -52,7 +52,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
         }
     }
 
-    protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P> handler, final Class<? extends P> parent) {
+    protected P concreteDelegator(ApplicationContext context, ProxyFactory<P> handler, Class<? extends P> parent) {
         return context.get(this.parentTarget());
     }
 

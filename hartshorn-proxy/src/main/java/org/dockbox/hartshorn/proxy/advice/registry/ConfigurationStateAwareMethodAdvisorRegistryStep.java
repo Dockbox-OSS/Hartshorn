@@ -48,7 +48,7 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
     private MethodInterceptor<T, R> interceptor;
     private T delegate;
 
-    public ConfigurationStateAwareMethodAdvisorRegistryStep(final StateAwareAdvisorRegistry<T> registry, final Method method) {
+    public ConfigurationStateAwareMethodAdvisorRegistryStep(StateAwareAdvisorRegistry<T> registry, Method method) {
         this.registry = registry;
         this.method = method;
         this.verifyConstraints();
@@ -56,12 +56,12 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
 
     private void verifyConstraints() {
         if (Modifier.isFinal(this.method.getModifiers())) {
-            throw new IllegalArgumentException("Cannot create advisor for final method " + this.method.getName());
+            throw new IllegalArgumentException("Cannot create advisor for method " + this.method.getName());
         }
     }
 
     @Override
-    public AdvisorRegistry<T> delegate(final T delegateInstance) {
+    public AdvisorRegistry<T> delegate(T delegateInstance) {
         if (delegateInstance == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
@@ -70,7 +70,7 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
     }
 
     @Override
-    public AdvisorRegistry<T> intercept(final MethodInterceptor<T, R> interceptor) {
+    public AdvisorRegistry<T> intercept(MethodInterceptor<T, R> interceptor) {
         if (this.interceptor != null) {
             this.interceptor = this.interceptor.andThen(interceptor);
         }
@@ -81,7 +81,7 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
     }
 
     @Override
-    public AdvisorRegistry<T> wrapAround(final MethodWrapper<T> wrapper) {
+    public AdvisorRegistry<T> wrapAround(MethodWrapper<T> wrapper) {
         this.wrappers.add(wrapper);
         return this.exit();
     }
@@ -92,8 +92,8 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
     }
 
     @Override
-    public AdvisorRegistry<T> wrapAround(final Consumer<MethodWrapperFactory<T>> wrapper) {
-        final StandardMethodWrapperFactory<T> factory = new StandardMethodWrapperFactory<>();
+    public AdvisorRegistry<T> wrapAround(Consumer<MethodWrapperFactory<T>> wrapper) {
+        StandardMethodWrapperFactory<T> factory = new StandardMethodWrapperFactory<>();
         wrapper.accept(factory);
         return this.wrapAround(factory.create());
     }

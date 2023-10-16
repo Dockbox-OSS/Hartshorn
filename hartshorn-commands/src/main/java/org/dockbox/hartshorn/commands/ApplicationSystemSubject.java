@@ -24,12 +24,12 @@ import jakarta.inject.Inject;
 public class ApplicationSystemSubject extends SystemSubject {
 
     @Inject
-    public ApplicationSystemSubject(final ApplicationContext applicationContext) {
+    public ApplicationSystemSubject(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
     @Override
-    public void send(final Message text) {
+    public void send(Message text) {
         this.applicationContext().log().info("-> %s".formatted(text.string()));
     }
 }

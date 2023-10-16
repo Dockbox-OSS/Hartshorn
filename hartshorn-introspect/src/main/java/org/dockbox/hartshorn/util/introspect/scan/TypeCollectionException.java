@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.util.introspect.scan;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public class TypeCollectionException extends ApplicationException {
-    public TypeCollectionException(final String message) {
+    public TypeCollectionException(String message) {
         super(message);
     }
 
-    public TypeCollectionException(final String message, final Throwable cause) {
+    public TypeCollectionException(String message, Throwable cause) {
         super(message, cause);
     }
 }

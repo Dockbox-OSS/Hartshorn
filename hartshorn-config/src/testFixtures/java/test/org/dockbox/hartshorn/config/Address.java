@@ -22,7 +22,7 @@ public class Address {
     private String city;
     private int number;
 
-    public Address(final String city, final String street, final int number) {
+    public Address(String city, String street, int number) {
         this.street = street;
         this.city = city;
         this.number = number;

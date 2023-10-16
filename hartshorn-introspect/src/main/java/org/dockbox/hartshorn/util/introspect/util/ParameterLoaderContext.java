@@ -23,7 +23,7 @@ public class ParameterLoaderContext {
     private final ExecutableElementView<?> executable;
     private final Object instance;
 
-    public ParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance) {
+    public ParameterLoaderContext(ExecutableElementView<?> executable, Object instance) {
         this.executable = executable;
         this.instance = instance;
     }

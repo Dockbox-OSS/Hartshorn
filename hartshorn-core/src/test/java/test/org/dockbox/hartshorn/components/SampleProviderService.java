@@ -36,12 +36,12 @@ public class SampleProviderService {
     }
 
     @Binds("parameter")
-    public ProvidedInterface withParameter(final SampleField field) {
+    public ProvidedInterface withParameter(SampleField field) {
         return () -> "ParameterProvision";
     }
 
     @Binds("namedParameter")
-    public ProvidedInterface withNamedField(@Named("named") final SampleField field) {
+    public ProvidedInterface withNamedField(@Named("named") SampleField field) {
         return () -> "NamedParameterProvision";
     }
 

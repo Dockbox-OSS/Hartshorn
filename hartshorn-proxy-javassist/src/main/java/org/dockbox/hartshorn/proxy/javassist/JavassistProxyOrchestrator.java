@@ -22,13 +22,13 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 
 public class JavassistProxyOrchestrator extends AbstractProxyOrchestrator {
 
-    public JavassistProxyOrchestrator(final Introspector introspector) {
+    public JavassistProxyOrchestrator(Introspector introspector) {
         super(introspector);
         this.registerProxyLookup(new JavassistProxyLookup());
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T> factory(final Class<T> type) {
+    public <T> StateAwareProxyFactory<T> factory(Class<T> type) {
         return new JavassistProxyFactory<>(type, this);
     }
 

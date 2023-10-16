@@ -24,7 +24,7 @@ public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V> extends TreeM
     public ConcurrentSetTreeMultiMap() {
     }
 
-    public ConcurrentSetTreeMultiMap(final MultiMap<K, V> map) {
+    public ConcurrentSetTreeMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

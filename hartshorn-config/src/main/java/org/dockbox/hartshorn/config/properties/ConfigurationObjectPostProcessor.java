@@ -29,14 +29,14 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
 
     private final PropertyHolder propertyHolder;
 
-    public ConfigurationObjectPostProcessor(final PropertyHolder propertyHolder) {
+    public ConfigurationObjectPostProcessor(PropertyHolder propertyHolder) {
         this.propertyHolder = propertyHolder;
     }
 
     @Override
-    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(ConfigurationObject.class)) {
-            final ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
+            ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
             this.verifyPropertiesAvailable(context, this.propertyHolder);
 
@@ -45,9 +45,9 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
         return instance;
     }
 
-    private <T> T createOrUpdate(final ComponentKey<T> key, final T instance, final ConfigurationObject configurationObject) {
-        final Option<T> configuration;
-        final Class<T> type = instance == null
+    private <T> T createOrUpdate(ComponentKey<T> key, T instance, ConfigurationObject configurationObject) {
+        Option<T> configuration;
+        Class<T> type = instance == null
                 ? key.type()
                 : TypeUtils.adjustWildcards(instance.getClass(), Class.class);
 

@@ -26,14 +26,14 @@ import java.util.Set;
 
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
-    public ClassPathScannerTypeReferenceCollector(final String packageName) {
+    public ClassPathScannerTypeReferenceCollector(String packageName) {
         super(packageName);
     }
 
     @Override
     protected Set<TypeReference> createCache() throws TypeCollectionException {
-        final Set<TypeReference> typeReferences = new HashSet<>();
-        final ClassPathScanner classpathScanner = ClassPathScanner.create()
+        Set<TypeReference> typeReferences = new HashSet<>();
+        ClassPathScanner classpathScanner = ClassPathScanner.create()
                 .includeDefaultClassPath()
                 .filterPrefix(this.packageName())
                 .classesOnly();
@@ -45,14 +45,14 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
                 }
             });
         }
-        catch(final ClassPathWalkingException e) {
+        catch(ClassPathWalkingException e) {
             throw new TypeCollectionException("Failed to collect types in package " + this.packageName(), e);
         }
         return typeReferences;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("package").write(this.packageName());
     }
 }

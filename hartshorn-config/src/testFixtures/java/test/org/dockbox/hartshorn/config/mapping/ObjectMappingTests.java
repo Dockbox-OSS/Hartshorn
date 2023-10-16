@@ -73,12 +73,12 @@ public abstract class ObjectMappingTests {
 
     @ParameterizedTest
     @MethodSource("serializationElements")
-    void testObjectSerialization(final FileFormat fileFormat, final Element content, final String expected) {
-        final ObjectMapper mapper = this.objectMapper();
+    void testObjectSerialization(FileFormat fileFormat, Element content, String expected) {
+        ObjectMapper mapper = this.objectMapper();
         mapper.fileType(fileFormat);
 
         content.name("sample");
-        final Option<String> result = mapper.write(content);
+        Option<String> result = mapper.write(content);
 
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(expected.replaceAll("[ \n]+", ""), result.get().replaceAll("[ \n\r]+", ""));
@@ -86,12 +86,12 @@ public abstract class ObjectMappingTests {
 
     @ParameterizedTest
     @MethodSource("serializationElements")
-    void testObjectDeserialization(final FileFormat fileFormat, final Element expected, final String content) {
-        final ObjectMapper mapper = this.objectMapper();
+    void testObjectDeserialization(FileFormat fileFormat, Element expected, String content) {
+        ObjectMapper mapper = this.objectMapper();
         mapper.fileType(fileFormat);
         expected.name("sample");
 
-        final Attempt<? extends Element, ?> result = mapper.read(content, expected.getClass());
+        Attempt<? extends Element, ?> result = mapper.read(content, expected.getClass());
 
         if (result.absent()) {
             Assertions.fail(result.error().getMessage());

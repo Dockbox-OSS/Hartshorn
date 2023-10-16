@@ -26,7 +26,7 @@ public class GenericTypeReference<T> extends TypeReference<T> {
 
     private final GenericType<T> genericType;
 
-    public GenericTypeReference(final GenericType<T> genericType) {
+    public GenericTypeReference(GenericType<T> genericType) {
         this.genericType = genericType;
     }
 

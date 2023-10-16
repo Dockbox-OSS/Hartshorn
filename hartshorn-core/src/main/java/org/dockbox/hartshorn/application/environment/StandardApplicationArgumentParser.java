@@ -34,10 +34,10 @@ public class StandardApplicationArgumentParser implements ApplicationArgumentPar
     private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.:_-]+)=(.*)");
 
     @Override
-    public Properties parse(final List<String> arguments) {
-        final Properties properties = new Properties();
-        for (final String arg : arguments) {
-            final Matcher matcher = ARGUMENTS.matcher(arg);
+    public Properties parse(List<String> arguments) {
+        Properties properties = new Properties();
+        for (String arg : arguments) {
+            Matcher matcher = ARGUMENTS.matcher(arg);
             if (matcher.find()) {
                 properties.put(matcher.group(1), matcher.group(2));
             }

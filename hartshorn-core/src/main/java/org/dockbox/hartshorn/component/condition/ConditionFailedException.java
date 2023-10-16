@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.component.condition;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ConditionFailedException extends ApplicationRuntimeException {
-    public ConditionFailedException(final Condition condition, final ConditionResult result) {
+    public ConditionFailedException(Condition condition, ConditionResult result) {
         super("Condition failed (" + condition.getClass().getSimpleName() + ") with reason: " + result.message());
     }
 }

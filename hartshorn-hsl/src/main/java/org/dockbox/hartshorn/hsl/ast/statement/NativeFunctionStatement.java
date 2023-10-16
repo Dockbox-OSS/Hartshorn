@@ -31,7 +31,7 @@ public class NativeFunctionStatement extends Function implements NamedNode {
     private final MethodView<?, ?> method;
     private final List<Parameter> params;
 
-    public NativeFunctionStatement(final Token name, final Token moduleName, final MethodView<?, ?> method, final List<Parameter> params) {
+    public NativeFunctionStatement(Token name, Token moduleName, MethodView<?, ?> method, List<Parameter> params) {
         super(name);
         this.name = name;
         this.moduleName = moduleName;
@@ -57,7 +57,7 @@ public class NativeFunctionStatement extends Function implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

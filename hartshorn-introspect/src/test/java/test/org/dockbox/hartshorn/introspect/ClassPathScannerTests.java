@@ -36,11 +36,11 @@ public class ClassPathScannerTests {
 
     @Test
     void testCanScanWithPackageFilter() throws ClassPathWalkingException {
-        final ClassPathScanner scanner = ClassPathScanner.create()
+        ClassPathScanner scanner = ClassPathScanner.create()
                 .includeDefaultClassPath()
                 .filterPrefix("test.org.dockbox.hartshorn.introspect.types");
 
-        final Set<String> classes = new HashSet<>();
+        Set<String> classes = new HashSet<>();
         scanner.scan(resource -> classes.add(resource.resourceName()));
 
         Assertions.assertEquals(7, classes.size()); // 7 classes in the test package
@@ -55,8 +55,8 @@ public class ClassPathScannerTests {
         Assertions.assertTrue(classes.contains(ScanRecord.class.getCanonicalName()));
     }
 
-    private String resourceNameFromCanonicalName(final String canonicalName) {
-        final int lastIndex = canonicalName.lastIndexOf('.');
+    private String resourceNameFromCanonicalName(String canonicalName) {
+        int lastIndex = canonicalName.lastIndexOf('.');
         return canonicalName.substring(0, lastIndex) + '$' + canonicalName.substring(lastIndex + 1);
     }
 }

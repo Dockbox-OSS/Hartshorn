@@ -30,8 +30,8 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     private final ResourceHandler handler;
     private final URLClassLoader classLoader;
 
-    public DirectoryFileTreeWalker(final ClassPathScanner classPathScanner, final int rootDirNameLength,
-                                   final ResourceHandler handler, final URLClassLoader classLoader) {
+    public DirectoryFileTreeWalker(ClassPathScanner classPathScanner, int rootDirNameLength,
+                                   ResourceHandler handler, URLClassLoader classLoader) {
         this.classPathScanner = classPathScanner;
         this.rootDirNameLength = rootDirNameLength;
         this.handler = handler;
@@ -39,24 +39,24 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-        final String resourceName = file.toFile().getCanonicalPath().substring(this.rootDirNameLength + 1);
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        String resourceName = file.toFile().getCanonicalPath().substring(this.rootDirNameLength + 1);
         this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFileFailed(final Path file, final IOException exc) {
+    public FileVisitResult visitFileFailed(Path file, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) {
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 }

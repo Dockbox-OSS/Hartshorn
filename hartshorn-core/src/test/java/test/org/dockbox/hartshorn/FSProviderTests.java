@@ -27,8 +27,8 @@ import java.nio.file.Path;
 public class FSProviderTests {
 
     @InjectTest
-    void testApplicationPathIsAbsolute(final FileSystemProvider fsProvider) {
-        final Path path = fsProvider.applicationPath();
+    void testApplicationPathIsAbsolute(FileSystemProvider fsProvider) {
+        Path path = fsProvider.applicationPath();
 
         Assertions.assertNotNull(path);
         Assertions.assertTrue(path.isAbsolute());

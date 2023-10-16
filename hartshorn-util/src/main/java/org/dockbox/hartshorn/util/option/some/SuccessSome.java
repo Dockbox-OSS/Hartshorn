@@ -40,42 +40,42 @@ import java.util.stream.Stream;
  */
 public class SuccessSome<T, E extends Throwable> extends Some<T> implements Attempt<T, E> {
 
-    public SuccessSome(final T value) {
+    public SuccessSome(T value) {
         super(value);
     }
 
     @Override
-    public @NonNull Attempt<T, E> peek(final Consumer<T> consumer) {
+    public @NonNull Attempt<T, E> peek(Consumer<T> consumer) {
         return (Attempt<T, E>) super.peek(consumer);
     }
 
     @Override
-    public @NonNull Attempt<T, E> onEmpty(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmpty(Runnable runnable) {
         return (Attempt<T, E>) super.onEmpty(runnable);
     }
 
     @Override
-    public @NonNull Attempt<T, E> orCompute(final @NonNull Supplier<@NonNull T> supplier) {
+    public @NonNull Attempt<T, E> orCompute(@NonNull Supplier<@NonNull T> supplier) {
         return (Attempt<T, E>) super.orCompute(supplier);
     }
 
     @Override
-    public @NonNull Attempt<T, E> orComputeFlat(final @NonNull Supplier<@NonNull Option<T>> supplier) {
+    public @NonNull Attempt<T, E> orComputeFlat(@NonNull Supplier<@NonNull Option<T>> supplier) {
         return (Attempt<T, E>) super.orComputeFlat(supplier);
     }
 
     @Override
-    public @NonNull <U> Attempt<U, E> map(final @NonNull Function<@NonNull T, @Nullable U> function) {
+    public @NonNull <U> Attempt<U, E> map(@NonNull Function<@NonNull T, @Nullable U> function) {
         return Attempt.of(function.apply(this.get()));
     }
 
     @Override
-    public @NonNull <U> Option<U> flatMap(final @NonNull Function<@NonNull T, @NonNull Option<U>> function) {
+    public @NonNull <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function) {
         return function.apply(this.get());
     }
 
     @Override
-    public @NonNull Attempt<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
+    public @NonNull Attempt<T, E> filter(@NonNull Predicate<@NonNull T> predicate) {
         return predicate.test(this.get()) ? this : Attempt.empty();
     }
 
@@ -90,17 +90,17 @@ public class SuccessSome<T, E extends Throwable> extends Some<T> implements Atte
     }
 
     @Override
-    public @NonNull Attempt<T, E> peekError(final Consumer<@NonNull E> consumer) {
+    public @NonNull Attempt<T, E> peekError(Consumer<@NonNull E> consumer) {
         return this;
     }
 
     @Override
-    public @NonNull <S extends E> Attempt<T, E> peekError(final Class<S> errorType, final Consumer<@NonNull S> consumer) {
+    public @NonNull <S extends E> Attempt<T, E> peekError(Class<S> errorType, Consumer<@NonNull S> consumer) {
         return this;
     }
 
     @Override
-    public @NonNull Attempt<T, E> onEmptyError(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmptyError(Runnable runnable) {
         runnable.run();
         return this;
     }
@@ -116,20 +116,24 @@ public class SuccessSome<T, E extends Throwable> extends Some<T> implements Atte
     }
 
     @Override
-    public E errorOrElse(final E value) {
+    public E errorOrElse(E value) {
         return value;
     }
 
     @Override
-    public E errorOrElseGet(final @NonNull Supplier<E> supplier) {
+    public E errorOrElseGet(@NonNull Supplier<E> supplier) {
         return supplier.get();
     }
 
     @Override
-    public @NonNull Attempt<T, E> orComputeError(final @NonNull Supplier<E> supplier) {
-        final E error = supplier.get();
-        if (error != null) return Attempt.of(error);
-        else return this;
+    public @NonNull Attempt<T, E> orComputeError(@NonNull Supplier<E> supplier) {
+        E error = supplier.get();
+        if (error != null) {
+            return Attempt.of(error);
+        }
+        else {
+            return this;
+        }
     }
 
     @Override
@@ -148,17 +152,17 @@ public class SuccessSome<T, E extends Throwable> extends Some<T> implements Atte
     }
 
     @Override
-    public <U extends Throwable> @NonNull Attempt<T, U> mapError(final @NonNull Function<E, U> mapper) {
+    public <U extends Throwable> @NonNull Attempt<T, U> mapError(@NonNull Function<E, U> mapper) {
         return new SuccessSome<>(super.get());
     }
 
     @Override
-    public <U extends Throwable> @NonNull Attempt<T, U> flatMapError(final @NonNull Function<E, Attempt<T, U>> mapper) {
+    public <U extends Throwable> @NonNull Attempt<T, U> flatMapError(@NonNull Function<E, Attempt<T, U>> mapper) {
         return new SuccessSome<>(super.get());
     }
 
     @Override
-    public Attempt<T, E> filterError(final Predicate<E> predicate) {
+    public Attempt<T, E> filterError(Predicate<E> predicate) {
         return this;
     }
 

@@ -33,7 +33,7 @@ public class CommandElementImpl<T> implements CommandElement<T> {
     private final boolean optional;
     private final int size;
 
-    public CommandElementImpl(final ArgumentConverter<T> converter, final String name, final boolean optional, final int size) {
+    public CommandElementImpl(ArgumentConverter<T> converter, String name, boolean optional, int size) {
         this.converter = converter;
         this.name = name;
         this.optional = optional;
@@ -51,12 +51,12 @@ public class CommandElementImpl<T> implements CommandElement<T> {
     }
 
     @Override
-    public Option<T> parse(final CommandSource source, final String argument) {
+    public Option<T> parse(CommandSource source, String argument) {
         return this.converter.convert(source, argument);
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return this.converter.suggestions(source, argument);
     }
 

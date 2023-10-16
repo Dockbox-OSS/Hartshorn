@@ -27,9 +27,9 @@ import java.util.Optional;
 public class OptionToOptionalConverterTests {
     @Test
     void testPresentOptionConvertsToPresentOptional() {
-        final OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        final Option<String> option = Option.of("test");
-        final Optional<?> optional = converter.convert(option);
+        OptionToOptionalConverter converter = new OptionToOptionalConverter();
+        Option<String> option = Option.of("test");
+        Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertTrue(optional.isPresent());
         Assertions.assertEquals("test", optional.get());
@@ -37,18 +37,18 @@ public class OptionToOptionalConverterTests {
 
     @Test
     void testEmptyOptionConvertsToEmptyOptional() {
-        final OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        final Option<String> option = Option.empty();
-        final Optional<?> optional = converter.convert(option);
+        OptionToOptionalConverter converter = new OptionToOptionalConverter();
+        Option<String> option = Option.empty();
+        Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertFalse(optional.isPresent());
     }
 
     @Test
     void testSuccessPresentAttemptConvertsToPresentOptional() {
-        final OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        final Option<String> option = Attempt.of("test");
-        final Optional<?> optional = converter.convert(option);
+        OptionToOptionalConverter converter = new OptionToOptionalConverter();
+        Option<String> option = Attempt.of("test");
+        Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertTrue(optional.isPresent());
         Assertions.assertEquals("test", optional.get());
@@ -56,9 +56,9 @@ public class OptionToOptionalConverterTests {
 
     @Test
     void testFailurePresentAttemptConvertsToPresentOptional() {
-        final OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        final Option<String> option = Attempt.of("test", new Exception());
-        final Optional<?> optional = converter.convert(option);
+        OptionToOptionalConverter converter = new OptionToOptionalConverter();
+        Option<String> option = Attempt.of("test", new Exception());
+        Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertTrue(optional.isPresent());
         Assertions.assertEquals("test", optional.get());
@@ -66,18 +66,18 @@ public class OptionToOptionalConverterTests {
 
     @Test
     void testFailureAbsentAttemptConvertsToEmptyOptional() {
-        final OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        final Option<String> option = Attempt.of(new Exception());
-        final Optional<?> optional = converter.convert(option);
+        OptionToOptionalConverter converter = new OptionToOptionalConverter();
+        Option<String> option = Attempt.of(new Exception());
+        Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertFalse(optional.isPresent());
     }
 
     @Test
     void testSuccessAbsentAttemptConvertsToEmptyOptional() {
-        final OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        final Option<String> option = Attempt.of((String) null);
-        final Optional<?> optional = converter.convert(option);
+        OptionToOptionalConverter converter = new OptionToOptionalConverter();
+        Option<String> option = Attempt.of((String) null);
+        Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertFalse(optional.isPresent());
     }

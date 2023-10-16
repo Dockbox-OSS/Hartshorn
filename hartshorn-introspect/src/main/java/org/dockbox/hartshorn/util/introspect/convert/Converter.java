@@ -54,9 +54,9 @@ public interface Converter<I, O> {
      * @return a composed converter that first applies this converter and then applies the {@code after}
      * @param <T> the type of output of the {@code after} converter, and of the composed converter
      */
-    default <T> Converter<I, T> andThen(final Converter<O, T> after) {
-        return (final I input) -> {
-            final O result = this.convert(input);
+    default <T> Converter<I, T> andThen(Converter<O, T> after) {
+        return (I input) -> {
+            O result = this.convert(input);
             return result != null ? after.convert(result) : null;
         };
     }

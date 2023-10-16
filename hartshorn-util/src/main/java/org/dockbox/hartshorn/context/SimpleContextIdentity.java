@@ -21,11 +21,11 @@ public class SimpleContextIdentity<T extends Context> implements ContextIdentity
     private final Class<T> type;
     private final String name;
 
-    public SimpleContextIdentity(final Class<T> type) {
+    public SimpleContextIdentity(Class<T> type) {
         this(type, null);
     }
 
-    public SimpleContextIdentity(final Class<T> type, final String name) {
+    public SimpleContextIdentity(Class<T> type, String name) {
         this.type = type;
         this.name = name;
     }

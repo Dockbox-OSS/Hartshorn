@@ -109,7 +109,7 @@ public enum AccessModifier {
 
     private final Predicate<Integer> predicate;
 
-    AccessModifier(final Predicate<Integer> predicate) {
+    AccessModifier(Predicate<Integer> predicate) {
         this.predicate = predicate;
     }
 
@@ -119,7 +119,7 @@ public enum AccessModifier {
      * @param modifiers The modifiers to check
      * @return Whether or not this {@link AccessModifier} is set in the given {@code modifiers}.
      */
-    public boolean test(final int modifiers) {
+    public boolean test(int modifiers) {
         return this.predicate.test(modifiers);
     }
 
@@ -130,9 +130,9 @@ public enum AccessModifier {
      * @return A list of all {@link AccessModifier}s that are set in the given {@code modifiers}.
      * @see Member#getModifiers()
      */
-    public static List<AccessModifier> from(final int mod) {
-        final List<AccessModifier> modifiers = new ArrayList<>();
-        for (final AccessModifier modifier : VALUES) {
+    public static List<AccessModifier> from(int mod) {
+        List<AccessModifier> modifiers = new ArrayList<>();
+        for (AccessModifier modifier : VALUES) {
             if (modifier.predicate.test(mod)) {
                 modifiers.add(modifier);
             }

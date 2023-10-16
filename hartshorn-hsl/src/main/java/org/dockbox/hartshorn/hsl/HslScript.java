@@ -34,25 +34,25 @@ public class HslScript extends DefaultApplicationAwareContext {
     private ScriptContext context;
     private ScriptRuntime runtime;
 
-    protected HslScript(final ApplicationContext context, final String source) {
+    protected HslScript(ApplicationContext context, String source) {
         super(context);
         this.source = source;
     }
 
-    public static HslScript of(final ApplicationContext context, final String source) {
+    public static HslScript of(ApplicationContext context, String source) {
         return new HslScript(context, source);
     }
 
-    public static HslScript of(final ApplicationContext context, final Path path) throws IOException {
+    public static HslScript of(ApplicationContext context, Path path) throws IOException {
         return of(context, sourceFromPath(path));
     }
 
-    public static HslScript of(final ApplicationContext context, final File file) throws IOException {
+    public static HslScript of(ApplicationContext context, File file) throws IOException {
         return of(context, file.toPath());
     }
 
-    public static String sourceFromPath(final Path path) throws IOException {
-        final List<String> lines = Files.readAllLines(path);
+    public static String sourceFromPath(Path path) throws IOException {
+        List<String> lines = Files.readAllLines(path);
         return String.join("\n", lines);
     }
 

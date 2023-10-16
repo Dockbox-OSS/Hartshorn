@@ -42,33 +42,34 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
 
     private final ApplicationEnvironment environment;
 
-    public ClassLoaderClasspathResourceLocator(final ApplicationEnvironment environment) {
+    public ClassLoaderClasspathResourceLocator(ApplicationEnvironment environment) {
         this.environment = environment;
     }
 
     @Override
-    public Attempt<Path, IOException> resource(final String name) {
+    public Attempt<Path, IOException> resource(String name) {
         return Attempt.of(() -> Resources.getResourceAsFile(name), IOException.class).map(File::toPath);
     }
 
     @Override
-    public Set<Path> resources(final String name) {
+    public Set<Path> resources(String name) {
         try {
-            final String normalizedPath = name.replaceAll("\\\\", "/");
-            final int lastIndex = normalizedPath.lastIndexOf("/");
-            final String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
-            final String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
+            String normalizedPath = name.replaceAll("\\\\", "/");
+            int lastIndex = normalizedPath.lastIndexOf("/");
+            String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
+            String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
 
-            final Set<File> files = new HashSet<>();
-            final Set<File> resources = Resources.getResourcesAsFiles(path);
-            for (final File parent : resources) {
-                final File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
-                if (filteredResources != null)
+            Set<File> files = new HashSet<>();
+            Set<File> resources = Resources.getResourcesAsFiles(path);
+            for (File parent : resources) {
+                File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
+                if (filteredResources != null) {
                     files.addAll(Arrays.asList(filteredResources));
+                }
             }
             return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
         }
-        catch (final NullPointerException | IOException e) {
+        catch (NullPointerException | IOException e) {
             return new HashSet<>();
         }
     }
@@ -76,11 +77,13 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     @Override
     public URI classpathUri() {
         try {
-            final URL resource = Hartshorn.class.getClassLoader().getResource("");
-            if (resource == null) return null;
+            URL resource = Hartshorn.class.getClassLoader().getResource("");
+            if (resource == null) {
+                return null;
+            }
             return resource.toURI();
         }
-        catch (final URISyntaxException e) {
+        catch (URISyntaxException e) {
             this.environment.handle("Could not look up classpath base", e);
             return null;
         }

@@ -28,9 +28,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(final DependencyDeclarationContext<T> componentContainer, final ApplicationContext applicationContext) throws DependencyResolutionException {
-        final TypeView<?> type = componentContainer.type();
-        final ConstructorView<?> constructorView = ComponentConstructorResolver.create(applicationContext).findConstructor(type)
+    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException {
+        TypeView<?> type = componentContainer.type();
+        ConstructorView<?> constructorView = ComponentConstructorResolver.create(applicationContext).findConstructor(type)
                 .mapError(DependencyResolutionException::new)
                 .rethrow()
                 .orNull();
@@ -39,11 +39,11 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
             return Set.of();
         }
 
-        final Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
-        final Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type);
+        Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
+        Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type);
 
-        final ComponentKey<?> componentKey = ComponentKey.of(type.type());
-        final Set<ComponentKey<?>> dependencies = CollectionUtilities.merge(constructorDependencies, typeDependencies);
+        ComponentKey<?> componentKey = ComponentKey.of(type.type());
+        Set<ComponentKey<?>> dependencies = CollectionUtilities.merge(constructorDependencies, typeDependencies);
 
         return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies));
     }

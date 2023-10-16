@@ -32,18 +32,22 @@ import org.dockbox.hartshorn.util.option.Option;
 public class UnproxyParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterView<?> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
+    public boolean accepts(ParameterView<?> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
         return parameter.annotations().has(Unproxy.class) || parameter.declaredBy().annotations().has(Unproxy.class);
     }
 
     @Override
-    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
-        final Object argument = args[index];
-        final Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
+    public <T> Option<T> load(ParameterView<T> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+        Object argument = args[index];
+        Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
         return handler.flatMap(ProxyManager::delegate).orCompute(() -> {
-            final Unproxy unproxy = parameter.annotations().get(Unproxy.class).orCompute(() -> parameter.declaredBy().annotations().get(Unproxy.class).orNull()).get();
-            if (unproxy.fallbackToProxy()) return argument;
-            else return null;
+            Unproxy unproxy = parameter.annotations().get(Unproxy.class).orCompute(() -> parameter.declaredBy().annotations().get(Unproxy.class).orNull()).get();
+            if (unproxy.fallbackToProxy()) {
+                return argument;
+            }
+            else {
+                return null;
+            }
         }).cast(parameter.type().type());
     }
 }

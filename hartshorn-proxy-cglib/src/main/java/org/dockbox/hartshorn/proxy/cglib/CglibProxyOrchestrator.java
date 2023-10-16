@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 @Deprecated(since = "0.4.13")
 public class CglibProxyOrchestrator extends AbstractProxyOrchestrator {
 
-    public CglibProxyOrchestrator(final Introspector introspector) {
+    public CglibProxyOrchestrator(Introspector introspector) {
         super(introspector);
         this.registerProxyLookup(new CglibProxyLookup());
         LoggerFactory.getLogger(CglibProxyOrchestrator.class).warn("""
@@ -39,7 +39,7 @@ public class CglibProxyOrchestrator extends AbstractProxyOrchestrator {
     }
 
     @Override
-    public <T> StateAwareProxyFactory<T> factory(final Class<T> type) {
+    public <T> StateAwareProxyFactory<T> factory(Class<T> type) {
         return new CglibProxyFactory<>(type, this);
     }
 }

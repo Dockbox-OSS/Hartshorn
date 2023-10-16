@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 public class GraphException extends ApplicationException {
 
-    public GraphException(final String message) {
+    public GraphException(String message) {
         super(message);
     }
 
-    public GraphException(final String message, final Throwable cause) {
+    public GraphException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public GraphException(final Throwable cause) {
+    public GraphException(Throwable cause) {
         super(cause);
     }
 }

@@ -26,25 +26,25 @@ public class ObjectToVoidConverterTests {
 
     @Test
     void testCanConvertPrimitive() {
-        final ConditionalConverter converter = new ObjectToVoidConverter();
+        ConditionalConverter converter = new ObjectToVoidConverter();
         Assertions.assertTrue(converter.canConvert(null, void.class));
     }
 
     @Test
     void testCanConvertPrimitiveWrapper() {
-        final ConditionalConverter converter = new ObjectToVoidConverter();
+        ConditionalConverter converter = new ObjectToVoidConverter();
         Assertions.assertTrue(converter.canConvert(null, Void.class));
     }
 
     @Test
     void testCanConvertPrimitiveType() {
-        final ConditionalConverter converter = new ObjectToVoidConverter();
+        ConditionalConverter converter = new ObjectToVoidConverter();
         Assertions.assertTrue(converter.canConvert(null, Void.TYPE));
     }
 
     @Test
     void testVoidIsAlwaysNull() {
-        final GenericConverter converter = new ObjectToVoidConverter();
+        GenericConverter converter = new ObjectToVoidConverter();
 
         Assertions.assertNull(converter.convert(null, Object.class, void.class));
         Assertions.assertNull(converter.convert("test", Object.class, void.class));

@@ -46,7 +46,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     private final ApplicationContext applicationContext;
     private final TreeMap<Integer, Provider<C>> bindings = new TreeMap<>(Collections.reverseOrder());
 
-    public NativeBindingHierarchy(final ComponentKey<C> key, final ApplicationContext applicationContext) {
+    public NativeBindingHierarchy(ComponentKey<C> key, ApplicationContext applicationContext) {
         this.key = key;
         this.applicationContext = applicationContext;
     }
@@ -67,12 +67,12 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public BindingHierarchy<C> add(final Provider<C> provider) {
+    public BindingHierarchy<C> add(Provider<C> provider) {
         return this.add(-1, provider);
     }
 
     @Override
-    public BindingHierarchy<C> add(final int priority, final Provider<C> provider) {
+    public BindingHierarchy<C> add(int priority, Provider<C> provider) {
         // Default providers may be overwritten without further warnings
         if (this.bindings.containsKey(priority) && priority != -1) {
             this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
@@ -84,21 +84,23 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public BindingHierarchy<C> addNext(final Provider<C> provider) {
+    public BindingHierarchy<C> addNext(Provider<C> provider) {
         int next = -1;
-        if (!this.bindings.isEmpty()) next = this.bindings.lastKey()+1;
+        if (!this.bindings.isEmpty()) {
+            next = this.bindings.lastKey()+1;
+        }
         return this.add(next, provider);
     }
 
     @Override
-    public BindingHierarchy<C> merge(final BindingHierarchy<C> hierarchy) {
-        final BindingHierarchy<C> merged = new NativeBindingHierarchy<>(this.key(), this.applicationContext);
+    public BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy) {
+        BindingHierarchy<C> merged = new NativeBindingHierarchy<>(this.key(), this.applicationContext);
         // Low priority, other
-        for (final Entry<Integer, Provider<C>> entry : hierarchy) {
+        for (Entry<Integer, Provider<C>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());
         }
         // High priority, self
-        for (final Entry<Integer, Provider<C>> entry : this) {
+        for (Entry<Integer, Provider<C>> entry : this) {
             merged.add(entry.getKey(), entry.getValue());
         }
         return merged;
@@ -110,7 +112,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public Option<Provider<C>> get(final int priority) {
+    public Option<Provider<C>> get(int priority) {
         return Option.of(this.bindings.getOrDefault(priority, null));
     }
 
@@ -121,20 +123,20 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public String toString() {
-        final String contract = this.key().type().getSimpleName();
-        final String keyName = this.key().name();
+        String contract = this.key().type().getSimpleName();
+        String keyName = this.key().name();
         String name = "";
         if (keyName != null) {
             name = "::" + keyName;
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
-        final List<Entry<Integer, Provider<C>>> entries = new ArrayList<>(this.bindings.entrySet());
+        List<Entry<Integer, Provider<C>>> entries = new ArrayList<>(this.bindings.entrySet());
         Collections.reverse(entries);
 
-        final String hierarchy = entries.stream()
+        String hierarchy = entries.stream()
                 .map(entry -> {
-                    final Provider<C> value = entry.getValue();
+                    Provider<C> value = entry.getValue();
                     String target = value.toString();
                     if (value instanceof ContextDrivenProvider<?> contextDrivenProvider) {
                         target = contextDrivenProvider.type().getSimpleName();

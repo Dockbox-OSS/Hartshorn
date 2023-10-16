@@ -32,9 +32,9 @@ public class TranslationInjectMethodInterceptor<T, R> implements MethodIntercept
     private final ConversionService conversionService;
     private final MethodProxyContext<T> methodContext;
 
-    public TranslationInjectMethodInterceptor(final ApplicationContext context, final String key,
-                                              final InjectTranslation annotation, final ConversionService conversionService,
-                                              final MethodProxyContext<T> methodContext) {
+    public TranslationInjectMethodInterceptor(ApplicationContext context, String key,
+                                              InjectTranslation annotation, ConversionService conversionService,
+                                              MethodProxyContext<T> methodContext) {
         this.context = context;
         this.key = key;
         this.annotation = annotation;
@@ -43,11 +43,11 @@ public class TranslationInjectMethodInterceptor<T, R> implements MethodIntercept
     }
 
     @Override
-    public R intercept(final MethodInterceptorContext<T, R> interceptorContext) {
+    public R intercept(MethodInterceptorContext<T, R> interceptorContext) {
         // Prevents NPE when formatting cached resources without arguments
-        final Object[] args = interceptorContext.args();
-        final Object[] objects = null == args ? TranslationInjectPostProcessor.EMPTY_ARGS : args;
-        final Message message = this.context.get(TranslationService.class).getOrCreate(this.key, this.annotation.value()).format(objects);
+        Object[] args = interceptorContext.args();
+        Object[] objects = null == args ? TranslationInjectPostProcessor.EMPTY_ARGS : args;
+        Message message = this.context.get(TranslationService.class).getOrCreate(this.key, this.annotation.value()).format(objects);
 
         //noinspection unchecked
         return (R) this.conversionService.convert(message, this.methodContext.method().returnType().type());

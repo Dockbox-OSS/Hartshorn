@@ -38,56 +38,56 @@ public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithArrayList() {
-        final List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class, 10);
+        List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class, 10);
         Assertions.assertTrue(list instanceof ArrayList);
         Assertions.assertEquals(list.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithHashSet() {
-        final Set<String> set = this.createDefaultFactory().createCollection(Set.class, String.class, 5);
+        Set<String> set = this.createDefaultFactory().createCollection(Set.class, String.class, 5);
         Assertions.assertTrue(set instanceof HashSet);
         Assertions.assertEquals(set.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithTreeSet() {
-        final SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class, 3);
+        SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class, 3);
         Assertions.assertTrue(sortedSet instanceof TreeSet);
         Assertions.assertEquals(sortedSet.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithLinkedList() {
-        final Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class, 7);
+        Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class, 7);
         Assertions.assertTrue(queue instanceof LinkedList);
         Assertions.assertEquals(queue.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithEnumSet() {
-        final CollectionFactory factory = this.createFactory(EnumSet.class, () -> null);
-        final EnumSet<Color> enumSet = factory.createCollection(EnumSet.class, Color.class, 2);
+        CollectionFactory factory = this.createFactory(EnumSet.class, () -> null);
+        EnumSet<Color> enumSet = factory.createCollection(EnumSet.class, Color.class, 2);
         Assertions.assertTrue(enumSet instanceof EnumSet);
         Assertions.assertEquals(enumSet.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithUnsupportedInterface() {
-        final CollectionFactory factory = this.createFactory(BeanContext.class, () -> null);
+        CollectionFactory factory = this.createFactory(BeanContext.class, () -> null);
         Assertions.assertThrows(IllegalArgumentException.class, () -> factory.createCollection(BeanContext.class, Integer.class, 0));
     }
 
     @Test
     public void testCreateCollectionWithConcreteImplementation() {
-        final CollectionFactory factory = this.createFactory(LinkedList.class, LinkedList::new);
-        final List<Integer> list = factory.createCollection(LinkedList.class, Integer.class, 0);
+        CollectionFactory factory = this.createFactory(LinkedList.class, LinkedList::new);
+        List<Integer> list = factory.createCollection(LinkedList.class, Integer.class, 0);
         Assertions.assertTrue(list instanceof LinkedList);
         Assertions.assertEquals(list.size(), 0);
     }
     
-    private <T extends Collection<?>> CollectionFactory createFactory(final Class<T> targetType, final Supplier<T> constructor) {
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
+    private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor) {
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
         return new CollectionFactory(introspector);
     }
 

@@ -44,23 +44,25 @@ public class CooldownExtension implements CommandExecutorExtension {
     private final ApplicationContext applicationContext;
 
     @Inject
-    public CooldownExtension(final ApplicationContext applicationContext) {
+    public CooldownExtension(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public ExtensionResult execute(final CommandContext context, final CommandExecutorContext executorContext) {
-        final CommandSource sender = context.source();
-        if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
+    public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
+        CommandSource sender = context.source();
+        if (!(sender instanceof Identifiable)) {
+            return ExtensionResult.accept();
+        }
 
-        final String id = this.id((Identifiable) sender, context);
+        String id = this.id((Identifiable) sender, context);
         if (this.inCooldown(id)) {
             context.applicationContext().log().debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
-            final Message cooldownMessage = this.activeCooldownMessage();
+            Message cooldownMessage = this.activeCooldownMessage();
             return ExtensionResult.reject(cooldownMessage);
         }
         else {
-            final Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
+            Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
             this.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
@@ -71,7 +73,7 @@ public class CooldownExtension implements CommandExecutorExtension {
     }
 
     @Override
-    public boolean extend(final CommandExecutorContext context) {
+    public boolean extend(CommandExecutorContext context) {
         return context.element().annotations().has(Cooldown.class);
     }
 
@@ -83,8 +85,10 @@ public class CooldownExtension implements CommandExecutorExtension {
      * @param duration The duration
      * @param timeUnit The time unit in which the duration is kept
      */
-    protected void cooldown(final Object target, final long duration, final TemporalUnit timeUnit) {
-        if (this.inCooldown(target)) return;
+    protected void cooldown(Object target, long duration, TemporalUnit timeUnit) {
+        if (this.inCooldown(target)) {
+            return;
+        }
         this.activeCooldowns.put(target, new CooldownEntry(LocalDateTime.now(), duration, timeUnit));
     }
 
@@ -95,20 +99,22 @@ public class CooldownExtension implements CommandExecutorExtension {
      *
      * @return true if an object is in an active cooldown queue. Otherwise false
      */
-    protected boolean inCooldown(final Object target) {
+    protected boolean inCooldown(Object target) {
         if (this.activeCooldowns.containsKey(target)) {
-            final LocalDateTime now = LocalDateTime.now();
-            final CooldownEntry cooldown = this.activeCooldowns.get(target);
-            final LocalDateTime timeCooledDown = cooldown.startTime();
-            final long duration = cooldown.duration();
-            final TemporalUnit timeUnit = cooldown.timeUnit();
+            LocalDateTime now = LocalDateTime.now();
+            CooldownEntry cooldown = this.activeCooldowns.get(target);
+            LocalDateTime timeCooledDown = cooldown.startTime();
+            long duration = cooldown.duration();
+            TemporalUnit timeUnit = cooldown.timeUnit();
 
-            final LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
+            LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
 
             return endTime.isAfter(now);
 
         }
-        else return false;
+        else {
+            return false;
+        }
     }
 
     private record CooldownEntry(LocalDateTime startTime, long duration, TemporalUnit timeUnit) {

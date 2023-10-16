@@ -31,15 +31,15 @@ public class CommandExtensionContext extends DefaultApplicationAwareContext {
     private final Set<CommandExecutorExtension> extensions = ConcurrentHashMap.newKeySet();
 
     @Inject
-    public CommandExtensionContext(final ApplicationContext applicationContext) {
+    public CommandExtensionContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
-    public boolean add(final CommandExecutorExtension extension) {
+    public boolean add(CommandExecutorExtension extension) {
         return this.extensions.add(extension);
     }
 
-    public boolean remove(final CommandExecutorExtension extension) {
+    public boolean remove(CommandExecutorExtension extension) {
         return this.extensions.remove(extension);
     }
 

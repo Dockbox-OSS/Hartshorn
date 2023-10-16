@@ -22,10 +22,10 @@ import org.dockbox.hartshorn.config.ConfigurationURIContextList;
 
 public abstract class PropertyAwareComponentPostProcessor extends ComponentPostProcessor {
 
-    protected void verifyPropertiesAvailable(final ApplicationContext context, final PropertyHolder propertyHolder) {
+    protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) {
         if (propertyHolder.properties().isEmpty()) {
-            final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
-            final URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
+            ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+            URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
             configProcessor.process(context, uriContextList.uris());
         }
     }

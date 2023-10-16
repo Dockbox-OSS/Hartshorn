@@ -26,7 +26,7 @@ public class SetExpression extends Expression implements NamedNode {
     private final Token name;
     private final Expression value;
 
-    public SetExpression(final Expression object, final Token name, final Expression value) {
+    public SetExpression(Expression object, Token name, Expression value) {
         super(name);
         this.object = object;
         this.name = name;
@@ -47,7 +47,7 @@ public class SetExpression extends Expression implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

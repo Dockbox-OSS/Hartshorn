@@ -28,14 +28,14 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
 
     private final Class<C> contextType;
 
-    protected ContextConfiguringComponentProcessor(final Class<C> contextType) {
+    protected ContextConfiguringComponentProcessor(Class<C> contextType) {
         this.contextType = contextType;
     }
 
     @Override
-    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (this.supports(processingContext)) {
-            final C componentContext = processingContext.first(ContextKey.of(this.contextType))
+            C componentContext = processingContext.first(ContextKey.of(this.contextType))
                     .orCompute(() -> this.createContext(context, processingContext)).orNull();
 
             if (componentContext != null) {
@@ -46,20 +46,20 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
                 contextInstance.add(componentContext);
             }
             else {
-                final ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
+                ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
                 if (processingContext.containsKey(factoryKey)) {
-                    final ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
+                    ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
                     proxyFactory.contextContainer().add(componentContext);
                 }
             }
         }
     }
 
-    protected abstract boolean supports(final ComponentProcessingContext<?> processingContext);
+    protected abstract boolean supports(ComponentProcessingContext<?> processingContext);
 
-    protected abstract <T> void configure(final ApplicationContext context, final C componentContext,
-                                          final ComponentProcessingContext<T> processingContext);
+    protected abstract <T> void configure(ApplicationContext context, C componentContext,
+                                          ComponentProcessingContext<T> processingContext);
 
-    protected abstract C createContext(final ApplicationContext context,
-                                       final ComponentProcessingContext<?> processingContext);
+    protected abstract C createContext(ApplicationContext context,
+                                       ComponentProcessingContext<?> processingContext);
 }

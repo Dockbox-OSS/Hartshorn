@@ -41,27 +41,27 @@ public class ContextConfiguringComponentProcessorTests {
 
     @InjectTest
     @TestComponents(components = EmptyComponent.class)
-    void testNonContextComponentIsProcessed(final ApplicationContext applicationContext) {
-        final EmptyComponent emptyComponent = applicationContext.get(EmptyComponent.class);
+    void testNonContextComponentIsProcessed(ApplicationContext applicationContext) {
+        EmptyComponent emptyComponent = applicationContext.get(EmptyComponent.class);
 
         Assertions.assertNotNull(emptyComponent);
         Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(emptyComponent));
 
-        final Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        final Option<SimpleContext> context = component.manager().first(ContextKey.of(SimpleContext.class));
+        Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
+        Option<SimpleContext> context = component.manager().first(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }
 
     @InjectTest
     @TestComponents(components = ContextComponent.class)
-    void testContextComponentIsProcessed(final ApplicationContext applicationContext) {
-        final ContextComponent contextComponent = applicationContext.get(ContextComponent.class);
+    void testContextComponentIsProcessed(ApplicationContext applicationContext) {
+        ContextComponent contextComponent = applicationContext.get(ContextComponent.class);
 
         Assertions.assertNotNull(contextComponent);
         Assertions.assertFalse(applicationContext.environment().proxyOrchestrator().isProxy(contextComponent));
 
-        final Option<SimpleContext> context = contextComponent.first(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context = contextComponent.first(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }

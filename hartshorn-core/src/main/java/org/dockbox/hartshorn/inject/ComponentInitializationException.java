@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ComponentInitializationException extends ApplicationRuntimeException {
-    public ComponentInitializationException(final String message) {
+    public ComponentInitializationException(String message) {
         super(message);
     }
 
-    public ComponentInitializationException(final String message, final Throwable cause) {
+    public ComponentInitializationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

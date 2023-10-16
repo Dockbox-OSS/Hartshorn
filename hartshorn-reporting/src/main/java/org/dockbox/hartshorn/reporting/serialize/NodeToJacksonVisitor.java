@@ -31,42 +31,74 @@ import java.util.List;
 class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
 
     @Override
-    public JsonNode visit(final Node<?> node) {
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
-        final Object value = node.value();
-        if (value instanceof String stringValue) return factory.textNode(stringValue);
-        else if (value instanceof Integer integerValue) return factory.numberNode(integerValue);
-        else if (value instanceof Double doubleValue) return factory.numberNode(doubleValue);
-        else if (value instanceof Long longValue) return factory.numberNode(longValue);
-        else if (value instanceof Short shortValue) return factory.numberNode(shortValue);
-        else if (value instanceof Boolean booleanValue) return factory.booleanNode(booleanValue);
-        else if (value instanceof Node<?> nodeValue) return nodeValue.accept(this);
-        else throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
+    public JsonNode visit(Node<?> node) {
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        Object value = node.value();
+        if (value instanceof String stringValue) {
+            return factory.textNode(stringValue);
+        }
+        else if (value instanceof Integer integerValue) {
+            return factory.numberNode(integerValue);
+        }
+        else if (value instanceof Double doubleValue) {
+            return factory.numberNode(doubleValue);
+        }
+        else if (value instanceof Long longValue) {
+            return factory.numberNode(longValue);
+        }
+        else if (value instanceof Short shortValue) {
+            return factory.numberNode(shortValue);
+        }
+        else if (value instanceof Boolean booleanValue) {
+            return factory.booleanNode(booleanValue);
+        }
+        else if (value instanceof Node<?> nodeValue) {
+            return nodeValue.accept(this);
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
+        }
     }
 
     @Override
-    public JsonNode visit(final GroupNode node) {
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
-        final ObjectNode object = factory.objectNode();
-        for (final Node<?> value : node.value()) {
+    public JsonNode visit(GroupNode node) {
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        ObjectNode object = factory.objectNode();
+        for (Node<?> value : node.value()) {
             object.set(value.name(), value.accept(this));
         }
         return object;
     }
 
     @Override
-    public JsonNode visit(final ArrayNode<?> node) {
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
-        final List<JsonNode> nodes = new ArrayList<>();
-        for (final Object value : node.value()) {
-            if (value instanceof String stringValue) nodes.add(factory.textNode(stringValue));
-            else if (value instanceof Integer integerValue) nodes.add(factory.numberNode(integerValue));
-            else if (value instanceof Double doubleValue) nodes.add(factory.numberNode(doubleValue));
-            else if (value instanceof Long longValue) nodes.add(factory.numberNode(longValue));
-            else if (value instanceof Short shortValue) nodes.add(factory.numberNode(shortValue));
-            else if (value instanceof Boolean booleanValue) nodes.add(factory.booleanNode(booleanValue));
-            else if (value instanceof Node<?> nodeValue) nodes.add(nodeValue.accept(this));
-            else throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
+    public JsonNode visit(ArrayNode<?> node) {
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        List<JsonNode> nodes = new ArrayList<>();
+        for (Object value : node.value()) {
+            if (value instanceof String stringValue) {
+                nodes.add(factory.textNode(stringValue));
+            }
+            else if (value instanceof Integer integerValue) {
+                nodes.add(factory.numberNode(integerValue));
+            }
+            else if (value instanceof Double doubleValue) {
+                nodes.add(factory.numberNode(doubleValue));
+            }
+            else if (value instanceof Long longValue) {
+                nodes.add(factory.numberNode(longValue));
+            }
+            else if (value instanceof Short shortValue) {
+                nodes.add(factory.numberNode(shortValue));
+            }
+            else if (value instanceof Boolean booleanValue) {
+                nodes.add(factory.booleanNode(booleanValue));
+            }
+            else if (value instanceof Node<?> nodeValue) {
+                nodes.add(nodeValue.accept(this));
+            }
+            else {
+                throw new IllegalArgumentException("Unsupported type " + value.getClass().getName());
+            }
         }
         return factory.arrayNode().addAll(nodes);
     }

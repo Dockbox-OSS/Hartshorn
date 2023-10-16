@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -29,14 +37,6 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
 public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     public static final String APPLICATION_CATEGORY = "application";
@@ -44,12 +44,12 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
     private final ApplicationContext applicationContext;
 
-    public ApplicationDiagnosticsReporter(final ApplicationContext applicationContext) {
+    public ApplicationDiagnosticsReporter(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
             collector.property("version").write(Hartshorn.VERSION);
         }
@@ -70,47 +70,47 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         }
     }
 
-    private static void reportJarLocation(final DiagnosticsPropertyCollector collector) {
+    private static void reportJarLocation(DiagnosticsPropertyCollector collector) {
         String jarLocation;
         try {
             jarLocation = Hartshorn.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             jarLocation = "Unknown";
         }
         collector.property("jar").write(jarLocation);
     }
 
-    private void reportApplicationProperties(final DiagnosticsPropertyCollector collector) {
-        final Properties properties = this.applicationContext.properties();
-        final Reportable reporter = new PropertiesReporter(properties);
+    private void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
+        Properties properties = this.applicationContext.properties();
+        Reportable reporter = new PropertiesReporter(properties);
         collector.property("properties").write(reporter);
     }
 
-    private void reportServiceActivators(final DiagnosticsPropertyCollector collector) {
-        final String[] activators = this.applicationContext.activators().stream()
+    private void reportServiceActivators(DiagnosticsPropertyCollector collector) {
+        String[] activators = this.applicationContext.activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").write(activators);
     }
 
-    private void reportObservers(final DiagnosticsPropertyCollector collector) {
-        final ApplicationEnvironment environment = this.applicationContext.environment();
+    private void reportObservers(DiagnosticsPropertyCollector collector) {
+        ApplicationEnvironment environment = this.applicationContext.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            final Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
+            Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
                             .collect(Collectors.groupingBy(Observer::getClass));
 
             collector.property("observers").write(observerCollector -> {
-                for (final Entry<Class<? extends Observer>, List<Observer>> entry : observers.entrySet()) {
+                for (Entry<Class<? extends Observer>, List<Observer>> entry : observers.entrySet()) {
                     observerCollector.property(entry.getKey().getSimpleName()).write(entry.getValue().size());
                 }
             });
         }
     }
 
-    private void reportContexts(final DiagnosticsPropertyCollector collector) {
-        final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference = new AtomicReference<>();
+    private void reportContexts(DiagnosticsPropertyCollector collector) {
+        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference = new AtomicReference<>();
 
-        final BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
+        BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
             contextsCollector.property("type").write(context.getClass().getCanonicalName());
             if (context instanceof Reportable reportable) {
                 contextsCollector.property("data").write(reportable);
@@ -119,18 +119,18 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
                 contextsCollector.property("name").write(namedContext.name());
             }
             if (!context.all().isEmpty()) {
-                final Reportable[] childReporters = childReporters(reporterReference, context);
+                Reportable[] childReporters = childReporters(reporterReference, context);
                 contextsCollector.property("children").write(childReporters);
             }
         };
         reporterReference.set(reporter);
 
-        final Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
+        Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
         collector.property("contexts").write(reporters);
     }
 
     @NonNull
-    private static Reportable[] childReporters(final AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, final Context context) {
+    private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, Context context) {
         return context.all().stream()
                 .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))
                 .toArray(Reportable[]::new);

@@ -32,27 +32,27 @@ import java.util.stream.Collectors;
 
 public class DependencyResolverUtils {
 
-    public static Set<ComponentKey<?>> resolveDependencies(final TypeView<?> type) {
-        final Set<ComponentKey<?>> setterDependencies = type.methods().annotatedWith(Inject.class).stream()
+    public static Set<ComponentKey<?>> resolveDependencies(TypeView<?> type) {
+        Set<ComponentKey<?>> setterDependencies = type.methods().annotatedWith(Inject.class).stream()
                 .flatMap(method -> DependencyResolverUtils.resolveDependencies(method).stream())
                 .collect(Collectors.toSet());
-        final Set<ComponentKey<?>> fieldDependencies = type.fields().annotatedWith(Inject.class).stream()
+        Set<ComponentKey<?>> fieldDependencies = type.fields().annotatedWith(Inject.class).stream()
                 .map(DependencyResolverUtils::resolveComponentKey)
                 .collect(Collectors.toSet());
 
         return CollectionUtilities.merge(setterDependencies, fieldDependencies);
     }
 
-    public static Set<ComponentKey<?>> resolveDependencies(final ExecutableElementView<?> executable) {
+    public static Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
         return executable.parameters().all().stream()
                 .filter(parameter -> !parameter.annotations().has(HandledInjection.class))
                 .map(DependencyResolverUtils::resolveComponentKey)
                 .collect(Collectors.toSet());
     }
 
-    public static <T, E extends AnnotatedElementView & GenericTypeView<T>> ComponentKey<T> resolveComponentKey(final E element) {
-        final TypeView<T> type = element.genericType();
-        final ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(type.type());
+    public static <T, E extends AnnotatedElementView & GenericTypeView<T>> ComponentKey<T> resolveComponentKey(E element) {
+        TypeView<T> type = element.genericType();
+        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(type.type());
         element.annotations().get(Named.class)
                 .filter(qualifier -> StringUtilities.notEmpty(qualifier.value()))
                 .peek(qualifier -> {

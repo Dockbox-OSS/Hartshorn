@@ -45,7 +45,7 @@ public class ExceptTests {
     public void testExceptKeepsPreferences() {
         this.applicationContext.environment().printStacktraces(true);
 
-        final Throwable throwable = new Exception("Test");
+        Throwable throwable = new Exception("Test");
         this.applicationContext.handle("Test", throwable);
 
         Assertions.assertTrue(HANDLE.stacktrace());
@@ -55,7 +55,7 @@ public class ExceptTests {
 
     @Test
     public void testExceptUsesExceptionMessageIfNoneProvided() {
-        final Exception throwable = new Exception("Something broke!");
+        Exception throwable = new Exception("Something broke!");
         this.applicationContext.handle(throwable);
 
         Assertions.assertSame(throwable, HANDLE.exception());
@@ -64,8 +64,8 @@ public class ExceptTests {
 
     @Test
     public void testExceptUsesFirstExceptionMessageIfNoneProvided() {
-        final Exception cause = new Exception("I caused it!");
-        final Exception throwable = new Exception("Something broke!", cause);
+        Exception cause = new Exception("I caused it!");
+        Exception throwable = new Exception("Something broke!", cause);
         this.applicationContext.handle(throwable);
 
         Assertions.assertSame(throwable, HANDLE.exception());
@@ -74,20 +74,20 @@ public class ExceptTests {
 
     @Test
     public void testGetFirstUsesParentFirst() {
-        final Exception cause = new Exception("I caused it!");
-        final Exception throwable = new Exception("Something broke!", cause);
+        Exception cause = new Exception("I caused it!");
+        Exception throwable = new Exception("Something broke!", cause);
 
-        final String message = LoggingExceptionHandler.firstMessage(throwable);
+        String message = LoggingExceptionHandler.firstMessage(throwable);
 
         Assertions.assertEquals("Something broke!", message);
     }
 
     @Test
     public void testGetFirstUsesCauseIfParentMessageAbsent() {
-        final Exception cause = new Exception("I caused it!");
-        final Exception throwable = new Exception(null, cause);
+        Exception cause = new Exception("I caused it!");
+        Exception throwable = new Exception(null, cause);
 
-        final String message = LoggingExceptionHandler.firstMessage(throwable);
+        String message = LoggingExceptionHandler.firstMessage(throwable);
 
         Assertions.assertEquals("I caused it!", message);
     }

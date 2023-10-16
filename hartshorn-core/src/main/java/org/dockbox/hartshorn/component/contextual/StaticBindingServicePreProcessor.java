@@ -39,17 +39,17 @@ import java.util.List;
 public class StaticBindingServicePreProcessor extends ComponentPreProcessor implements ExitingComponentProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
 
         try {
-            final TypeView<T> type = processingContext.type();
-            final List<FieldView<T, ?>> fields = type.fields().annotatedWith(StaticBinds.class);
+            TypeView<T> type = processingContext.type();
+            List<FieldView<T, ?>> fields = type.fields().annotatedWith(StaticBinds.class);
             this.process(context, staticComponentContext, TypeUtils.adjustWildcards(fields, List.class));
-            final List<MethodView<T, ?>> methods = type.methods().annotatedWith(StaticBinds.class);
+            List<MethodView<T, ?>> methods = type.methods().annotatedWith(StaticBinds.class);
             this.process(context, staticComponentContext, TypeUtils.adjustWildcards(methods, List.class));
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new ApplicationRuntimeException(e);
         }
     }
@@ -57,12 +57,14 @@ public class StaticBindingServicePreProcessor extends ComponentPreProcessor impl
     private <T, E extends AnnotatedElementView
             & ModifierCarrierView
             & GenericTypeView<T>>
-    void process(final ApplicationContext applicationContext, final StaticComponentCollector context, final List<E> elements) throws ApplicationException {
-        if (elements.isEmpty()) return;
+    void process(ApplicationContext applicationContext, StaticComponentCollector context, List<E> elements) throws ApplicationException {
+        if (elements.isEmpty()) {
+            return;
+        }
 
-        final ViewContextAdapter adapter = applicationContext.get(ViewContextAdapter.class);
-        final ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
-        for (final E element : elements) {
+        ViewContextAdapter adapter = applicationContext.get(ViewContextAdapter.class);
+        ConditionMatcher conditionMatcher = applicationContext.get(ConditionMatcher.class);
+        for (E element : elements) {
             if (!element.modifiers().isStatic()) {
                 throw new ApplicationException("Bean service pre-processor can only process static fields and methods");
             }
@@ -75,14 +77,14 @@ public class StaticBindingServicePreProcessor extends ComponentPreProcessor impl
     private <T, E extends AnnotatedElementView
             & ModifierCarrierView
             & GenericTypeView<T>>
-    void process(final ViewContextAdapter adapter, final E element, final StaticComponentCollector context) throws ApplicationException {
-        final StaticBinds staticBinds = element.annotations().get(StaticBinds.class).get();
-        final String id = staticBinds.id();
+    void process(ViewContextAdapter adapter, E element, StaticComponentCollector context) throws ApplicationException {
+        StaticBinds staticBinds = element.annotations().get(StaticBinds.class).get();
+        String id = staticBinds.id();
 
-        final T beanInstance = adapter.load(element)
+        T beanInstance = adapter.load(element)
                 .orElseThrow(() -> new ApplicationException("Bean service pre-processor can only process static fields and methods"));
 
-        final TypeView<T> type = element.genericType();
+        TypeView<T> type = element.genericType();
         context.register(beanInstance, type.type(), id);
     }
 
@@ -92,12 +94,13 @@ public class StaticBindingServicePreProcessor extends ComponentPreProcessor impl
     }
 
     @Override
-    public void exit(final ApplicationContext context) {
-        final ApplicationEnvironment environment = context.environment();
-        final StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
+    public void exit(ApplicationContext context) {
+        ApplicationEnvironment environment = context.environment();
+        StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
         if (environment instanceof ObservableApplicationEnvironment observable) {
-            for (final StaticComponentObserver observer : observable.observers(StaticComponentObserver.class))
+            for (StaticComponentObserver observer : observable.observers(StaticComponentObserver.class)) {
                 observer.onStaticComponentsCollected(context, staticComponentContext);
+            }
         }
     }
 }

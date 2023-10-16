@@ -46,34 +46,40 @@ public class FactoryServicePreProcessor extends ComponentPreProcessor {
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final List<MethodView<T, ?>> factoryMethods = processingContext.type().methods().annotatedWith(Factory.class);
-        if (factoryMethods.isEmpty()) return;
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        List<MethodView<T, ?>> factoryMethods = processingContext.type().methods().annotatedWith(Factory.class);
+        if (factoryMethods.isEmpty()) {
+            return;
+        }
 
-        final FactoryContext factoryContext = context.first(FactoryContext.class).get();
+        FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
-        for (final MethodView<T, ?> method : factoryMethods) {
-            final Factory annotation = method.annotations().get(Factory.class).get();
+        for (MethodView<T, ?> method : factoryMethods) {
+            Factory annotation = method.annotations().get(Factory.class).get();
             ComponentKey<?> componentKey = ComponentKey.of(method.returnType());
-            if (!"".equals(annotation.value())) componentKey = componentKey.mutable().name(annotation.value()).build();
+            if (!"".equals(annotation.value())) {
+                componentKey = componentKey.mutable().name(annotation.value()).build();
+            }
 
             if (!lookupMatchingConstructor(context, factoryContext, (MethodView<Object, ?>) method, componentKey)) {
-                if (annotation.required()) throw new MissingFactoryConstructorException(componentKey, method);
+                if (annotation.required()) {
+                    throw new MissingFactoryConstructorException(componentKey, method);
+                }
             }
         }
     }
 
-    private static boolean lookupMatchingConstructor(final ApplicationContext context, final FactoryContext factoryContext,
-                                                     final MethodView<Object, ?> method, final ComponentKey<?> componentKey) {
-        final List<Class<?>> methodParameters = method.parameters().types().stream()
+    private static boolean lookupMatchingConstructor(ApplicationContext context, FactoryContext factoryContext,
+                                                     MethodView<Object, ?> method, ComponentKey<?> componentKey) {
+        List<Class<?>> methodParameters = method.parameters().types().stream()
                 .map(TypeView::type)
                 .collect(Collectors.toList());
 
-        for (final Provider<?> provider : context.hierarchy(componentKey).providers()) {
+        for (Provider<?> provider : context.hierarchy(componentKey).providers()) {
             if (provider instanceof ContextDrivenProvider<?> contextDrivenProvider) {
-                final TypeView<?> typeContext = context.environment().introspector().introspect(contextDrivenProvider.type());
+                TypeView<?> typeContext = context.environment().introspector().introspect(contextDrivenProvider.type());
 
-                for (final ConstructorView<?> constructor : typeContext.constructors().annotatedWith(Bound.class)) {
+                for (ConstructorView<?> constructor : typeContext.constructors().annotatedWith(Bound.class)) {
                     if (constructor.parameters().matches(methodParameters)) {
                         factoryContext.register(method, (ConstructorView<Object>) constructor);
                         return true;

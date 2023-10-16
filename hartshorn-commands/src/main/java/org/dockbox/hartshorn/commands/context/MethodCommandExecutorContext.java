@@ -55,9 +55,9 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key) {
+    public MethodCommandExecutorContext(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key) {
         super(context);
-        final Option<Command> annotated = method.annotations().get(Command.class);
+        Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
@@ -66,8 +66,8 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         this.command = annotated.get();
         this.type = context.environment().introspector().introspect(key.type());
 
-        final Option<Command> annotation = this.type.annotations().get(Command.class);
-        final Command parent;
+        Option<Command> annotation = this.type.annotations().get(Command.class);
+        Command parent;
         if (annotation.present()) {
             parent = annotation.get();
             this.isChild = true;
@@ -115,9 +115,9 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     public Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = new HashMap<>();
-            final List<ParameterView<?>> parameters = this.method().parameters().all();
+            List<ParameterView<?>> parameters = this.method().parameters().all();
             for (int i = 0; i < parameters.size(); i++) {
-                final ParameterView<?> parameter = parameters.get(i);
+                ParameterView<?> parameter = parameters.get(i);
                 this.parameters.put(parameter.name(), new CommandParameterContext(parameter, i));
             }
 
@@ -127,28 +127,30 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     @Override
     public CommandExecutor executor() {
-        final ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
+        ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
         return new MethodCommandExecutor<>(conditionMatcher, this);
     }
 
     @Override
-    public boolean accepts(final String command) {
-        final CommandDefinitionContext context = this.definition();
+    public boolean accepts(String command) {
+        CommandDefinitionContext context = this.definition();
         return context.matches(this.strip(command, true));
     }
 
     @Override
-    public String strip(String command, final boolean parentOnly) {
+    public String strip(String command, boolean parentOnly) {
         command = this.stripAny(command, this.parentAliases);
-        if (!parentOnly) command = this.stripAny(command, this.definition().aliases());
+        if (!parentOnly) {
+            command = this.stripAny(command, this.definition().aliases());
+        }
         return command;
     }
 
     @Override
     public List<String> aliases() {
-        final List<String> aliases = new ArrayList<>();
-        for (final String parentAlias : this.parentAliases()) {
-            for (final String alias : this.command().value()) {
+        List<String> aliases = new ArrayList<>();
+        for (String parentAlias : this.parentAliases()) {
+            for (String alias : this.command().value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
         }
@@ -169,17 +171,21 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     @Override
-    public List<String> suggestions(final CommandSource source, final String command, final CommandParser parser) {
-        final String stripped = this.strip(command, false);
+    public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
+        String stripped = this.strip(command, false);
         this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
-        final List<CommandElement<?>> elements = this.definition().elements();
-        final List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
-        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
+        List<CommandElement<?>> elements = this.definition().elements();
+        List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
+        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) {
+            tokens.add("");
+        }
 
         CommandElement<?> last = null;
-        for (final CommandElement<?> element : elements) {
+        for (CommandElement<?> element : elements) {
             int size = element.size();
-            if (size == -1) return List.of();
+            if (size == -1) {
+                return List.of();
+            }
 
             if (tokens.size() <= size) {
                 last = element;
@@ -196,22 +202,28 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.applicationContext().log().debug("Could not locate last command element to collect suggestions");
             return List.of();
         }
-        final Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
+        Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
         this.applicationContext().log().debug("Found " + suggestions.size() + " suggestions");
         return List.copyOf(suggestions);
     }
 
     private CommandDefinitionContext definition() {
-        final Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
-        if (definition.absent()) throw new DefinitionContextLostException();
+        Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        if (definition.absent()) {
+            throw new DefinitionContextLostException();
+        }
         return definition.get();
     }
 
-    private String stripAny(String command, final Iterable<String> aliases) {
-        for (final String alias : aliases) {
+    private String stripAny(String command, Iterable<String> aliases) {
+        for (String alias : aliases) {
             // Equality is expected when no required arguments are present afterwards
-            if (command.equals(alias)) command = "";
-            else if (command.startsWith(alias + ' ')) command = command.substring(alias.length() + 1);
+            if (command.equals(alias)) {
+                command = "";
+            }
+            else if (command.startsWith(alias + ' ')) {
+                command = command.substring(alias.length() + 1);
+            }
         }
         return command;
     }

@@ -51,13 +51,13 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (instance != null) {
             throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
         }
-        final ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
+        ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
-            final T objectInstance = executable.create(arguments.toArray())
+            T objectInstance = executable.create(arguments.toArray())
                     .mapError(ApplicationException::new)
                     .rethrow()
                     .orNull();
@@ -77,14 +77,16 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
     }
 
     @Override
-    public MethodReference method(final String name) {
+    public MethodReference method(String name) {
         return new ExternalFunction(this.type(), name);
     }
 
     @Override
     public ClassReference superClass() {
-        final TypeView<?> parent = this.type().superClass();
-        if (parent.isVoid()) return null;
+        TypeView<?> parent = this.type().superClass();
+        if (parent.isVoid()) {
+            return null;
+        }
         return new ExternalClass<>(parent);
     }
 

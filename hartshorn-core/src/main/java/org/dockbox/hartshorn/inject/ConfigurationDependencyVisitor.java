@@ -27,31 +27,31 @@ public class ConfigurationDependencyVisitor extends BreadthFirstGraphVisitor<Dep
 
     private final ApplicationContext applicationContext;
 
-    public ConfigurationDependencyVisitor(final ApplicationContext applicationContext) {
+    public ConfigurationDependencyVisitor(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    protected boolean visit(final GraphNode<DependencyContext<?>> node) throws GraphException {
-        final DependencyContext<?> dependencyContext = node.value();
+    protected boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
+        DependencyContext<?> dependencyContext = node.value();
         try {
             this.registerProvider(dependencyContext);
             this.doAfterRegister(dependencyContext);
             return true;
         }
-        catch (final ComponentConfigurationException e) {
+        catch (ComponentConfigurationException e) {
             throw new GraphException(e);
         }
     }
 
-    private <T> void registerProvider(final DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
-        final BindingFunction<T> function = this.applicationContext.bind(dependencyContext.componentKey());
+    private <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
+        BindingFunction<T> function = this.applicationContext.bind(dependencyContext.componentKey());
         dependencyContext.configure(function);
     }
 
-    private void doAfterRegister(final DependencyContext<?> dependencyContext) {
+    private void doAfterRegister(DependencyContext<?> dependencyContext) {
         if (ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
-            final ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
+            ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
             this.applicationContext.add(processor);
         }
     }

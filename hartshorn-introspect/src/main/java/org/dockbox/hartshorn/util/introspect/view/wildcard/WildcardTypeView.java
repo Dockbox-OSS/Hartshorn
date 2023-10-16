@@ -119,7 +119,7 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
-    public boolean isPermittedSubclass(final Class<?> subclass) {
+    public boolean isPermittedSubclass(Class<?> subclass) {
         return false;
     }
 
@@ -129,12 +129,12 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
-    public boolean isDeclaredIn(final String prefix) {
+    public boolean isDeclaredIn(String prefix) {
         return false;
     }
 
     @Override
-    public boolean isInstance(final Object object) {
+    public boolean isInstance(Object object) {
         return true;
     }
 
@@ -179,17 +179,17 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
-    public boolean isParentOf(final Class<?> type) {
+    public boolean isParentOf(Class<?> type) {
         return true;
     }
 
     @Override
-    public boolean isChildOf(final Class<?> type) {
+    public boolean isChildOf(Class<?> type) {
         return true;
     }
 
     @Override
-    public boolean is(final Class<?> type) {
+    public boolean is(Class<?> type) {
         return true;
     }
 
@@ -219,12 +219,12 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
-    public Object cast(final Object object) {
+    public Object cast(Object object) {
         return object;
     }
 
     @Override
-    public boolean has(final AccessModifier modifier) {
+    public boolean has(AccessModifier modifier) {
         return false;
     }
 
@@ -244,7 +244,7 @@ public class WildcardTypeView implements TypeView<Object> {
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write("*");
         collector.property("wildcard").write(true);
     }

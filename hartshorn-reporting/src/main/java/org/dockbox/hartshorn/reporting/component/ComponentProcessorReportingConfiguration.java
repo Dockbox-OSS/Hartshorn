@@ -24,15 +24,16 @@ public class ComponentProcessorReportingConfiguration {
     private final EnumMap<ComponentProcessorAttribute, Boolean> attributes = new EnumMap<>(ComponentProcessorAttribute.class);
 
     public ComponentProcessorReportingConfiguration() {
-        for (final ComponentProcessorAttribute attribute : ComponentProcessorAttribute.values())
+        for (ComponentProcessorAttribute attribute : ComponentProcessorAttribute.values()) {
             this.attributes.put(attribute, true);
+        }
     }
 
     public ComponentProcessorAttribute groupBy() {
         return this.groupBy;
     }
 
-    public ComponentProcessorReportingConfiguration groupBy(final ComponentProcessorAttribute groupBy) {
+    public ComponentProcessorReportingConfiguration groupBy(ComponentProcessorAttribute groupBy) {
         this.groupBy = groupBy;
         return this;
     }
@@ -41,16 +42,16 @@ public class ComponentProcessorReportingConfiguration {
         return this.attributes;
     }
 
-    public ComponentProcessorReportingConfiguration attribute(final ComponentProcessorAttribute attribute, final boolean enabled) {
+    public ComponentProcessorReportingConfiguration attribute(ComponentProcessorAttribute attribute, boolean enabled) {
         this.attributes.put(attribute, enabled);
         return this;
     }
 
-    public ComponentProcessorReportingConfiguration enable(final ComponentProcessorAttribute attribute) {
+    public ComponentProcessorReportingConfiguration enable(ComponentProcessorAttribute attribute) {
         return this.attribute(attribute, true);
     }
 
-    public ComponentProcessorReportingConfiguration disable(final ComponentProcessorAttribute attribute) {
+    public ComponentProcessorReportingConfiguration disable(ComponentProcessorAttribute attribute) {
         return this.attribute(attribute, false);
     }
 

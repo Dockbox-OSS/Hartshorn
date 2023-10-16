@@ -30,7 +30,7 @@ public interface TypeParametersIntrospector {
      * @return the list of type parameters
      */
     @Deprecated(forRemoval = true, since = "0.5.0")
-    List<TypeView<?>> from(final Class<?> fromInterface);
+    List<TypeView<?>> from(Class<?> fromInterface);
 
     /**
      * @deprecated use {@link #atIndex(int)} instead
@@ -40,7 +40,7 @@ public interface TypeParametersIntrospector {
     @Deprecated(forRemoval = true, since = "0.5.0")
     Option<TypeView<?>> at(int index);
 
-    TypeParameterList resolveInputFor(final Class<?> fromParentType);
+    TypeParameterList resolveInputFor(Class<?> fromParentType);
 
     Option<TypeParameterView> atIndex(int index);
 
@@ -50,7 +50,7 @@ public interface TypeParametersIntrospector {
 
     TypeParameterList allOutput();
 
-    TypeParameterList outputFor(final Class<?> fromParentType);
+    TypeParameterList outputFor(Class<?> fromParentType);
 
     int count();
 

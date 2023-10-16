@@ -29,19 +29,19 @@ public final class ProvidedParameterContext extends DefaultProvisionContext {
 
     private final Map<ParameterView<?>, Object> arguments = new HashMap<>();
 
-    private ProvidedParameterContext(final Map<ParameterView<?>, Object> arguments) {
+    private ProvidedParameterContext(Map<ParameterView<?>, Object> arguments) {
         this.arguments.putAll(arguments);
     }
 
-    public static ProvidedParameterContext of(final Map<ParameterView<?>, Object> arguments) {
+    public static ProvidedParameterContext of(Map<ParameterView<?>, Object> arguments) {
         return new ProvidedParameterContext(arguments);
     }
 
-    public static ProvidedParameterContext of(final List<ParameterView<?>> parameters, final List<Object> arguments) {
+    public static ProvidedParameterContext of(List<ParameterView<?>> parameters, List<Object> arguments) {
         if (parameters.size() != arguments.size()) {
             throw new IllegalArgumentException("Parameters and arguments must be of the same size");
         }
-        final Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
+        Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
                 .collect(
                         HashMap::new,
                         (parameterViews, index) -> parameterViews.put(parameters.get(index), arguments.get(index)),
@@ -50,7 +50,7 @@ public final class ProvidedParameterContext extends DefaultProvisionContext {
         return new ProvidedParameterContext(argumentMap);
     }
 
-    public static ProvidedParameterContext of(final ExecutableElementView<?> executable, final List<Object> arguments) {
+    public static ProvidedParameterContext of(ExecutableElementView<?> executable, List<Object> arguments) {
         return of(executable.parameters().all(), arguments);
     }
 

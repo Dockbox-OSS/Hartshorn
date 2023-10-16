@@ -27,20 +27,20 @@ public class JVMDiagnosticsReporter implements Reportable {
 
     private final boolean includeJvmFlags;
 
-    public JVMDiagnosticsReporter(final boolean includeJvmFlags) {
+    public JVMDiagnosticsReporter(boolean includeJvmFlags) {
         this.includeJvmFlags = includeJvmFlags;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("home").write(System.getProperty("java.home"));
         collector.property("version").write(System.getProperty("java.vm.version"));
         collector.property("vendor").write(System.getProperty("java.vm.vendor"));
         collector.property("name").write(System.getProperty("java.vm.name"));
 
         if (this.includeJvmFlags) {
-            final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-            final List<String> arguments = runtimeMXBean.getInputArguments();
+            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+            List<String> arguments = runtimeMXBean.getInputArguments();
             collector.property("flags").write(arguments.toArray(String[]::new));
         }
     }

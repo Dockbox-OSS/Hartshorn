@@ -35,7 +35,7 @@ public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ProxyPar
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(ParameterView<T> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
         return (T) args[index];
     }
 }

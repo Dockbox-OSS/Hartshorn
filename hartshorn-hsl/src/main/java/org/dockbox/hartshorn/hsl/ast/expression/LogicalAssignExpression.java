@@ -24,7 +24,7 @@ public class LogicalAssignExpression extends AssignExpression {
 
     private final Token operator;
 
-    public LogicalAssignExpression(final Token name, final Token operator, final Expression rightExp) {
+    public LogicalAssignExpression(Token name, Token operator, Expression rightExp) {
         super(name, rightExp);
         this.operator = operator;
     }
@@ -38,7 +38,7 @@ public class LogicalAssignExpression extends AssignExpression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

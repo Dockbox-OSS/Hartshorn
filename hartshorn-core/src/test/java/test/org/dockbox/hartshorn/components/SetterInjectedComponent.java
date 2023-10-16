@@ -29,12 +29,12 @@ public class SetterInjectedComponent {
     private SampleContext context;
 
     @Inject
-    public void setComponent(@Required final ComponentType component) {
+    public void setComponent(@Required ComponentType component) {
         this.component = component;
     }
 
     @Inject
-    public void setContext(@Context("setter") final SampleContext context) {
+    public void setContext(@Context("setter") SampleContext context) {
         this.context = context;
     }
 

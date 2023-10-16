@@ -37,13 +37,13 @@ public class ArrayComprehensionExpression extends Expression {
     private final Token elseToken;
     private final Expression elseExpression;
 
-    public ArrayComprehensionExpression(final Expression collection,
-                                        final Expression expression,
-                                        final Token selector,
-                                        final Token forToken, final Token inToken,
-                                        final Token open, final Token close,
-                                        final Token ifToken, final Expression condition,
-                                        final Token elseToken, final Expression elseExpression) {
+    public ArrayComprehensionExpression(Expression collection,
+                                        Expression expression,
+                                        Token selector,
+                                        Token forToken, Token inToken,
+                                        Token open, Token close,
+                                        Token ifToken, Expression condition,
+                                        Token elseToken, Expression elseExpression) {
         super(open);
         this.collection = collection;
         this.expression = expression;
@@ -103,7 +103,7 @@ public class ArrayComprehensionExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

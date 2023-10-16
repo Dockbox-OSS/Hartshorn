@@ -98,7 +98,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private final Stack<Map<String, String>> finals = new Stack<>();
 
-    public Resolver(final Interpreter interpreter) {
+    public Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
     }
 
@@ -121,32 +121,32 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     private MoveKeyword.ScopeType currentScopeType = MoveKeyword.ScopeType.NONE;
 
     @Override
-    public Void visit(final BinaryExpression expr) {
+    public Void visit(BinaryExpression expr) {
         this.resolve(expr.leftExpression());
         this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final RangeExpression expr) {
+    public Void visit(RangeExpression expr) {
         this.resolve(expr.leftExpression());
         this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final GroupingExpression expr) {
+    public Void visit(GroupingExpression expr) {
         this.resolve(expr.expression());
         return null;
     }
 
     @Override
-    public Void visit(final LiteralExpression expr) {
+    public Void visit(LiteralExpression expr) {
         return null;
     }
 
     @Override
-    public Void visit(final AssignExpression expr) {
+    public Void visit(AssignExpression expr) {
         this.checkFinal(expr.name());
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
@@ -154,7 +154,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final LogicalAssignExpression expr) {
+    public Void visit(LogicalAssignExpression expr) {
         this.checkFinal(expr.name());
         this.resolve(expr.value());
         this.resolveLocal(expr, expr.name());
@@ -162,36 +162,36 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final UnaryExpression expr) {
+    public Void visit(UnaryExpression expr) {
         this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final PostfixExpression expr) {
+    public Void visit(PostfixExpression expr) {
         this.resolve(expr.leftExpression());
         return null;
     }
 
     @Override
-    public Void visit(final LogicalExpression expr) {
-        this.resolve(expr.leftExpression());
-        this.resolve(expr.rightExpression());
-        return null;
-    }
-
-    @Override
-    public Void visit(final BitwiseExpression expr) {
+    public Void visit(LogicalExpression expr) {
         this.resolve(expr.leftExpression());
         this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final FunctionCallExpression expr) {
+    public Void visit(BitwiseExpression expr) {
+        this.resolve(expr.leftExpression());
+        this.resolve(expr.rightExpression());
+        return null;
+    }
+
+    @Override
+    public Void visit(FunctionCallExpression expr) {
         this.resolve(expr.callee());
 
-        for (final Expression argument : expr.arguments()) {
+        for (Expression argument : expr.arguments()) {
             this.resolve(argument);
         }
 
@@ -199,20 +199,20 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final GetExpression expr) {
+    public Void visit(GetExpression expr) {
         this.resolve(expr.object());
         return null;
     }
 
     @Override
-    public Void visit(final SetExpression expr) {
+    public Void visit(SetExpression expr) {
         this.resolve(expr.value());
         this.resolve(expr.object());
         return null;
     }
 
     @Override
-    public Void visit(final ThisExpression expr) {
+    public Void visit(ThisExpression expr) {
         if (this.currentClass == ClassType.NONE) {
             throw new ScriptEvaluationError("Cannot use 'this' outside of a class.", Phase.RESOLVING, expr.keyword());
         }
@@ -221,7 +221,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final VariableExpression expr) {
+    public Void visit(VariableExpression expr) {
         if (!this.scopes.isEmpty() &&
                 this.scopes.peek().get(expr.name().lexeme()) == Boolean.FALSE) {
             throw new ScriptEvaluationError("Cannot read local variable in its own initializer.", Phase.RESOLVING, expr.name());
@@ -231,19 +231,19 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ExpressionStatement statement) {
+    public Void visit(ExpressionStatement statement) {
         this.resolve(statement.expression());
         return null;
     }
 
     @Override
-    public Void visit(final PrintStatement statement) {
+    public Void visit(PrintStatement statement) {
         this.resolve(statement.expression());
         return null;
     }
 
     @Override
-    public Void visit(final BlockStatement statement) {
+    public Void visit(BlockStatement statement) {
         this.beginScope();
         this.resolve(statement.statements());
         this.endScope();
@@ -251,16 +251,18 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final IfStatement statement) {
+    public Void visit(IfStatement statement) {
         this.resolve(statement.condition());
         this.resolve(statement.thenBranch());
-        if (statement.elseBranch() != null) this.resolve(statement.elseBranch());
+        if (statement.elseBranch() != null) {
+            this.resolve(statement.elseBranch());
+        }
         return null;
     }
 
     @Override
-    public Void visit(final WhileStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+    public Void visit(WhileStatement statement) {
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
         this.resolve(statement.condition());
         this.resolve(statement.body());
@@ -269,8 +271,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final DoWhileStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+    public Void visit(DoWhileStatement statement) {
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
         this.beginScope();
         this.resolve(statement.condition());
@@ -281,8 +283,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ForStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+    public Void visit(ForStatement statement) {
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
         this.beginScope();
         this.resolve(statement.initializer());
@@ -295,8 +297,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ForEachStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+    public Void visit(ForEachStatement statement) {
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
         this.beginScope();
         this.declare(statement.selector().name());
@@ -307,8 +309,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final RepeatStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+    public Void visit(RepeatStatement statement) {
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
         this.beginScope();
         this.resolve(statement.value());
@@ -319,7 +321,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final BreakStatement statement) {
+    public Void visit(BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType != MoveKeyword.ScopeType.LOOP && this.currentScopeType != MoveKeyword.ScopeType.SWITCH) {
             throw new ScriptEvaluationError("Break can only used be inside loops and switch cases.", Phase.RESOLVING, statement.keyword());
@@ -328,7 +330,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ContinueStatement statement) {
+    public Void visit(ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.currentScopeType != MoveKeyword.ScopeType.LOOP) {
             throw new ScriptEvaluationError("Continue can only used be inside loops and switch cases.", Phase.RESOLVING, statement.keyword());
@@ -337,7 +339,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final FunctionStatement statement) {
+    public Void visit(FunctionStatement statement) {
         this.makeFinal(statement, "function");
         this.define(statement.name());
         this.resolveFunction(statement, FunctionType.FUNCTION);
@@ -345,7 +347,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final FieldStatement statement) {
+    public Void visit(FieldStatement statement) {
         this.makeFinal(statement, "field");
         this.define(statement.name());
         this.resolve(statement);
@@ -353,15 +355,15 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ConstructorStatement statement) {
+    public Void visit(ConstructorStatement statement) {
         this.define(statement.initializerIdentifier());
         this.resolveFunction(statement, FunctionType.INITIALIZER);
         return null;
     }
 
     @Override
-    public Void visit(final ExtensionStatement statement) {
-        final ClassType enclosingClass = this.currentClass;
+    public Void visit(ExtensionStatement statement) {
+        ClassType enclosingClass = this.currentClass;
         this.currentClass = ClassType.CLASS;
         this.declare(statement.className());
         this.resolveFunction(statement.functionStatement(), FunctionType.FUNCTION);
@@ -370,7 +372,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final VariableStatement statement) {
+    public Void visit(VariableStatement statement) {
         // Resolving a variable declaration adds a new entry to the current innermost scope’s map
         this.declare(statement.name());
         if (statement.initializer() != null) {
@@ -382,7 +384,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ReturnStatement statement) {
+    public Void visit(ReturnStatement statement) {
         // Make sure return is inside function
         if (this.currentFunction == FunctionType.NONE) {
             throw new ScriptEvaluationError("Cannot return from top-level code.", Phase.RESOLVING, statement.keyword());
@@ -397,8 +399,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ClassStatement statement) {
-        final ClassType enclosingClass = this.currentClass;
+    public Void visit(ClassStatement statement) {
+        ClassType enclosingClass = this.currentClass;
         this.currentClass = ClassType.CLASS;
 
         this.declare(statement.name());
@@ -426,7 +428,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.beginScope();
         this.scopes.peek().put(TokenType.THIS.representation(), true);
         this.finals.peek().put(TokenType.THIS.representation(), "instance variable");
-        for (final FunctionStatement method : statement.methods()) {
+        for (FunctionStatement method : statement.methods()) {
             this.resolveFunction(method, FunctionType.METHOD);
         }
         if (statement.constructor() != null) {
@@ -434,13 +436,15 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         }
         this.define(statement.name());
         this.endScope();
-        if (statement.superClass() != null) this.endScope();
+        if (statement.superClass() != null) {
+            this.endScope();
+        }
         this.currentClass = enclosingClass;
         return null;
     }
 
     @Override
-    public Void visit(final NativeFunctionStatement statement) {
+    public Void visit(NativeFunctionStatement statement) {
         this.makeFinal(statement, "native function");
         this.declare(statement.name());
         this.define(statement.name());
@@ -449,8 +453,8 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final TestStatement statement) {
-        final FunctionType enclosingClass = this.currentFunction;
+    public Void visit(TestStatement statement) {
+        FunctionType enclosingClass = this.currentFunction;
         this.currentFunction = FunctionType.TEST;
         this.declare(statement.name());
         this.resolve(statement.body());
@@ -459,9 +463,9 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ModuleStatement statement) {
-        final Map<String, NativeModule> modules = this.interpreter.externalModules();
-        final String module = statement.name().lexeme();
+    public Void visit(ModuleStatement statement) {
+        Map<String, NativeModule> modules = this.interpreter.externalModules();
+        String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
             throw new ScriptEvaluationError("Cannot find module named '" + module + "'", Phase.RESOLVING, statement.name());
         }
@@ -469,14 +473,14 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ElvisExpression statement) {
+    public Void visit(ElvisExpression statement) {
         this.resolve(statement.condition());
         this.resolve(statement.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final TernaryExpression statement) {
+    public Void visit(TernaryExpression statement) {
         this.resolve(statement.condition());
         this.resolve(statement.firstExpression());
         this.resolve(statement.secondExpression());
@@ -484,7 +488,7 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ArraySetExpression expr) {
+    public Void visit(ArraySetExpression expr) {
         this.define(expr.name());
         this.resolve(expr.index());
         this.resolve(expr.value());
@@ -492,24 +496,24 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final ArrayGetExpression expr) {
+    public Void visit(ArrayGetExpression expr) {
         this.define(expr.name());
         this.resolve(expr.index());
         return null;
     }
 
     @Override
-    public Void visit(final ArrayLiteralExpression expr) {
-        for (final Expression element : expr.elements()) {
+    public Void visit(ArrayLiteralExpression expr) {
+        for (Expression element : expr.elements()) {
             this.resolve(element);
         }
         return null;
     }
 
     @Override
-    public Void visit(final ArrayComprehensionExpression expr) {
+    public Void visit(ArrayComprehensionExpression expr) {
         this.resolve(expr.collection());
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.LOOP;
 
         this.beginScope();
@@ -532,20 +536,20 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final PrefixExpression expr) {
+    public Void visit(PrefixExpression expr) {
         this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final InfixExpression expr) {
+    public Void visit(InfixExpression expr) {
         this.resolve(expr.leftExpression());
         this.resolve(expr.rightExpression());
         return null;
     }
 
     @Override
-    public Void visit(final SuperExpression expr) {
+    public Void visit(SuperExpression expr) {
         if (this.currentClass == ClassType.NONE) {
             throw new ScriptEvaluationError("Cannot use 'super' outside of a class.", Phase.RESOLVING, expr.keyword());
         }
@@ -557,9 +561,9 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final SwitchStatement statement) {
+    public Void visit(SwitchStatement statement) {
         this.resolve(statement.expression());
-        for (final SwitchCase switchCase : statement.cases()) {
+        for (SwitchCase switchCase : statement.cases()) {
             this.resolve(switchCase);
         }
         this.beginScope();
@@ -569,12 +573,12 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
     }
 
     @Override
-    public Void visit(final SwitchCase statement) {
+    public Void visit(SwitchCase statement) {
         if (!statement.isDefault()) {
             this.resolve(statement.expression());
         }
 
-        final MoveKeyword.ScopeType enclosingType = this.currentScopeType;
+        MoveKeyword.ScopeType enclosingType = this.currentScopeType;
         this.currentScopeType = MoveKeyword.ScopeType.SWITCH;
         this.beginScope();
         this.resolve(statement.body());
@@ -594,21 +598,21 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.finals.pop();
     }
 
-    public void resolve(final List<Statement> stmtList) {
-        for (final Statement statement : stmtList) {
+    public void resolve(List<Statement> stmtList) {
+        for (Statement statement : stmtList) {
             this.resolve(statement);
         }
     }
 
-    private void resolve(final Statement stmt) {
+    private void resolve(Statement stmt) {
         stmt.accept(this);
     }
 
-    private void resolve(final Expression expr) {
+    private void resolve(Expression expr) {
         expr.accept(this);
     }
 
-    private void resolveLocal(final Expression expr, final Token name) {
+    private void resolveLocal(Expression expr, Token name) {
         for (int i = this.scopes.size() - 1; i >= 0; i--) {
             if (this.scopes.get(i).containsKey(name.lexeme())) {
                 this.interpreter.resolve(expr, this.scopes.size() - 1 - i);
@@ -618,12 +622,12 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         // Not found. Assume it is global.
     }
 
-    private void resolveFunction(final ParametricExecutableStatement executable, final FunctionType type) {
-        final FunctionType enclosingFunction = this.currentFunction;
+    private void resolveFunction(ParametricExecutableStatement executable, FunctionType type) {
+        FunctionType enclosingFunction = this.currentFunction;
         this.currentFunction = type;
 
         this.beginScope();
-        for (final Parameter param : executable.parameters()) {
+        for (Parameter param : executable.parameters()) {
             this.declare(param.name());
             this.define(param.name());
         }
@@ -633,10 +637,12 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         this.currentFunction = enclosingFunction;
     }
 
-    private void declare(final Token name) {
-        if (this.scopes.isEmpty()) return;
+    private void declare(Token name) {
+        if (this.scopes.isEmpty()) {
+            return;
+        }
 
-        final Map<String, Boolean> scope = this.scopes.peek();
+        Map<String, Boolean> scope = this.scopes.peek();
 
         // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
@@ -645,23 +651,27 @@ public class Resolver implements ExpressionVisitor<Void>, StatementVisitor<Void>
         scope.put(name.lexeme(), false);
     }
 
-    private void define(final Token name) {
+    private void define(Token name) {
         // set the variable’s value in the scope map to true to mark it as fully initialized and available for use
-        if (this.scopes.isEmpty()) return;
+        if (this.scopes.isEmpty()) {
+            return;
+        }
         this.checkFinal(name);
         this.scopes.peek().put(name.lexeme(), true);
     }
 
-    private void checkFinal(final Token name) {
+    private void checkFinal(Token name) {
         if (this.finals.peek().containsKey(name.lexeme())) {
-            final String existingWhat = this.finals.peek().get(name.lexeme());
-            throw new ScriptEvaluationError("Cannot reassign final %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
+            String existingWhat = this.finals.peek().get(name.lexeme());
+            throw new ScriptEvaluationError("Cannot reassign %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
         }
     }
 
-    private <R extends Finalizable & NamedNode> void makeFinal(final R node, final String what) {
+    private <R extends Finalizable & NamedNode> void makeFinal(R node, String what) {
         // Unlike scopes, finals need to be tracked even in the global scope.
-        if (this.finals.isEmpty()) this.finals.push(new HashMap<>());
+        if (this.finals.isEmpty()) {
+            this.finals.push(new HashMap<>());
+        }
         this.checkFinal(node.name());
         if (node.isFinal()) {
             this.finals.peek().put(node.name().lexeme(), what);

@@ -46,21 +46,22 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     private final Introspector introspector;
     private final TypeView<T> type;
 
-    public ReflectionTypeFieldsIntrospector(final Introspector introspector, final TypeView<T> type) {
+    public ReflectionTypeFieldsIntrospector(Introspector introspector, TypeView<T> type) {
         this.introspector = introspector;
         this.type = type;
     }
 
     private void collect() {
         if (this.fields.isEmpty()) {
-            for (final Field declared : this.type.type().getDeclaredFields()) {
-                if (EXCLUDED_FIELDS.contains(declared.getName()))
+            for (Field declared : this.type.type().getDeclaredFields()) {
+                if (EXCLUDED_FIELDS.contains(declared.getName())) {
                     continue;
+                }
 
                 this.fields.put(declared.getName(), (FieldView<T, ?>) this.introspector.introspect(declared));
             }
             if (!(this.type.superClass().isVoid() || Object.class.equals(this.type.superClass().type()))) {
-                for (final FieldView<?, ?> field : this.type.superClass().fields().all()) {
+                for (FieldView<?, ?> field : this.type.superClass().fields().all()) {
                     this.fields.put(field.name(), (FieldView<T, ?>) field);
                 }
             }
@@ -68,13 +69,15 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public Option<FieldView<T, ?>> named(final String name) {
+    public Option<FieldView<T, ?>> named(String name) {
         this.collect();
-        if (this.fields.containsKey(name))
+        if (this.fields.containsKey(name)) {
             return Option.of(this.fields.get(name));
-        else if (!this.type.superClass().isVoid())
+        }
+        else if (!this.type.superClass().isVoid()) {
             return this.type.superClass().fields().named(name)
                     .map(field -> (FieldView<T, ?>) field);
+        }
         return Option.empty();
     }
 
@@ -85,14 +88,14 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public List<FieldView<T, ?>> annotatedWith(final Class<? extends Annotation> annotation) {
+    public List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
                 .filter(field -> field.annotations().has(annotation))
                 .toList();
     }
 
     @Override
-    public <F> List<FieldView<T, ? extends F>> typed(final Class<F> type) {
+    public <F> List<FieldView<T, ? extends F>> typed(Class<F> type) {
         return this.all().stream()
                 .filter(field -> field.type().is(type))
                 .map(field -> (FieldView<T, ? extends F>) field)
@@ -100,27 +103,33 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     }
 
     @Override
-    public <F> List<FieldView<T, ? extends F>> typed(final GenericType<F> type) {
+    public <F> List<FieldView<T, ? extends F>> typed(GenericType<F> type) {
         return this.all().stream()
                 .filter(field -> field.type().is(type.asClass().get()))
                 .filter(field -> {
-                    final TypeView<?> genericType = field.genericType();
-                    final List<TypeView<?>> typeParameters = genericType.typeParameters().all().stream()
+                    TypeView<?> genericType = field.genericType();
+                    List<TypeView<?>> typeParameters = genericType.typeParameters().all().stream()
                             .flatMap(typeParameterView -> typeParameterView.upperBounds().stream())
                             .toList();
-                    final Option<Class<F>> classType = type.asClass();
-                    if (classType.absent()) return false;
+                    Option<Class<F>> classType = type.asClass();
+                    if (classType.absent()) {
+                        return false;
+                    }
 
-                    final TypeView<F> targetGenericType = this.introspector.introspect(classType.get());
-                    final List<TypeView<?>> targetTypeParameters = targetGenericType.typeParameters().all().stream()
+                    TypeView<F> targetGenericType = this.introspector.introspect(classType.get());
+                    List<TypeView<?>> targetTypeParameters = targetGenericType.typeParameters().all().stream()
                             .flatMap(typeParameterView -> typeParameterView.upperBounds().stream())
                             .toList();
-                    if (targetTypeParameters.size() != typeParameters.size()) return false;
+                    if (targetTypeParameters.size() != typeParameters.size()) {
+                        return false;
+                    }
 
                     for (int i = 0; i < typeParameters.size(); i++) {
-                        final TypeView<?> typeParameter = typeParameters.get(i);
-                        final TypeView<?> targetTypeParameter = targetTypeParameters.get(i);
-                        if (!typeParameter.is(targetTypeParameter.type())) return false;
+                        TypeView<?> typeParameter = typeParameters.get(i);
+                        TypeView<?> targetTypeParameter = targetTypeParameters.get(i);
+                        if (!typeParameter.is(targetTypeParameter.type())) {
+                            return false;
+                        }
                     }
                     return true;
                 })

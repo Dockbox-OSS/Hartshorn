@@ -32,14 +32,14 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     private final Introspector introspector;
     private final CollectionFactory helperFactory;
 
-    public CollectionDefaultValueProviderFactory(final Introspector introspector) {
+    public CollectionDefaultValueProviderFactory(Introspector introspector) {
         this.introspector = introspector;
         this.helperFactory = new CollectionFactory(introspector);
     }
 
-    public <E, O extends Collection<E>> DefaultValueProvider<O> create(final Class<O> targetType, final Class<E> elementType) {
-        final TypeView<O> type = this.introspector.introspect(targetType);
-        final Option<ConstructorView<O>> defaultConstructor = type.constructors().defaultConstructor();
+    public <E, O extends Collection<E>> DefaultValueProvider<O> create(Class<O> targetType, Class<E> elementType) {
+        TypeView<O> type = this.introspector.introspect(targetType);
+        Option<ConstructorView<O>> defaultConstructor = type.constructors().defaultConstructor();
         if (defaultConstructor.present()) {
             return () -> defaultConstructor.get().create().orNull();
         }
@@ -48,7 +48,7 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
                 try {
                     return this.helperFactory.createCollection(targetType, elementType, 0);
                 }
-                catch (final IllegalArgumentException e) {
+                catch (IllegalArgumentException e) {
                     return null;
                 }
             };
@@ -57,9 +57,9 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public <O extends Collection<?>> DefaultValueProvider<O> create(final Class<O> targetType) {
-        final TypeView<O> type = this.introspector.introspect(targetType);
-        final Class<?> componentType = type.typeParameters()
+    public <O extends Collection<?>> DefaultValueProvider<O> create(Class<O> targetType) {
+        TypeView<O> type = this.introspector.introspect(targetType);
+        Class<?> componentType = type.typeParameters()
                 .resolveInputFor(Collection.class)
                 .atIndex(0)
                 .flatMap(TypeParameterView::resolvedType)
@@ -75,7 +75,7 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
         return this;
     }
 
-    public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(final Class<T> type, final Supplier<T> supplier) {
+    public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(Class<T> type, Supplier<T> supplier) {
         this.helperFactory.withDefault(type, supplier);
         return this;
     }

@@ -27,13 +27,13 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
     private final Consumer<T> onLockRequested;
     private boolean requestInstanceLock = false;
 
-    public ModifiableComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key,
-                                                final T instance, final Consumer<T> onLockRequested) {
+    public ModifiableComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key,
+                                                T instance, Consumer<T> onLockRequested) {
         super(applicationContext, key, instance);
         this.onLockRequested = onLockRequested;
     }
 
-    public ModifiableComponentProcessingContext<T> instance(final T instance) {
+    public ModifiableComponentProcessingContext<T> instance(T instance) {
         if (this.requestInstanceLock) {
             throw new IllegalModificationException("Cannot modify instance after lock has been requested");
         }

@@ -33,10 +33,10 @@ public class ConstructorFactoryConcreteMethodInterceptor<T, R> extends Construct
     private final ApplicationContext context;
     private final boolean enable;
 
-    public ConstructorFactoryConcreteMethodInterceptor(final MethodProxyContext<T> methodContext,
-                                                       final ConversionService conversionService,
-                                                       final MethodView<T, R> method, final ApplicationContext context,
-                                                       final boolean enable) {
+    public ConstructorFactoryConcreteMethodInterceptor(MethodProxyContext<T> methodContext,
+                                                       ConversionService conversionService,
+                                                       MethodView<T, R> method, ApplicationContext context,
+                                                       boolean enable) {
         this.methodContext = methodContext;
         this.conversionService = conversionService;
         this.method = method;
@@ -45,10 +45,10 @@ public class ConstructorFactoryConcreteMethodInterceptor<T, R> extends Construct
     }
 
     @Override
-    public R intercept(final MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
-        final T instance = interceptorContext.instance();
-        final Object result = this.methodContext.method().invoke(instance, interceptorContext.args()).orNull();
-        final R convertedResult = this.conversionService.convert(result, this.method.returnType().type());
+    public R intercept(MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
+        T instance = interceptorContext.instance();
+        Object result = this.methodContext.method().invoke(instance, interceptorContext.args()).orNull();
+        R convertedResult = this.conversionService.convert(result, this.method.returnType().type());
         return this.processInstance(this.context, convertedResult, this.enable);
     }
 }

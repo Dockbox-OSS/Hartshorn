@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 
     private static final String GLOBAL_RESULT = "$__result__$";
-    protected final Map<String, Object> results = new ConcurrentHashMap<>();
+    protected Map<String, Object> results = new ConcurrentHashMap<>();
 
     private final String source;
 
@@ -57,7 +57,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private Resolver resolver;
     private Interpreter interpreter;
 
-    public ScriptContext(final ApplicationContext context, final String source) {
+    public ScriptContext(ApplicationContext context, String source) {
         super(context);
         this.source = source;
     }
@@ -70,7 +70,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.tokens;
     }
 
-    public ScriptContext tokens(final List<Token> tokens) {
+    public ScriptContext tokens(List<Token> tokens) {
         this.tokens = tokens;
         return this;
     }
@@ -79,7 +79,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.statements;
     }
 
-    public ScriptContext statements(final List<Statement> statements) {
+    public ScriptContext statements(List<Statement> statements) {
         this.statements = statements;
         return this;
     }
@@ -88,7 +88,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.comments;
     }
 
-    public ScriptContext comments(final List<Comment> comments) {
+    public ScriptContext comments(List<Comment> comments) {
         this.comments = comments;
         return this;
     }
@@ -97,7 +97,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.lexer;
     }
 
-    public ScriptContext lexer(final Lexer lexer) {
+    public ScriptContext lexer(Lexer lexer) {
         this.lexer = lexer;
         return this;
     }
@@ -106,7 +106,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.parser;
     }
 
-    public ScriptContext parser(final TokenParser parser) {
+    public ScriptContext parser(TokenParser parser) {
         this.parser = parser;
         return this;
     }
@@ -115,7 +115,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.resolver;
     }
 
-    public ScriptContext resolver(final Resolver resolver) {
+    public ScriptContext resolver(Resolver resolver) {
         this.resolver = resolver;
         return this;
     }
@@ -124,18 +124,18 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.interpreter;
     }
 
-    public ScriptContext interpreter(final Interpreter interpreter) {
+    public ScriptContext interpreter(Interpreter interpreter) {
         this.interpreter = interpreter;
         return this;
     }
 
     @Override
-    public void addResult(final Object value) {
+    public void addResult(Object value) {
         this.addResult(GLOBAL_RESULT, value);
     }
 
     @Override
-    public void addResult(final String id, final Object value) {
+    public void addResult(String id, Object value) {
         this.results.put(id, value);
     }
 
@@ -145,7 +145,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     @Override
-    public <T> Option<T> result(final String id) {
+    public <T> Option<T> result(String id) {
         return Option.of(this.results.get(id))
                 .map(result -> (T) result);
     }

@@ -24,24 +24,24 @@ public class StringToBooleanConverterTests {
 
     @Test
     void testTrueCanConvert() {
-        final StringToBooleanConverter converter = new StringToBooleanConverter();
-        final Boolean converted = converter.convert("true");
+        StringToBooleanConverter converter = new StringToBooleanConverter();
+        Boolean converted = converter.convert("true");
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted);
     }
 
     @Test
     void testFalseCanConvert() {
-        final StringToBooleanConverter converter = new StringToBooleanConverter();
-        final Boolean converted = converter.convert("false");
+        StringToBooleanConverter converter = new StringToBooleanConverter();
+        Boolean converted = converter.convert("false");
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted);
     }
 
     @Test
     void testNonDefinedValuesConvertToFalse() {
-        final StringToBooleanConverter converter = new StringToBooleanConverter();
-        final Boolean converted = converter.convert("test");
+        StringToBooleanConverter converter = new StringToBooleanConverter();
+        Boolean converted = converter.convert("test");
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted);
     }

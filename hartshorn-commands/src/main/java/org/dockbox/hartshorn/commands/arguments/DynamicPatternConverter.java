@@ -35,23 +35,23 @@ public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;
 
-    public DynamicPatternConverter(final Class<T> type, final CustomParameterPattern pattern, final String... keys) {
+    public DynamicPatternConverter(Class<T> type, CustomParameterPattern pattern, String... keys) {
         super(type, keys);
         this.pattern = pattern;
     }
 
     @Override
-    public Option<T> convert(final CommandSource source, final String argument) {
+    public Option<T> convert(CommandSource source, String argument) {
         return this.pattern.request(this.type(), source, argument);
     }
 
     @Override
-    public Option<T> convert(final CommandSource source, final CommandParameter<String> value) {
+    public Option<T> convert(CommandSource source, CommandParameter<String> value) {
         return this.pattern.request(this.type(), source, value.value());
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return List.of();
     }
 }

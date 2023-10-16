@@ -24,7 +24,7 @@ public class ExtensionStatement extends Function {
     private final Token className;
     private final FunctionStatement functionStatement;
 
-    public ExtensionStatement(final Token className, final FunctionStatement function) {
+    public ExtensionStatement(Token className, FunctionStatement function) {
         super(className);
         this.className = className;
         this.functionStatement = function;
@@ -39,7 +39,7 @@ public class ExtensionStatement extends Function {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

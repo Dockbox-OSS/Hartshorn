@@ -45,11 +45,11 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     private final InstanceReference instance;
     private final boolean isInitializer;
 
-    public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final boolean isInitializer) {
+    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, boolean isInitializer) {
         this(declaration, closure, null, isInitializer);
     }
 
-    public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final InstanceReference instance, final boolean isInitializer) {
+    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, InstanceReference instance, boolean isInitializer) {
         super(declaration.isFinal());
         this.declaration = declaration;
         this.closure = closure;
@@ -64,16 +64,16 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
      * @return A new {@link VirtualFunction} bound to the given instance.
      */
     @Override
-    public VirtualFunction bind(final InstanceReference instance) {
-        final VariableScope variableScope = new VariableScope(this.closure);
+    public VirtualFunction bind(InstanceReference instance) {
+        VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(TokenType.THIS.representation(), instance);
         return new VirtualFunction(this.declaration, variableScope, this.isInitializer);
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) {
-        final VariableScope variableScope = new VariableScope(this.closure);
-        final List<Parameter> parameters = this.declaration.parameters();
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) {
+        VariableScope variableScope = new VariableScope(this.closure);
+        List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
             throw new RuntimeError(at, "Expected %d %s, but got %d".formatted(
                     parameters.size(),
@@ -86,11 +86,15 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         try {
             interpreter.execute(this.declaration.statements(), variableScope);
         }
-        catch (final Return returnValue) {
-            if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
+        catch (Return returnValue) {
+            if (this.isInitializer) {
+                return this.closure.getAt(at, 0, TokenType.THIS.representation());
+            }
             return returnValue.value();
         }
-        if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
+        if (this.isInitializer) {
+            return this.closure.getAt(at, 0, TokenType.THIS.representation());
+        }
         return null;
     }
 

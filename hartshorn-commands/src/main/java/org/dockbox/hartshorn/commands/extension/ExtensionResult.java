@@ -42,7 +42,7 @@ public record ExtensionResult(boolean proceed, Message reason, boolean send) {
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(final Message reason) {
+    public static ExtensionResult reject(Message reason) {
         return reject(reason, true);
     }
 
@@ -56,7 +56,7 @@ public record ExtensionResult(boolean proceed, Message reason, boolean send) {
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(final Message reason, final boolean send) {
+    public static ExtensionResult reject(Message reason, boolean send) {
         return new ExtensionResult(false, reason, send);
     }
 

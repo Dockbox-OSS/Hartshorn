@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.HartshornApplication;
 
 public class ValidActivator {
 
-    public static void main(final String... args) {
+    public static void main(String... args) {
         HartshornApplication.create(args);
     }
 }

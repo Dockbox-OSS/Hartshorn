@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class InvalidComponentException extends ApplicationRuntimeException {
-    public InvalidComponentException(final String message) {
+    public InvalidComponentException(String message) {
         super(message);
     }
 }

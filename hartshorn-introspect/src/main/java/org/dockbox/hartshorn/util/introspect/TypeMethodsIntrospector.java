@@ -25,11 +25,11 @@ import java.util.List;
 
 public interface TypeMethodsIntrospector<T> {
 
-    default Option<MethodView<T, ?>> named(final String name) {
+    default Option<MethodView<T, ?>> named(String name) {
         return this.named(name, List.of());
     }
 
-    default Option<MethodView<T, ?>> named(final String name, final Class<?>... parameterTypes) {
+    default Option<MethodView<T, ?>> named(String name, Class<?>... parameterTypes) {
         return this.named(name, List.of(parameterTypes));
     }
 

@@ -26,7 +26,7 @@ public class SimpleContext extends DefaultProvisionContext {
         return this.value;
     }
 
-    public void value(final String value) {
+    public void value(String value) {
         this.value = value;
     }
 }

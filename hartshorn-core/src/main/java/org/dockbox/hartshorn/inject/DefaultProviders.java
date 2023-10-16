@@ -33,7 +33,7 @@ public class DefaultProviders {
 
     @Binds
     @Singleton
-    public ContextCarrier contextCarrier(final ApplicationContext applicationContext) {
+    public ContextCarrier contextCarrier(ApplicationContext applicationContext) {
         return new ConcreteContextCarrier(applicationContext);
     }
 }

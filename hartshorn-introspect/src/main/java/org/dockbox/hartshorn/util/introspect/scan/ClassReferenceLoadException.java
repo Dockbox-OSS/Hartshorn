@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 public class ClassReferenceLoadException extends ApplicationException {
 
-    public ClassReferenceLoadException(final String message) {
+    public ClassReferenceLoadException(String message) {
         super(message);
     }
 
-    public ClassReferenceLoadException(final String message, final Throwable cause) {
+    public ClassReferenceLoadException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ClassReferenceLoadException(final Throwable cause) {
+    public ClassReferenceLoadException(Throwable cause) {
         super(cause);
     }
 }

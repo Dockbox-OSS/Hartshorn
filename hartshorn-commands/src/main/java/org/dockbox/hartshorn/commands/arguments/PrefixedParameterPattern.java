@@ -32,12 +32,12 @@ import java.util.List;
 public abstract class PrefixedParameterPattern implements CustomParameterPattern {
 
     @Override
-    public <T> Attempt<Boolean, ConverterException> preconditionsMatch(final Class<T> type, final CommandSource source, final String raw) {
+    public <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw) {
         String prefix = String.valueOf(this.prefix());
         if (this.requiresTypeName()) {
-            final ApplicationContext applicationContext = source.applicationContext();
-            final TypeView<T> typeView = applicationContext.environment().introspector().introspect(type);
-            final String parameterName = typeView.annotations().get(Parameter.class).get().value();
+            ApplicationContext applicationContext = source.applicationContext();
+            TypeView<T> typeView = applicationContext.environment().introspector().introspect(type);
+            String parameterName = typeView.annotations().get(Parameter.class).get().value();
             prefix = this.prefix() + parameterName;
         }
         if (raw.startsWith(prefix)) {
@@ -48,12 +48,12 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public List<String> splitArguments(final String raw) {
-        final String group = raw.substring(raw.indexOf(this.opening()));
-        final List<String> arguments = new ArrayList<>();
+    public List<String> splitArguments(String raw) {
+        String group = raw.substring(raw.indexOf(this.opening()));
+        List<String> arguments = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         int openCount = 0;
-        for (final char c : group.toCharArray()) {
+        for (char c : group.toCharArray()) {
             current.append(c);
             if (this.opening() == c) {
                 openCount++;
@@ -61,7 +61,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
             else if (this.closing() == c) {
                 openCount--;
                 if (0 == openCount) {
-                    final String out = current.toString();
+                    String out = current.toString();
                     arguments.add(out.substring(1, out.length() - 1));
                     current = new StringBuilder();
                 }
@@ -71,7 +71,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public Attempt<String, ConverterException> parseIdentifier(final String argument) {
+    public Attempt<String, ConverterException> parseIdentifier(String argument) {
         if (argument.startsWith(String.valueOf(this.prefix()))) {
             return Attempt.of(argument.substring(1, argument.indexOf(this.opening())));
         }

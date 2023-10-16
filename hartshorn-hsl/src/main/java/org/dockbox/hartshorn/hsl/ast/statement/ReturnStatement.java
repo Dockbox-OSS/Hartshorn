@@ -25,7 +25,7 @@ public class ReturnStatement extends Statement {
     private final Token keyword;
     private final Expression value;
 
-    public ReturnStatement(final Token keyword, final Expression value) {
+    public ReturnStatement(Token keyword, Expression value) {
         super(keyword);
         this.keyword = keyword;
         this.value = value;
@@ -40,7 +40,7 @@ public class ReturnStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

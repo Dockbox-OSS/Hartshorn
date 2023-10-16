@@ -35,8 +35,8 @@ public class ModifyApplicationTests {
     }
 
     @InjectTest
-    void testFactoryWasModified(final ApplicationContext applicationContext) {
-        final Option<String> property = applicationContext.property("hartshorn.modified");
+    void testFactoryWasModified(ApplicationContext applicationContext) {
+        Option<String> property = applicationContext.property("hartshorn.modified");
         Assertions.assertTrue(property.present());
         Assertions.assertEquals("true", property.get());
     }

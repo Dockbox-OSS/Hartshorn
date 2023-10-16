@@ -25,7 +25,7 @@ public abstract class HashMultiMap<K, V> extends StandardMultiMap<K, V> {
     protected HashMultiMap() {
     }
 
-    protected HashMultiMap(final MultiMap<K, V> map) {
+    protected HashMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

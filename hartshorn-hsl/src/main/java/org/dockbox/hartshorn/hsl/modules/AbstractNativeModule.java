@@ -69,16 +69,17 @@ public abstract class AbstractNativeModule implements NativeModule {
     protected abstract Object instance();
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final NativeFunctionStatement function, final List<Object> arguments) throws NativeExecutionException {
+    public Object call(Token at, Interpreter interpreter, NativeFunctionStatement function, List<Object> arguments) throws NativeExecutionException {
         try {
-            final TypeView<Object> type = TypeUtils.adjustWildcards(this.applicationContext().environment().introspector().introspect(this.moduleClass()), TypeView.class);
-            final MethodView<Object, ?> method;
+            TypeView<Object> type = TypeUtils.adjustWildcards(this.applicationContext().environment().introspector().introspect(this.moduleClass()), TypeView.class);
+            MethodView<Object, ?> method;
             if (function.method() == null) {
-                final String functionName = function.name().lexeme();
+                String functionName = function.name().lexeme();
                 if (arguments.isEmpty()) {
-                    final Option<MethodView<Object, ?>> methodViewOption = type.methods().named(functionName);
-                    if (methodViewOption.absent())
+                    Option<MethodView<Object, ?>> methodViewOption = type.methods().named(functionName);
+                    if (methodViewOption.absent()) {
                         throw new NativeExecutionException("Module Loader : Can't find function with name : " + function);
+                    }
 
                     method = methodViewOption.get();
                 }
@@ -90,36 +91,42 @@ public abstract class AbstractNativeModule implements NativeModule {
                 method = TypeUtils.adjustWildcards(function.method(), MethodView.class);
             }
             if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method))) {
-                final Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new))
+                Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new))
                         .mapError(ApplicationException::new)
                         .orNull();
 
                 return new ExternalInstance(result, TypeUtils.adjustWildcards(method.returnType(), TypeView.class));
-            } else throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
+            } else {
+                throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
+            }
         }
-        catch (final Throwable e) {
+        catch (Throwable e) {
             throw new RuntimeError(at, e.getMessage());
         }
     }
 
     @Override
-    public List<NativeFunctionStatement> supportedFunctions(final Token moduleName) {
+    public List<NativeFunctionStatement> supportedFunctions(Token moduleName) {
         if (this.supportedFunctions == null) {
-            final List<NativeFunctionStatement> functionStatements = new ArrayList<>();
+            List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
-            final TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
-            for (final MethodView<?, ?> method : typeView.methods().all()) {
-                if (!method.modifiers().isPublic()) continue;
-                if (method.declaredBy().is(Object.class)) continue;
+            TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
+            for (MethodView<?, ?> method : typeView.methods().all()) {
+                if (!method.modifiers().isPublic()) {
+                    continue;
+                }
+                if (method.declaredBy().is(Object.class)) {
+                    continue;
+                }
 
-                final Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
+                Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
 
-                final List<Parameter> parameters = new ArrayList<>();
-                for (final ParameterView<?> parameter : method.parameters().all()) {
-                    final Token parameterName = new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1);
+                List<Parameter> parameters = new ArrayList<>();
+                for (ParameterView<?> parameter : method.parameters().all()) {
+                    Token parameterName = new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1);
                     parameters.add(new Parameter(parameterName));
                 }
-                final NativeFunctionStatement functionStatement = new NativeFunctionStatement(token, moduleName, method, parameters);
+                NativeFunctionStatement functionStatement = new NativeFunctionStatement(token, moduleName, method, parameters);
                 functionStatements.add(functionStatement);
             }
             this.supportedFunctions = functionStatements;

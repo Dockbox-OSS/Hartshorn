@@ -24,7 +24,7 @@ public class SuperExpression extends Expression {
     private final Token keyword;
     private final Token method;
 
-    public SuperExpression(final Token keyword, final Token method) {
+    public SuperExpression(Token keyword, Token method) {
         super(keyword);
         this.keyword = keyword;
         this.method = method;
@@ -39,7 +39,7 @@ public class SuperExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

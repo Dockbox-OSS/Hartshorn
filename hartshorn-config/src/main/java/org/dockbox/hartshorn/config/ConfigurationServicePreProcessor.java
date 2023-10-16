@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.config;
 
-import java.net.URI;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -31,6 +28,9 @@ import org.dockbox.hartshorn.util.resources.MissingSourceException;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
 
+import java.net.URI;
+import java.util.Set;
+
 /**
  * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
  * properties to {@link PropertyHolder#set(String, Object)}. To support different file sources
@@ -42,13 +42,15 @@ import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
 public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(Configuration.class)) {
-            final Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
-            final String[] sources = configuration.value();
+            Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
+            String[] sources = configuration.value();
 
-            for (final String source : sources) {
-                if (this.processSource(source, context, processingContext.key())) return;
+            for (String source : sources) {
+                if (this.processSource(source, context, processingContext.key())) {
+                    return;
+                }
                 context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
             }
 
@@ -73,9 +75,9 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
             context.log().warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
         }
 
-        final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
-        for (final URI uri : config) {
-            final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
+        ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+        for (URI uri : config) {
+            ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
             uriContextList.add(uriContext);
         }
 

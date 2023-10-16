@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.function.Function;
+
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link StringTypeAdapter} implementation. This implementation uses a {@link Function} to convert the {@link String}
@@ -34,7 +34,7 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
     private final Class<T> type;
     private final Function<String, Option<T>> function;
 
-    private StringTypeAdapterImpl(final Class<T> type, final Function<String, Option<T>> function) {
+    private StringTypeAdapterImpl(Class<T> type, Function<String, Option<T>> function) {
         this.type = type;
         this.function = function;
     }
@@ -45,7 +45,7 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
     }
 
     @Override
-    public Option<T> adapt(final String value) {
+    public Option<T> adapt(String value) {
         return this.function.apply(value);
     }
 
@@ -57,7 +57,7 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
      * @param <T> The type to convert to.
      * @return The new {@link StringTypeAdapterImpl} instance.
      */
-    public static <T> StringTypeAdapterImpl<T> of(final Class<T> type, final Function<String, Option<T>> function) {
+    public static <T> StringTypeAdapterImpl<T> of(Class<T> type, Function<String, Option<T>> function) {
         return new StringTypeAdapterImpl<>(type, function);
     }
 }

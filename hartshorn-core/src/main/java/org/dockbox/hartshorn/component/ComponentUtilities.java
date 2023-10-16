@@ -28,30 +28,32 @@ public final class ComponentUtilities {
     private ComponentUtilities() {
     }
 
-    public static String id(final ApplicationContext context, final Class<?> type) {
+    public static String id(ApplicationContext context, Class<?> type) {
         return id(context, type, false);
     }
 
-    public static String id(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting) {
+    public static String id(ApplicationContext context, Class<?> type, boolean ignoreExisting) {
         return format(context, type, ignoreExisting, '-', ComponentContainer::id).toLowerCase(Locale.ROOT);
     }
 
-    public static String name(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting) {
+    public static String name(ApplicationContext context, Class<?> type, boolean ignoreExisting) {
         return format(context, type, ignoreExisting, ' ', ComponentContainer::name);
     }
 
-    public static String format(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer<?>, String> attribute) {
-        final Option<ComponentContainer<?>> container = context.get(ComponentLocator.class).container(type);
+    public static String format(ApplicationContext context, Class<?> type, boolean ignoreExisting, char delimiter, Function<ComponentContainer<?>, String> attribute) {
+        Option<ComponentContainer<?>> container = context.get(ComponentLocator.class).container(type);
         if (!ignoreExisting && container.present()) {
-            final String name = attribute.apply(container.get());
-            if (StringUtilities.notEmpty(name)) return name;
+            String name = attribute.apply(container.get());
+            if (StringUtilities.notEmpty(name)) {
+                return name;
+            }
         }
 
         String raw = type.getSimpleName();
         if (raw.endsWith("Service")) {
             raw = raw.substring(0, raw.length() - 7);
         }
-        final String[] parts = StringUtilities.splitCapitals(raw);
+        String[] parts = StringUtilities.splitCapitals(raw);
         return StringUtilities.capitalize(String.join(String.valueOf(delimiter), parts));
     }
 }

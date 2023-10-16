@@ -39,7 +39,7 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     private List<TypeView<?>> parameterTypes;
     private List<TypeView<?>> genericParameterTypes;
 
-    public ReflectionExecutableParametersIntrospector(final Introspector introspector, final ReflectionExecutableElementView<?> executable) {
+    public ReflectionExecutableParametersIntrospector(Introspector introspector, ReflectionExecutableElementView<?> executable) {
         this.introspector = introspector;
         this.executable = executable;
     }
@@ -67,8 +67,8 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     @Override
     public List<ParameterView<?>> all() {
         if (this.parameters == null) {
-            final List<ParameterView<?>> parameters = new LinkedList<>();
-            for (final Parameter parameter : this.executable.executable().getParameters()) {
+            List<ParameterView<?>> parameters = new LinkedList<>();
+            for (Parameter parameter : this.executable.executable().getParameters()) {
                 parameters.add(this.introspector.introspect(parameter));
             }
             this.parameters = parameters;
@@ -77,16 +77,20 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     }
 
     @Override
-    public List<ParameterView<?>> annotedWith(final Class<? extends Annotation> annotation) {
+    public List<ParameterView<?>> annotedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
                 .filter(parameter -> parameter.annotations().has(annotation))
                 .toList();
     }
 
     @Override
-    public Option<ParameterView<?>> at(final int index) {
-        if (this.all().size() > index) return Option.of(this.all().get(index));
-        else return Option.empty();
+    public Option<ParameterView<?>> at(int index) {
+        if (this.all().size() > index) {
+            return Option.of(this.all().get(index));
+        }
+        else {
+            return Option.empty();
+        }
     }
 
     @Override
@@ -95,32 +99,36 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     }
 
     @Override
-    public boolean matches(final Class<?>... parameterTypes) {
+    public boolean matches(Class<?>... parameterTypes) {
         return this.matches(Arrays.asList(parameterTypes));
     }
 
     @Override
-    public boolean matchesExact(final Class<?>... parameterTypes) {
+    public boolean matchesExact(Class<?>... parameterTypes) {
         return this.matchesExact(Arrays.asList(parameterTypes));
     }
 
     @Override
-    public boolean matchesExact(final List<Class<?>> parameterTypes) {
+    public boolean matchesExact(List<Class<?>> parameterTypes) {
         return this.matches(parameterTypes, TypeView::is);
     }
 
     @Override
-    public boolean matches(final List<Class<?>> parameterTypes) {
+    public boolean matches(List<Class<?>> parameterTypes) {
         return this.matches(parameterTypes, TypeView::isParentOf);
     }
 
-    private boolean matches(final List<Class<?>> parameterTypes, final BiPredicate<TypeView<?>, Class<?>> predicate) {
-        if (parameterTypes.size() != this.count()) return false;
-        final List<TypeView<?>> types = this.types();
+    private boolean matches(List<Class<?>> parameterTypes, BiPredicate<TypeView<?>, Class<?>> predicate) {
+        if (parameterTypes.size() != this.count()) {
+            return false;
+        }
+        List<TypeView<?>> types = this.types();
         for (int i = 0; i < types.size(); i++) {
-            final TypeView<?> type = types.get(i);
-            final Class<?> expected = parameterTypes.get(i);
-            if (!predicate.test(type, expected)) return false;
+            TypeView<?> type = types.get(i);
+            Class<?> expected = parameterTypes.get(i);
+            if (!predicate.test(type, expected)) {
+                return false;
+            }
         }
         return true;
 

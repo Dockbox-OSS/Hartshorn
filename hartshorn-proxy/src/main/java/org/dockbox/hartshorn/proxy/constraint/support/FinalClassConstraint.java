@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Set;
 
 /**
- * A constraint that prevents the creation of proxies for final classes. This includes sealed classes and records.
+ * A constraint that prevents the creation of proxies for classes. This includes sealed classes and records.
  * This constraint is applied by default when using {@link CollectorProxyValidator#withDefaults()}.
  *
  * @since 0.5.0
@@ -33,11 +33,17 @@ import java.util.Set;
 public class FinalClassConstraint implements ProxyConstraint {
 
     @Override
-    public Set<ProxyConstraintViolation> validate(final TypeView<?> typeView) {
+    public Set<ProxyConstraintViolation> validate(TypeView<?> typeView) {
         String classType = null;
-        if (typeView.isSealed()) classType = "sealed class";
-        else if (typeView.isRecord()) classType = "record";
-        else if (typeView.modifiers().isFinal()) classType = "final class";
+        if (typeView.isSealed()) {
+            classType = "sealed class";
+        }
+        else if (typeView.isRecord()) {
+            classType = "record";
+        }
+        else if (typeView.modifiers().isFinal()) {
+            classType = "class";
+        }
 
         if (classType != null) {
             return Set.of(new ProxyConstraintViolation("Cannot create proxy for " + classType + " " + typeView.qualifiedName()));

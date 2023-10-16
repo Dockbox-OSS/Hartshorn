@@ -33,19 +33,21 @@ public class MethodInvokable implements Invokable {
     private final Method method;
     private final Introspector introspector;
 
-    public MethodInvokable(final Method method, final Introspector introspector) {
+    public MethodInvokable(Method method, Introspector introspector) {
         this.method = method;
         this.introspector = introspector;
     }
 
     @Override
-    public Object invoke(final Object obj, final Object... args) throws Exception {
-        if (this.method == null) return null;
+    public Object invoke(Object obj, Object... args) throws Exception {
+        if (this.method == null) {
+            return null;
+        }
         return this.method.invoke(obj, args);
     }
 
     @Override
-    public void setAccessible(final boolean accessible) {
+    public void setAccessible(boolean accessible) {
         this.method.setAccessible(accessible);
     }
 

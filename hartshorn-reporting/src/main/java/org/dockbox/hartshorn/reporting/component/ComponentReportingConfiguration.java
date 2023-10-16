@@ -36,7 +36,7 @@ public class ComponentReportingConfiguration {
     }
 
     public ComponentReportingConfiguration groupBy(
-            final ComponentAttribute groupBy) {
+            ComponentAttribute groupBy) {
         this.groupBy = groupBy;
         return this;
     }
@@ -45,7 +45,7 @@ public class ComponentReportingConfiguration {
         return this.includeDependencies;
     }
 
-    public ComponentReportingConfiguration includeDependencies(final boolean includeDependencies) {
+    public ComponentReportingConfiguration includeDependencies(boolean includeDependencies) {
         this.includeDependencies = includeDependencies;
         return this;
     }
@@ -54,7 +54,7 @@ public class ComponentReportingConfiguration {
         return this.includeRequiredConditions;
     }
 
-    public ComponentReportingConfiguration includeRequiredConditions(final boolean includeRequiredConditions) {
+    public ComponentReportingConfiguration includeRequiredConditions(boolean includeRequiredConditions) {
         this.includeRequiredConditions = includeRequiredConditions;
         return this;
     }
@@ -63,16 +63,16 @@ public class ComponentReportingConfiguration {
         return this.attributes;
     }
 
-    public ComponentReportingConfiguration attribute(final ComponentAttribute attribute, final boolean enabled) {
+    public ComponentReportingConfiguration attribute(ComponentAttribute attribute, boolean enabled) {
         this.attributes.put(attribute, enabled);
         return this;
     }
 
-    public ComponentReportingConfiguration enable(final ComponentAttribute attribute) {
+    public ComponentReportingConfiguration enable(ComponentAttribute attribute) {
         return this.attribute(attribute, true);
     }
 
-    public ComponentReportingConfiguration disable(final ComponentAttribute attribute) {
+    public ComponentReportingConfiguration disable(ComponentAttribute attribute) {
         return this.attribute(attribute, false);
     }
 

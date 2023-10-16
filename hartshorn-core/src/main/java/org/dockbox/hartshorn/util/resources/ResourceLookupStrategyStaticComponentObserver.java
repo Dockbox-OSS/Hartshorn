@@ -28,12 +28,12 @@ import java.util.List;
 public class ResourceLookupStrategyStaticComponentObserver implements StaticComponentObserver {
 
     @Override
-    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
-        final List<ResourceLookupStrategy> strategies = staticComponentContext.provider().all(ResourceLookupStrategy.class);
-        final ContextKey<ResourceLookupStrategyContext> contextKey = ContextKey.builder(ResourceLookupStrategyContext.class)
+    public void onStaticComponentsCollected(ApplicationContext applicationContext, StaticComponentContext staticComponentContext) {
+        List<ResourceLookupStrategy> strategies = staticComponentContext.provider().all(ResourceLookupStrategy.class);
+        ContextKey<ResourceLookupStrategyContext> contextKey = ContextKey.builder(ResourceLookupStrategyContext.class)
                 .fallback(ResourceLookupStrategyContext::new)
                 .build();
-        final ResourceLookupStrategyContext strategyContext = applicationContext.first(contextKey).get();
+        ResourceLookupStrategyContext strategyContext = applicationContext.first(contextKey).get();
         strategies.forEach(strategyContext::addLookupStrategy);
     }
 }

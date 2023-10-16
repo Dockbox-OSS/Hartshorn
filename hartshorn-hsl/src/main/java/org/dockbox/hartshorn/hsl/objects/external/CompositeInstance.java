@@ -41,7 +41,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     private final TypeView<T> firstExternalClass;
     private T instance;
 
-    public CompositeInstance(final @NonNull VirtualClass virtualClass) {
+    public CompositeInstance(@NonNull VirtualClass virtualClass) {
         super(virtualClass);
         ClassReference superClass = virtualClass.superClass();
         while (superClass != null && !(superClass instanceof ExternalClass<?>)) {
@@ -56,12 +56,12 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
     }
 
-    public void makeInstance(final Token at, final Interpreter interpreter, final List<Object> arguments, final VirtualFunction virtualConstructor) throws ApplicationException {
+    public void makeInstance(Token at, Interpreter interpreter, List<Object> arguments, VirtualFunction virtualConstructor) throws ApplicationException {
         if (this.instance != null) {
             throw new IllegalStateException("Instance already made");
         }
         // External class constructor
-        final ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
+        ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
         this.instance = constructor.create()
                 .mapError(ApplicationException::new)
                 .rethrow()
@@ -73,14 +73,14 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
         this.checkInstance();
-        final FieldStatement virtualField = super.type().field(name.lexeme());
+        FieldStatement virtualField = super.type().field(name.lexeme());
         if (virtualField != null) {
             super.set(name, value, fromScope, options);
         }
         else {
-            final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
+            Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 field.get().set(this.instance, value);
             }
@@ -91,14 +91,14 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
         this.checkInstance();
-        final FieldStatement virtualField = super.type().field(name.lexeme());
+        FieldStatement virtualField = super.type().field(name.lexeme());
         if (virtualField != null) {
             return super.get(name, fromScope, options);
         }
         else {
-            final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
+            Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 return field.get().get(this.instance);
             }

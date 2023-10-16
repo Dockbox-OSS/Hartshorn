@@ -25,7 +25,7 @@ public class CircularConstructorB {
     private final CircularConstructorA constructorA;
 
     @Inject
-    public CircularConstructorB(final CircularConstructorA constructorA) {
+    public CircularConstructorB(CircularConstructorA constructorA) {
         this.constructorA = constructorA;
     }
 

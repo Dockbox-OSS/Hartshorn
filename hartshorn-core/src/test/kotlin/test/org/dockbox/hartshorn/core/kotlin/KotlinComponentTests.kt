@@ -70,7 +70,7 @@ class KotlinComponentTests {
         fun components(): Stream<Arguments> = Stream.of(
                 Arguments.of(KotlinClassComponent::class.java, KotlinClassComponent::applicationContext, KotlinClassComponent::environment),
                 Arguments.of(KotlinInterfaceComponent::class.java, null, null),
-                Arguments.of(KotlinObjectComponent::class.java, { it: KotlinObjectComponent -> KotlinObjectComponent.applicationContext() }, null),
+                Arguments.of(KotlinObjectComponent::class.java, { _: KotlinObjectComponent -> KotlinObjectComponent.applicationContext() }, null),
                 Arguments.of(KotlinSealedInterfaceComponent::class.java, null, null),
         )
     }

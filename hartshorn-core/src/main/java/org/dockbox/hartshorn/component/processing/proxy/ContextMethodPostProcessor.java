@@ -27,22 +27,24 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        final ConversionService conversionService = context.get(ConversionService.class);
-        final Provided annotation = methodContext.annotation(Provided.class);
-        final String name = annotation.value();
+    public <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+        ConversionService conversionService = context.get(ConversionService.class);
+        Provided annotation = methodContext.annotation(Provided.class);
+        String name = annotation.value();
 
         //noinspection unchecked
-        final TypeView<R> type = (TypeView<R>) methodContext.method().returnType();
+        TypeView<R> type = (TypeView<R>) methodContext.method().returnType();
         ComponentKey<?> key = ComponentKey.of(type);
-        if (!name.isEmpty()) key = key.mutable().name(name).build();
+        if (!name.isEmpty()) {
+            key = key.mutable().name(name).build();
+        }
 
-        final ComponentKey<?> finalKey = key;
+        ComponentKey<?> finalKey = key;
         return interceptorContext -> conversionService.convert(context.get(finalKey), type.type());
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 

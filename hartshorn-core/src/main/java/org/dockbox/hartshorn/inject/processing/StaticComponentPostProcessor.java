@@ -34,30 +34,30 @@ import java.util.List;
 public class StaticComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> T initializeComponent(final ApplicationContext context, @Nullable final T instance,
-                                     final ComponentProcessingContext<T> processingContext) {
-        final ComponentKey<T> componentKey = processingContext.key();
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance,
+                                     ComponentProcessingContext<T> processingContext) {
+        ComponentKey<T> componentKey = processingContext.key();
 
         if (Collection.class.isAssignableFrom(componentKey.type())) {
-            final TypeView<T> componentType = context.environment().introspector().introspect(componentKey.type());
-            final List<ParameterizableType<?>> parameters = componentKey.parameterizedType().parameters();
-            final ParameterizableType<?> elementType;
+            TypeView<T> componentType = context.environment().introspector().introspect(componentKey.type());
+            List<ParameterizableType<?>> parameters = componentKey.parameterizedType().parameters();
+            ParameterizableType<?> elementType;
             if(parameters.size() == 1) {
                 elementType = parameters.get(0);
             }
             else {
-                final TypeParameterList collectionParameters = componentType.typeParameters()
+                TypeParameterList collectionParameters = componentType.typeParameters()
                         .resolveInputFor(Collection.class);
-                final TypeParameterView parameterView = collectionParameters.atIndex(0)
+                TypeParameterView parameterView = collectionParameters.atIndex(0)
                         .orElseThrow(() -> new IllegalArgumentException(String.format("Cannot determine collection type for %s", componentKey.type())));
                 elementType = new ParameterizableType<>(parameterView.resolvedType().get());
             }
 
-            final ComponentKey<?> elementKey = ComponentKey.builder(elementType)
+            ComponentKey<?> elementKey = ComponentKey.builder(elementType)
                     .name(componentKey.name())
                     .build();
-            final StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
-            final List<?> beans = staticComponentContext.provider().all(elementKey);
+            StaticComponentContext staticComponentContext = context.first(StaticComponentContext.CONTEXT_KEY).get();
+            List<?> beans = staticComponentContext.provider().all(elementKey);
 
             return context.get(ConversionService.class).convert(beans, componentType.type());
         }

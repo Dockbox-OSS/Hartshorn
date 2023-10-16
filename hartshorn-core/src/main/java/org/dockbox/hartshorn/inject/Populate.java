@@ -74,7 +74,7 @@ public @interface Populate {
         /**
          * <pre>{@code
          * @Inject
-         * public void setComponent(final MyComponent component) {
+         * public void setComponent(MyComponent component) {
          *    this.component = component;
          *    // ...
          * }

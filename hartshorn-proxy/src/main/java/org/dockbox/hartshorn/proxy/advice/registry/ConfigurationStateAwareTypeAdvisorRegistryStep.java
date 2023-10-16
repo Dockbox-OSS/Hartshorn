@@ -39,7 +39,7 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
     private final Class<S> type;
     private S delegate;
 
-    public ConfigurationStateAwareTypeAdvisorRegistryStep(final StateAwareAdvisorRegistry<T> registry, final Class<S> type) {
+    public ConfigurationStateAwareTypeAdvisorRegistryStep(StateAwareAdvisorRegistry<T> registry, Class<S> type) {
         this.registry = registry;
         this.type = type;
     }
@@ -55,11 +55,11 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
     }
 
     @Override
-    public AdvisorRegistry<T> delegate(final S delegateInstance) {
+    public AdvisorRegistry<T> delegate(S delegateInstance) {
         if (delegateInstance == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
-        for (final Method declaredMethod : this.type.getDeclaredMethods()) {
+        for (Method declaredMethod : this.type.getDeclaredMethods()) {
             this.addDelegateAdvice(delegateInstance, declaredMethod);
         }
         this.delegate = delegateInstance;
@@ -68,11 +68,11 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
     }
 
     @Override
-    public AdvisorRegistry<T> delegateAbstractOnly(final S delegateInstance) {
+    public AdvisorRegistry<T> delegateAbstractOnly(S delegateInstance) {
         if (delegateInstance == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
-        for (final Method declaredMethod : this.type.getDeclaredMethods()) {
+        for (Method declaredMethod : this.type.getDeclaredMethods()) {
             this.delegateAbstractOverrideCandidate(delegateInstance, declaredMethod);
         }
         if (this.registry.advisedType() == delegateInstance.getClass()) {
@@ -82,21 +82,21 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
         return this.registry;
     }
 
-    private void delegateAbstractOverrideCandidate(final S delegateInstance, final Method declaredMethod) {
+    private void delegateAbstractOverrideCandidate(S delegateInstance, Method declaredMethod) {
         try {
-            final Method override = this.registry.advisedType().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            Method override = this.registry.advisedType().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
             if (!Modifier.isAbstract(override.getModifiers()) || override.isDefault() || declaredMethod.isDefault()) {
                 return;
             }
         }
-        catch (final NoSuchMethodException e) {
+        catch (NoSuchMethodException e) {
             // Ignore error, delegate is not concrete
         }
         this.addDelegateAdvice(delegateInstance, declaredMethod);
     }
 
-    private void addDelegateAdvice(final S delegateInstance, final Method declaredMethod) {
-        final MethodAdvisorRegistryStep<T, ?> method = this.registry.method(declaredMethod);
+    private void addDelegateAdvice(S delegateInstance, Method declaredMethod) {
+        MethodAdvisorRegistryStep<T, ?> method = this.registry.method(declaredMethod);
         method.delegate(TypeUtils.adjustWildcards(delegateInstance, Object.class));
         this.registry.state().modify();
     }

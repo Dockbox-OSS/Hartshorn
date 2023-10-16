@@ -29,7 +29,7 @@ public class ArrayToObjectConverter implements GenericConverter {
 
     private final ConversionService conversionService;
 
-    public ArrayToObjectConverter(final ConversionService conversionService) {
+    public ArrayToObjectConverter(ConversionService conversionService) {
         this.conversionService = conversionService;
     }
 
@@ -39,13 +39,13 @@ public class ArrayToObjectConverter implements GenericConverter {
     }
 
     @Override
-    public @Nullable <I, O> Object convert(final @Nullable Object source, final @NonNull Class<I> sourceType, final @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
         if (sourceType.isArray()) {
             if (Array.getLength(source) != 1) {
                 return null;
             }
 
-            final Object firstElement = Array.get(source, 0);
+            Object firstElement = Array.get(source, 0);
             if (firstElement == null) {
                 return null;
             }

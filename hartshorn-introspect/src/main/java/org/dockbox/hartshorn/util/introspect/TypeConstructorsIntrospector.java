@@ -34,7 +34,7 @@ public interface TypeConstructorsIntrospector<T> {
         return this.annotatedWith(Inject.class);
     }
 
-    default Option<ConstructorView<T>> withParameters(final Class<?>... parameters) {
+    default Option<ConstructorView<T>> withParameters(Class<?>... parameters) {
         return this.withParameters(List.of(parameters));
     }
 

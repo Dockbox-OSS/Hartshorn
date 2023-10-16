@@ -33,7 +33,7 @@ public class InstanceNativeModule extends AbstractNativeModule {
     private final Object instance;
     private final ApplicationContext applicationContext;
 
-    public InstanceNativeModule(final ApplicationContext applicationContext, final Object instance) {
+    public InstanceNativeModule(ApplicationContext applicationContext, Object instance) {
         this.instance = Objects.requireNonNull(instance);
         this.moduleClass = instance.getClass();
         this.applicationContext = applicationContext;

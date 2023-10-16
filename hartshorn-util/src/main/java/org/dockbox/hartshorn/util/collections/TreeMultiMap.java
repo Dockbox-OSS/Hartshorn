@@ -25,7 +25,7 @@ public abstract class TreeMultiMap<K extends Comparable<K>, V> extends StandardM
     protected TreeMultiMap() {
     }
 
-    protected TreeMultiMap(final MultiMap<K, V> map) {
+    protected TreeMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

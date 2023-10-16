@@ -30,20 +30,20 @@ public class NodeTests {
 
     @Test
     void testSimpleNodeCanHaveNullValue() {
-        final Node<Object> node = new SimpleNode<>("node", null);
+        Node<Object> node = new SimpleNode<>("node", null);
         Assertions.assertNull(node.value());
     }
 
     @Test
     void testArrayNodeIsNonNull() {
-        final Node<List<Object>> node = new ArrayNode<>("node");
+        Node<List<Object>> node = new ArrayNode<>("node");
         Assertions.assertNotNull(node.value());
         Assertions.assertTrue(node.value().isEmpty());
     }
 
     @Test
     void testArrayNodeUsesInsertionOrder() {
-        final Node<List<Object>> node = new ArrayNode<>("node", "a", "b", "c");
+        Node<List<Object>> node = new ArrayNode<>("node", "a", "b", "c");
         Assertions.assertEquals("a", node.value().get(0));
         Assertions.assertEquals("b", node.value().get(1));
         Assertions.assertEquals("c", node.value().get(2));
@@ -51,14 +51,14 @@ public class NodeTests {
 
     @Test
     void testGroupNodeIsNonNull() {
-        final Node<List<Node<?>>> node = new GroupNode("node");
+        Node<List<Node<?>>> node = new GroupNode("node");
         Assertions.assertNotNull(node.value());
         Assertions.assertTrue(node.value().isEmpty());
     }
 
     @Test
     void testGroupNodeUsesInsertionOrder() {
-        final GroupNode node = new GroupNode("node");
+        GroupNode node = new GroupNode("node");
         node.add(new SimpleNode<>("a", "a"));
         node.add(new SimpleNode<>("b", "b"));
         node.add(new SimpleNode<>("c", "c"));
@@ -69,22 +69,22 @@ public class NodeTests {
 
     @Test
     void testSimpleNodeValueVisitor() {
-        final Node<Integer> node = new SimpleNode<>("node", 12);
+        Node<Integer> node = new SimpleNode<>("node", 12);
         node.accept(new NodeVisitor<Void>() {
             @Override
-            public Void visit(final Node<?> node) {
+            public Void visit(Node<?> node) {
                 Assertions.assertEquals(12, node.value());
                 return null;
             }
 
             @Override
-            public Void visit(final GroupNode node) {
+            public Void visit(GroupNode node) {
                 Assertions.fail("GroupNode should not be visited");
                 return null;
             }
 
             @Override
-            public Void visit(final ArrayNode<?> node) {
+            public Void visit(ArrayNode<?> node) {
                 Assertions.fail("ArrayNode should not be visited");
                 return null;
             }
@@ -93,22 +93,22 @@ public class NodeTests {
 
     @Test
     void testGroupNodeValueVisitor() {
-        final GroupNode node = new GroupNode("node");
+        GroupNode node = new GroupNode("node");
         node.accept(new NodeVisitor<Void>() {
             @Override
-            public Void visit(final Node<?> node) {
+            public Void visit(Node<?> node) {
                 Assertions.fail("Node should not be visited");
                 return null;
             }
 
             @Override
-            public Void visit(final GroupNode node) {
+            public Void visit(GroupNode node) {
                 Assertions.assertEquals("node", node.name());
                 return null;
             }
 
             @Override
-            public Void visit(final ArrayNode<?> node) {
+            public Void visit(ArrayNode<?> node) {
                 Assertions.fail("ArrayNode should not be visited");
                 return null;
             }
@@ -117,22 +117,22 @@ public class NodeTests {
 
     @Test
     void testArrayNodeValueVisitor() {
-        final ArrayNode<Integer> node = new ArrayNode<>("node");
+        ArrayNode<Integer> node = new ArrayNode<>("node");
         node.accept(new NodeVisitor<Void>() {
             @Override
-            public Void visit(final Node<?> node) {
+            public Void visit(Node<?> node) {
                 Assertions.fail("Node should not be visited");
                 return null;
             }
 
             @Override
-            public Void visit(final GroupNode node) {
+            public Void visit(GroupNode node) {
                 Assertions.fail("GroupNode should not be visited");
                 return null;
             }
 
             @Override
-            public Void visit(final ArrayNode<?> node) {
+            public Void visit(ArrayNode<?> node) {
                 Assertions.assertEquals("node", node.name());
                 return null;
             }

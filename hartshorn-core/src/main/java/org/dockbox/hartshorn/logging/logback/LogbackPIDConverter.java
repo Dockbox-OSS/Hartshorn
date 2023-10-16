@@ -34,7 +34,7 @@ public class LogbackPIDConverter extends ClassicConverter {
     private static final long PROCESS_ID = ManagementFactory.getRuntimeMXBean().getPid();
 
     @Override
-    public String convert(final ILoggingEvent event) {
+    public String convert(ILoggingEvent event) {
         return String.valueOf(PROCESS_ID);
     }
 }

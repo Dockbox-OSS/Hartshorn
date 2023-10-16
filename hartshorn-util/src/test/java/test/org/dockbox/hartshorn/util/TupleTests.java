@@ -26,22 +26,22 @@ public class TupleTests {
 
     @Test
     public void testFirstValueIsStored() {
-        final Entry<?, ?> tuple = new Tuple<>(1, "two");
+        Entry<?, ?> tuple = new Tuple<>(1, "two");
         Assertions.assertEquals(1, tuple.getKey());
         Assertions.assertTrue(tuple.getKey() instanceof Integer);
     }
 
     @Test
     public void testSecondValueIsStored() {
-        final Entry<?, ?> tuple = new Tuple<>(1, "two");
+        Entry<?, ?> tuple = new Tuple<>(1, "two");
         Assertions.assertEquals("two", tuple.getValue());
         Assertions.assertTrue(tuple.getValue() instanceof String);
     }
 
     @Test
     public void testEqualsUsesValues() {
-        final Entry<?, ?> tuple = new Tuple<>(1, "two");
-        final Entry<?, ?> second = new Tuple<>(1, "two");
+        Entry<?, ?> tuple = new Tuple<>(1, "two");
+        Entry<?, ?> second = new Tuple<>(1, "two");
         Assertions.assertNotSame(tuple, second);
         Assertions.assertEquals(tuple, second);
     }

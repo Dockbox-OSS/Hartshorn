@@ -35,20 +35,20 @@ public class FinalizedTests {
 
     @Test
     void cannotExtendFinalClass() {
-        final HslScript script = HslScript.of(this.applicationContext, """
-                final class User { }
+        HslScript script = HslScript.of(this.applicationContext, """
+                class User { }
                 class Admin extends User { }
                 """);
-        final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend final class 'User'. While interpreting at line 2, column 23.
+                Cannot extend class 'User'. While interpreting at line 2, column 23.
                 class Admin extends User { }
                                        ^""", error.getMessage());
     }
 
     @Test
     void canExtendExternalFinalClass() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        HslScript script = HslScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
         script.runtime().imports(User.class);
@@ -57,70 +57,70 @@ public class FinalizedTests {
 
     @Test
     void cannotExtendFinalExternalClass() {
-        final HslScript script = HslScript.of(this.applicationContext, """
+        HslScript script = HslScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
         script.runtime().imports("User", FinalUser.class);
-        final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
+                Cannot extend class 'FinalUser'. While interpreting at line 1, column 20.
                 class Admin extends User { }
                                     ^""", error.getMessage());
     }
 
     @Test
     void testCannotReassignFinalVariables() {
-        final HslScript script = HslScript.of(this.applicationContext, """
-                final var x = 1;
+        HslScript script = HslScript.of(this.applicationContext, """
+                var x = 1;
                 x = 2;
                 """);
-        final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final variable 'x'. While resolving at line 2, column 0.
+                Cannot reassign variable 'x'. While resolving at line 2, column 0.
                 x = 2;
                 ^""", error.getMessage());
     }
 
     @Test
     void testCannotReassignFinalFunctions() {
-        final HslScript script = HslScript.of(this.applicationContext, """
-                final function x() { }
+        HslScript script = HslScript.of(this.applicationContext, """
+                function x() { }
                 function x() { }
                 """);
-        final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final function 'x'. While resolving at line 2, column 9.
+                Cannot reassign function 'x'. While resolving at line 2, column 9.
                 function x() { }
                          ^""", error.getMessage());
     }
 
     @Test
     void testCannotReassignFinalClasses() {
-        final HslScript script = HslScript.of(this.applicationContext, """
-                final class User { }
+        HslScript script = HslScript.of(this.applicationContext, """
+                class User { }
                 class User { }
                 """);
-        final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign final class 'User'. While resolving at line 2, column 9.
+                Cannot reassign class 'User'. While resolving at line 2, column 9.
                 class User { }
                          ^""", error.getMessage());
     }
 
     @Test
     void testCannotReassignFinalNativeFunctions() {
-        final HslScript script = HslScript.of(this.applicationContext, """
-                final native function a.x();
+        HslScript script = HslScript.of(this.applicationContext, """
+                native function a.x();
                 function x() { }
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
-        final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
         Assertions.assertEquals("""
-                Cannot reassign final native function 'x'. While resolving at line 2, column 9.
+                Cannot reassign native function 'x'. While resolving at line 2, column 9.
                 function x() { }
                          ^""", error.getMessage());
     }
 
     public static class User { }
-    public static final class FinalUser { }
+    public static class FinalUser { }
 }

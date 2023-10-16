@@ -68,6 +68,6 @@ public @interface AliasFor {
      */
     Class<?> target() default DefaultThis.class;
 
-    final class DefaultThis {
+    class DefaultThis {
     }
 }

@@ -23,7 +23,7 @@ public class ThisExpression extends Expression {
 
     private final Token keyword;
 
-    public ThisExpression(final Token keyword) {
+    public ThisExpression(Token keyword) {
         super(keyword);
         this.keyword = keyword;
     }
@@ -33,7 +33,7 @@ public class ThisExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -145,11 +145,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     private boolean isRunning;
     private ExecutionOptions executionOptions;
 
-    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules) {
+    public Interpreter(ResultCollector resultCollector, Map<String, NativeModule> externalModules) {
         this(resultCollector, externalModules, new ExecutionOptions());
     }
 
-    public Interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> externalModules, final ExecutionOptions executionOptions) {
+    public Interpreter(ResultCollector resultCollector, Map<String, NativeModule> externalModules, ExecutionOptions executionOptions) {
         this.resultCollector = resultCollector;
         this.applicationContext = resultCollector.applicationContext();
         this.externalModules = new ConcurrentHashMap<>(externalModules);
@@ -172,11 +172,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         this.resultCollector.clear();
     }
 
-    public void externalModule(final String name, final NativeModule module) {
+    public void externalModule(String name, NativeModule module) {
         this.externalModules.put(name, module);
     }
 
-    public void externalModules(final Map<String, NativeModule> externalModules) {
+    public void externalModules(Map<String, NativeModule> externalModules) {
         this.externalModules.putAll(externalModules);
     }
 
@@ -184,7 +184,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return this.externalModules;
     }
 
-    public Interpreter executionOptions(final ExecutionOptions options) {
+    public Interpreter executionOptions(ExecutionOptions options) {
         this.executionOptions = options;
         return this;
     }
@@ -197,17 +197,17 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return this.global.values();
     }
 
-    public void interpret(final List<Statement> statements) {
+    public void interpret(List<Statement> statements) {
         if (this.isRunning) {
             throw new IllegalAccessException("Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {
-            for (final Statement statement : statements) {
+            for (Statement statement : statements) {
                 this.execute(statement);
             }
         }
-        catch (final RuntimeError error) {
+        catch (RuntimeError error) {
             throw new ScriptEvaluationError(error, Phase.INTERPRETING, error.token());
         }
         finally {
@@ -216,7 +216,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final BinaryExpression expr) {
+    public Object visit(BinaryExpression expr) {
         Object left = this.evaluate(expr.leftExpression());
         Object right = this.evaluate(expr.rightExpression());
 
@@ -240,11 +240,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     return String.valueOf(left) + right;
                 }
                 if ((left instanceof Character) && (right instanceof Double)) {
-                    final int value = (Character) left;
+                    int value = (Character) left;
                     return (double) right + value;
                 }
                 if ((left instanceof Double) && (right instanceof Character)) {
-                    final int value = (Character) right;
+                    int value = (Character) right;
                     return (double) left + value;
                 }
                 throw new RuntimeError(expr.operator(), "Unsupported child for PLUS.\n");
@@ -255,19 +255,19 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             }
             case STAR -> {
                 if ((left instanceof String || left instanceof Character) && right instanceof Double) {
-                    final int times = (int) ((double) right);
-                    final int finalLen = left.toString().length() * times;
-                    final StringBuilder result = new StringBuilder(finalLen);
-                    final String strValue = left.toString();
+                    int times = (int) ((double) right);
+                    int finalLen = left.toString().length() * times;
+                    StringBuilder result = new StringBuilder(finalLen);
+                    String strValue = left.toString();
                     result.append(strValue.repeat(Math.max(0, times)));
                     return result.toString();
                 }
                 else if (left instanceof Array array && right instanceof Double) {
-                    final int times = (int) ((double) right);
-                    final int finalLen = array.length() * times;
-                    final Array result = new Array(finalLen);
+                    int times = (int) ((double) right);
+                    int finalLen = array.length() * times;
+                    Array result = new Array(finalLen);
                     for (int i = 0; i < times; i++) {
-                        final int originalIndex = times % array.length();
+                        int originalIndex = times % array.length();
                         result.value(array.value(originalIndex), i);
                     }
                     return result;
@@ -313,17 +313,17 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final RangeExpression expr) {
-        final Object start = this.unwrap(this.evaluate(expr.leftExpression()));
-        final Object end = this.unwrap(this.evaluate(expr.rightExpression()));
+    public Object visit(RangeExpression expr) {
+        Object start = this.unwrap(this.evaluate(expr.leftExpression()));
+        Object end = this.unwrap(this.evaluate(expr.rightExpression()));
 
         this.checkNumberOperands(expr.operator(), start, end);
 
-        final int min = ((Number) start).intValue();
-        final int max = ((Number) end).intValue();
+        int min = ((Number) start).intValue();
+        int max = ((Number) end).intValue();
 
-        final int length = max - min + 1;
-        final Object[] result = new Object[length];
+        int length = max - min + 1;
+        Object[] result = new Object[length];
         for (int i = 0; i < length; i++) {
             result[i] = (double) min + i;
         }
@@ -331,21 +331,21 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final GroupingExpression expr) {
+    public Object visit(GroupingExpression expr) {
         return this.evaluate(expr.expression());
     }
 
     @Override
-    public Object visit(final LiteralExpression expr) {
+    public Object visit(LiteralExpression expr) {
         return expr.value();
     }
 
     @Override
-    public Object visit(final AssignExpression expr) {
-        final Token name = expr.name();
-        final Object value = this.evaluate(expr.value());
+    public Object visit(AssignExpression expr) {
+        Token name = expr.name();
+        Object value = this.evaluate(expr.value());
 
-        final Integer distance = this.locals.get(expr);
+        Integer distance = this.locals.get(expr);
         if (distance != null) {
             this.variableScope().assignAt(distance, name, value);
         }
@@ -356,20 +356,20 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final LogicalAssignExpression expr) {
-        final Token name = expr.name();
-        final Object left = this.lookUpVariable(name, expr);
+    public Object visit(LogicalAssignExpression expr) {
+        Token name = expr.name();
+        Object left = this.lookUpVariable(name, expr);
 
-        final Object right = this.evaluate(expr.value());
+        Object right = this.evaluate(expr.value());
 
-        final Token op = expr.assignmentOperator();
-        final TokenType bitwiseOperator = expr.logicalOperator();
+        Token op = expr.assignmentOperator();
+        TokenType bitwiseOperator = expr.logicalOperator();
 
         // Virtual token to indicate the position of the operator
-        final Token token = new Token(bitwiseOperator, op.lexeme(), op.line(), op.column());
-        final Object result = this.getBitwiseResult(token, left, right);
+        Token token = new Token(bitwiseOperator, op.lexeme(), op.line(), op.column());
+        Object result = this.getBitwiseResult(token, left, right);
 
-        final Integer distance = this.locals.get(expr);
+        Integer distance = this.locals.get(expr);
         if (distance != null) {
             this.variableScope().assignAt(distance, name, result);
         }
@@ -380,9 +380,9 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final UnaryExpression expr) {
-        final Object right = this.evaluate(expr.rightExpression());
-        final Object newValue = switch (expr.operator().type()) {
+    public Object visit(UnaryExpression expr) {
+        Object right = this.evaluate(expr.rightExpression());
+        Object newValue = switch (expr.operator().type()) {
             case MINUS -> {
                 this.checkNumberOperand(expr.operator(), right);
                 yield -(double) right;
@@ -398,7 +398,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
             case BANG -> !this.isTruthy(right);
             case COMPLEMENT -> {
                 this.checkNumberOperand(expr.operator(), right);
-                final int value = ((Double) right).intValue();
+                int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
                 //noinspection RedundantCast
                 yield (int) ~value;
@@ -410,11 +410,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final PostfixExpression expr) {
-        final Object left = this.evaluate(expr.leftExpression());
+    public Object visit(PostfixExpression expr) {
+        Object left = this.evaluate(expr.leftExpression());
         this.checkNumberOperand(expr.operator(), left);
 
-        final double newValue = switch (expr.operator().type()) {
+        double newValue = switch (expr.operator().type()) {
             case PLUS_PLUS -> (double) left + 1;
             case MINUS_MINUS -> (double) left -1;
             default -> throw new RuntimeError(expr.operator(), "Invalid postfix operator " + expr.operator().type());
@@ -423,22 +423,22 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return left;
     }
 
-    private void assignIfVariable(final Expression expression, final Object value) {
+    private void assignIfVariable(Expression expression, Object value) {
         if (expression instanceof VariableExpression variable) {
             this.variableScope().assign(variable.name(), value);
         }
     }
 
     @Override
-    public Object visit(final LogicalExpression expr) {
-        final Object left = this.evaluate(expr.leftExpression());
+    public Object visit(LogicalExpression expr) {
+        Object left = this.evaluate(expr.leftExpression());
         switch (expr.operator().type()) {
             case AND -> {
                 if (!this.isTruthy(left)) {
                     return false;
                 }
                 // Don't evaluate right if left is not truthy
-                final Object right = this.evaluate(expr.rightExpression());
+                Object right = this.evaluate(expr.rightExpression());
                 return this.isTruthy(right);
             }
             case OR -> {
@@ -446,11 +446,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     return true;
                 }
                 // No need to evaluate right if left is already truthy
-                final Object right = this.evaluate(expr.rightExpression());
+                Object right = this.evaluate(expr.rightExpression());
                 return this.isTruthy(right);
             }
             case XOR -> {
-                final Object right = this.evaluate(expr.rightExpression());
+                Object right = this.evaluate(expr.rightExpression());
                 return this.xor(left, right);
             }
             default -> throw new RuntimeError(expr.operator(), "Unsupported logical operator.");
@@ -458,16 +458,16 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final BitwiseExpression expr) {
-        final Object left = this.evaluate(expr.leftExpression());
-        final Object right = this.evaluate(expr.rightExpression());
+    public Object visit(BitwiseExpression expr) {
+        Object left = this.evaluate(expr.leftExpression());
+        Object right = this.evaluate(expr.rightExpression());
         return this.getBitwiseResult(expr.operator(), left, right);
     }
 
-    private Object getBitwiseResult(final Token operator, final Object left, final Object right) {
+    private Object getBitwiseResult(Token operator, Object left, Object right) {
         if (left instanceof Number && right instanceof Number) {
-            final int iLeft = ((Number) left).intValue();
-            final int iRight = ((Number) right).intValue();
+            int iLeft = ((Number) left).intValue();
+            int iRight = ((Number) right).intValue();
 
             return switch (operator.type()) {
                 case SHIFT_RIGHT -> iLeft >> iRight;
@@ -479,23 +479,23 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 default -> throw new RuntimeError(operator, "Unsupported bitwise operator.");
             };
         }
-        final String leftType = left != null ? left.getClass().getSimpleName() : null;
-        final String rightType = right != null ? right.getClass().getSimpleName() : null;
+        String leftType = left != null ? left.getClass().getSimpleName() : null;
+        String rightType = right != null ? right.getClass().getSimpleName() : null;
         throw new RuntimeError(operator, "Bitwise left and right must be a numbers, but got %s (%s) and %s (%s)".formatted(left, leftType, right, rightType));
     }
 
-    private Object xor(final Object left, final Object right) {
+    private Object xor(Object left, Object right) {
         if (left instanceof Number nleft && right instanceof Number nright) {
-            final int iLeft = nleft.intValue();
-            final int iRight = nright.intValue();
+            int iLeft = nleft.intValue();
+            int iRight = nright.intValue();
             return iLeft ^ iRight;
         }
         return this.isTruthy(left) ^ this.isTruthy(right);
     }
 
     @Override
-    public Object visit(final ElvisExpression expr) {
-        final Object condition = this.evaluate(expr.condition());
+    public Object visit(ElvisExpression expr) {
+        Object condition = this.evaluate(expr.condition());
         if (this.isTruthy(condition)) {
             return condition;
         }
@@ -503,8 +503,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final TernaryExpression expr) {
-        final Object condition = this.evaluate(expr.condition());
+    public Object visit(TernaryExpression expr) {
+        Object condition = this.evaluate(expr.condition());
         if (this.isTruthy(condition)) {
             return this.evaluate(expr.firstExpression());
         }
@@ -512,54 +512,54 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final ArraySetExpression expr) {
+    public Object visit(ArraySetExpression expr) {
         return this.accessArray(expr.name(), expr.index(), (array, index) -> {
-            final Object value = this.evaluate(expr.value());
+            Object value = this.evaluate(expr.value());
             array.value(value, index);
             return value;
         });
     }
 
     @Override
-    public Object visit(final ArrayGetExpression expr) {
+    public Object visit(ArrayGetExpression expr) {
         return this.accessArray(expr.name(), expr.index(), Array::value);
     }
 
     @Override
-    public Object visit(final ArrayLiteralExpression expr) {
-        final List<Object> values = new ArrayList<>();
-        for(final Expression expression : expr.elements()) {
-            final Object evaluate = this.evaluate(expression);
+    public Object visit(ArrayLiteralExpression expr) {
+        List<Object> values = new ArrayList<>();
+        for(Expression expression : expr.elements()) {
+            Object evaluate = this.evaluate(expression);
             values.add(evaluate);
         }
         return new Array(values.toArray());
     }
 
     @Override
-    public Object visit(final ArrayComprehensionExpression expr) {
-        final List<Object> values = new ArrayList<>();
-        final Object collection = this.evaluate(expr.collection());
+    public Object visit(ArrayComprehensionExpression expr) {
+        List<Object> values = new ArrayList<>();
+        Object collection = this.evaluate(expr.collection());
         if (collection instanceof Iterable<?> iterable) {
 
             this.withNextScope(() -> {
                 this.variableScope().define(expr.selector().lexeme(), null);
 
                 this.withNextScope(() -> {
-                    for (final Object element : iterable) {
+                    for (Object element : iterable) {
                         this.variableScope().assign(expr.selector(), element);
 
                         if (expr.condition() != null) {
-                            final Object condition = this.evaluate(expr.condition());
+                            Object condition = this.evaluate(expr.condition());
                             if (!this.isTruthy(condition)) {
                                 if (expr.elseExpression() != null) {
-                                    final Object elseValue = this.evaluate(expr.elseExpression());
+                                    Object elseValue = this.evaluate(expr.elseExpression());
                                     values.add(elseValue);
                                 }
                                 continue;
                             }
                         }
 
-                        final Object result = this.evaluate(expr.expression());
+                        Object result = this.evaluate(expr.expression());
                         values.add(result);
                     }
                 });
@@ -571,10 +571,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return new Array(values.toArray());
     }
 
-    private Object accessArray(final Token name, final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
-        final Array array = (Array) this.variableScope().get(name);
-        final Double indexValue = (Double) this.evaluate(indexExp);
-        final int index = indexValue.intValue();
+    private Object accessArray(Token name, Expression indexExp, BiFunction<Array, Integer, Object> converter) {
+        Array array = (Array) this.variableScope().get(name);
+        Double indexValue = (Double) this.evaluate(indexExp);
+        int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
             throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
@@ -584,46 +584,48 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final PrefixExpression expr) {
-        final CallableNode value = (CallableNode) this.variableScope().get(expr.prefixOperatorName());
-        final List<Object> args = new ArrayList<>();
+    public Object visit(PrefixExpression expr) {
+        CallableNode value = (CallableNode) this.variableScope().get(expr.prefixOperatorName());
+        List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.rightExpression()));
         try {
             return value.call(expr.prefixOperatorName(), this, null, args);
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new RuntimeError(expr.prefixOperatorName(), e.getMessage());
         }
     }
 
     @Override
-    public Object visit(final InfixExpression expr) {
-        final CallableNode value = (CallableNode) this.variableScope().get(expr.infixOperatorName());
-        final List<Object> args = new ArrayList<>();
+    public Object visit(InfixExpression expr) {
+        CallableNode value = (CallableNode) this.variableScope().get(expr.infixOperatorName());
+        List<Object> args = new ArrayList<>();
         args.add(this.evaluate(expr.leftExpression()));
         args.add(this.evaluate(expr.rightExpression()));
 
         try {
             return value.call(expr.infixOperatorName(), this, null, args);
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new RuntimeError(expr.infixOperatorName(), e.getMessage());
         }
     }
 
     @Override
-    public Object visit(final FunctionCallExpression expr) {
-        final Object callee = this.evaluate(expr.callee());
+    public Object visit(FunctionCallExpression expr) {
+        Object callee = this.evaluate(expr.callee());
 
-        final List<Object> arguments = new ArrayList<>();
-        for (final Expression argument : expr.arguments()) {
+        List<Object> arguments = new ArrayList<>();
+        for (Expression argument : expr.arguments()) {
             Object evaluated = this.evaluate(argument);
-            if (evaluated instanceof ExternalObjectReference external) evaluated = external.externalObject();
+            if (evaluated instanceof ExternalObjectReference external) {
+                evaluated = external.externalObject();
+            }
             arguments.add(evaluated);
         }
 
         // Can't call non-callable nodes..
-        if (!(callee instanceof final CallableNode function)) {
+        if (!(callee instanceof CallableNode function)) {
             throw new RuntimeError(expr.openParenthesis(), "Can only call functions and classes, but received " + callee + ".");
         }
 
@@ -638,17 +640,19 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 return function.call(expr.openParenthesis(), this, null, arguments);
             }
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new RuntimeError(expr.openParenthesis(), e.getMessage());
         }
     }
 
     @Override
-    public Object visit(final GetExpression expr) {
-        final Object object = this.evaluate(expr.object());
+    public Object visit(GetExpression expr) {
+        Object object = this.evaluate(expr.object());
         if (object instanceof PropertyContainer container) {
             Object result = container.get(expr.name(), this.variableScope(), this.executionOptions());
-            if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
+            if (result instanceof ExternalObjectReference objectReference) {
+                result = objectReference.externalObject();
+            }
             if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
             }
@@ -658,11 +662,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final SetExpression expr) {
-        final Object object = this.evaluate(expr.object());
+    public Object visit(SetExpression expr) {
+        Object object = this.evaluate(expr.object());
 
         if (object instanceof PropertyContainer instance) {
-            final Object value = this.evaluate(expr.value());
+            Object value = this.evaluate(expr.value());
             instance.set(expr.name(), value, this.variableScope(), this.executionOptions());
             return value;
         }
@@ -670,21 +674,21 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Object visit(final ThisExpression expr) {
+    public Object visit(ThisExpression expr) {
         return this.lookUpVariable(expr.keyword(), expr);
     }
 
     @Override
-    public Object visit(final VariableExpression expr) {
+    public Object visit(VariableExpression expr) {
         return this.lookUpVariable(expr.name(), expr);
     }
 
     @Override
-    public Object visit(final SuperExpression expr) {
-        final int distance = this.locals.get(expr);
-        final ClassReference superClass = (ClassReference) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
-        final InstanceReference object = (InstanceReference) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
-        final MethodReference method = superClass.method(expr.method().lexeme());
+    public Object visit(SuperExpression expr) {
+        int distance = this.locals.get(expr);
+        ClassReference superClass = (ClassReference) this.variableScope().getAt(expr.method(), distance, TokenType.SUPER.representation());
+        InstanceReference object = (InstanceReference) this.variableScope().getAt(expr.method(), distance - 1, TokenType.THIS.representation());
+        MethodReference method = superClass.method(expr.method().lexeme());
 
         if (method == null) {
             throw new RuntimeError(expr.method(), "Undefined property '" + expr.method().lexeme() + "'.");
@@ -693,34 +697,34 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final ExpressionStatement statement) {
+    public Void visit(ExpressionStatement statement) {
         this.evaluate(statement.expression());
         return null;
     }
 
     @Override
-    public Void visit(final PrintStatement statement) {
+    public Void visit(PrintStatement statement) {
         return null;
     }
 
     @Override
-    public Void visit(final BlockStatement statement) {
+    public Void visit(BlockStatement statement) {
         this.execute(statement.statements(), new VariableScope(this.variableScope()));
         return null;
     }
 
     @Override
-    public Void visit(final IfStatement statement) {
-        final Object conditionResult = this.evaluate(statement.condition());
-        final VariableScope previous = this.variableScope();
+    public Void visit(IfStatement statement) {
+        Object conditionResult = this.evaluate(statement.condition());
+        VariableScope previous = this.variableScope();
 
         if (this.isTruthy(conditionResult)) {
-            final VariableScope thenVariableScope = new VariableScope(previous);
+            VariableScope thenVariableScope = new VariableScope(previous);
             this.visitingScope = thenVariableScope;
             this.execute(statement.thenBranch(), thenVariableScope);
         }
         else if (statement.elseBranch() != null) {
-            final VariableScope elseVariableScope = new VariableScope(previous);
+            VariableScope elseVariableScope = new VariableScope(previous);
             this.visitingScope = elseVariableScope;
             this.execute(statement.elseBranch(), elseVariableScope);
         }
@@ -729,12 +733,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final WhileStatement statement) {
+    public Void visit(WhileStatement statement) {
         while (this.isTruthy(this.evaluate(statement.condition()))) {
             try {
                 this.execute(statement.body());
             }
-            catch (final MoveKeyword moveKeyword) {
+            catch (MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                     break;
                 }
@@ -744,14 +748,16 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final DoWhileStatement statement) {
+    public Void visit(DoWhileStatement statement) {
         this.withNextScope(() -> {
             do {
                 try {
                     this.execute(statement.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
             }
             while (this.isTruthy(this.evaluate(statement.condition())));
@@ -760,15 +766,17 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final ForStatement statement) {
+    public Void visit(ForStatement statement) {
         this.withNextScope(() -> {
             this.execute(statement.initializer());
             while (this.isTruthy(this.evaluate(statement.condition()))) {
                 try {
                     this.execute(statement.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
                 this.execute(statement.increment());
             }
@@ -777,14 +785,14 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final ForEachStatement statement) {
+    public Void visit(ForEachStatement statement) {
         this.withNextScope(() -> {
             Object collection = this.evaluate(statement.collection());
             collection = this.unwrap(collection);
 
             if (collection instanceof Iterable<?> iterable) {
                 this.variableScope().define(statement.selector().name().lexeme(), null);
-                for (final Object item : iterable) {
+                for (Object item : iterable) {
                     this.variableScope().assign(statement.selector().name(), item);
                     this.execute(statement.body());
                 }
@@ -797,23 +805,25 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final RepeatStatement statement) {
+    public Void visit(RepeatStatement statement) {
         this.withNextScope(() -> {
-            final Object value = this.evaluate(statement.value());
+            Object value = this.evaluate(statement.value());
 
-            final boolean isNotNumber = !(value instanceof Number);
+            boolean isNotNumber = !(value instanceof Number);
 
             if (isNotNumber) {
                 throw new RuntimeException("Repeat Counter must be number");
             }
 
-            final int counter = (int) Double.parseDouble(value.toString());
+            int counter = (int) Double.parseDouble(value.toString());
             for (int i = 0; i < counter; i++) {
                 try {
                     this.execute(statement.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
             }
         });
@@ -821,7 +831,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final VariableStatement statement) {
+    public Void visit(VariableStatement statement) {
         Object value = null;
         if (statement.initializer() != null) {
             value = this.evaluate(statement.initializer());
@@ -831,7 +841,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final ReturnStatement statement) {
+    public Void visit(ReturnStatement statement) {
         Object value = null;
         if (statement.value() != null) {
             value = this.evaluate(statement.value());
@@ -840,7 +850,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final ClassStatement statement) {
+    public Void visit(ClassStatement statement) {
         Object superClass = null;
         // Because super class is a variable expression assert it's a class
         if (statement.superClass() != null) {
@@ -849,24 +859,24 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 throw new RuntimeError(statement.superClass().name(), "Superclass must be a class.");
             }
             if (virtualClass.isFinal()) {
-                throw new ScriptEvaluationError("Cannot extend final class '" + virtualClass.name() + "'.", Phase.INTERPRETING, statement.superClass().name());
+                throw new ScriptEvaluationError("Cannot extend class '" + virtualClass.name() + "'.", Phase.INTERPRETING, statement.superClass().name());
             }
         }
 
         this.variableScope().define(statement.name().lexeme(), null);
 
-        final ClassReference superClassReference = (ClassReference) superClass;
+        ClassReference superClassReference = (ClassReference) superClass;
         this.withNextScope(() -> {
             if (statement.superClass() != null) {
                 this.visitingScope = new VariableScope(this.variableScope());
                 this.variableScope().define(TokenType.SUPER.representation(), superClassReference);
             }
 
-            final Map<String, VirtualFunction> methods = new HashMap<>();
+            Map<String, VirtualFunction> methods = new HashMap<>();
 
             // Bind all method into the class
-            for (final FunctionStatement method : statement.methods()) {
-                final VirtualFunction function = new VirtualFunction(method, this.variableScope(), false);
+            for (FunctionStatement method : statement.methods()) {
+                VirtualFunction function = new VirtualFunction(method, this.variableScope(), false);
                 methods.put(method.name().lexeme(), function);
             }
 
@@ -875,10 +885,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                 constructor = new VirtualFunction(statement.constructor(), this.variableScope(), true);
             }
 
-            final Map<String, FieldStatement> fields = statement.fields().stream()
+            Map<String, FieldStatement> fields = statement.fields().stream()
                     .collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), field -> field));
 
-            final VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(),
+            VirtualClass virtualClass = new VirtualClass(statement.name().lexeme(),
                     superClassReference, constructor, this.variableScope(),
                     methods, fields,
                     statement.isFinal(), statement.isDynamic());
@@ -894,31 +904,31 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final NativeFunctionStatement statement) {
-        final HslLibrary hslLibrary = new HslLibrary(statement, this.externalModules);
+    public Void visit(NativeFunctionStatement statement) {
+        HslLibrary hslLibrary = new HslLibrary(statement, this.externalModules);
         this.variableScope().define(statement.name().lexeme(), hslLibrary);
         return null;
     }
 
     @Override
-    public Void visit(final TestStatement statement) {
-        final String name = String.valueOf(statement.name().literal());
-        final VariableScope variableScope = new VariableScope(this.global);
+    public Void visit(TestStatement statement) {
+        String name = String.valueOf(statement.name().literal());
+        VariableScope variableScope = new VariableScope(this.global);
         try {
             this.execute(statement.body(), variableScope);
         }
-        catch (final Return r) {
-            final Object value = r.value();
-            final boolean val = this.isTruthy(value);
+        catch (Return r) {
+            Object value = r.value();
+            boolean val = this.isTruthy(value);
             this.resultCollector.addResult(name, val);
         }
         return null;
     }
 
     @Override
-    public Void visit(final ModuleStatement statement) {
-        final String moduleName = statement.name().lexeme();
-        final NativeModule module = this.externalModules().get(moduleName);
+    public Void visit(ModuleStatement statement) {
+        String moduleName = statement.name().lexeme();
+        NativeModule module = this.externalModules().get(moduleName);
 
         if (this.activeModules.contains(moduleName)) {
             if (this.executionOptions.permitDuplicateModules()) {
@@ -928,8 +938,8 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         }
         this.activeModules.add(moduleName);
 
-        for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
-            final HslLibrary library = new HslLibrary(supportedFunction, moduleName, module);
+        for (NativeFunctionStatement supportedFunction : module.supportedFunctions(statement.name())) {
+            HslLibrary library = new HslLibrary(supportedFunction, moduleName, module);
 
             CallableNode callableNode = library;
             if (this.global.contains(supportedFunction.name().lexeme())) {
@@ -937,13 +947,16 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
                     throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + supportedFunction.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunction.name());
                 }
                 else {
-                    final Object existing = this.global.get(supportedFunction.name());
-                    final Set<HslLibrary> existingLibraries = new HashSet<>();
+                    Object existing = this.global.get(supportedFunction.name());
+                    Set<HslLibrary> existingLibraries = new HashSet<>();
                     existingLibraries.add(library);
 
-                    if (existing instanceof HslLibrary existingLibrary) existingLibraries.add(existingLibrary);
-                    else if (existing instanceof AmbiguousLibraryFunction ambiguousLibraryFunction)
+                    if (existing instanceof HslLibrary existingLibrary) {
+                        existingLibraries.add(existingLibrary);
+                    }
+                    else if (existing instanceof AmbiguousLibraryFunction ambiguousLibraryFunction) {
                         existingLibraries.addAll(ambiguousLibraryFunction.libraries());
+                    }
 
                     callableNode = new AmbiguousLibraryFunction(existingLibraries);
                 }
@@ -955,46 +968,46 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final BreakStatement statement) {
+    public Void visit(BreakStatement statement) {
         throw new MoveKeyword(MoveKeyword.MoveType.BREAK);
     }
 
     @Override
-    public Void visit(final ContinueStatement statement) {
+    public Void visit(ContinueStatement statement) {
         throw new MoveKeyword(MoveKeyword.MoveType.CONTINUE);
     }
 
     @Override
-    public Void visit(final FunctionStatement statement) {
-        final VirtualFunction function = new VirtualFunction(statement, this.variableScope(), false);
+    public Void visit(FunctionStatement statement) {
+        VirtualFunction function = new VirtualFunction(statement, this.variableScope(), false);
         this.variableScope().define(statement.name().lexeme(), function);
         return null;
     }
 
     @Override
-    public Void visit(final FieldStatement statement) {
-        final Object value = this.evaluate(statement.initializer());
-        final int distance = this.locals.get(statement.initializer());
-        final PropertyContainer object = (PropertyContainer) this.variableScope().getAt(statement.name(), distance - 1, TokenType.THIS.representation());
+    public Void visit(FieldStatement statement) {
+        Object value = this.evaluate(statement.initializer());
+        int distance = this.locals.get(statement.initializer());
+        PropertyContainer object = (PropertyContainer) this.variableScope().getAt(statement.name(), distance - 1, TokenType.THIS.representation());
         object.set(statement.name(), value, this.variableScope(), this.executionOptions());
         return null;
     }
 
     @Override
-    public Void visit(final ConstructorStatement statement) {
-        final VirtualFunction function = new VirtualFunction(statement, this.variableScope(), true);
+    public Void visit(ConstructorStatement statement) {
+        VirtualFunction function = new VirtualFunction(statement, this.variableScope(), true);
         this.variableScope().define(statement.initializerIdentifier().lexeme(), function);
         return null;
     }
 
     @Override
-    public Void visit(final ExtensionStatement statement) {
-        final VirtualClass extensionClass = (VirtualClass) this.variableScope().get(statement.className());
+    public Void visit(ExtensionStatement statement) {
+        VirtualClass extensionClass = (VirtualClass) this.variableScope().get(statement.className());
         if (extensionClass == null) {
             throw new RuntimeException("Can't find extension class " + statement.className());
         }
-        final FunctionStatement functionStatement = statement.functionStatement();
-        final VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.variableScope(), false);
+        FunctionStatement functionStatement = statement.functionStatement();
+        VirtualFunction extension = new VirtualFunction(functionStatement, extensionClass.variableScope(), false);
         if (extensionClass.method(functionStatement.name().lexeme()) != null) {
             throw new ScriptEvaluationError("Duplicate method " + extensionClass.name() + "." + functionStatement.name().lexeme(), Phase.INTERPRETING, statement.functionStatement().name());
         }
@@ -1003,10 +1016,10 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final SwitchStatement statement) {
+    public Void visit(SwitchStatement statement) {
         Object value = this.evaluate(statement.expression());
         value = this.unwrap(value);
-        for (final SwitchCase switchCase : statement.cases()) {
+        for (SwitchCase switchCase : statement.cases()) {
             if (this.isEqual(value, switchCase.expression().value())) {
                 this.execute(switchCase);
                 return null;
@@ -1019,11 +1032,11 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
     }
 
     @Override
-    public Void visit(final SwitchCase statement) {
+    public Void visit(SwitchCase statement) {
         this.withNextScope(() -> {
             try {
                 this.execute(statement.body());
-            } catch (final MoveKeyword moveKeyword) {
+            } catch (MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() != MoveKeyword.MoveType.BREAK) {
                     throw new RuntimeException("Unexpected move keyword " + moveKeyword.moveType());
                 }
@@ -1032,64 +1045,78 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return null;
     }
 
-    private Object evaluate(final Expression expr) {
+    private Object evaluate(Expression expr) {
         return expr.accept(this);
     }
 
     private boolean isTruthy(Object object) {
         object = this.unwrap(object);
-        if (object == null) return false;
-        if (object instanceof Boolean) return (boolean) object;
+        if (object == null) {
+            return false;
+        }
+        if (object instanceof Boolean) {
+            return (boolean) object;
+        }
         return true;
     }
 
-    private boolean isEqual(final Object left, final Object right) {
-        if (left == null && right == null) return true;
-        if (left == null) return false;
+    private boolean isEqual(Object left, Object right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null) {
+            return false;
+        }
         if (left instanceof Number numberLeft && right instanceof Number numberRight) {
-            final BigDecimal decimalLeft = BigDecimal.valueOf(numberLeft.doubleValue());
-            final BigDecimal decimalRight = BigDecimal.valueOf(numberRight.doubleValue());
+            BigDecimal decimalLeft = BigDecimal.valueOf(numberLeft.doubleValue());
+            BigDecimal decimalRight = BigDecimal.valueOf(numberRight.doubleValue());
             return decimalLeft.compareTo(decimalRight) == 0;
         }
         return left.equals(right);
     }
 
-    private Object unwrap(final Object object) {
-        if (object instanceof ExternalInstance external) return external.instance();
+    private Object unwrap(Object object) {
+        if (object instanceof ExternalInstance external) {
+            return external.instance();
+        }
         return object;
     }
 
 
 
-    private void checkNumberOperand(final Token operator, final Object operand) {
-        if (operand instanceof Double) return;
+    private void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) {
+            return;
+        }
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
-    private void checkNumberOperands(final Token operator, final Object left, final Object right) {
-        if (left instanceof Number && right instanceof Number) return;
+    private void checkNumberOperands(Token operator, Object left, Object right) {
+        if (left instanceof Number && right instanceof Number) {
+            return;
+        }
         throw new RuntimeError(operator, "Operands must the same type -> number.");
     }
 
-    private void execute(final Statement stmt) {
+    private void execute(Statement stmt) {
         stmt.accept(this);
     }
 
-    public void execute(final BlockStatement blockStatement, final VariableScope localVariableScope) {
+    public void execute(BlockStatement blockStatement, VariableScope localVariableScope) {
         this.execute(blockStatement.statements(), localVariableScope);
     }
 
-    public void execute(final List<Statement> statementList, final VariableScope localVariableScope) {
-        final VariableScope previous = this.variableScope();
+    public void execute(List<Statement> statementList, VariableScope localVariableScope) {
+        VariableScope previous = this.variableScope();
         try {
             // Make current scope block local and not global
             this.visitingScope = localVariableScope;
 
-            for (final Statement statement : statementList) {
+            for (Statement statement : statementList) {
                 try {
                     this.execute(statement);
                 }
-                catch (final MoveKeyword type) {
+                catch (MoveKeyword type) {
                     if (type.moveType() == MoveKeyword.MoveType.CONTINUE) {
                         break;
                     }
@@ -1104,12 +1131,12 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         }
     }
 
-    private Object lookUpVariable(final Token name, final Expression expr) {
+    private Object lookUpVariable(Token name, Expression expr) {
         if (name.type() == TokenType.THIS) {
             return this.variableScope().getAt(name, 1);
         }
 
-        final Integer distance = this.locals.get(expr);
+        Integer distance = this.locals.get(expr);
         if (distance != null) {
             // Find variable value in locales score
             return this.variableScope().getAt(name, distance);
@@ -1128,7 +1155,7 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
     }
 
-    public void resolve(final Expression expr, final int depth) {
+    public void resolve(Expression expr, int depth) {
         this.locals.put(expr, depth);
     }
 
@@ -1136,20 +1163,20 @@ public class Interpreter implements ExpressionVisitor<Object>, StatementVisitor<
         return this.visitingScope;
     }
 
-    public void global(final Map<String, Object> globalVariables) {
+    public void global(Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
-            final TypeView<Object> typeView = this.applicationContext().environment().introspector().introspect(instance);
+            TypeView<Object> typeView = this.applicationContext().environment().introspector().introspect(instance);
             this.externalVariables.put(name, new ExternalInstance(instance, typeView));
         });
     }
 
-    public void imports(final Map<String, TypeView<?>> imports) {
+    public void imports(Map<String, TypeView<?>> imports) {
         imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
     }
 
-    private void withNextScope(final Runnable runnable) {
-        final VariableScope nextScope = new VariableScope(this.variableScope());
-        final VariableScope previous = this.variableScope();
+    private void withNextScope(Runnable runnable) {
+        VariableScope nextScope = new VariableScope(this.variableScope());
+        VariableScope previous = this.variableScope();
         this.visitingScope = nextScope;
         runnable.run();
         this.visitingScope = previous;

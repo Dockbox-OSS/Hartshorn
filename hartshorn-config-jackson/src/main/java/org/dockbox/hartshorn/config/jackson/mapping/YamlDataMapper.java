@@ -34,7 +34,7 @@ public class YamlDataMapper implements JacksonDataMapper {
 
     @Override
     public MapperBuilder<?, ?> get() {
-        final YAMLFactory yamlFactory = new YAMLFactory();
+        YAMLFactory yamlFactory = new YAMLFactory();
         yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
         yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);

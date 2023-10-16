@@ -42,15 +42,15 @@ public final class ComponentKey<T> {
         this.enable = enable;
     }
 
-    public static <T> Builder<T> builder(final Class<T> type) {
+    public static <T> Builder<T> builder(Class<T> type) {
         return new Builder<>(new ParameterizableType<>(type));
     }
 
-    public static <T> Builder<T> builder(final TypeView<T> type) {
+    public static <T> Builder<T> builder(TypeView<T> type) {
         return new Builder<>(new ParameterizableType<>(type));
     }
 
-    public static <T> Builder<T> builder(final ParameterizableType<T> type) {
+    public static <T> Builder<T> builder(ParameterizableType<T> type) {
         return new Builder<>(type);
     }
 
@@ -62,27 +62,27 @@ public final class ComponentKey<T> {
         return builder;
     }
 
-    public static <T> ComponentKey<T> of(final Class<T> type) {
+    public static <T> ComponentKey<T> of(Class<T> type) {
         return ComponentKey.builder(type).build();
     }
 
-    public static <T> ComponentKey<T> of(final TypeView<T> type) {
+    public static <T> ComponentKey<T> of(TypeView<T> type) {
         return ComponentKey.builder(type).build();
     }
 
-    public static <T> ComponentKey<T> of(final ParameterizableType<T> type) {
+    public static <T> ComponentKey<T> of(ParameterizableType<T> type) {
         return ComponentKey.builder(type).build();
     }
 
-    public static <T> ComponentKey<T> of(final TypeView<T> type, final String named) {
+    public static <T> ComponentKey<T> of(TypeView<T> type, String named) {
         return ComponentKey.of(type.type(), named);
     }
 
-    public static <T> ComponentKey<T> of(final Class<T> key, final String name) {
+    public static <T> ComponentKey<T> of(Class<T> key, String name) {
         return ComponentKey.builder(key).name(name).build();
     }
 
-    public static <T> ComponentKey<T> of(final ParameterView<T> parameter) {
+    public static <T> ComponentKey<T> of(ParameterView<T> parameter) {
         return ComponentKey.builder(parameter).build();
     }
 
@@ -107,14 +107,14 @@ public final class ComponentKey<T> {
     }
 
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         if(this == other) {
             return true;
         }
         if(other == null || this.getClass() != other.getClass()) {
             return false;
         }
-        final ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
+        ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
         return this.enable == otherComponentKey.enable
                 && this.type.equals(otherComponentKey.type)
                 && Objects.equals(this.name, otherComponentKey.name)
@@ -148,42 +148,42 @@ public final class ComponentKey<T> {
 
     public static final class Builder<T> {
 
-        private ParameterizableType<T> type;
+        private final ParameterizableType<T> type;
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
 
-        private Builder(final ComponentKey<T> key) {
+        private Builder(ComponentKey<T> key) {
             this.type = key.type;
             this.name = key.name;
             this.scope = key.scope;
             this.enable = key.enable;
         }
 
-        private Builder(final ParameterizableType<T> type) {
+        private Builder(ParameterizableType<T> type) {
             this.type = type;
         }
 
-        public <U> Builder<U> type(final Class<U> type) {
+        public <U> Builder<U> type(Class<U> type) {
             return this.type(new ParameterizableType<>(type));
         }
 
-        public <U> Builder<U> type(final TypeView<U> type) {
+        public <U> Builder<U> type(TypeView<U> type) {
             return this.type(new ParameterizableType<>(type));
         }
 
-        public <U> Builder<U> type(final ParameterizableType<U> type) {
+        public <U> Builder<U> type(ParameterizableType<U> type) {
             return builder(type)
                     .name(name)
                     .scope(scope)
                     .enable(enable);
         }
 
-        public Builder<T> parameterClasses(final Class<?>... parameterTypes) {
+        public Builder<T> parameterClasses(Class<?>... parameterTypes) {
             return this.parameterClasses(List.of(parameterTypes));
         }
 
-        public Builder<T> parameterClasses(final List<Class<?>> parameterTypes) {
+        public Builder<T> parameterClasses(List<Class<?>> parameterTypes) {
             List<ParameterizableType<?>> types = new ArrayList<>();
             for (Class<?> parameterType : parameterTypes) {
                 types.add(new ParameterizableType<>(parameterType));
@@ -191,33 +191,33 @@ public final class ComponentKey<T> {
             return this.parameterTypes(types);
         }
 
-        public Builder<T> parameterTypes(final ParameterizableType<?>... parameterTypes) {
+        public Builder<T> parameterTypes(ParameterizableType<?>... parameterTypes) {
             return this.parameterTypes(List.of(parameterTypes));
         }
 
-        public Builder<T> parameterTypes(final List<ParameterizableType<?>> parameterTypes) {
+        public Builder<T> parameterTypes(List<ParameterizableType<?>> parameterTypes) {
             this.type.parameters(parameterTypes);
             return this;
         }
 
-        public Builder<T> name(final String name) {
+        public Builder<T> name(String name) {
             this.name = StringUtilities.nullIfEmpty(name);
             return this;
         }
 
-        public Builder<T> name(final Named named) {
+        public Builder<T> name(Named named) {
             if(named != null) {
                 return this.name(named.value());
             }
             return this;
         }
 
-        public Builder<T> scope(final Scope scope) {
+        public Builder<T> scope(Scope scope) {
             this.scope = scope;
             return this;
         }
 
-        public Builder<T> enable(final boolean enable) {
+        public Builder<T> enable(boolean enable) {
             this.enable = enable;
             return this;
         }
@@ -232,20 +232,20 @@ public final class ComponentKey<T> {
         private final ParameterizableType<T> type;
         private final String name;
 
-        private ComponentKeyView(final ComponentKey<T> key) {
+        private ComponentKeyView(ComponentKey<T> key) {
             this.type = key.type;
             this.name = key.name;
         }
 
         @Override
-        public boolean equals(final Object other) {
+        public boolean equals(Object other) {
             if(this == other) {
                 return true;
             }
             if(other == null || this.getClass() != other.getClass()) {
                 return false;
             }
-            final ComponentKeyView<?> otherKeyView = (ComponentKeyView<?>) other;
+            ComponentKeyView<?> otherKeyView = (ComponentKeyView<?>) other;
             return Objects.equals(this.type, otherKeyView.type) && Objects.equals(this.name, otherKeyView.name);
         }
 

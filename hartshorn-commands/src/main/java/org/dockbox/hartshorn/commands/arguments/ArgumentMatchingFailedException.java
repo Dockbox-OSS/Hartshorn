@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.i18n.Message;
 
 public class ArgumentMatchingFailedException extends ConverterException {
-    public ArgumentMatchingFailedException(final Message message) {
+    public ArgumentMatchingFailedException(Message message) {
         this(message.string());
     }
 
-    public ArgumentMatchingFailedException(final String message) {
+    public ArgumentMatchingFailedException(String message) {
         super(message);
     }
 }

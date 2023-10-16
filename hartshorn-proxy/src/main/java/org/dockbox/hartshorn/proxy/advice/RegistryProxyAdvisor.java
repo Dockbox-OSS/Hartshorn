@@ -36,7 +36,7 @@ public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
 
     private final StateAwareAdvisorRegistry<T> advisors;
 
-    public RegistryProxyAdvisor(final StateAwareAdvisorRegistry<T> advisors) {
+    public RegistryProxyAdvisor(StateAwareAdvisorRegistry<T> advisors) {
         this.advisors = advisors;
     }
 
@@ -46,21 +46,21 @@ public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
     }
 
     @Override
-    public <U> U safeWrapIntercept(final ProxyCallbackContext<T> context, final ProxyInterceptFunction<U> interceptFunction) throws Throwable {
-        final Method method = context.method().method().orElseThrow(() -> null);
-        final Collection<MethodWrapper<T>> wrappers = this.resolver()
+    public <U> U safeWrapIntercept(ProxyCallbackContext<T> context, ProxyInterceptFunction<U> interceptFunction) throws Throwable {
+        Method method = context.method().method().orElseThrow(() -> null);
+        Collection<MethodWrapper<T>> wrappers = this.resolver()
                 .method(method)
                 .wrappers();
-        final MethodWrapper<T> methodWrapper = new MethodWrapperList<>(wrappers);
+        MethodWrapper<T> methodWrapper = new MethodWrapperList<>(wrappers);
 
         methodWrapper.acceptBefore(context);
         try {
-            final U result = interceptFunction.handleInterception();
+            U result = interceptFunction.handleInterception();
             methodWrapper.acceptAfter(context);
             return result;
         }
-        catch (final Throwable e) {
-            final ProxyCallbackContext<T> errorContext = context.acceptError(e);
+        catch (Throwable e) {
+            ProxyCallbackContext<T> errorContext = context.acceptError(e);
             methodWrapper.acceptError(errorContext);
             throw e;
         }

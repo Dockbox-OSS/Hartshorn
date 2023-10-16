@@ -36,27 +36,27 @@ import java.util.Map;
 public class StandardHslLanguageFactory implements HslLanguageFactory {
 
     @Override
-    public Lexer lexer(final String source) {
+    public Lexer lexer(String source) {
         return new Lexer(source);
     }
 
     @Override
-    public TokenParser parser(final List<Token> tokens) {
+    public TokenParser parser(List<Token> tokens) {
         return new StandardTokenParser(tokens);
     }
 
     @Override
-    public Resolver resolver(final Interpreter interpreter) {
+    public Resolver resolver(Interpreter interpreter) {
         return new Resolver(interpreter);
     }
 
     @Override
-    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules) {
+    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules) {
         return this.interpreter(resultCollector, modules, new ExecutionOptions());
     }
 
     @Override
-    public Interpreter interpreter(final ResultCollector resultCollector, final Map<String, NativeModule> modules, final ExecutionOptions options) {
+    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options) {
         return new Interpreter(resultCollector, modules, options);
     }
 }

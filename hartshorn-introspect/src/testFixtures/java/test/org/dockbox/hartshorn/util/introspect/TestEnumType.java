@@ -18,6 +18,4 @@ package test.org.dockbox.hartshorn.util.introspect;
 
 public enum TestEnumType {
     A, B, C;
-
-    public static final TestEnumType[] VALUES = TestEnumType.values();
 }

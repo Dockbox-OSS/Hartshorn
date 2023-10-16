@@ -20,7 +20,7 @@ public abstract class AbstractFinalizable implements Finalizable {
 
     private boolean finalized;
 
-    protected AbstractFinalizable(final boolean finalized) {
+    protected AbstractFinalizable(boolean finalized) {
         this.finalized = finalized;
     }
 

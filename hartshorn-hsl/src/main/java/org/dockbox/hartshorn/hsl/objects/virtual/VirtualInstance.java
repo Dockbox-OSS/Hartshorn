@@ -43,37 +43,43 @@ public class VirtualInstance implements InstanceReference {
     private final VirtualClass virtualClass;
     private final Map<String, Object> fields = new HashMap<>();
 
-    public VirtualInstance(final @NonNull VirtualClass virtualClass) {
+    public VirtualInstance(@NonNull VirtualClass virtualClass) {
         this.virtualClass = virtualClass;
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
-        final FieldStatement field = this.virtualClass.field(name.lexeme());
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
+        FieldStatement field = this.virtualClass.field(name.lexeme());
         if (field == null && !this.virtualClass.isDynamic()) {
             throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
         }
         if (field != null && field.isFinal() && this.fields.containsKey(name.lexeme())) {
-            throw new RuntimeError(name, "Cannot reassign final property '" + name.lexeme() + "'.");
+            throw new RuntimeError(name, "Cannot reassign property '" + name.lexeme() + "'.");
         }
-        if (field != null) this.checkScopeCanAccess(name, field, fromScope);
+        if (field != null) {
+            this.checkScopeCanAccess(name, field, fromScope);
+        }
         this.fields.put(name.lexeme(), value);
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
-        final FieldStatement field = this.virtualClass.field(name.lexeme());
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
+        FieldStatement field = this.virtualClass.field(name.lexeme());
         if (this.virtualClass.isDynamic() || (field != null && this.fields.containsKey(name.lexeme()))) {
-            if (field != null) this.checkScopeCanAccess(name, field, fromScope);
+            if (field != null) {
+                this.checkScopeCanAccess(name, field, fromScope);
+            }
             return this.fields.get(name.lexeme());
         }
-        final MethodReference method = this.virtualClass.method(name.lexeme());
-        if (method != null) return method.bind(this);
+        MethodReference method = this.virtualClass.method(name.lexeme());
+        if (method != null) {
+            return method.bind(this);
+        }
         throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
     }
 
-    private void checkScopeCanAccess(final Token at, final FieldStatement field, final VariableScope fromScope) {
-        final PropertyAccessVerifier verifier = this.accessVerifier();
+    private void checkScopeCanAccess(Token at, FieldStatement field, VariableScope fromScope) {
+        PropertyAccessVerifier verifier = this.accessVerifier();
         if (!verifier.verify(at, field, this, fromScope)) {
             throw new RuntimeError(at, "Cannot access property '" + field.name().lexeme() + "' outside of its class scope.");
         }

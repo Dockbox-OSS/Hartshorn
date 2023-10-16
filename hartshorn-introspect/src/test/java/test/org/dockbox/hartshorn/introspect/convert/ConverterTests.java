@@ -24,12 +24,12 @@ public class ConverterTests {
 
     @Test
     void testConverterChainingFollowsCorrectOrder() {
-        final Converter<String, Byte> converter = ((Converter<String, Double>) Double::parseDouble)
+        Converter<String, Byte> converter = ((Converter<String, Double>) Double::parseDouble)
                 .andThen(Double::longValue)
                 .andThen(Long::intValue)
                 .andThen(Integer::byteValue);
 
-        final byte result = converter.convert("1.0");
+        byte result = converter.convert("1.0");
         Assertions.assertEquals((byte) 1, result);
     }
 }

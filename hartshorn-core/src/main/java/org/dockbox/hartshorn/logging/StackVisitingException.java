@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.logging;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class StackVisitingException extends ApplicationRuntimeException {
-    public StackVisitingException(final String message) {
+    public StackVisitingException(String message) {
         super(message);
     }
 }

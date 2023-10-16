@@ -28,33 +28,33 @@ public class CollectionToObjectConverterTests {
 
     @Test
     void testSingleElementCollectionOfTargetTypeCanConvert() {
-        final Set<String> collection = Collections.singleton("test");
-        final CollectionToObjectConverter converter = new CollectionToObjectConverter();
+        Set<String> collection = Collections.singleton("test");
+        CollectionToObjectConverter converter = new CollectionToObjectConverter();
         Assertions.assertTrue(converter.canConvert(collection, String.class));
 
-        final Object converted = converter.convert(collection, Set.class, String.class);
+        Object converted = converter.convert(collection, Set.class, String.class);
         Assertions.assertNotNull(converted);
         Assertions.assertEquals("test", converted);
     }
 
     @Test
     void testSingleElementCollectionOfDifferentTypeCannotConvert() {
-        final Set<Integer> collection = Collections.singleton(1);
-        final ConditionalConverter converter = new CollectionToObjectConverter();
+        Set<Integer> collection = Collections.singleton(1);
+        ConditionalConverter converter = new CollectionToObjectConverter();
         Assertions.assertFalse(converter.canConvert(collection, String.class));
     }
 
     @Test
     void testEmptyCollectionCannotConvert() {
-        final Set<String> collection = Collections.emptySet();
-        final ConditionalConverter converter = new CollectionToObjectConverter();
+        Set<String> collection = Collections.emptySet();
+        ConditionalConverter converter = new CollectionToObjectConverter();
         Assertions.assertFalse(converter.canConvert(collection, String.class));
     }
 
     @Test
     void testMultiElementCollectionCannotConvert() {
-        final Set<String> collection = Set.of("test", "test2");
-        final ConditionalConverter converter = new CollectionToObjectConverter();
+        Set<String> collection = Set.of("test", "test2");
+        ConditionalConverter converter = new CollectionToObjectConverter();
         Assertions.assertFalse(converter.canConvert(collection, String.class));
     }
 }

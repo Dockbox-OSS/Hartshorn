@@ -26,7 +26,7 @@ public class WildcardPackageView implements PackageView {
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         // No-op, only report in WildcardTypeView
     }
 

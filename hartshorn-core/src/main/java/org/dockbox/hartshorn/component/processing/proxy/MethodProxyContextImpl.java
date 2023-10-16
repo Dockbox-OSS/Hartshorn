@@ -28,14 +28,14 @@ public class MethodProxyContextImpl<T> extends DefaultApplicationAwareContext im
     private final TypeView<T> type;
     private final MethodView<T, ?> method;
 
-    public MethodProxyContextImpl(final ApplicationContext context, final TypeView<T> type, final MethodView<T, ?> method) {
+    public MethodProxyContextImpl(ApplicationContext context, TypeView<T> type, MethodView<T, ?> method) {
         super(context);
         this.type = type;
         this.method = method;
     }
 
     @Override
-    public <A extends Annotation> A annotation(final Class<A> annotation) {
+    public <A extends Annotation> A annotation(Class<A> annotation) {
         return this.method.annotations().get(annotation).orNull();
     }
 

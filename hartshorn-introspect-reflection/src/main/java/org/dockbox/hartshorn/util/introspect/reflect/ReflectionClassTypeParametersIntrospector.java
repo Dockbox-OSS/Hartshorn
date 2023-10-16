@@ -31,23 +31,23 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
 
     private TypeParameterList inputParameters;
 
-    public ReflectionClassTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
+    public ReflectionClassTypeParametersIntrospector(TypeView<?> type, Introspector introspector) {
         super(type, introspector);
     }
 
     @Override
     @Deprecated(since = "0.5.0", forRemoval = true)
-    public List<TypeView<?>> from(final Class<?> fromInterface) {
+    public List<TypeView<?>> from(Class<?> fromInterface) {
         return List.of();
     }
 
     @Override
     public TypeParameterList allInput() {
         if (this.inputParameters == null) {
-            final List<TypeParameterView> parameters = new ArrayList<>();
-            final TypeVariable<? extends Class<?>>[] typeParameters = this.type().type().getTypeParameters();
+            List<TypeParameterView> parameters = new ArrayList<>();
+            TypeVariable<? extends Class<?>>[] typeParameters = this.type().type().getTypeParameters();
             for (int i = 0; i < typeParameters.length; i++) {
-                final TypeVariable<?> typeParameter = typeParameters[i];
+                TypeVariable<?> typeParameter = typeParameters[i];
                 parameters.add(new ReflectionTypeParameterView(typeParameter, this.type(), i, this.introspector()));
             }
             this.inputParameters = new SimpleTypeParameterList(parameters);

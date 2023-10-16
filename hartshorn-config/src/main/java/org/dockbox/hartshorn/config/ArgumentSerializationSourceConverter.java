@@ -34,12 +34,12 @@ import java.nio.file.Path;
 public class ArgumentSerializationSourceConverter implements SerializationSourceConverter {
 
     @Override
-    public InputStream inputStream(final AnnotatedElementView context, final Object... args) throws ApplicationException {
+    public InputStream inputStream(AnnotatedElementView context, Object... args) throws ApplicationException {
         if (args.length != 1) {
             return null;
         }
-        final Object arg = args[0];
-        final InputStream inputStream;
+        Object arg = args[0];
+        InputStream inputStream;
 
         try {
             if (arg instanceof InputStream stream) {
@@ -61,7 +61,7 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
                 throw new IllegalArgumentException("Expected a valid serialization source, but found " + (arg != null ? arg.getClass() : null));
             }
         }
-        catch (final IOException e) {
+        catch (IOException e) {
             throw new ApplicationException(e);
         }
 
@@ -69,12 +69,12 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
     }
 
     @Override
-    public OutputStream outputStream(final AnnotatedElementView context, final Object... args) throws ApplicationException {
+    public OutputStream outputStream(AnnotatedElementView context, Object... args) throws ApplicationException {
         if (args.length != 1) {
             return null;
         }
-        final Object arg = args[0];
-        final OutputStream outputStream;
+        Object arg = args[0];
+        OutputStream outputStream;
 
         try {
             if (arg instanceof OutputStream stream) {
@@ -90,7 +90,7 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
                 return null;
             }
         }
-        catch (final IOException e) {
+        catch (IOException e) {
             throw new ApplicationException(e);
         }
 

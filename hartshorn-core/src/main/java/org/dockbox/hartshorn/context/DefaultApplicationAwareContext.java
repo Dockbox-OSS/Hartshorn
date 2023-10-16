@@ -24,7 +24,7 @@ public abstract class DefaultApplicationAwareContext extends DefaultProvisionCon
     private final ApplicationContext applicationContext;
 
     @SuppressWarnings({ "OverridableMethodCallDuringObjectConstruction", "InstanceofThis" })
-    protected DefaultApplicationAwareContext(final ApplicationContext applicationContext) {
+    protected DefaultApplicationAwareContext(ApplicationContext applicationContext) {
         if (applicationContext != null) {
             this.applicationContext = applicationContext;
         }
@@ -51,10 +51,10 @@ public abstract class DefaultApplicationAwareContext extends DefaultProvisionCon
     }
 
     @Override
-    public <C extends Context> Option<C> first(final ContextIdentity<C> key) {
+    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
         return super.first(key).orCompute(() -> {
             if (key instanceof ContextKey<C> contextKey) {
-                final C context = contextKey.create(this.applicationContext);
+                C context = contextKey.create(this.applicationContext);
                 this.add(context);
                 return context;
             }

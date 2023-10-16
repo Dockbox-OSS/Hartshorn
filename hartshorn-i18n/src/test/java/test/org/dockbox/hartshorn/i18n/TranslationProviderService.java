@@ -30,17 +30,17 @@ import java.util.Locale;
 public class TranslationProviderService {
 
     @TranslationProvider
-    public TranslationBundle dutch(final ApplicationContext context) {
-        final TranslationBundle bundle = context.get(TranslationBundle.class);
+    public TranslationBundle dutch(ApplicationContext context) {
+        TranslationBundle bundle = context.get(TranslationBundle.class);
         bundle.primaryLanguage(new Locale("nl", "NL"));
         bundle.register("lang.name", "Nederlands");
         return bundle;
     }
 
     @TranslationProvider
-    public TranslationBundle english(final ApplicationContext context) {
-        final TranslationBundle bundle = context.get(TranslationBundle.class);
-        final Path path = context.get(ClasspathResourceLocator.class).resource("i18n/en_us.yml").get();
+    public TranslationBundle english(ApplicationContext context) {
+        TranslationBundle bundle = context.get(TranslationBundle.class);
+        Path path = context.get(ClasspathResourceLocator.class).resource("i18n/en_us.yml").get();
         bundle.register(path, Locale.US, FileFormats.YAML);
         return bundle;
     }

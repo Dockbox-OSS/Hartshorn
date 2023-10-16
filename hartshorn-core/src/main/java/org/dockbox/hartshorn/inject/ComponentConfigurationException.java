@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 public class ComponentConfigurationException extends ApplicationException {
 
-    public ComponentConfigurationException(final String message) {
+    public ComponentConfigurationException(String message) {
         super(message);
     }
 
-    public ComponentConfigurationException(final String message, final Throwable cause) {
+    public ComponentConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

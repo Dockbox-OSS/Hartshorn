@@ -39,12 +39,12 @@ public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
     }
 
     @Override
-    public Set<URI> lookup(final ApplicationContext context, final String path) {
+    public Set<URI> lookup(ApplicationContext context, String path) {
         return context.environment().classpath().resources(path).stream().map(Path::toUri).collect(Collectors.toSet());
     }
 
     @Override
-    public URI baseUrl(final ApplicationContext context) {
+    public URI baseUrl(ApplicationContext context) {
         return context.environment().classpath().classpathUri();
     }
 }

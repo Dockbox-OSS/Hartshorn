@@ -59,12 +59,12 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         private int counter;
 
         @Override
-        public String get(final Class<?> type) {
+        public String get(Class<?> type) {
             return this.get(type.getName());
         }
 
         @Override
-        public String get(final String type) {
+        public String get(String type) {
             return type + this.sep + Integer.toHexString(this.counter++);
         }
     };
@@ -76,7 +76,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private final ProxyValidator validator;
     private final Class<T> type;
 
-    protected DefaultProxyFactory(final Class<T> type, final ProxyOrchestrator proxyOrchestrator) {
+    protected DefaultProxyFactory(Class<T> type, ProxyOrchestrator proxyOrchestrator) {
         this.type = type;
         this.proxyOrchestrator = proxyOrchestrator;
         this.advisorRegistry = new ConfigurationAdvisorRegistry<>(proxyOrchestrator, this);
@@ -90,18 +90,20 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public StateAwareProxyFactory<T> advisors(final Consumer<? super AdvisorRegistry<T>> registryConsumer) {
+    public StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer) {
         registryConsumer.accept(this.advisorRegistry);
         return this;
     }
 
     @Override
-    public DefaultProxyFactory<T> implement(final Class<?>... interfaces) {
-        for (final Class<?> anInterface : interfaces) {
+    public DefaultProxyFactory<T> implement(Class<?>... interfaces) {
+        for (Class<?> anInterface : interfaces) {
             if (!anInterface.isInterface()) {
                 throw new IllegalArgumentException(anInterface.getName() + " is not an interface");
             }
-            if (Proxy.class.equals(anInterface)) continue;
+            if (Proxy.class.equals(anInterface)) {
+                continue;
+            }
             this.interfaces.add(anInterface);
         }
         return this;
@@ -113,7 +115,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public StateAwareProxyFactory<T> trackState(final boolean trackState) {
+    public StateAwareProxyFactory<T> trackState(boolean trackState) {
         this.advisorRegistry.state().trackState(trackState);
         return this;
     }
@@ -134,7 +136,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public final Attempt<T, Throwable> proxy() throws ApplicationException {
+    public Attempt<T, Throwable> proxy() throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy();
     }
@@ -142,7 +144,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     protected abstract Attempt<T, Throwable> createNewProxy() throws ApplicationException;
 
     @Override
-    public final Attempt<T, Throwable> proxy(final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
+    public Attempt<T, Throwable> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy(constructor, args);
     }
@@ -150,7 +152,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     protected abstract Attempt<T, Throwable> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     @Override
-    public final Attempt<T, Throwable> proxy(final ConstructorView<? extends T> constructor, final Object[] args) throws ApplicationException {
+    public Attempt<T, Throwable> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
         if (constructor.constructor().present()) {
             return this.proxy(constructor.constructor().get(), args);
         }
@@ -160,8 +162,8 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     protected void validateConstraints() throws ProxyConstraintViolationException {
-        final TypeView<T> typeView = this.orchestrator().introspector().introspect(this.type);
-        final Set<ProxyConstraintViolation> violations = this.validator().validate(typeView);
+        TypeView<T> typeView = this.orchestrator().introspector().introspect(this.type);
+        Set<ProxyConstraintViolation> violations = this.validator().validate(typeView);
 
         if (!violations.isEmpty()) {
             throw new ProxyConstraintViolationException(violations);

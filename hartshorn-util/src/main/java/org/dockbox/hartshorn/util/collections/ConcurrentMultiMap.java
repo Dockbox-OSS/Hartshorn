@@ -25,7 +25,7 @@ public abstract class ConcurrentMultiMap<K, V> extends StandardMultiMap<K, V> {
     protected ConcurrentMultiMap() {
     }
 
-    protected ConcurrentMultiMap(final MultiMap<K, V> map) {
+    protected ConcurrentMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

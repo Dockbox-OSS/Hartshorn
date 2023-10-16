@@ -91,27 +91,27 @@ public abstract class ElementContextTests {
 
     @Test
     void testTypesAreCached() {
-        final TypeView<ElementContextTests> tc1 = this.introspector().introspect(ElementContextTests.class);
-        final TypeView<ElementContextTests> tc2 = this.introspector().introspect(ElementContextTests.class);
+        TypeView<ElementContextTests> tc1 = this.introspector().introspect(ElementContextTests.class);
+        TypeView<ElementContextTests> tc2 = this.introspector().introspect(ElementContextTests.class);
         Assertions.assertSame(tc1, tc2);
     }
 
     @Test
     void testCachedItemsAreNotReusedForDifferentTypes() {
-        final TypeView<ElementContextTests> tc1 = this.introspector().introspect(ElementContextTests.class);
-        final TypeView<Object> tc2 = this.introspector().introspect(Object.class);
+        TypeView<ElementContextTests> tc1 = this.introspector().introspect(ElementContextTests.class);
+        TypeView<Object> tc2 = this.introspector().introspect(Object.class);
         Assertions.assertNotSame(tc1, tc2);
     }
 
     @ParameterizedTest
     @MethodSource("primitives")
-    public void testIsPrimitiveAcceptsPrimitives(final Class<?> primitive) {
+    public void testIsPrimitiveAcceptsPrimitives(Class<?> primitive) {
         Assertions.assertTrue(this.introspector().introspect(primitive).isPrimitive());
     }
 
     @ParameterizedTest
     @MethodSource("wrappers")
-    public void testIsPrimitiveRejectsPrimitiveWrappers(final Class<?> wrapper) {
+    public void testIsPrimitiveRejectsPrimitiveWrappers(Class<?> wrapper) {
         Assertions.assertFalse(this.introspector().introspect(wrapper).isPrimitive());
     }
 
@@ -145,20 +145,20 @@ public abstract class ElementContextTests {
 
     @Test
     public void testAnonymousTypesAreAnonymous() {
-        final TypeView<Object> anonymous = this.introspector().introspect(new Object() {
+        TypeView<Object> anonymous = this.introspector().introspect(new Object() {
         });
         Assertions.assertTrue(anonymous.isAnonymous());
     }
 
     @Test
     public void testNonAnonymousTypesAreNotAnonymous() {
-        final TypeView<Object> anonymous = this.introspector().introspect(Object.class);
+        TypeView<Object> anonymous = this.introspector().introspect(Object.class);
         Assertions.assertFalse(anonymous.isAnonymous());
     }
 
     @Test
     void testAnonymousWrappersReturnCorrectType() {
-        final TypeView<Object> anonymous = this.introspector().introspect(new Object() {
+        TypeView<Object> anonymous = this.introspector().introspect(new Object() {
         });
         Assertions.assertNotEquals(Object.class, anonymous.type());
     }
@@ -180,8 +180,8 @@ public abstract class ElementContextTests {
 
     @Test
     public void enumConstantsCanBeObtained() {
-        final TypeView<TestEnumType> enumContext = this.introspector().introspect(TestEnumType.class);
-        Assertions.assertEquals(TestEnumType.VALUES.length, enumContext.enumConstants().size());
+        TypeView<TestEnumType> enumContext = this.introspector().introspect(TestEnumType.class);
+        Assertions.assertEquals(TestEnumType.values().length, enumContext.enumConstants().size());
     }
 
     @Test
@@ -251,7 +251,7 @@ public abstract class ElementContextTests {
 
     @ParameterizedTest
     @MethodSource("primitiveDefaults")
-    void testPrimitiveDefaults(final Class<?> primitive, final Object defaultValue) {
+    void testPrimitiveDefaults(Class<?> primitive, Object defaultValue) {
         Assertions.assertEquals(defaultValue, this.introspector().introspect(primitive).defaultOrNull());
     }
 
@@ -277,7 +277,7 @@ public abstract class ElementContextTests {
 
     @ParameterizedTest
     @MethodSource("wrapperDefaults")
-    void testWrapperDefaults(final Class<?> wrapper, final Object defaultValue) {
+    void testWrapperDefaults(Class<?> wrapper, Object defaultValue) {
         Assertions.assertEquals(defaultValue, this.introspector().introspect(wrapper).defaultOrNull());
     }
 
@@ -292,24 +292,24 @@ public abstract class ElementContextTests {
 
     @Test
     void testTypeParametersWithoutSourceAreFromSuperclass() {
-        final TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
+        TypeView<ImplementationWithTP> type = this.introspector().introspect(ImplementationWithTP.class);
         assertTypeParameterForType(type, AbstractTypeWithTP.class, Integer.class);
         assertTypeParameterForType(type, InterfaceWithTP.class, String.class);
     }
 
-    private static void assertTypeParameterForType(final TypeView<?> type, final Class<?> forClass, final Class<?> expectedClass) {
-        final TypeParameterList typeParameters = type.typeParameters().outputFor(forClass);
+    private static void assertTypeParameterForType(TypeView<?> type, Class<?> forClass, Class<?> expectedClass) {
+        TypeParameterList typeParameters = type.typeParameters().outputFor(forClass);
         Assertions.assertEquals(1, typeParameters.count());
 
-        final TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
-        final Option<TypeView<?>> upperBound = typeParameterView.resolvedType();
+        TypeParameterView typeParameterView = typeParameters.atIndex(0).get();
+        Option<TypeView<?>> upperBound = typeParameterView.resolvedType();
         Assertions.assertTrue(upperBound.present());
         Assertions.assertSame(expectedClass, upperBound.get().type());
     }
 
     @Test
     void testAnnotatedTypeHasAnnotations() {
-        final TypeView<AnnotatedElement> type = this.introspector().introspect(AnnotatedElement.class);
+        TypeView<AnnotatedElement> type = this.introspector().introspect(AnnotatedElement.class);
         Assertions.assertEquals(1, type.annotations().count());
         Assertions.assertSame(Sample.class, type.annotations().all().iterator().next().annotationType());
     }
@@ -328,13 +328,13 @@ public abstract class ElementContextTests {
 
     @Test
     void testStaticMethodCanInvokeStatic() {
-        final Option<MethodView<ElementContextTests, ?>> test = this.introspector().introspect(this)
+        Option<MethodView<ElementContextTests, ?>> test = this.introspector().introspect(this)
                 .methods()
                 .named("testStatic");
         Assertions.assertTrue(test.present());
-        final MethodView<ElementContextTests, ?> methodContext = test.get();
+        MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertTrue(methodContext.modifiers().isStatic());
-        final Attempt<?, ?> result = methodContext.invokeStatic();
+        Attempt<?, ?> result = methodContext.invokeStatic();
         Assertions.assertTrue(result.errorAbsent());
     }
 
@@ -342,11 +342,11 @@ public abstract class ElementContextTests {
 
     @Test
     void testNonStaticMethodCannotInvokeStatic() {
-        final Option<MethodView<ElementContextTests, ?>> test = this.introspector().introspect(this)
+        Option<MethodView<ElementContextTests, ?>> test = this.introspector().introspect(this)
                 .methods()
                 .named("testNonStatic");
         Assertions.assertTrue(test.present());
-        final MethodView<ElementContextTests, ?> methodContext = test.get();
+        MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertFalse(methodContext.modifiers().isStatic());
         Assertions.assertThrows(IllegalIntrospectionException.class, () -> methodContext.invokeStatic());
     }

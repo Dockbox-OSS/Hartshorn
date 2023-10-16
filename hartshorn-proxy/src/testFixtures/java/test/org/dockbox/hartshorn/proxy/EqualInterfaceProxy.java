@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.proxy;
 
 public interface EqualInterfaceProxy {
-    default boolean test(final EqualInterfaceProxy proxy) {
+    default boolean test(EqualInterfaceProxy proxy) {
         return this.equals(proxy);
     }
 }

@@ -36,7 +36,7 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     private String name;
     private ExecutableElementView<?> declaredBy;
 
-    public ReflectionParameterView(final ReflectionIntrospector introspector, final Parameter parameter) {
+    public ReflectionParameterView(ReflectionIntrospector introspector, Parameter parameter) {
         super(introspector);
         this.introspector = introspector;
         this.parameter = parameter;
@@ -66,7 +66,7 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
 
     @Override
     public String qualifiedName() {
-        final String executableName = this.declaredBy().qualifiedName();
+        String executableName = this.declaredBy().qualifiedName();
         return executableName + "[" + this.name() + "]";
     }
 
@@ -83,10 +83,16 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     @Override
     public ExecutableElementView<?> declaredBy() {
         if (this.declaredBy == null) {
-            final Executable executable = this.parameter.getDeclaringExecutable();
-            if (executable instanceof Method method) this.declaredBy = this.introspector.introspect(method);
-            else if (executable instanceof Constructor<?> constructor) this.declaredBy = this.introspector.introspect(constructor);
-            else throw new RuntimeException("Unexpected executable type: " + executable.getName());
+            Executable executable = this.parameter.getDeclaringExecutable();
+            if (executable instanceof Method method) {
+                this.declaredBy = this.introspector.introspect(method);
+            }
+            else if (executable instanceof Constructor<?> constructor) {
+                this.declaredBy = this.introspector.introspect(constructor);
+            }
+            else {
+                throw new RuntimeException("Unexpected executable type: " + executable.getName());
+            }
         }
         return this.declaredBy;
     }
@@ -97,7 +103,7 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
         collector.property("type").write(this.genericType());
     }

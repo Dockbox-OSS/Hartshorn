@@ -29,7 +29,7 @@ public class TestStaticComponentObserver implements StaticComponentObserver {
     private List<StaticComponent> components;
 
     @Override
-    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
+    public void onStaticComponentsCollected(ApplicationContext applicationContext, StaticComponentContext staticComponentContext) {
         this.components = staticComponentContext.provider().all(StaticComponent.class);
     }
 

@@ -22,21 +22,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public final class ParameterizableType<T> {
+public class ParameterizableType<T> {
 
     private final Class<T> type;
     private List<ParameterizableType<?>> parameters;
 
-    public ParameterizableType(final Class<T> type, final List<ParameterizableType<?>> parameters) {
+    public ParameterizableType(Class<T> type, List<ParameterizableType<?>> parameters) {
         this.type = type;
         this.parameters = parameters;
     }
 
-    public ParameterizableType(final Class<T> type) {
+    public ParameterizableType(Class<T> type) {
         this(type, List.of());
     }
 
-    public ParameterizableType(final TypeView<T> type) {
+    public ParameterizableType(TypeView<T> type) {
         this.type = type.type();
         this.parameters = type.typeParameters().allInput()
                 .asList()
@@ -46,7 +46,7 @@ public final class ParameterizableType<T> {
                 .collect(Collectors.toList());
     }
 
-    public void parameters(final List<ParameterizableType<?>> parameters) {
+    public void parameters(List<ParameterizableType<?>> parameters) {
         this.parameters = parameters;
     }
 
@@ -59,14 +59,14 @@ public final class ParameterizableType<T> {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if(this == o) {
             return true;
         }
         if(o == null || this.getClass() != o.getClass()) {
             return false;
         }
-        final ParameterizableType<?> that = (ParameterizableType<?>) o;
+        ParameterizableType<?> that = (ParameterizableType<?>) o;
         return Objects.equals(this.type, that.type) && Objects.equals(this.parameters, that.parameters);
     }
 
@@ -77,7 +77,7 @@ public final class ParameterizableType<T> {
 
     @Override
     public String toString() {
-        final String parameters = this.parameters.stream()
+        String parameters = this.parameters.stream()
                 .map(ParameterizableType::toString)
                 .collect(Collectors.joining(", "));
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");

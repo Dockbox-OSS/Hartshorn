@@ -30,17 +30,17 @@ import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 public class TranslationProviders {
 
     @Binds
-    public TranslationService translationService(final ApplicationContext applicationContext, final TranslationBundle bundle) {
+    public TranslationService translationService(ApplicationContext applicationContext, TranslationBundle bundle) {
         return new BundledTranslationService(applicationContext, bundle);
     }
 
     @Binds
-    public TranslationBundle translationBundle(final ApplicationContext applicationContext) {
+    public TranslationBundle translationBundle(ApplicationContext applicationContext) {
         return new DefaultTranslationBundle(applicationContext);
     }
 
     @Binds
-    public TranslationKeyGenerator translationKeyGenerator(final ComponentLocator componentLocator) {
+    public TranslationKeyGenerator translationKeyGenerator(ComponentLocator componentLocator) {
         return new SimpleTranslationKeyGenerator(componentLocator);
     }
 }

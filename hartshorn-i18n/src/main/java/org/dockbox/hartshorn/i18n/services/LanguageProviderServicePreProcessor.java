@@ -31,15 +31,15 @@ import java.util.List;
 public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final List<MethodView<T, ?>> translationProviderMethods = processingContext.type().methods().annotatedWith(TranslationProvider.class);
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        List<MethodView<T, ?>> translationProviderMethods = processingContext.type().methods().annotatedWith(TranslationProvider.class);
 
         if (!translationProviderMethods.isEmpty()) {
-            final TranslationService translationService = context.get(TranslationService.class);
-            final ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+            TranslationService translationService = context.get(TranslationService.class);
+            ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
 
-            for (final MethodView<T, ?> method : translationProviderMethods) {
-                final Object value = adapter.invoke(method)
+            for (MethodView<T, ?> method : translationProviderMethods) {
+                Object value = adapter.invoke(method)
                         .mapError(error -> new IllegalStateException("Failed to invoke translation provider method " + method, error))
                         .rethrow()
                         .orNull();

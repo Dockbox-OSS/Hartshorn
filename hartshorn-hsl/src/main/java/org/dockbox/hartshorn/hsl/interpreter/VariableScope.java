@@ -39,7 +39,7 @@ public class VariableScope {
         this.enclosing = null;
     }
 
-    public VariableScope(final VariableScope enclosing) {
+    public VariableScope(VariableScope enclosing) {
         this.enclosing = enclosing;
     }
 
@@ -61,13 +61,15 @@ public class VariableScope {
      * @return The value of the variable.
      * @throws RuntimeError If the variable is not defined.
      */
-    public Object get(final Token name) {
+    public Object get(Token name) {
         if (this.valuesMap.containsKey(name.lexeme())) {
             return this.valuesMap.get(name.lexeme());
         }
 
         // If the variable isn’t found in this scope, we simply try the enclosing one
-        if (this.enclosing != null) return this.enclosing.get(name);
+        if (this.enclosing != null) {
+            return this.enclosing.get(name);
+        }
 
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
     }
@@ -79,7 +81,7 @@ public class VariableScope {
      * @param name The name of the variable.
      * @param value The value to assign.
      */
-    public void define(final String name, final Object value) {
+    public void define(String name, Object value) {
         this.valuesMap.put(name, value);
     }
 
@@ -92,7 +94,7 @@ public class VariableScope {
      * @param value The value to assign.
      * @throws RuntimeError If the variable does not exist.
      */
-    public void assign(final Token name, final Object value) {
+    public void assign(Token name, Object value) {
         if (this.valuesMap.containsKey(name.lexeme())) {
             this.valuesMap.put(name.lexeme(), value);
             return;
@@ -105,11 +107,11 @@ public class VariableScope {
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
     }
 
-    void assignAt(final int distance, final Token name, final Object value) {
+    void assignAt(int distance, Token name, Object value) {
         this.ancestor(name, distance).valuesMap.put(name.lexeme(), value);
     }
 
-    public boolean contains(final Token token) {
+    public boolean contains(Token token) {
         return this.contains(token.lexeme());
     }
 
@@ -120,7 +122,7 @@ public class VariableScope {
      * @param name The name of the variable.
      * @return {@code true} if the variable exists, or {@code false}.
      */
-    public boolean contains(final String name) {
+    public boolean contains(String name) {
         return this.valuesMap.containsKey(name);
     }
 
@@ -136,7 +138,7 @@ public class VariableScope {
      * @return The value of the variable.
      * @throws RuntimeError If there is no enclosing scope matching the amount of steps.
      */
-    public Object getAt(final Token at, final int distance, final String name) {
+    public Object getAt(Token at, int distance, String name) {
         return this.ancestor(at, distance).valuesMap.get(name);
     }
 
@@ -151,11 +153,11 @@ public class VariableScope {
      * @return The value of the variable.
      * @throws RuntimeError If there is no enclosing scope matching the amount of steps.
      */
-    public Object getAt(final Token name, final int distance) {
+    public Object getAt(Token name, int distance) {
         return this.getAt(name, distance, name.lexeme());
     }
 
-    VariableScope ancestor(final Token name, final int distance) {
+    VariableScope ancestor(Token name, int distance) {
         VariableScope variableScope = this;
         for (int i = 0; i < distance; i++) {
             variableScope = variableScope.enclosing;

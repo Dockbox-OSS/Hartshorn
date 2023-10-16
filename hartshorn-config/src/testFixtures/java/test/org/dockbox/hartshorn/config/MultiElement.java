@@ -26,7 +26,7 @@ public class MultiElement implements Element {
     public MultiElement() {
     }
 
-    public MultiElement(final String name, final String other) {
+    public MultiElement(String name, String other) {
         this.name = name;
         this.other = other;
     }
@@ -37,7 +37,7 @@ public class MultiElement implements Element {
     }
 
     @Override
-    public MultiElement name(final String name) {
+    public MultiElement name(String name) {
         this.name = name;
         this.other = name;
         return this;
@@ -47,16 +47,20 @@ public class MultiElement implements Element {
         return this.other;
     }
 
-    public MultiElement other(final String other) {
+    public MultiElement other(String other) {
         this.other = other;
         return this;
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final MultiElement element = (MultiElement) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        MultiElement element = (MultiElement) other;
         return Objects.equals(this.name, element.name) && Objects.equals(this.other, element.other);
     }
 

@@ -38,5 +38,5 @@ public interface ProxyConstraint {
      * @param typeView the type view to validate
      * @return an error message if the constraint is not met, {@code null} otherwise
      */
-    Set<ProxyConstraintViolation> validate(final TypeView<?> typeView);
+    Set<ProxyConstraintViolation> validate(TypeView<?> typeView);
 }

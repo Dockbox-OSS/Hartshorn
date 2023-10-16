@@ -27,7 +27,7 @@ public class SimpleGraph<T> implements Graph<T> {
         this(new HashSet<>());
     }
 
-    public SimpleGraph(final Set<GraphNode<T>> nodes) {
+    public SimpleGraph(Set<GraphNode<T>> nodes) {
         this.nodes = new HashSet<>();
         this.addRoots(Set.copyOf(nodes));
     }
@@ -45,7 +45,7 @@ public class SimpleGraph<T> implements Graph<T> {
     }
 
     @Override
-    public void addRoot(final GraphNode<T> root) {
+    public void addRoot(GraphNode<T> root) {
         if (root instanceof ContainableGraphNode<T> containable) {
             if (containable.isRoot()) {
                 this.nodes.add(containable);
@@ -58,8 +58,8 @@ public class SimpleGraph<T> implements Graph<T> {
     }
 
     @Override
-    public void addRoots(final Set<GraphNode<T>> roots) {
-        for (final GraphNode<T> root : roots) {
+    public void addRoots(Set<GraphNode<T>> roots) {
+        for (GraphNode<T> root : roots) {
             this.addRoot(root);
         }
     }

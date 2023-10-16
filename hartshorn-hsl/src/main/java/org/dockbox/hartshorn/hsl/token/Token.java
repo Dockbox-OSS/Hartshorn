@@ -32,11 +32,11 @@ public class Token extends ASTNode {
     private final Object literal;
     private String lexeme;
 
-    public Token(final TokenType type, final String lexeme, final int line, final int column) {
+    public Token(TokenType type, String lexeme, int line, int column) {
         this(type, lexeme, null, line, column);
     }
 
-    public Token(final TokenType type, final String lexeme, final Object literal, final int line, final int column) {
+    public Token(TokenType type, String lexeme, Object literal, int line, int column) {
         super(line, column);
         this.type = type;
         this.lexeme = lexeme;
@@ -48,7 +48,7 @@ public class Token extends ASTNode {
      * this token.
      * @param token The token of which the lexical meaning is to be concatenated.
      */
-    public void concat(final Token token) {
+    public void concat(Token token) {
         if(token == null) {
             return;
         }

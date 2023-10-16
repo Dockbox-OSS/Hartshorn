@@ -29,7 +29,7 @@ public abstract class AbstractCodeCustomizer implements CodeCustomizer {
 
     private final Phase phase;
 
-    protected AbstractCodeCustomizer(final Phase phase) {
+    protected AbstractCodeCustomizer(Phase phase) {
         this.phase = phase;
     }
 

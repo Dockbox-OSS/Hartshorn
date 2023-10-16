@@ -21,7 +21,7 @@ public final class ConditionResult {
     private final boolean matches;
     private final String message;
 
-    private ConditionResult(final boolean matches, final String message) {
+    private ConditionResult(boolean matches, String message) {
         this.matches = matches;
         this.message = message;
     }
@@ -34,7 +34,7 @@ public final class ConditionResult {
         return this.message;
     }
 
-    public static ConditionResult of(final boolean matched) {
+    public static ConditionResult of(boolean matched) {
         return new ConditionResult(matched, null);
     }
 
@@ -42,27 +42,27 @@ public final class ConditionResult {
         return new ConditionResult(true, null);
     }
 
-    public static ConditionResult notMatched(final String message) {
+    public static ConditionResult notMatched(String message) {
         return new ConditionResult(false, message);
     }
 
-    public static ConditionResult notFound(final String what, final String name) {
+    public static ConditionResult notFound(String what, String name) {
         return new ConditionResult(false, "Could not find " + what + ": " + name);
     }
 
-    public static ConditionResult found(final String what, final String name, final String value) {
+    public static ConditionResult found(String what, String name, String value) {
         return new ConditionResult(false, "Found " + what + " with value " + name);
     }
 
-    public static ConditionResult found(final String what, final String name) {
+    public static ConditionResult found(String what, String name) {
         return new ConditionResult(false, "Found " + what);
     }
 
-    public static ConditionResult notEqual(final String what, final String expected, final String actual) {
+    public static ConditionResult notEqual(String what, String expected, String actual) {
         return new ConditionResult(false, "Expected " + what + " to be " + expected + " but was " + actual);
     }
 
-    public static ConditionResult invalidCondition(final String conditionType) {
+    public static ConditionResult invalidCondition(String conditionType) {
         return new ConditionResult(false, "Invalid " + conditionType + " condition");
     }
 }

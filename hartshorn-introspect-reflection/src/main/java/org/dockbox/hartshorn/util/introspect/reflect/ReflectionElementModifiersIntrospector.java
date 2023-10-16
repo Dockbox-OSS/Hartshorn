@@ -34,16 +34,16 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
         int syntheticModifier;
         int mandatedModifier;
         try {
-            final Class<Modifier> modifier = Modifier.class;
-            final Field synthetic = modifier.getDeclaredField("SYNTHETIC");
+            Class<Modifier> modifier = Modifier.class;
+            Field synthetic = modifier.getDeclaredField("SYNTHETIC");
             synthetic.setAccessible(true);
             syntheticModifier = (int) synthetic.get(null);
 
-            final Field mandated = modifier.getDeclaredField("MANDATED");
+            Field mandated = modifier.getDeclaredField("MANDATED");
             mandated.setAccessible(true);
             mandatedModifier = (int) mandated.get(null);
         }
-        catch (final NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
+        catch (NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
             syntheticModifier = 0x00001000;
             mandatedModifier  = 0x00008000;
         }
@@ -54,12 +54,12 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
     private final int modifiers;
     private final Member member;
 
-    public ReflectionElementModifiersIntrospector(final Member member) {
+    public ReflectionElementModifiersIntrospector(Member member) {
         this.modifiers = member.getModifiers();
         this.member = member;
     }
 
-    public ReflectionElementModifiersIntrospector(final int modifiers) {
+    public ReflectionElementModifiersIntrospector(int modifiers) {
         this.modifiers = modifiers;
         this.member = null;
     }
@@ -70,7 +70,7 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
     }
 
     @Override
-    public boolean has(final AccessModifier modifier) {
+    public boolean has(AccessModifier modifier) {
         return modifier.test(this.asInt());
     }
 

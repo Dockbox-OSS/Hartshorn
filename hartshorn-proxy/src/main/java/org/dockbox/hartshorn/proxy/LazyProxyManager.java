@@ -46,7 +46,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         try {
             managerAccessor = Proxy.class.getDeclaredMethod("manager");
         }
-        catch (final NoSuchMethodException e) {
+        catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -58,12 +58,12 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     private final Class<T> targetClass;
     private T proxy;
 
-    public LazyProxyManager(final DefaultProxyFactory<T> proxyFactory) {
+    public LazyProxyManager(DefaultProxyFactory<T> proxyFactory) {
         this(proxyFactory.orchestrator(), null, proxyFactory.type(), proxyFactory.advisors());
     }
 
-    public LazyProxyManager(final ProxyOrchestrator proxyOrchestrator, final Class<T> proxyClass, final Class<T> targetClass,
-                            final StateAwareAdvisorRegistry<T> advisors) {
+    public LazyProxyManager(ProxyOrchestrator proxyOrchestrator, Class<T> proxyClass, Class<T> targetClass,
+                            StateAwareAdvisorRegistry<T> advisors) {
         this.proxyOrchestrator = proxyOrchestrator;
 
         if (this.proxyOrchestrator.isProxy(targetClass)) {
@@ -80,7 +80,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         this.advisor = new RegistryProxyAdvisor<>(advisors);
     }
 
-    public void proxy(final T proxy) {
+    public void proxy(T proxy) {
         if (this.proxy != null) {
             throw new IllegalModificationException("Proxy instance already set.");
         }
@@ -127,7 +127,7 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     }
 
     @Override
-    public ModifiableProxyManager<T> delegate(final T delegate) {
+    public ModifiableProxyManager<T> delegate(T delegate) {
         this.advisor.resolver().type().delegate(delegate);
         return this;
     }

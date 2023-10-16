@@ -35,21 +35,21 @@ import org.dockbox.hartshorn.util.option.Option;
 public class HartshornProxyLookup implements ProxyLookup {
 
     @Override
-    public <T> Option<Class<T>> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(T instance) {
         if (instance instanceof Proxy<?> proxy) {
-            final Class<T> unproxied = TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
+            Class<T> unproxied = TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
             return Option.of(unproxied);
         }
         return Option.empty();
     }
 
     @Override
-    public boolean isProxy(final Object instance) {
+    public boolean isProxy(Object instance) {
         return instance != null && (instance instanceof Proxy || this.isProxy(instance.getClass()));
     }
 
     @Override
-    public boolean isProxy(final Class<?> candidate) {
+    public boolean isProxy(Class<?> candidate) {
         return Proxy.class.isAssignableFrom(candidate) && !Proxy.class.equals(candidate);
     }
 

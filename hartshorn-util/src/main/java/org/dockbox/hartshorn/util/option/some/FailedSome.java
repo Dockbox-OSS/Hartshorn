@@ -42,7 +42,7 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
 
     private final E error;
 
-    public FailedSome(final T value, final E error) {
+    public FailedSome(T value, E error) {
         super(value);
         this.error = Objects.requireNonNull(error);
     }
@@ -58,13 +58,13 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     }
 
     @Override
-    public @NonNull Attempt<T, E> peekError(final Consumer<@NonNull E> consumer) {
+    public @NonNull Attempt<T, E> peekError(Consumer<@NonNull E> consumer) {
         consumer.accept(this.error);
         return this;
     }
 
     @Override
-    public @NonNull <S extends E> Attempt<T, E> peekError(final Class<S> errorType, final Consumer<@NonNull S> consumer) {
+    public @NonNull <S extends E> Attempt<T, E> peekError(Class<S> errorType, Consumer<@NonNull S> consumer) {
         if (this.error.getClass().equals(errorType)) {
             consumer.accept(errorType.cast(this.error));
         }
@@ -72,7 +72,7 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     }
 
     @Override
-    public @NonNull Attempt<T, E> onEmptyError(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmptyError(Runnable runnable) {
         return this;
     }
 
@@ -87,17 +87,17 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     }
 
     @Override
-    public E errorOrElse(final E value) {
+    public E errorOrElse(E value) {
         return this.error;
     }
 
     @Override
-    public E errorOrElseGet(final @NonNull Supplier<E> supplier) {
+    public E errorOrElseGet(@NonNull Supplier<E> supplier) {
         return this.error;
     }
 
     @Override
-    public @NonNull Attempt<T, E> orComputeError(final @NonNull Supplier<E> supplier) {
+    public @NonNull Attempt<T, E> orComputeError(@NonNull Supplier<E> supplier) {
         return this;
     }
 
@@ -117,17 +117,17 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     }
 
     @Override
-    public <U extends Throwable> @NonNull Attempt<T, U> mapError(final @NonNull Function<E, U> mapper) {
+    public <U extends Throwable> @NonNull Attempt<T, U> mapError(@NonNull Function<E, U> mapper) {
         return new FailedSome<>(this.get(), mapper.apply(this.error));
     }
 
     @Override
-    public <U extends Throwable> @NonNull Attempt<T, U> flatMapError(final @NonNull Function<E, Attempt<T, U>> mapper) {
+    public <U extends Throwable> @NonNull Attempt<T, U> flatMapError(@NonNull Function<E, Attempt<T, U>> mapper) {
         return mapper.apply(this.error);
     }
 
     @Override
-    public Attempt<T, E> filterError(final Predicate<E> predicate) {
+    public Attempt<T, E> filterError(Predicate<E> predicate) {
         return predicate.test(this.error) ? this : Attempt.of(this.get());
     }
 
@@ -142,27 +142,27 @@ public class FailedSome<T, E extends Throwable> extends Some<T> implements Attem
     }
 
     @Override
-    public @NonNull Attempt<T, E> onEmpty(final Runnable runnable) {
+    public @NonNull Attempt<T, E> onEmpty(Runnable runnable) {
         return (Attempt<T, E>) super.onEmpty(runnable);
     }
 
     @Override
-    public @NonNull Attempt<T, E> orCompute(final @NonNull Supplier<@NonNull T> supplier) {
+    public @NonNull Attempt<T, E> orCompute(@NonNull Supplier<@NonNull T> supplier) {
         return (Attempt<T, E>) super.orCompute(supplier);
     }
 
     @Override
-    public @NonNull <U> Attempt<U, E> map(final @NonNull Function<@NonNull T, @Nullable U> function) {
+    public @NonNull <U> Attempt<U, E> map(@NonNull Function<@NonNull T, @Nullable U> function) {
         return Attempt.of(function.apply(this.get()));
     }
 
     @Override
-    public @NonNull Attempt<T, E> filter(final @NonNull Predicate<@NonNull T> predicate) {
+    public @NonNull Attempt<T, E> filter(@NonNull Predicate<@NonNull T> predicate) {
         return predicate.test(this.get()) ? this : Attempt.empty();
     }
 
     @Override
-    public @NonNull Attempt<T, E> peek(final Consumer<T> consumer) {
+    public @NonNull Attempt<T, E> peek(Consumer<T> consumer) {
         return (Attempt<T, E>) super.peek(consumer);
     }
 

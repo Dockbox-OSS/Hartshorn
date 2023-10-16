@@ -58,8 +58,8 @@ import org.dockbox.hartshorn.util.option.Attempt;
  *
  * <pre>{@code
  * factory.intercept(greetingMethod, interceptorContext -> "Hello world!");
- * final User user = factory.proxy().get();
- * final String greeting = user.greeting(); // Returns 'Hello world!'
+ * User user = factory.proxy().get();
+ * String greeting = user.greeting(); // Returns 'Hello world!'
  * }</pre>
  *
  * <p><b>Wrapping interception</b>
@@ -77,24 +77,24 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * <pre>{@code
  * public class UserMethodExecutionLogger implements MethodWrapper<User> {
  *     @Override
- *     public void acceptBefore(final MethodView<?, User> method, final User instance, final Object[] args) {
+ *     public void acceptBefore(MethodView<?, User> method, User instance, Object[] args) {
  *         System.out.println("Before method!");
  *     }
  *
  *     @Override
- *     public void acceptAfter(final MethodView<?, User> method, final User instance, final Object[] args) {
+ *     public void acceptAfter(MethodView<?, User> method, User instance, Object[] args) {
  *         System.out.println("After method!");
  *     }
  *
  *     @Override
- *     public void acceptError(final MethodView<?, User> method, final User instance, final Object[] args, final Throwable error) {
+ *     public void acceptError(MethodView<?, User> method, User instance, Object[] args, Throwable error) {
  *         System.out.println("Method caused an exception: " + error.getMessage());
  *     }
  * }
  * }</pre>
  * <pre>{@code
  * factory.intercept(greetingMethod, new UserMethodExecutionLogger());
- * final User user = factory.proxy().get();
+ * User user = factory.proxy().get();
  * user.speakGreeting();
  * }</pre>
  *
@@ -126,9 +126,9 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * }
  * }</pre>
  * <pre>{@code
- * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
+ * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(new UserImpl());
- * final User user = factory.proxy().get();
+ * User user = factory.proxy().get();
  * user.greeting(); // Returns 'Hello implementation!'
  * }</pre>
  *
@@ -149,9 +149,9 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * }
  * }</pre>
  * <pre>{@code
- * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
+ * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(ContextCarrier.class, new ContextCarrierImpl());
- * final User user = factory.proxy().get();
+ * User user = factory.proxy().get();
  * user.applicationContext(); // Returns a valid application context
  * user.greeting(); // Yields an exception as no implementation is assigned and the method is abstract
  * }</pre>
@@ -174,9 +174,9 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * }
  * }</pre>
  * <pre>{@code
- * final StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
+ * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(Returner.class, new ReturnerImpl());
- * final User user = factory.proxy().get();
+ * User user = factory.proxy().get();
  * user.self(); // Returns the user proxy object instead of the ReturnerImpl instance
  * }</pre>
  *

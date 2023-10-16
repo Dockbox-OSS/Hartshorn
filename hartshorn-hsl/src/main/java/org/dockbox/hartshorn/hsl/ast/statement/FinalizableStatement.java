@@ -23,7 +23,7 @@ public abstract class FinalizableStatement extends Statement implements Finaliza
 
     private boolean finalized;
 
-    protected FinalizableStatement(final ASTNode at, final boolean finalized) {
+    protected FinalizableStatement(ASTNode at, boolean finalized) {
         super(at);
         this.finalized = finalized;
     }

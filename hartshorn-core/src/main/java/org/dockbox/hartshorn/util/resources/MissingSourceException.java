@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.util.resources;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class MissingSourceException extends ApplicationRuntimeException {
-    public MissingSourceException(final String message) {
+    public MissingSourceException(String message) {
         super(message);
     }
 }

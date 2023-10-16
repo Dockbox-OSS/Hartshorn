@@ -22,7 +22,7 @@ public final class ScopeAdapter<T> implements Scope {
 
     private final T adaptee;
 
-    private ScopeAdapter(final T adaptee) {
+    private ScopeAdapter(T adaptee) {
         this.adaptee = adaptee;
     }
 
@@ -30,15 +30,19 @@ public final class ScopeAdapter<T> implements Scope {
         return this.adaptee;
     }
 
-    public static <T> ScopeAdapter<T> of(final T adaptee) {
+    public static <T> ScopeAdapter<T> of(T adaptee) {
         return new ScopeAdapter<>(adaptee);
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final ScopeAdapter<?> adapter = (ScopeAdapter<?>) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        ScopeAdapter<?> adapter = (ScopeAdapter<?>) other;
         return this.adaptee.equals(adapter.adaptee);
     }
 

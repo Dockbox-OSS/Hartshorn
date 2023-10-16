@@ -45,7 +45,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     private Function<Object[], Attempt<T, Throwable>> invoker;
     private String qualifiedName;
 
-    public ReflectionConstructorView(final ReflectionIntrospector introspector, final Constructor<T> constructor) {
+    public ReflectionConstructorView(ReflectionIntrospector introspector, Constructor<T> constructor) {
         super(introspector, constructor);
         this.constructor = constructor;
         this.introspector = introspector;
@@ -56,8 +56,10 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
             this.invoker = args -> Attempt.of(() -> {
                 try {
                     return this.constructor.newInstance(args);
-                } catch (final InvocationTargetException e) {
-                    if (e.getCause() instanceof Exception ex) throw ex;
+                } catch (InvocationTargetException e) {
+                    if (e.getCause() instanceof Exception ex) {
+                        throw ex;
+                    }
                     throw e;
                 }
             }, Throwable.class);
@@ -71,7 +73,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public Attempt<T, Throwable> create(final Collection<?> arguments) {
+    public Attempt<T, Throwable> create(Collection<?> arguments) {
         return this.invoker().apply(arguments.toArray());
     }
 
@@ -107,7 +109,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("type").write(this.type());
         collector.property("elementType").write("constructor");
         collector.property("parameters").write(this.parameters().all().toArray(Reportable[]::new));

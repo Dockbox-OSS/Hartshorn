@@ -42,16 +42,16 @@ public class TypeCollectorTests {
 
     @Test
     void testClassPathScannerTypeCollector() throws TypeCollectionException {
-        final TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
-        final Set<TypeReference> typeReferences = collector.collect();
+        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
+        Set<TypeReference> typeReferences = collector.collect();
 
         Assertions.assertEquals(7, typeReferences.size());
 
-        final Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
+        Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
             try {
                 return typeReference.getOrLoad();
             }
-            catch (final ClassReferenceLoadException e) {
+            catch (ClassReferenceLoadException e) {
                 return Assertions.fail(e);
             }
         }).collect(Collectors.toSet());
@@ -67,31 +67,31 @@ public class TypeCollectorTests {
 
     @Test
     void testCachedTypeCollector() throws TypeCollectionException {
-        final TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
-        final TypeReferenceCollector cachedCollector = new CachedTypeReferenceCollector(collector);
+        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
+        TypeReferenceCollector cachedCollector = new CachedTypeReferenceCollector(collector);
 
-        final Set<TypeReference> typeReferencesA = cachedCollector.collect();
-        final Set<TypeReference> typeReferencesB = cachedCollector.collect();
+        Set<TypeReference> typeReferencesA = cachedCollector.collect();
+        Set<TypeReference> typeReferencesB = cachedCollector.collect();
 
         Assertions.assertSame(typeReferencesA, typeReferencesB);
     }
 
     @Test
     void testAggregateTypeCollector() throws TypeCollectionException {
-        final PredefinedSetTypeReferenceCollector enumCollector = PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
-        final PredefinedSetTypeReferenceCollector classCollector = PredefinedSetTypeReferenceCollector.of(ScanClass.class);
-        final PredefinedSetTypeReferenceCollector interfaceCollector = PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
+        PredefinedSetTypeReferenceCollector enumCollector = PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
+        PredefinedSetTypeReferenceCollector classCollector = PredefinedSetTypeReferenceCollector.of(ScanClass.class);
+        PredefinedSetTypeReferenceCollector interfaceCollector = PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
 
-        final TypeReferenceCollector collector = new AggregateTypeReferenceCollector(enumCollector, classCollector, interfaceCollector);
-        final Set<TypeReference> typeReferences = collector.collect();
+        TypeReferenceCollector collector = new AggregateTypeReferenceCollector(enumCollector, classCollector, interfaceCollector);
+        Set<TypeReference> typeReferences = collector.collect();
 
         Assertions.assertEquals(3, typeReferences.size());
 
-        final Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
+        Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
             try {
                 return typeReference.getOrLoad();
             }
-            catch (final ClassReferenceLoadException e) {
+            catch (ClassReferenceLoadException e) {
                 return Assertions.fail(e);
             }
         }).collect(Collectors.toSet());

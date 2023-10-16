@@ -33,18 +33,18 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
     private static final ComponentKey<SerializationSourceConverter> CONVERTER_KEY = ComponentKey.of(SerializationSourceConverter.class);
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+        SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         return converter != null;
     }
 
-    protected <T> SerializationSourceConverter findConverter(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    protected <T> SerializationSourceConverter findConverter(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         if (processingContext.containsKey(CONVERTER_KEY)) {
             return processingContext.get(CONVERTER_KEY);
         }
 
-        final MethodView<T, ?> method = methodContext.method();
-        final SerializationSourceConverter converter = method.annotations().get(SerializationSource.class)
+        MethodView<T, ?> method = methodContext.method();
+        SerializationSourceConverter converter = method.annotations().get(SerializationSource.class)
                 .map(serializationSource -> (SerializationSourceConverter) context.get(serializationSource.converter()))
                 .orCompute(ArgumentSerializationSourceConverter::new)
                 .orNull();
@@ -55,11 +55,15 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
         return converter;
     }
 
-    protected Object wrapSerializationResult(final MethodView<?, ?> methodContext, final Option<?> result) {
-        if (methodContext.returnType().is(Option.class))
+    protected Object wrapSerializationResult(MethodView<?, ?> methodContext, Option<?> result) {
+        if (methodContext.returnType().is(Option.class)) {
             return result;
-        else if (methodContext.returnType().is(Optional.class))
+        }
+        else if (methodContext.returnType().is(Optional.class)) {
             return Optional.ofNullable(result.orNull());
-        else return result.orNull();
+        }
+        else {
+            return result.orNull();
+        }
     }
 }

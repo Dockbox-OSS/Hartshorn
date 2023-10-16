@@ -26,37 +26,37 @@ public class StandardTokenStepValidator implements TokenStepValidator {
     private final TokenParser parser;
 
     @Inject
-    public StandardTokenStepValidator(final TokenParser parser) {
+    public StandardTokenStepValidator(TokenParser parser) {
         this.parser = parser;
     }
 
     @Override
-    public Token expect(final TokenType type) {
+    public Token expect(TokenType type) {
         return this.expect(type, type.representation() + (type.keyword() ? " keyword" : ""));
     }
 
     @Override
-    public Token expect(final TokenType type, final String what) {
+    public Token expect(TokenType type, String what) {
         return this.parser.consume(type, "Expected " + what + ".");
     }
 
     @Override
-    public Token expectBefore(final TokenType type, final String before) {
+    public Token expectBefore(TokenType type, String before) {
         return this.expectAround(type, before, "before");
     }
 
     @Override
-    public Token expectAfter(final TokenType type, final TokenType after) {
+    public Token expectAfter(TokenType type, TokenType after) {
         return this.expectAround(type, after.representation(), "after");
     }
 
     @Override
-    public Token expectAfter(final TokenType type, final String after) {
+    public Token expectAfter(TokenType type, String after) {
         return this.expectAround(type, after, "after");
     }
 
     @Override
-    public Token expectAround(final TokenType type, final String where, final String position) {
+    public Token expectAround(TokenType type, String where, String position) {
         return this.parser.consume(type, "Expected '%s' %s %s.".formatted(type.representation(), position, where));
     }
 }

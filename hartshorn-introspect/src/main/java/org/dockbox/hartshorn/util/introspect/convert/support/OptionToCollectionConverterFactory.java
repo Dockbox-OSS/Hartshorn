@@ -28,19 +28,19 @@ public class OptionToCollectionConverterFactory implements ConverterFactory<Opti
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
 
-    public OptionToCollectionConverterFactory(final Introspector introspector) {
+    public OptionToCollectionConverterFactory(Introspector introspector) {
         this(new CollectionDefaultValueProviderFactory(introspector).withDefaults());
     }
 
-    public OptionToCollectionConverterFactory(final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
+    public OptionToCollectionConverterFactory(DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
         this.defaultValueProviderFactory = defaultValueProviderFactory;
     }
 
     @Override
-    public <O extends Collection<?>> Converter<Option<?>, O> create(final Class<O> targetType) {
+    public <O extends Collection<?>> Converter<Option<?>, O> create(Class<O> targetType) {
         return input -> {
             //noinspection unchecked
-            final Collection<Object> collection = (Collection<Object>) this.defaultValueProviderFactory.create(targetType).defaultValue();
+            Collection<Object> collection = (Collection<Object>) this.defaultValueProviderFactory.create(targetType).defaultValue();
             if (input.present()) {
                 collection.add(input.get());
             }

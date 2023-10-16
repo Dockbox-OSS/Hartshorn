@@ -27,64 +27,72 @@ public class ContextStaticComponentProvider implements StaticComponentProvider {
 
     private final StaticComponentContext staticComponentContext;
 
-    public ContextStaticComponentProvider(final StaticComponentContext staticComponentContext) {
+    public ContextStaticComponentProvider(StaticComponentContext staticComponentContext) {
         this.staticComponentContext = staticComponentContext;
     }
 
-    private Predicate<StaticComponentContainer<?>> typeFilter(final Class<?> type) {
+    private Predicate<StaticComponentContainer<?>> typeFilter(Class<?> type) {
         return ref -> ref.type().isChildOf(type);
     }
 
-    private Predicate<StaticComponentContainer<?>> idFilter(final String id) {
-        if (StringUtilities.empty(id)) return ref -> true;
+    private Predicate<StaticComponentContainer<?>> idFilter(String id) {
+        if (StringUtilities.empty(id)) {
+            return ref -> true;
+        }
         return ref -> ref.id().equals(id);
     }
 
-    private Predicate<StaticComponentContainer<?>> typeAndIdFilter(final Class<?> type, final String id) {
+    private Predicate<StaticComponentContainer<?>> typeAndIdFilter(Class<?> type, String id) {
         return this.typeFilter(type).and(this.idFilter(id));
     }
 
     @Override
-    public <T> T first(final Class<T> type) {
+    public <T> T first(Class<T> type) {
         return this.first(type, this.typeFilter(type));
     }
 
     @Override
-    public <T> T first(final Class<T> type, final String id) {
+    public <T> T first(Class<T> type, String id) {
         return this.first(type, this.typeAndIdFilter(type, id));
     }
 
     @Override
-    public <T> T first(final ComponentKey<T> key) {
-        if (key.name() != null) return this.first(key.type(), key.name());
+    public <T> T first(ComponentKey<T> key) {
+        if (key.name() != null) {
+            return this.first(key.type(), key.name());
+        }
         return this.first(key.type());
     }
 
-    private <T> T first(final Class<T> type, final Predicate<StaticComponentContainer<?>> predicate) {
+    private <T> T first(Class<T> type, Predicate<StaticComponentContainer<?>> predicate) {
         return this.stream(type, predicate)
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
-    public <T> List<T> all(final Class<T> type) {
+    public <T> List<T> all(Class<T> type) {
         return this.stream(type, this.typeFilter(type))
                 .toList();
     }
 
     @Override
-    public <T> List<T> all(final Class<T> type, final String id) {
+    public <T> List<T> all(Class<T> type, String id) {
         return this.stream(type, this.typeAndIdFilter(type, id))
                 .toList();
     }
 
     @Override
-    public <T> List<T> all(final ComponentKey<T> key) {
-        if (key.name() != null) return this.all(key.type(), key.name());
-        else return this.all(key.type());
+    public <T> List<T> all(ComponentKey<T> key) {
+        if (key.name() != null) {
+            return this.all(key.type(), key.name());
+        }
+        else {
+            return this.all(key.type());
+        }
     }
 
-    private <T>Stream<T> stream(final Class<T> type, final Predicate<StaticComponentContainer<?>> predicate) {
+    private <T>Stream<T> stream(Class<T> type, Predicate<StaticComponentContainer<?>> predicate) {
         return this.staticComponentContext.containers().stream()
                 .filter(predicate)
                 .map(StaticComponentContainer::instance)

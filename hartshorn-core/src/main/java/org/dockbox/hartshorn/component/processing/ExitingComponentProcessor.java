@@ -19,5 +19,5 @@ package org.dockbox.hartshorn.component.processing;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 public interface ExitingComponentProcessor {
-    void exit(final ApplicationContext context);
+    void exit(ApplicationContext context);
 }

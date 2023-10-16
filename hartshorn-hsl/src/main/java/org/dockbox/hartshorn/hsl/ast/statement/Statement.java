@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 public abstract class Statement extends ASTNode {
 
-    protected Statement(final ASTNode at) {
+    protected Statement(ASTNode at) {
         super(at);
     }
 

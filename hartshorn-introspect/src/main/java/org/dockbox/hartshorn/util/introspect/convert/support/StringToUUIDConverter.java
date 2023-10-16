@@ -24,12 +24,12 @@ import java.util.UUID;
 public class StringToUUIDConverter implements Converter<String, UUID> {
 
     @Override
-    public @Nullable UUID convert(final @Nullable String input) {
+    public @Nullable UUID convert(@Nullable String input) {
         if (input != null) {
             try {
                 return UUID.fromString(input);
             }
-            catch (final IllegalArgumentException e) {
+            catch (IllegalArgumentException e) {
                 return null;
             }
         }

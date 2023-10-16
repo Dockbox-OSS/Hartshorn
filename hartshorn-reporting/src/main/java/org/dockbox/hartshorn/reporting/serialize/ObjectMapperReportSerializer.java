@@ -40,11 +40,11 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public abstract class ObjectMapperReportSerializer implements ReportSerializer<String> {
 
     @Override
-    public String serialize(final DiagnosticsReport report) throws ReportSerializationException {
+    public String serialize(DiagnosticsReport report) throws ReportSerializationException {
         try {
-            final JsonNode node = report.root().accept(new NodeToJacksonVisitor());
+            JsonNode node = report.root().accept(new NodeToJacksonVisitor());
             return this.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(node);
-        } catch (final JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new ReportSerializationException(e);
         }
     }

@@ -42,7 +42,7 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
     private final Introspector introspector;
 
-    protected AbstractProxyOrchestrator(final Introspector introspector) {
+    protected AbstractProxyOrchestrator(Introspector introspector) {
         this.introspector = introspector;
         this.registerProxyLookup(new NativeProxyLookup());
         this.registerProxyLookup(new HartshornProxyLookup());
@@ -54,21 +54,21 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     }
 
     @Override
-    public <T> Option<Class<T>> real(final T instance) {
+    public <T> Option<Class<T>> real(T instance) {
         return this.manager(instance).map(ProxyManager::targetClass);
     }
 
     @Override
-    public <T> Option<ProxyManager<T>> manager(final T instance) {
+    public <T> Option<ProxyManager<T>> manager(T instance) {
         if (instance instanceof Proxy) {
-            final Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+            Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
             return Option.of(proxy.manager());
         }
         return Option.empty();
     }
 
     @Override
-    public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
+    public <D, T extends D> Option<D> delegate(Class<D> type, T instance) {
         return this.manager(instance)
                 .map(ProxyManager::advisor)
                 .map(ProxyAdvisor::resolver)
@@ -77,10 +77,10 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     }
 
     @Override
-    public <T> Option<Class<T>> unproxy(final T instance) {
-        for (final ProxyLookup lookup : this.proxyLookups) {
+    public <T> Option<Class<T>> unproxy(T instance) {
+        for (ProxyLookup lookup : this.proxyLookups) {
             if (lookup.isProxy(instance)) {
-                final Option<Class<T>> unproxied = lookup.unproxy(instance);
+                Option<Class<T>> unproxied = lookup.unproxy(instance);
                 if (unproxied.present()) {
                     return unproxied;
                 }
@@ -90,20 +90,20 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     }
 
     @Override
-    public boolean isProxy(final Object instance) {
+    public boolean isProxy(Object instance) {
         return this.proxyLookups.stream().anyMatch(lookup -> lookup.isProxy(instance));
     }
 
     @Override
-    public boolean isProxy(final Class<?> candidate) {
+    public boolean isProxy(Class<?> candidate) {
         return this.proxyLookups.stream().anyMatch(lookup -> lookup.isProxy(candidate));
     }
 
     @Override
     public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
-        for (final ProxyLookup lookup : this.proxyLookups) {
+        for (ProxyLookup lookup : this.proxyLookups) {
             if (lookup.isProxy(instance)) {
-                final Option<ProxyIntrospector<T>> introspector = lookup.introspector(instance);
+                Option<ProxyIntrospector<T>> introspector = lookup.introspector(instance);
                 if (introspector.present()) {
                     return introspector;
                 }
@@ -112,7 +112,7 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
         return Option.empty();
     }
 
-    public final void registerProxyLookup(final ProxyLookup proxyLookup) {
+    public void registerProxyLookup(ProxyLookup proxyLookup) {
         this.proxyLookups.add(proxyLookup);
     }
 }

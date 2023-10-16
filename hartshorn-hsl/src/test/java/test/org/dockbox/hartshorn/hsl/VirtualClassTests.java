@@ -63,20 +63,20 @@ public class VirtualClassTests {
                 Arguments.of("private final", "name", true, "Cannot access property 'name' outside of its class scope"),
                 Arguments.of("final", "name", false, null),
 
-                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
+                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
+                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
+                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
 
-                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
-                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
-                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign final property 'name'")
+                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign property 'name'"),
+                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign property 'name'"),
+                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign property 'name'")
         );
     }
 
     @ParameterizedTest
     @MethodSource("propertyAccessors")
-    void test(final String modifier, final String accessor, final boolean shouldFail, final String message) {
-        final HslScript script = HslScript.of(this.applicationContext, """
+    void test(String modifier, String accessor, boolean shouldFail, String message) {
+        HslScript script = HslScript.of(this.applicationContext, """
                 class User {
                     %s name;
                     constructor(name) {
@@ -94,7 +94,7 @@ public class VirtualClassTests {
                 """.formatted(modifier, accessor));
 
         if (shouldFail) {
-            final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+            ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
             String errorMessage = error.getMessage();
             errorMessage = errorMessage.substring(0, errorMessage.indexOf("."));
             Assertions.assertEquals(message, errorMessage);

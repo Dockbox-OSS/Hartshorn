@@ -38,7 +38,7 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
                         ? Tristate.TRUE
                         : Tristate.FALSE;
             }
-            catch (final NoSuchMethodException e) {
+            catch (NoSuchMethodException e) {
                 this.parameterNamesAvailable = Tristate.FALSE;
             }
         }

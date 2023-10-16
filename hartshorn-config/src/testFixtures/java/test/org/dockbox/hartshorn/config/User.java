@@ -25,7 +25,7 @@ public class User {
     public User() {
     }
 
-    public User(final String name) {
+    public User(String name) {
         this.name = name;
     }
 
@@ -41,7 +41,7 @@ public class User {
         return this.address;
     }
 
-    public User name(final String name) {
+    public User name(String name) {
         this.name = name;
         return this;
     }

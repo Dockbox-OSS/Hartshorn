@@ -25,12 +25,12 @@ public class NonRegisteredObserver implements LifecycleObserver {
     private boolean stopped;
 
     @Override
-    public void onStarted(final ApplicationContext applicationContext) {
+    public void onStarted(ApplicationContext applicationContext) {
         this.started = true;
     }
 
     @Override
-    public void onExit(final ApplicationContext applicationContext) {
+    public void onExit(ApplicationContext applicationContext) {
         this.stopped = true;
     }
 

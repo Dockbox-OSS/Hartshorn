@@ -25,9 +25,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testNonNullElementCanBeConverted() {
-        final String element = "test";
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, Object.class, Object[].class);
+        String element = "test";
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, Object.class, Object[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Object[]);
         Assertions.assertEquals(1, ((Object[]) converted).length);
@@ -36,9 +36,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testElementTypeIsRetained() {
-        final String element = "test";
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, String.class, String[].class);
+        String element = "test";
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, String.class, String[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof String[]);
         Assertions.assertEquals(1, ((String[]) converted).length);
@@ -47,9 +47,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testNullElementCanBeConverted() {
-        final Object element = null;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, Object.class, Object[].class);
+        Object element = null;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, Object.class, Object[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Object[]);
         Assertions.assertEquals(1, ((Object[]) converted).length);
@@ -58,9 +58,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveIntCanBeConverted() {
-        final int element = 1;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, int.class, int[].class);
+        int element = 1;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, int.class, int[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof int[]);
         Assertions.assertEquals(1, ((int[]) converted).length);
@@ -69,9 +69,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveLongCanBeConverted() {
-        final long element = 1L;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, long.class, long[].class);
+        long element = 1L;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, long.class, long[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof long[]);
         Assertions.assertEquals(1, ((long[]) converted).length);
@@ -80,9 +80,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveShortCanBeConverted() {
-        final short element = 1;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, short.class, short[].class);
+        short element = 1;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, short.class, short[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof short[]);
         Assertions.assertEquals(1, ((short[]) converted).length);
@@ -91,9 +91,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveByteCanBeConverted() {
-        final byte element = 1;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, byte.class, byte[].class);
+        byte element = 1;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, byte.class, byte[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof byte[]);
         Assertions.assertEquals(1, ((byte[]) converted).length);
@@ -102,9 +102,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveFloatCanBeConverted() {
-        final float element = 1.0F;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, float.class, float[].class);
+        float element = 1.0F;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, float.class, float[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof float[]);
         Assertions.assertEquals(1, ((float[]) converted).length);
@@ -113,9 +113,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveDoubleCanBeConverted() {
-        final double element = 1.0D;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, double.class, double[].class);
+        double element = 1.0D;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, double.class, double[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof double[]);
         Assertions.assertEquals(1, ((double[]) converted).length);
@@ -124,9 +124,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveCharCanBeConverted() {
-        final char element = 'a';
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, char.class, char[].class);
+        char element = 'a';
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, char.class, char[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof char[]);
         Assertions.assertEquals(1, ((char[]) converted).length);
@@ -135,9 +135,9 @@ public class ObjectToArrayConverterTests {
 
     @Test
     void testPrimitiveBooleanCanBeConverted() {
-        final boolean element = true;
-        final GenericConverter converter = new ObjectToArrayConverter();
-        final Object converted = converter.convert(element, boolean.class, boolean[].class);
+        boolean element = true;
+        GenericConverter converter = new ObjectToArrayConverter();
+        Object converted = converter.convert(element, boolean.class, boolean[].class);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof boolean[]);
         Assertions.assertEquals(1, ((boolean[]) converted).length);

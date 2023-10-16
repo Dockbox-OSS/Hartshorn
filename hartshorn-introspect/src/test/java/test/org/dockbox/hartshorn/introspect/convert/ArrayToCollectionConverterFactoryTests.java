@@ -32,13 +32,13 @@ public class ArrayToCollectionConverterFactoryTests {
 
     @Test
     void testFactoryCreatesConverterForConcreteCollectionTarget() {
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
 
-        final ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
-        final Converter<Object[], ArrayList> converter = factory.create(ArrayList.class);
+        ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
+        Converter<Object[], ArrayList> converter = factory.create(ArrayList.class);
         Assertions.assertNotNull(converter);
 
-        final List<?> list = converter.convert(new Object[]{ "test" });
+        List<?> list = converter.convert(new Object[]{ "test" });
         Assertions.assertNotNull(list);
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals("test", list.get(0));
@@ -46,10 +46,10 @@ public class ArrayToCollectionConverterFactoryTests {
 
     @Test
     void testFactoryCreatesConverterForInterfaceCollectionTarget() {
-        final Converter<Object[], Collection> converter = createConverter();
+        Converter<Object[], Collection> converter = createConverter();
         Assertions.assertNotNull(converter);
 
-        final Collection list = converter.convert(new Object[]{ "test" });
+        Collection list = converter.convert(new Object[]{ "test" });
         Assertions.assertNotNull(list);
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals("test", list.iterator().next());
@@ -57,18 +57,18 @@ public class ArrayToCollectionConverterFactoryTests {
 
     @Test
     void testFactoryCreatesEmptyCollectionIfArrayEmpty() {
-        final Converter<Object[], Collection> converter = createConverter();
+        Converter<Object[], Collection> converter = createConverter();
 
-        final Collection list = converter.convert(new Object[0]);
+        Collection list = converter.convert(new Object[0]);
         Assertions.assertNotNull(list);
         Assertions.assertEquals(0, list.size());
     }
 
     private static Converter<Object[], Collection> createConverter() {
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
-        final ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
+        ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
 
-        final Converter<Object[], Collection> converter = factory.create(Collection.class);
+        Converter<Object[], Collection> converter = factory.create(Collection.class);
         Assertions.assertNotNull(converter);
 
         return converter;

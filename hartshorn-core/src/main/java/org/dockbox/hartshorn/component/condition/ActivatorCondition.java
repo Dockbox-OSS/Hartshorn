@@ -21,9 +21,9 @@ import java.lang.annotation.Annotation;
 public class ActivatorCondition implements Condition {
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresActivator.class).map(condition -> {
-            for (final Class<? extends Annotation> activator : condition.value()) {
+            for (Class<? extends Annotation> activator : condition.value()) {
                 if (!context.applicationContext().hasActivator(activator)) {
                     return ConditionResult.notFound("Activator", activator.getName());
                 }
