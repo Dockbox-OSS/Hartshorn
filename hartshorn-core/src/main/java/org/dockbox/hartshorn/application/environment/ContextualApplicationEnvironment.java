@@ -48,6 +48,8 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -85,7 +87,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
-        /// TODO: Fix circular dependency between proxy orchestrator and introspector
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
         this.applicationLogger = this.configure(environmentInitializerContext, configurer.applicationLogger);
         this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
@@ -176,9 +177,11 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     @Override
     public Introspector introspector() {
         if (this.introspector == null) {
+            // Lazy, as the proxy orchestrator may not yet be initialized
+            ProxyLookup proxyLookup = new SupplierAdapterProxyLookup(() -> this.proxyOrchestrator);
             this.introspector = DiscoveryService.instance()
                     .discover(IntrospectorLoader.class)
-                    .create(this.proxyOrchestrator, this.annotationLookup());
+                    .create(proxyLookup, this.annotationLookup());
         }
         return this.introspector;
     }
