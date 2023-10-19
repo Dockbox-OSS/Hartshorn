@@ -56,24 +56,24 @@ public class HslLanguageProviders {
     }
 
     @Binds
-    private Resolver resolver(final Interpreter interpreter) {
+    private Resolver resolver(Interpreter interpreter) {
         return new Resolver(interpreter);
     }
 
     @Binds
     public ScriptRuntime runtime(
-            final ApplicationContext applicationContext,
-            final HslLanguageFactory factory,
-            @Named(HslStatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+            ApplicationContext applicationContext,
+            HslLanguageFactory factory,
+            @Named(HslStatementStaticProviders.STATEMENT_BEAN) Set<ASTNodeParser<? extends Statement>> statementParsers
     ) {
         return new StandardRuntime(applicationContext, factory, statementParsers);
     }
 
     @Binds
     public ValidateExpressionRuntime expressionRuntime(
-            final ApplicationContext applicationContext,
-            final HslLanguageFactory factory,
-            @Named(HslStatementStaticProviders.STATEMENT_BEAN) final Set<ASTNodeParser<? extends Statement>> statementParsers
+            ApplicationContext applicationContext,
+            HslLanguageFactory factory,
+            @Named(HslStatementStaticProviders.STATEMENT_BEAN) Set<ASTNodeParser<? extends Statement>> statementParsers
     ) {
         return new ValidateExpressionRuntime(applicationContext, factory, statementParsers);
     }

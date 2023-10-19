@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.proxy;
 // Abstract to trigger basic delegate proxying, and ensure no delegate can exist
 public abstract class EqualServiceProxy {
 
-    public boolean test(final EqualServiceProxy self) {
+    public boolean test(EqualServiceProxy self) {
         return this.equals(self);
     }
 }

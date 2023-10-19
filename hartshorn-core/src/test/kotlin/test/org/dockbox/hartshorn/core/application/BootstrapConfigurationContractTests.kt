@@ -151,7 +151,7 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: DefaultBindingConfigurer? -> configurer.defaultBindings(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.defaultBindings(initializer) }
 
-        val biConsumerDefaultBindingsResult = instance.defaultBindings { applicationContext: ApplicationContext, binder: Binder -> }
+        val biConsumerDefaultBindingsResult = instance.defaultBindings { _: ApplicationContext, _: Binder -> }
         Assertions.assertSame(instance, biConsumerDefaultBindingsResult)
     }
 
@@ -200,8 +200,7 @@ class BootstrapConfigurationContractTests {
     fun testStreamableConfigurerContract() {
         val instance = StreamableConfigurer.empty<Any, Any>()
 
-        var result: StreamableConfigurer<Any, Any>? = null
-        result = instance.add(null as Any?)
+        var result: StreamableConfigurer<Any, Any>? = instance.add(null as Any?)
         Assertions.assertSame(instance, result)
 
         result = instance.add(Initializer.of(null))
@@ -232,28 +231,28 @@ class BootstrapConfigurationContractTests {
         Assertions.assertNotNull(stream)
     }
 
-    protected fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
+    fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
         val result = deferredFunction.apply(configurer)
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
+    fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
         val result = deferredFunction.apply(configurer, null)
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, I, C> assertContextInitializer(configurer: T, initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>) {
+    fun <T, I, C> assertContextInitializer(configurer: T, initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>) {
         val result = initializerFunction.apply(configurer) { _ -> null }
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, C> assertInitializer(configurer: T, initializerFunction: BiFunction<T, Initializer<C?>, T>) {
+    fun <T, C> assertInitializer(configurer: T, initializerFunction: BiFunction<T, Initializer<C?>, T>) {
         val result = initializerFunction.apply(configurer) { null }
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, C> assertCustomizer(configurer: T, customizableFunction: BiFunction<T, Customizer<C>, T>) {
-        val result = customizableFunction.apply(configurer) { it: C -> }
+    fun <T, C> assertCustomizer(configurer: T, customizableFunction: BiFunction<T, Customizer<C>, T>) {
+        val result = customizableFunction.apply(configurer) { _: C -> }
         Assertions.assertSame(configurer, result)
     }
 }

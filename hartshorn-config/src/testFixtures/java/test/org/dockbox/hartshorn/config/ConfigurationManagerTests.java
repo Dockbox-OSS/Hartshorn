@@ -50,7 +50,7 @@ public abstract class ConfigurationManagerTests {
     @TestComponents(components = DemoClasspathConfiguration.class)
     void testClassPathConfigurations() {
         // Configuration is read from resources/junit.yml
-        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
+        DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValue());
@@ -60,7 +60,7 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoClasspathConfiguration.class)
     void testDefaultValuesAreUsedIfPropertyIsAbsent() {
-        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
+        DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValueWithDefault());
@@ -70,7 +70,7 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoClasspathConfiguration.class)
     void testNumberValuesAreParsed() {
-        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
+        DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertEquals(1, configuration.number());
@@ -79,7 +79,7 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoClasspathConfiguration.class)
     void testCollectionsAreParsed() {
-        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
+        DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.list());
@@ -89,7 +89,7 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoClasspathConfiguration.class)
     void testCollectionsAreSorted() {
-        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
+        DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.copyOnWriteArrayList());
@@ -101,7 +101,7 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoClasspathConfiguration.class)
     void testCustomCollectionsAreConverted() {
-        final DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
+        DemoClasspathConfiguration configuration = this.applicationContext.get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.copyOnWriteArrayList());
@@ -112,17 +112,17 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = DemoFSConfiguration.class)
     void testFsConfigurations() {
-        final Path file = FileFormats.YAML.asPath(this.applicationContext.environment().fileSystem().applicationPath(), "junit");
-        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
+        Path file = FileFormats.YAML.asPath(this.applicationContext.environment().fileSystem().applicationPath(), "junit");
+        ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
         objectMapper.write(file, """
                 junit:
                     fs: "This is a value"
                     """);
 
-        final ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, ComponentKey.of(DemoFSConfiguration.class), null);
+        ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, ComponentKey.of(DemoFSConfiguration.class), null);
         new ConfigurationServicePreProcessor().process(this.applicationContext, processingContext);
 
-        final DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);
+        DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.fileSystemValue());
         Assertions.assertEquals("This is a value", configuration.fileSystemValue());
@@ -132,7 +132,7 @@ public abstract class ConfigurationManagerTests {
     @TestComponents(components = ValueTyped.class)
     void testNormalValuesAreAccessible() {
         this.applicationContext.get(PropertyHolder.class).set("demo", "Hartshorn");
-        final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
+        ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.string());
         Assertions.assertEquals("Hartshorn", typed.string());
@@ -142,7 +142,7 @@ public abstract class ConfigurationManagerTests {
     @TestComponents(components = ValueTyped.class)
     void testNestedValuesAreAccessible() {
         this.applicationContext.get(PropertyHolder.class).set("nested.demo", "Hartshorn");
-        final ValueTyped typed = this.applicationContext.get(ValueTyped.class);
+        ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);
         Assertions.assertNotNull(typed.nestedString());
@@ -152,11 +152,11 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = SampleConfigurationObject.class)
     void testConfigurationObjects() {
-        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
         propertyHolder.set("user.age", 21);
 
-        final SampleConfigurationObject configurationObject = this.applicationContext.get(SampleConfigurationObject.class);
+        SampleConfigurationObject configurationObject = this.applicationContext.get(SampleConfigurationObject.class);
         Assertions.assertNotNull(configurationObject);
         Assertions.assertEquals("Hartshorn", configurationObject.name());
         Assertions.assertEquals(21, configurationObject.age());
@@ -165,11 +165,11 @@ public abstract class ConfigurationManagerTests {
     @Test
     @TestComponents(components = SampleSetterConfigurationObject.class)
     void testSetterConfigurationObjects() {
-        final PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
+        PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
         propertyHolder.set("user.age", 21);
 
-        final SampleSetterConfigurationObject configurationObject = this.applicationContext.get(SampleSetterConfigurationObject.class);
+        SampleSetterConfigurationObject configurationObject = this.applicationContext.get(SampleSetterConfigurationObject.class);
         Assertions.assertNotNull(configurationObject);
         Assertions.assertEquals("Hartshorn!", configurationObject.name(), "Bean-style setter (public)");
         Assertions.assertEquals(31, configurationObject.age(), "Fluent-style setter (private)");

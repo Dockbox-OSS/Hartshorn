@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 public class ReflectionIntrospectorLoader implements IntrospectorLoader {
 
     @Override
-    public Introspector create(final ProxyLookup proxyLookup, final AnnotationLookup annotationLookup) {
+    public Introspector create(ProxyLookup proxyLookup, AnnotationLookup annotationLookup) {
         return new ReflectionIntrospector(proxyLookup, annotationLookup);
     }
 }

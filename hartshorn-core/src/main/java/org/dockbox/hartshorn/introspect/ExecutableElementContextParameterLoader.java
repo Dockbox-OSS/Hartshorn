@@ -33,17 +33,17 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final ApplicationBoundParameterLoaderContext context, final Object... args) {
-        final Named named = parameter.annotations().get(Named.class).orNull();
-        final ComponentKey<T> key = ComponentKey.builder(parameter.genericType()).name(named).build();
-        final boolean enable = Boolean.TRUE.equals(parameter.annotations().get(Enable.class)
+    protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+        Named named = parameter.annotations().get(Named.class).orNull();
+        ComponentKey<T> key = ComponentKey.builder(parameter.genericType()).name(named).build();
+        boolean enable = Boolean.TRUE.equals(parameter.annotations().get(Enable.class)
                 .map(Enable::value)
                 .orElse(true));
 
-        final ComponentKey<T> componentKey = key.mutable().enable(enable).build();
-        final T out = context.provider().get(componentKey);
+        ComponentKey<T> componentKey = key.mutable().enable(enable).build();
+        T out = context.provider().get(componentKey);
 
-        final boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
+        boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
                 .map(Required::value)
                 .orElse(false));
 

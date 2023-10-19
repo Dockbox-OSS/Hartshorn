@@ -37,7 +37,7 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
     private final CommandSource source;
     private final ApplicationContext applicationContext;
 
-    public CommandContextImpl(final String command, final List<CommandParameter<?>> args, final List<CommandParameter<?>> flags, final CommandSource source, final ApplicationContext applicationContext) {
+    public CommandContextImpl(String command, List<CommandParameter<?>> args, List<CommandParameter<?>> flags, CommandSource source, ApplicationContext applicationContext) {
         this.command = command;
         this.args = args;
         this.flags = flags;
@@ -61,7 +61,7 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
     }
 
     @Override
-    public <T> T get(final String key, final Class<T> type) {
+    public <T> T get(String key, Class<T> type) {
         return CollectionUtilities.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
@@ -79,7 +79,7 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
     }
 
     @Override
-    public boolean has(final String key) {
+    public boolean has(String key) {
         return CollectionUtilities.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
@@ -92,12 +92,12 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
     }
 
     @Override
-    public <T> Option<T> find(final String key, final Class<T> type) {
+    public <T> Option<T> find(String key, Class<T> type) {
         return Option.of(() -> this.get(key, type));
     }
 
     @Override
-    public <T> Option<CommandParameter<T>> argument(final String key) {
+    public <T> Option<CommandParameter<T>> argument(String key) {
         return Option.of(this.args.stream()
                 .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
@@ -105,7 +105,7 @@ public class CommandContextImpl extends DefaultProvisionContext implements Comma
     }
 
     @Override
-    public <T> Option<CommandParameter<T>> flag(final String key) {
+    public <T> Option<CommandParameter<T>> flag(String key) {
         return Option.of(this.flags.stream()
                 .filter(flag -> flag.trimmedKey().equals(key))
                 .findFirst()

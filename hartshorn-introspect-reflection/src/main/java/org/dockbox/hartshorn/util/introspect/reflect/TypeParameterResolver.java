@@ -32,7 +32,7 @@ public class TypeParameterResolver {
     private final TypeView<?> lookForParent;
     private final TypeParameterView[] parameters;
 
-    public TypeParameterResolver(final TypeView<?> lookForParent) {
+    public TypeParameterResolver(TypeView<?> lookForParent) {
         this.lookForParent = lookForParent;
         this.parameters = new TypeParameterView[lookForParent.typeParameters().allInput().count()];
     }
@@ -42,12 +42,12 @@ public class TypeParameterResolver {
         return Arrays.asList(this.parameters);
     }
 
-    public List<TypeParameterView> tryResolveFromGraph(final Graph<TypeView<?>> graph) throws TypeParameterResolutionException {
-        final Set<GraphNode<TypeView<?>>> roots = graph.roots();
+    public List<TypeParameterView> tryResolveFromGraph(Graph<TypeView<?>> graph) throws TypeParameterResolutionException {
+        Set<GraphNode<TypeView<?>>> roots = graph.roots();
         if (roots.size() != 1) {
             throw new TypeParameterResolutionException("Expected exactly one root node, found " + roots.size());
         }
-        final GraphNode<TypeView<?>> root = roots.iterator().next();
+        GraphNode<TypeView<?>> root = roots.iterator().next();
         // Compare type, not view, as the view is likely parameterized and thus a different non-equal instance
         if (root.value().type() != this.lookForParent.type()) {
             throw new TypeParameterResolutionException("Expected root node to be " + this.lookForParent.type().getName() + ", found " + root.value().type().getName());
@@ -58,22 +58,22 @@ public class TypeParameterResolver {
         return this.parameters();
     }
 
-    private void visit(final GraphNode<TypeView<?>> node) {
-        final TypeView<?> currentValue = node.value();
-        final TypeParameterList inputParameters = currentValue.typeParameters().allInput();
-        final List<TypeParameterView> parameters = inputParameters.asList();
+    private void visit(GraphNode<TypeView<?>> node) {
+        TypeView<?> currentValue = node.value();
+        TypeParameterList inputParameters = currentValue.typeParameters().allInput();
+        List<TypeParameterView> parameters = inputParameters.asList();
 
         for (int i = 0; i < parameters.size(); i++) {
-            final TypeParameterView parameter = parameters.get(i);
+            TypeParameterView parameter = parameters.get(i);
             this.parameters[i] = this.tryResolve(node, parameter);
         }
     }
 
-    private TypeParameterView tryResolve(final GraphNode<TypeView<?>> node, final TypeParameterView parameter) {
-        final int index = parameter.index();
-        final TypeView<?> typeView = node.value();
-        final Class<?> type = typeView.type();
-        final Set<GraphNode<TypeView<?>>> children = node.children();
+    private TypeParameterView tryResolve(GraphNode<TypeView<?>> node, TypeParameterView parameter) {
+        int index = parameter.index();
+        TypeView<?> typeView = node.value();
+        Class<?> type = typeView.type();
+        Set<GraphNode<TypeView<?>>> children = node.children();
 
         // Reached original input, but no definition found indicates that the input is a generic parameterized
         // type (not part of class definition, but of method or field definition)
@@ -85,11 +85,11 @@ public class TypeParameterResolver {
         }
     }
 
-    private TypeParameterView tryResolveFromGenericType(final TypeParameterView parameter, final TypeView<?> typeView) {
-        final TypeParameterList parameterViews = typeView.typeParameters().allInput();
-        final Option<TypeParameterView> parameterAtIndex = parameterViews.atIndex(parameter.index());
+    private TypeParameterView tryResolveFromGenericType(TypeParameterView parameter, TypeView<?> typeView) {
+        TypeParameterList parameterViews = typeView.typeParameters().allInput();
+        Option<TypeParameterView> parameterAtIndex = parameterViews.atIndex(parameter.index());
         if (parameterAtIndex.present()) {
-            final TypeParameterView parameterView = parameterAtIndex.get();
+            TypeParameterView parameterView = parameterAtIndex.get();
             if (!parameterView.isVariable()) {
                 return parameterView;
             }
@@ -97,22 +97,22 @@ public class TypeParameterResolver {
         return null;
     }
 
-    private TypeParameterView tryResolveFromTypeDefinition(final int index, final Class<?> type, final Set<GraphNode<TypeView<?>>> children) {
-        for (final GraphNode<TypeView<?>> child : children) {
-            final TypeParameterList outputParameters = child.value().typeParameters().outputFor(type);
+    private TypeParameterView tryResolveFromTypeDefinition(int index, Class<?> type, Set<GraphNode<TypeView<?>>> children) {
+        for (GraphNode<TypeView<?>> child : children) {
+            TypeParameterList outputParameters = child.value().typeParameters().outputFor(type);
             if (outputParameters.isEmpty()) {
                 continue;
             }
-            final Option<TypeParameterView> parameterAtIndex = outputParameters.atIndex(index);
+            Option<TypeParameterView> parameterAtIndex = outputParameters.atIndex(index);
             if (parameterAtIndex.present()) {
-                final TypeParameterView parameterView = parameterAtIndex.get();
+                TypeParameterView parameterView = parameterAtIndex.get();
                 if (!parameterView.isVariable()) {
                     return parameterView;
                 }
                 else {
-                    final Option<TypeParameterView> definition = parameterView.definition();
+                    Option<TypeParameterView> definition = parameterView.definition();
                     if (definition.present()) {
-                        final TypeParameterView resolved = this.tryResolve(child, definition.get());
+                        TypeParameterView resolved = this.tryResolve(child, definition.get());
                         if (resolved != null) {
                             return resolved;
                         }

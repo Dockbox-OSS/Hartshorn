@@ -27,9 +27,9 @@ public class TernaryExpression extends Expression {
     private final Token colon;
     private final Expression secondExp;
 
-    public TernaryExpression(final Expression condition, final Token ternaryOp,
-                             final Expression firstExp, final Token colon,
-                             final Expression secondExp) {
+    public TernaryExpression(Expression condition, Token ternaryOp,
+                             Expression firstExp, Token colon,
+                             Expression secondExp) {
         super(condition);
         this.condition = condition;
         this.ternaryOp = ternaryOp;
@@ -59,7 +59,7 @@ public class TernaryExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -29,12 +29,12 @@ import javassist.util.proxy.ProxyFactory;
 public class JavassistProxyLookup implements StandardProxyLookup {
 
     @Override
-    public <T> Option<Class<T>> unproxy(final T instance) {
+    public <T> Option<Class<T>> unproxy(T instance) {
         if (instance instanceof Proxy proxy) {
-            final MethodHandler handler = ProxyFactory.getHandler(proxy);
+            MethodHandler handler = ProxyFactory.getHandler(proxy);
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
-                final Class<?> targetClass = javassistProxyMethodHandler.interceptor().manager().targetClass();
-                final Class<T> adjustedTargetClass = TypeUtils.adjustWildcards(targetClass, Class.class);
+                Class<?> targetClass = javassistProxyMethodHandler.interceptor().manager().targetClass();
+                Class<T> adjustedTargetClass = TypeUtils.adjustWildcards(targetClass, Class.class);
                 return Option.of(adjustedTargetClass);
             }
         }
@@ -42,14 +42,14 @@ public class JavassistProxyLookup implements StandardProxyLookup {
     }
 
     @Override
-    public boolean isProxy(final Class<?> candidate) {
+    public boolean isProxy(Class<?> candidate) {
         return ProxyFactory.isProxyClass(candidate);
     }
 
     @Override
     public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
         if (instance instanceof Proxy proxy) {
-            final MethodHandler handler = ProxyFactory.getHandler(proxy);
+            MethodHandler handler = ProxyFactory.getHandler(proxy);
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
                 ProxyManager<?> manager = javassistProxyMethodHandler.interceptor().manager();
                 if (manager.proxy() == instance) {

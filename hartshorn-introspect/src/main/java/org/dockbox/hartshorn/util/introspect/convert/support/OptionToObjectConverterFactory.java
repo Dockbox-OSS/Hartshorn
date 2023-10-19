@@ -25,16 +25,18 @@ import org.dockbox.hartshorn.util.option.Option;
 public class OptionToObjectConverterFactory implements ConverterFactory<Option<?>, Object>, ConditionalConverter {
 
     @Override
-    public <O> Converter<Option<?>, O> create(final Class<O> targetType) {
+    public <O> Converter<Option<?>, O> create(Class<O> targetType) {
         return input -> input.map(result -> (O) result).orNull();
     }
 
     @Override
-    public boolean canConvert(final Object source, final Class<?> targetType) {
+    public boolean canConvert(Object source, Class<?> targetType) {
         if (source instanceof Option<?> option) {
-            final Object value = option.orNull();
+            Object value = option.orNull();
 
-            if (value == null) return true;
+            if (value == null) {
+                return true;
+            }
             return TypeUtils.isAssignable(value.getClass(), targetType);
         }
         return false;

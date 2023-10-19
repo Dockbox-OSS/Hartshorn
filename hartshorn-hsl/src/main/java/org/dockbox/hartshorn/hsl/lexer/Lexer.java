@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.lexer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -23,10 +27,6 @@ import org.dockbox.hartshorn.hsl.token.TokenConstants;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The lexer takes in HSL sources and transforms it into tokens. This implementation
@@ -50,7 +50,7 @@ public class Lexer {
     private int line = 1;
     private int column = -1;
 
-    public Lexer(final String source) {
+    public Lexer(String source) {
         this.source = source;
     }
 
@@ -80,7 +80,7 @@ public class Lexer {
     }
 
     private void scanToken() {
-        final char c = this.pointToNextChar();
+        char c = this.pointToNextChar();
         switch (c) {
             case TokenConstants.ARRAY_OPEN:
                 this.addToken(TokenType.ARRAY_OPEN);
@@ -167,7 +167,9 @@ public class Lexer {
                             this.addToken(TokenType.SHIFT_LEFT);
                         }
                     }
-                    else this.addToken(TokenType.LESS);
+                    else {
+                        this.addToken(TokenType.LESS);
+                    }
                 }
                 break;
             case TokenConstants.GREATER:
@@ -186,7 +188,9 @@ public class Lexer {
                             this.addToken(TokenType.SHIFT_RIGHT);
                         }
                     }
-                    else this.addToken(TokenType.GREATER);
+                    else {
+                        this.addToken(TokenType.GREATER);
+                    }
                 }
                 break;
             case TokenConstants.SLASH:
@@ -201,14 +205,26 @@ public class Lexer {
                 }
                 break;
             case TokenConstants.AMPERSAND:
-                if (this.match(TokenConstants.AMPERSAND)) this.addToken(TokenType.AND);
-                else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.BITWISE_AND_EQUAL);
-                else this.addToken(TokenType.BITWISE_AND);
+                if (this.match(TokenConstants.AMPERSAND)) {
+                    this.addToken(TokenType.AND);
+                }
+                else if (this.match(TokenConstants.EQUAL)) {
+                    this.addToken(TokenType.BITWISE_AND_EQUAL);
+                }
+                else {
+                    this.addToken(TokenType.BITWISE_AND);
+                }
                 break;
             case TokenConstants.PIPE:
-                if (this.match(TokenConstants.PIPE)) this.addToken(TokenType.OR);
-                else if (this.match(TokenConstants.EQUAL)) this.addToken(TokenType.BITWISE_OR_EQUAL);
-                else this.addToken(TokenType.BITWISE_OR);
+                if (this.match(TokenConstants.PIPE)) {
+                    this.addToken(TokenType.OR);
+                }
+                else if (this.match(TokenConstants.EQUAL)) {
+                    this.addToken(TokenType.BITWISE_OR_EQUAL);
+                }
+                else {
+                    this.addToken(TokenType.BITWISE_OR);
+                }
                 break;
             case TokenConstants.CARET:
                 this.addToken(this.match(TokenConstants.EQUAL)
@@ -251,8 +267,8 @@ public class Lexer {
     }
 
     private void scanComment() {
-        final StringBuilder text = new StringBuilder();
-        final int line = this.line;
+        StringBuilder text = new StringBuilder();
+        int line = this.line;
         while (this.currentChar() != '\n' && !this.isAtEnd()) {
             text.append(this.pointToNextChar());
         }
@@ -260,8 +276,8 @@ public class Lexer {
     }
 
     private void scanMultilineComment() {
-        final StringBuilder text = new StringBuilder();
-        final int line = this.line;
+        StringBuilder text = new StringBuilder();
+        int line = this.line;
         while (!this.isAtEnd()) {
             if (this.currentChar() == TokenConstants.STAR && this.nextChar() == TokenConstants.SLASH) {
                 this.current += 2;
@@ -284,7 +300,9 @@ public class Lexer {
         if (this.currentChar() == TokenConstants.DOT && this.isDigit(this.nextChar())) {
             // Consume the "."
             this.pointToNextChar();
-            while (this.isDigit(this.currentChar())) this.pointToNextChar();
+            while (this.isDigit(this.currentChar())) {
+                this.pointToNextChar();
+            }
         }
 
         String number = this.source.substring(this.start, this.current);
@@ -309,12 +327,12 @@ public class Lexer {
         this.pointToNextChar();
 
         // Trim the surrounding quotes.
-        final String value = this.source.substring(this.start + 1, this.current - 1);
+        String value = this.source.substring(this.start + 1, this.current - 1);
         this.addToken(TokenType.STRING, value);
     }
 
     private void scanChar() {
-        final String value = this.source.substring(this.start + 1, this.start + 2);
+        String value = this.source.substring(this.start + 1, this.start + 2);
         this.pointToNextChar();
         if (this.currentChar() != TokenConstants.SINGLE_QUOTE) {
             throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line, this.column);
@@ -324,14 +342,18 @@ public class Lexer {
     }
 
     private void scanIdentifier() {
-        while (this.isAlphaNumeric(this.currentChar())) this.pointToNextChar();
+        while (this.isAlphaNumeric(this.currentChar())) {
+            this.pointToNextChar();
+        }
 
         // See if the scanIdentifier is a reserved word.
-        final String text = this.source.substring(this.start, this.current);
+        String text = this.source.substring(this.start, this.current);
 
         TokenType type = KEYWORDS.get(text);
 
-        if (type == null) type = TokenType.IDENTIFIER;
+        if (type == null) {
+            type = TokenType.IDENTIFIER;
+        }
         this.addToken(type);
     }
 
@@ -341,7 +363,7 @@ public class Lexer {
         return this.source.charAt(this.current - 1);
     }
 
-    private void addToken(final TokenType type) {
+    private void addToken(TokenType type) {
         if (type.reserved()) {
             LOG.warn("Reserved token type used: " + type + " at line " + this.line + ", column " + this.column + ". " +
                     "Reserved tokens are not supported and may not be implemented yet. " +
@@ -350,8 +372,8 @@ public class Lexer {
         this.addToken(type, null);
     }
 
-    private void addToken(final TokenType type, final Object literal) {
-        final String text = this.source.substring(this.start, this.current);
+    private void addToken(TokenType type, Object literal) {
+        String text = this.source.substring(this.start, this.current);
         this.tokens.add(new Token(type, text, literal, this.line, Math.min(this.start, this.column)));
     }
 
@@ -359,35 +381,43 @@ public class Lexer {
         return this.current >= this.source.length();
     }
 
-    private boolean isDigit(final char character) {
+    private boolean isDigit(char character) {
         return character >= '0' && character <= '9';
     }
 
-    private boolean match(final char expected) {
-        if (this.isAtEnd()) return false;
-        if (this.source.charAt(this.current) != expected) return false;
+    private boolean match(char expected) {
+        if (this.isAtEnd()) {
+            return false;
+        }
+        if (this.source.charAt(this.current) != expected) {
+            return false;
+        }
         this.current++;
         this.column++;
         return true;
     }
 
     private char currentChar() {
-        if (this.isAtEnd()) return '\0';
+        if (this.isAtEnd()) {
+            return '\0';
+        }
         return this.source.charAt(this.current);
     }
 
     private char nextChar() {
-        if (this.current + 1 >= this.source.length()) return '\0';
+        if (this.current + 1 >= this.source.length()) {
+            return '\0';
+        }
         return this.source.charAt(this.current + 1);
     }
 
-    private boolean isAlpha(final char character) {
+    private boolean isAlpha(char character) {
         return (character >= 'a' && character <= 'z') ||
                 (character >= 'A' && character <= 'Z') ||
                 character == '_';
     }
 
-    private boolean isAlphaNumeric(final char character) {
+    private boolean isAlphaNumeric(char character) {
         return this.isAlpha(character) || this.isDigit(character);
     }
 
@@ -398,7 +428,7 @@ public class Lexer {
 
     private int column() {
         // Get current line from complete source index
-        final int lineStart = this.source.lastIndexOf('\n', this.current) + 1;
+        int lineStart = this.source.lastIndexOf('\n', this.current) + 1;
         return this.current - lineStart - 1;
     }
 }

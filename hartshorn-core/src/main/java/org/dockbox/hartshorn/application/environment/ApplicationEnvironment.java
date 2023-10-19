@@ -97,7 +97,7 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      * @param annotation The annotation expected to be present on one or more types
      * @return The annotated types
      */
-    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation);
+    <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation);
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
@@ -107,7 +107,7 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      * @param <T> The type of the parent
      * @return The list of sub-types, or an empty list
      */
-    <T> Collection<TypeView<? extends T>> children(final Class<T> parent);
+    <T> Collection<TypeView<? extends T>> children(Class<T> parent);
 
     /**
      * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
@@ -128,7 +128,7 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      * @param annotation The annotation expected to be present on zero or more annotations
      * @return The annotated annotations
      */
-    List<Annotation> annotationsWith(final TypeView<?> type, final Class<? extends Annotation> annotation);
+    List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation);
 
     /**
      * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
@@ -149,7 +149,7 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      * @param annotation The annotation expected to be present on zero or more annotations
      * @return The annotated annotations
      */
-    List<Annotation> annotationsWith(final Class<?> type, final Class<? extends Annotation> annotation);
+    List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation);
 
     /**
      * Indicates whether the given type should be treated as a singleton. How this is determined is up to the

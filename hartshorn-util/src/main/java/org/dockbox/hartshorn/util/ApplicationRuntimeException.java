@@ -22,15 +22,15 @@ package org.dockbox.hartshorn.util;
  */
 public class ApplicationRuntimeException extends RuntimeException {
 
-    public ApplicationRuntimeException(final String message) {
+    public ApplicationRuntimeException(String message) {
         super(message);
     }
 
-    public ApplicationRuntimeException(final String message, final Throwable cause) {
+    public ApplicationRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ApplicationRuntimeException(final Throwable cause) {
+    public ApplicationRuntimeException(Throwable cause) {
         super(cause);
     }
 

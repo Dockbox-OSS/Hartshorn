@@ -58,48 +58,50 @@ public class ConditionTests {
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testBulkValidations(final String expression, final boolean matches) {
-        final ConditionResult result = this.match(expression);
+    void testBulkValidations(String expression, boolean matches) {
+        ConditionResult result = this.match(expression);
         Assertions.assertEquals(matches, result.matches());
     }
 
     @Test
     void testApplicationContextIsOptInAvailable() {
-        final ExpressionConditionContext context = new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
-        final String expression = "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass().getName());
-        final ConditionResult result = this.match(expression, context);
+        ExpressionConditionContext context = new ExpressionConditionContext(this.applicationContext).includeApplicationContext(true);
+        String expression = "applicationContext.getClass().getName() == \"%s\"".formatted(this.applicationContext.getClass().getName());
+        ConditionResult result = this.match(expression, context);
         Assertions.assertTrue(result.matches());
     }
 
     @Test
     void testApplicationContextIsNotAvailableDefault() {
-        final String expression = "null != applicationContext";
-        final ConditionResult result = this.match(expression);
+        String expression = "null != applicationContext";
+        ConditionResult result = this.match(expression);
         Assertions.assertFalse(result.matches());
 
-        final String message = result.message();
-        final String withoutMarker = message.substring(0, message.indexOf('.'));
+        String message = result.message();
+        String withoutMarker = message.substring(0, message.indexOf('.'));
         // Ensure the failure is due to the absence of the application context, not due to it being null
         Assertions.assertEquals("Undefined variable 'applicationContext'", withoutMarker);
     }
 
-    ConditionResult match(final String expression, final Context... contexts) {
-        final ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
-        final AnnotatedElementView element = this.createAnnotatedElement(expression);
-        final ConditionContext context = new ConditionContext(this.applicationContext, element, null);
-        for (final Context child : contexts) context.add(child);
+    ConditionResult match(String expression, Context... contexts) {
+        ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
+        AnnotatedElementView element = this.createAnnotatedElement(expression);
+        ConditionContext context = new ConditionContext(this.applicationContext, element, null);
+        for (Context child : contexts) {
+            context.add(child);
+        }
         return condition.matches(context);
     }
 
-    private AnnotatedElementView createAnnotatedElement(final String expression) {
-        final RequiresExpression condition = Mockito.mock(RequiresExpression.class);
+    private AnnotatedElementView createAnnotatedElement(String expression) {
+        RequiresExpression condition = Mockito.mock(RequiresExpression.class);
         Mockito.when(condition.value()).thenReturn(expression);
         Mockito.doReturn(RequiresExpression.class).when(condition).annotationType();
 
-        final ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
+        ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
         Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Option.of(condition));
 
-        final AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
+        AnnotatedElementView elementView = Mockito.mock(AnnotatedElementView.class);
         Mockito.when(elementView.annotations()).thenReturn(annotationsIntrospector);
 
         return elementView;

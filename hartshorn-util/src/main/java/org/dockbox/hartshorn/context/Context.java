@@ -59,7 +59,7 @@ public interface Context {
      * @param <C> The type of the context.
      * @return The first context of the given type.
      */
-    <C extends Context> Option<C> first(final Class<C> context);
+    <C extends Context> Option<C> first(Class<C> context);
 
     /**
      * Returns all contexts of the given type. If no contexts of the given type are found, an empty list is returned.
@@ -68,7 +68,7 @@ public interface Context {
      * @return All contexts of the given type.
      * @param <C> The type of the context.
      */
-    <C extends Context> List<C> all(final Class<C> context);
+    <C extends Context> List<C> all(Class<C> context);
 
     /**
      * Returns the first context matching the given identity. If no context is found, an attempt may be made to create

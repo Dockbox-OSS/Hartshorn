@@ -43,14 +43,14 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
     private final ProxyMethodInvoker<T> methodInvoker;
     private final ProxyManager<T> manager;
 
-    public ReflectionProxyMethodInterceptHandler(final ProxyMethodInterceptor<T> interceptor) {
+    public ReflectionProxyMethodInterceptHandler(ProxyMethodInterceptor<T> interceptor) {
         this.methodInvoker = new ReflectionProxyMethodInvoker<>(interceptor);
         this.manager = interceptor.manager();
     }
 
     @Override
-    public Object handleNonInterceptedMethod(final T self, final MethodInvokable source, final Invokable proxy, final T callbackTarget, final Object[] arguments) throws Throwable {
-        final Option<?> delegate = this.manager()
+    public Object handleNonInterceptedMethod(T self, MethodInvokable source, Invokable proxy, T callbackTarget, Object[] arguments) throws Throwable {
+        Option<?> delegate = this.manager()
                 .advisor()
                 .resolver()
                 .method(source.toMethod())
@@ -65,7 +65,7 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
     }
 
     @Override
-    public Object handleInterceptedMethod(final MethodInvokable source, final T callbackTarget, final CustomInvocation<?> customInvocation, final Object[] arguments, final MethodInterceptor<T, Object> interceptor) throws Throwable {
+    public Object handleInterceptedMethod(MethodInvokable source, T callbackTarget, CustomInvocation<?> customInvocation, Object[] arguments, MethodInterceptor<T, Object> interceptor) throws Throwable {
         return this.methodInvoker.invokeInterceptor(callbackTarget,
                 TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class),
                 arguments,
@@ -79,22 +79,26 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
         return this.methodInvoker;
     }
 
-    protected Object handleDelegateMethod(final Object delegate, final T self, final Invokable source, final Object[] args) throws Throwable {
-        final Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
-        if (defaultMethod.present()) return defaultMethod.get();
+    protected Object handleDelegateMethod(Object delegate, T self, Invokable source, Object[] args) throws Throwable {
+        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
+        if (defaultMethod.present()) {
+            return defaultMethod.get();
+        }
 
-        final Object result = source.invoke(delegate, args);
+        Object result = source.invoke(delegate, args);
         if (result == delegate) {
             return self;
         }
         return result;
     }
 
-    protected Object handleNonDelegateMethod(final T self, final T callbackTarget, final Invokable source, final Invokable proxy, final Object[] args) throws Throwable {
-        final Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
-        if (defaultMethod.present()) return defaultMethod.get();
+    protected Object handleNonDelegateMethod(T self, T callbackTarget, Invokable source, Invokable proxy, Object[] args) throws Throwable {
+        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
+        if (defaultMethod.present()) {
+            return defaultMethod.get();
+        }
 
-        final Object result;
+        Object result;
         if (callbackTarget == self && proxy != null) {
             result = proxy.invoke(callbackTarget, args);
         }
@@ -114,13 +118,17 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
      * @param args the arguments that are passed to the method
      * @return the result of the invocation, if the method is a default method
      */
-    protected Option<Object> tryInvokeDefaultMethod(final T self, final Invokable target, final Object[] args) {
+    protected Option<Object> tryInvokeDefaultMethod(T self, Invokable target, Object[] args) {
         return Option.of(() -> {
             if (this.isEqualsMethod(target)){
                 return this.proxyEquals(args[0]);
             }
-            if (this.isToStringMethod(target)) return this.proxyToString(self);
-            if (this.isHashCodeMethod(target)) return this.proxyHashCode(self);
+            if (this.isToStringMethod(target)) {
+                return this.proxyToString(self);
+            }
+            if (this.isHashCodeMethod(target)) {
+                return this.proxyHashCode(self);
+            }
 
             throw new UnsupportedOperationException("Unsupported default method: " + target.qualifiedName());
         });

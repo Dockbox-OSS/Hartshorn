@@ -22,7 +22,7 @@ public class SampleContext extends DefaultProvisionContext {
 
     private final String name;
 
-    public SampleContext(final String name) {
+    public SampleContext(String name) {
         this.name = name;
     }
 

@@ -34,58 +34,68 @@ public final class Resources {
     private Resources() {
     }
 
-    public static URL getResourceURL(final String resource) throws IOException {
+    public static URL getResourceURL(String resource) throws IOException {
         return getResourceURL(getClassLoader(), resource);
     }
 
-    public static URL getResourceURL(final ClassLoader loader, final String resource) throws IOException {
+    public static URL getResourceURL(ClassLoader loader, String resource) throws IOException {
         URL url = null;
-        if (loader != null) url = loader.getResource(resource);
-        if (url == null) url = ClassLoader.getSystemResource(resource);
-        if (url == null) throw new IOException("Could not find resource " + resource);
+        if (loader != null) {
+            url = loader.getResource(resource);
+        }
+        if (url == null) {
+            url = ClassLoader.getSystemResource(resource);
+        }
+        if (url == null) {
+            throw new IOException("Could not find resource " + resource);
+        }
         return url;
     }
 
-    public static File getResourceAsFile(final String resource) throws IOException {
+    public static File getResourceAsFile(String resource) throws IOException {
         return new File(getResourceURL(resource).getFile());
     }
 
-    public static File getResourceAsFile(final ClassLoader loader, final String resource) throws IOException {
+    public static File getResourceAsFile(ClassLoader loader, String resource) throws IOException {
         return new File(getResourceURL(loader, resource).getFile());
     }
 
-    public static Set<URL> getResourceURLs(final String resource) throws IOException {
+    public static Set<URL> getResourceURLs(String resource) throws IOException {
         return getResourceURLs(getClassLoader(), resource);
     }
 
-    public static Set<URL> getResourceURLs(final ClassLoader loader, final String resource) throws IOException {
-        final Set<URL> urls = new HashSet<>();
+    public static Set<URL> getResourceURLs(ClassLoader loader, String resource) throws IOException {
+        Set<URL> urls = new HashSet<>();
         if (loader != null) {
-            final Enumeration<URL> resources = loader.getResources(resource);
+            Enumeration<URL> resources = loader.getResources(resource);
             if (resources != null) {
-                while (resources.hasMoreElements()) urls.add(resources.nextElement());
+                while (resources.hasMoreElements()) {
+                    urls.add(resources.nextElement());
+                }
             }
         }
-        final Enumeration<URL> systemResources = ClassLoader.getSystemResources(resource);
+        Enumeration<URL> systemResources = ClassLoader.getSystemResources(resource);
         if (systemResources != null) {
-            while (systemResources.hasMoreElements()) urls.add(systemResources.nextElement());
+            while (systemResources.hasMoreElements()) {
+                urls.add(systemResources.nextElement());
+            }
         }
         return Collections.unmodifiableSet(urls);
     }
 
-    public static Set<File> getResourcesAsFiles(final String resource) throws IOException {
+    public static Set<File> getResourcesAsFiles(String resource) throws IOException {
         return getResourcesAsFiles(getClassLoader(), resource);
     }
 
-    public static Set<File> getResourcesAsFiles(final ClassLoader loader, final String resource) throws IOException {
+    public static Set<File> getResourcesAsFiles(ClassLoader loader, String resource) throws IOException {
         return getResourceURLs(loader, resource).stream()
                 .map(url -> new File(url.getFile()))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    public static Set<URI> getResourceURIs(final ApplicationContext applicationContext, final String resource, final ResourceLookupStrategy... strategies) {
-        final Set<URI> uris = new HashSet<>();
-        for (final ResourceLookupStrategy strategy : strategies) {
+    public static Set<URI> getResourceURIs(ApplicationContext applicationContext, String resource, ResourceLookupStrategy... strategies) {
+        Set<URI> uris = new HashSet<>();
+        for (ResourceLookupStrategy strategy : strategies) {
             uris.addAll(strategy.lookup(applicationContext, resource));
         }
         return Collections.unmodifiableSet(uris);
@@ -94,7 +104,7 @@ public final class Resources {
     private static ClassLoader getClassLoader() {
         try {
             return Thread.currentThread().getContextClassLoader();
-        } catch (final SecurityException e) {
+        } catch (SecurityException e) {
             return Hartshorn.class.getClassLoader();
         }
     }

@@ -25,7 +25,7 @@ public class ConditionContext extends DefaultApplicationAwareContext {
     private final AnnotatedElementView annotatedElementContext;
     private final RequiresCondition condition;
 
-    public ConditionContext(final ApplicationContext applicationContext, final AnnotatedElementView annotatedElementContext, final RequiresCondition condition) {
+    public ConditionContext(ApplicationContext applicationContext, AnnotatedElementView annotatedElementContext, RequiresCondition condition) {
         super(applicationContext);
         this.annotatedElementContext = annotatedElementContext;
         this.condition = condition;

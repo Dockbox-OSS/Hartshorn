@@ -23,11 +23,11 @@ public class GraphNodeLookupVisitor<T> extends BreadthFirstGraphVisitor<T> {
     private final Predicate<T> rule;
     private GraphNode<T> foundNode;
 
-    public GraphNodeLookupVisitor(final T valueToFind) {
+    public GraphNodeLookupVisitor(T valueToFind) {
         this(type -> type.equals(valueToFind));
     }
 
-    public GraphNodeLookupVisitor(final Predicate<T> rule) {
+    public GraphNodeLookupVisitor(Predicate<T> rule) {
         this.rule = rule;
     }
 
@@ -36,7 +36,7 @@ public class GraphNodeLookupVisitor<T> extends BreadthFirstGraphVisitor<T> {
     }
 
     @Override
-    protected boolean visit(final GraphNode<T> node) throws GraphException {
+    protected boolean visit(GraphNode<T> node) throws GraphException {
         if (this.rule.test(node.value())) {
             this.foundNode = node;
             return false;

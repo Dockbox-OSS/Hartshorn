@@ -52,42 +52,42 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testPrimitiveWrapperFromEmptyString() {
-        final ConversionService conversionService = this.conversionService();
-        final Integer empty = conversionService.convert("", Integer.class);
+        ConversionService conversionService = this.conversionService();
+        Integer empty = conversionService.convert("", Integer.class);
         Assertions.assertNotNull(empty);
         Assertions.assertEquals(0, empty);
     }
 
     @Test
     void testNumberFromString() {
-        final ConversionService conversionService = this.conversionService();
-        final Integer valid = conversionService.convert("12", Integer.class);
+        ConversionService conversionService = this.conversionService();
+        Integer valid = conversionService.convert("12", Integer.class);
         Assertions.assertNotNull(valid);
         Assertions.assertEquals(12, valid);
     }
 
     @Test
     void testPrimitiveFromString() {
-        final ConversionService conversionService = this.conversionService();
-        final int primitive = conversionService.convert("12", int.class);
+        ConversionService conversionService = this.conversionService();
+        int primitive = conversionService.convert("12", int.class);
         Assertions.assertEquals(12, primitive);
     }
 
     @Test
     void testEnumFromString() {
-        final ConversionService conversionService = this.conversionService();
-        final DemoABC a = conversionService.convert("A", DemoABC.class);
+        ConversionService conversionService = this.conversionService();
+        DemoABC a = conversionService.convert("A", DemoABC.class);
         Assertions.assertNotNull(a);
         Assertions.assertSame(DemoABC.A, a);
 
-        final DemoABC d = conversionService.convert("D", DemoABC.class);
+        DemoABC d = conversionService.convert("D", DemoABC.class);
         Assertions.assertNull(d);
     }
 
     @Test
     void testOptionFromObject() {
-        final ConversionService conversionService = this.conversionService();
-        final Option<?> option = conversionService.convert("test", Option.class);
+        ConversionService conversionService = this.conversionService();
+        Option<?> option = conversionService.convert("test", Option.class);
         Assertions.assertNotNull(option);
         Assertions.assertTrue(option.present());
         Assertions.assertEquals("test", option.get());
@@ -95,47 +95,47 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testObjectFromOption() {
-        final ConversionService conversionService = this.conversionService();
-        final String converted = conversionService.convert(Option.of("test"), String.class);
+        ConversionService conversionService = this.conversionService();
+        String converted = conversionService.convert(Option.of("test"), String.class);
         Assertions.assertNotNull(converted);
         Assertions.assertEquals("test", converted);
     }
 
     @Test
     void testOptionDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final Option<?> optionFromNull = conversionService.convert(null, Option.class);
+        ConversionService conversionService = this.conversionService();
+        Option<?> optionFromNull = conversionService.convert(null, Option.class);
         Assertions.assertNotNull(optionFromNull);
         Assertions.assertFalse(optionFromNull.present());
     }
 
     @Test
     void testStringDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final String stringFromNull = conversionService.convert(null, String.class);
+        ConversionService conversionService = this.conversionService();
+        String stringFromNull = conversionService.convert(null, String.class);
         Assertions.assertNotNull(stringFromNull);
         Assertions.assertEquals("", stringFromNull);
     }
 
     @Test
     void testPrimitiveDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final int intFromNull = conversionService.convert(null, int.class);
+        ConversionService conversionService = this.conversionService();
+        int intFromNull = conversionService.convert(null, int.class);
         Assertions.assertEquals(0, intFromNull);
     }
 
     @Test
     void testPrimitiveWrapperDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final Integer integerFromNull = conversionService.convert(null, Integer.class);
+        ConversionService conversionService = this.conversionService();
+        Integer integerFromNull = conversionService.convert(null, Integer.class);
         Assertions.assertNotNull(integerFromNull);
         Assertions.assertEquals(0, integerFromNull);
     }
 
     @Test
     void testConcreteSetDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final Set<?> hashSet = conversionService.convert(null, TreeSet.class);
+        ConversionService conversionService = this.conversionService();
+        Set<?> hashSet = conversionService.convert(null, TreeSet.class);
         Assertions.assertNotNull(hashSet);
         Assertions.assertTrue(hashSet.isEmpty());
         Assertions.assertTrue(hashSet instanceof TreeSet);
@@ -143,24 +143,24 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testSetDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final Set<?> set = conversionService.convert(null, Set.class);
+        ConversionService conversionService = this.conversionService();
+        Set<?> set = conversionService.convert(null, Set.class);
         Assertions.assertNotNull(set);
         Assertions.assertTrue(set.isEmpty());
     }
 
     @Test
     void testListDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final List<?> list = conversionService.convert(null, List.class);
+        ConversionService conversionService = this.conversionService();
+        List<?> list = conversionService.convert(null, List.class);
         Assertions.assertNotNull(list);
         Assertions.assertTrue(list.isEmpty());
     }
 
     @Test
     void testConcreteListDefaultValue() {
-        final ConversionService conversionService = this.conversionService();
-        final List<?> arrayList = conversionService.convert(null, CopyOnWriteArrayList.class);
+        ConversionService conversionService = this.conversionService();
+        List<?> arrayList = conversionService.convert(null, CopyOnWriteArrayList.class);
         Assertions.assertNotNull(arrayList);
         Assertions.assertTrue(arrayList.isEmpty());
         Assertions.assertTrue(arrayList instanceof CopyOnWriteArrayList);
@@ -168,8 +168,8 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testCollectionFromObject() {
-        final ConversionService conversionService = this.conversionService();
-        final List<?> linkedList = conversionService.convert("test", LinkedList.class);
+        ConversionService conversionService = this.conversionService();
+        List<?> linkedList = conversionService.convert("test", LinkedList.class);
         Assertions.assertNotNull(linkedList);
         Assertions.assertFalse(linkedList.isEmpty());
         Assertions.assertEquals("test", linkedList.get(0));
@@ -177,8 +177,8 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testCollectionFromCollection() {
-        final ConversionService conversionService = this.conversionService();
-        final Set<?> setFromList = conversionService.convert(List.of(1, 2, 3), Set.class);
+        ConversionService conversionService = this.conversionService();
+        Set<?> setFromList = conversionService.convert(List.of(1, 2, 3), Set.class);
         Assertions.assertNotNull(setFromList);
         Assertions.assertFalse(setFromList.isEmpty());
         Assertions.assertEquals(3, setFromList.size());
@@ -186,8 +186,8 @@ public abstract class ConversionServiceTests {
 
     @Test
     public void testCollectionFromOption() {
-        final ConversionService conversionService = this.conversionService();
-        final List<?> listFromOption = conversionService.convert(Option.of("123"), List.class);
+        ConversionService conversionService = this.conversionService();
+        List<?> listFromOption = conversionService.convert(Option.of("123"), List.class);
         Assertions.assertNotNull(listFromOption);
         Assertions.assertFalse(listFromOption.isEmpty());
         Assertions.assertEquals(1, listFromOption.size());
@@ -196,8 +196,8 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testArrayFromCollection() {
-        final ConversionService conversionService = this.conversionService();
-        final String[] array = conversionService.convert(List.of("1", "2", "3"), String[].class);
+        ConversionService conversionService = this.conversionService();
+        String[] array = conversionService.convert(List.of("1", "2", "3"), String[].class);
         Assertions.assertNotNull(array);
         Assertions.assertEquals(3, array.length);
         Assertions.assertEquals("1", array[0]);
@@ -207,8 +207,8 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testArrayFromObject() {
-        final ConversionService conversionService = this.conversionService();
-        final String[] array = conversionService.convert("test", String[].class);
+        ConversionService conversionService = this.conversionService();
+        String[] array = conversionService.convert("test", String[].class);
         Assertions.assertNotNull(array);
         Assertions.assertEquals(1, array.length);
         Assertions.assertEquals("test", array[0]);
@@ -239,23 +239,23 @@ public abstract class ConversionServiceTests {
         this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addDefaultValueProvider(String.class, () -> ""), NullAccess.getInstance(), String.class, ConverterType.DEFAULT_VALUE_PROVIDER);
     }
 
-    private void testConverterTypeIsAdaptedCorrectly(final Consumer<ConverterRegistry> registerAction, final Object source, final Class<?> targetType, final ConverterType converterType) {
-        final ConverterCache converterCache = new GenericConverters();
-        final ConverterCache defaultValueProviderCache = new GenericConverters();
-        final ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
+    private void testConverterTypeIsAdaptedCorrectly(Consumer<ConverterRegistry> registerAction, Object source, Class<?> targetType, ConverterType converterType) {
+        ConverterCache converterCache = new GenericConverters();
+        ConverterCache defaultValueProviderCache = new GenericConverters();
+        ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
         Assertions.assertTrue(converterCache.converters().isEmpty());
         Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
 
         registerAction.accept(registry);
 
-        final ConverterCache shouldBeEmpty = converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
-        final ConverterCache shouldBePopulated = converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
+        ConverterCache shouldBeEmpty = converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
+        ConverterCache shouldBePopulated = converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
 
         Assertions.assertTrue(shouldBeEmpty.converters().isEmpty());
         Assertions.assertFalse(shouldBePopulated.converters().isEmpty());
         Assertions.assertEquals(1, shouldBePopulated.converters().size());
 
-        final GenericConverter converter = shouldBePopulated.getConverter(source, targetType);
+        GenericConverter converter = shouldBePopulated.getConverter(source, targetType);
         Assertions.assertNotNull(converter);
     }
 
@@ -264,9 +264,9 @@ public abstract class ConversionServiceTests {
         DEFAULT_VALUE_PROVIDER,
     }
 
-    private static final class SimpleConverter implements Converter<String, Integer> {
+    private static class SimpleConverter implements Converter<String, Integer> {
         @Override
-        public Integer convert(final String source) {
+        public Integer convert(String source) {
             return Integer.parseInt(source);
         }
     }

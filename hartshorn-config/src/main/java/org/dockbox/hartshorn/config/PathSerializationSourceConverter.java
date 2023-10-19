@@ -37,18 +37,18 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
     private final FileSystemProvider fileSystem;
 
     @Inject
-    public PathSerializationSourceConverter(final FileSystemProvider fileSystem) {
+    public PathSerializationSourceConverter(FileSystemProvider fileSystem) {
         this.fileSystem = fileSystem;
     }
 
     @Override
-    public InputStream inputStream(final AnnotatedElementView context, final Object... args) {
+    public InputStream inputStream(AnnotatedElementView context, Object... args) {
         return this.resolvePath(context)
                 .map(path -> {
                     try {
                         return Files.newInputStream(path);
                     }
-                    catch (final IOException e) {
+                    catch (IOException e) {
                         return null;
                     }
                 })
@@ -57,19 +57,19 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
     }
 
     @Override
-    public OutputStream outputStream(final AnnotatedElementView context, final Object... args) {
+    public OutputStream outputStream(AnnotatedElementView context, Object... args) {
         return this.resolvePath(context).map(path -> {
                     try {
                         return Files.newOutputStream(path);
                     }
-                    catch (final IOException e) {
+                    catch (IOException e) {
                         return null;
                     }
                 }).map(BufferedOutputStream::new)
                 .orNull();
     }
 
-    private Option<Path> resolvePath(final AnnotatedElementView context) {
+    private Option<Path> resolvePath(AnnotatedElementView context) {
         return context.annotations().get(FileSource.class)
                 .map(fileSource -> {
                     if (fileSource.relativeToApplicationPath()) {

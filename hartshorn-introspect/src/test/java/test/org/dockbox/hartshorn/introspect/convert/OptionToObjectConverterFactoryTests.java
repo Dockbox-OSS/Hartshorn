@@ -27,20 +27,20 @@ public class OptionToObjectConverterFactoryTests {
 
     @Test
     void testPresentOptionConvertsToObject() {
-        final ConverterFactory<Option<?>, Object> factory = new OptionToObjectConverterFactory();
-        final Converter<Option<?>, String> converter = factory.create(String.class);
-        final Option<String> option = Option.of("test");
-        final String converted = converter.convert(option);
+        ConverterFactory<Option<?>, Object> factory = new OptionToObjectConverterFactory();
+        Converter<Option<?>, String> converter = factory.create(String.class);
+        Option<String> option = Option.of("test");
+        String converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertEquals("test", converted);
     }
 
     @Test
     void testEmptyOptionConvertsToNull() {
-        final ConverterFactory<Option<?>, Object> factory = new OptionToObjectConverterFactory();
-        final Converter<Option<?>, String> converter = factory.create(String.class);
-        final Option<String> option = Option.empty();
-        final String converted = converter.convert(option);
+        ConverterFactory<Option<?>, Object> factory = new OptionToObjectConverterFactory();
+        Converter<Option<?>, String> converter = factory.create(String.class);
+        Option<String> option = Option.empty();
+        String converted = converter.convert(option);
         Assertions.assertNull(converted);
     }
 }

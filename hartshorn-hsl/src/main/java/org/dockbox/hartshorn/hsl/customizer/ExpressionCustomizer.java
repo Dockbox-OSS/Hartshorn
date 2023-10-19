@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
@@ -26,9 +29,6 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
@@ -48,35 +48,35 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
     }
 
     @Override
-    public void call(final ScriptContext context) {
-        final List<Statement> statements = context.statements();
+    public void call(ScriptContext context) {
+        List<Statement> statements = context.statements();
         this.verifyIsExpression(statements);
-        final List<Statement> testStatements = this.enhanceTestStatement(statements);
+        List<Statement> testStatements = this.enhanceTestStatement(statements);
         context.statements(testStatements);
     }
 
-    private void verifyIsExpression(final List<Statement> statements) {
+    private void verifyIsExpression(List<Statement> statements) {
         // Get last statement in the statements list
-        final Statement lastStatement = statements.get(statements.size() - 1);
+        Statement lastStatement = statements.get(statements.size() - 1);
         if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
             throw new ScriptEvaluationError("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
         }
     }
 
-    private List<Statement> enhanceTestStatement(final List<Statement> statements) {
-        final Statement lastStatement = statements.get(statements.size() - 1);
+    private List<Statement> enhanceTestStatement(List<Statement> statements) {
+        Statement lastStatement = statements.get(statements.size() - 1);
         if (!(lastStatement instanceof ReturnStatement)) {
-            final ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            final Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
-            final ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
+            ExpressionStatement statement = (ExpressionStatement) lastStatement;
+            Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
+            ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
             statements.set(statements.size() - 1, returnStatement);
         }
 
-        final Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
-        final BlockStatement blockStatement = new BlockStatement(testToken, statements);
-        final TestStatement testStatement = new TestStatement(testToken, blockStatement);
+        Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
+        BlockStatement blockStatement = new BlockStatement(testToken, statements);
+        TestStatement testStatement = new TestStatement(testToken, blockStatement);
 
-        final List<Statement> validationStatements = new ArrayList<>();
+        List<Statement> validationStatements = new ArrayList<>();
         validationStatements.add(testStatement);
 
         return validationStatements;

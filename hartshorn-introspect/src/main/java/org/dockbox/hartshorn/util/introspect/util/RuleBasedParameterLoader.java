@@ -30,7 +30,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
 
     private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
 
-    public RuleBasedParameterLoader<?> add(final ParameterLoaderRule<? super C> rule) {
+    public RuleBasedParameterLoader<?> add(ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);
         return this;
     }
@@ -40,14 +40,16 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     }
 
     @Override
-    public Object loadArgument(final C context, final int index, final Object... args) {
-        final Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
+    public Object loadArgument(C context, int index, Object... args) {
+        Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
         if (parameterCandidate.present()) {
-            final ParameterView<?> parameter = parameterCandidate.get();
-            for (final ParameterLoaderRule<C> rule : this.rules()) {
+            ParameterView<?> parameter = parameterCandidate.get();
+            for (ParameterLoaderRule<C> rule : this.rules()) {
                 if (rule.accepts(parameter, index, context, args)) {
-                    final Option<?> argument = rule.load(parameter, index, context, args);
-                    if (argument.present()) return argument.get();
+                    Option<?> argument = rule.load(parameter, index, context, args);
+                    if (argument.present()) {
+                        return argument.get();
+                    }
                 }
             }
             return this.loadDefault(parameter, index, context, args);
@@ -56,30 +58,30 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     }
 
     @Override
-    public List<Object> loadArguments(final C context, final Object... args) {
-        final List<Object> arguments = new ArrayList<>();
-        final List<ParameterView<?>> parameters = context.executable().parameters().all();
+    public List<Object> loadArguments(C context, Object... args) {
+        List<Object> arguments = new ArrayList<>();
+        List<ParameterView<?>> parameters = context.executable().parameters().all();
         parameters:
         for (int i = 0; i < parameters.size(); i++) {
-            final ParameterView<?> parameter = parameters.get(i);
+            ParameterView<?> parameter = parameters.get(i);
             try {
-                for (final ParameterLoaderRule<C> rule : this.rules) {
+                for (ParameterLoaderRule<C> rule : this.rules) {
                     if (rule.accepts(parameter, i, context, args)) {
-                        final Option<?> argument = rule.load(parameter, i, context, args);
+                        Option<?> argument = rule.load(parameter, i, context, args);
                         arguments.add(argument.orNull());
                         continue parameters;
                     }
                 }
                 arguments.add(this.loadDefault(parameter, i, context, args));
             }
-            catch (final ApplicationRuntimeException e) {
+            catch (ApplicationRuntimeException e) {
                 throw new ParameterLoadException(parameter, e);
             }
         }
         return Collections.unmodifiableList(arguments);
     }
 
-    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final C context, final Object... args) {
+    protected <T> T loadDefault(ParameterView<T> parameter, int index, C context, Object... args) {
         return parameter.type().defaultOrNull();
     }
 }

@@ -33,12 +33,12 @@ public class PrimitiveWrapperConverter implements GenericConverter, ConditionalC
     }
 
     @Override
-    public boolean canConvert(final Object source, final Class<?> targetType) {
+    public boolean canConvert(Object source, Class<?> targetType) {
         if (source == null) {
             return false;
         }
-        final Class<?> sourceType = source.getClass();
-        final boolean primitiveToWrapper = sourceType.isPrimitive() && TypeUtils.isPrimitiveWrapper(targetType, sourceType);
+        Class<?> sourceType = source.getClass();
+        boolean primitiveToWrapper = sourceType.isPrimitive() && TypeUtils.isPrimitiveWrapper(targetType, sourceType);
         if (primitiveToWrapper) {
             return true;
         }
@@ -47,7 +47,7 @@ public class PrimitiveWrapperConverter implements GenericConverter, ConditionalC
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
+    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
         assert source != null;
         // Implicit (un)boxing
         return source;

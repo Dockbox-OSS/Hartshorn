@@ -47,12 +47,12 @@ public class ExecutableLookup {
      * @return The found executable.
      * @param <T> The type of the declaring type.
      */
-    public static <T> MethodView<T, ?> method(final Token at, final TypeView<T> declaring, final String function, final List<Object> arguments) {
-        final Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
+    public static <T> MethodView<T, ?> method(Token at, TypeView<T> declaring, String function, List<Object> arguments) {
+        Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
-        final List<MethodView<T, ?>> methods = declaring.methods().all().stream()
+        List<MethodView<T, ?>> methods = declaring.methods().all().stream()
                 .filter(method -> method.name().equals(function))
                 .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
@@ -60,8 +60,10 @@ public class ExecutableLookup {
             throw new RuntimeError(at, "Method '" + function + "' with " + arguments.size() + " parameters does not exist on external instance of type " + declaring.name());
         }
 
-        final MethodView<T, ?> executable = executable(methods, arguments);
-        if (executable != null) return executable;
+        MethodView<T, ?> executable = executable(methods, arguments);
+        if (executable != null) {
+            return executable;
+        }
 
         throw new RuntimeError(at, "Method '" + function + "' with parameters accepting " + arguments + " does not exist on external instance of type " + declaring.name());
     }
@@ -77,19 +79,23 @@ public class ExecutableLookup {
      * @param <P> The type of the declaring parent of the executable.
      * @param <T> The context type representing the executable.
      */
-    public static <P, T extends ExecutableElementView<P>> T executable(final List<T> executables, final List<Object> arguments) {
-        for (final T executable : executables) {
+    public static <P, T extends ExecutableElementView<P>> T executable(List<T> executables, List<Object> arguments) {
+        for (T executable : executables) {
             boolean pass = true;
-            if (executable.parameters().count() != arguments.size()) continue;
+            if (executable.parameters().count() != arguments.size()) {
+                continue;
+            }
             for (int i = 0; i < executable.parameters().count(); i++) {
-                final TypeView<?> parameter = executable.parameters().types().get(i);
-                final Object argument = arguments.get(i);
+                TypeView<?> parameter = executable.parameters().types().get(i);
+                Object argument = arguments.get(i);
                 if (!parameter.isInstance(argument)) {
                     pass = false;
                     break;
                 }
             }
-            if (pass) return executable;
+            if (pass) {
+                return executable;
+            }
         }
         return null;
     }

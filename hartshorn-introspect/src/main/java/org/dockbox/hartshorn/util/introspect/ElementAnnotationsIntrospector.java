@@ -29,13 +29,13 @@ public interface ElementAnnotationsIntrospector {
 
     boolean has(Class<? extends Annotation> annotation);
 
-    default boolean hasAny(final Class<? extends Annotation>... annotations) {
+    default boolean hasAny(Class<? extends Annotation>... annotations) {
         return this.hasAny(Set.of(annotations));
     }
 
     boolean hasAny(Set<Class<? extends Annotation>> annotations);
 
-    default boolean hasAll(final Class<? extends Annotation>... annotations) {
+    default boolean hasAll(Class<? extends Annotation>... annotations) {
         return this.hasAll(Set.of(annotations));
     }
 

@@ -28,9 +28,9 @@ public class OptionalToOptionConverterTests {
 
     @Test
     void testPresentOptionalConvertsToPresentOption() {
-        final Converter<Optional<?>, Option<?>> converter = new OptionalToOptionConverter();
-        final Optional<String> option = Optional.of("test");
-        final Option<?> converted = converter.convert(option);
+        Converter<Optional<?>, Option<?>> converter = new OptionalToOptionConverter();
+        Optional<String> option = Optional.of("test");
+        Option<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted.present());
         Assertions.assertEquals("test", converted.get());
@@ -38,9 +38,9 @@ public class OptionalToOptionConverterTests {
 
     @Test
     void testEmptyOptionalConvertsToEmptyOption() {
-        final Converter<Optional<?>, Option<?>> converter = new OptionalToOptionConverter();
-        final Optional<String> option = Optional.empty();
-        final Option<?> converted = converter.convert(option);
+        Converter<Optional<?>, Option<?>> converter = new OptionalToOptionConverter();
+        Optional<String> option = Optional.empty();
+        Option<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted.present());
     }

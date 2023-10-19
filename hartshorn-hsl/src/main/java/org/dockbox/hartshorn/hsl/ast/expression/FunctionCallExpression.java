@@ -28,7 +28,7 @@ public class FunctionCallExpression extends Expression {
     private final Token openParenthesis;
     private final List<Expression> arguments;
 
-    public FunctionCallExpression(final Expression callee, final Token open, final Token close, final List<Expression> arguments) {
+    public FunctionCallExpression(Expression callee, Token open, Token close, List<Expression> arguments) {
         super(callee);
         this.callee = callee;
         this.openParenthesis = open;
@@ -53,7 +53,7 @@ public class FunctionCallExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

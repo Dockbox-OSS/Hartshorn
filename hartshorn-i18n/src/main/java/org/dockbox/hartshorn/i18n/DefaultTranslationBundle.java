@@ -38,7 +38,7 @@ public class DefaultTranslationBundle implements TranslationBundle {
     private final ApplicationContext applicationContext;
     private Locale primaryLanguage = Locale.getDefault();
 
-    public DefaultTranslationBundle(final ApplicationContext applicationContext) {
+    public DefaultTranslationBundle(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -48,7 +48,7 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public DefaultTranslationBundle primaryLanguage(final Locale primaryLanguage) {
+    public DefaultTranslationBundle primaryLanguage(Locale primaryLanguage) {
         this.primaryLanguage = primaryLanguage;
         return this;
     }
@@ -59,42 +59,42 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public Option<Message> message(final String key) {
+    public Option<Message> message(String key) {
         return this.message(key, this.primaryLanguage());
     }
 
     @Override
-    public Option<Message> message(final String key, final Locale language) {
+    public Option<Message> message(String key, Locale language) {
         return Option.of(this.messages.get(key))
                 .map(message -> message.translate(language).detach());
     }
 
     @Override
-    public Message register(final String key, final String value, final Locale language) {
+    public Message register(String key, String value, Locale language) {
         return this.register(new MessageTemplate(value, key, language));
     }
 
     @Override
-    public Message register(final Message message) {
+    public Message register(Message message) {
         this.messages.put(message.key(), this.mergeMessages(message, this.messages));
         return message;
     }
 
     @Override
-    public Message register(final String key, final String value) {
+    public Message register(String key, String value) {
         return this.register(key, value, this.primaryLanguage());
     }
 
-    protected void add(final Message message) {
+    protected void add(Message message) {
         message.translate(this.primaryLanguage());
     }
 
     @Override
-    public TranslationBundle merge(final TranslationBundle bundle) {
-        final DefaultTranslationBundle translationBundle = new DefaultTranslationBundle(this.applicationContext)
+    public TranslationBundle merge(TranslationBundle bundle) {
+        DefaultTranslationBundle translationBundle = new DefaultTranslationBundle(this.applicationContext)
                 .primaryLanguage(this.primaryLanguage());
 
-        final Map<String, Message> messageDict = translationBundle.messages;
+        Map<String, Message> messageDict = translationBundle.messages;
         CollectionUtilities.forEach(
                 message -> messageDict.put(message.key(), this.mergeMessages(message, messageDict)),
                 this.messages(), bundle.messages()
@@ -104,33 +104,35 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public Set<Message> register(final Map<String, String> messages, final Locale locale) {
-        final Set<Message> registeredMessages = new HashSet<>();
+    public Set<Message> register(Map<String, String> messages, Locale locale) {
+        Set<Message> registeredMessages = new HashSet<>();
         messages.forEach((key, value) -> registeredMessages.add(this.register(key, value, locale)));
         registeredMessages.forEach(this::register);
         return Set.copyOf(registeredMessages);
     }
 
     @Override
-    public Set<Message> register(final Path source, final Locale locale, final FileFormat fileFormat) {
-        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
-        final Map<String, String> result = objectMapper.flat(source).entrySet()
+    public Set<Message> register(Path source, Locale locale, FileFormat fileFormat) {
+        ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
+        Map<String, String> result = objectMapper.flat(source).entrySet()
                 .stream()
                 .collect(Collectors.toMap(Entry::getKey, value -> String.valueOf(value.getValue())));
         return this.register(result, locale);
     }
 
     @Override
-    public Set<Message> register(final ResourceBundle resourceBundle) {
-        final Map<String, String> result = resourceBundle.keySet().stream()
+    public Set<Message> register(ResourceBundle resourceBundle) {
+        Map<String, String> result = resourceBundle.keySet().stream()
                 .collect(Collectors.toMap(key -> key, resourceBundle::getString));
         return this.register(result, resourceBundle.getLocale());
     }
 
-    private Message mergeMessages(final Message message, final Map<String, Message> messageDict) {
+    private Message mergeMessages(Message message, Map<String, Message> messageDict) {
         if (messageDict.containsKey(message.key())) {
             return messageDict.get(message.key()).merge(this.primaryLanguage(), message);
         }
-        else return message;
+        else {
+            return message;
+        }
     }
 }

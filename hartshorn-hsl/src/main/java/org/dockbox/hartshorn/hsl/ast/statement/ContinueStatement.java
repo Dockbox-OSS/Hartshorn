@@ -23,7 +23,7 @@ public class ContinueStatement extends Statement {
 
     private final Token keyword;
 
-    public ContinueStatement(final Token keyword) {
+    public ContinueStatement(Token keyword) {
         super(keyword);
         this.keyword = keyword;
     }
@@ -33,7 +33,7 @@ public class ContinueStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.introspect.AccessModifier;
 public interface ReflectionModifierCarrierView extends ModifierCarrierView {
 
     @Override
-    default boolean has(final AccessModifier modifier) {
+    default boolean has(AccessModifier modifier) {
         return modifier.test(this.modifiers().asInt());
     }
 }

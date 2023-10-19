@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util;
 
 public class NotPrimitiveException extends ApplicationRuntimeException {
 
-    public NotPrimitiveException(final Class<?> type) {
+    public NotPrimitiveException(Class<?> type) {
         super(type.getSimpleName() + " is not a primitive type");
     }
 }

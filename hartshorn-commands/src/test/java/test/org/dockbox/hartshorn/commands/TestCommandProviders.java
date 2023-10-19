@@ -31,7 +31,7 @@ public class TestCommandProviders {
 
     @Binds(priority = 0)
     @Singleton
-    public SystemSubject systemSubject(final ApplicationContext applicationContext) {
+    public SystemSubject systemSubject(ApplicationContext applicationContext) {
         return new JUnitSystemSubject(applicationContext);
     }
 }

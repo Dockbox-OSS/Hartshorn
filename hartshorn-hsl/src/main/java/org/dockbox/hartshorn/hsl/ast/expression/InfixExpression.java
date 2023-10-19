@@ -25,7 +25,7 @@ public class InfixExpression extends Expression {
     private final Token infixOperator;
     private final Expression rightExp;
 
-    public InfixExpression(final Expression leftExp, final Token infixOperator, final Expression rightExp) {
+    public InfixExpression(Expression leftExp, Token infixOperator, Expression rightExp) {
         super(infixOperator);
         this.leftExp = leftExp;
         this.infixOperator = infixOperator;
@@ -45,7 +45,7 @@ public class InfixExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

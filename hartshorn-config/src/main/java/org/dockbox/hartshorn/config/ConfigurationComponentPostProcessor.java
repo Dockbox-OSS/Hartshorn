@@ -32,20 +32,20 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> void postConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) {
             return;
         }
 
-        final PropertyHolder propertyHolder = context.get(PropertyHolder.class);
+        PropertyHolder propertyHolder = context.get(PropertyHolder.class);
         this.verifyPropertiesAvailable(context, propertyHolder);
 
-        for (final FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Value.class)) {
+        for (FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Value.class)) {
             try {
-                final Value annotation = field.annotations().get(Value.class).get();
+                Value annotation = field.annotations().get(Value.class).get();
 
-                final String valueKey = annotation.value();
-                final Option<?> property = propertyHolder.get(valueKey, field.genericType().type());
+                String valueKey = annotation.value();
+                Option<?> property = propertyHolder.get(valueKey, field.genericType().type());
 
                 if (property.absent()) {
                     context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
@@ -55,7 +55,7 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
                 context.log().debug("Populating value for configuration field '{}' in {} (key: {}), value is not logged.", field.name(), valueKey, field.type().name());
                 field.set(instance, property.get());
             }
-            catch (final NotPrimitiveException e) {
+            catch (NotPrimitiveException e) {
                 context.log().warn("Could not prepare value field {} in {}", field.name(), processingContext.type().name());
                 context.handle(e);
             }

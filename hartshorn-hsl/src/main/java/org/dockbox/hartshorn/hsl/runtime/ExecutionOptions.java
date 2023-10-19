@@ -25,7 +25,7 @@ public class ExecutionOptions {
         return this.permitAmbiguousExternalFunctions;
     }
 
-    public ExecutionOptions permitAmbiguousExternalFunctions(final boolean permitAmbiguousModuleFunctions) {
+    public ExecutionOptions permitAmbiguousExternalFunctions(boolean permitAmbiguousModuleFunctions) {
         this.permitAmbiguousExternalFunctions = permitAmbiguousModuleFunctions;
         return this;
     }
@@ -34,7 +34,7 @@ public class ExecutionOptions {
         return this.permitDuplicateModules;
     }
 
-    public ExecutionOptions permitDuplicateModules(final boolean permitDuplicateModules) {
+    public ExecutionOptions permitDuplicateModules(boolean permitDuplicateModules) {
         this.permitDuplicateModules = permitDuplicateModules;
         return this;
     }

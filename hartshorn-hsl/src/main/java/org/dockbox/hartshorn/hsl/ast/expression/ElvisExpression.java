@@ -25,9 +25,9 @@ public class ElvisExpression extends Expression {
     private final Token elvisOpe;
     private final Expression rightExp;
 
-    public ElvisExpression(final Expression condition,
-                           final Token elvisOpe,
-                           final Expression rightExp) {
+    public ElvisExpression(Expression condition,
+                           Token elvisOpe,
+                           Expression rightExp) {
         super(elvisOpe);
         this.condition = condition;
         this.elvisOpe = elvisOpe;
@@ -47,7 +47,7 @@ public class ElvisExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

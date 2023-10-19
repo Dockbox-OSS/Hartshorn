@@ -32,15 +32,15 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterView<?> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
-        final ExecutableElementView<?> executable = parameter.declaredBy();
+    public boolean accepts(ParameterView<?> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+        ExecutableElementView<?> executable = parameter.declaredBy();
         return executable.declaredBy().is(Object.class) && "equals".equals(executable.name());
     }
 
     @Override
-    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ProxyParameterLoaderContext context, final Object... args) {
-        final Object argument = args[index];
-        final Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
+    public <T> Option<T> load(ParameterView<T> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+        Object argument = args[index];
+        Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
         return handler.flatMap(ProxyManager::delegate)
                 .orCompute(() -> argument)
                 .cast(parameter.type().type());

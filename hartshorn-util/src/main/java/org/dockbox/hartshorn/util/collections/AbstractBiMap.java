@@ -23,16 +23,16 @@ import java.util.function.Function;
 
 public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
 
-    protected final Map<K, V> forward;
-    protected final Map<V, K> backward;
+    protected Map<K, V> forward;
+    protected Map<V, K> backward;
 
-    protected AbstractBiMap(final Map<K, V> forward, final Map<V, K> backward) {
+    protected AbstractBiMap(Map<K, V> forward, Map<V, K> backward) {
         this.forward = forward;
         this.backward = backward;
     }
 
     @Override
-    public V put(final K key, final V value) {
+    public V put(K key, V value) {
         if (this.forward.containsKey(key)) {
             this.backward.remove(this.forward.get(key));
         }
@@ -44,14 +44,14 @@ public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
     }
 
     @Override
-    public V remove(final Object key) {
-        final V value = this.forward.remove(key);
+    public V remove(Object key) {
+        V value = this.forward.remove(key);
         this.backward.remove(value);
         return value;
     }
 
     @Override
-    public void putAll(final Map<? extends K, ? extends V> map) {
+    public void putAll(Map<? extends K, ? extends V> map) {
         map.forEach(this::put);
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
     }
 
     @Override
-    public boolean containsValue(final Object value) {
+    public boolean containsValue(Object value) {
         return this.forward.containsKey(value);
     }
 
@@ -82,12 +82,12 @@ public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
     }
 
     @Override
-    public boolean containsKey(final Object key) {
+    public boolean containsKey(Object key) {
         return this.forward.containsKey(key);
     }
 
     @Override
-    public V get(final Object key) {
+    public V get(Object key) {
         return this.forward.get(key);
     }
 
@@ -106,9 +106,9 @@ public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
         return this.forward.entrySet();
     }
 
-    private <T> T checkConsistent(final Function<Map<?, ?>, T> function) {
-        final T forwardResult = function.apply(this.forward);
-        final T backwardResult = function.apply(this.backward);
+    private <T> T checkConsistent(Function<Map<?, ?>, T> function) {
+        T forwardResult = function.apply(this.forward);
+        T backwardResult = function.apply(this.backward);
         if (!forwardResult.equals(backwardResult)) {
             throw new IllegalStateException("BiMap is in an inconsistent state");
         }

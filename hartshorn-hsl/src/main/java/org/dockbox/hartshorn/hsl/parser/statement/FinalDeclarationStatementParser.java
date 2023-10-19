@@ -36,10 +36,10 @@ import org.dockbox.hartshorn.util.option.Option;
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
     @Override
-    public Option<FinalizableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<FinalizableStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.FINAL)) {
-            final Token current = parser.peek();
-            final FinalizableStatement finalizable = switch (current.type()) {
+            Token current = parser.peek();
+            FinalizableStatement finalizable = switch (current.type()) {
                 case PREFIX, INFIX -> {
                     parser.advance();
                     if (parser.check(TokenType.FUNCTION)) {
@@ -61,14 +61,14 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
     }
 
     @NonNull
-    private static FinalizableStatement delegateParseStatement(final TokenParser parser, final TokenStepValidator validator, final Class<? extends FinalizableStatement> statement, final String statementType, final Token current) {
+    private static FinalizableStatement delegateParseStatement(TokenParser parser, TokenStepValidator validator, Class<? extends FinalizableStatement> statement, String statementType, Token current) {
         return parser.firstCompatibleParser(statement)
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .orElseThrow(() -> new ScriptEvaluationError("Failed to parse %s statement".formatted(statementType), Phase.PARSING, current));
     }
 
     @NonNull
-    private static Function lookupFinalizableFunction(final TokenParser parser, final TokenStepValidator validator, final Token current) {
+    private static Function lookupFinalizableFunction(TokenParser parser, TokenStepValidator validator, Token current) {
         return parser.firstCompatibleParser(Function.class)
                 .flatMap(functionParser -> functionParser.parse(parser, validator))
                 .orElseThrow(() -> new ScriptEvaluationError("Failed to parse function", Phase.PARSING, current));

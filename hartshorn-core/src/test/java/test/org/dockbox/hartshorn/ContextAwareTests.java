@@ -35,10 +35,10 @@ public class ContextAwareTests {
     @Test
     @TestComponents(components = SampleContextAwareType.class)
     void testApplicationContextIsBound() {
-        final ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
+        ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);
 
-        final SampleContextAwareType sampleContextAwareType = this.applicationContext.get(SampleContextAwareType.class);
+        SampleContextAwareType sampleContextAwareType = this.applicationContext.get(SampleContextAwareType.class);
         Assertions.assertNotNull(sampleContextAwareType);
         Assertions.assertNotNull(sampleContextAwareType.context());
 
@@ -47,7 +47,7 @@ public class ContextAwareTests {
 
     @Test
     void testServiceLocatorIsBound() {
-        final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
+        ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
         Assertions.assertNotNull(componentLocator);
     }
 }

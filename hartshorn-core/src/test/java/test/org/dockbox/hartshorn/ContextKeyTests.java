@@ -27,26 +27,26 @@ public class ContextKeyTests {
 
     @Test
     void testContextKeyNameIsNullIfUndefined() {
-        final ContextKey<Context> undefinedNameKey = ContextKey.builder(Context.class).build();
+        ContextKey<Context> undefinedNameKey = ContextKey.builder(Context.class).build();
         Assertions.assertNull(undefinedNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfEmpty() {
-        final ContextKey<Context> emptyNameKey = ContextKey.builder(Context.class).name("").build();
+        ContextKey<Context> emptyNameKey = ContextKey.builder(Context.class).name("").build();
         Assertions.assertNull(emptyNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfNull() {
         // Ensure no NPE is thrown
-        final ContextKey<Context> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(Context.class).name(null).build());
+        ContextKey<Context> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(Context.class).name(null).build());
         Assertions.assertNull(nullNameKey.name());
     }
 
     @Test
     void testRequiresApplicationContextIsTrueIfFunction() {
-        final ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextKey<Context> key = ContextKey.builder(Context.class)
                 .fallback(applicationContext -> null)
                 .build();
         Assertions.assertTrue(key.requiresApplicationContext());
@@ -54,7 +54,7 @@ public class ContextKeyTests {
 
     @Test
     void testRequiresApplicationContextIsFalseIfSupplier() {
-        final ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextKey<Context> key = ContextKey.builder(Context.class)
                 .fallback(() -> null)
                 .build();
         Assertions.assertFalse(key.requiresApplicationContext());
@@ -62,34 +62,34 @@ public class ContextKeyTests {
 
     @Test
     void testContextDoesNotYieldErrorIfFunctionFallbackProvidesNull() {
-        final ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextKey<Context> key = ContextKey.builder(Context.class)
                 .fallback(applicationContext -> null)
                 .build();
 
-        final ApplicationContext applicationContext = HartshornApplication.create();
+        ApplicationContext applicationContext = HartshornApplication.create();
         Assertions.assertNull(key.create(applicationContext));
     }
 
     @Test
     void testContextDoesNotYieldErrorIfSupplierFallbackProvidesNull() {
-        final ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextKey<Context> key = ContextKey.builder(Context.class)
                 .fallback(() -> null)
                 .build();
 
-        final ApplicationContext applicationContext = HartshornApplication.create();
+        ApplicationContext applicationContext = HartshornApplication.create();
         Assertions.assertNull(key.create(applicationContext));
     }
 
     @Test
     void testCreateYieldsExceptionIfNoFallbackAndApplication() {
-        final ContextKey<Context> key = ContextKey.builder(Context.class).build();
+        ContextKey<Context> key = ContextKey.builder(Context.class).build();
         Assertions.assertThrows(IllegalStateException.class, () -> key.create(null));
     }
 
     @Test
     void testMutableKeyCreatesClone() {
-        final ContextKey<Context> key = ContextKey.builder(Context.class).build();
-        final ContextKey<Context> mutableKey = key.mutable().name("mutable").build();
+        ContextKey<Context> key = ContextKey.builder(Context.class).build();
+        ContextKey<Context> mutableKey = key.mutable().name("mutable").build();
         Assertions.assertNotSame(key, mutableKey);
         Assertions.assertNull(key.name());
         Assertions.assertEquals("mutable", mutableKey.name());

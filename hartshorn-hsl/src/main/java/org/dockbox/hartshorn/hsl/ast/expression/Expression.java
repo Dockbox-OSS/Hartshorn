@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 public abstract class Expression extends ASTNode {
 
-    protected Expression(final ASTNode at) {
+    protected Expression(ASTNode at) {
         super(at);
     }
 

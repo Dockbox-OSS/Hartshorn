@@ -28,7 +28,7 @@ public class EntityElement implements Element {
     public EntityElement() {
     }
 
-    public EntityElement(final String name) {
+    public EntityElement(String name) {
         this.name = name;
     }
 
@@ -38,16 +38,20 @@ public class EntityElement implements Element {
     }
 
     @Override
-    public EntityElement name(final String name) {
+    public EntityElement name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final EntityElement element = (EntityElement) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        EntityElement element = (EntityElement) other;
         return Objects.equals(this.name, element.name);
     }
 

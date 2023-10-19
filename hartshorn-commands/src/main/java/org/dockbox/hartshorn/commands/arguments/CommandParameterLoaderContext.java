@@ -27,9 +27,9 @@ public class CommandParameterLoaderContext extends ApplicationBoundParameterLoad
     private final CommandContext commandContext;
     private final MethodCommandExecutorContext<?> executorContext;
 
-    public CommandParameterLoaderContext(final ExecutableElementView<?> element, final Object instance,
-                                         final ApplicationContext applicationContext, final CommandContext commandContext,
-                                         final MethodCommandExecutorContext<?> executorContext) {
+    public CommandParameterLoaderContext(ExecutableElementView<?> element, Object instance,
+                                         ApplicationContext applicationContext, CommandContext commandContext,
+                                         MethodCommandExecutorContext<?> executorContext) {
         super(element, instance, applicationContext);
         this.commandContext = commandContext;
         this.executorContext = executorContext;

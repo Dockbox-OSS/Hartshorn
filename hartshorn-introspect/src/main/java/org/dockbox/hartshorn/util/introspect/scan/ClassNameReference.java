@@ -22,7 +22,7 @@ public class ClassNameReference implements TypeReference {
 
     private final String name;
 
-    public ClassNameReference(final String name) {
+    public ClassNameReference(String name) {
         this.name = name;
     }
 
@@ -30,7 +30,7 @@ public class ClassNameReference implements TypeReference {
     public Class<?> getOrLoad() throws ClassReferenceLoadException {
         try {
             return Class.forName(this.name, false, Thread.currentThread().getContextClassLoader());
-        } catch (final ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new ClassReferenceLoadException(e);
         }
     }
@@ -51,9 +51,13 @@ public class ClassNameReference implements TypeReference {
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (!(other instanceof final ClassNameReference reference)) return false;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof ClassNameReference reference)) {
+            return false;
+        }
         return this.name.equals(reference.name);
     }
 

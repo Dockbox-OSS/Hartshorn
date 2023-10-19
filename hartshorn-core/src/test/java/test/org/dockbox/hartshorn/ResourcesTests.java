@@ -29,62 +29,62 @@ public class ResourcesTests {
 
     @Test
     void testGetResourceURLReturnsValidURL() {
-        final URL url = Assertions.assertDoesNotThrow(() -> Resources.getResourceURL("sample.txt"));
+        URL url = Assertions.assertDoesNotThrow(() -> Resources.getResourceURL("sample.txt"));
         Assertions.assertNotNull(url);
     }
 
     @Test
     void testGetResourceURLThrowsExceptionWhenResourceNotExists() {
-        final IOException exception = Assertions.assertThrows(IOException.class, () -> Resources.getResourceURL("not-exists.txt"));
+        IOException exception = Assertions.assertThrows(IOException.class, () -> Resources.getResourceURL("not-exists.txt"));
         Assertions.assertEquals("Could not find resource not-exists.txt", exception.getMessage());
     }
 
     @Test
     void testGetResourceAsFileReturnsValidFile() {
-        final File file = Assertions.assertDoesNotThrow(() -> Resources.getResourceAsFile("sample.txt"));
+        File file = Assertions.assertDoesNotThrow(() -> Resources.getResourceAsFile("sample.txt"));
         Assertions.assertNotNull(file);
         Assertions.assertTrue(file.exists());
     }
 
     @Test
     void testGetResourceAsFileThrowsExceptionWhenResourceNotExists() {
-        final IOException exception = Assertions.assertThrows(IOException.class, () -> Resources.getResourceAsFile("not-exists.txt"));
+        IOException exception = Assertions.assertThrows(IOException.class, () -> Resources.getResourceAsFile("not-exists.txt"));
         Assertions.assertEquals("Could not find resource not-exists.txt", exception.getMessage());
     }
 
     @Test
     void testGetResourceURLsReturnsValidURLs() {
-        final Set<URL> urls = Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("sample.txt"));
+        Set<URL> urls = Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("sample.txt"));
         Assertions.assertNotNull(urls);
         Assertions.assertFalse(urls.isEmpty());
         Assertions.assertEquals(1, urls.size());
 
-        final URL url = urls.iterator().next();
+        URL url = urls.iterator().next();
         Assertions.assertNotNull(url);
     }
 
     @Test
     void testGetResourceURLsReturnsEmptyWhenResourceNotExists() {
-        final Set<URL> urls = Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("not-exists.txt"));
+        Set<URL> urls = Assertions.assertDoesNotThrow(() -> Resources.getResourceURLs("not-exists.txt"));
         Assertions.assertNotNull(urls);
         Assertions.assertTrue(urls.isEmpty());
     }
 
     @Test
     void testGetResourceAsFilesReturnsValidFiles() {
-        final Set<File> files = Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsFiles("sample.txt"));
+        Set<File> files = Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsFiles("sample.txt"));
         Assertions.assertNotNull(files);
         Assertions.assertFalse(files.isEmpty());
         Assertions.assertEquals(1, files.size());
 
-        final File file = files.iterator().next();
+        File file = files.iterator().next();
         Assertions.assertNotNull(file);
         Assertions.assertTrue(file.exists());
     }
 
     @Test
     void testGetResourceAsFilesReturnsEmptyWhenResourceNotExists() {
-        final Set<File> files = Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsFiles("not-exists.txt"));
+        Set<File> files = Assertions.assertDoesNotThrow(() -> Resources.getResourcesAsFiles("not-exists.txt"));
         Assertions.assertNotNull(files);
         Assertions.assertTrue(files.isEmpty());
     }

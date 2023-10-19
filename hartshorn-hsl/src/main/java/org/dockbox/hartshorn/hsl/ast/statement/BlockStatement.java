@@ -25,7 +25,7 @@ public class BlockStatement extends Statement {
 
     private final List<Statement> statementList;
 
-    public BlockStatement(final Token at, final List<Statement> statementList) {
+    public BlockStatement(Token at, List<Statement> statementList) {
         super(at);
         this.statementList = statementList;
     }
@@ -35,7 +35,7 @@ public class BlockStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

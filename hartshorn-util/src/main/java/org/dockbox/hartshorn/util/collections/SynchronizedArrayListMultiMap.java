@@ -24,7 +24,7 @@ public class SynchronizedArrayListMultiMap<K, V> extends SynchronizedMultiMap<K,
     public SynchronizedArrayListMultiMap() {
     }
 
-    public SynchronizedArrayListMultiMap(final MultiMap<K, V> map) {
+    public SynchronizedArrayListMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

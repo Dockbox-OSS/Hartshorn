@@ -54,7 +54,7 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    default Attempt<ReturnType, Throwable> invoke(final Parent instance, final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invoke(Parent instance, Object... arguments) {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
@@ -78,7 +78,7 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @throws IllegalIntrospectionException if the method is not static
      * @return the result of the method invocation
      */
-    default Attempt<ReturnType, Throwable> invokeStatic(final Object... arguments) {
+    default Attempt<ReturnType, Throwable> invokeStatic(Object... arguments) {
         return this.invokeStatic(Arrays.asList(arguments));
     }
 

@@ -48,40 +48,40 @@ public class MultimapTests {
     
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testAllValuesIsNonNull(final MultiMap<String, String> map) {
+    void testAllValuesIsNonNull(MultiMap<String, String> map) {
         Assertions.assertNotNull(map.allValues());
         Assertions.assertTrue(map.allValues().isEmpty());
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testGetReturnsEmptyCollectionIfAbsent(final MultiMap<String, String> map) {
-        final Collection<String> collection = map.get("test");
+    void testGetReturnsEmptyCollectionIfAbsent(MultiMap<String, String> map) {
+        Collection<String> collection = map.get("test");
         Assertions.assertNotNull(collection);
         Assertions.assertTrue(collection.isEmpty());
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testPutCreatesCollection(final MultiMap<String, String> map) {
+    void testPutCreatesCollection(MultiMap<String, String> map) {
         map.put("test", "test");
 
-        final Collection<String> collection = map.get("test");
+        Collection<String> collection = map.get("test");
         Assertions.assertNotNull(collection);
         Assertions.assertFalse(collection.isEmpty());
         Assertions.assertEquals(1, collection.size());
 
-        final String value = collection.iterator().next();
+        String value = collection.iterator().next();
         Assertions.assertEquals("test", value);
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testPutMultipleAddsToCollection(final MultiMap<String, String> map) {
+    void testPutMultipleAddsToCollection(MultiMap<String, String> map) {
         map.put("test", "test");
         map.put("test", "test2");
 
-        final Collection<String> collection = map.get("test");
+        Collection<String> collection = map.get("test");
         Assertions.assertNotNull(collection);
         Assertions.assertFalse(collection.isEmpty());
         Assertions.assertEquals(2, collection.size());
@@ -92,29 +92,29 @@ public class MultimapTests {
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testPutIfAbsentDoesNotAddDuplicate(final MultiMap<String, String> map) {
+    void testPutIfAbsentDoesNotAddDuplicate(MultiMap<String, String> map) {
         map.put("test", "test");
         map.putIfAbsent("test", "test");
 
-        final Collection<String> collection = map.get("test");
+        Collection<String> collection = map.get("test");
         Assertions.assertNotNull(collection);
         Assertions.assertFalse(collection.isEmpty());
         Assertions.assertEquals(1, collection.size());
 
-        final String value = collection.iterator().next();
+        String value = collection.iterator().next();
         Assertions.assertEquals("test", value);
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testPutIfAbsentAddsIfAbsent(final MultiMap<String, String> map) {
+    void testPutIfAbsentAddsIfAbsent(MultiMap<String, String> map) {
         map.put("test", "test");
         map.putIfAbsent("test", "test2");
 
         Assertions.assertEquals(2, map.size());
         Assertions.assertEquals(2, map.allValues().size());
 
-        final Collection<String> collection = map.get("test");
+        Collection<String> collection = map.get("test");
         Assertions.assertNotNull(collection);
         Assertions.assertFalse(collection.isEmpty());
         Assertions.assertEquals(2, collection.size());
@@ -125,66 +125,66 @@ public class MultimapTests {
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testKeySetIsNonNull(final MultiMap<String, String> map) {
+    void testKeySetIsNonNull(MultiMap<String, String> map) {
         Assertions.assertNotNull(map.keySet());
         Assertions.assertTrue(map.keySet().isEmpty());
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testKeySetContainsKey(final MultiMap<String, String> map) {
+    void testKeySetContainsKey(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.keySet().contains("test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testKeySetDoesNotContainKeyIfEmpty(final MultiMap<String, String> map) {
+    void testKeySetDoesNotContainKeyIfEmpty(MultiMap<String, String> map) {
         Assertions.assertFalse(map.keySet().contains("test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testContainsKeyReturnsTrueIfKeyExists(final MultiMap<String, String> map) {
+    void testContainsKeyReturnsTrueIfKeyExists(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.containsKey("test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testContainsKeyReturnsFalseIfKeyDoesNotExist(final MultiMap<String, String> map) {
+    void testContainsKeyReturnsFalseIfKeyDoesNotExist(MultiMap<String, String> map) {
         Assertions.assertFalse(map.containsKey("test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testContainsValueReturnsTrueIfValueExists(final MultiMap<String, String> map) {
+    void testContainsValueReturnsTrueIfValueExists(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.containsValue("test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testContainsValueReturnsFalseIfValueDoesNotExist(final MultiMap<String, String> map) {
+    void testContainsValueReturnsFalseIfValueDoesNotExist(MultiMap<String, String> map) {
         Assertions.assertFalse(map.containsValue("test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testContainsEntryReturnsTrueIfEntryExists(final MultiMap<String, String> map) {
+    void testContainsEntryReturnsTrueIfEntryExists(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.containsEntry("test", "test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testContainsEntryReturnsFalseIfEntryDoesNotExist(final MultiMap<String, String> map) {
+    void testContainsEntryReturnsFalseIfEntryDoesNotExist(MultiMap<String, String> map) {
         Assertions.assertFalse(map.containsEntry("test", "test"));
     }
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testRemoveRemovesAllEntries(final MultiMap<String, String> map) {
+    void testRemoveRemovesAllEntries(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.containsEntry("test", "test"));
         
@@ -194,7 +194,7 @@ public class MultimapTests {
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testRemoveKeyRemovesKey(final MultiMap<String, String> map) {
+    void testRemoveKeyRemovesKey(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.containsKey("test"));
         
@@ -204,7 +204,7 @@ public class MultimapTests {
 
     @ParameterizedTest
     @MethodSource("multiMapImplementations")
-    void testReplaceReplacesMatchingEntries(final MultiMap<String, String> map) {
+    void testReplaceReplacesMatchingEntries(MultiMap<String, String> map) {
         map.put("test", "test");
         Assertions.assertTrue(map.containsEntry("test", "test"));
         

@@ -30,7 +30,7 @@ public abstract class ReflectionAnnotatedElementView implements AnnotatedElement
     private final ReflectionIntrospector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;
 
-    protected ReflectionAnnotatedElementView(final ReflectionIntrospector introspector) {
+    protected ReflectionAnnotatedElementView(ReflectionIntrospector introspector) {
         this.introspector = introspector;
     }
 

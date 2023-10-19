@@ -31,7 +31,7 @@ public class CommandListenerImpl implements CommandListener {
     private final CommandGateway gateway;
 
     @Inject
-    public CommandListenerImpl(final ApplicationContext applicationContext, final CommandGateway gateway) {
+    public CommandListenerImpl(ApplicationContext applicationContext, CommandGateway gateway) {
         this.context = applicationContext;
         this.gateway = gateway;
         this.source(SystemSubject.instance(applicationContext));
@@ -50,26 +50,26 @@ public class CommandListenerImpl implements CommandListener {
     }
 
     @Override
-    public CommandListenerImpl async(final boolean async) {
+    public CommandListenerImpl async(boolean async) {
         this.async = async;
         return this;
     }
 
     @Override
-    public CommandListenerImpl input(final InputStream input) {
+    public CommandListenerImpl input(InputStream input) {
         this.input = input;
         return this;
     }
 
     @Override
-    public CommandListenerImpl source(final CommandSource source) {
+    public CommandListenerImpl source(CommandSource source) {
         this.source = source;
         return this;
     }
 
     @Override
     public void open() {
-        final Runnable task = this.createTask();
+        Runnable task = this.createTask();
 
         if (this.async()) {
             this.context.log().debug("Performing startup task for command CLI asynchronously");
@@ -86,19 +86,19 @@ public class CommandListenerImpl implements CommandListener {
 
     private void listenForInput() {
         try (
-                final InputStream input = this.input();
-                final Scanner scanner = new Scanner(input)
+                InputStream input = this.input();
+                Scanner scanner = new Scanner(input)
         ) {
             this.context.log().debug("Starting command CLI input listener");
             while (this.running()) {
-                final String next = scanner.nextLine();
+                String next = scanner.nextLine();
                 try {
                     this.gateway.accept(this.source(), next);
-                } catch (final ParsingException e) {
+                } catch (ParsingException e) {
                     this.context.handle(e);
                 }
             }
-        } catch (final IOException e) {
+        } catch (IOException e) {
             this.context.handle(e);
         }
     }

@@ -26,7 +26,7 @@ public class ArraySetExpression extends Expression implements NamedNode {
     private final Expression index;
     private final Expression value;
 
-    public ArraySetExpression(final Token name, final Expression index, final Expression value) {
+    public ArraySetExpression(Token name, Expression index, Expression value) {
         super(name);
         this.name = name;
         this.index = index;
@@ -47,7 +47,7 @@ public class ArraySetExpression extends Expression implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

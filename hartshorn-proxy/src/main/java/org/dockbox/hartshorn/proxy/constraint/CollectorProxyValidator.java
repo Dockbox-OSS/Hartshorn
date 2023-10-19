@@ -36,7 +36,7 @@ public class CollectorProxyValidator implements ProxyValidator {
     private final Set<ProxyConstraint> constraints = ConcurrentHashMap.newKeySet();
 
     @Override
-    public void add(final ProxyConstraint constraint) {
+    public void add(ProxyConstraint constraint) {
         this.constraints.add(constraint);
     }
 
@@ -46,7 +46,7 @@ public class CollectorProxyValidator implements ProxyValidator {
     }
 
     @Override
-    public Set<ProxyConstraintViolation> validate(final TypeView<?> type) {
+    public Set<ProxyConstraintViolation> validate(TypeView<?> type) {
         return this.constraints.stream()
                 .flatMap(constraint -> constraint.validate(type).stream())
                 .collect(Collectors.toUnmodifiableSet());

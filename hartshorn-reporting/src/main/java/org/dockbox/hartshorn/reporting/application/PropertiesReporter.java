@@ -26,13 +26,13 @@ public class PropertiesReporter implements Reportable {
 
     private final Properties properties;
 
-    public PropertiesReporter(final Properties properties) {
+    public PropertiesReporter(Properties properties) {
         this.properties = properties;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        for (final Entry<Object, Object> entry : this.properties.entrySet()) {
+    public void report(DiagnosticsPropertyCollector collector) {
+        for (Entry<Object, Object> entry : this.properties.entrySet()) {
             collector.property(String.valueOf(entry.getKey())).write(String.valueOf(entry.getValue()));
         }
     }

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DuplicateAnnotationCompositeException extends ApplicationRuntimeException {
-    public DuplicateAnnotationCompositeException(final Object target, final List<? extends Annotation> annotations) {
+    public DuplicateAnnotationCompositeException(Object target, List<? extends Annotation> annotations) {
         super("Found more than one annotation on " + target + ":\n"
                 + annotations.stream().map(Annotation::toString).collect(Collectors.joining("\n")));
     }

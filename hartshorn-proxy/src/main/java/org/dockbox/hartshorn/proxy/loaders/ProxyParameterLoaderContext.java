@@ -30,7 +30,7 @@ public class ProxyParameterLoaderContext extends ParameterLoaderContext {
 
     private final ProxyOrchestrator proxyOrchestrator;
 
-    public ProxyParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ProxyOrchestrator proxyOrchestrator) {
+    public ProxyParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ProxyOrchestrator proxyOrchestrator) {
         super(executable, instance);
         this.proxyOrchestrator = proxyOrchestrator;
     }

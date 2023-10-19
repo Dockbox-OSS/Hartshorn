@@ -25,7 +25,7 @@ public class ArrayGetExpression extends Expression implements NamedNode {
     private final Token name;
     private final Expression index;
 
-    public ArrayGetExpression(final Token name, final Expression index) {
+    public ArrayGetExpression(Token name, Expression index) {
         super(name);
         this.name = name;
         this.index = index;
@@ -41,7 +41,7 @@ public class ArrayGetExpression extends Expression implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

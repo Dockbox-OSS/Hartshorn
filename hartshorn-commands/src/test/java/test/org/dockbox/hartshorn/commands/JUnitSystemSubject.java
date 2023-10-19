@@ -32,12 +32,12 @@ public class JUnitSystemSubject extends SystemSubject {
     private final List<Message> received = new ArrayList<>();
 
     @Inject
-    public JUnitSystemSubject(final ApplicationContext applicationContext) {
+    public JUnitSystemSubject(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
     @Override
-    public void send(final Message text) {
+    public void send(Message text) {
         this.received.add(text);
     }
 

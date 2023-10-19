@@ -68,7 +68,7 @@ public interface MethodWrapper<T> {
      * @param <T> The type of the proxy
      * @return A method wrapper that calls the given callbacks
      */
-    static <T> MethodWrapper<T> of(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
+    static <T> MethodWrapper<T> of(ProxyCallback<T> before, ProxyCallback<T> after, ProxyCallback<T> afterThrowing) {
         return new CallbackMethodWrapper<>(before, after, afterThrowing);
     }
 }

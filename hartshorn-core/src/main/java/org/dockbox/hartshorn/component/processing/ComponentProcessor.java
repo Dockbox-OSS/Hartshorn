@@ -43,6 +43,6 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
      * @return The processed component instance.
      * @param <T> The type of the component.
      */
-    <T> T process(final ComponentProcessingContext<T> processingContext);
+    <T> T process(ComponentProcessingContext<T> processingContext);
 
 }

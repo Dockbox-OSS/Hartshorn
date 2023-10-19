@@ -27,7 +27,7 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     private final ComponentKey<T> componentKey;
     private final Set<ComponentKey<?>> dependencies;
 
-    public ManagedComponentDependencyContext(final ComponentKey<T> componentKey, final Set<ComponentKey<?>> dependencies) {
+    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
     }
@@ -53,7 +53,7 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     }
 
     @Override
-    public void configure(final BindingFunction<T> function) throws ComponentConfigurationException {
+    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         // Do nothing, require processing or standard instance provision
     }
 }

@@ -29,7 +29,7 @@ import net.sf.cglib.proxy.Enhancer;
 public class CglibProxyLookup extends HartshornProxyLookup {
 
     @Override
-    public boolean isProxy(final Class<?> candidate) {
+    public boolean isProxy(Class<?> candidate) {
         return Enhancer.isEnhanced(candidate);
     }
 }

@@ -43,51 +43,51 @@ public abstract class MethodStubTests {
 
     @Test
     void testDefaultBehaviorIsDefaultOrNull() throws ApplicationException {
-        final ProxyOrchestrator orchestrator = this.orchestratorLoader().create(this.introspector());
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = orchestrator.factory(StubbedInterfaceProxy.class);
-        final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
+        ProxyOrchestrator orchestrator = this.orchestratorLoader().create(this.introspector());
+        ProxyFactory<StubbedInterfaceProxy> proxyFactory = orchestrator.factory(StubbedInterfaceProxy.class);
+        StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
 
-        final Option<ProxyManager<StubbedInterfaceProxy>> manager = orchestrator.manager(proxy);
+        Option<ProxyManager<StubbedInterfaceProxy>> manager = orchestrator.manager(proxy);
         Assertions.assertTrue(manager.present());
 
-        final MethodStub<StubbedInterfaceProxy> methodStub = manager.get().advisor().resolver().defaultStub().get();
+        MethodStub<StubbedInterfaceProxy> methodStub = manager.get().advisor().resolver().defaultStub().get();
         Assertions.assertTrue(methodStub instanceof DefaultValueResponseMethodStub<StubbedInterfaceProxy>);
 
-        final String stringValue = Assertions.assertDoesNotThrow(proxy::stringTest);
+        String stringValue = Assertions.assertDoesNotThrow(proxy::stringTest);
         Assertions.assertNull(stringValue);
 
-        final int intValue = Assertions.assertDoesNotThrow(proxy::integerTest);
+        int intValue = Assertions.assertDoesNotThrow(proxy::integerTest);
         Assertions.assertEquals(0, intValue);
     }
 
     @Test
     void testStubBehaviorCanBeChanged() throws ApplicationException {
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
+        ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
 
         // Also verifies that the stub result is not cached
-        final AtomicInteger integer = new AtomicInteger(0);
+        AtomicInteger integer = new AtomicInteger(0);
         proxyFactory.advisors().defaultStub(context -> integer.incrementAndGet());
 
-        final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
+        StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
 
-        final int one = Assertions.<Integer>assertDoesNotThrow(proxy::integerTest);
+        int one = Assertions.<Integer>assertDoesNotThrow(proxy::integerTest);
         Assertions.assertEquals(1, one);
 
-        final int two = Assertions.<Integer>assertDoesNotThrow(proxy::integerTest);
+        int two = Assertions.<Integer>assertDoesNotThrow(proxy::integerTest);
         Assertions.assertEquals(2, two);
     }
 
     @Test
     void testStubsAreObserved() throws ApplicationException, NoSuchMethodException {
-        final ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
+        ProxyFactory<StubbedInterfaceProxy> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(StubbedInterfaceProxy.class);
 
-        final AtomicBoolean beforeObserved = new AtomicBoolean(false);
-        final AtomicBoolean afterObserved = new AtomicBoolean(false);
-        final AtomicBoolean errorObserved = new AtomicBoolean(false);
+        AtomicBoolean beforeObserved = new AtomicBoolean(false);
+        AtomicBoolean afterObserved = new AtomicBoolean(false);
+        AtomicBoolean errorObserved = new AtomicBoolean(false);
 
-        final AtomicBoolean shouldThrow = new AtomicBoolean(false);
+        AtomicBoolean shouldThrow = new AtomicBoolean(false);
 
-        final Method stringTest = StubbedInterfaceProxy.class.getDeclaredMethod("stringTest");
+        Method stringTest = StubbedInterfaceProxy.class.getDeclaredMethod("stringTest");
         proxyFactory.advisors().method(stringTest).wrapAround(wrapper -> wrapper
                 .before(context -> beforeObserved.set(true))
                 .after(context -> afterObserved.set(true))
@@ -95,11 +95,13 @@ public abstract class MethodStubTests {
                 )
                 .defaultStub(context -> {
                     // RuntimeException, as it is not declared in the interface
-                    if (shouldThrow.get()) throw new ApplicationRuntimeException("Test");
+                    if (shouldThrow.get()) {
+                        throw new ApplicationRuntimeException("Test");
+                    }
                     return "test";
                 });
 
-        final StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
+        StubbedInterfaceProxy proxy = proxyFactory.proxy().get();
         Assertions.assertDoesNotThrow(proxy::stringTest);
 
         Assertions.assertTrue(beforeObserved.get());

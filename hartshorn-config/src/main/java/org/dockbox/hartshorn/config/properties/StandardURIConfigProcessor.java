@@ -35,19 +35,19 @@ import jakarta.inject.Singleton;
 public class StandardURIConfigProcessor implements URIConfigProcessor {
 
     @Override
-    public void process(final ApplicationContext context, final Set<ConfigurationURIContext> contexts) {
-        for (final ConfigurationURIContext uriContext : contexts) {
-            final URI uri = uriContext.uri();
-            final String source = uriContext.source();
+    public void process(ApplicationContext context, Set<ConfigurationURIContext> contexts) {
+        for (ConfigurationURIContext uriContext : contexts) {
+            URI uri = uriContext.uri();
+            String source = uriContext.source();
 
-            final FileFormat format = this.lookupFileFormat(uri, source);
+            FileFormat format = this.lookupFileFormat(uri, source);
 
             if (format == null) {
                 context.log().error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
                 return;
             }
 
-            final Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
+            Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
                     .fileType(format)
                     .read(uri, Map.class)
                     .orElseGet(HashMap::new), Map.class);
@@ -57,14 +57,14 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
         }
     }
 
-    protected FileFormat lookupFileFormat(final URI uri, final String source) {
+    protected FileFormat lookupFileFormat(URI uri, String source) {
         // If the source has a file extension, use that
-        final FileFormat lookup = FileFormats.lookup(source);
+        FileFormat lookup = FileFormats.lookup(source);
         if (lookup != null) {
             return lookup;
         }
         else {
-            final String fileName = new File(uri).getName();
+            String fileName = new File(uri).getName();
             return FileFormats.lookup(fileName);
         }
     }

@@ -24,36 +24,36 @@ import java.util.Set;
 public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> {
 
     @Override
-    public Set<GraphNode<T>> iterate(final Graph<T> graph) throws GraphException {
-        final Set<GraphNode<T>> visited = new HashSet<>();
-        for (final GraphNode<T> root : graph.roots()) {
+    public Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException {
+        Set<GraphNode<T>> visited = new HashSet<>();
+        for (GraphNode<T> root : graph.roots()) {
             this.visitSingleRoot(visited, root);
         }
         return visited;
     }
 
-    private void visitSingleRoot(final Set<GraphNode<T>> visited, final GraphNode<T> root) throws GraphException {
-        final Deque<GraphNode<T>> stack = new ArrayDeque<>();
+    private void visitSingleRoot(Set<GraphNode<T>> visited, GraphNode<T> root) throws GraphException {
+        Deque<GraphNode<T>> stack = new ArrayDeque<>();
         stack.push(root);
         boolean atNextPathStart = true;
         while (!stack.isEmpty()) {
-            final GraphNode<T> node = stack.pop();
+            GraphNode<T> node = stack.pop();
             if (visited.add(node) && this.visit(node)) {
                 atNextPathStart = this.visitNextNode(stack, visited, atNextPathStart, node);
             }
         }
     }
 
-    private boolean visitNextNode(final Deque<GraphNode<T>> stack, final Set<GraphNode<T>> visited, boolean atNextPathStart, final GraphNode<T> node) {
+    private boolean visitNextNode(Deque<GraphNode<T>> stack, Set<GraphNode<T>> visited, boolean atNextPathStart, GraphNode<T> node) {
         // Do not use children directly, as we want to ensure they can be visited
         // before considering them for the next node.
-        final Set<GraphNode<T>> visitableChildren = this.visitableChildren(node, visited);
+        Set<GraphNode<T>> visitableChildren = this.visitableChildren(node, visited);
 
         if (visitableChildren.isEmpty()) {
             this.afterPathVisited();
             atNextPathStart = true;
         } else {
-            for (final GraphNode<T> visitableChild : visitableChildren) {
+            for (GraphNode<T> visitableChild : visitableChildren) {
                 stack.push(visitableChild);
             }
             if (atNextPathStart) {
@@ -64,9 +64,9 @@ public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> 
         return atNextPathStart;
     }
 
-    private Set<GraphNode<T>> visitableChildren(final GraphNode<T> node, final Set<GraphNode<T>> visited) {
-        final Set<GraphNode<T>> visitableChildren = new HashSet<>();
-        for (final GraphNode<T> child : node.children()) {
+    private Set<GraphNode<T>> visitableChildren(GraphNode<T> node, Set<GraphNode<T>> visited) {
+        Set<GraphNode<T>> visitableChildren = new HashSet<>();
+        for (GraphNode<T> child : node.children()) {
             if (child instanceof ContainableGraphNode<T> containable && visited.containsAll(containable.parents())) {
                 visitableChildren.add(child);
             }

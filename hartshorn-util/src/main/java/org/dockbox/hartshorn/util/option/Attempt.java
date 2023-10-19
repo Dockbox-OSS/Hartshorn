@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.util.option;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.function.ThrowingSupplier;
-import org.dockbox.hartshorn.util.option.none.FailedNone;
-import org.dockbox.hartshorn.util.option.none.SuccessNone;
-import org.dockbox.hartshorn.util.option.some.FailedSome;
-import org.dockbox.hartshorn.util.option.some.SuccessSome;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -35,6 +26,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.function.ThrowingSupplier;
+import org.dockbox.hartshorn.util.option.none.FailedNone;
+import org.dockbox.hartshorn.util.option.none.SuccessNone;
+import org.dockbox.hartshorn.util.option.some.FailedSome;
+import org.dockbox.hartshorn.util.option.some.SuccessSome;
 
 /**
  * A container object which may or may not contain a non-null value, and which may or may not contain a non-null
@@ -59,13 +59,17 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @return The {@link Attempt} containing the result of the {@link Callable}
      */
     @NonNull
-    static <T> Attempt<T, Exception> of(final @NonNull Callable<@Nullable T> callable) {
+    static <T> Attempt<T, Exception> of(@NonNull Callable<@Nullable T> callable) {
         try {
-            final T result = callable.call();
-            if (result == null) return new SuccessNone<>();
-            else return new SuccessSome<>(result);
+            T result = callable.call();
+            if (result == null) {
+                return new SuccessNone<>();
+            }
+            else {
+                return new SuccessSome<>(result);
+            }
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             return new FailedNone<>(e);
         }
     }
@@ -85,14 +89,16 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @return The {@link Attempt} containing the result of the {@link ThrowingSupplier}
      */
     @NonNull
-    static <T, E extends Throwable> Attempt<T, E> of(final @NonNull ThrowingSupplier<@Nullable T, E> supplier,
-                                                     final @NonNull Class<E> errorType) {
+    static <T, E extends Throwable> Attempt<T, E> of(@NonNull ThrowingSupplier<@Nullable T, E> supplier,
+                                                     @NonNull Class<E> errorType) {
         try {
-            final T result = supplier.get();
-            if (result == null) return new SuccessNone<>();
+            T result = supplier.get();
+            if (result == null) {
+                return new SuccessNone<>();
+            }
             return new SuccessSome<>(result);
         }
-        catch (final Throwable e) {
+        catch (Throwable e) {
             if (errorType.isInstance(e)) {
                 return new FailedNone<>(errorType.cast(e));
             }
@@ -124,8 +130,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @return The {@link Attempt} containing the given value
      */
     @NonNull
-    static <T, E extends Throwable> Attempt<T, E> of(final @Nullable T value) {
-        if (value == null) return new SuccessNone<>();
+    static <T, E extends Throwable> Attempt<T, E> of(@Nullable T value) {
+        if (value == null) {
+            return new SuccessNone<>();
+        }
         return new SuccessSome<>(value);
     }
 
@@ -141,8 +149,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @return The {@link Attempt} based on the given {@link Optional}
      */
     @NonNull
-    static <T, E extends Throwable> Attempt<T, E> of(final @NonNull Optional<T> optional) {
-        if (optional.isEmpty()) return new SuccessNone<>();
+    static <T, E extends Throwable> Attempt<T, E> of(@NonNull Optional<T> optional) {
+        if (optional.isEmpty()) {
+            return new SuccessNone<>();
+        }
         return new SuccessSome<>(optional.get());
     }
 
@@ -165,8 +175,10 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @return The {@link Attempt} containing the given exception
      */
     @NonNull
-    static <T, E extends Throwable, R extends E> Attempt<T, E> of(final @Nullable R throwable) {
-        if (throwable == null) return new SuccessNone<>();
+    static <T, E extends Throwable, R extends E> Attempt<T, E> of(@Nullable R throwable) {
+        if (throwable == null) {
+            return new SuccessNone<>();
+        }
         return new FailedNone<>(throwable);
     }
 
@@ -189,11 +201,17 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @return The {@link Attempt} containing the given value and exception
      */
     @NonNull
-    static <T, E extends Throwable, R extends E> Attempt<T, E> of(final @Nullable T value,
-                                                                  final @Nullable R throwable) {
-        if (value != null && throwable != null) return new FailedSome<>(value, throwable);
-        if (value == null && throwable == null) return new SuccessNone<>();
-        if (value != null) return new SuccessSome<>(value);
+    static <T, E extends Throwable, R extends E> Attempt<T, E> of(@Nullable T value,
+                                                                  @Nullable R throwable) {
+        if (value != null && throwable != null) {
+            return new FailedSome<>(value, throwable);
+        }
+        if (value == null && throwable == null) {
+            return new SuccessNone<>();
+        }
+        if (value != null) {
+            return new SuccessSome<>(value);
+        }
         return new FailedNone<>(throwable);
     }
 
@@ -405,6 +423,9 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * checked exception. If the exception is a checked exception, it will still be thrown without being wrapped.
      *
      * @return the current {@link Attempt} instance.
+     *
+     * @deprecated It is not recommended to throw checked exceptions in an unchecked manner, as this can lead to
+     *             unexpected behavior. This method will be removed in a future release.
      */
     @Deprecated(since = "0.5.0", forRemoval = true)
     default Attempt<T, E> rethrowUnchecked() {
@@ -427,17 +448,17 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
     @NonNull Attempt<T, E> filter(@NonNull Predicate<@NonNull T> predicate);
 
     @Override
-    default <U> Attempt<U, E> ofType(@NonNull final Class<U> type) {
+    default <U> Attempt<U, E> ofType(@NonNull Class<U> type) {
         return this.filter(type::isInstance).cast(type);
     }
 
     @Override
-    default <U> Attempt<U, E> cast(@NonNull final Class<U> type) {
+    default <U> Attempt<U, E> cast(@NonNull Class<U> type) {
         return this.map(type::cast);
     }
 
     @Override
-    default <K extends T, A extends K> Attempt<A, E> adjust(@NonNull final Class<K> type) {
+    default <K extends T, A extends K> Attempt<A, E> adjust(@NonNull Class<K> type) {
         return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
     }
 }

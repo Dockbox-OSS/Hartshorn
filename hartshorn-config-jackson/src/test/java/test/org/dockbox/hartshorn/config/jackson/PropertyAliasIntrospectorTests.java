@@ -44,18 +44,18 @@ public class PropertyAliasIntrospectorTests {
 
     @Test
     void testPropertyNameForSerialization() throws NoSuchFieldException {
-        final Annotated annotated = this.annotated("name");
-        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
-        final PropertyName name = introspector.findNameForSerialization(annotated);
-        final String simpleName = name.getSimpleName();
+        Annotated annotated = this.annotated("name");
+        AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
+        PropertyName name = introspector.findNameForSerialization(annotated);
+        String simpleName = name.getSimpleName();
         Assertions.assertEquals("firstName", simpleName);
     }
 
-    private Annotated annotated(final String name) throws NoSuchFieldException {
-        final Field field = SampleElement.class.getDeclaredField(name);
-        final TypeResolutionContext context = new Empty(TypeFactory.defaultInstance());
-        final AnnotationMap map = new AnnotationMap();
-        for (final Annotation annotation : field.getAnnotations()) {
+    private Annotated annotated(String name) throws NoSuchFieldException {
+        Field field = SampleElement.class.getDeclaredField(name);
+        TypeResolutionContext context = new Empty(TypeFactory.defaultInstance());
+        AnnotationMap map = new AnnotationMap();
+        for (Annotation annotation : field.getAnnotations()) {
             map.add(annotation);
         }
         return new AnnotatedField(context, field, map);
@@ -63,27 +63,27 @@ public class PropertyAliasIntrospectorTests {
 
     @Test
     void testDefaultNameForSerialization() throws NoSuchFieldException {
-        final Annotated annotated = this.annotated("other");
-        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
-        final PropertyName name = introspector.findNameForSerialization(annotated);
+        Annotated annotated = this.annotated("other");
+        AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
+        PropertyName name = introspector.findNameForSerialization(annotated);
         // No explicit property name defined
         Assertions.assertNull(name);
     }
 
     @Test
     void testPropertyNameForDeserialization() throws NoSuchFieldException {
-        final Annotated annotated = this.annotated("name");
-        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
-        final PropertyName name = introspector.findNameForDeserialization(annotated);
-        final String simpleName = name.getSimpleName();
+        Annotated annotated = this.annotated("name");
+        AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
+        PropertyName name = introspector.findNameForDeserialization(annotated);
+        String simpleName = name.getSimpleName();
         Assertions.assertEquals("firstName", simpleName);
     }
 
     @Test
     void testDefaultNameForDeserialization() throws NoSuchFieldException {
-        final Annotated annotated = this.annotated("other");
-        final AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
-        final PropertyName name = introspector.findNameForDeserialization(annotated);
+        Annotated annotated = this.annotated("other");
+        AnnotationIntrospector introspector = new HartshornJacksonAnnotationIntrospector(this.introspector);
+        PropertyName name = introspector.findNameForDeserialization(annotated);
         // No explicit property name defined
         Assertions.assertNull(name);
     }

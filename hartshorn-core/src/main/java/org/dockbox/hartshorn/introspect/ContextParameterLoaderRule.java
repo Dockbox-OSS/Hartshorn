@@ -32,27 +32,29 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ContextParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterView<?> parameter, final int index, final ApplicationBoundParameterLoaderContext context, final Object... args) {
+    public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
         return parameter.annotations().has(Context.class) && parameter.type().isChildOf(org.dockbox.hartshorn.context.Context.class);
     }
 
     @Override
-    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ApplicationBoundParameterLoaderContext context, final Object... args) {
-        final ApplicationContext applicationContext = context.applicationContext();
-        final String name = parameter.annotations().get(Context.class).map(Context::value).orNull();
+    public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+        ApplicationContext applicationContext = context.applicationContext();
+        String name = parameter.annotations().get(Context.class).map(Context::value).orNull();
 
-        final TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
+        TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
         ContextKey<? extends org.dockbox.hartshorn.context.Context> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();
         }
 
-        final Option<? extends org.dockbox.hartshorn.context.Context> out = applicationContext.first(key);
+        Option<? extends org.dockbox.hartshorn.context.Context> out = applicationContext.first(key);
 
-        final boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
+        boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
                 .map(Required::value)
                 .orElse(false));
-        if (required && out.absent()) throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
+        if (required && out.absent()) {
+            throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
+        }
 
         return out.cast(parameter.type().type());
     }

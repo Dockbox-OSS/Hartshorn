@@ -43,7 +43,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
 
     private BindingHierarchy<C> real;
 
-    public ContextWrappedHierarchy(final BindingHierarchy<C> real, final ApplicationContext applicationContext, final Consumer<BindingHierarchy<C>> onUpdate) {
+    public ContextWrappedHierarchy(BindingHierarchy<C> real, ApplicationContext applicationContext, Consumer<BindingHierarchy<C>> onUpdate) {
         this.real = real;
         this.applicationContext = applicationContext;
         this.onUpdate = onUpdate;
@@ -67,25 +67,25 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public BindingHierarchy<C> add(final Provider<C> provider) {
+    public BindingHierarchy<C> add(Provider<C> provider) {
         this.real = this.real().add(provider);
         return this.update();
     }
 
     @Override
-    public BindingHierarchy<C> add(final int priority, final Provider<C> provider) {
+    public BindingHierarchy<C> add(int priority, Provider<C> provider) {
         this.real = this.real().add(priority, provider);
         return this.update();
     }
 
     @Override
-    public BindingHierarchy<C> addNext(final Provider<C> provider) {
+    public BindingHierarchy<C> addNext(Provider<C> provider) {
         this.real = this.real().addNext(provider);
         return this.update();
     }
 
     @Override
-    public BindingHierarchy<C> merge(final BindingHierarchy<C> hierarchy) {
+    public BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy) {
         this.real = this.real().merge(hierarchy);
         return this.update();
     }
@@ -96,7 +96,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public Option<Provider<C>> get(final int priority) {
+    public Option<Provider<C>> get(int priority) {
         return this.real().get(priority);
     }
 

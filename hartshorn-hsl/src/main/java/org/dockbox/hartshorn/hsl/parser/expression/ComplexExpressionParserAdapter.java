@@ -40,8 +40,8 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ComplexExpressionParserAdapter implements ExpressionParser {
 
     @Override
-    public Option<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
-        final ComplexExpressionParser expressionParser = new ComplexExpressionParser(parser, validator);
+    public Option<Expression> parse(TokenParser parser, TokenStepValidator validator) {
+        ComplexExpressionParser expressionParser = new ComplexExpressionParser(parser, validator);
         return Option.of(expressionParser.parse());
     }
 

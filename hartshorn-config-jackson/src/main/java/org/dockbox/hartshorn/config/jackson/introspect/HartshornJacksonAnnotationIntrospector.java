@@ -40,31 +40,39 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
 
     private final Introspector introspector;
 
-    public HartshornJacksonAnnotationIntrospector(final Introspector introspector) {
+    public HartshornJacksonAnnotationIntrospector(Introspector introspector) {
         this.introspector = introspector;
     }
 
     @Override
-    public JavaType refineSerializationType(final MapperConfig<?> config, final Annotated annotated, final JavaType baseType) throws JsonMappingException {
+    public JavaType refineSerializationType(MapperConfig<?> config, Annotated annotated, JavaType baseType) throws JsonMappingException {
         if (annotated.hasAnnotation(Property.class)) {
-            final Property property = annotated.getAnnotation(Property.class);
-            final TypeFactory typeFactory = config.getTypeFactory();
+            Property property = annotated.getAnnotation(Property.class);
+            TypeFactory typeFactory = config.getTypeFactory();
             JavaType type = baseType;
 
             // Property type
-            final Class<?> valueClass = this._classIfExplicit(property.type());
+            Class<?> valueClass = this._classIfExplicit(property.type());
             if (valueClass != null) {
-                if (type.hasRawClass(valueClass)) type = type.withStaticTyping();
-                else type = this.refineAssignableType(typeFactory, type, valueClass);
+                if (type.hasRawClass(valueClass)) {
+                    type = type.withStaticTyping();
+                }
+                else {
+                    type = this.refineAssignableType(typeFactory, type, valueClass);
+                }
             }
 
             // Key type - for container-like types
             if (type.isMapLikeType()) {
                 JavaType keyType = type.getKeyType();
-                final Class<?> keyClass = this._classIfExplicit(property.key());
+                Class<?> keyClass = this._classIfExplicit(property.key());
                 if (keyClass != null) {
-                    if (keyType.hasRawClass(keyClass)) type = type.withStaticTyping();
-                    else keyType = this.refineAssignableType(typeFactory, keyType, keyClass);
+                    if (keyType.hasRawClass(keyClass)) {
+                        type = type.withStaticTyping();
+                    }
+                    else {
+                        keyType = this.refineAssignableType(typeFactory, keyType, keyClass);
+                    }
                     type = ((MapLikeType) type).withKeyType(keyType);
                 }
             }
@@ -72,10 +80,14 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
             // Content type - for container-like types
             JavaType contentType = type.getContentType();
             if (contentType != null) {
-                final Class<?> contentClass = this._classIfExplicit(property.content());
+                Class<?> contentClass = this._classIfExplicit(property.content());
                 if (contentClass != null) {
-                    if (contentType.hasRawClass(contentClass)) contentType = contentType.withStaticTyping();
-                    else contentType = this.refineAssignableType(typeFactory, contentType, contentClass);
+                    if (contentType.hasRawClass(contentClass)) {
+                        contentType = contentType.withStaticTyping();
+                    }
+                    else {
+                        contentType = this.refineAssignableType(typeFactory, contentType, contentClass);
+                    }
                     type = type.withContentType(contentType);
                 }
             }
@@ -85,44 +97,50 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
         return super.refineSerializationType(config, annotated, baseType);
     }
 
-    private JavaType refineAssignableType(final TypeFactory typeFactory, final JavaType javaType, final Class<?> type) throws JacksonIntrospectionException {
-        final Class<?> rawClass = javaType.getRawClass();
-        if (type.isAssignableFrom(rawClass)) return typeFactory.constructGeneralizedType(javaType, type);
-        else if (rawClass.isAssignableFrom(type)) return typeFactory.constructSpecializedType(javaType, type);
-        else throw new JacksonIntrospectionException(null, "Cannot refine property content type from " + rawClass.getName() + " to " + type.getName());
+    private JavaType refineAssignableType(TypeFactory typeFactory, JavaType javaType, Class<?> type) throws JacksonIntrospectionException {
+        Class<?> rawClass = javaType.getRawClass();
+        if (type.isAssignableFrom(rawClass)) {
+            return typeFactory.constructGeneralizedType(javaType, type);
+        }
+        else if (rawClass.isAssignableFrom(type)) {
+            return typeFactory.constructSpecializedType(javaType, type);
+        }
+        else {
+            throw new JacksonIntrospectionException(null, "Cannot refine property content type from " + rawClass.getName() + " to " + type.getName());
+        }
     }
 
     @Override
-    public JavaType refineDeserializationType(final MapperConfig<?> config, final Annotated annotated, final JavaType baseType) throws JsonMappingException {
+    public JavaType refineDeserializationType(MapperConfig<?> config, Annotated annotated, JavaType baseType) throws JsonMappingException {
         if (annotated.hasAnnotation(Property.class)) {
-            final Property property = annotated.getAnnotation(Property.class);
-            final TypeFactory typeFactory = config.getTypeFactory();
+            Property property = annotated.getAnnotation(Property.class);
+            TypeFactory typeFactory = config.getTypeFactory();
             JavaType type = baseType;
 
             // Property type
-            final Class<?> valueClass = this._classIfExplicit(property.type());
+            Class<?> valueClass = this._classIfExplicit(property.type());
             if (valueClass != null && !type.hasRawClass(valueClass)) {
                 type = typeFactory.constructSpecializedType(type, valueClass);
             }
 
             // Key type - for container-like types
             if (type.isMapLikeType()) {
-                final JavaType keyType = type.getKeyType();
+                JavaType keyType = type.getKeyType();
                 // Filters void types, including default used in RefineProperty
-                final Class<?> keyClass = this._classIfExplicit(property.key());
+                Class<?> keyClass = this._classIfExplicit(property.key());
                 if (keyClass != null) {
-                    final JavaType specializedType = typeFactory.constructSpecializedType(keyType, keyClass);
+                    JavaType specializedType = typeFactory.constructSpecializedType(keyType, keyClass);
                     type = ((MapLikeType) type).withKeyType(specializedType);
                 }
             }
 
             // Content type - for container-like types
-            final JavaType contentType = type.getContentType();
+            JavaType contentType = type.getContentType();
             if (contentType != null) {
                 // Filters void types, including default used in RefineProperty
-                final Class<?> contentClass = this._classIfExplicit(property.content());
+                Class<?> contentClass = this._classIfExplicit(property.content());
                 if (contentClass != null) {
-                    final JavaType specializedType = typeFactory.constructSpecializedType(contentType, contentClass);
+                    JavaType specializedType = typeFactory.constructSpecializedType(contentType, contentClass);
                     type = type.withContentType(specializedType);
                 }
             }
@@ -133,20 +151,20 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
     }
 
     @Override
-    public PropertyName findNameForSerialization(final Annotated annotated) {
+    public PropertyName findNameForSerialization(Annotated annotated) {
         return this.findName(annotated, super::findNameForSerialization);
     }
 
     @Override
-    public PropertyName findNameForDeserialization(final Annotated annotated) {
+    public PropertyName findNameForDeserialization(Annotated annotated) {
         return this.findName(annotated, super::findNameForDeserialization);
     }
 
-    private PropertyName findName(final Annotated annotated, final Function<Annotated, PropertyName> defaultValue) {
-        final AnnotatedElement element = annotated.getAnnotated();
+    private PropertyName findName(Annotated annotated, Function<Annotated, PropertyName> defaultValue) {
+        AnnotatedElement element = annotated.getAnnotated();
         if (element != null) {
-            final ElementAnnotationsIntrospector introspector = this.introspector.introspect(element);
-            final Option<Property> annotation = introspector.get(Property.class);
+            ElementAnnotationsIntrospector introspector = this.introspector.introspect(element);
+            Option<Property> annotation = introspector.get(Property.class);
             if (annotation.present()) {
                 return new PropertyName(annotation.get().name());
             }
@@ -155,7 +173,7 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
     }
 
     @Override
-    public boolean hasIgnoreMarker(final AnnotatedMember member) {
+    public boolean hasIgnoreMarker(AnnotatedMember member) {
         if (this.introspector.introspect(member.getAnnotated()).has(IgnoreProperty.class)) {
             return true;
         }

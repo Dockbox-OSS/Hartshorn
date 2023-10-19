@@ -34,7 +34,7 @@ public class ProxyContextContainer extends DefaultContext {
 
     private final Runnable onModify;
 
-    public ProxyContextContainer(final Runnable onModify) {
+    public ProxyContextContainer(Runnable onModify) {
         this.onModify = onModify;
     }
 
@@ -49,13 +49,13 @@ public class ProxyContextContainer extends DefaultContext {
     }
 
     @Override
-    public <C extends Context> void add(final C context) {
+    public <C extends Context> void add(C context) {
         super.add(context);
         this.onModify.run();
     }
 
     @Override
-    public <C extends Context> void add(final String name, final C context) {
+    public <C extends Context> void add(String name, C context) {
         super.add(name, context);
         this.onModify.run();
     }

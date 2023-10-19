@@ -24,7 +24,7 @@ public class VariableExpression extends Expression implements NamedNode {
 
     private final Token name;
 
-    public VariableExpression(final Token name) {
+    public VariableExpression(Token name) {
         super(name);
         this.name = name;
     }
@@ -35,7 +35,7 @@ public class VariableExpression extends Expression implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

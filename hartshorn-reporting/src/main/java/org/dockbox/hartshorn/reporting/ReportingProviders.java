@@ -33,8 +33,8 @@ import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
 public class ReportingProviders {
 
     @Binds
-    public Reportable applicationReportable(final ApplicationContext applicationContext) {
-        final ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> reporter = new AggregateDiagnosticsReporter();
+    public Reportable applicationReportable(ApplicationContext applicationContext) {
+        ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> reporter = new AggregateDiagnosticsReporter();
         reporter.configuration().add(new SystemDiagnosticsReporter());
         reporter.configuration().add(new ApplicationDiagnosticsReporter(applicationContext));
         reporter.configuration().add(new ComponentDiagnosticsReporter(applicationContext));

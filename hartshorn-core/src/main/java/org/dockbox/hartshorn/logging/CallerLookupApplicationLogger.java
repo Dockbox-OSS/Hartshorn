@@ -38,27 +38,31 @@ public abstract class CallerLookupApplicationLogger implements ApplicationLogger
     @Override
     public Logger log() {
         StackTraceElement element = null;
-        for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-            final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
 
             try {
-                final Class<?> clazz = Class.forName(ste.getClassName());
-                final boolean isExcluded = clazz.isAnnotationPresent(LogExclude.class);
+                Class<?> clazz = Class.forName(ste.getClassName());
+                boolean isExcluded = clazz.isAnnotationPresent(LogExclude.class);
                 if (!isJavaModule && !isExcluded) {
                     element = ste;
                     break;
                 }
             }
-            catch (final ClassNotFoundException ignored) {
+            catch (ClassNotFoundException ignored) {
             }
         }
 
-        if (element == null) throw new StackVisitingException("Could not determine caller from stacktrace");
+        if (element == null) {
+            throw new StackVisitingException("Could not determine caller from stacktrace");
+        }
 
-        final String className = element.getClassName().split("\\$")[0];
-        if (this.loggers.containsKey(className)) return this.loggers.get(className);
+        String className = element.getClassName().split("\\$")[0];
+        if (this.loggers.containsKey(className)) {
+            return this.loggers.get(className);
+        }
 
-        final Logger logger = LoggerFactory.getLogger(className);
+        Logger logger = LoggerFactory.getLogger(className);
         this.loggers.put(className, logger);
         return logger;
     }

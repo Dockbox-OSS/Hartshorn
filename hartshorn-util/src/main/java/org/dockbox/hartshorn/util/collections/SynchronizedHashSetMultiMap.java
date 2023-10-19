@@ -24,7 +24,7 @@ public class SynchronizedHashSetMultiMap<K, V> extends SynchronizedMultiMap<K, V
     public SynchronizedHashSetMultiMap() {
     }
 
-    public SynchronizedHashSetMultiMap(final MultiMap<K, V> map) {
+    public SynchronizedHashSetMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

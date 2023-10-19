@@ -22,10 +22,10 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 public class AbsentBindingCondition implements Condition {
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
-            final ComponentKey<?> key = ComponentKey.of(condition.value(), condition.name());
-            final BindingHierarchy<?> hierarchy = context.applicationContext().hierarchy(key);
+            ComponentKey<?> key = ComponentKey.of(condition.value(), condition.name());
+            BindingHierarchy<?> hierarchy = context.applicationContext().hierarchy(key);
             return hierarchy.size() > 0
                     ? ConditionResult.matched()
                     : ConditionResult.notFound("Binding", String.valueOf(key));

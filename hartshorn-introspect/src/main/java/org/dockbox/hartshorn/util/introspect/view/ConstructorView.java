@@ -50,7 +50,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T> {
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    default Attempt<T, Throwable> create(final Object... arguments) {
+    default Attempt<T, Throwable> create(Object... arguments) {
         return this.create(Arrays.asList(arguments));
     }
 

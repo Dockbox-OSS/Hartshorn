@@ -56,13 +56,13 @@ public final class CollectionUtilities {
      */
     @SafeVarargs
     @Deprecated
-    public static <K, V> Map<K, V> ofEntries(final Entry<? extends K, ? extends V>... entries) {
+    public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
             return new HashMap<>();
         }
         else {
-            final Map<K, V> map = new HashMap<>();
-            for (final Entry<? extends K, ? extends V> entry : entries) {
+            Map<K, V> map = new HashMap<>();
+            for (Entry<? extends K, ? extends V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
             return map;
@@ -70,38 +70,38 @@ public final class CollectionUtilities {
     }
 
     @SafeVarargs
-    public static <T> Set<T> merge(final Collection<T>... collections) {
-        final Set<T> merged = new HashSet<>();
-        for (final Collection<T> collection : collections) {
+    public static <T> Set<T> merge(Collection<T>... collections) {
+        Set<T> merged = new HashSet<>();
+        for (Collection<T> collection : collections) {
             merged.addAll(collection);
         }
         return merged;
     }
 
     @SafeVarargs
-    public static <T> List<T> mergeList(final Collection<T>... collections) {
-        final List<T> merged = new ArrayList<>();
-        for (final Collection<T> collection : collections) {
+    public static <T> List<T> mergeList(Collection<T>... collections) {
+        List<T> merged = new ArrayList<>();
+        for (Collection<T> collection : collections) {
             merged.addAll(collection);
         }
         return merged;
     }
 
-    public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
-        final T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
+    public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
+        T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
         System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);
         return merged;
     }
 
-    public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
-        final BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
+    public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
+        BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
                 .filter(element -> !c2.contains(element))
                 .toList();
 
-        final List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
-        final List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
+        List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
+        List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
 
-        final List<T> mergedDifference = new ArrayList<>(differenceInOne.size() + differenceInTwo.size());
+        List<T> mergedDifference = new ArrayList<>(differenceInOne.size() + differenceInTwo.size());
         mergedDifference.addAll(differenceInOne);
         mergedDifference.addAll(differenceInTwo);
 
@@ -109,8 +109,8 @@ public final class CollectionUtilities {
     }
 
     @SafeVarargs
-    public static <T> void forEach(final Consumer<T> consumer, final Collection<T>... collections) {
-        for (final Collection<T> collection : collections) {
+    public static <T> void forEach(Consumer<T> consumer, Collection<T>... collections) {
+        for (Collection<T> collection : collections) {
             collection.forEach(consumer);
         }
     }

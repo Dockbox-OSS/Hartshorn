@@ -24,7 +24,7 @@ public class ApplicationContextShutdownHook implements Runnable {
     private final Logger logger;
     private final ApplicationContext applicationContext;
 
-    public ApplicationContextShutdownHook(final Logger logger, final ApplicationContext applicationContext) {
+    public ApplicationContextShutdownHook(Logger logger, ApplicationContext applicationContext) {
         this.logger = logger;
         this.applicationContext = applicationContext;
     }
@@ -36,7 +36,7 @@ public class ApplicationContextShutdownHook implements Runnable {
                 this.applicationContext.close();
             }
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             this.logger.error("Failed to close application context", e);
         }
     }

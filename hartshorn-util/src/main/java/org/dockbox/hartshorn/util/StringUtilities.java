@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class StringUtilities {
+public class StringUtilities {
 
     private static final Pattern minorTimeString = Pattern.compile("^\\d+$");
     private static final Pattern timeString = Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
@@ -35,40 +35,40 @@ public final class StringUtilities {
     private static final int secondsInDay = 24 * StringUtilities.secondsInHour;
     private static final int secondsInWeek = 7 * StringUtilities.secondsInDay;
 
-    public static String capitalize(final String value) {
+    public static String capitalize(String value) {
         return StringUtilities.empty(value)
                 ? value
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-    public static boolean empty(final CharSequence value) {
+    public static boolean empty(CharSequence value) {
         return null == value || value.isEmpty();
     }
 
-    public static boolean notEmpty(final CharSequence value) {
+    public static boolean notEmpty(CharSequence value) {
         return null != value && !value.isEmpty();
     }
 
-    public static String emptyIfNull(final String value) {
+    public static String emptyIfNull(String value) {
         return null == value ? "" : value;
     }
 
-    public static String nullIfEmpty(final String value) {
+    public static String nullIfEmpty(String value) {
         return StringUtilities.empty(value) ? null : value;
     }
 
-    public static String strip(final String value) {
+    public static String strip(String value) {
         return value.replaceAll("[\n\r\t ]+", "").trim();
     }
 
-    public static Option<Duration> durationOf(final String value) {
+    public static Option<Duration> durationOf(String value) {
         // First, if just digits, return the number in seconds.
 
         if (StringUtilities.minorTimeString.matcher(value).matches()) {
             return Option.of(Duration.ofSeconds(Long.parseUnsignedLong(value)));
         }
 
-        final Matcher m = StringUtilities.timeString.matcher(value);
+        Matcher m = StringUtilities.timeString.matcher(value);
         if (m.matches()) {
             long time = StringUtilities.durationAmount(m.group(2), StringUtilities.secondsInWeek);
             time += StringUtilities.durationAmount(m.group(4), StringUtilities.secondsInDay);
@@ -83,7 +83,7 @@ public final class StringUtilities {
         return Option.empty();
     }
 
-    private static long durationAmount(@Nullable final String value, final int multiplier) {
+    private static long durationAmount(@Nullable String value, int multiplier) {
         if (null != value && !value.isEmpty()) {
             return multiplier * Long.parseUnsignedLong(value);
         }
@@ -91,14 +91,14 @@ public final class StringUtilities {
         return 0;
     }
 
-    public static String[] splitCapitals(final String value) {
+    public static String[] splitCapitals(String value) {
         return value.split("(?=\\p{Lu})");
     }
 
-    public static String trimWith(final char trimCharacter, final String value) {
+    public static String trimWith(char trimCharacter, String value) {
         int length = value.length();
         int currentIndex = 0;
-        final char[] characters = value.toCharArray();
+        char[] characters = value.toCharArray();
 
         while ((currentIndex < length) && (characters[currentIndex] <= trimCharacter)) {
             currentIndex++;
@@ -109,30 +109,32 @@ public final class StringUtilities {
         return ((currentIndex > 0) || (length < value.length())) ? value.substring(currentIndex, length) : value;
     }
 
-    public static String format(final String format, final Object... args) {
-        if (0 == args.length) return format;
-        final Map<String, String> map = new HashMap<>();
+    public static String format(String format, Object... args) {
+        if (0 == args.length) {
+            return format;
+        }
+        Map<String, String> map = new HashMap<>();
 
         for (int i = 0; i < args.length; i++) {
-            final String arg = String.valueOf(args[i]);
+            String arg = String.valueOf(args[i]);
             map.put(String.format("{%d}", i), arg);
         }
         return StringUtilities.format(format, map);
     }
 
-    public static String format(final String string, final Map<String, String> replacements) {
-        final StringBuilder sb = new StringBuilder(string);
+    public static String format(String string, Map<String, String> replacements) {
+        StringBuilder sb = new StringBuilder(string);
         int size = string.length();
-        for (final Entry<String, String> entry : replacements.entrySet()) {
+        for (Entry<String, String> entry : replacements.entrySet()) {
             if (0 == size) {
                 break;
             }
-            final String key = entry.getKey();
-            final String value = entry.getValue();
+            String key = entry.getKey();
+            String value = entry.getValue();
             int nextSearchStart;
             int start = sb.indexOf(key, 0);
             while (-1 < start) {
-                final int end = start + key.length();
+                int end = start + key.length();
                 nextSearchStart = start + value.length();
                 sb.replace(start, end, value);
                 size -= end - start;

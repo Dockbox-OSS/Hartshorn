@@ -119,10 +119,10 @@ public class DefaultArgumentConverters {
     public static ArgumentConverter<Message> messageArgumentConverter() {
         return ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
                 .withConverter((src, in) -> {
-                    final TranslationService rs = src.applicationContext().get(TranslationService.class);
+                    TranslationService rs = src.applicationContext().get(TranslationService.class);
                     return rs.get(in);
                 }).withSuggestionProvider((src, in) -> {
-                    final TranslationService rs = src.applicationContext().get(TranslationService.class);
+                    TranslationService rs = src.applicationContext().get(TranslationService.class);
                     return rs.bundle().messages().stream()
                             .map(Message::key)
                             .filter(key -> key.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
@@ -155,13 +155,13 @@ public class DefaultArgumentConverters {
 
     @StaticBinds
     public static ArgumentConverter<Integer[]> remainingIntegersArgumentConverter() {
-        final Converter<String, Integer> integerConverter = new StringToNumberConverterFactory().create(Integer.class);
+        Converter<String, Integer> integerConverter = new StringToNumberConverterFactory().create(Integer.class);
         return ArgumentConverterImpl.builder(Integer[].class, "remainingInt")
-                .withConverter((final String in) -> {
-                    final String[] parts = in.split(" ");
-                    final Integer[] integers = new Integer[parts.length];
+                .withConverter((String in) -> {
+                    String[] parts = in.split(" ");
+                    Integer[] integers = new Integer[parts.length];
                     for (int i = 0; i < parts.length; i++) {
-                        final String part = parts[i];
+                        String part = parts[i];
                         integers[i] = integerConverter.convert(part);
                     }
                     return Option.of(integers);

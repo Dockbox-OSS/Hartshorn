@@ -29,40 +29,40 @@ public class GenericTypeTests {
 
     @Test
     void testGenericTypeOfSimpleTypeIsCorrect() {
-        final GenericType<String> genericType = new GenericType<>() {};
-        final Type type = genericType.type();
+        GenericType<String> genericType = new GenericType<>() {};
+        Type type = genericType.type();
         Assertions.assertTrue(type instanceof Class<?>);
         Assertions.assertEquals(String.class, type);
 
-        final Option<Class<String>> classOption = genericType.asClass();
+        Option<Class<String>> classOption = genericType.asClass();
         Assertions.assertTrue(classOption.present());
         Assertions.assertSame(String.class, classOption.get());
     }
 
     @Test
     void testGenericTypeOfParameterizedTypeIsCorrect() {
-        final GenericType<List<String>> genericType = new GenericType<>() {};
-        final Type type = genericType.type();
+        GenericType<List<String>> genericType = new GenericType<>() {};
+        Type type = genericType.type();
         Assertions.assertTrue(type instanceof ParameterizedType);
 
-        final ParameterizedType parameterizedType = (ParameterizedType) type;
-        final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        Type[] typeArguments = parameterizedType.getActualTypeArguments();
         Assertions.assertEquals(1, typeArguments.length);
         Assertions.assertEquals(String.class, typeArguments[0]);
 
-        final Option<Class<List<String>>> classOption = genericType.asClass();
+        Option<Class<List<String>>> classOption = genericType.asClass();
         // ParameterizedType should not yield a class
         Assertions.assertTrue(classOption.absent());
     }
 
     @Test
     void testWildcardTypeYieldsObject() {
-        final GenericType<?> genericType = new GenericType<>() {};
-        final Type type = genericType.type();
+        GenericType<?> genericType = new GenericType<>() {};
+        Type type = genericType.type();
         Assertions.assertTrue(type instanceof Class<?>);
         Assertions.assertEquals(Object.class, type);
 
-        final Option<? extends Class<?>> classOption = genericType.asClass();
+        Option<? extends Class<?>> classOption = genericType.asClass();
         Assertions.assertTrue(classOption.present());
         Assertions.assertEquals(Object.class, classOption.get());
     }

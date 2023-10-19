@@ -36,7 +36,7 @@ public class GroovyTraitConstraint implements ProxyConstraint {
     private static final String GROOVY_TRAIT = "groovy.transform.Trait";
 
     @Override
-    public Set<ProxyConstraintViolation> validate(final TypeView<?> typeView) {
+    public Set<ProxyConstraintViolation> validate(TypeView<?> typeView) {
         if (this.isGroovyTrait(typeView.type())) {
             return Set.of(new ProxyConstraintViolation("Cannot create proxy for Groovy trait " + typeView.qualifiedName()));
         }
@@ -50,12 +50,12 @@ public class GroovyTraitConstraint implements ProxyConstraint {
      * @param type the type to check
      * @return {@code true} if the type is a Groovy trait, {@code false} otherwise
      */
-    protected boolean isGroovyTrait(final Class<?> type) {
+    protected boolean isGroovyTrait(Class<?> type) {
         try {
-            final Class<?> groovyTrait = Class.forName(GROOVY_TRAIT);
+            Class<?> groovyTrait = Class.forName(GROOVY_TRAIT);
             return groovyTrait.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
         }
-        catch (final ClassNotFoundException e) {
+        catch (ClassNotFoundException e) {
             return false;
         }
     }

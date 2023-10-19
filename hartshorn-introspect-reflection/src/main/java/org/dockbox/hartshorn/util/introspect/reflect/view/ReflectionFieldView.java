@@ -44,7 +44,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     private Function<Object, Attempt<FieldType, Throwable>> getter;
     private BiConsumer<Object, FieldType> setter;
 
-    public ReflectionFieldView(final ReflectionIntrospector introspector, final Field field) {
+    public ReflectionFieldView(ReflectionIntrospector introspector, Field field) {
         super(introspector);
         this.field = field;
         this.introspector = introspector;
@@ -59,24 +59,24 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public void set(final Object instance, final Object value) {
+    public void set(Object instance, Object value) {
         if (value != null && !this.type().isInstance(value)) {
             throw new IllegalIntrospectionException(this, "Cannot set field " + this.field.getName() + " to value of type " + value.getClass().getName() + ", expected " + this.type().name());
         }
 
         if (this.setter == null) {
-            final Option<Property> property = this.annotations().get(Property.class);
+            Option<Property> property = this.annotations().get(Property.class);
             if (property.present() && !"".equals(property.get().setter())) {
-                final String setter = property.get().setter();
-                final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(setter, List.of(this.type().type()));
-                final MethodView<Parent, ?> methodView = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
+                String setter = property.get().setter();
+                Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(setter, List.of(this.type().type()));
+                MethodView<Parent, ?> methodView = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
                 this.setter = (object, propertyValue) -> methodView.invoke(this.declaredBy().cast(instance), propertyValue);
             } else {
                 this.setter = (object, propertyValue) -> {
                     try {
                         this.field.set(object, propertyValue);
                     }
-                    catch (final IllegalAccessException e) {
+                    catch (IllegalAccessException e) {
                         throw new IllegalIntrospectionException(this, e.getMessage());
                     }
                 };
@@ -86,13 +86,13 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public Attempt<FieldType, Throwable> get(final Parent instance) {
+    public Attempt<FieldType, Throwable> get(Parent instance) {
         if (this.getter == null) {
-            final Option<Property> property = this.annotations().get(Property.class);
+            Option<Property> property = this.annotations().get(Property.class);
             if (property.present() && !"".equals(property.get().getter())) {
-                final String getter = property.get().getter();
-                final Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
-                final MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
+                String getter = property.get().getter();
+                Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(getter);
+                MethodView<Parent, ?> methodContext = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Getter for field '" + this.name() + "' (" + getter + ") does not exist!"));
                 this.getter = object -> methodContext.invoke(instance)
                         .map(result -> this.type().cast(result));
             } else {
@@ -100,7 +100,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                     try {
                         return this.type().cast(this.field.get(object));
                     }
-                    catch (final IllegalAccessException e) {
+                    catch (IllegalAccessException e) {
                         throw new IllegalIntrospectionException(this, e.getMessage());
                     }
                 }, Throwable.class);
@@ -183,7 +183,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
         collector.property("elementType").write("field");
         collector.property("type").write(this.genericType());

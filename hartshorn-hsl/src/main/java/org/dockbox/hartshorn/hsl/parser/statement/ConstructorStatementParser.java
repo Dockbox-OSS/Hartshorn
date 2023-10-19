@@ -31,12 +31,12 @@ import java.util.Set;
 public class ConstructorStatementParser extends AbstractBodyStatementParser<ConstructorStatement> implements ParametricStatementParser {
 
     @Override
-    public Option<ConstructorStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        final Token keyword = parser.peek();
+    public Option<ConstructorStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        Token keyword = parser.peek();
         if (keyword.type() == TokenType.CONSTRUCTOR) {
             parser.advance();
-            final List<Parameter> parameters = this.parameters(parser, validator, "constructor", Integer.MAX_VALUE, keyword.type());
-            final BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
+            List<Parameter> parameters = this.parameters(parser, validator, "constructor", Integer.MAX_VALUE, keyword.type());
+            BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
             return Option.of(new ConstructorStatement(keyword, parameters, body));
         }
         return Option.empty();

@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 public interface StandardProxyLookup extends ProxyLookup {
 
     @Override
-    default boolean isProxy(final Object instance) {
+    default boolean isProxy(Object instance) {
         return instance != null && this.isProxy(instance.getClass());
     }
 }

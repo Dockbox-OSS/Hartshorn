@@ -38,7 +38,7 @@ public class MethodInterceptorContext<T, R> {
     private final CustomInvocation<R> customInvocation;
     private final R result;
 
-    public MethodInterceptorContext(final MethodView<T, R> method, final Object[] args, final T instance, final Callable<R> callable, final CustomInvocation<R> customInvocation, final R result) {
+    public MethodInterceptorContext(MethodView<T, R> method, Object[] args, T instance, Callable<R> callable, CustomInvocation<R> customInvocation, R result) {
         this.method = method;
         this.args = args;
         this.instance = instance;
@@ -47,11 +47,11 @@ public class MethodInterceptorContext<T, R> {
         this.result = result;
     }
 
-    public MethodInterceptorContext(final MethodInterceptorContext<T, R> context, final R result) {
+    public MethodInterceptorContext(MethodInterceptorContext<T, R> context, R result) {
         this(context.method, context.args, context.instance, context.callable, context.customInvocation, result);
     }
 
-    public MethodInterceptorContext(final MethodView<T, R> method, final Object[] args, final T instance, final CustomInvocation<R> customInvocation) {
+    public MethodInterceptorContext(MethodView<T, R> method, Object[] args, T instance, CustomInvocation<R> customInvocation) {
         this(method, args, instance, customInvocation.toCallable(args), customInvocation, method.returnType().defaultOrNull());
     }
 
@@ -102,7 +102,7 @@ public class MethodInterceptorContext<T, R> {
      * @return the result of the underlying method
      * @throws Throwable if the underlying method throws an exception
      */
-    public R invokeDefault(final Object... args) throws Throwable {
+    public R invokeDefault(Object... args) throws Throwable {
         if (this.customInvocation != null) {
             return this.customInvocation.call(args);
         }
@@ -121,9 +121,15 @@ public class MethodInterceptorContext<T, R> {
     }
 
     @Deprecated
-    public R checkedCast(final Object o) {
-        if (this.method.returnType().isVoid()) return null;
-        else if (this.method.returnType().isInstance(o)) return this.method.returnType().cast(o);
-        else throw new UnsupportedOperationException("Cannot cast " + o.getClass().getName() + " to " + this.method.returnType().name() + ", use a ConversionService instance to convert the result.");
+    public R checkedCast(Object o) {
+        if (this.method.returnType().isVoid()) {
+            return null;
+        }
+        else if (this.method.returnType().isInstance(o)) {
+            return this.method.returnType().cast(o);
+        }
+        else {
+            throw new UnsupportedOperationException("Cannot cast " + o.getClass().getName() + " to " + this.method.returnType().name() + ", use a ConversionService instance to convert the result.");
+        }
     }
 }

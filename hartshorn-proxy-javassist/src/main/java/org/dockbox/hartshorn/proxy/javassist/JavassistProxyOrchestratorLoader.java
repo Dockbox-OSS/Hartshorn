@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 public class JavassistProxyOrchestratorLoader implements ProxyOrchestratorLoader {
 
     @Override
-    public ProxyOrchestrator create(final Introspector introspector) {
+    public ProxyOrchestrator create(Introspector introspector) {
         return new JavassistProxyOrchestrator(introspector);
     }
 }

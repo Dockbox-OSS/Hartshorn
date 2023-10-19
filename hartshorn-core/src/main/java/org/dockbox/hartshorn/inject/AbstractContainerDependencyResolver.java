@@ -25,9 +25,9 @@ import java.util.Set;
 public abstract class AbstractContainerDependencyResolver implements DependencyResolver {
 
     @Override
-    public Set<DependencyContext<?>> resolve(final Collection<DependencyDeclarationContext<?>> containers, final ApplicationContext applicationContext) throws DependencyResolutionException {
-        final Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
-        for (final DependencyDeclarationContext<?> componentContainer : containers) {
+    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers, ApplicationContext applicationContext) throws DependencyResolutionException {
+        Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
+        for (DependencyDeclarationContext<?> componentContainer : containers) {
             dependencyContexts.addAll(this.resolveSingle(componentContainer, applicationContext));
         }
         return dependencyContexts;

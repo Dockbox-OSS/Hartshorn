@@ -26,9 +26,9 @@ public class ConstructorStatement extends ParametricExecutableStatement {
 
     private final Token keyword;
 
-    public ConstructorStatement(final Token keyword,
-                                final List<Parameter> params,
-                                final BlockStatement body) {
+    public ConstructorStatement(Token keyword,
+                                List<Parameter> params,
+                                BlockStatement body) {
         super(keyword, params, body);
         this.keyword = keyword;
     }
@@ -42,7 +42,7 @@ public class ConstructorStatement extends ParametricExecutableStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

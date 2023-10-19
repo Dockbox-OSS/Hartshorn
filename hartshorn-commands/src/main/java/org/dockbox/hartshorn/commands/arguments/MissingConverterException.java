@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class MissingConverterException extends ConverterException {
-    public MissingConverterException(final ApplicationContext context, final TypeView<?> type) {
+    public MissingConverterException(ApplicationContext context, TypeView<?> type) {
         super(context.get(CommandParameterResources.class)
                 .missingConverter(type.qualifiedName())
                 .string());

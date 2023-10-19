@@ -26,7 +26,7 @@ public interface PropertyHolder {
 
     boolean has(String key);
 
-    default <T> Option<T> update(final T object, final String key) {
+    default <T> Option<T> update(T object, String key) {
         return this.update(object, key, (Class<T>) null);
     }
 
@@ -38,7 +38,7 @@ public interface PropertyHolder {
 
     <T> Option<T> get(String key, GenericType<T> type);
 
-    default <T> Option<T> get(final String key) {
+    default <T> Option<T> get(String key) {
         return this.get(key, (Class<T>) null);
     }
 

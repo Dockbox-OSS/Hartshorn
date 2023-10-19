@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.config;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public class ObjectMappingException extends ApplicationException {
-    public ObjectMappingException(final String message) {
+    public ObjectMappingException(String message) {
         super(message);
     }
 
-    public ObjectMappingException(final String message, final Throwable cause) {
+    public ObjectMappingException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ObjectMappingException(final Throwable cause) {
+    public ObjectMappingException(Throwable cause) {
         super(cause);
     }
 }

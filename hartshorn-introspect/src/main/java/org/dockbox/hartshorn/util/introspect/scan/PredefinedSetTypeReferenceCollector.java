@@ -26,7 +26,7 @@ public final class PredefinedSetTypeReferenceCollector implements TypeReferenceC
 
     private final Set<TypeReference> references;
 
-    private PredefinedSetTypeReferenceCollector(final Set<TypeReference> references) {
+    private PredefinedSetTypeReferenceCollector(Set<TypeReference> references) {
         this.references = references;
     }
 
@@ -35,21 +35,21 @@ public final class PredefinedSetTypeReferenceCollector implements TypeReferenceC
         return this.references;
     }
 
-    public static PredefinedSetTypeReferenceCollector of(final Set<Class<?>> references) {
+    public static PredefinedSetTypeReferenceCollector of(Set<Class<?>> references) {
         return new PredefinedSetTypeReferenceCollector(references.stream()
                 .map(ClassReference::new)
                 .collect(Collectors.toSet()));
     }
 
-    public static PredefinedSetTypeReferenceCollector of(final Class<?>... references) {
+    public static PredefinedSetTypeReferenceCollector of(Class<?>... references) {
         return new PredefinedSetTypeReferenceCollector(Stream.of(references)
                 .map(ClassReference::new)
                 .collect(Collectors.toSet()));
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final String[] typeNames = this.references.stream()
+    public void report(DiagnosticsPropertyCollector collector) {
+        String[] typeNames = this.references.stream()
                 .map(TypeReference::qualifiedName)
                 .toArray(String[]::new);
         collector.property("references").write(typeNames);

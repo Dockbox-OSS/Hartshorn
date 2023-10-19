@@ -34,11 +34,11 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     private final Object[] values;
 
-    public Array(final int length) {
+    public Array(int length) {
         this.values = new Object[length];
     }
 
-    public Array(final Object[] values) {
+    public Array(Object[] values) {
         this.values = values;
     }
 
@@ -48,7 +48,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
      * @param index The index to set the value at.
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
-    public void value(final Object value, final int index) {
+    public void value(Object value, int index) {
         this.values[index] = value;
     }
 
@@ -58,7 +58,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
-    public Object value(final int index) {
+    public Object value(int index) {
         return this.values[index];
     }
 
@@ -89,12 +89,12 @@ public class Array implements Iterable<Object>, PropertyContainer {
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
         throw new UnsupportedOperationException("Cannot set properties on arrays.");
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions interpreter) {
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions interpreter) {
         if ("length".equals(name.lexeme())) {
             return this.values.length;
         } else {

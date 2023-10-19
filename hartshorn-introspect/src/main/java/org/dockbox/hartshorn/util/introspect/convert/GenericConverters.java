@@ -31,10 +31,10 @@ public class GenericConverters implements ConverterCache {
     private final MultiMap<ConvertibleTypePair, GenericConverter> converters = new ConcurrentSetMultiMap<>();
 
     @Override
-    public void addConverter(final GenericConverter converter) {
-        final Set<ConvertibleTypePair> convertibleTypes = converter.convertibleTypes();
+    public void addConverter(GenericConverter converter) {
+        Set<ConvertibleTypePair> convertibleTypes = converter.convertibleTypes();
         if (convertibleTypes == null) {
-            if (converter instanceof final ConditionalConverter conditionalConverter) {
+            if (converter instanceof ConditionalConverter conditionalConverter) {
                 this.globalConverters.add(conditionalConverter);
             }
             else {
@@ -42,14 +42,14 @@ public class GenericConverters implements ConverterCache {
             }
         }
         else {
-            for (final ConvertibleTypePair convertibleType : convertibleTypes) {
+            for (ConvertibleTypePair convertibleType : convertibleTypes) {
                 this.converters.put(convertibleType, converter);
             }
         }
     }
 
     @Override
-    public GenericConverter getConverter(final Object source, final Class<?> targetType) {
+    public GenericConverter getConverter(Object source, Class<?> targetType) {
         GenericConverter converter = this.getTypeMatchingConverter(source, targetType);
         if (converter == null) {
             converter = this.getGlobalConverter(source, targetType);
@@ -62,16 +62,16 @@ public class GenericConverters implements ConverterCache {
 
     @Override
     public Set<GenericConverter> converters() {
-        final Set<GenericConverter> converters = new HashSet<>(this.converters.allValues());
+        Set<GenericConverter> converters = new HashSet<>(this.converters.allValues());
         this.globalConverters.stream()
                 .map(converter -> (GenericConverter) converter)
                 .forEach(converters::add);
         return converters;
     }
 
-    private GenericConverter getClosestMatchingConverter(final Object source, final Class<?> targetType) {
-        final Set<GenericConverter> matchingConverters = new HashSet<>();
-        for (final ConvertibleTypePair typePair : this.converters.keySet()) {
+    private GenericConverter getClosestMatchingConverter(Object source, Class<?> targetType) {
+        Set<GenericConverter> matchingConverters = new HashSet<>();
+        for (ConvertibleTypePair typePair : this.converters.keySet()) {
             Class<?> inputType = source.getClass();
             Class<?> sourceType = typePair.sourceType();
             if (inputType.isArray() && sourceType.isArray()) {
@@ -85,7 +85,7 @@ public class GenericConverters implements ConverterCache {
                 // the closer the distance, the more specific the typePair sourceType is
                 // the more specific the typePair sourceType is, the more likely it is that the converter can convert the source
                 // to the target type
-                final int distance = this.hierarchyDistance(inputType, sourceType);
+                int distance = this.hierarchyDistance(inputType, sourceType);
                 if (distance >= 0) {
                     matchingConverters.addAll(this.converters.get(typePair));
                 }
@@ -94,15 +94,15 @@ public class GenericConverters implements ConverterCache {
         return this.findMatchingConverter(source, targetType, matchingConverters);
     }
 
-    private int hierarchyDistance(final Class<?> inputType, final Class<?> sourceType) {
+    private int hierarchyDistance(Class<?> inputType, Class<?> sourceType) {
         if (inputType == sourceType) {
             return 0;
         }
 
         int interfaceDistance = -1;
-        for (final Class<?> interfaceType : inputType.getInterfaces()) {
+        for (Class<?> interfaceType : inputType.getInterfaces()) {
             if (sourceType.isAssignableFrom(interfaceType)) {
-                final int distance = this.hierarchyDistance(interfaceType, sourceType);
+                int distance = this.hierarchyDistance(interfaceType, sourceType);
                 if (distance >= 0) {
                     interfaceDistance = distance;
                 }
@@ -110,7 +110,7 @@ public class GenericConverters implements ConverterCache {
         }
 
         int classDistance = -1;
-        final Class<?> superClass = inputType.getSuperclass();
+        Class<?> superClass = inputType.getSuperclass();
         if (superClass != null) {
             if (sourceType.isAssignableFrom(superClass)) {
                 classDistance = this.hierarchyDistance(superClass, sourceType);
@@ -134,9 +134,9 @@ public class GenericConverters implements ConverterCache {
         return -1;
     }
 
-    private GenericConverter getGlobalConverter(final Object source, final Class<?> targetType) {
-        final Set<GenericConverter> candidateConverters = new HashSet<>();
-        for (final ConditionalConverter converter : this.globalConverters) {
+    private GenericConverter getGlobalConverter(Object source, Class<?> targetType) {
+        Set<GenericConverter> candidateConverters = new HashSet<>();
+        for (ConditionalConverter converter : this.globalConverters) {
             if (converter.canConvert(source, targetType)) {
                 candidateConverters.add((GenericConverter) converter);
             }
@@ -150,14 +150,14 @@ public class GenericConverters implements ConverterCache {
         return null;
     }
 
-    private GenericConverter findMatchingConverter(final Object source, final Class<?> targetType, final Set<GenericConverter> candidateConverters) {
+    private GenericConverter findMatchingConverter(Object source, Class<?> targetType, Set<GenericConverter> candidateConverters) {
         if (candidateConverters.isEmpty()) {
             return null;
         }
 
         DistantConverterMatch<GenericConverter> bestMatch = null;
-        for (final GenericConverter candidateConverter : candidateConverters) {
-            if (candidateConverter instanceof final ConditionalConverter conditionalConverter) {
+        for (GenericConverter candidateConverter : candidateConverters) {
+            if (candidateConverter instanceof ConditionalConverter conditionalConverter) {
                 if (!conditionalConverter.canConvert(source, targetType)) {
                     continue;
                 }
@@ -165,7 +165,7 @@ public class GenericConverters implements ConverterCache {
 
             Set<ConvertibleTypePair> convertibleTypes = candidateConverter.convertibleTypes();
             if (convertibleTypes == null) {
-                if (candidateConverter instanceof final ConverterFactoryAdapter adapter) {
+                if (candidateConverter instanceof ConverterFactoryAdapter adapter) {
                     convertibleTypes = Set.of(adapter.typePair());
                 }
                 else {
@@ -173,7 +173,7 @@ public class GenericConverters implements ConverterCache {
                 }
             }
 
-            final int distance = convertibleTypes.stream()
+            int distance = convertibleTypes.stream()
                     .mapToInt(pair -> this.hierarchyDistance(source.getClass(), pair.sourceType()))
                     .min()
                     .orElse(-1);
@@ -194,15 +194,15 @@ public class GenericConverters implements ConverterCache {
                 : null;
     }
 
-    protected GenericConverter getTypeMatchingConverter(final Object source, final Class<?> targetType) {
-        final ConvertibleTypePair pair = new ConvertibleTypePair(source.getClass() == null ? null : source.getClass(), targetType);
+    protected GenericConverter getTypeMatchingConverter(Object source, Class<?> targetType) {
+        ConvertibleTypePair pair = new ConvertibleTypePair(source.getClass() == null ? null : source.getClass(), targetType);
         return this.getConverterForPair(source, targetType, pair);
     }
 
-    private GenericConverter getConverterForPair(final Object source, final Class<?> targetType, final ConvertibleTypePair pair) {
-        final List<GenericConverter> matchingConverters = new ArrayList<>();
-        for (final GenericConverter converter : this.converters.get(pair)) {
-            if (converter instanceof final ConditionalConverter conditionalConverter) {
+    private GenericConverter getConverterForPair(Object source, Class<?> targetType, ConvertibleTypePair pair) {
+        List<GenericConverter> matchingConverters = new ArrayList<>();
+        for (GenericConverter converter : this.converters.get(pair)) {
+            if (converter instanceof ConditionalConverter conditionalConverter) {
                 if (conditionalConverter.canConvert(source, targetType)) {
                     matchingConverters.add(converter);
                 }

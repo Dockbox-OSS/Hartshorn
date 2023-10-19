@@ -26,28 +26,28 @@ public class StringToEnumConverterFactoryTests {
 
     @Test
     void testMatchingNameCanConvert() {
-        final Converter<String, Color> converter = createConverter();
-        final Color red = converter.convert("RED");
+        Converter<String, Color> converter = createConverter();
+        Color red = converter.convert("RED");
         Assertions.assertNotNull(red);
         Assertions.assertSame(Color.RED, red);
     }
 
     @Test
     void testMatchingNameIgnoreCaseCanNotConvert() {
-        final Converter<String, Color> converter = createConverter();
-        final Color red = converter.convert("red");
+        Converter<String, Color> converter = createConverter();
+        Color red = converter.convert("red");
         Assertions.assertNull(red);
     }
 
     @Test
     void testNonMatchingNameCanNotConvert() {
-        final Converter<String, Color> converter = createConverter();
-        final Color yellow = converter.convert("YELLOW");
+        Converter<String, Color> converter = createConverter();
+        Color yellow = converter.convert("YELLOW");
         Assertions.assertNull(yellow);
     }
 
     private static Converter<String, Color> createConverter() {
-        final ConverterFactory<String, Enum> factory = new StringToEnumConverterFactory();
+        ConverterFactory<String, Enum> factory = new StringToEnumConverterFactory();
         return factory.create(Color.class);
     }
 

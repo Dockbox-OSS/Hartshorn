@@ -31,8 +31,8 @@ public class HartshornBanner implements Banner {
             """.formatted(Hartshorn.VERSION);
 
     @Override
-    public void print(final Logger logger) {
-        for (final String line : BANNER.split("\n")) {
+    public void print(Logger logger) {
+        for (String line : BANNER.split("\n")) {
             logger.info(line);
         }
         logger.info("");

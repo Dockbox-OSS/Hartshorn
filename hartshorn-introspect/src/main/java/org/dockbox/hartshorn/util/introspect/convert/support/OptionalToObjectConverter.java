@@ -26,17 +26,19 @@ import java.util.Optional;
 public class OptionalToObjectConverter implements Converter<Optional<?>, Object>, ConditionalConverter {
 
     @Override
-    public @Nullable Object convert(final @Nullable Optional<?> input) {
+    public @Nullable Object convert(@Nullable Optional<?> input) {
         assert input != null;
         return input.orElse(null);
     }
 
     @Override
-    public boolean canConvert(final Object source, final Class<?> targetType) {
+    public boolean canConvert(Object source, Class<?> targetType) {
         if (source instanceof Optional<?> optional) {
-            final Object value = optional.orElse(null);
+            Object value = optional.orElse(null);
 
-            if (value == null) return true;
+            if (value == null) {
+                return true;
+            }
             return TypeUtils.isAssignable(value.getClass(), targetType);
         }
         return false;

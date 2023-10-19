@@ -31,20 +31,20 @@ public class OptionalToCollectionConverterFactoryTests {
 
     @Test
     void testEmptyOptionalConvertsToEmptyCollection() {
-        final Converter<Optional<?>, ArrayList> converter = createConverter();
-        final Optional<String> option = Optional.empty();
+        Converter<Optional<?>, ArrayList> converter = createConverter();
+        Optional<String> option = Optional.empty();
 
-        final Collection<?> converted = converter.convert(option);
+        Collection<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted.isEmpty());
     }
 
     @Test
     void testPresentOptionalConvertsToCollectionWithElement() {
-        final Converter<Optional<?>, ArrayList> converter = createConverter();
-        final Optional<String> option = Optional.of("test");
+        Converter<Optional<?>, ArrayList> converter = createConverter();
+        Optional<String> option = Optional.of("test");
 
-        final Collection<?> converted = converter.convert(option);
+        Collection<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted.isEmpty());
         Assertions.assertEquals(1, converted.size());
@@ -52,8 +52,8 @@ public class OptionalToCollectionConverterFactoryTests {
     }
 
     private static Converter<Optional<?>, ArrayList> createConverter() {
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
-        final ConverterFactory<Optional<?>, Collection<?>> factory = new OptionalToCollectionConverterFactory(introspector);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
+        ConverterFactory<Optional<?>, Collection<?>> factory = new OptionalToCollectionConverterFactory(introspector);
         return factory.create(ArrayList.class);
     }
 }

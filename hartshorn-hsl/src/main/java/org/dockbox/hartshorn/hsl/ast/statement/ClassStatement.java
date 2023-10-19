@@ -33,17 +33,17 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     private final List<FieldStatement> fields;
     private final boolean isDynamic;
 
-    public ClassStatement(final Token name,
-                          final VariableExpression superClass, final ConstructorStatement constructor,
-                          final List<FunctionStatement> methods, final List<FieldStatement> fields,
-                          final boolean isDynamic) {
+    public ClassStatement(Token name,
+                          VariableExpression superClass, ConstructorStatement constructor,
+                          List<FunctionStatement> methods, List<FieldStatement> fields,
+                          boolean isDynamic) {
         this(name, false, name, superClass, constructor, methods, fields, isDynamic);
     }
 
-    public ClassStatement(final ASTNode at, final boolean finalized, final Token name,
-                          final VariableExpression superClass, final ConstructorStatement constructor,
-                          final List<FunctionStatement> methods, final List<FieldStatement> fields,
-                          final boolean isDynamic) {
+    public ClassStatement(ASTNode at, boolean finalized, Token name,
+                          VariableExpression superClass, ConstructorStatement constructor,
+                          List<FunctionStatement> methods, List<FieldStatement> fields,
+                          boolean isDynamic) {
         super(at, finalized);
         this.name = name;
         this.superClass = superClass;
@@ -79,7 +79,7 @@ public class ClassStatement extends FinalizableStatement implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

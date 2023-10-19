@@ -45,7 +45,7 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
     }
 
     @Override
-    public DiagnosticsReport report(final Reportable reportable) {
+    public DiagnosticsReport report(Reportable reportable) {
         this.property("timestamp").write(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 
         reportable.report(this);
@@ -53,12 +53,12 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
     }
 
     @Override
-    public DiagnosticsPropertyWriter property(final String name) {
+    public DiagnosticsPropertyWriter property(String name) {
         return new StandardDiagnosticsPropertyWriter(name, this, this.report().root());
     }
 
     @Override
-    public void visit(final CategorizedDiagnosticsReporter reporter) {
+    public void visit(CategorizedDiagnosticsReporter reporter) {
         this.property(reporter.category()).write(reporter);
     }
 }

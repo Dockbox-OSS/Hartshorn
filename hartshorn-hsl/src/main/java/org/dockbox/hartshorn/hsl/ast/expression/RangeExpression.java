@@ -25,7 +25,7 @@ public class RangeExpression extends Expression {
     private final Token operator;
     private final Expression rightExp;
 
-    public RangeExpression(final Expression leftExp, final Token operator, final Expression rightExp) {
+    public RangeExpression(Expression leftExp, Token operator, Expression rightExp) {
         super(operator);
         this.leftExp = leftExp;
         this.operator = operator;
@@ -45,7 +45,7 @@ public class RangeExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ComponentPopulateException extends ApplicationRuntimeException {
-    public ComponentPopulateException(final String message, final Throwable cause) {
+    public ComponentPopulateException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -39,11 +39,11 @@ public class MethodStubContext<T> extends DefaultContext {
     private final ProxyMethodInterceptor<T> interceptor;
     private final Object[] args;
 
-    public MethodStubContext(final T self,
-                             final Invokable source,
-                             final Invokable target,
-                             final ProxyMethodInterceptor<T> interceptor,
-                             final Object[] args) {
+    public MethodStubContext(T self,
+                             Invokable source,
+                             Invokable target,
+                             ProxyMethodInterceptor<T> interceptor,
+                             Object[] args) {
         this.self = self;
         this.source = source;
         this.target = target;

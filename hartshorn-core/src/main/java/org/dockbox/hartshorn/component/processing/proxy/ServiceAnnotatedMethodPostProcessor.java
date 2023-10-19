@@ -32,21 +32,21 @@ public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> 
     public abstract Class<M> annotation();
 
     @Override
-    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().methods().annotatedWith(this.annotation()).isEmpty()) {
             return;
         }
 
-        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
+        Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
-        for (final MethodView<T, ?> method : methods) {
+        for (MethodView<T, ?> method : methods) {
             this.process(context, processingContext.key(), instance, method);
         }
     }
 
-    protected abstract <T> void process(final ApplicationContext context, final ComponentKey<T> key, @Nullable final T instance, final MethodView<T, ?> method);
+    protected abstract <T> void process(ApplicationContext context, ComponentKey<T> key, @Nullable T instance, MethodView<T, ?> method);
 
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final TypeView<T> type) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(TypeView<T> type) {
         return type.methods().annotatedWith(this.annotation());
     }
 }

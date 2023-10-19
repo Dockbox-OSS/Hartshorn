@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 @ServiceLoader(ProxyOrchestratorLoader.class)
 public class CglibProxyOrchestratorLoader implements ProxyOrchestratorLoader {
     @Override
-    public ProxyOrchestrator create(final Introspector introspector) {
+    public ProxyOrchestrator create(Introspector introspector) {
         return new CglibProxyOrchestrator(introspector);
     }
 }

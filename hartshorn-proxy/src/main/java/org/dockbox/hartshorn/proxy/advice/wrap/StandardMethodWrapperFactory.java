@@ -32,7 +32,7 @@ public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> 
     private ProxyCallback<T> onError;
 
     @Override
-    public MethodWrapperFactory<T> before(final ProxyCallback<T> callback) {
+    public MethodWrapperFactory<T> before(ProxyCallback<T> callback) {
         this.before = this.before == null
                 ? callback
                 : this.before.then(callback);
@@ -40,7 +40,7 @@ public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> 
     }
 
     @Override
-    public MethodWrapperFactory<T> after(final ProxyCallback<T> callback) {
+    public MethodWrapperFactory<T> after(ProxyCallback<T> callback) {
         this.after = this.after == null
                 ? callback
                 : this.after.then(callback);
@@ -48,7 +48,7 @@ public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> 
     }
 
     @Override
-    public MethodWrapperFactory<T> onError(final ProxyCallback<T> callback) {
+    public MethodWrapperFactory<T> onError(ProxyCallback<T> callback) {
         this.onError = this.onError == null
                 ? callback
                 : this.onError.then(callback);

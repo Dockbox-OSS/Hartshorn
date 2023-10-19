@@ -37,7 +37,7 @@ public class HashtagParameterPattern extends PrefixedParameterPattern {
     private final CommandParameterResources resources;
 
     @Inject
-    public HashtagParameterPattern(final CommandParameterResources resources) {
+    public HashtagParameterPattern(CommandParameterResources resources) {
         this.resources = resources;
     }
 

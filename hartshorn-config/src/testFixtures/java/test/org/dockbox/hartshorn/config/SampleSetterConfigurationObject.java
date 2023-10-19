@@ -29,7 +29,7 @@ public class SampleSetterConfigurationObject {
     }
 
     // Classic bean-style setter
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name + "!";
     }
 
@@ -38,7 +38,7 @@ public class SampleSetterConfigurationObject {
     }
 
     // Fluent-style setter, private
-    private SampleSetterConfigurationObject setAge(final int age) {
+    private SampleSetterConfigurationObject setAge(int age) {
         this.age = age + 10;
         return this;
     }

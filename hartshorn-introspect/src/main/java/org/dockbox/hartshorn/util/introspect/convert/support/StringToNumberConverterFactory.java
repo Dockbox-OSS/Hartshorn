@@ -25,8 +25,8 @@ import java.util.function.Function;
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
     @Override
-    public <O extends Number> Converter<String, O> create(final Class<O> targetType) {
-        final Converter<String, ? extends Number> converter;
+    public <O extends Number> Converter<String, O> create(Class<O> targetType) {
+        Converter<String, ? extends Number> converter;
         if (targetType == Integer.class) {
             converter = new StringToNumberConverter<>(Integer::parseInt, Integer::decode);
         }
@@ -56,7 +56,7 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
             implements Converter<String, T> {
 
         @Override
-            public @Nullable T convert(final @Nullable String input) {
+            public @Nullable T convert(@Nullable String input) {
                 assert input != null;
                 try {
                     if(isHexNumber(input)) {
@@ -66,15 +66,15 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
                         return this.parseFunction.apply(input);
                     }
                 }
-                catch(final NumberFormatException e) {
+                catch(NumberFormatException e) {
                     // If primitive, the conversion service will default to zero
                     return null;
                 }
             }
         }
 
-    public static boolean isHexNumber(final String value) {
-        final int index = value.startsWith("-") ? 1 : 0;
+    public static boolean isHexNumber(String value) {
+        int index = value.startsWith("-") ? 1 : 0;
         return value.toLowerCase().startsWith("0x", index) || value.startsWith("#", index);
     }
 }

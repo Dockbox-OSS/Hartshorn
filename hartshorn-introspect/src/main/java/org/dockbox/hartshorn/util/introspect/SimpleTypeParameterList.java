@@ -30,12 +30,12 @@ public class SimpleTypeParameterList implements TypeParameterList {
     private final List<? extends TypeParameterView> typeParameters;
     private BiMultiMap<TypeParameterView, TypeParameterView> representationMap;
 
-    public SimpleTypeParameterList(final List<? extends TypeParameterView> typeParameters) {
+    public SimpleTypeParameterList(List<? extends TypeParameterView> typeParameters) {
         this.typeParameters = typeParameters;
     }
 
     @Override
-    public Option<TypeParameterView> atIndex(final int index) {
+    public Option<TypeParameterView> atIndex(int index) {
         if (this.typeParameters.size() <= index) {
             return Option.empty();
         }
@@ -60,8 +60,8 @@ public class SimpleTypeParameterList implements TypeParameterList {
     @Override
     public BiMultiMap<TypeParameterView, TypeParameterView> asMap() {
         if (this.representationMap == null) {
-            final BiMultiMap<TypeParameterView, TypeParameterView> map = new ArrayListHashBiMultiMap<>();
-            for (final TypeParameterView typeParameter : this.typeParameters) {
+            BiMultiMap<TypeParameterView, TypeParameterView> map = new ArrayListHashBiMultiMap<>();
+            for (TypeParameterView typeParameter : this.typeParameters) {
                 if (typeParameter.isInputParameter()) {
                     map.putAll(typeParameter, typeParameter.represents());
                 }

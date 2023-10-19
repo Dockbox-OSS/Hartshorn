@@ -57,20 +57,20 @@ public class ResourceLookupTests {
         this.testResourceLookup("sample.txt");
     }
 
-    private void testResourceLookup(final String path) {
-        final Set<URI> lookup = this.resourceLookup.lookup(path);
+    private void testResourceLookup(String path) {
+        Set<URI> lookup = this.resourceLookup.lookup(path);
         Assertions.assertFalse(lookup.isEmpty());
         Assertions.assertEquals(1, lookup.size());
 
-        final URI uri = lookup.iterator().next();
-        final File file = new File(uri);
+        URI uri = lookup.iterator().next();
+        File file = new File(uri);
 
         Assertions.assertEquals("sample.txt", file.getName());
         Assertions.assertTrue(file.exists());
     }
 
     private void createLocalFile() throws IOException {
-        final Path path = this.fileSystemProvider.applicationPath();
+        Path path = this.fileSystemProvider.applicationPath();
         Files.createFile(path.resolve("sample.txt"));
     }
 }

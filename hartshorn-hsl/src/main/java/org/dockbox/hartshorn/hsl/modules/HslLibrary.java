@@ -41,12 +41,12 @@ public class HslLibrary implements CallableNode {
     private final NativeFunctionStatement declaration;
     private final Map<String, NativeModule> externalModules;
 
-    public HslLibrary(final NativeFunctionStatement declaration, final Map<String, NativeModule> externalModules) {
+    public HslLibrary(NativeFunctionStatement declaration, Map<String, NativeModule> externalModules) {
         this.declaration = declaration;
         this.externalModules = externalModules;
     }
 
-    public HslLibrary(final NativeFunctionStatement declaration, final String moduleName, final NativeModule externalModule) {
+    public HslLibrary(NativeFunctionStatement declaration, String moduleName, NativeModule externalModule) {
         this(declaration, Map.of(moduleName, externalModule));
     }
 
@@ -55,14 +55,14 @@ public class HslLibrary implements CallableNode {
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
-        final String moduleName = this.declaration.moduleName().lexeme();
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
+        String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {
             throw new NativeExecutionException("Module Loader : Can't find class with name : " + moduleName);
         }
 
-        final NativeModule module = this.externalModules.get(moduleName);
+        NativeModule module = this.externalModules.get(moduleName);
         return module.call(at, interpreter, this.declaration, arguments);
     }
 }

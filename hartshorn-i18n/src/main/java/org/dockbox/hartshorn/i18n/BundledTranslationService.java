@@ -24,7 +24,7 @@ public class BundledTranslationService implements TranslationService {
     private final ApplicationContext applicationContext;
     private TranslationBundle bundle;
 
-    public BundledTranslationService(final ApplicationContext applicationContext, final TranslationBundle bundle) {
+    public BundledTranslationService(ApplicationContext applicationContext, TranslationBundle bundle) {
         this.applicationContext = applicationContext;
         this.bundle = bundle;
     }
@@ -40,27 +40,27 @@ public class BundledTranslationService implements TranslationService {
     }
 
     @Override
-    public Option<Message> get(final String key) {
+    public Option<Message> get(String key) {
         return this.bundle.message(this.clean(key));
     }
 
     @Override
-    public Message getOrCreate(final String key, final String value) {
+    public Message getOrCreate(String key, String value) {
         return this.bundle.message(this.clean(key))
                 .orElseGet(() -> this.bundle.register(key, value));
     }
 
     @Override
-    public void add(final TranslationBundle bundle) {
+    public void add(TranslationBundle bundle) {
         this.bundle = this.bundle.merge(bundle);
     }
 
     @Override
-    public void add(final Message message) {
+    public void add(Message message) {
         this.bundle.register(message);
     }
 
-    private String clean(final String key) {
+    private String clean(String key) {
         return key.replaceAll("[/\\\\_-]", ".");
     }
 }

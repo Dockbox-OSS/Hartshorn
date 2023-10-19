@@ -29,10 +29,12 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     private final TypeView<T> introspectedComponent;
     private final ApplicationContext context;
 
-    public ComponentContainerImpl(final ApplicationContext context, final Class<T> component) {
+    public ComponentContainerImpl(ApplicationContext context, Class<T> component) {
         this.introspectedComponent = context.environment().introspector().introspect(component);
-        final Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
-        if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
+        Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
+        if (annotated.absent()) {
+            throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
+        }
 
         this.component = component;
         this.annotation = annotated.get();
@@ -53,15 +55,19 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
 
     @Override
     public String id() {
-        final String id = this.annotation().id();
-        if (id != null && id.isEmpty()) return ComponentUtilities.id(this.context, this.component, true);
+        String id = this.annotation().id();
+        if (id != null && id.isEmpty()) {
+            return ComponentUtilities.id(this.context, this.component, true);
+        }
         return id;
     }
 
     @Override
     public String name() {
-        final String name = this.annotation().name();
-        if (name != null && name.isEmpty()) return ComponentUtilities.name(this.context, this.component, true);
+        String name = this.annotation().name();
+        if (name != null && name.isEmpty()) {
+            return ComponentUtilities.name(this.context, this.component, true);
+        }
         return name;
     }
 
@@ -96,10 +102,14 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final ComponentContainerImpl container = (ComponentContainerImpl) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        ComponentContainerImpl container = (ComponentContainerImpl) other;
         return this.component.equals(container.component);
     }
 

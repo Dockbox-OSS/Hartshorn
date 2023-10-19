@@ -16,10 +16,10 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+import java.util.Locale;
+
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.Locale;
 
 @Demo
 @SuppressWarnings({ "FieldMayBeFinal", "unused" })
@@ -64,16 +64,16 @@ public class ReflectTestType extends ParentTestType {
         return "accessorField";
     }
 
-    public void field(final String value) {
+    public void field(String value) {
         this.activatedSetter = true;
     }
 
-    public String publicMethod(final String argument) {
+    public String publicMethod(String argument) {
         Assertions.assertEquals("value", argument);
         return argument.toUpperCase(Locale.ROOT);
     }
 
-    public String privateMethod(final String argument) {
+    public String privateMethod(String argument) {
         Assertions.assertEquals("value", argument);
         return argument.toUpperCase(Locale.ROOT);
     }

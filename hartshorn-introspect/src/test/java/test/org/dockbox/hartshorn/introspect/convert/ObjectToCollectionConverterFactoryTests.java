@@ -31,9 +31,9 @@ public class ObjectToCollectionConverterFactoryTests {
 
     @Test
     void testNonNullElementCanBeConverted() {
-        final String element = "test";
-        final Converter<Object, Set> converter = createConverter();
-        final Object converted = converter.convert(element);
+        String element = "test";
+        Converter<Object, Set> converter = createConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Set);
         Assertions.assertEquals(1, ((Collection) converted).size());
@@ -42,9 +42,9 @@ public class ObjectToCollectionConverterFactoryTests {
 
     @Test
     void testPrimitiveCanBeConverted() {
-        final int element = 1;
-        final Converter<Object, Set> converter = createConverter();
-        final Object converted = converter.convert(element);
+        int element = 1;
+        Converter<Object, Set> converter = createConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Set);
         Assertions.assertEquals(1, ((Collection) converted).size());
@@ -52,8 +52,8 @@ public class ObjectToCollectionConverterFactoryTests {
     }
 
     private static Converter<Object, Set> createConverter() {
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
-        final ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
+        ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
         return factory.create(Set.class);
     }
 }

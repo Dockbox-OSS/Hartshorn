@@ -34,13 +34,13 @@ public class ReportingTests {
     @Test
     void testSystemReporterCreatesNonNullReport() {
         // Given
-        final ApplicationContext applicationContext = HartshornApplication.create(ReportingTests.class);
-        final Reportable configurable = applicationContext.get(Reportable.class);
-        final DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
+        ApplicationContext applicationContext = HartshornApplication.create(ReportingTests.class);
+        Reportable configurable = applicationContext.get(Reportable.class);
+        DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
 
         // When
-        final DiagnosticsReport report = collector.report(configurable);
-        final Node<?> root = report.root();
+        DiagnosticsReport report = collector.report(configurable);
+        Node<?> root = report.root();
 
         // Then
         Assertions.assertNotNull(root);
@@ -49,13 +49,13 @@ public class ReportingTests {
     @Test
     void testSystemReporterCreatesNonNullReportWithCustomReportable() throws ReportSerializationException {
         // Given
-        final ApplicationContext applicationContext = HartshornApplication.create(ReportingTests.class);
-        final Reportable configurable = applicationContext.get(Reportable.class);
-        final DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
+        ApplicationContext applicationContext = HartshornApplication.create(ReportingTests.class);
+        Reportable configurable = applicationContext.get(Reportable.class);
+        DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
 
         // When
-        final DiagnosticsReport report = collector.report(configurable);
-        final String serialized = report.serialize(new JsonReportSerializer());
+        DiagnosticsReport report = collector.report(configurable);
+        String serialized = report.serialize(new JsonReportSerializer());
 
         // Then
         Assertions.assertNotNull(serialized);

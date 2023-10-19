@@ -38,7 +38,7 @@ public class CglibProxyMethodInvokable implements Invokable {
     private final Method method;
     private final TypeView<?> returnType;
 
-    public CglibProxyMethodInvokable(final Introspector introspector, final MethodProxy methodProxy, final Object proxy, final Method method) {
+    public CglibProxyMethodInvokable(Introspector introspector, MethodProxy methodProxy, Object proxy, Method method) {
         this.methodProxy = methodProxy;
         this.proxy = proxy;
         this.parameterTypes = method.getParameterTypes();
@@ -47,23 +47,23 @@ public class CglibProxyMethodInvokable implements Invokable {
     }
 
     @Override
-    public Object invoke(final Object obj, final Object... args) throws Exception {
+    public Object invoke(Object obj, Object... args) throws Exception {
         try {
             return this.methodProxy.invokeSuper(obj, args);
         }
-        catch (final AbstractMethodError e) {
+        catch (AbstractMethodError e) {
             return this.returnType.defaultOrNull();
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             throw e;
         }
-        catch (final Throwable t) {
+        catch (Throwable t) {
             throw new Exception(t);
         }
     }
 
     @Override
-    public void setAccessible(final boolean accessible) {
+    public void setAccessible(boolean accessible) {
         // Nothing to do. Setting the local method accessible does not affect the proxy method.
     }
 

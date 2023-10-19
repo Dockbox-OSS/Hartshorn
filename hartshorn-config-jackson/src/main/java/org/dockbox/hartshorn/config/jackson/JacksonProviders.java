@@ -69,12 +69,12 @@ public class JacksonProviders {
     }
 
     @Binds(phase = DATA_MAPPER_PHASE + 32)
-    public ObjectMapper objectMapper(final ApplicationContext applicationContext) {
+    public ObjectMapper objectMapper(ApplicationContext applicationContext) {
         return new JacksonObjectMapper(applicationContext);
     }
 
     @Binds(phase = DATA_MAPPER_PHASE + 16) // Before ObjectMapper
-    public JacksonObjectMapperConfigurator mapperConfigurator(final Introspector introspector) {
+    public JacksonObjectMapperConfigurator mapperConfigurator(Introspector introspector) {
         return new StandardJacksonObjectMapperConfigurator(introspector);
     }
 }

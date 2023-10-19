@@ -23,15 +23,15 @@ import java.io.Closeable;
 
 public class JacksonIntrospectionException extends JsonMappingException {
 
-    public JacksonIntrospectionException(final Closeable processor, final String msg) {
+    public JacksonIntrospectionException(Closeable processor, String msg) {
         super(processor, msg);
     }
 
-    public JacksonIntrospectionException(final Closeable processor, final String msg, final Throwable problem) {
+    public JacksonIntrospectionException(Closeable processor, String msg, Throwable problem) {
         super(processor, msg, problem);
     }
 
-    public JacksonIntrospectionException(final Closeable processor, final String msg, final JsonLocation loc) {
+    public JacksonIntrospectionException(Closeable processor, String msg, JsonLocation loc) {
         super(processor, msg, loc);
     }
 }

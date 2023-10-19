@@ -24,7 +24,7 @@ public class PostfixExpression extends Expression {
     private final Token operator;
     private final Expression leftExpr;
 
-    public PostfixExpression(final Token operator, final Expression leftExpr) {
+    public PostfixExpression(Token operator, Expression leftExpr) {
         super(operator);
         this.operator = operator;
         this.leftExpr = leftExpr;
@@ -39,7 +39,7 @@ public class PostfixExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

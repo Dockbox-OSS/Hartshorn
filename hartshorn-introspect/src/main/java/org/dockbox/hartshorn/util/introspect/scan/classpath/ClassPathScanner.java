@@ -53,41 +53,41 @@ public final class ClassPathScanner {
         return new ClassPathScanner();
     }
 
-    public ClassPathScanner addSystemPropertyPaths(final String key) {
-        final String value = System.getProperty(key);
+    public ClassPathScanner addSystemPropertyPaths(String key) {
+        String value = System.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
             return this;
         }
 
-        for (final String path : value.split(String.valueOf(File.pathSeparatorChar), -1)) {
+        for (String path : value.split(String.valueOf(File.pathSeparatorChar), -1)) {
             if (path == null || path.trim().isEmpty()) {
                 continue;
             }
-            final File file = new File(path);
+            File file = new File(path);
             if (!file.exists()) {
                 continue;
             }
 
             try {
-                final URL url = file.toURI().toURL();
+                URL url = file.toURI().toURL();
                 this.classLoaders.add(new URLClassLoader(new URL[] { url }) {
                     public String toString() {
                         return super.toString() + " [url=" + url.toExternalForm() + "]";
                     }
                 });
             }
-            catch (final MalformedURLException e) {
+            catch (MalformedURLException e) {
                 // Ignore
             }
         }
         return this;
     }
 
-    public ClassPathScanner scan(final ResourceHandler handler) throws ClassPathWalkingException {
+    public ClassPathScanner scan(ResourceHandler handler) throws ClassPathWalkingException {
         this.reset();
 
-        final long start = System.currentTimeMillis();
-        for (final ClassLoader classLoader : this.classLoaders) {
+        long start = System.currentTimeMillis();
+        for (ClassLoader classLoader : this.classLoaders) {
             if (classLoader instanceof URLClassLoader) {
                 this.scanClassLoaderResources(handler, (URLClassLoader) classLoader);
             }
@@ -104,11 +104,11 @@ public final class ClassPathScanner {
         this.classNames.clear();
     }
 
-    private void scanClassLoaderResources(final ResourceHandler handler, final URLClassLoader classLoader) throws ClassPathWalkingException {
-        for (final URL url : classLoader.getURLs()) {
+    private void scanClassLoaderResources(ResourceHandler handler, URLClassLoader classLoader) throws ClassPathWalkingException {
+        for (URL url : classLoader.getURLs()) {
             if (url.getFile() != null && !url.getFile().isEmpty()) {
 
-                final File file = new File(url.getFile());
+                File file = new File(url.getFile());
                 if (file.exists()) {
                     if (file.isDirectory()) {
                         this.processDirectoryResource(handler, classLoader, file);
@@ -124,35 +124,35 @@ public final class ClassPathScanner {
         }
     }
 
-    private void processJarFileResource(final ResourceHandler handler, final URLClassLoader classLoader, final URL url, final File jarFile)
+    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, URL url, File jarFile)
             throws ClassPathWalkingException {
         try {
-            final FileSystem fileSystem = FileSystems.newFileSystem(Paths.get(url.toURI()), (ClassLoader) null);
+            FileSystem fileSystem = FileSystems.newFileSystem(Paths.get(url.toURI()), (ClassLoader) null);
             Files.walkFileTree(fileSystem.getRootDirectories().iterator().next(), new JarFileWalker(this, handler, classLoader));
         }
-        catch (final IOException | URISyntaxException e) {
+        catch (IOException | URISyntaxException e) {
             throw new ClassPathWalkingException("Error while scanning jar file " + jarFile, e);
         }
     }
 
-    private void processDirectoryResource(final ResourceHandler handler, final URLClassLoader classLoader, final File directory) throws ClassPathWalkingException {
+    private void processDirectoryResource(ResourceHandler handler, URLClassLoader classLoader, File directory) throws ClassPathWalkingException {
         try {
-            final File rootDir = directory.getCanonicalFile();
-            final int rootDirNameLen = rootDir.getCanonicalPath().length();
+            File rootDir = directory.getCanonicalFile();
+            int rootDirNameLen = rootDir.getCanonicalPath().length();
             Files.walkFileTree(rootDir.toPath(), new DirectoryFileTreeWalker(this, rootDirNameLen, handler, classLoader));
         }
-        catch (final IOException e) {
+        catch (IOException e) {
             throw new ClassPathWalkingException("Could not process directory resource " + directory.getPath(), e);
         }
     }
 
-    public void processPathResource(final ResourceHandler handler, final URLClassLoader classLoader, final String resourceName, final Path path) {
+    public void processPathResource(ResourceHandler handler, URLClassLoader classLoader, String resourceName, Path path) {
         if (handler == null) {
             return;
         }
 
-        final boolean isClassResource = resourceName.toLowerCase().endsWith(".class");
-        final String checkedResourceName = !isClassResource
+        boolean isClassResource = resourceName.toLowerCase().endsWith(".class");
+        String checkedResourceName = !isClassResource
                 ? resourceName
                 : this.resourceToCanonicalName(resourceName);
 
@@ -173,24 +173,24 @@ public final class ClassPathScanner {
             return;
         }
 
-        for (final String beginFilterName : this.prefixFilters) {
+        for (String beginFilterName : this.prefixFilters) {
             if (!checkedResourceName.startsWith(beginFilterName)) {
                 return;
             }
         }
 
-        final ClassPathResource resource = new ClassCandidateResource(classLoader, path, checkedResourceName, isClassResource);
+        ClassPathResource resource = new ClassCandidateResource(classLoader, path, checkedResourceName, isClassResource);
         handler.handle(resource);
     }
 
     @NonNull
-    private String resourceToCanonicalName(final String resourceName) {
+    private String resourceToCanonicalName(String resourceName) {
         return resourceName.substring(0, resourceName.length() - 6)
                 .replace('/', '.')
                 .replace('\\', '.');
     }
 
-    public ClassPathScanner filterPrefix(final String prefix) {
+    public ClassPathScanner filterPrefix(String prefix) {
         if (prefix != null) {
             this.prefixFilters.add(prefix);
         }

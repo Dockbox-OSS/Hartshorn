@@ -32,11 +32,11 @@ import java.util.Set;
 public class BlockStatementParser implements ASTNodeParser<BlockStatement> {
 
     @Override
-    public Option<BlockStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<BlockStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(TokenType.LEFT_BRACE)) {
-            final Token start = parser.advance();
+            Token start = parser.advance();
 
-            final List<Statement> statements = new ArrayList<>();
+            List<Statement> statements = new ArrayList<>();
             while (!parser.check(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
                 statements.add(parser.statement());
             }

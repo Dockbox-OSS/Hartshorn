@@ -30,11 +30,11 @@ import org.dockbox.hartshorn.util.MapBackedAnnotationInvocationHandler;
 @Deprecated(forRemoval = true, since = "0.5.0")
 public class PolymorphicAnnotationInvocationHandler implements InvocationHandler {
 
-    final Map<String, Object> cache;
+    Map<String, Object> cache;
     private final Class<?> type;
     private final Annotation annotation;
 
-    public PolymorphicAnnotationInvocationHandler(final Class<?> type, final Annotation annotation) {
+    public PolymorphicAnnotationInvocationHandler(Class<?> type, Annotation annotation) {
         this.type = type;
         this.annotation = annotation;
         this.cache = new HashMap<>();
@@ -45,7 +45,7 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
     }
 
     @Override
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("annotationType".equals(method.getName())) {
             return this.type;
         }
@@ -57,8 +57,8 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
             return result;
         }
 
-        for (final Method methodInCompositeAnnotation : this.annotation.annotationType().getMethods()) {
-            final AttributeAlias attributeAlias = methodInCompositeAnnotation.getAnnotation(AttributeAlias.class);
+        for (Method methodInCompositeAnnotation : this.annotation.annotationType().getMethods()) {
+            AttributeAlias attributeAlias = methodInCompositeAnnotation.getAnnotation(AttributeAlias.class);
             if (attributeAlias != null && (this.directAlias(attributeAlias, method) || this.indirectAlias(attributeAlias, method))) {
                 result = methodInCompositeAnnotation.invoke(this.annotation);
                 this.cache.put(method.getName(), result);
@@ -67,26 +67,26 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
         }
 
         try {
-            final Object ret = this.type.getMethod(method.getName()).getDefaultValue();
+            Object ret = this.type.getMethod(method.getName()).getDefaultValue();
             if (ret == null) {
                 throw new CompositeAnnotationInvocationException(this.type, method, this.annotation);
             }
             return ret;
         }
-        catch (final NoSuchMethodError e) {
+        catch (NoSuchMethodError e) {
             throw new CompositeAnnotationInvocationException(this.type, method, this.annotation, e);
         }
     }
 
-    private boolean directAlias(final AttributeAlias attributeAlias, final Method methodBeingInvoked) {
+    private boolean directAlias(AttributeAlias attributeAlias, Method methodBeingInvoked) {
         return attributeAlias.target() == this.type && attributeAlias.value().equals(methodBeingInvoked.getName());
     }
 
-    private boolean indirectAlias(final AttributeAlias attributeAlias, final Method methodBeingInvoked) {
+    private boolean indirectAlias(AttributeAlias attributeAlias, Method methodBeingInvoked) {
         if (attributeAlias.target() != this.type) {
             return false;
         }
-        final AttributeAlias redirect = methodBeingInvoked.getAnnotation(AttributeAlias.class);
+        AttributeAlias redirect = methodBeingInvoked.getAnnotation(AttributeAlias.class);
         return redirect != null && redirect.target() == Void.class && redirect.value().equals(attributeAlias.value());
     }
 }

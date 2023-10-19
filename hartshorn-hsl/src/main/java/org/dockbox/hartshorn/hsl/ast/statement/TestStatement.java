@@ -24,9 +24,11 @@ public class TestStatement extends BodyStatement implements NamedNode {
 
     private final Token name;
 
-    public TestStatement(final Token name, final BlockStatement body) {
+    public TestStatement(Token name, BlockStatement body) {
         super(name, body);
-        if (name.literal() == null) throw new IllegalArgumentException("Test name cannot be null");
+        if (name.literal() == null) {
+            throw new IllegalArgumentException("Test name cannot be null");
+        }
         this.name = name;
     }
 
@@ -36,7 +38,7 @@ public class TestStatement extends BodyStatement implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

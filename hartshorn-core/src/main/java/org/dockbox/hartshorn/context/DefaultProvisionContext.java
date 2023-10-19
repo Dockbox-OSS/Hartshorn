@@ -34,12 +34,12 @@ import org.dockbox.hartshorn.util.option.Option;
 public abstract class DefaultProvisionContext extends DefaultContext implements ProvisionContext {
 
     @Override
-    public <C extends Context> Option<C> first(final Class<C> context) {
+    public <C extends Context> Option<C> first(Class<C> context) {
         return ProvisionContext.super.first(context);
     }
 
     @Override
-    public <C extends Context> List<C> all(final Class<C> context) {
+    public <C extends Context> List<C> all(Class<C> context) {
         return ProvisionContext.super.all(context);
     }
 }

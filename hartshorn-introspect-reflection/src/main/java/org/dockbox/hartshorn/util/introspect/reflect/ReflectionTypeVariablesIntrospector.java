@@ -32,13 +32,13 @@ public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrosp
     private final List<TypeVariable<?>> variables;
     private List<TypeView<?>> typeViews;
 
-    public ReflectionTypeVariablesIntrospector(final Introspector introspector, final List<TypeVariable<?>> variables) {
+    public ReflectionTypeVariablesIntrospector(Introspector introspector, List<TypeVariable<?>> variables) {
         this.introspector = introspector;
         this.variables = variables;
     }
 
     @Override
-    public Option<TypeView<?>> at(final int index) {
+    public Option<TypeView<?>> at(int index) {
         if (this.variables.size() > index) {
             return Option.of(this.introspector.introspect((Type) this.variables.get(index)));
         }

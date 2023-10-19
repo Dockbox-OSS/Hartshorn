@@ -24,7 +24,7 @@ public class ConcurrentSetMultiMap<K, V> extends ConcurrentMultiMap<K, V> {
     public ConcurrentSetMultiMap() {
     }
 
-    public ConcurrentSetMultiMap(final MultiMap<K, V> map) {
+    public ConcurrentSetMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

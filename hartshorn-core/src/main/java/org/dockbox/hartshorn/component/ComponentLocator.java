@@ -27,7 +27,7 @@ public interface ComponentLocator extends ContextCarrier {
 
     Collection<ComponentContainer<?>> containers(ComponentType functional);
 
-    Option<ComponentContainer<?>> container(final Class<?> type);
+    Option<ComponentContainer<?>> container(Class<?> type);
 
     <T> void validate(ComponentKey<T> key);
 }

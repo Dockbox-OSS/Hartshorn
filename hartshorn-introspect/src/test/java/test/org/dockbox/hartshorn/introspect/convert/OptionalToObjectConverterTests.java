@@ -27,18 +27,18 @@ public class OptionalToObjectConverterTests {
 
     @Test
     void testPresentOptionalConvertsToObject() {
-        final Converter<Optional<?>, Object> converter = new OptionalToObjectConverter();
-        final Optional<String> option = Optional.of("test");
-        final Object converted = converter.convert(option);
+        Converter<Optional<?>, Object> converter = new OptionalToObjectConverter();
+        Optional<String> option = Optional.of("test");
+        Object converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertEquals("test", converted);
     }
 
     @Test
     void testEmptyOptionalConvertsToNull() {
-        final Converter<Optional<?>, Object> converter = new OptionalToObjectConverter();
-        final Optional<String> option = Optional.empty();
-        final Object converted = converter.convert(option);
+        Converter<Optional<?>, Object> converter = new OptionalToObjectConverter();
+        Optional<String> option = Optional.empty();
+        Object converted = converter.convert(option);
         Assertions.assertNull(converted);
     }
 }

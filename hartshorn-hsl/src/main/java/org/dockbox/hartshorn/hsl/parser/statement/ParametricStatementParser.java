@@ -29,16 +29,16 @@ import java.util.List;
 
 public interface ParametricStatementParser {
 
-    default List<Parameter> parameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOfArguments, final TokenType functionType) {
+    default List<Parameter> parameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOfArguments, TokenType functionType) {
         validator.expectAfter(TokenType.LEFT_PAREN, functionName);
-        final List<Parameter> parameters = new ArrayList<>();
+        List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= expectedNumberOfArguments) {
-                    final String message = "Cannot have more than " + expectedNumberOfArguments + " parameters" + (functionType == null ? "" : " for " + functionType.representation() + " functions");
+                    String message = "Cannot have more than " + expectedNumberOfArguments + " parameters" + (functionType == null ? "" : " for " + functionType.representation() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                final Token parameterName = validator.expect(TokenType.IDENTIFIER, "parameter name");
+                Token parameterName = validator.expect(TokenType.IDENTIFIER, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
             while (parser.match(TokenType.COMMA));

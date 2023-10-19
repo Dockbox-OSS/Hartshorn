@@ -31,7 +31,7 @@ public class Tuple<K, V> implements Entry<K, V> {
     private final K key;
     private final V value;
 
-    public Tuple(final K key, final V value) {
+    public Tuple(K key, V value) {
         this.key = key;
         this.value = value;
     }
@@ -44,7 +44,7 @@ public class Tuple<K, V> implements Entry<K, V> {
         return this.value;
     }
 
-    public static <K, V> Tuple<K, V> of(final K key, final V value) {
+    public static <K, V> Tuple<K, V> of(K key, V value) {
         return new Tuple<>(key, value);
     }
 
@@ -59,15 +59,19 @@ public class Tuple<K, V> implements Entry<K, V> {
     }
 
     @Override
-    public V setValue(final V value) {
-        throw new UnsupportedOperationException("Cannot modify final Tuple value");
+    public V setValue(V value) {
+        throw new UnsupportedOperationException("Cannot modify Tuple value");
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final Tuple<?, ?> tuple = (Tuple<?, ?>) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        Tuple<?, ?> tuple = (Tuple<?, ?>) other;
         return Objects.equals(this.key, tuple.key) && Objects.equals(this.value, tuple.value);
     }
 

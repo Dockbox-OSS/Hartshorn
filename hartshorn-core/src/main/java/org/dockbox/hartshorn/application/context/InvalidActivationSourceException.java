@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class InvalidActivationSourceException extends ApplicationRuntimeException {
 
-    public InvalidActivationSourceException(final String message) {
+    public InvalidActivationSourceException(String message) {
         super(message);
     }
 }

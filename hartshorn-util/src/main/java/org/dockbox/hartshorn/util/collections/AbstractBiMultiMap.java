@@ -25,18 +25,18 @@ public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> im
     protected AbstractBiMultiMap() {
     }
 
-    protected AbstractBiMultiMap(final MultiMap<K, V> map) {
+    protected AbstractBiMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 
     @Override
     public MultiMap<V, K> inverse() {
-        final Set<Entry<K, Collection<V>>> entries = this.entrySet();
-        final MultiMap<V, K> inverseMap = this.createEmptyInverseMap();
-        for (final Entry<K, Collection<V>> entry : entries) {
-            final K key = entry.getKey();
-            final Collection<V> values = entry.getValue();
-            for (final V value : values) {
+        Set<Entry<K, Collection<V>>> entries = this.entrySet();
+        MultiMap<V, K> inverseMap = this.createEmptyInverseMap();
+        for (Entry<K, Collection<V>> entry : entries) {
+            K key = entry.getKey();
+            Collection<V> values = entry.getValue();
+            for (V value : values) {
                 inverseMap.put(value, key);
             }
         }

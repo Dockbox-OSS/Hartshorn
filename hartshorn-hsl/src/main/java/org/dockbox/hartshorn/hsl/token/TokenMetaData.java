@@ -32,7 +32,7 @@ public class TokenMetaData {
     private final boolean reserved;
     private final TokenType assignsWith;
 
-    TokenMetaData(final TokenMetaDataBuilder builder) {
+    TokenMetaData(TokenMetaDataBuilder builder) {
         this.type = builder.type;
         this.representation = builder.representation;
         this.keyword = builder.keyword;
@@ -98,7 +98,7 @@ public class TokenMetaData {
      * @param type The {@link TokenType} to attach to.
      * @return A new {@link TokenMetaDataBuilder}.
      */
-    public static TokenMetaDataBuilder builder(final TokenType type) {
+    public static TokenMetaDataBuilder builder(TokenType type) {
         return new TokenMetaDataBuilder(type);
     }
 }

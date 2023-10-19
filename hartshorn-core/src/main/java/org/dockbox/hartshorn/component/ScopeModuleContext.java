@@ -36,16 +36,16 @@ public class ScopeModuleContext extends DefaultApplicationAwareContext {
     private final MultiMap<Class<? extends Scope>, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
 
     @Inject
-    public ScopeModuleContext(final ApplicationContext applicationContext) {
+    public ScopeModuleContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
-    public <T> BindingHierarchy<T> hierarchy(final Class<? extends Scope> scope, final ComponentKey<T> key) {
-        final BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
+    public <T> BindingHierarchy<T> hierarchy(Class<? extends Scope> scope, ComponentKey<T> key) {
+        BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
                 .filter(hierarchy -> hierarchy.key().equals(key))
                 .findFirst()
                 .orElseGet(() -> {
-                    final BindingHierarchy<T> hierarchy = new NativeBindingHierarchy<>(key, this.applicationContext());
+                    BindingHierarchy<T> hierarchy = new NativeBindingHierarchy<>(key, this.applicationContext());
                     this.scopeModules.put(scope, hierarchy);
                     return hierarchy;
                 });
@@ -53,7 +53,7 @@ public class ScopeModuleContext extends DefaultApplicationAwareContext {
         return TypeUtils.adjustWildcards(bindingHierarchy, BindingHierarchy.class);
     }
 
-    public Collection<BindingHierarchy<?>> hierarchies(final Class<? extends Scope> type) {
+    public Collection<BindingHierarchy<?>> hierarchies(Class<? extends Scope> type) {
         if (type == Scope.class) {
             return Collections.emptyList();
         }

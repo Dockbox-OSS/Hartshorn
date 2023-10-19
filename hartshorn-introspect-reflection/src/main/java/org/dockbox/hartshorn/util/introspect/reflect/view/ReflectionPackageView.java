@@ -26,7 +26,7 @@ public class ReflectionPackageView implements PackageView, IntrospectorAwareView
     private final Introspector introspector;
     private final Package pkg;
 
-    public ReflectionPackageView(final Introspector introspector, final Package pkg) {
+    public ReflectionPackageView(Introspector introspector, Package pkg) {
         this.introspector = introspector;
         this.pkg = pkg;
     }
@@ -47,7 +47,7 @@ public class ReflectionPackageView implements PackageView, IntrospectorAwareView
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
     }
 }

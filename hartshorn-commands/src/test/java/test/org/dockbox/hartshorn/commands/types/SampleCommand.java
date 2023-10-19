@@ -28,32 +28,32 @@ public class SampleCommand {
     private String valueAfterCondition;
 
     @Command(arguments = "<remaining{remainingString}>")
-    public void parent(final CommandContext context) {
+    public void parent(CommandContext context) {
     }
 
     @Command(value = "sub", arguments = "<argument{Int}> --skip remainingInt")
-    public void sub(final CommandContext context) {
+    public void sub(CommandContext context) {
     }
 
     @Command(value = "sub sub", arguments = "<service{Service}>")
-    public void subsub(final CommandContext context) {
+    public void subsub(CommandContext context) {
     }
 
     @Command(value = "complex", arguments = "<required{String}> [optional{String}]  [enum{test.org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s")
-    public void complex(final CommandContext context) {
+    public void complex(CommandContext context) {
     }
 
     @Command(value = "group", arguments = "[group <requiredA> <requiredB>]")
-    public void group(final CommandContext context) {
+    public void group(CommandContext context) {
     }
 
     @Command(value = "arguments", arguments = "<required{String}> [optional{String}] --flag String")
-    public void arguments(final CommandSource source, final CommandContext context, final String required, final String optional, final String flag) {
+    public void arguments(CommandSource source, CommandContext context, String required, String optional, String flag) {
     }
 
     @Command(value = "condition", arguments = "[optional{String}]")
     @RequiresExpression("optional != null && optional != \"\"")
-    public void condition(final CommandContext context, final String optional) {
+    public void condition(CommandContext context, String optional) {
         if (StringUtilities.empty(optional)) {
             throw new IllegalArgumentException("optional is empty");
         }

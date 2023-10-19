@@ -46,7 +46,7 @@ public class FactoryContext extends DefaultProvisionContext {
      * @param constructor The constructor to associate with the method.
      * @param <T> The return type of the method.
      */
-    public <T> void register(final MethodView<T, ?> method, final ConstructorView<T> constructor) {
+    public <T> void register(MethodView<T, ?> method, ConstructorView<T> constructor) {
         this.bounds.put(method, constructor);
     }
 
@@ -59,8 +59,8 @@ public class FactoryContext extends DefaultProvisionContext {
      * @return The constructor associated with the given method.
      * @throws NoSuchElementException If no constructor is associated with the method.
      */
-    public <T> Option<ConstructorView<T>> get(final MethodView<T, ?> method) {
-        final ConstructorView<?> constructor = this.bounds.get(method);
+    public <T> Option<ConstructorView<T>> get(MethodView<T, ?> method) {
+        ConstructorView<?> constructor = this.bounds.get(method);
         return Option.of((ConstructorView<T>) constructor);
     }
 }

@@ -29,7 +29,7 @@ public class RuntimeError extends RuntimeException {
 
     private final Token token;
 
-    public RuntimeError(final Token token, final String message) {
+    public RuntimeError(Token token, String message) {
         super(message);
         this.token = token;
     }

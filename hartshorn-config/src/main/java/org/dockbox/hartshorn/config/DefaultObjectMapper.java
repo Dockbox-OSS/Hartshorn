@@ -20,12 +20,12 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
 
     protected FileFormat fileFormat;
 
-    protected DefaultObjectMapper(final FileFormat fileFormat) {
+    protected DefaultObjectMapper(FileFormat fileFormat) {
         this.fileFormat = fileFormat;
     }
 
     @Override
-    public ObjectMapper fileType(final FileFormat fileFormat) {
+    public ObjectMapper fileType(FileFormat fileFormat) {
         this.fileFormat = fileFormat;
         return this;
     }

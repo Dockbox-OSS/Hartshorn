@@ -23,7 +23,7 @@ public class WhileStatement extends BodyStatement {
 
     private final Expression condition;
 
-    public WhileStatement(final Expression condition, final BlockStatement loopBody) {
+    public WhileStatement(Expression condition, BlockStatement loopBody) {
         super(condition, loopBody);
         this.condition = condition;
     }
@@ -33,7 +33,7 @@ public class WhileStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ServiceDiscoveryException extends ApplicationRuntimeException {
 
-    public ServiceDiscoveryException(final String message) {
+    public ServiceDiscoveryException(String message) {
         super(message);
     }
 
-    public ServiceDiscoveryException(final String message, final Throwable cause) {
+    public ServiceDiscoveryException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -21,7 +21,7 @@ import java.util.Map;
 public abstract class StandardBiMap<K, V> extends AbstractBiMap<K, V> {
 
 
-    protected StandardBiMap(final Map<K, V> forward, final Map<V, K> backward) {
+    protected StandardBiMap(Map<K, V> forward, Map<V, K> backward) {
         super(forward, backward);
     }
 

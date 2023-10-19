@@ -27,7 +27,7 @@ public class ArrayLiteralExpression extends Expression {
     private final Token open;
     private final Token close;
 
-    public ArrayLiteralExpression(final Token open, final Token close, final List<Expression> elements) {
+    public ArrayLiteralExpression(Token open, Token close, List<Expression> elements) {
         super(open);
         this.open = open;
         this.close = close;
@@ -47,7 +47,7 @@ public class ArrayLiteralExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

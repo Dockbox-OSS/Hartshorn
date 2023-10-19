@@ -81,7 +81,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
 
     private boolean batchModeEnabled = false;
 
-    public ReflectionIntrospector(final ProxyLookup proxyLookup, final AnnotationLookup annotationLookup) {
+    public ReflectionIntrospector(ProxyLookup proxyLookup, AnnotationLookup annotationLookup) {
         this.proxyLookup = proxyLookup;
         this.annotationLookup = annotationLookup;
     }
@@ -105,7 +105,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public <T> TypeView<T> introspect(final Class<T> type) {
+    public <T> TypeView<T> introspect(Class<T> type) {
         if (type == null) {
             return this.voidType();
         }
@@ -113,12 +113,12 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public <T> TypeView<T> introspect(final T instance) {
+    public <T> TypeView<T> introspect(T instance) {
         if (instance == null) {
             return this.voidType();
         }
         else if (this.proxyLookup.isProxy(instance)) {
-            final Option<Class<T>> unproxied = this.proxyLookup.unproxy(instance);
+            Option<Class<T>> unproxied = this.proxyLookup.unproxy(instance);
             return unproxied.present()
                     ? this.introspect(unproxied.get())
                     : this.voidType();
@@ -129,7 +129,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public TypeView<?> introspect(final Type type) {
+    public TypeView<?> introspect(Type type) {
         if (type instanceof Class<?> clazz) {
             return this.introspect(clazz);
         }
@@ -140,14 +140,14 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public TypeView<?> introspect(final ParameterizedType type) {
+    public TypeView<?> introspect(ParameterizedType type) {
         // Do not use cache here, as the type is parameterized
         return new ReflectionTypeView<>(this, type);
     }
 
     @Override
-    public <T> TypeView<T> introspect(final GenericType<T> type) {
-        final Option<TypeView<T>> view = type.asClass()
+    public <T> TypeView<T> introspect(GenericType<T> type) {
+        Option<TypeView<T>> view = type.asClass()
                 .<Object>map(this::introspect)
                 .orCompute(() -> this.introspect(type.type()))
                 .adjust(TypeView.class);
@@ -158,11 +158,11 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public TypeView<?> introspect(final String type) {
+    public TypeView<?> introspect(String type) {
         try {
             return this.introspect(Class.forName(type, false, Thread.currentThread().getContextClassLoader()));
         }
-        catch (final ClassNotFoundException e) {
+        catch (ClassNotFoundException e) {
             return this.voidType();
         }
     }
@@ -178,27 +178,27 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public MethodView<?, ?> introspect(final Method method) {
+    public MethodView<?, ?> introspect(Method method) {
         return this.viewCache().computeIfAbsent(method, () -> new ReflectionMethodView<>(this, method));
     }
 
     @Override
-    public <T> ConstructorView<T> introspect(final Constructor<T> method) {
+    public <T> ConstructorView<T> introspect(Constructor<T> method) {
         return this.viewCache().computeIfAbsent(method, () -> new ReflectionConstructorView<>(this, method));
     }
 
     @Override
-    public FieldView<?, ?> introspect(final Field field) {
+    public FieldView<?, ?> introspect(Field field) {
         return this.viewCache().computeIfAbsent(field, () -> new ReflectionFieldView<>(this, field));
     }
 
     @Override
-    public ParameterView<?> introspect(final Parameter parameter) {
+    public ParameterView<?> introspect(Parameter parameter) {
         return this.viewCache().computeIfAbsent(parameter, () -> new ReflectionParameterView<>(this, parameter));
     }
 
     @Override
-    public ElementAnnotationsIntrospector introspect(final AnnotatedElement annotatedElement) {
+    public ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement) {
         return new ReflectionElementAnnotationsIntrospector(this, annotatedElement);
     }
 

@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.inject.Context;
 public class StaticComponentProviders {
 
     @Binds
-    public StaticComponentProvider staticComponentProvider(@Context final StaticComponentContext staticComponentContext) {
+    public StaticComponentProvider staticComponentProvider(@Context StaticComponentContext staticComponentContext) {
         return new ContextStaticComponentProvider(staticComponentContext);
     }
 }

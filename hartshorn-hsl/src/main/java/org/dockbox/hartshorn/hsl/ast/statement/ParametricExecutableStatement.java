@@ -25,7 +25,7 @@ public abstract class ParametricExecutableStatement extends Function {
     private final List<Parameter> params;
     private final BlockStatement body;
 
-    protected ParametricExecutableStatement(final Token token, final List<Parameter> params, final BlockStatement body) {
+    protected ParametricExecutableStatement(Token token, List<Parameter> params, BlockStatement body) {
         super(token);
         this.params = params;
         this.body = body;

@@ -34,35 +34,35 @@ import java.util.function.Supplier;
 
 public class ConverterIntrospectionHelper {
 
-    public static <T extends Collection<?>> Introspector createIntrospectorForCollection(final Class<T> type, final Supplier<T> supplier) {
-        final TypeConstructorsIntrospector<T> constructors = Mockito.mock(TypeConstructorsIntrospector.class);
+    public static <T extends Collection<?>> Introspector createIntrospectorForCollection(Class<T> type, Supplier<T> supplier) {
+        TypeConstructorsIntrospector<T> constructors = Mockito.mock(TypeConstructorsIntrospector.class);
         try {
-            final Constructor<T> defaultConstructor = type.getConstructor();
+            Constructor<T> defaultConstructor = type.getConstructor();
             Assertions.assertNotNull(defaultConstructor);
 
-            final ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
+            ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(defaultConstructor));
             Mockito.when(constructorView.create()).thenAnswer(invocation -> Attempt.of(supplier.get()));
 
             Mockito.when(constructors.defaultConstructor()).thenReturn(Option.of(constructorView));
         }
-        catch (final NoSuchMethodException e) {
+        catch (NoSuchMethodException e) {
             Mockito.when(constructors.defaultConstructor()).thenReturn(Option.empty());
         }
 
-        final TypeParametersIntrospector parametersIntrospector = Mockito.mock(TypeParametersIntrospector.class);
+        TypeParametersIntrospector parametersIntrospector = Mockito.mock(TypeParametersIntrospector.class);
         Mockito.when(parametersIntrospector.resolveInputFor(Collection.class)).thenReturn(new SimpleTypeParameterList(List.of()));
 
-        final TypeView<T> typeView = Mockito.mock(TypeView.class);
+        TypeView<T> typeView = Mockito.mock(TypeView.class);
         Mockito.when(typeView.constructors()).thenReturn(constructors);
         Mockito.when(typeView.typeParameters()).thenReturn(parametersIntrospector);
 
-        final Introspector introspector = Mockito.mock(Introspector.class);
+        Introspector introspector = Mockito.mock(Introspector.class);
         Mockito.when(introspector.introspect(type)).thenReturn(typeView);
         return introspector;
     }
 
-    public static <T extends Collection<?>> Introspector createIntrospectorForCollection(final Class<T> type) {
+    public static <T extends Collection<?>> Introspector createIntrospectorForCollection(Class<T> type) {
         return createIntrospectorForCollection(type, () -> null);
     }
 }

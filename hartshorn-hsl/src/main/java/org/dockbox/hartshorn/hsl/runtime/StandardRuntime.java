@@ -43,12 +43,12 @@ import java.util.Set;
  */
 public class StandardRuntime extends AbstractScriptRuntime {
 
-    public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+    public StandardRuntime(ApplicationContext applicationContext, HslLanguageFactory factory) {
         this(applicationContext, factory, Set.of());
     }
 
-    public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
-                           final Set<ASTNodeParser<? extends Statement>> statementParsers) {
+    public StandardRuntime(ApplicationContext applicationContext, HslLanguageFactory factory,
+                           Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext, factory, statementParsers);
         this.customizer(new InlineStandardLibraryCustomizer());
     }

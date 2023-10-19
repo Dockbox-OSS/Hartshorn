@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class InvalidExecutorException extends ApplicationRuntimeException {
-    public InvalidExecutorException(final String message) {
+    public InvalidExecutorException(String message) {
         super(message);
     }
 }

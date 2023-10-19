@@ -46,11 +46,11 @@ public interface CustomParameterPattern {
      *
      * @return An instance of {@code T}, wrapped in a {@link Option}, or {@link Option#empty()} if {@code null}
      */
-    default <T> Attempt<T, ConverterException> request(final Class<T> type, final CommandSource source, final String raw) {
-        final ApplicationContext context = source.applicationContext();
-        final TypeView<T> typeView = context.environment().introspector().introspect(type);
+    default <T> Attempt<T, ConverterException> request(Class<T> type, CommandSource source, String raw) {
+        ApplicationContext context = source.applicationContext();
+        TypeView<T> typeView = context.environment().introspector().introspect(type);
 
-        final Attempt<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
+        Attempt<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
         if (preconditionsMatch.errorPresent()) {
             context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
             return Attempt.of(preconditionsMatch.error());
@@ -60,13 +60,13 @@ public interface CustomParameterPattern {
             return Attempt.empty();
         }
 
-        final List<String> rawArguments = this.splitArguments(raw);
-        final List<Class<?>> argumentTypes = new ArrayList<>();
-        final List<Object> arguments = new ArrayList<>();
+        List<String> rawArguments = this.splitArguments(raw);
+        List<Class<?>> argumentTypes = new ArrayList<>();
+        List<Object> arguments = new ArrayList<>();
 
-        for (final String rawArgument : rawArguments) {
+        for (String rawArgument : rawArguments) {
             context.log().debug("Parsing raw argument " + rawArgument);
-            final Option<String> argumentIdentifier = this.parseIdentifier(rawArgument);
+            Option<String> argumentIdentifier = this.parseIdentifier(rawArgument);
             if (argumentIdentifier.absent()) {
                 context.log().debug("Could not determine argument identifier for raw argument '%s', this is not a error as the value likely needs to be looked up by its type instead.".formatted(rawArgument));
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
@@ -74,12 +74,12 @@ public interface CustomParameterPattern {
                 arguments.add(rawArgument);
                 continue;
             }
-            final String typeIdentifier = argumentIdentifier.get();
+            String typeIdentifier = argumentIdentifier.get();
 
-            final ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
+            ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
                     .fallback(ArgumentConverterContext::new)
                     .build();
-            final Option<ArgumentConverter<?>> converter = context
+            Option<ArgumentConverter<?>> converter = context
                     .first(argumentConverterContextKey)
                     .flatMap(argumentConverterContext -> argumentConverterContext.converter(typeIdentifier));
 
@@ -106,34 +106,38 @@ public interface CustomParameterPattern {
 
     Attempt<String, ConverterException> parseIdentifier(String argument);
 
-    default <T> Attempt<ConstructorView<T>, ConverterException> constructor(final List<Class<?>> argumentTypes, final List<Object> arguments, final TypeView<T> type, final CommandSource source) {
-        for (final ConstructorView<T> constructor : type.constructors().all()) {
-            if (constructor.parameters().count() != arguments.size()) continue;
-            final List<TypeView<?>> parameters = constructor.parameters().types();
+    default <T> Attempt<ConstructorView<T>, ConverterException> constructor(List<Class<?>> argumentTypes, List<Object> arguments, TypeView<T> type, CommandSource source) {
+        for (ConstructorView<T> constructor : type.constructors().all()) {
+            if (constructor.parameters().count() != arguments.size()) {
+                continue;
+            }
+            List<TypeView<?>> parameters = constructor.parameters().types();
 
             boolean passed = true;
             for (int i = 0; i < parameters.size(); i++) {
-                final TypeView<?> parameter = parameters.get(i);
-                final Class<?> argument = argumentTypes.get(i);
+                TypeView<?> parameter = parameters.get(i);
+                Class<?> argument = argumentTypes.get(i);
 
                 if (argument == null) {
-                    final ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
+                    ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
                             .fallback(ArgumentConverterContext::new)
                             .build();
 
-                    final Option<? extends ArgumentConverter<?>> converter = source.applicationContext()
+                    Option<? extends ArgumentConverter<?>> converter = source.applicationContext()
                             .first(argumentConverterContextKey)
                             .flatMap(context -> context.converter(parameter));
 
                     if (converter.present()) {
-                        final Option<?> result = converter.get().convert(source, (String) arguments.get(i));
+                        Option<?> result = converter.get().convert(source, (String) arguments.get(i));
                         if (result.present()) {
                             arguments.set(i, result.get());
                             continue; // Generic type, will be parsed later
                         }
                     }
                 }
-                else if (parameter.is(argument)) continue;
+                else if (parameter.is(argument)) {
+                    continue;
+                }
 
                 passed = false;
                 break; // Parameter is not what we expected, do not continue

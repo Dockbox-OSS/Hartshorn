@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class InvalidActivatorException extends ApplicationRuntimeException {
-    public InvalidActivatorException(final String message) {
+    public InvalidActivatorException(String message) {
         super(message);
     }
 }

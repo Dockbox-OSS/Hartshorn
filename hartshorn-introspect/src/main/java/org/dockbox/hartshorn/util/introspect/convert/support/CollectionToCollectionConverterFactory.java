@@ -29,16 +29,16 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
 
-    public CollectionToCollectionConverterFactory(final Introspector introspector) {
+    public CollectionToCollectionConverterFactory(Introspector introspector) {
         this(new CollectionDefaultValueProviderFactory(introspector).withDefaults());
     }
 
-    public CollectionToCollectionConverterFactory(final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
+    public CollectionToCollectionConverterFactory(DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory) {
         this.defaultValueProviderFactory = defaultValueProviderFactory;
     }
 
     @Override
-    public <O extends Collection<?>> Converter<Collection<?>, O> create(final Class<O> targetType) {
+    public <O extends Collection<?>> Converter<Collection<?>, O> create(Class<O> targetType) {
         return new CollectionToCollectionConverter<>(this.defaultValueProviderFactory.create(targetType), targetType);
     }
 
@@ -47,15 +47,15 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
         private final DefaultValueProvider<O> defaultValueProvider;
         private final Class<O> targetType;
 
-        public CollectionToCollectionConverter(final DefaultValueProvider<O> defaultValueProvider, final Class<O> targetType) {
+        public CollectionToCollectionConverter(DefaultValueProvider<O> defaultValueProvider, Class<O> targetType) {
             this.defaultValueProvider = defaultValueProvider;
             this.targetType = targetType;
         }
 
         @Override
-        public O convert(final Collection<?> source) {
+        public O convert(Collection<?> source) {
             //noinspection unchecked
-            final Collection<Object> collection = (Collection<Object>) this.defaultValueProvider.defaultValue();
+            Collection<Object> collection = (Collection<Object>) this.defaultValueProvider.defaultValue();
             Objects.requireNonNull(collection).addAll(source);
             return this.targetType.cast(collection);
         }

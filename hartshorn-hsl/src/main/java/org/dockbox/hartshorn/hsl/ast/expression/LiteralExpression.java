@@ -23,7 +23,7 @@ public class LiteralExpression extends Expression {
 
     private final Object value;
 
-    public LiteralExpression(final Token at, final Object value) {
+    public LiteralExpression(Token at, Object value) {
         super(at);
         this.value = value;
     }
@@ -33,7 +33,7 @@ public class LiteralExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -30,7 +30,7 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     private static final MultiMap<String, TypeReference> BATCH_CACHE = new ConcurrentSetMultiMap<>();
     private final String packageName;
 
-    protected ClasspathTypeReferenceCollector(final String packageName) {
+    protected ClasspathTypeReferenceCollector(String packageName) {
         this.packageName = packageName;
     }
 
@@ -50,11 +50,11 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     protected abstract Set<TypeReference> createCache() throws TypeCollectionException;
 
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof final ClasspathTypeReferenceCollector collector)) {
+        if (!(other instanceof ClasspathTypeReferenceCollector collector)) {
             return false;
         }
         return this.packageName.equals(collector.packageName);

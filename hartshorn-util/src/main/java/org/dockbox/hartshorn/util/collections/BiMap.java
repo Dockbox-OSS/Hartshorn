@@ -21,9 +21,9 @@ import java.util.Map;
 public interface BiMap<K, V> extends Map<K, V> {
 
     @SafeVarargs
-    static <K, V> BiMap<K, V> ofEntries(final Entry<K, V>... entries) {
-        final BiMap<K, V> map = new HashBiMap<>();
-        for (final Entry<K, V> entry : entries) {
+    static <K, V> BiMap<K, V> ofEntries(Entry<K, V>... entries) {
+        BiMap<K, V> map = new HashBiMap<>();
+        for (Entry<K, V> entry : entries) {
             map.put(entry.getKey(), entry.getValue());
         }
         return map;

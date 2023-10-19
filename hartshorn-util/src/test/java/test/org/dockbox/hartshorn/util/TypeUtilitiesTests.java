@@ -41,8 +41,8 @@ public class TypeUtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("primitiveStrings")
-    void testPrimitivesFromString(final Class<?> primitive, final String value, final Object real) {
-        final Object out = TypeUtils.toPrimitive(primitive, value);
+    void testPrimitivesFromString(Class<?> primitive, String value, Object real) {
+        Object out = TypeUtils.toPrimitive(primitive, value);
         Assertions.assertEquals(real, out);
     }
 }

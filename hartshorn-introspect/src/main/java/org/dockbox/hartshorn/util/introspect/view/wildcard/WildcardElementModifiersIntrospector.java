@@ -27,7 +27,7 @@ public class WildcardElementModifiersIntrospector implements ElementModifiersInt
     }
 
     @Override
-    public boolean has(final AccessModifier modifier) {
+    public boolean has(AccessModifier modifier) {
         return false;
     }
 

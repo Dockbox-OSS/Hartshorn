@@ -32,14 +32,14 @@ import jakarta.inject.Inject;
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.
  */
 @InstallIfAbsent
-public final class ArgumentConverterContext extends DefaultProvisionContext {
+public class ArgumentConverterContext extends DefaultProvisionContext {
 
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
     private final ApplicationContext applicationContext;
 
     @Inject
-    public ArgumentConverterContext(final ApplicationContext applicationContext) {
+    public ArgumentConverterContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -50,7 +50,7 @@ public final class ArgumentConverterContext extends DefaultProvisionContext {
      *
      * @return {@code true} if a converter exists, or else {@code false}
      */
-    public boolean hasConverter(final String key) {
+    public boolean hasConverter(String key) {
         return this.converter(key).present();
     }
 
@@ -61,7 +61,7 @@ public final class ArgumentConverterContext extends DefaultProvisionContext {
      *
      * @return The converter if it exists, or {@link Option#empty()}
      */
-    public Option<ArgumentConverter<?>> converter(final String key) {
+    public Option<ArgumentConverter<?>> converter(String key) {
         return Option.of(this.converterMap.get(key.toLowerCase()));
     }
 
@@ -72,7 +72,7 @@ public final class ArgumentConverterContext extends DefaultProvisionContext {
      *
      * @return {@code true} if a converter exists, or else {@code false}
      */
-    public boolean hasConverter(final TypeView<?> type) {
+    public boolean hasConverter(TypeView<?> type) {
         return this.converter(type).present();
     }
 
@@ -85,7 +85,7 @@ public final class ArgumentConverterContext extends DefaultProvisionContext {
      *
      * @return The converter if it exists, or {@link Option#empty()}
      */
-    public <T> Option<ArgumentConverter<T>> converter(final TypeView<T> type) {
+    public <T> Option<ArgumentConverter<T>> converter(TypeView<T> type) {
         return Option.of(this.converterMap.values().stream()
                 .filter(converter -> type.isChildOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
@@ -97,11 +97,12 @@ public final class ArgumentConverterContext extends DefaultProvisionContext {
      *
      * @param converter The converter to register
      */
-    public void register(final ArgumentConverter<?> converter) {
+    public void register(ArgumentConverter<?> converter) {
         for (String key : converter.keys()) {
             key = key.toLowerCase();
-            if (this.converterMap.containsKey(key))
+            if (this.converterMap.containsKey(key)) {
                 this.applicationContext.log().debug("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter.");
+            }
             this.converterMap.put(key, converter);
         }
     }

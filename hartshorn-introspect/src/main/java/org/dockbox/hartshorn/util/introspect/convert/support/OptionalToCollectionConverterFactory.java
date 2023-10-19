@@ -29,20 +29,20 @@ public class OptionalToCollectionConverterFactory implements ConverterFactory<Op
     private final Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter;
     private final ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory;
 
-    public OptionalToCollectionConverterFactory(final Introspector introspector) {
+    public OptionalToCollectionConverterFactory(Introspector introspector) {
         this(new OptionalToOptionConverter(), new OptionToCollectionConverterFactory(introspector));
     }
 
-    public OptionalToCollectionConverterFactory(final Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter, final ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory) {
+    public OptionalToCollectionConverterFactory(Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter, ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory) {
         this.helperOptionalToOptionConverter = helperOptionalToOptionConverter;
         this.helperOptionToCollectionConverterFactory = helperOptionToCollectionConverterFactory;
     }
 
     @Override
-    public <O extends Collection<?>> Converter<Optional<?>, O> create(final Class<O> targetType) {
-        final Converter<Option<?>, O> optionToCollectionConverter = this.helperOptionToCollectionConverterFactory.create(targetType);
+    public <O extends Collection<?>> Converter<Optional<?>, O> create(Class<O> targetType) {
+        Converter<Option<?>, O> optionToCollectionConverter = this.helperOptionToCollectionConverterFactory.create(targetType);
         return input -> {
-            final Option<?> option = this.helperOptionalToOptionConverter.convert(input);
+            Option<?> option = this.helperOptionalToOptionConverter.convert(input);
             return optionToCollectionConverter.convert(option);
         };
     }

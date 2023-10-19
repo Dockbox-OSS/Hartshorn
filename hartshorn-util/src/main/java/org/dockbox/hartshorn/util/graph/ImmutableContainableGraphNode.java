@@ -22,7 +22,7 @@ public class ImmutableContainableGraphNode<T> extends ImmutableGraphNode<T> impl
 
     private final Set<GraphNode<T>> parents;
 
-    public ImmutableContainableGraphNode(final GraphNode<T> node) {
+    public ImmutableContainableGraphNode(GraphNode<T> node) {
         super(node);
         if (node instanceof ContainableGraphNode<T> containable) {
             this.parents = Set.copyOf(containable.parents());

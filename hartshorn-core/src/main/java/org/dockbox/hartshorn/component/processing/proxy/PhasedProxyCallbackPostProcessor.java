@@ -32,22 +32,22 @@ import java.util.Collection;
 public abstract class PhasedProxyCallbackPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
-        final ComponentKey<T> key = processingContext.key();
-        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+        ComponentKey<T> key = processingContext.key();
+        Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 
-        final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) {
             return;
         }
 
         instance = this.processProxy(context, instance, processingContext, factory);
 
-        for (final MethodView<T, ?> method : methods) {
-            final ProxyCallback<T> before = this.doBefore(context, method, key, instance);
-            final ProxyCallback<T> after = this.doAfter(context, method, key, instance);
-            final ProxyCallback<T> afterThrowing = this.doAfterThrowing(context, method, key, instance);
-            final MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
+        for (MethodView<T, ?> method : methods) {
+            ProxyCallback<T> before = this.doBefore(context, method, key, instance);
+            ProxyCallback<T> after = this.doAfter(context, method, key, instance);
+            ProxyCallback<T> afterThrowing = this.doAfterThrowing(context, method, key, instance);
+            MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
                 factory.advisors().method(method).wrapAround(wrapper);
@@ -55,13 +55,13 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
         }
     }
 
-    protected <T> T processProxy(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext, final ProxyFactory<T> proxyFactory) {
+    protected <T> T processProxy(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext, ProxyFactory<T> proxyFactory) {
         // Left for subclasses to override if necessary
         return instance;
     }
 
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ApplicationContext context, final ComponentKey<T> key, @Nullable final T instance) {
-        final TypeView<T> typeView = instance == null
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(ApplicationContext context, ComponentKey<T> key, @Nullable T instance) {
+        TypeView<T> typeView = instance == null
                 ? context.environment().introspector().introspect(key.type())
                 : context.environment().introspector().introspect(instance);
 
@@ -70,11 +70,11 @@ public abstract class PhasedProxyCallbackPostProcessor extends FunctionalCompone
                 .toList();
     }
 
-    public abstract <T> boolean wraps(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
+    public abstract <T> boolean wraps(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
 
-    public abstract <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doBefore(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
 
-    public abstract <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doAfter(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
 
-    public abstract <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodView<T, ?> method, final ComponentKey<T> key, @Nullable final T instance);
+    public abstract <T> ProxyCallback<T> doAfterThrowing(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
 }

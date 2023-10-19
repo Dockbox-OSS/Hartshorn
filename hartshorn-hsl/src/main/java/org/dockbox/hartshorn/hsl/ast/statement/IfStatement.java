@@ -25,7 +25,7 @@ public class IfStatement extends Statement {
     private final BlockStatement thenBranch;
     private final BlockStatement elseBranch;
 
-    public IfStatement(final Expression condition, final BlockStatement thenBranch, final BlockStatement elseBranch) {
+    public IfStatement(Expression condition, BlockStatement thenBranch, BlockStatement elseBranch) {
         super(condition);
         this.condition = condition;
         this.thenBranch = thenBranch;
@@ -45,7 +45,7 @@ public class IfStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

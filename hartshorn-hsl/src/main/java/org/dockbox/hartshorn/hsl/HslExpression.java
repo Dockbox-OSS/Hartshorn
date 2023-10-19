@@ -28,28 +28,28 @@ import java.nio.file.Path;
 
 public class HslExpression extends HslScript {
 
-    protected HslExpression(final ApplicationContext context, final String source) {
+    protected HslExpression(ApplicationContext context, String source) {
         super(context, source);
     }
 
-    public static HslExpression of(final ApplicationContext context, final String source) {
+    public static HslExpression of(ApplicationContext context, String source) {
         return new HslExpression(context, source);
     }
 
-    public static HslExpression of(final ApplicationContext context, final Path path) throws IOException {
+    public static HslExpression of(ApplicationContext context, Path path) throws IOException {
         return of(context, sourceFromPath(path));
     }
 
-    public static HslExpression of(final ApplicationContext context, final File file) throws IOException {
+    public static HslExpression of(ApplicationContext context, File file) throws IOException {
         return of(context, file.toPath());
     }
 
     public boolean valid() {
-        final ScriptContext context = this.evaluate();
+        ScriptContext context = this.evaluate();
         return this.valid(context);
     }
 
-    public boolean valid(final ResultCollector collector) {
+    public boolean valid(ResultCollector collector) {
         return ValidateExpressionRuntime.valid(collector);
     }
 

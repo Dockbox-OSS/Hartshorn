@@ -25,7 +25,7 @@ public class CachedTypeReferenceCollector implements TypeReferenceCollector {
     private final TypeReferenceCollector collector;
     private Set<TypeReference> cache;
 
-    public CachedTypeReferenceCollector(final TypeReferenceCollector collector) {
+    public CachedTypeReferenceCollector(TypeReferenceCollector collector) {
         this.collector = collector;
     }
 
@@ -38,7 +38,7 @@ public class CachedTypeReferenceCollector implements TypeReferenceCollector {
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         this.collector.report(collector);
     }
 }

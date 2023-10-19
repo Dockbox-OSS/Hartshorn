@@ -26,25 +26,25 @@ public class AggregateTypeReferenceCollector implements TypeReferenceCollector{
 
     private final Set<TypeReferenceCollector> collectors;
 
-    public AggregateTypeReferenceCollector(final Set<TypeReferenceCollector> collectors) {
+    public AggregateTypeReferenceCollector(Set<TypeReferenceCollector> collectors) {
         this.collectors = collectors;
     }
 
-    public AggregateTypeReferenceCollector(final TypeReferenceCollector... collectors) {
+    public AggregateTypeReferenceCollector(TypeReferenceCollector... collectors) {
         this(Set.of(collectors));
     }
 
     @Override
     public Set<TypeReference> collect() throws TypeCollectionException {
-        final Set<TypeReference> references = new HashSet<>();
-        for (final TypeReferenceCollector collector : this.collectors) {
+        Set<TypeReference> references = new HashSet<>();
+        for (TypeReferenceCollector collector : this.collectors) {
             references.addAll(collector.collect());
         }
         return references;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("collectors").write(this.collectors.toArray(Reportable[]::new));
     }
 }

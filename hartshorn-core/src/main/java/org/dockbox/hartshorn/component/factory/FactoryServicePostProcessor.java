@@ -40,26 +40,26 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         //noinspection unchecked
-        final MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
-        final ConversionService conversionService = context.get(ConversionService.class);
-        final boolean enable = Boolean.TRUE.equals(method.annotations().get(Enable.class).map(Enable::value).orElse(true));
+        MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
+        ConversionService conversionService = context.get(ConversionService.class);
+        boolean enable = Boolean.TRUE.equals(method.annotations().get(Enable.class).map(Enable::value).orElse(true));
         if (method.modifiers().isAbstract()) {
-            final FactoryContext factoryContext = context.first(FactoryContext.class).get();
+            FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
-            final Option<? extends ConstructorView<?>> constructorCandidate = factoryContext.get(method);
+            Option<? extends ConstructorView<?>> constructorCandidate = factoryContext.get(method);
             if (constructorCandidate.present()) {
-                final ConstructorView<?> constructor = constructorCandidate.get();
+                ConstructorView<?> constructor = constructorCandidate.get();
                 return new ConstructorFactoryAbstractMethodInterceptor<>(constructor, conversionService, method, context, enable);
             }
             else {
-                final Factory factory = method.annotations().get(Factory.class).get();
+                Factory factory = method.annotations().get(Factory.class).get();
                 if (factory.required()) {
                     throw new MissingFactoryConstructorException(processingContext.key(), method);
                 }

@@ -32,12 +32,12 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface ProvisionContext extends Context {
 
     @Override
-    default <C extends Context> Option<C> first(final Class<C> context) {
+    default <C extends Context> Option<C> first(Class<C> context) {
         return this.first(ContextKey.of(context));
     }
 
     @Override
-    default <C extends Context> List<C> all(final Class<C> context) {
+    default <C extends Context> List<C> all(Class<C> context) {
         return this.all(ContextKey.of(context));
     }
 }

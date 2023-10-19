@@ -26,19 +26,19 @@ public class ScriptEvaluationError extends RuntimeException {
     private final int column;
     private final ASTNode at;
 
-    public ScriptEvaluationError(final String message, final Phase phase, final int line, final int column) {
+    public ScriptEvaluationError(String message, Phase phase, int line, int column) {
         this(null, message, phase, null, line, column);
     }
 
-    public ScriptEvaluationError(final String message, final Phase phase, final ASTNode at) {
+    public ScriptEvaluationError(String message, Phase phase, ASTNode at) {
         this(null, message, phase, at, at.line(), at.column());
     }
 
-    public ScriptEvaluationError(final Throwable cause, final Phase phase, final ASTNode at) {
+    public ScriptEvaluationError(Throwable cause, Phase phase, ASTNode at) {
         this(cause, cause.getMessage(), phase, at, at.line(), at.column());
     }
 
-    public ScriptEvaluationError(final Throwable cause, final String message, final Phase phase, final ASTNode at, final int line, final int column) {
+    public ScriptEvaluationError(Throwable cause, String message, Phase phase, ASTNode at, int line, int column) {
         super(message, cause);
         this.phase = phase;
         this.at = at;

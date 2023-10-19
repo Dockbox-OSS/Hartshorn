@@ -26,264 +26,264 @@ public class StringToNumberConverterFactoryTests {
 
     @Test
     void testValidStringToInteger() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Integer> converter = factory.create(Integer.class);
-        final Integer converted = converter.convert("1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Integer> converter = factory.create(Integer.class);
+        Integer converted = converter.convert("1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1, converted);
     }
 
     @Test
     void testValidStringToLong() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Long> converter = factory.create(Long.class);
-        final Long converted = converter.convert("1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Long> converter = factory.create(Long.class);
+        Long converted = converter.convert("1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1L, converted);
     }
 
     @Test
     void testValidStringToFloat() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Float> converter = factory.create(Float.class);
-        final Float converted = converter.convert("1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Float> converter = factory.create(Float.class);
+        Float converted = converter.convert("1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
     void testValidStringToDouble() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Double> converter = factory.create(Double.class);
-        final Double converted = converter.convert("1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Double> converter = factory.create(Double.class);
+        Double converted = converter.convert("1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
     void testValidStringToShort() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Short> converter = factory.create(Short.class);
-        final Short converted = converter.convert("1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Short> converter = factory.create(Short.class);
+        Short converted = converter.convert("1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((short) 1, converted);
     }
 
     @Test
     void testValidStringToByte() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Byte> converter = factory.create(Byte.class);
-        final Byte converted = converter.convert("1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Byte> converter = factory.create(Byte.class);
+        Byte converted = converter.convert("1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((byte) 1, converted);
     }
 
     @Test
     void testNegativeStringToInteger() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Integer> converter = factory.create(Integer.class);
-        final Integer converted = converter.convert("-1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Integer> converter = factory.create(Integer.class);
+        Integer converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(-1, converted);
     }
 
     @Test
     void testNegativeStringToLong() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Long> converter = factory.create(Long.class);
-        final Long converted = converter.convert("-1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Long> converter = factory.create(Long.class);
+        Long converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(-1L, converted);
     }
 
     @Test
     void testNegativeStringToFloat() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Float> converter = factory.create(Float.class);
-        final Float converted = converter.convert("-1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Float> converter = factory.create(Float.class);
+        Float converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(-1.0F, converted);
     }
 
     @Test
     void testNegativeStringToDouble() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Double> converter = factory.create(Double.class);
-        final Double converted = converter.convert("-1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Double> converter = factory.create(Double.class);
+        Double converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(-1.0D, converted);
     }
 
     @Test
     void testNegativeStringToShort() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Short> converter = factory.create(Short.class);
-        final Short converted = converter.convert("-1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Short> converter = factory.create(Short.class);
+        Short converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((short) -1, converted);
     }
 
     @Test
     void testNegativeStringToByte() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Byte> converter = factory.create(Byte.class);
-        final Byte converted = converter.convert("-1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Byte> converter = factory.create(Byte.class);
+        Byte converted = converter.convert("-1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((byte) -1, converted);
     }
 
     @Test
     void testInvalidStringToInteger() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Integer> converter = factory.create(Integer.class);
-        final Integer converted = converter.convert("a");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Integer> converter = factory.create(Integer.class);
+        Integer converted = converter.convert("a");
         Assertions.assertNull(converted);
     }
 
     @Test
     void testInvalidStringToLong() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Long> converter = factory.create(Long.class);
-        final Long converted = converter.convert("a");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Long> converter = factory.create(Long.class);
+        Long converted = converter.convert("a");
         Assertions.assertNull(converted);
     }
 
     @Test
     void testInvalidStringToFloat() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Float> converter = factory.create(Float.class);
-        final Float converted = converter.convert("a");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Float> converter = factory.create(Float.class);
+        Float converted = converter.convert("a");
         Assertions.assertNull(converted);
     }
 
     @Test
     void testInvalidStringToDouble() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Double> converter = factory.create(Double.class);
-        final Double converted = converter.convert("a");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Double> converter = factory.create(Double.class);
+        Double converted = converter.convert("a");
         Assertions.assertNull(converted);
     }
 
     @Test
     void testInvalidStringToShort() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Short> converter = factory.create(Short.class);
-        final Short converted = converter.convert("a");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Short> converter = factory.create(Short.class);
+        Short converted = converter.convert("a");
         Assertions.assertNull(converted);
     }
 
     @Test
     void testInvalidStringToByte() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Byte> converter = factory.create(Byte.class);
-        final Byte converted = converter.convert("a");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Byte> converter = factory.create(Byte.class);
+        Byte converted = converter.convert("a");
         Assertions.assertNull(converted);
     }
 
     @Test
     void testHexadecimalStringToInteger() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Integer> converter = factory.create(Integer.class);
-        final Integer converted = converter.convert("0x1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Integer> converter = factory.create(Integer.class);
+        Integer converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1, converted);
     }
 
     @Test
     void testHexadecimalStringToLong() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Long> converter = factory.create(Long.class);
-        final Long converted = converter.convert("0x1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Long> converter = factory.create(Long.class);
+        Long converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1L, converted);
     }
 
     @Test
     void testHexadecimalStringToFloat() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Float> converter = factory.create(Float.class);
-        final Float converted = converter.convert("0x1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Float> converter = factory.create(Float.class);
+        Float converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
     void testHexadecimalStringToDouble() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Double> converter = factory.create(Double.class);
-        final Double converted = converter.convert("0x1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Double> converter = factory.create(Double.class);
+        Double converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
     void testHexadecimalStringToShort() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Short> converter = factory.create(Short.class);
-        final Short converted = converter.convert("0x1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Short> converter = factory.create(Short.class);
+        Short converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((short) 1, converted);
     }
 
     @Test
     void testHexadecimalStringToByte() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Byte> converter = factory.create(Byte.class);
-        final Byte converted = converter.convert("0x1");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Byte> converter = factory.create(Byte.class);
+        Byte converted = converter.convert("0x1");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((byte) 1, converted);
     }
 
     @Test
     void testOctalStringToInteger() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Integer> converter = factory.create(Integer.class);
-        final Integer converted = converter.convert("01");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Integer> converter = factory.create(Integer.class);
+        Integer converted = converter.convert("01");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1, converted);
     }
 
     @Test
     void testOctalStringToLong() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Long> converter = factory.create(Long.class);
-        final Long converted = converter.convert("01");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Long> converter = factory.create(Long.class);
+        Long converted = converter.convert("01");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1L, converted);
     }
 
     @Test
     void testOctalStringToFloat() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Float> converter = factory.create(Float.class);
-        final Float converted = converter.convert("01");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Float> converter = factory.create(Float.class);
+        Float converted = converter.convert("01");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1.0F, converted);
     }
 
     @Test
     void testOctalStringToDouble() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Double> converter = factory.create(Double.class);
-        final Double converted = converter.convert("01");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Double> converter = factory.create(Double.class);
+        Double converted = converter.convert("01");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals(1.0D, converted);
     }
 
     @Test
     void testOctalStringToShort() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Short> converter = factory.create(Short.class);
-        final Short converted = converter.convert("01");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Short> converter = factory.create(Short.class);
+        Short converted = converter.convert("01");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((short) 1, converted);
     }
 
     @Test
     void testOctalStringToByte() {
-        final ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
-        final Converter<String, Byte> converter = factory.create(Byte.class);
-        final Byte converted = converter.convert("01");
+        ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
+        Converter<String, Byte> converter = factory.create(Byte.class);
+        Byte converted = converter.convert("01");
         Assertions.assertNotNull(converted);
         Assertions.assertEquals((byte) 1, converted);
     }

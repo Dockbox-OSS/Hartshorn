@@ -33,7 +33,7 @@ public class ApplicationBoundNativeModule extends AbstractNativeModule {
 
     private Object instance;
 
-    public ApplicationBoundNativeModule(final Class<?> moduleClass, final ApplicationContext applicationContext) {
+    public ApplicationBoundNativeModule(Class<?> moduleClass, ApplicationContext applicationContext) {
         this.moduleClass = moduleClass;
         this.applicationContext = applicationContext;
     }

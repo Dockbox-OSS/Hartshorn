@@ -24,7 +24,7 @@ import test.org.dockbox.hartshorn.config.StandardPropertyHolderTests;
 public class JacksonStandardPropertyHolderTests extends StandardPropertyHolderTests {
 
     @Override
-    protected PropertyHolder propertyHolder(final ApplicationContext applicationContext) {
+    protected PropertyHolder propertyHolder(ApplicationContext applicationContext) {
         return applicationContext.get(PropertyHolder.class);
     }
 }

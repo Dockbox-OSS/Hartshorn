@@ -31,9 +31,9 @@ public class SerializerMethodInterceptor<T, R> implements MethodInterceptor<T, R
     private final ObjectMapper mapper;
     private final ConversionService conversionService;
 
-    public SerializerMethodInterceptor(final SerializationSourceConverter converter, final MethodView<T, R> method,
-                                       final boolean returnsStringOrWrapper, final ObjectMapper mapper,
-                                       final ConversionService conversionService) {
+    public SerializerMethodInterceptor(SerializationSourceConverter converter, MethodView<T, R> method,
+                                       boolean returnsStringOrWrapper, ObjectMapper mapper,
+                                       ConversionService conversionService) {
         this.converter = converter;
         this.method = method;
         this.returnsStringOrWrapper = returnsStringOrWrapper;
@@ -42,14 +42,18 @@ public class SerializerMethodInterceptor<T, R> implements MethodInterceptor<T, R
     }
 
     @Override
-    public R intercept(final MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
-        final Object[] arguments = interceptorContext.args();
+    public R intercept(MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
+        Object[] arguments = interceptorContext.args();
 
-        try (final OutputStream outputStream = this.converter.outputStream(this.method, arguments)) {
-            final Option<?> result;
+        try (OutputStream outputStream = this.converter.outputStream(this.method, arguments)) {
+            Option<?> result;
 
-            if (outputStream == null && this.returnsStringOrWrapper) result = this.mapper.write(arguments[0]);
-            else result = this.mapper.write(outputStream, arguments[0]);
+            if (outputStream == null && this.returnsStringOrWrapper) {
+                result = this.mapper.write(arguments[0]);
+            }
+            else {
+                result = this.mapper.write(outputStream, arguments[0]);
+            }
 
             return this.conversionService.convert(result, this.method.returnType().type());
         }

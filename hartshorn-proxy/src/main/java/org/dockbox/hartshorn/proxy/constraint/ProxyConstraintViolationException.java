@@ -30,11 +30,11 @@ import java.util.stream.Collectors;
  */
 public class ProxyConstraintViolationException extends ApplicationException {
 
-    public ProxyConstraintViolationException(final String message) {
+    public ProxyConstraintViolationException(String message) {
         super(message);
     }
 
-    public ProxyConstraintViolationException(final Set<ProxyConstraintViolation> violations) {
+    public ProxyConstraintViolationException(Set<ProxyConstraintViolation> violations) {
         this(violations.stream()
                 .map(ProxyConstraintViolation::message)
                 .collect(Collectors.joining("\n"))

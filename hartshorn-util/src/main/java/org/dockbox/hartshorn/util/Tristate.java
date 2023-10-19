@@ -27,7 +27,7 @@ public enum Tristate {
 
     private final boolean booleanValue;
 
-    Tristate(final boolean booleanValue) {
+    Tristate(boolean booleanValue) {
         this.booleanValue = booleanValue;
     }
 
@@ -35,7 +35,7 @@ public enum Tristate {
         return this.booleanValue;
     }
 
-    public static Tristate valueOf(final boolean booleanValue) {
+    public static Tristate valueOf(boolean booleanValue) {
         return booleanValue ? TRUE : FALSE;
     }
 }

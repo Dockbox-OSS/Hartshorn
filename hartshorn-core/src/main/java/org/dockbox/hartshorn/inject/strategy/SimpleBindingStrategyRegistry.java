@@ -39,13 +39,13 @@ public class SimpleBindingStrategyRegistry extends DefaultContext implements Bin
     }
 
     @Override
-    public BindingStrategyRegistry register(final BindingStrategy strategy) {
+    public BindingStrategyRegistry register(BindingStrategy strategy) {
         this.strategies.put(strategy.priority(), strategy);
         return this;
     }
 
     @Override
-    public BindingStrategyRegistry unregister(final BindingStrategy strategy) {
+    public BindingStrategyRegistry unregister(BindingStrategy strategy) {
         this.strategies.remove(strategy.priority(), strategy);
         return this;
     }
@@ -57,10 +57,10 @@ public class SimpleBindingStrategyRegistry extends DefaultContext implements Bin
     }
 
     @Override
-    public Option<BindingStrategy> find(final BindingStrategyContext<?> context) {
-        for (final BindingStrategyPriority priority : BindingStrategyPriority.values()) {
-            final List<BindingStrategy> matchingStrategies = new ArrayList<>();
-            for (final BindingStrategy strategy : this.strategies.get(priority)) {
+    public Option<BindingStrategy> find(BindingStrategyContext<?> context) {
+        for (BindingStrategyPriority priority : BindingStrategyPriority.values()) {
+            List<BindingStrategy> matchingStrategies = new ArrayList<>();
+            for (BindingStrategy strategy : this.strategies.get(priority)) {
                 if (strategy.canHandle(context)) {
                     matchingStrategies.add(strategy);
                 }

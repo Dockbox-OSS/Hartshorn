@@ -27,7 +27,7 @@ public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> 
     protected SynchronizedMultiMap() {
     }
 
-    protected SynchronizedMultiMap(final MultiMap<K, V> map) {
+    protected SynchronizedMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

@@ -38,11 +38,11 @@ import org.dockbox.hartshorn.util.option.Option;
 public class NativeProxyLookup implements ProxyLookup {
 
     @Override
-    public <T> Option<Class<T>> unproxy(final @NonNull T instance) {
+    public <T> Option<Class<T>> unproxy(@NonNull T instance) {
         Class<T> unproxied = null;
         // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
         if(Proxy.isProxyClass(instance.getClass())) {
-            final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+            InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
             if(invocationHandler instanceof PolymorphicAnnotationInvocationHandler annotationInvocationHandler) {
                 unproxied = TypeUtils.adjustWildcards(annotationInvocationHandler.annotation().annotationType(), Class.class);
             }
@@ -57,20 +57,20 @@ public class NativeProxyLookup implements ProxyLookup {
     }
 
     @Override
-    public boolean isProxy(final Object instance) {
+    public boolean isProxy(Object instance) {
         return instance != null && this.isProxy(instance.getClass());
     }
 
     @Override
-    public boolean isProxy(final Class<?> candidate) {
+    public boolean isProxy(Class<?> candidate) {
         return Proxy.isProxyClass(candidate);
     }
 
     @Override
     public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
-        final ProxyIntrospector<?> introspector;
+        ProxyIntrospector<?> introspector;
         if(Proxy.isProxyClass(instance.getClass())) {
-            final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+            InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
             if(invocationHandler instanceof PolymorphicAnnotationInvocationHandler) {
                 throw new UnsupportedOperationException("Polymorphic annotation proxies are not supported, see the documentation for more information.");
             }

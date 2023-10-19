@@ -43,8 +43,8 @@ public class ConvertibleTypePairTests {
 
     @ParameterizedTest
     @ValueSource(classes = {void.class, Void.class})
-    void testSourceTypeIsNullableType(final Class<?> type) {
-        final ConvertibleTypePair typePair = ConvertibleTypePair.of(type, String.class);
+    void testSourceTypeIsNullableType(Class<?> type) {
+        ConvertibleTypePair typePair = ConvertibleTypePair.of(type, String.class);
         Assertions.assertSame(Null.TYPE, typePair.sourceType());
     }
 }

@@ -38,11 +38,11 @@ public class ProxyCallbackContext<T> extends DefaultContext {
     private final Object[] args;
     private Throwable error;
 
-    public ProxyCallbackContext(final T delegate, final T proxy, final MethodView<T, ?> method, final Object[] args) {
+    public ProxyCallbackContext(T delegate, T proxy, MethodView<T, ?> method, Object[] args) {
         this(delegate, proxy, method, args, null);
     }
 
-    public ProxyCallbackContext(final T delegate, final T proxy, final MethodView<T, ?> method, final Object[] args, final Throwable error) {
+    public ProxyCallbackContext(T delegate, T proxy, MethodView<T, ?> method, Object[] args, Throwable error) {
         this.delegate = delegate;
         this.proxy = proxy;
         this.method = method;
@@ -109,7 +109,7 @@ public class ProxyCallbackContext<T> extends DefaultContext {
      * @param error The error that was thrown during the method invocation.
      * @return This context instance.
      */
-    public ProxyCallbackContext<T> acceptError(final Throwable error) {
+    public ProxyCallbackContext<T> acceptError(Throwable error) {
         this.error = error;
         return this;
     }

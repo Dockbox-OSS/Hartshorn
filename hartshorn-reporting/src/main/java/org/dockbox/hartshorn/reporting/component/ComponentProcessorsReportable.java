@@ -26,13 +26,13 @@ import java.util.Collection;
 public class ComponentProcessorsReportable implements Reportable {
     private final MultiMap<Integer, ComponentPostProcessor> processors;
 
-    public ComponentProcessorsReportable(final MultiMap<Integer, ComponentPostProcessor> processors) {
+    public ComponentProcessorsReportable(MultiMap<Integer, ComponentPostProcessor> processors) {
         this.processors = processors;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector propertyCollector) {
-        final Reportable[] reportables = processors.values().stream()
+    public void report(DiagnosticsPropertyCollector propertyCollector) {
+        Reportable[] reportables = processors.values().stream()
                 .flatMap(Collection::stream)
                 .map(processor -> (Reportable) processorCollector -> {
                     processorCollector.property("name").write(processor.getClass().getCanonicalName());

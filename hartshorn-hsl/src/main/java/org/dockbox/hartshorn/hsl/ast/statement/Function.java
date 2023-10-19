@@ -21,11 +21,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 
 public abstract class Function extends FinalizableStatement {
 
-    protected Function(final Token at) {
+    protected Function(Token at) {
         this(at, false);
     }
 
-    protected Function(final ASTNode at, final boolean finalized) {
+    protected Function(ASTNode at, boolean finalized) {
         super(at, finalized);
     }
 }

@@ -33,7 +33,7 @@ public class MethodCommandExecutor<T> implements CommandExecutor {
     private final ApplicationContext applicationContext;
     private final MethodView<T, ?> method;
 
-    public MethodCommandExecutor(final ConditionMatcher conditionMatcher, final MethodCommandExecutorContext<T> context) {
+    public MethodCommandExecutor(ConditionMatcher conditionMatcher, MethodCommandExecutorContext<T> context) {
         this.conditionMatcher = conditionMatcher;
         this.executorContext = context;
         this.applicationContext = context.applicationContext();
@@ -41,10 +41,10 @@ public class MethodCommandExecutor<T> implements CommandExecutor {
     }
 
     @Override
-    public void execute(final CommandContext commandContext) {
-        final T instance = this.applicationContext.get(this.executorContext.key());
-        final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method, null, this.applicationContext, commandContext, this.executorContext);
-        final List<Object> arguments = this.executorContext.parameterLoader().loadArguments(loaderContext);
+    public void execute(CommandContext commandContext) {
+        T instance = this.applicationContext.get(this.executorContext.key());
+        CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method, null, this.applicationContext, commandContext, this.executorContext);
+        List<Object> arguments = this.executorContext.parameterLoader().loadArguments(loaderContext);
 
         if (this.conditionMatcher.match(this.method, ProvidedParameterContext.of(this.method, arguments))) {
             this.applicationContext.log().debug("Invoking command method %s with %d arguments".formatted(this.method.qualifiedName(), arguments.size()));
@@ -53,7 +53,7 @@ public class MethodCommandExecutor<T> implements CommandExecutor {
         }
         else {
             this.applicationContext.log().debug("Conditions didn't match for " + this.method.qualifiedName());
-            final Message cancelled = this.applicationContext.get(CommandResources.class).cancelled();
+            Message cancelled = this.applicationContext.get(CommandResources.class).cancelled();
             commandContext.source().send(cancelled);
         }
     }

@@ -40,8 +40,8 @@ public class ValidateExpressionRuntime extends StandardRuntime {
         super(applicationContext, factory);
     }
 
-    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
-            final Set<ASTNodeParser<? extends Statement>> statementParsers) {
+    public ValidateExpressionRuntime(ApplicationContext applicationContext, HslLanguageFactory factory,
+            Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext, factory, statementParsers);
         this.customizer(new ExpressionCustomizer());
     }
@@ -53,8 +53,8 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      * @param collector The result collector in which the validation result may be stored.
      * @return The validation result, or {@code false} if it does not exist.
      */
-    public static boolean valid(final ResultCollector collector) {
-        final Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
+    public static boolean valid(ResultCollector collector) {
+        Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
         return Boolean.TRUE.equals(result.orElse(false));
     }
 }

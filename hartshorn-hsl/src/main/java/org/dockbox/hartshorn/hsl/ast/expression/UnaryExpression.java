@@ -24,7 +24,7 @@ public class UnaryExpression extends Expression {
     private final Token operator;
     private final Expression rightExp;
 
-    public UnaryExpression(final Token operator, final Expression rightExp) {
+    public UnaryExpression(Token operator, Expression rightExp) {
         super(operator);
         this.operator = operator;
         this.rightExp = rightExp;
@@ -39,7 +39,7 @@ public class UnaryExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -46,10 +46,10 @@ public class ConfigurationProviders {
      */
     @Binds
     @Singleton
-    public PropertyHolder propertyHolder(final ApplicationContext applicationContext,
-                                         final ApplicationPropertyHolder propertyHolder,
-                                         final ObjectMapper objectMapper,
-                                         final ObjectMapper propertyMapper) {
+    public PropertyHolder propertyHolder(ApplicationContext applicationContext,
+                                         ApplicationPropertyHolder propertyHolder,
+                                         ObjectMapper objectMapper,
+                                         ObjectMapper propertyMapper) {
         return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
     }
 
