@@ -17,13 +17,17 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.context.ComponentCollectionArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 import jakarta.inject.Singleton;
@@ -45,8 +49,8 @@ public class CommandProviders {
 
     @Binds
     @Singleton
-    public CommandGateway commandGateway(CommandParser parser, CommandResources resources, ApplicationContext context) {
-        return new CommandGatewayImpl(parser, resources, context);
+    public CommandGateway commandGateway(CommandParser parser, CommandResources resources, ApplicationContext context, ArgumentConverterRegistry converterRegistry) {
+        return new CommandGatewayImpl(parser, resources, context, converterRegistry);
     }
 
     @Binds
@@ -54,13 +58,18 @@ public class CommandProviders {
         return new CommandParserImpl(resources);
     }
 
-    @StaticBinds
-    public static CooldownExtension cooldownExtension(ApplicationContext applicationContext) {
+    @Binds(type = BindingType.COLLECTION)
+    public CooldownExtension cooldownExtension(ApplicationContext applicationContext) {
         return new CooldownExtension(applicationContext);
     }
 
     @Binds("command_loader")
     public ParameterLoader<?> parameterLoader() {
         return new CommandParameterLoader();
+    }
+    
+    @Binds
+    public ArgumentConverterRegistry converterRegistry(ComponentCollection<ArgumentConverter<?>> converters) {
+        return new ComponentCollectionArgumentConverterRegistry(converters);
     }
 }

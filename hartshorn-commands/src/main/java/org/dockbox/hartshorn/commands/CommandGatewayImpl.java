@@ -16,28 +16,28 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
-import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
-import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
-import org.dockbox.hartshorn.commands.extension.ExtensionResult;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
+import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
+import org.dockbox.hartshorn.commands.extension.ExtensionResult;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -53,12 +53,19 @@ public class CommandGatewayImpl implements CommandGateway {
     private final CommandParser parser;
     private final CommandResources resources;
     private final ApplicationContext context;
+    private final ArgumentConverterRegistry converterRegistry;
 
     @Inject
-    public CommandGatewayImpl(CommandParser parser, CommandResources resources, ApplicationContext context) {
+    public CommandGatewayImpl(
+            CommandParser parser,
+            CommandResources resources,
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry
+    ) {
         this.parser = parser;
         this.resources = resources;
         this.context = context;
+        this.converterRegistry = converterRegistry;
     }
 
     protected MultiMap<String, CommandExecutorContext> contexts() {
@@ -72,11 +79,8 @@ public class CommandGatewayImpl implements CommandGateway {
     @PostConstruct
     public void enable() {
         if (this.extensions.isEmpty()) {
-            ContextKey<CommandExtensionContext> commandExtensionContextKey = ContextKey.builder(CommandExtensionContext.class)
-                    .fallback(CommandExtensionContext::new)
-                    .build();
-            CommandExtensionContext extensionContext = this.context.first(commandExtensionContextKey).get();
-            for (CommandExecutorExtension extension : extensionContext.extensions()) {
+            ComponentCollection<CommandExecutorExtension> extensions = this.context.get(ComponentKey.collect(CommandExecutorExtension.class));
+            for (final CommandExecutorExtension extension : extensions) {
                 this.context.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
                 this.add(extension);
             }
@@ -220,6 +224,6 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     private <T> void register(MethodView<T, ?> method, ComponentKey<T> key) {
-        this.register(new MethodCommandExecutorContext<>(this.context, method, key));
+        this.register(new MethodCommandExecutorContext<>(this.context, this.converterRegistry, method, key));
     }
 }

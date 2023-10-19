@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 
@@ -85,7 +85,7 @@ public class ArgumentConverterContext extends DefaultProvisionContext {
      *
      * @return The converter if it exists, or {@link Option#empty()}
      */
-    public <T> Option<ArgumentConverter<T>> converter(TypeView<T> type) {
+    public <T> Option<ArgumentConverter<T>> converter(final TypeView<T> type) {
         return Option.of(this.converterMap.values().stream()
                 .filter(converter -> type.isChildOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)

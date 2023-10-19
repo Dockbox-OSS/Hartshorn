@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
@@ -34,13 +41,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 /**
  * Simple implementation of {@link CommandExecutorContext} targeting {@link MethodView} based executors.
  */
@@ -56,7 +56,12 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key) {
+    public MethodCommandExecutorContext(
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry,
+            MethodView<T, ?> method,
+            ComponentKey<T> key
+    ) {
         super(context);
         Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {

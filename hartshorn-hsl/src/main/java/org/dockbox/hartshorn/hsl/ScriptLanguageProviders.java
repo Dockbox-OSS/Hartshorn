@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
 import jakarta.inject.Named;
 
@@ -64,17 +65,19 @@ public class ScriptLanguageProviders {
     public ScriptRuntime runtime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
-            @Named(StatementStaticProviders.STATEMENT_BEAN) Set<ASTNodeParser<? extends Statement>> statementParsers
+            @Named(DefaultScriptStatementsProvider.STATEMENT_BEAN)
+            ComponentCollection<ASTNodeParser<? extends Statement>> statementParsers
     ) {
-        return new StandardRuntime(applicationContext, factory, statementParsers);
+        return new StandardRuntime(applicationContext, factory, Set.copyOf(statementParsers));
     }
 
     @Binds
     public ValidateExpressionRuntime expressionRuntime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
-            @Named(StatementStaticProviders.STATEMENT_BEAN) Set<ASTNodeParser<? extends Statement>> statementParsers
+            @Named(DefaultScriptStatementsProvider.STATEMENT_BEAN)
+            ComponentCollection<ASTNodeParser<? extends Statement>> statementParsers
     ) {
-        return new ValidateExpressionRuntime(applicationContext, factory, statementParsers);
+        return new ValidateExpressionRuntime(applicationContext, factory, Set.copyOf(statementParsers));
     }
 }
