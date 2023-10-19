@@ -19,24 +19,24 @@
 
     <properties>
         <!-- Language support, keep in sync with module parent -->
-        <groovy.version>4.0.14</groovy.version>
+        <groovy.version>4.0.15</groovy.version>
         <kotlin.version>1.9.10</kotlin.version>
-        <slf4j.version>2.0.7</slf4j.version>
+        <slf4j.version>2.0.9</slf4j.version>
 
         <!-- Versions in alphabetical order -->
         <auto-service.version>1.1.1</auto-service.version>
         <compile-testing.version>0.21.0</compile-testing.version>
         <cglib.version>3.3.0</cglib.version>
-        <checker.version>3.37.0</checker.version>
+        <checker.version>3.39.0</checker.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <jackson.version>2.15.2</jackson.version>
+        <jackson.version>2.15.3</jackson.version>
         <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <junit.version>5.10.0</junit.version>
         <logback.version>1.4.11</logback.version>
-        <mockito.version>5.2.0</mockito.version>
-        <scala.version>3.3.0</scala.version>
+        <mockito.version>5.6.0</mockito.version>
+        <scala.version>3.3.1</scala.version>
     </properties>
 
     <dependencyManagement>
@@ -156,7 +156,7 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
