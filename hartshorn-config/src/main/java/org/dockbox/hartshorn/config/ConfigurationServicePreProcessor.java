@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.config;
 
+import java.net.URI;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -23,16 +26,10 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.resources.FallbackResourceLookup;
 import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
 import org.dockbox.hartshorn.util.resources.MissingSourceException;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
-import org.dockbox.hartshorn.util.resources.ResourceLookupStrategyContext;
-
-import java.net.URI;
-import java.util.Set;
 
 /**
  * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
@@ -65,13 +62,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
     }
 
     private <T> boolean processSource(final String source, final ApplicationContext context, final ComponentKey<T> key) {
-        final Option<ResourceLookupStrategyContext> strategyContext = context.first(ResourceLookupStrategyContext.class);
-        if (strategyContext.absent()) {
-            context.log().warn("No resource lookup strategies present, cannot look up resource for " + key.type().getSimpleName());
-            return false;
-        }
-
-        final ResourceLookup resourceLookup = new FallbackResourceLookup(context, new FileSystemLookupStrategy());
+        final ResourceLookup resourceLookup = context.get(ResourceLookup.class);
         final Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
