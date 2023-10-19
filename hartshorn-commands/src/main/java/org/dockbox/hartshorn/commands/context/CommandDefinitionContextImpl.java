@@ -35,7 +35,6 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -118,12 +117,19 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
      */
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{([\\w\\.]+)?\\})?");
 
+    private final ArgumentConverterRegistry converterRegistry;
     private final Command command;
     private final CommandDefinition definition;
     private final ApplicationContext context;
     private final MethodView<?, ?> method;
 
-    public CommandDefinitionContextImpl(ApplicationContext context, Command command, MethodView<?, ?> method) {
+    public CommandDefinitionContextImpl(
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry,
+            Command command,
+            MethodView<?, ?> method
+    ) {
+        this.converterRegistry = converterRegistry;
         this.command = command;
         this.context = context;
         this.method = method;
@@ -197,10 +203,9 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
             this.context.log().warn("Unknown argument specification " + definition + ", use Type or Name{Type}");
         }
 
-        /*
-        Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
-        group matched.
-        */
+
+        // Group one specifies either the name of the value (if two or more groups are matched), or the type if only
+        // one group matched.
         if (1 <= elementValue.groupCount()) {
             String g1 = elementValue.group(1);
             if (1 == elementValue.groupCount()) {
@@ -212,9 +217,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
             throw new ArgumentMatchingFailedException("Missing key argument in specification '" + definition + "'");
         }
 
-        /*
-        Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
-        */
+        // Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
         if (2 <= elementValue.groupCount() && null != elementValue.group(2)) {
             type = elementValue.group(2);
         }
@@ -224,13 +227,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, boolean optional) {
-        ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
-                .fallback(ArgumentConverterContext::new)
-                .build();
-
-        Option<ArgumentConverter<?>> converter = this.context
-                .first(argumentConverterContextKey)
-                .flatMap(context -> context.converter(type.toLowerCase()));
+        final Option<ArgumentConverter<?>> converter = this.converterRegistry.converter(type.toLowerCase());
 
         if (converter.present()) {
             this.context.log().debug("Found converter for element type " + type);

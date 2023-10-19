@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class InterpreterTests {
 
     @Inject

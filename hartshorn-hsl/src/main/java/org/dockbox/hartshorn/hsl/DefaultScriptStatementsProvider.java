@@ -16,27 +16,11 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.BodyStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.Function;
-import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.statement.BlockStatementParser;
 import org.dockbox.hartshorn.hsl.parser.statement.BreakStatementParser;
@@ -61,97 +45,97 @@ import org.dockbox.hartshorn.hsl.parser.statement.WhileStatementParser;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
-public class StatementStaticProviders {
+public class DefaultScriptStatementsProvider {
 
     public static final String STATEMENT_BEAN = "statement";
     
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<BlockStatement> blockStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> blockStatementParser() {
         return new BlockStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<BreakStatement> breakStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> breakStatementParser() {
         return new BreakStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<ClassStatement> classStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> classStatementParser() {
         return new ClassStatementParser(new FieldStatementParser());
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<ConstructorStatement> constructorStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> constructorStatementParser() {
         return new ConstructorStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<ContinueStatement> continueStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> continueStatementParser() {
         return new ContinueStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<DoWhileStatement> doWhileStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> doWhileStatementParser() {
         return new DoWhileStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<FinalizableStatement> finalDeclarationStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> finalDeclarationStatementParser() {
         return new FinalDeclarationStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<BodyStatement> forStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> forStatementParser() {
         return new ForStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<Function> functionStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> functionStatementParser() {
         return new FunctionStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<IfStatement> ifStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> ifStatementParser() {
         return new IfStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<ModuleStatement> moduleStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> moduleStatementParser() {
         return new ModuleStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<NativeFunctionStatement> nativeFunctionStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> nativeFunctionStatementParser() {
         return new NativeFunctionStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<RepeatStatement> repeatStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> repeatStatementParser() {
         return new RepeatStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<ReturnStatement> returnStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> returnStatementParser() {
         return new ReturnStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<SwitchStatement> switchStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> switchStatementParser() {
         return new SwitchStatementParser(new CaseBodyStatementParser());
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<TestStatement> testStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> testStatementParser() {
         return new TestStatementParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<VariableStatement> variableDeclarationParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> variableDeclarationParser() {
         return new VariableDeclarationParser();
     }
 
-    @StaticBinds(id = STATEMENT_BEAN)
-    public static ASTNodeParser<WhileStatement> whileStatementParser() {
+    @Binds(value = STATEMENT_BEAN, type = BindingType.COLLECTION)
+    public ASTNodeParser<? extends Statement> whileStatementParser() {
         return new WhileStatementParser();
     }
 }
