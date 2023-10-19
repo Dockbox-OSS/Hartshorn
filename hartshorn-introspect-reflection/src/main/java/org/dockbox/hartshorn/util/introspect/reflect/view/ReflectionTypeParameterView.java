@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -33,6 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class ReflectionTypeParameterView implements TypeParameterView {
 
@@ -181,7 +181,10 @@ public class ReflectionTypeParameterView implements TypeParameterView {
             else if (this.type instanceof ParameterizedType parameterizedType) {
                 this.resolvedType = Option.of(this.introspector.introspect(parameterizedType));
             }
-            else if (this.isWildcard()) {
+            else if (this.type instanceof WildcardType) {
+                // Note that upper bounds may be present, but the resolved type itself is still a wildcard,
+                // so we return a wildcard type view here. The upper bounds can be resolved separately if
+                // needed.
                 this.resolvedType = Option.of(new WildcardTypeView());
             }
             else {

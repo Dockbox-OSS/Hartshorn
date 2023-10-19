@@ -37,5 +37,4 @@ public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
         }
         return Option.of(this.container);
     }
-
 }

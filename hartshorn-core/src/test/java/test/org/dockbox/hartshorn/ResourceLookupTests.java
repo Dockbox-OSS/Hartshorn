@@ -16,18 +16,18 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.resources.ResourceLookup;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.resources.ResourceLookup;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 

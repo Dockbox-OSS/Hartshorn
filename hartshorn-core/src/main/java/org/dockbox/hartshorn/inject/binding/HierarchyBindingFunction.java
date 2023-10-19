@@ -18,17 +18,23 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.ScopeModuleContext;
+import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
+import org.dockbox.hartshorn.inject.binding.collection.CollectionBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.collection.CollectorBindingFunction;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.binding.collection.HierarchyCollectorBindingFunction;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -47,7 +53,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     private final BindingHierarchy<T> hierarchy;
-    private final Binder binder;
+    private final HierarchicalBinder binder;
     private final SingletonCache singletonCache;
     private final ComponentInstanceFactory instanceFactory;
     private final ScopeModuleContext moduleContext;
@@ -59,7 +65,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     public HierarchyBindingFunction(
             BindingHierarchy<T> hierarchy,
-            Binder binder,
+            HierarchicalBinder binder,
             SingletonCache singletonCache,
             ComponentInstanceFactory instanceFactory,
             Scope scope,
@@ -163,24 +169,43 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder lazySingleton(Class<T> type) {
-        this.lazyContainerSingleton(() -> {
+        return this.lazyContainerSingleton(() -> {
             ComponentKey<T> key = ComponentKey.builder(type).scope(this.scope).build();
             Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
             return object.orNull();
         });
-        return this.binder();
     }
 
     @Override
     public Binder lazySingleton(CheckedSupplier<T> supplier) {
-        this.lazyContainerSingleton(() -> {
+        return this.lazyContainerSingleton(() -> {
             T instance = supplier.get();
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }
-            return new ObjectContainer<>(instance);
+            return new ComponentObjectContainer<>(instance);
         });
-        return this.binder();
+    }
+
+    @Override
+    public Binder collect(Customizer<CollectorBindingFunction<T>> collector) {
+        BindingHierarchy<T> existingHierarchy = this.hierarchy();
+        ComponentKey<ComponentCollection<T>> collectionComponentKey = createCollectionComponentKey();
+
+        BindingHierarchy<ComponentCollection<T>> existingCollectionHierarchy = this.binder.hierarchy(collectionComponentKey);
+        if (existingCollectionHierarchy instanceof CollectionBindingHierarchy<T> collectionBindingHierarchy) {
+            Binder updatedBinder = this.binder.bind(collectionBindingHierarchy);
+            HierarchyCollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(updatedBinder, collectionBindingHierarchy, this.priority);
+            collector.configure(function);
+            return updatedBinder;
+        }
+        else {
+            throw new IllegalStateException("Cannot create collector binding function for hierarchy " + existingHierarchy.key() + " as it is not a collection binding hierarchy");
+        }
+    }
+
+    private ComponentKey<ComponentCollection<T>> createCollectionComponentKey() {
+        return this.hierarchy().key().mutable().collector().build();
     }
 
     protected Binder lazyContainerSingleton(CheckedSupplier<ObjectContainer<T>> supplier) {

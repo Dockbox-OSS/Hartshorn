@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
-public class ComponentConfigurationException extends ApplicationException {
+public class ComponentConfigurationException extends ApplicationRuntimeException {
 
     public ComponentConfigurationException(String message) {
         super(message);

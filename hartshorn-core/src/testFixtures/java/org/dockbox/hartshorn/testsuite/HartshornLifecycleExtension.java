@@ -253,7 +253,7 @@ public class HartshornLifecycleExtension implements
         public void configure(Configurer constructor) {
             Customizer<ContextualApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
                 environment.disableBanner(); // Disable banner for tests, to avoid unnecessary noise
-                environment.enableBatchMode(); // Enable batch mode, to make use of additional caching
+                environment.enableBatchMode(); // Enable batch mode, to make use of additional caching between tests. This decreases startup time after warmup (first test).
                 environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
 

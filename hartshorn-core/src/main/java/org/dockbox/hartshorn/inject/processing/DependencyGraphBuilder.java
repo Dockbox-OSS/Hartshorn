@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComposedProvider;
 import org.dockbox.hartshorn.inject.DependencyContext;
@@ -33,6 +34,7 @@ import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -44,8 +46,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DependencyGraphBuilder {
 
-    private final DependencyResolver resolver;
     private final HierarchicalComponentProvider hierarchicalComponentProvider;
+    private final DependencyResolver resolver;
 
     protected DependencyGraphBuilder(DependencyResolver resolver, HierarchicalComponentProvider hierarchicalComponentProvider) {
         this.resolver = resolver;
@@ -60,7 +62,7 @@ public class DependencyGraphBuilder {
         return new DependencyGraphBuilder(resolver, hierarchicalComponentProvider);
     }
 
-    public DependencyGraph buildDependencyGraph(Collection<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
+    public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
         Set<DependencyContext<?>> contexts = inflateDependencyContexts(dependencyContexts);
         MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.computeNodeMap(contexts);
         DependencyGraph graph = new DependencyGraph();
@@ -70,7 +72,7 @@ public class DependencyGraphBuilder {
         return graph;
     }
 
-    private void buildDependencyNodes(Collection<DependencyContext<?>> dependencyContexts,
+    private void buildDependencyNodes(Iterable<DependencyContext<?>> dependencyContexts,
             MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes, DependencyGraph graph
     ) {
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
@@ -78,28 +80,19 @@ public class DependencyGraphBuilder {
         }
     }
 
-    protected void buildSingleDependencyNode(
-            MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
-            DependencyGraph graph,
-            DependencyContext<?> dependencyContext
-    ) {
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(dependencyContext.componentKey());
-        graph.addRoots(Set.copyOf(componentNodes));
-
-        for(MutableContainableGraphNode<DependencyContext<?>> componentNode : componentNodes) {
-            DependencyContext<?> componentDependencyContext = componentNode.value();
-            for (ComponentKey<?> dependency : componentDependencyContext.dependencies().allValues()) {
-                if (!nodes.containsKey(dependency)) {
-                    // provided by existing bindings, or will be dynamically created on request. It is not up to the
-                    // graph builder to verify that the dependency is (or will be) available.
-                    continue;
-                }
-
-                Set<GraphNode<DependencyContext<?>>> dependencyNodes = Set.copyOf(nodes.get(dependency));
-                graph.addRoots(dependencyNodes);
-                componentNodes.forEach(node -> node.addParents(dependencyNodes));
+    protected <T> Set<ComponentKey<? extends T>> lookupHierarchyDeclarations(DependencyContext<T> dependencyContext) {
+        ComponentKey<T> componentKey = dependencyContext.componentKey();
+        BindingHierarchy<T> hierarchy = this.hierarchicalComponentProvider.hierarchy(componentKey);
+        return hierarchy.highestPriority().map(provider -> {
+            Provider<T> actualProvider = provider;
+            if(provider instanceof ComposedProvider<T> composedProvider) {
+                actualProvider = composedProvider.provider();
             }
-        }
+            if(actualProvider instanceof TypeAwareProvider<T> typeAwareProvider) {
+                return componentKey.mutable().type(typeAwareProvider.type()).build();
+            }
+            return null;
+        }).stream().collect(Collectors.toSet());
     }
 
     private Set<DependencyContext<?>> inflateDependencyContexts(Iterable<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
@@ -129,6 +122,65 @@ public class DependencyGraphBuilder {
                 .collect(Collectors.toSet());
     }
 
+    protected void visitContextForNodeMapping(
+            DependencyContext<?> dependencyContext,
+            MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes
+    ) {
+        MutableContainableGraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(dependencyContext);
+        if (dependencyContext instanceof ImplementationDependencyContext<?,?> implementationDependencyContext) {
+            nodes.put(implementationDependencyContext.declarationContext().componentKey(), node);
+        }
+
+        ComponentKey<?> componentKey = dependencyContext.componentKey();
+        switch(dependencyContext.type()) {
+        case COMPONENT -> nodes.put(componentKey, node);
+        case COLLECTION -> {
+            ComponentKey<? extends ComponentCollection<?>> collectorComponentKey = componentKey.mutable().collector().build();
+            nodes.put(collectorComponentKey, node);
+        }
+        }
+    }
+
+    private void buildSingleDependencyNode(
+            MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
+            DependencyGraph graph,
+            DependencyContext<?> dependencyContext
+    ) {
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(dependencyContext.componentKey());
+        graph.addRoots(Set.copyOf(componentNodes));
+
+        for(MutableContainableGraphNode<DependencyContext<?>> componentNode : componentNodes) {
+            DependencyContext<?> componentDependencyContext = componentNode.value();
+            for(ComponentKey<?> dependency : componentDependencyContext.dependencies().allValues()) {
+                if(!nodes.containsKey(dependency)) {
+                    // provided by existing bindings, or will be dynamically created on request. It is not up to the
+                    // graph builder to verify that the dependency is (or will be) available.
+                    continue;
+                }
+
+                Set<GraphNode<DependencyContext<?>>> dependencyNodes = Set.copyOf(nodes.get(dependency));
+                if (dependencyNodes.size() > 1) {
+                    boolean collectionsOnly = dependencyNodes.stream().allMatch(node -> node.value().type() == BindingType.COLLECTION);
+                    if (!collectionsOnly) {
+                        // Priority is ignored for collections, so we can fail fast here.
+                        throw new IllegalStateException("Multiple nodes found for dependency " + dependency + " but not all are collections");
+                    }
+                }
+                graph.addRoots(dependencyNodes);
+                componentNodes.forEach(node -> node.addParents(dependencyNodes));
+            }
+        }
+    }
+
+    private static boolean containsAllDependencies(DependencyContext<?> dependencyContext, MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes) {
+        for (ComponentKey<?> dependency : dependencyContext.dependencies().allValues()) {
+            if (!nodes.containsKey(dependency)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @NotNull
     private MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> computeNodeMap(
             Iterable<DependencyContext<?>> allDependencyContexts
@@ -139,32 +191,5 @@ public class DependencyGraphBuilder {
         }
 
         return nodes;
-    }
-
-    protected void visitContextForNodeMapping(
-            DependencyContext<?> dependencyContext,
-            MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes
-    ) {
-        MutableContainableGraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(dependencyContext);
-        if (dependencyContext instanceof ImplementationDependencyContext<?,?> implementationDependencyContext) {
-            nodes.put(implementationDependencyContext.declarationContext().componentKey(), node);
-        }
-        // Add both, so resolution can find implementations if needed
-        nodes.put(dependencyContext.componentKey(), node);
-    }
-
-    protected <T> Set<ComponentKey<? extends T>> lookupHierarchyDeclarations(DependencyContext<T> dependencyContext) {
-        ComponentKey<T> componentKey = dependencyContext.componentKey();
-        BindingHierarchy<T> hierarchy = this.hierarchicalComponentProvider.hierarchy(componentKey);
-        return hierarchy.highestPriority().map(provider -> {
-            Provider<T> actualProvider = provider;
-            if (provider instanceof ComposedProvider<T> composedProvider) {
-                actualProvider = composedProvider.provider();
-            }
-            if (actualProvider instanceof TypeAwareProvider<T> typeAwareProvider) {
-                return componentKey.mutable().type(typeAwareProvider.type()).build();
-            }
-            return null;
-        }).stream().collect(Collectors.toSet());
     }
 }

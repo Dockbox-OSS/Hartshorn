@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.contextual;
+package org.dockbox.hartshorn.inject.binding.collection;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
-public record StaticComponentContainer<T>(T instance, TypeView<T> type, String id) {
+public interface CollectorBindingFunction<T> {
+
+    Binder provider(Provider<T> provider);
+
+    Binder supplier(CheckedSupplier<T> supplier);
+
+    Binder singleton(T instance);
+
+    Binder type(Class<? extends T> type);
+
+    Binder lazySingleton(CheckedSupplier<T> supplier);
 }

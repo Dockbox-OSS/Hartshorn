@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.collection.CollectorBindingFunction;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 public interface BindingFunction<T> {
@@ -110,4 +112,6 @@ public interface BindingFunction<T> {
      * @return The binder
      */
     Binder lazySingleton(CheckedSupplier<T> supplier);
+
+    Binder collect(Customizer<CollectorBindingFunction<T>> collector);
 }

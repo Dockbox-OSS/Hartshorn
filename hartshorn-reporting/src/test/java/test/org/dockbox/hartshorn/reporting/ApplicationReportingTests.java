@@ -17,7 +17,6 @@
 package test.org.dockbox.hartshorn.reporting;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -33,8 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 
-@UseStaticBinding
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class ApplicationReportingTests {
 
     @Inject

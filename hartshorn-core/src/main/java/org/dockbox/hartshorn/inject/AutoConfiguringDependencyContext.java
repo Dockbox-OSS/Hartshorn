@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -49,18 +50,17 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     private final View view;
 
     public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
-                                            ScopeKey scope, int priority,
-                                            CheckedSupplier<T> supplier, View view) {
-        super(componentKey, dependencies, scope, priority);
+                                            ScopeKey scope, int priority, BindingType bindingType,
+                                            View view, CheckedSupplier<T> supplier) {
+        super(componentKey, dependencies, scope, priority, bindingType);
         this.supplier = supplier;
         this.view = view;
     }
 
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
-        InstanceType instanceType = this.instanceType();
         function.priority(this.priority());
-        if (!this.scope().equals(Scope.DEFAULT_SCOPE.installableScopeType())) {
+        if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
             try {
                 function.installTo(this.scope());
             }
@@ -68,8 +68,33 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
                 throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
             }
         }
+        function.priority(this.priority());
         function.processAfterInitialization(this.processAfterInitialization());
 
+        switch(this.type()) {
+            case COMPONENT -> this.configureComponent(function);
+            case COLLECTION -> this.configureCollection(function);
+        }
+    }
+
+    private void configureCollection(BindingFunction<T> function) throws ComponentConfigurationException {
+        function.collect(collector -> {
+            InstanceType instanceType = this.instanceType();
+            try {
+                switch(instanceType) {
+                case SUPPLIER -> collector.supplier(this.supplier);
+                case SINGLETON -> collector.singleton(this.supplier.get());
+                case LAZY_SINGLETON -> collector.lazySingleton(this.supplier);
+                }
+            }
+            catch(ApplicationException e) {
+                throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
+            }
+        });
+    }
+
+    private void configureComponent(BindingFunction<T> function) throws ComponentConfigurationException {
+        InstanceType instanceType = this.instanceType();
         try {
             switch (instanceType) {
                 case SUPPLIER -> function.to(this.supplier);

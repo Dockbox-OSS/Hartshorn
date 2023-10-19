@@ -18,10 +18,8 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -29,6 +27,7 @@ import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
@@ -178,19 +177,18 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             throw new ComponentPopulateException("Failed to populate field " + field.name() + " in " + type.qualifiedName() + ", could not resolve bean type", null);
         }
 
-        ComponentKey<?> beanKey = ComponentKey.of(beanType.get());
+        ComponentKey<? extends ComponentCollection<?>> beanKey = ComponentKey.collect(beanType.get().type());
         if (field.annotations().has(Named.class)) {
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
         }
 
-        StaticComponentContext staticComponentContext = this.applicationContext().first(StaticComponentContext.CONTEXT_KEY).get();
-        List<?> beans = staticComponentContext.provider().all(beanKey);
+        ComponentCollection<?> collection = applicationContext.get(beanKey);
         //noinspection unchecked
         Collection<Object> fieldValue = field.get(instance)
                 .cast(Collection.class)
                 .orCompute(() -> (Collection<Object>) this.conversionService.get().convert(null, field.type().type()))
                 .get();
-        fieldValue.addAll(beans);
+        fieldValue.addAll(collection);
 
         this.applicationContext().log().debug("Injecting bean collection of type {} into field {}", field.type().name(), field.qualifiedName());
         field.set(instance, fieldValue);

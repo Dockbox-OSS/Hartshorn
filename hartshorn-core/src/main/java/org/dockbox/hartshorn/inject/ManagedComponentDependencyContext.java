@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.View;
@@ -82,7 +83,12 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     }
 
     @Override
-    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
+    public BindingType type() {
+        return BindingType.COMPONENT;
+    }
+
+    @Override
+    public void configure(final BindingFunction<T> function) throws ComponentConfigurationException {
         // Do nothing, require processing or standard instance provision
     }
 

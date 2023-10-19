@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
@@ -76,10 +77,10 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         boolean lazy = bindingDecorator.lazy();
         boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
         boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
+        BindingType bindingType = bindingDecorator.type();
 
         DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
-
-        return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, supplier, bindsMethod)
+        return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, bindingType, bindsMethod, supplier)
                 .lazy(lazy)
                 .singleton(singleton)
                 .processAfterInitialization(processAfterInitialization);

@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
-public interface HierarchicalComponentProvider extends ComponentProvider, Binder {
-
-    <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key);
+public interface HierarchicalComponentProvider extends ComponentProvider, HierarchicalBinder {
 
     MultiMap<Scope, BindingHierarchy<?>> hierarchies();
 }

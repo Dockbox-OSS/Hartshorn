@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.contextual;
+package org.dockbox.hartshorn.inject.binding.collection;
 
 import java.util.Collection;
 import java.util.Set;
 
-public interface StaticComponentCollector {
-    <T> StaticComponentContainer<T> register(T instance, Class<T> type, String id);
+import org.dockbox.hartshorn.util.collections.AbstractDelegatingCollection;
 
-    <T> Set<StaticComponentContainer<T>> register(Class<T> type, Collection<T> components, String id);
+/**
+ * Basic implementation of {@link ComponentCollection}, using a backing {@link Collection} instance.
+ *
+ * @param <T> the type of the components
+ */
+public class SimpleComponentCollection<T> extends AbstractDelegatingCollection<T> implements ComponentCollection<T> {
 
-    void unregister(StaticComponentContainer<?> componentReference);
+    public SimpleComponentCollection(Collection<T> delegate) {
+        // Immutable copy, to prevent modification of the collection.
+        super(Set.copyOf(delegate));
+    }
 }
