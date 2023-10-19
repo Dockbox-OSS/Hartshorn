@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.HandledInjection;
 import org.dockbox.hartshorn.util.CollectionUtilities;
@@ -27,8 +28,8 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class DependencyResolverUtils {
 
@@ -52,7 +53,7 @@ public class DependencyResolverUtils {
 
     public static <T, E extends AnnotatedElementView & GenericTypeView<T>> ComponentKey<T> resolveComponentKey(E element) {
         TypeView<T> type = element.genericType();
-        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(type.type());
+        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(type);
         element.annotations().get(Named.class)
                 .filter(qualifier -> StringUtilities.notEmpty(qualifier.value()))
                 .peek(qualifier -> {

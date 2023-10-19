@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 public class FallbackResourceLookup implements ResourceLookup {
 
@@ -36,9 +36,6 @@ public class FallbackResourceLookup implements ResourceLookup {
     public FallbackResourceLookup(ApplicationContext applicationContext, ResourceLookupStrategy fallbackStrategy) {
         this.applicationContext = applicationContext;
         this.fallbackStrategy = fallbackStrategy;
-
-        applicationContext.first(ResourceLookupStrategyContext.class)
-                .peek(strategyContext -> strategyContext.strategies().forEach(this::addLookupStrategy));
     }
 
     @Override

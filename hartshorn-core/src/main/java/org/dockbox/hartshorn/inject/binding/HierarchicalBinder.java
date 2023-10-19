@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.contextual;
+package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 
-import java.util.List;
+public interface HierarchicalBinder extends Binder {
 
-public interface StaticComponentProvider {
-    <T> T first(Class<T> type);
-
-    <T> T first(Class<T> type, String id);
-
-    <T> T first(ComponentKey<T> key);
-
-    <T> List<T> all(Class<T> type);
-
-    <T> List<T> all(Class<T> type, String id);
-
-    <T> List<T> all(ComponentKey<T> key);
+    <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key);
 }

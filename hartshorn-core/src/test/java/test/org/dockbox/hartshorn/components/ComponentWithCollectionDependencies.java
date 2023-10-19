@@ -14,15 +14,33 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.contextual;
+package test.org.dockbox.hartshorn.components;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-@Target({ElementType.FIELD, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface StaticBinds {
-    String id() default "";
+import org.dockbox.hartshorn.component.Component;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
+@Component
+public class ComponentWithCollectionDependencies {
+
+    @Inject
+    @Named("names")
+    private List<String> names;
+
+    @Inject
+    @Named("ages")
+    private Set<Integer> ages = new TreeSet<>();
+
+    public List<String> names() {
+        return this.names;
+    }
+
+    public Set<Integer> ages() {
+        return this.ages;
+    }
 }

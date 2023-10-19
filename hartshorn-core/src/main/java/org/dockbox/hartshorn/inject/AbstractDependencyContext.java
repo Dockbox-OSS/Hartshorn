@@ -21,6 +21,7 @@ import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 /**
@@ -42,16 +43,33 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     private final DependencyMap dependencies;
     private final ScopeKey scope;
     private final int priority;
+    private final BindingType bindingType;
 
     private boolean lazy;
     private boolean singleton;
     private boolean processAfterInitialization = true;
 
-    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ScopeKey scope, int priority) {
+    protected AbstractDependencyContext(DependencyContext<T> dependencyContext) {
+        this(dependencyContext.componentKey(), dependencyContext.dependencies(), dependencyContext.scope(), dependencyContext.priority(), dependencyContext.type());
+        if (dependencyContext instanceof AbstractDependencyContext<T> abstractDependencyContext) {
+            this.lazy = abstractDependencyContext.lazy();
+            this.singleton = abstractDependencyContext.singleton();
+            this.processAfterInitialization = abstractDependencyContext.processAfterInitialization();
+        }
+        else {
+            this.lazy = false;
+            this.singleton = false;
+            this.processAfterInitialization = true;
+        }
+    }
+
+    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
+                                        ScopeKey scope, int priority, BindingType bindingType) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;
         this.priority = priority;
+        this.bindingType = bindingType;
     }
 
     /**
@@ -124,6 +142,11 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         return this.scope;
     }
 
+    @Override
+    public BindingType type() {
+        return this.bindingType;
+    }
+
     /**
      * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
      * requested for the first time. If {@code false}, the component will be created when the container is initialized.
@@ -156,5 +179,19 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      */
     public boolean processAfterInitialization() {
         return this.processAfterInitialization;
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractDependencyContext{" +
+                "componentKey=" + this.componentKey +
+                ", dependencies=" + this.dependencies +
+                ", scope=" + this.scope +
+                ", priority=" + this.priority +
+                ", bindingType=" + this.bindingType +
+                ", lazy=" + this.lazy +
+                ", singleton=" + this.singleton +
+                ", processAfterInitialization=" + this.processAfterInitialization +
+                '}';
     }
 }

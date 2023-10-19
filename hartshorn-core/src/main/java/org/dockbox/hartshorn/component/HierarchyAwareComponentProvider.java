@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -27,6 +28,7 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
@@ -38,6 +40,10 @@ import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
+import org.dockbox.hartshorn.inject.binding.collection.SimpleComponentCollection;
+import org.dockbox.hartshorn.inject.binding.collection.CollectionBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -127,6 +133,17 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return processingContext.instance();
     }
 
+    protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(ComponentKey<T> key, T collection) {
+        ComponentKey<E> build = TypeUtils.adjustWildcards(key.mutable()
+                .type(key.parameterizedType().parameters().get(0))
+                .build(), ComponentKey.class);
+
+        for(ObjectContainer<E> container : collection.containers()) {
+            E processed = process(build, container, null);
+        }
+        return collection;
+    }
+
     protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, ComponentContainer<?> container) {
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
                 this.applicationContext(), key, instance, latest -> this.storeSingletons(key, latest));
@@ -196,7 +213,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         this.owner.componentLocator().validate(componentKey);
 
         ObjectContainer<T> objectContainer = this.create(componentKey)
-                .orElseGet(() -> new ObjectContainer<>(null));
+                .orElseGet(() -> new ComponentObjectContainer<>(null));
 
         T instance = objectContainer.instance();
 
@@ -257,7 +274,39 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }
+        if (ComponentCollection.class.isAssignableFrom(componentKey.type())) {
+            if (ComponentCollection.class != componentKey.type()) {
+                throw new IllegalArgumentException("Component collection key must be of type ComponentCollection, specific implementations are not supported");
+            }
+            ComponentCollection<Object> collection = processComponentCollection(
+                    TypeUtils.adjustWildcards(componentKey, ComponentKey.class),
+                    TypeUtils.adjustWildcards(objectContainer, ObjectContainer.class)
+            );
+            return TypeUtils.adjustWildcards(collection, componentKey.type());
+        }
         return this.process(componentKey, objectContainer, null);
+    }
+
+    private <E, T extends ComponentCollection<E>> ComponentCollection<E> processComponentCollection(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer) {
+        if (objectContainer.instance() == null) {
+            return new SimpleComponentCollection<>(Set.of());
+        }
+        else if (objectContainer.instance() instanceof ContainerAwareComponentCollection<?> containerAwareComponentCollection) {
+
+            ContainerAwareComponentCollection<E> collection = TypeUtils.adjustWildcards(
+                    containerAwareComponentCollection,
+                    ContainerAwareComponentCollection.class);
+
+            ComponentKey<ContainerAwareComponentCollection<E>> key = TypeUtils.adjustWildcards(
+                    componentKey,
+                    ComponentKey.class);
+
+            ContainerAwareComponentCollection<E> processed = this.processCollection(key, collection);
+            return new SimpleComponentCollection<>(Set.copyOf(processed));
+        }
+        else {
+            throw new IllegalArgumentException("Component collection from provider must be of type ContainerAwareComponentCollection");
+        }
     }
 
     @Override
@@ -292,11 +341,19 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             if (useParentIfAbsent && this.owner.applicationProvider() != this) {
                 return this.owner.applicationProvider().hierarchy(key);
             }
-            return new NativeBindingHierarchy<>(key, this.applicationContext());
+            if (ComponentCollection.class.isAssignableFrom(key.type())) {
+                return new CollectionBindingHierarchy<>(
+                        TypeUtils.adjustWildcards(key, ComponentKey.class),
+                        this.applicationContext()
+                );
+            }
+            else {
+                return new NativeBindingHierarchy<>(key, this.applicationContext());
+            }
         });
         BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (adjustedHierarchy instanceof ContextWrappedHierarchy) {
+        if (adjustedHierarchy instanceof ContextWrappedHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
             return adjustedHierarchy;
         }
         else {

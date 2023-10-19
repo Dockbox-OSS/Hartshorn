@@ -14,19 +14,29 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.contextual;
+package test.org.dockbox.hartshorn.collection;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+
+import jakarta.inject.Named;
 
 @Service
-@RequiresActivator(UseStaticBinding.class)
-public class StaticComponentProviders {
+public class CollectionProviders {
 
-    @Binds
-    public StaticComponentProvider staticComponentProvider(@Context StaticComponentContext staticComponentContext) {
-        return new ContextStaticComponentProvider(staticComponentContext);
+    @Binds(type = BindingType.COLLECTION)
+    String hello() {
+        return "Hello";
+    }
+
+    @Binds(type = BindingType.COLLECTION)
+    String thing(@Named("name") String name) {
+        return name;
+    }
+
+    @Binds("name")
+    String name() {
+        return "World";
     }
 }

@@ -21,7 +21,9 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
@@ -101,5 +103,10 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
+    }
+
+    @Override
+    public Binder collect(Customizer<CollectorBindingFunction<T>> collector) {
+        return this.delegate.collect(collector);
     }
 }

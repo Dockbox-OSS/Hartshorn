@@ -60,7 +60,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
                 .mapError(error -> new ApplicationException("Failed to create instance of type " + this.type().getName(), error))
                 .rethrow()
                 .cast(this.type())
-                .map(ObjectContainer::new);
+                .map(ComponentObjectContainer::new);
     }
 
     protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {

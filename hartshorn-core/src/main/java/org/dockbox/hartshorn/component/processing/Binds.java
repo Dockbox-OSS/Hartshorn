@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the
@@ -52,4 +52,11 @@ public @interface Binds {
     int phase() default 0;
 
     boolean processAfterInitialization() default true;
+
+    BindingType type() default BindingType.COMPONENT;
+
+    enum BindingType {
+        COMPONENT,
+        COLLECTION,
+    }
 }

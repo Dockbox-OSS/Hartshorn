@@ -47,7 +47,7 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
     private final DependencyContext<T> declarationContext;
 
     public ImplementationDependencyContext(DependencyContext<I> implementationContext, DependencyContext<T> declarationContext) {
-        super(implementationContext.componentKey(), implementationContext.dependencies(), implementationContext.scope(), implementationContext.priority());
+        super(implementationContext);
         this.implementationContext = implementationContext;
         this.declarationContext = declarationContext;
     }

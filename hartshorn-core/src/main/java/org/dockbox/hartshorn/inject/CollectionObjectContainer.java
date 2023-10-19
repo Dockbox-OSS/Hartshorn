@@ -16,24 +16,23 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
 
-public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
+public class CollectionObjectContainer<T extends ContainerAwareComponentCollection<E>, E> extends ObjectContainer<T> {
 
-    private final ObjectContainer<T> container;
-
-    public SingletonProvider(T instance) {
-        this.container = new ComponentObjectContainer<>(instance);
+    public CollectionObjectContainer(T instance) {
+        super(instance);
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ApplicationContext context) {
-        return Option.of(this.container);
+    public boolean processed() {
+        return this.instance().containers().stream()
+                .allMatch(ObjectContainer::processed);
     }
 
     @Override
-    public String toString() {
-        return "Singleton: " + container;
+    public void processed(boolean processed) {
+        this.instance().containers()
+                .forEach(container -> container.processed(processed));
     }
 }

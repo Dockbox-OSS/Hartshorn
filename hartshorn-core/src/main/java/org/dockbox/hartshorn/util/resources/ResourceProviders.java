@@ -17,26 +17,28 @@
 package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
 @Service
 public class ResourceProviders {
 
-    @StaticBinds
-    public static ResourceLookupStrategy classPathResourceLookupStrategy() {
+    @Binds(type = BindingType.COLLECTION)
+    public ResourceLookupStrategy classPathResourceLookupStrategy() {
         return new ClassPathResourceLookupStrategy();
     }
 
-    @StaticBinds
-    public static ResourceLookupStrategy fileSystemResourceLookupStrategy() {
+    @Binds(type = BindingType.COLLECTION)
+    public ResourceLookupStrategy fileSystemResourceLookupStrategy() {
         return new FileSystemLookupStrategy();
     }
 
     @Binds
-    public ResourceLookup resourceLookup(ApplicationContext applicationContext) {
-        return new FallbackResourceLookup(applicationContext, new FileSystemLookupStrategy());
+    public ResourceLookup resourceLookup(ApplicationContext applicationContext, ComponentCollection<ResourceLookupStrategy> strategies) {
+        FallbackResourceLookup resourceLookup = new FallbackResourceLookup(applicationContext, new FileSystemLookupStrategy());
+        strategies.forEach(resourceLookup::addLookupStrategy);
+        return resourceLookup;
     }
-
 }

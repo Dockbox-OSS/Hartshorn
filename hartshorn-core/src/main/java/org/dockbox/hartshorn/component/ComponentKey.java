@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.component;
 import java.util.Objects;
 
 import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -109,6 +110,16 @@ public final class ComponentKey<T> {
         annotations.get(Named.class).peek(builder::name);
         annotations.get(Enable.class).peek(enable -> builder.enable(enable.value()));
         return builder;
+    }
+
+    public static <T> ComponentKey<ComponentCollection<T>> collect(final Class<T> type) {
+        return collect(new ParameterizableType<>(type));
+    }
+
+    public static <T> ComponentKey<ComponentCollection<T>> collect(final ParameterizableType<T> type) {
+        return TypeUtils.adjustWildcards(ComponentKey.builder(ComponentCollection.class)
+                .parameterTypes(type)
+                .build(), ComponentKey.class);
     }
 
     /**
@@ -362,6 +373,15 @@ public final class ComponentKey<T> {
         public Builder<T> enable(boolean enable) {
             this.enable = enable;
             return this;
+        }
+
+        public Builder<ComponentCollection<T>> collector() {
+            Builder<ComponentCollection> builder = builder(ComponentCollection.class)
+                    .parameterTypes(this.type)
+                    .name(this.name)
+                    .scope(this.scope)
+                    .enable(this.enable);
+            return TypeUtils.adjustWildcards(builder, Builder.class);
         }
 
         public ComponentKey<T> build() {
