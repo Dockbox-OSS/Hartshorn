@@ -16,9 +16,7 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Set;
+import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -32,11 +30,13 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-
-import com.google.auto.service.AutoService;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Objects;
+import java.util.Set;
 
 @SupportedAnnotationTypes("org.dockbox.hartshorn.discovery.ServiceLoader")
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DiscoveryServiceProcessor extends AbstractProcessor {
@@ -54,7 +54,7 @@ public class DiscoveryServiceProcessor extends AbstractProcessor {
             final TypeMirror implementationType = element.asType();
             final TypeMirror targetType = getTargetType(annotation);
 
-            final FileObject resource = this.createResource(targetType.toString());
+            final FileObject resource = this.createResource(Objects.requireNonNull(targetType).toString());
             if (resource == null) {
                 continue;
             }
