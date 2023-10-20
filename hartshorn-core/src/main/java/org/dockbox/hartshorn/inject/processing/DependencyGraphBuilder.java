@@ -16,22 +16,19 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.util.graph.Graph;
-import org.dockbox.hartshorn.util.graph.GraphNode;
-import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
-import org.dockbox.hartshorn.util.graph.SimpleGraph;
-import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
+import org.dockbox.hartshorn.util.graph.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DependencyGraphBuilder {
 
-    public Graph<DependencyContext<?>> buildDependencyGraph(Iterable<DependencyContext<?>> providerContexts) {
+    public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> providerContexts) {
         Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.createNodeMap(providerContexts);
-        Graph<DependencyContext<?>> graph = new SimpleGraph<>();
+        DependencyGraph graph = new DependencyGraph();
 
         for (DependencyContext<?> providerContext : providerContexts) {
             buildSingleDependencyNode(nodes, graph, providerContext);

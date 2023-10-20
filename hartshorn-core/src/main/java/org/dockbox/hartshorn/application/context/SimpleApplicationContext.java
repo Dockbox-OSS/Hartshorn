@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SingleElementContext;
@@ -101,7 +102,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         this.log().debug("Located %d components".formatted(containers.size()));
 
         try {
-            List<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
+            Collection<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
 
             if (this.componentProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
                 Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider.uninitializedPostProcessors().stream()
@@ -123,6 +124,9 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         }
         catch (GraphException e) {
             throw new ComponentInitializationException("Failed to iterate dependency graph", e);
+        }
+        catch (ApplicationException e) {
+            throw new ComponentInitializationException("Failed to initialize components", e);
         }
         this.initializePostProcessors();
         this.processComponents(containers);
