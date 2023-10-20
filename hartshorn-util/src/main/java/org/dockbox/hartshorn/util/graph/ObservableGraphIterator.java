@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.util.graph;
 
-public abstract class AbstractGraphVisitor<T> implements GraphIterator<T> {
+public interface ObservableGraphIterator<T> extends GraphIterator<T> {
 
-    protected abstract boolean visit(GraphNode<T> node) throws GraphException;
+    boolean visit(GraphNode<T> node) throws GraphException;
 
-    protected void beforePathVisited() {
+    default void beforePathVisited() {
         // Do nothing by default, can be overridden
     }
 
-    protected void afterPathVisited() {
+    default void afterPathVisited() {
         // Do nothing by default, can be overridden
     }
 }

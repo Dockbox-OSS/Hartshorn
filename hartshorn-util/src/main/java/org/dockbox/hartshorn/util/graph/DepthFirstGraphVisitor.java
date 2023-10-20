@@ -21,10 +21,10 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class DepthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> {
+public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
 
     @Override
-    public Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException {
+    default Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException {
         Set<GraphNode<T>> visited = new HashSet<>();
         for (GraphNode<T> root : graph.roots()) {
             this.visitSingleRoot(visited, root);

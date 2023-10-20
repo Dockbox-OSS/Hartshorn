@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
-public class ConfigurationDependencyVisitor extends BreadthFirstGraphVisitor<DependencyContext<?>> {
+public class ConfigurationDependencyVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>> {
 
     private final ApplicationContext applicationContext;
 
@@ -32,7 +32,7 @@ public class ConfigurationDependencyVisitor extends BreadthFirstGraphVisitor<Dep
     }
 
     @Override
-    protected boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
+    public boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
         DependencyContext<?> dependencyContext = node.value();
         try {
             this.registerProvider(dependencyContext);

@@ -5,10 +5,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleContentAwareGraph<T> extends SimpleGraph<T> implements ContentAwareGraph<T> {
+public class SimpleContentAwareGraph<T> extends SimpleGraph<T> implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
 
     private final Set<GraphNode<T>> nodes = new HashSet<>();
-    private final GraphIterator<T> visitor = new PassOnlyGraphVisitor<>();
 
     @Override
     public Set<GraphNode<T>> nodes() {
@@ -17,12 +16,10 @@ public class SimpleContentAwareGraph<T> extends SimpleGraph<T> implements Conten
 
     @Override
     public void addRoot(GraphNode<T> root) {
+        Set<GraphNode<T>> collected = new HashSet<>();
         try {
-            // TODO: #998 This is PoC only, needs to be replaced with a proper implementation
-            Graph<T> graph = new SimpleGraph<>();
-            graph.addRoot(root);
-            Set<GraphNode<T>> set = this.visitor.iterate(graph);
-            this.nodes.addAll(set);
+            this.visitSingle(collected, root);
+            this.nodes.addAll(collected);
         }
         catch (GraphException e) {
             throw new ApplicationRuntimeException(e);
@@ -30,11 +27,14 @@ public class SimpleContentAwareGraph<T> extends SimpleGraph<T> implements Conten
         super.addRoot(root);
     }
 
-    private static class PassOnlyGraphVisitor<T> extends BreadthFirstGraphVisitor<T> {
+    @Override
+    public Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException {
+        throw new UnsupportedOperationException("Visiting is only for internal tracking.");
+    }
 
-        @Override
-        protected boolean visit(GraphNode<T> node) {
-            return true;
-        }
+    @Override
+    public boolean visit(GraphNode<T> node) throws GraphException {
+        // Always continue, as children may have changed.
+        return true;
     }
 }

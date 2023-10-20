@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DependencyPresenceValidationVisitor extends BreadthFirstGraphVisitor<DependencyContext<?>> {
+public class DependencyPresenceValidationVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>> {
 
     private final Set<GraphNode<DependencyContext<?>>> missingDependencies = new HashSet<>();
     private final Set<GraphNode<DependencyContext<?>>> visitedDependencies;
@@ -37,7 +37,7 @@ public class DependencyPresenceValidationVisitor extends BreadthFirstGraphVisito
     }
 
     @Override
-    protected boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
+    public boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
         if (!this.visitedDependencies.contains(node)) {
             this.missingDependencies.add(node);
         }
