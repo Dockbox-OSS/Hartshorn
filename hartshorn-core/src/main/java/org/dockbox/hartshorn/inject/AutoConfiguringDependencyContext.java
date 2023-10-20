@@ -24,16 +24,19 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> {
 
     private final CheckedSupplier<T> supplier;
+    private final View view;
 
     public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies,
                                             Class<? extends Scope> scope, int priority,
-                                            CheckedSupplier<T> supplier) {
+                                            CheckedSupplier<T> supplier, View view) {
         super(componentKey, dependencies, scope, priority);
         this.supplier = supplier;
+        this.view = view;
     }
 
     @Override
@@ -60,6 +63,11 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         catch (ApplicationException e) {
             throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
         }
+    }
+
+    @Override
+    public View origin() {
+        return this.view;
     }
 
     private InstanceType instanceType() {

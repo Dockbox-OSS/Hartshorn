@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Iterator;
-
-import org.dockbox.hartshorn.inject.ConstructorDiscoveryList.DiscoveredComponent;
+import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 public class CyclicComponentException extends ApplicationException {
 
@@ -29,8 +29,21 @@ public class CyclicComponentException extends ApplicationException {
     private static final String CYCLE_PATH    = " |   ↓\n";
     private static final String CYCLE_BOTTOM  = " └───┘";
 
-    public CyclicComponentException(ConstructorDiscoveryList path) {
-        super(formatMessage(path));
+    private final ComponentDiscoveryList componentDiscoveryList;
+    private final View origin;
+
+    public CyclicComponentException(ComponentDiscoveryList componentDiscoveryList, View origin) {
+        super(formatMessage(componentDiscoveryList, origin));
+        this.componentDiscoveryList = componentDiscoveryList;
+        this.origin = origin;
+    }
+
+    public ComponentDiscoveryList componentDiscoveryList() {
+        return this.componentDiscoveryList;
+    }
+
+    public View origin() {
+        return this.origin;
     }
 
     /**
@@ -49,7 +62,7 @@ public class CyclicComponentException extends ApplicationException {
      * @param path the path to format
      * @return the formatted string
      */
-    private static String formatMessage(ConstructorDiscoveryList path) {
+    private static String formatMessage(ComponentDiscoveryList path, View view) {
         if (path.isEmpty()) {
             throw new IllegalArgumentException("Path cannot be empty");
         }
@@ -71,6 +84,10 @@ public class CyclicComponentException extends ApplicationException {
 
         DiscoveredComponent origin = path.getOrigin();
         String typeName = origin.fromBinding() ? origin.actualType().name() : origin.node().qualifiedName();
-        return "Cyclic dependency detected in constructor of %s. Complete dependency path:\n%s".formatted(typeName, builder.toString());
+        return "Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:\n%s".formatted(
+            typeName,
+            view.qualifiedName(),
+            builder.toString()
+        );
     }
 }

@@ -56,10 +56,10 @@ public class DependencyGraphInitializer {
 
     public void initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws ApplicationException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(containers);
-        this.graphValidator.validateBeforeConfiguration(dependencyGraph);
+        this.graphValidator.validateBeforeConfiguration(dependencyGraph, this.applicationContext);
 
         Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
-        this.graphValidator.validateAfterConfiguration(dependencyGraph, visitedDependencies);
+        this.graphValidator.validateAfterConfiguration(dependencyGraph, this.applicationContext, visitedDependencies);
 
         this.applicationContext.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
     }
@@ -80,14 +80,13 @@ public class DependencyGraphInitializer {
 
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver =
-            ApplicationDependencyResolver.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder =
-            ContextualInitializer.of(DependencyGraphBuilder::new);
-        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor =
-            ContextualInitializer.of(ConfigurationDependencyVisitor::new);
-        private final LazyStreamableConfigurer<ApplicationContext, DependencyGraphValidator> graphValidator =
-            LazyStreamableConfigurer.of(Set.of(new DependenciesVisitedGraphValidator(), new CyclicDependencyGraphValidator()));
+        private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver = ApplicationDependencyResolver.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::new);
+        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(ConfigurationDependencyVisitor::new);
+        private final LazyStreamableConfigurer<ApplicationContext, DependencyGraphValidator> graphValidator = LazyStreamableConfigurer.of(Set.of(
+            new DependenciesVisitedGraphValidator(),
+            new CyclicDependencyGraphValidator()
+        ));
 
         public Configurer dependencyResolver(DependencyResolver dependencyResolver) {
             return this.dependencyResolver(ContextualInitializer.of(dependencyResolver));

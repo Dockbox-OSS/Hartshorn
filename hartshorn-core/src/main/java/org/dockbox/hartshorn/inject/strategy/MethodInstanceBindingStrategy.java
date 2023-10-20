@@ -74,7 +74,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
         boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
 
-        return new AutoConfiguringDependencyContext<>(componentKey, dependencies, scope, priority, supplier)
+        return new AutoConfiguringDependencyContext<>(componentKey, dependencies, scope, priority, supplier, bindsMethod)
                 .lazy(lazy)
                 .singleton(singleton)
                 .processAfterInitialization(processAfterInitialization);

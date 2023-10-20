@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.ConstructorDiscoveryList;
-import org.dockbox.hartshorn.inject.ConstructorDiscoveryList.DiscoveredComponent;
+import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
+import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.processing.UseContextInjection;
@@ -380,7 +380,7 @@ public class ApplicationContextTests {
     })
     void testCircularDependencyPathCanBeDetermined(Class<?> type, Class<?>... expected) {
         TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(type);
-        ConstructorDiscoveryList path = ComponentConstructorResolver.create(applicationContext).findCyclicPath(typeView);
+        ComponentDiscoveryList path = ComponentConstructorResolver.create(applicationContext).findCyclicPath(typeView);
         
         Assertions.assertNotNull(path);
         List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
@@ -408,7 +408,7 @@ public class ApplicationContextTests {
     })
     void testCircularDependencyPathOnExplicitBoundTypeCanBeDetermined() {
         TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(InterfaceCircularDependencyA.class);
-        ConstructorDiscoveryList path = ComponentConstructorResolver.create(applicationContext).findCyclicPath(typeView);
+        ComponentDiscoveryList path = ComponentConstructorResolver.create(applicationContext).findCyclicPath(typeView);
         Assertions.assertNotNull(path);
 
         List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
@@ -425,7 +425,7 @@ public class ApplicationContextTests {
     })
     void testCircularDependencyPathOnImplicitBoundTypeCanBeDetermined() {
         TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(InterfaceCircularDependencyA.class);
-        ConstructorDiscoveryList path = ComponentConstructorResolver.create(applicationContext).findCyclicPath(typeView);
+        ComponentDiscoveryList path = ComponentConstructorResolver.create(applicationContext).findCyclicPath(typeView);
         Assertions.assertNotNull(path);
 
         List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();

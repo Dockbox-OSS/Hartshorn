@@ -1,47 +1,71 @@
 package org.dockbox.hartshorn.application.context.validate;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
+import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.TypePathNode;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class CyclicDependencyGraphValidator implements DependencyGraphValidator {
 
     @Override
-    public void validateBeforeConfiguration(DependencyGraph dependencyGraph) throws ApplicationException {
+    public void validateBeforeConfiguration(DependencyGraph dependencyGraph, ApplicationContext applicationContext) throws ApplicationException {
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         for (GraphNode<DependencyContext<?>> node : nodes) {
             if (node.isLeaf()) {
                 continue;
             }
-            if (node instanceof ContainableGraphNode<DependencyContext<?>> contextContainableGraphNode && contextContainableGraphNode.isRoot()) {
+            if (node instanceof ContainableGraphNode<DependencyContext<?>> contextContainableGraphNode
+                && contextContainableGraphNode.isRoot()) {
                 continue;
             }
-            this.checkNodeNotCyclic(node);
+            List<GraphNode<DependencyContext<?>>> graphNodes = this.checkNodeNotCyclicRecursive(node, new ArrayList<>());
+            if (!graphNodes.isEmpty()) {
+                ComponentDiscoveryList discoveryList = this.createDiscoveryList(graphNodes, applicationContext);
+                throw new CyclicComponentException(discoveryList, node.value().origin());
+            }
         }
     }
 
-    private void checkNodeNotCyclic(GraphNode<DependencyContext<?>> node) throws ApplicationException {
-        Set<GraphNode<DependencyContext<?>>> knownNodes = new HashSet<>();
+    private List<GraphNode<DependencyContext<?>>> checkNodeNotCyclicRecursive(GraphNode<DependencyContext<?>> node, List<GraphNode<DependencyContext<?>>> knownNodes) {
+        if (knownNodes.contains(node)) {
+            return List.of(node);
+        }
         knownNodes.add(node);
-        Queue<GraphNode<DependencyContext<?>>> queue = new ArrayDeque<>();
-        queue.add(node);
-        while(!queue.isEmpty()) {
-            GraphNode<DependencyContext<?>> current = queue.poll();
-            for (GraphNode<DependencyContext<?>> child : current.children()) {
-                if (knownNodes.contains(child)) {
-                    // TODO: CyclicComponentException, for path reporting
-                    throw new ApplicationException("Found cyclic dependency: %s".formatted(child));
-                }
-                knownNodes.add(child);
-                queue.add(child);
+        for (GraphNode<DependencyContext<?>> child : node.children()) {
+            List<GraphNode<DependencyContext<?>>> graphNodes = this.checkNodeNotCyclicRecursive(child, knownNodes);
+            if (!graphNodes.isEmpty()) {
+                List<GraphNode<DependencyContext<?>>> path = new ArrayList<>();
+                path.add(node);
+                path.addAll(graphNodes);
+                return path;
             }
         }
+        return List.of();
+    }
+
+    private ComponentDiscoveryList createDiscoveryList(List<GraphNode<DependencyContext<?>>> path, ApplicationContext applicationContext) {
+        ComponentDiscoveryList discoveryList = new ComponentDiscoveryList();
+        Introspector introspector = applicationContext.environment().introspector();
+        for (GraphNode<DependencyContext<?>> node : path) {
+            TypePathNode<?> pathNode = this.createTypePathNode(node.value().componentKey(), introspector);
+            discoveryList.add(pathNode);
+        }
+        return discoveryList;
+    }
+
+    private <T> TypePathNode<T> createTypePathNode(ComponentKey<T> componentKey, Introspector introspector) {
+        TypeView<T> view = introspector.introspect(componentKey.type());
+        return new TypePathNode<>(view, componentKey);
     }
 }

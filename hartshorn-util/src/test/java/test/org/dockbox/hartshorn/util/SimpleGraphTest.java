@@ -18,8 +18,16 @@ package test.org.dockbox.hartshorn.util;
 
 import java.util.List;
 import java.util.Set;
-import org.dockbox.hartshorn.util.graph.*;
-import org.junit.jupiter.api.*;
+import org.dockbox.hartshorn.util.graph.DepthFirstGraphVisitor;
+import org.dockbox.hartshorn.util.graph.Graph;
+import org.dockbox.hartshorn.util.graph.GraphException;
+import org.dockbox.hartshorn.util.graph.GraphIterator;
+import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.dockbox.hartshorn.util.graph.MutableGraphNode;
+import org.dockbox.hartshorn.util.graph.SimpleGraph;
+import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class SimpleGraphTest {

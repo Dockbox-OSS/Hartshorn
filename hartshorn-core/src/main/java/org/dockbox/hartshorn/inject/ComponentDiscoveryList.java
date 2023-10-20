@@ -20,24 +20,32 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.dockbox.hartshorn.inject.ConstructorDiscoveryList.DiscoveredComponent;
+import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.jetbrains.annotations.NotNull;
 
-public class ConstructorDiscoveryList implements Iterable<DiscoveredComponent> {
+public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
 
-    public static final ConstructorDiscoveryList EMPTY = new ConstructorDiscoveryList(List.of());
+    public static final ComponentDiscoveryList EMPTY = new ComponentDiscoveryList(List.of());
 
     private final List<DiscoveredComponent> discoveredComponents;
 
-    public ConstructorDiscoveryList() {
+    public ComponentDiscoveryList() {
         this(new LinkedList<>());
     }
 
-    public ConstructorDiscoveryList(List<DiscoveredComponent> discoveredComponents) {
+    public ComponentDiscoveryList(List<DiscoveredComponent> discoveredComponents) {
         this.discoveredComponents = discoveredComponents;
+    }
+
+    public void add(TypePathNode<?> node) {
+        this.discoveredComponents.add(new DiscoveredComponent(node, node.type()));
+    }
+
+    public void add(TypePathNode<?> node, TypeView<?> actualType) {
+        this.discoveredComponents.add(new DiscoveredComponent(node, actualType));
     }
 
     public void add(TypePathNode<?> node, ConstructorView<?> constructor) {
@@ -72,7 +80,7 @@ public class ConstructorDiscoveryList implements Iterable<DiscoveredComponent> {
     public record DiscoveredComponent(TypePathNode<?> node, TypeView<?> actualType) {
 
         public boolean fromBinding() {
-            return !node.type().is(actualType.type());
+            return !this.node.type().is(this.actualType.type());
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.application.context.validate;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -22,16 +23,16 @@ public class CompositeDependencyGraphValidator implements DependencyGraphValidat
     }
 
     @Override
-    public void validateBeforeConfiguration(DependencyGraph dependencyGraph) throws ApplicationException {
+    public void validateBeforeConfiguration(DependencyGraph dependencyGraph, ApplicationContext applicationContext) throws ApplicationException {
         for (DependencyGraphValidator validator : this.validators) {
-            validator.validateBeforeConfiguration(dependencyGraph);
+            validator.validateBeforeConfiguration(dependencyGraph, applicationContext);
         }
     }
 
     @Override
-    public void validateAfterConfiguration(DependencyGraph dependencyGraph, Set<GraphNode<DependencyContext<?>>> visited) throws ApplicationException {
+    public void validateAfterConfiguration(DependencyGraph dependencyGraph, ApplicationContext applicationContext, Set<GraphNode<DependencyContext<?>>> visited) throws ApplicationException {
         for (DependencyGraphValidator validator : this.validators) {
-            validator.validateAfterConfiguration(dependencyGraph, visited);
+            validator.validateAfterConfiguration(dependencyGraph, applicationContext, visited);
         }
     }
 }

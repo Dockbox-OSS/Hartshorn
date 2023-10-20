@@ -29,8 +29,8 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
 
     @Override
     protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException {
-        TypeView<?> type = componentContainer.type();
-        ConstructorView<?> constructorView = ComponentConstructorResolver.create(applicationContext).findConstructor(type)
+        TypeView<T> type = componentContainer.type();
+        ConstructorView<? extends T> constructorView = ComponentConstructorResolver.create(applicationContext).findConstructor(type)
                 .mapError(DependencyResolutionException::new)
                 .rethrow()
                 .orNull();
@@ -42,9 +42,9 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
         Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type);
 
-        ComponentKey<?> componentKey = ComponentKey.of(type.type());
+        ComponentKey<T> componentKey = ComponentKey.of(type);
         Set<ComponentKey<?>> dependencies = CollectionUtilities.merge(constructorDependencies, typeDependencies);
 
-        return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies));
+        return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies, constructorView));
     }
 }

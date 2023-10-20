@@ -21,6 +21,7 @@ import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
  * A dependency context represents the definition of a single dependency, along with its
@@ -76,4 +77,6 @@ public interface DependencyContext<T> {
      * @throws ComponentConfigurationException when the binding could not be configured
      */
     void configure(BindingFunction<T> function) throws ComponentConfigurationException;
+
+    View origin();
 }

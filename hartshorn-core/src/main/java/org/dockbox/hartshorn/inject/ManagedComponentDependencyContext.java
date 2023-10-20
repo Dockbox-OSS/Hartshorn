@@ -21,15 +21,19 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 
 import java.util.Set;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 public class ManagedComponentDependencyContext<T> implements DependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
     private final Set<ComponentKey<?>> dependencies;
+    private final ConstructorView<? extends T> constructorView;
 
-    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies) {
+    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies, ConstructorView<? extends T> constructorView) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
+        this.constructorView = constructorView;
     }
 
     @Override
@@ -55,5 +59,10 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         // Do nothing, require processing or standard instance provision
+    }
+
+    @Override
+    public View origin() {
+        return this.constructorView;
     }
 }

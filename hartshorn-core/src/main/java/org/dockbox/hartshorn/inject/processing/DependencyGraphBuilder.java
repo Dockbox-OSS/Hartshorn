@@ -19,10 +19,13 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.util.graph.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.dockbox.hartshorn.util.graph.Graph;
+import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
+import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 
 public class DependencyGraphBuilder {
 
