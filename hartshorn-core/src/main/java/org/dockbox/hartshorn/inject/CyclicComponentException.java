@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 public class CyclicComponentException extends ApplicationException {
 
     private static final String CYCLE_TOP     = " ┌───┐\n";
-    private static final String CYCLE_NODE    = " ↑  %s\n";
+    private static final String CYCLE_NODE    = " ↑  %s (in %s)\n";
     private static final String CYCLE_BINDING = " |   ↓   ↳ Implemented by %s\n";
     private static final String CYCLE_PATH    = " |   ↓\n";
     private static final String CYCLE_BOTTOM  = " └───┘";
@@ -72,7 +72,7 @@ public class CyclicComponentException extends ApplicationException {
 
         for(Iterator<DiscoveredComponent> iterator = path.iterator(); iterator.hasNext(); ) {
             DiscoveredComponent node = iterator.next();
-            builder.append(CYCLE_NODE.formatted(node.node().qualifiedName()));
+            builder.append(CYCLE_NODE.formatted(node.node().qualifiedName(), node.node().origin().qualifiedName()));
             if(node.fromBinding()) {
                 builder.append(CYCLE_BINDING.formatted(node.actualType().qualifiedName()));
             }

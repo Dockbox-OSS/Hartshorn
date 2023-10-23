@@ -18,8 +18,9 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
-public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey) {
+public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey, View origin) {
 
     public String qualifiedName() {
         return this.componentKey.qualifiedName(true);

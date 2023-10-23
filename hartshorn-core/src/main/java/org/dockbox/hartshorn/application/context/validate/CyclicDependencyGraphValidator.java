@@ -15,6 +15,7 @@ import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 public class CyclicDependencyGraphValidator implements DependencyGraphValidator {
 
@@ -58,14 +59,14 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         ComponentDiscoveryList discoveryList = new ComponentDiscoveryList();
         Introspector introspector = applicationContext.environment().introspector();
         for (GraphNode<DependencyContext<?>> node : path) {
-            TypePathNode<?> pathNode = this.createTypePathNode(node.value().componentKey(), introspector);
+            TypePathNode<?> pathNode = this.createTypePathNode(node.value().componentKey(), node.value().origin(), introspector);
             discoveryList.add(pathNode);
         }
         return discoveryList;
     }
 
-    private <T> TypePathNode<T> createTypePathNode(ComponentKey<T> componentKey, Introspector introspector) {
+    private <T> TypePathNode<T> createTypePathNode(ComponentKey<T> componentKey, View origin, Introspector introspector) {
         TypeView<T> view = introspector.introspect(componentKey.type());
-        return new TypePathNode<>(view, componentKey);
+        return new TypePathNode<>(view, componentKey, origin);
     }
 }
