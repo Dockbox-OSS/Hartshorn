@@ -38,7 +38,7 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         }
     }
 
-    private List<GraphNode<DependencyContext<?>>> checkNodeNotCyclicRecursive(GraphNode<DependencyContext<?>> node, List<GraphNode<DependencyContext<?>>> knownNodes) {
+    public List<GraphNode<DependencyContext<?>>> checkNodeNotCyclicRecursive(GraphNode<DependencyContext<?>> node, List<GraphNode<DependencyContext<?>>> knownNodes) {
         if (knownNodes.contains(node)) {
             return List.of(node);
         }
@@ -55,7 +55,7 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         return List.of();
     }
 
-    private ComponentDiscoveryList createDiscoveryList(List<GraphNode<DependencyContext<?>>> path, ApplicationContext applicationContext) {
+    public ComponentDiscoveryList createDiscoveryList(List<GraphNode<DependencyContext<?>>> path, ApplicationContext applicationContext) {
         ComponentDiscoveryList discoveryList = new ComponentDiscoveryList();
         Introspector introspector = applicationContext.environment().introspector();
         for (GraphNode<DependencyContext<?>> node : path) {

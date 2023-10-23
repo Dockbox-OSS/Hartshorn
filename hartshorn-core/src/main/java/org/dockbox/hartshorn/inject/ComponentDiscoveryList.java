@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
 
-    public static final ComponentDiscoveryList EMPTY = new ComponentDiscoveryList(List.of());
+    public static final ComponentDiscoveryList EMPTY = new ComponentDiscoveryList(List.of()); // Intentionally immutable
 
     private final List<DiscoveredComponent> discoveredComponents;
 
@@ -41,15 +41,15 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
     }
 
     public void add(TypePathNode<?> node) {
-        this.discoveredComponents.add(new DiscoveredComponent(node, node.type()));
+        this.discoveredComponents.add(0, new DiscoveredComponent(node, node.type()));
     }
 
     public void add(TypePathNode<?> node, TypeView<?> actualType) {
-        this.discoveredComponents.add(new DiscoveredComponent(node, actualType));
+        this.discoveredComponents.add(0, new DiscoveredComponent(node, actualType));
     }
 
     public void add(TypePathNode<?> node, ConstructorView<?> constructor) {
-        this.discoveredComponents.add(new DiscoveredComponent(node, constructor.declaredBy()));
+        this.discoveredComponents.add(0, new DiscoveredComponent(node, constructor.declaredBy()));
     }
 
     public List<DiscoveredComponent> discoveredComponents() {

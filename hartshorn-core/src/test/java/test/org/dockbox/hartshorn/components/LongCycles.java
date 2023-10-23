@@ -18,28 +18,33 @@ package test.org.dockbox.hartshorn.components;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.dockbox.hartshorn.component.Component;
 
 public class LongCycles {
 
     @Singleton
+    @Component
     public static class LongCycleA {
         @Inject
         public LongCycleA(LongCycleB cycle) {}
     }
 
     @Singleton
+    @Component
     public static class LongCycleB {
         @Inject
         public LongCycleB(LongCycleC cycle) {}
     }
 
     @Singleton
+    @Component
     public static class LongCycleC {
         @Inject
         public LongCycleC(LongCycleD cycle) {}
     }
 
     @Singleton
+    @Component
     public static class LongCycleD {
         @Inject
         public LongCycleD(LongCycleA cycle) {}
