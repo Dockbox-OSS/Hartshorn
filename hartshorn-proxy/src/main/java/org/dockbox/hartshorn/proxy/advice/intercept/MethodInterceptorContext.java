@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
+import org.dockbox.hartshorn.proxy.advice.ProxyResultValidator;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.concurrent.Callable;
@@ -120,7 +122,12 @@ public class MethodInterceptorContext<T, R> {
         return this.result;
     }
 
-    @Deprecated
+    /**
+     * @deprecated interceptor results are automatically validated using the configured {@link ProxyResultValidator}. Use a
+     * {@link ConversionService} to convert the result if necessary, or compare against {@link #method() the active method's}
+     * {@link MethodView#returnType() return type}.
+     */
+    @Deprecated(forRemoval = true, since = "0.5.0")
     public R checkedCast(Object o) {
         if (this.method.returnType().isVoid()) {
             return null;
