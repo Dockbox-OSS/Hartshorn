@@ -16,14 +16,16 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScanner;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathWalkingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import test.org.dockbox.hartshorn.introspect.types.ScanAnnotation;
 import test.org.dockbox.hartshorn.introspect.types.ScanClass;
 import test.org.dockbox.hartshorn.introspect.types.ScanClass.NonStaticInnerClass;
@@ -53,6 +55,18 @@ public class ClassPathScannerTests {
         Assertions.assertTrue(classes.contains(ScanEnum.class.getCanonicalName()));
         Assertions.assertTrue(classes.contains(ScanInterface.class.getCanonicalName()));
         Assertions.assertTrue(classes.contains(ScanRecord.class.getCanonicalName()));
+    }
+
+    @Test
+    void testCanScanWithEncodedCharacters() throws IOException, ClassPathWalkingException {
+        // Space is encoded as %20 in URLs, though we don't need to encode it here yet.
+        // Note that we use an empty directory here, so scanning will yield no results, but won't throw an exception either.
+        Path dummyFolder = Files.createTempDirectory("dummy folder");
+        dummyFolder.toFile().deleteOnExit();
+        URL url = dummyFolder.toUri().toURL();
+
+        ClassPathScanner scanner = Assertions.assertDoesNotThrow(() -> ClassPathScanner.create().addUrlForScanning(url));
+        scanner.scan(resource -> Assertions.fail("Should not have found any resources"));
     }
 
     private String resourceNameFromCanonicalName(String canonicalName) {

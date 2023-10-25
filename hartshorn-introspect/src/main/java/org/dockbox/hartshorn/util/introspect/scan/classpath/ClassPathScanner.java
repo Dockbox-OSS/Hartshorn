@@ -22,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -70,16 +72,25 @@ public final class ClassPathScanner {
 
             try {
                 URL url = file.toURI().toURL();
-                this.classLoaders.add(new URLClassLoader(new URL[] { url }) {
-                    public String toString() {
-                        return super.toString() + " [url=" + url.toExternalForm() + "]";
-                    }
-                });
+                this.addUrlForScanning(url);
             }
             catch (MalformedURLException e) {
                 // Ignore
             }
         }
+        return this;
+    }
+
+    public ClassPathScanner addUrlForScanning(URL url) {
+        return this.addClassLoaderForScanning(new URLClassLoader(new URL[] { url }) {
+            public String toString() {
+                return super.toString() + " [url=" + url.toExternalForm() + "]";
+            }
+        });
+    }
+
+    public ClassPathScanner addClassLoaderForScanning(URLClassLoader classLoader) {
+        this.classLoaders.add(classLoader);
         return this;
     }
 
@@ -108,7 +119,11 @@ public final class ClassPathScanner {
         for (URL url : classLoader.getURLs()) {
             if (url.getFile() != null && !url.getFile().isEmpty()) {
 
-                File file = new File(url.getFile());
+                // Physical files can have escaped characters in the URL representation. The simplest form of this is
+                // %20 instead of a space. This is not valid in a URI, so we need to decode the URL to get the correct
+                // file path.
+                String decodedUrl = URLDecoder.decode(url.getFile(), Charset.defaultCharset());
+                File file = new File(decodedUrl);
                 if (file.exists()) {
                     if (file.isDirectory()) {
                         this.processDirectoryResource(handler, classLoader, file);
