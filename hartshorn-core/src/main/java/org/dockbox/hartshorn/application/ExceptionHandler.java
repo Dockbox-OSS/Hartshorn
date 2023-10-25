@@ -59,8 +59,10 @@ public interface ExceptionHandler {
      * @param <T> The type of the exception.
      * @throws T The exception to throw.
      * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
+     *
+     * @deprecated Re-throwing checked exceptions as unchecked exceptions is not recommended. This method will be removed in a future release.
      */
-    @Deprecated
+    @Deprecated(since = "0.5.0", forRemoval = true)
     static <T extends Throwable, R> R unchecked(Throwable throwable) throws T {
         throw (T) throwable;
     }

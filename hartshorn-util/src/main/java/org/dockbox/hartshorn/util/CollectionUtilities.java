@@ -48,7 +48,7 @@ public final class CollectionUtilities {
      * @deprecated Use {@link Map#ofEntries(Entry...)} instead
      */
     @SafeVarargs
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "0.5.0")
     public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
             return new HashMap<>();
