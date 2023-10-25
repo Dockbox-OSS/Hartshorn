@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class ElvisExpressionInterpreter implements ASTNodeInterpreter<Object, ElvisExpression> {
 
     @Override
-    public Object interpret(final ElvisExpression node, final InterpreterAdapter adapter) {
-        final Object condition = adapter.evaluate(node.condition());
+    public Object interpret(ElvisExpression node, InterpreterAdapter adapter) {
+        Object condition = adapter.evaluate(node.condition());
         if (InterpreterUtilities.isTruthy(condition)) {
             return condition;
         }

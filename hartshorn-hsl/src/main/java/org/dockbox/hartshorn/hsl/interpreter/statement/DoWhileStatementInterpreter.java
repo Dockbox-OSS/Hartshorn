@@ -25,14 +25,16 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class DoWhileStatementInterpreter implements ASTNodeInterpreter<Void, DoWhileStatement> {
 
     @Override
-    public Void interpret(final DoWhileStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(DoWhileStatement node, InterpreterAdapter adapter) {
         adapter.withNextScope(() -> {
             do {
                 try {
                     adapter.execute(node.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
             }
             while (InterpreterUtilities.isTruthy(adapter.evaluate(node.condition())));

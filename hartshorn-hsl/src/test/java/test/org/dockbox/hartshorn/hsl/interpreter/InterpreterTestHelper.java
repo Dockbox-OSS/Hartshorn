@@ -30,11 +30,11 @@ public final class InterpreterTestHelper {
     private InterpreterTestHelper() {}
 
     public static InterpreterAdapter createInterpreterAdapter() {
-        final ResultCollector resultCollector = new CacheOnlyResultCollector(null);
+        ResultCollector resultCollector = new CacheOnlyResultCollector(null);
         return new Interpreter(resultCollector, Map.of(), null);
     }
 
-    public static <T extends ASTNode, R> R interpret(final T node, final ASTNodeInterpreter<R, T> interpreter) {
+    public static <T extends ASTNode, R> R interpret(T node, ASTNodeInterpreter<R, T> interpreter) {
         return interpreter.interpret(node, createInterpreterAdapter());
     }
 }

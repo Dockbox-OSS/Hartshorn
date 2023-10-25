@@ -47,7 +47,7 @@ public class AssignExpressionInterpreterTests {
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void testAssignmentToDefinedVariable(final Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
+    void testAssignmentToDefinedVariable(Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
         Token variableName = Token.of(TokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();

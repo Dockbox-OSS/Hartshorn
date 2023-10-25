@@ -25,11 +25,11 @@ import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetExpression> {
 
     @Override
-    public Object interpret(final SetExpression node, final InterpreterAdapter adapter) {
-        final Object object = adapter.evaluate(node.object());
+    public Object interpret(SetExpression node, InterpreterAdapter adapter) {
+        Object object = adapter.evaluate(node.object());
 
         if (object instanceof PropertyContainer instance) {
-            final Object value = adapter.evaluate(node.value());
+            Object value = adapter.evaluate(node.value());
             instance.set(node.name(), value, adapter.visitingScope(), adapter.interpreter().executionOptions());
             return value;
         }

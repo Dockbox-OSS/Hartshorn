@@ -27,9 +27,9 @@ import java.util.List;
 public class ArrayLiteralExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
 
     @Override
-    public Object interpret(final ArrayLiteralExpression node, final InterpreterAdapter adapter) {
-        final Object[] values = new Object[node.elements().size()];
-        final List<Expression> elements = node.elements();
+    public Object interpret(ArrayLiteralExpression node, InterpreterAdapter adapter) {
+        Object[] values = new Object[node.elements().size()];
+        List<Expression> elements = node.elements();
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
             final Expression expression = elements.get(i);
             values[i] = adapter.evaluate(expression);

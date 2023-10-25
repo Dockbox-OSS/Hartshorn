@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class SwitchStatementInterpreter implements ASTNodeInterpreter<Void, SwitchStatement> {
 
     @Override
-    public Void interpret(final SwitchStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(SwitchStatement node, InterpreterAdapter adapter) {
         Object value = adapter.evaluate(node.expression());
         value = InterpreterUtilities.unwrap(value);
-        for (final SwitchCase switchCase : node.cases()) {
+        for (SwitchCase switchCase : node.cases()) {
             if (InterpreterUtilities.isEqual(value, switchCase.expression().value())) {
                 adapter.execute(switchCase);
                 return null;

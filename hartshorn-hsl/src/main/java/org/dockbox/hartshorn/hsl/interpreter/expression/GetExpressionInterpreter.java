@@ -28,11 +28,13 @@ import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetExpression> {
 
     @Override
-    public Object interpret(final GetExpression node, final InterpreterAdapter adapter) {
-        final Object object = adapter.evaluate(node.object());
+    public Object interpret(GetExpression node, InterpreterAdapter adapter) {
+        Object object = adapter.evaluate(node.object());
         if (object instanceof PropertyContainer container) {
             Object result = container.get(node.name(), adapter.visitingScope(), adapter.interpreter().executionOptions());
-            if (result instanceof ExternalObjectReference objectReference) result = objectReference.externalObject();
+            if (result instanceof ExternalObjectReference objectReference) {
+                result = objectReference.externalObject();
+            }
             if (result instanceof ExternalFunction bindableNode && object instanceof InstanceReference instance) {
                 return bindableNode.bind(instance);
             }

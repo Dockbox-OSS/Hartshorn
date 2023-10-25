@@ -61,7 +61,7 @@ public class ArrayLiteralExpressionInterpreterTests {
     }
 
     @NotNull
-    private static ArrayLiteralExpression createExpression(final List<Expression> expressions) {
+    private static ArrayLiteralExpression createExpression(List<Expression> expressions) {
         Token open = Token.of(TokenType.ARRAY_OPEN).lexeme("[").build();
         Token close = Token.of(TokenType.ARRAY_CLOSE).lexeme("]").build();
         return new ArrayLiteralExpression(open, close, expressions);

@@ -35,7 +35,7 @@ public final class InterpreterUtilities {
         return true;
     }
 
-    public static boolean isEqual(final Object a, final Object b) {
+    public static boolean isEqual(Object a, Object b) {
         if (a == null && b == null) {
             return true;
         }
@@ -43,28 +43,28 @@ public final class InterpreterUtilities {
             return false;
         }
         if (a instanceof Number na && b instanceof Number nb) {
-            final BigDecimal ba = BigDecimal.valueOf(na.doubleValue());
+            BigDecimal ba = BigDecimal.valueOf(na.doubleValue());
             final BigDecimal bb = BigDecimal.valueOf(nb.doubleValue());
             return ba.compareTo(bb) == 0;
         }
         return a.equals(b);
     }
 
-    public static Object unwrap(final Object object) {
+    public static Object unwrap(Object object) {
         if (object instanceof ExternalInstance external) {
             return external.instance();
         }
         return object;
     }
 
-    public static void checkNumberOperand(final Token operator, final Object operand) {
+    public static void checkNumberOperand(Token operator, Object operand) {
         if (operand instanceof Double) {
             return;
         }
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
-    public static void checkNumberOperands(final Token operator, final Object left, final Object right) {
+    public static void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Number && right instanceof Number) {
             return;
         }

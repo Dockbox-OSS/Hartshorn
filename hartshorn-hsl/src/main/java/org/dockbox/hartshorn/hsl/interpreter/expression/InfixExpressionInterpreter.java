@@ -29,16 +29,16 @@ import java.util.List;
 public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, InfixExpression> {
 
     @Override
-    public Object interpret(final InfixExpression node, final InterpreterAdapter adapter) {
-        final CallableNode value = (CallableNode) adapter.visitingScope().get(node.infixOperatorName());
-        final List<Object> args = new ArrayList<>();
+    public Object interpret(InfixExpression node, InterpreterAdapter adapter) {
+        CallableNode value = (CallableNode) adapter.visitingScope().get(node.infixOperatorName());
+        List<Object> args = new ArrayList<>();
         args.add(adapter.evaluate(node.leftExpression()));
         args.add(adapter.evaluate(node.rightExpression()));
 
         try {
             return value.call(node.infixOperatorName(), adapter.interpreter(), null, args);
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new RuntimeError(node.infixOperatorName(), e.getMessage());
         }
     }

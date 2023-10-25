@@ -25,27 +25,27 @@ import java.util.List;
 
 public interface InterpreterAdapter {
 
-    Object evaluate(final Expression expr);
+    Object evaluate(Expression expr);
 
-    void execute(final Statement stmt);
+    void execute(Statement stmt);
 
-    void execute(final BlockStatement blockStatement, final VariableScope localVariableScope);
+    void execute(BlockStatement blockStatement, VariableScope localVariableScope);
 
-    void execute(final List<Statement> statementList, final VariableScope localVariableScope);
+    void execute(List<Statement> statementList, VariableScope localVariableScope);
 
-    Object lookUpVariable(final Token name, final Expression expr);
+    Object lookUpVariable(Token name, Expression expr);
 
-    void resolve(final Expression expr, final int depth);
+    void resolve(Expression expr, int depth);
 
     VariableScope visitingScope();
 
     VariableScope global();
 
-    void withNextScope(final Runnable runnable);
+    void withNextScope(Runnable runnable);
 
     void enterScope(VariableScope scope);
 
-    Integer distance(final Expression expr);
+    Integer distance(Expression expr);
 
     Interpreter interpreter();
 }

@@ -25,15 +25,17 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class ForStatementInterpreter implements ASTNodeInterpreter<Void, ForStatement> {
 
     @Override
-    public Void interpret(final ForStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(ForStatement node, InterpreterAdapter adapter) {
         adapter.withNextScope(() -> {
             adapter.execute(node.initializer());
             while (InterpreterUtilities.isTruthy(adapter.evaluate(node.condition()))) {
                 try {
                     adapter.execute(node.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
                 adapter.execute(node.increment());
             }

@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 public class ArrayGetExpressionInterpreter extends ArrayInterpreter<Object, ArrayGetExpression> {
 
     @Override
-    public Object interpret(final ArrayGetExpression node, final InterpreterAdapter adapter) {
+    public Object interpret(ArrayGetExpression node, InterpreterAdapter adapter) {
         return this.accessArray(adapter, node.name(), node.index(), Array::value);
     }
 }

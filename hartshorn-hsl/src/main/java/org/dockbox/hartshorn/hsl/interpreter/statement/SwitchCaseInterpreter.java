@@ -24,11 +24,11 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 public class SwitchCaseInterpreter implements ASTNodeInterpreter<Void, SwitchCase> {
 
     @Override
-    public Void interpret(final SwitchCase node, final InterpreterAdapter adapter) {
+    public Void interpret(SwitchCase node, InterpreterAdapter adapter) {
         adapter.withNextScope(() -> {
             try {
                 adapter.execute(node.body());
-            } catch (final MoveKeyword moveKeyword) {
+            } catch (MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() != MoveKeyword.MoveType.BREAK) {
                     throw new RuntimeException("Unexpected move keyword " + moveKeyword.moveType());
                 }

@@ -24,31 +24,31 @@ public class TokenBuilder {
     private int line;
     private int column;
 
-    public TokenBuilder(final TokenType type) {
+    public TokenBuilder(TokenType type) {
         this.type = type;
     }
 
-    public TokenBuilder literal(final Object literal) {
+    public TokenBuilder literal(Object literal) {
         this.literal = literal;
         return this;
     }
 
-    public TokenBuilder lexeme(final String lexeme) {
+    public TokenBuilder lexeme(String lexeme) {
         this.lexeme = lexeme;
         return this;
     }
 
-    public TokenBuilder line(final int line) {
+    public TokenBuilder line(int line) {
         this.line = line;
         return this;
     }
 
-    public TokenBuilder column(final int column) {
+    public TokenBuilder column(int column) {
         this.column = column;
         return this;
     }
 
-    public TokenBuilder position(final Token token) {
+    public TokenBuilder position(Token token) {
         return this
                 .line(token.line())
                 .column(token.column());

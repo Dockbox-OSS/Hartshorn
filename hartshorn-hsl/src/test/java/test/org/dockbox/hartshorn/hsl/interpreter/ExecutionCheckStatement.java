@@ -34,7 +34,7 @@ public class ExecutionCheckStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         this.executed = true;
         return null;
     }

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 public class ReturnStatementInterpreter implements ASTNodeInterpreter<Void, ReturnStatement> {
 
     @Override
-    public Void interpret(final ReturnStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(ReturnStatement node, InterpreterAdapter adapter) {
         Object value = null;
         if (node.value() != null) {
             value = adapter.evaluate(node.value());

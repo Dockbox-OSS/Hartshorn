@@ -67,7 +67,7 @@ public class Lexer {
             this.start = this.current;
             this.scanToken();
         }
-        final Token token = Token.of(TokenType.EOF)
+        Token token = Token.of(TokenType.EOF)
                 .lexeme("")
                 .line(this.line)
                 .column(this.start)

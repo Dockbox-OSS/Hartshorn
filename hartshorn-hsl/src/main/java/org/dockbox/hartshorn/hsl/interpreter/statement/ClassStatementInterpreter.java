@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, ClassStatement> {
 
     @Override
-    public Void interpret(final ClassStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(ClassStatement node, InterpreterAdapter adapter) {
         Object superClass = null;
         // Because super class is a variable expression assert it's a class
         if (node.superClass() != null) {
@@ -52,23 +52,23 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
 
         adapter.visitingScope().define(node.name().lexeme(), null);
 
-        final ClassReference superClassReference = (ClassReference) superClass;
+        ClassReference superClassReference = (ClassReference) superClass;
         adapter.withNextScope(() -> visitClassScope(node, adapter, superClassReference));
 
         return null;
     }
 
-    private static void visitClassScope(final ClassStatement node, final InterpreterAdapter adapter, final ClassReference superClassReference) {
+    private static void visitClassScope(ClassStatement node, InterpreterAdapter adapter, ClassReference superClassReference) {
         if (node.superClass() != null) {
             adapter.enterScope(new VariableScope(adapter.visitingScope()));
             adapter.visitingScope().define(TokenType.SUPER.representation(), superClassReference);
         }
 
-        final Map<String, VirtualFunction> methods = new HashMap<>();
+        Map<String, VirtualFunction> methods = new HashMap<>();
 
         // Bind all method into the class
-        for (final FunctionStatement method : node.methods()) {
-            final VirtualFunction function = new VirtualFunction(method, adapter.visitingScope(), false);
+        for (FunctionStatement method : node.methods()) {
+            VirtualFunction function = new VirtualFunction(method, adapter.visitingScope(), false);
             methods.put(method.name().lexeme(), function);
         }
 
@@ -77,9 +77,9 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
             constructor = new VirtualFunction(node.constructor(), adapter.visitingScope(), true);
         }
 
-        final Map<String, FieldStatement> fields = node.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
+        Map<String, FieldStatement> fields = node.fields().stream().collect(Collectors.toUnmodifiableMap(field -> field.name().lexeme(), f -> f));
 
-        final VirtualClass virtualClass = new VirtualClass(node.name().lexeme(),
+        VirtualClass virtualClass = new VirtualClass(node.name().lexeme(),
                 superClassReference, constructor, adapter.visitingScope(),
                 methods, fields,
                 node.isFinal(), node.isDynamic());

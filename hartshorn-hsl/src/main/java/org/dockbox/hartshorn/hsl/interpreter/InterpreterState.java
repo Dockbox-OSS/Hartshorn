@@ -41,7 +41,7 @@ public class InterpreterState {
     private VariableScope visitingScope = this.global;
     private final Interpreter owner;
 
-    public InterpreterState(final Map<String, NativeModule> externalModules, final Interpreter owner) {
+    public InterpreterState(Map<String, NativeModule> externalModules, Interpreter owner) {
         this.externalModules = new ConcurrentHashMap<>(externalModules);
         this.owner = owner;
     }
@@ -60,11 +60,11 @@ public class InterpreterState {
         this.locals.clear();
     }
 
-    public void externalModule(final String name, final NativeModule module) {
+    public void externalModule(String name, NativeModule module) {
         this.externalModules.put(name, module);
     }
 
-    public void externalModules(final Map<String, NativeModule> externalModules) {
+    public void externalModules(Map<String, NativeModule> externalModules) {
         this.externalModules.putAll(externalModules);
     }
 
@@ -72,22 +72,22 @@ public class InterpreterState {
         return this.externalModules;
     }
 
-    public void global(final Map<String, Object> globalVariables) {
+    public void global(Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
-            final TypeView<Object> typeView = this.owner.applicationContext().environment().introspect(instance);
+            TypeView<Object> typeView = this.owner.applicationContext().environment().introspector().introspect(instance);
             this.externalVariables.put(name, new ExternalInstance(instance, typeView));
         });
     }
 
-    public void imports(final Map<String, TypeView<?>> imports) {
+    public void imports(Map<String, TypeView<?>> imports) {
         imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
     }
 
-    public void enterScope(final VariableScope scope) {
+    public void enterScope(VariableScope scope) {
         this.visitingScope = scope;
     }
 
-    public void withScope(final VariableScope scope, final Runnable runnable) {
+    public void withScope(VariableScope scope, Runnable runnable) {
         final VariableScope previous = this.visitingScope();
         try {
             this.enterScope(scope);
@@ -98,20 +98,20 @@ public class InterpreterState {
         }
     }
 
-    public void withNextScope(final Runnable runnable) {
+    public void withNextScope(Runnable runnable) {
         final VariableScope nextScope = new VariableScope(this.visitingScope());
         this.withScope(nextScope, runnable);
     }
 
-    public Integer distance(final Expression expr) {
+    public Integer distance(Expression expr) {
         return this.locals.get(expr);
     }
 
-    public void resolve(final Expression expr, final int depth) {
+    public void resolve(Expression expr, int depth) {
         this.locals.put(expr, depth);
     }
 
-    public Object lookUpVariable(final Token name, final Expression expr) {
+    public Object lookUpVariable(Token name, Expression expr) {
         if (name.type() == TokenType.THIS) {
             return this.visitingScope().getAt(name, 1);
         }

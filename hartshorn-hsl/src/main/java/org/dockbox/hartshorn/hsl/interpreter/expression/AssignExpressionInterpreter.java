@@ -24,11 +24,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 public class AssignExpressionInterpreter implements ASTNodeInterpreter<Object, AssignExpression> {
 
     @Override
-    public Object interpret(final AssignExpression node, final InterpreterAdapter adapter) {
-        final Token name = node.name();
-        final Object value = adapter.evaluate(node.value());
+    public Object interpret(AssignExpression node, InterpreterAdapter adapter) {
+        Token name = node.name();
+        Object value = adapter.evaluate(node.value());
 
-        final Integer distance = adapter.distance(node);
+        Integer distance = adapter.distance(node);
         if (distance != null) {
             adapter.visitingScope().assignAt(distance, name, value);
         }

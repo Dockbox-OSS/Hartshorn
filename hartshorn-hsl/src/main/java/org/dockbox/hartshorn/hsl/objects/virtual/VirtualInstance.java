@@ -54,7 +54,7 @@ public class VirtualInstance implements InstanceReference {
             throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
         }
         if (field != null && field.isFinal() && this.fields.containsKey(name.lexeme())) {
-            throw new RuntimeError(name, "Cannot reassign property '" + name.lexeme() + "'.");
+            throw new RuntimeError(name, "Cannot reassign final property '" + name.lexeme() + "'.");
         }
         if (field != null) {
             this.checkScopeCanAccess(name, field, fromScope);

@@ -63,13 +63,13 @@ public class VirtualClassTests {
                 Arguments.of("private final", "name", true, "Cannot access property 'name' outside of its class scope"),
                 Arguments.of("final", "name", false, null),
 
-                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
-                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
-                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
+                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
+                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
+                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
 
-                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign property 'name'"),
-                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign property 'name'"),
-                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign property 'name'")
+                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
+                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
+                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign final property 'name'")
         );
     }
 

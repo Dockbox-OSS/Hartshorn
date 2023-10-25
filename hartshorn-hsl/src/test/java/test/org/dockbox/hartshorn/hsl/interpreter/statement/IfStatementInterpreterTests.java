@@ -165,15 +165,15 @@ public class IfStatementInterpreterTests {
         Assertions.assertTrue(executed.get());
     }
 
-    private void assertEvaluatesToTrue(final Expression expression) {
+    private void assertEvaluatesToTrue(Expression expression) {
         this.assertEvaluatesTo(expression, true);
     }
 
-    private void assertEvaluatesToFalse(final Expression expression) {
+    private void assertEvaluatesToFalse(Expression expression) {
         this.assertEvaluatesTo(expression, false);
     }
 
-    private void assertEvaluatesTo(final Expression expression, final boolean evaluatesTo) {
+    private void assertEvaluatesTo(Expression expression, boolean evaluatesTo) {
         ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
         BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 

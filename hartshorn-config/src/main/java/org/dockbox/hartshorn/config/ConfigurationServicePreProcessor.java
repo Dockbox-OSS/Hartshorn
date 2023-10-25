@@ -63,9 +63,9 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
         }
     }
 
-    private <T> boolean processSource(final String source, final ApplicationContext context, final ComponentKey<T> key) {
-        final ResourceLookup resourceLookup = context.get(ResourceLookup.class);
-        final Set<URI> config = resourceLookup.lookup(source);
+    private <T> boolean processSource(String source, ApplicationContext context, ComponentKey<T> key) {
+        ResourceLookup resourceLookup = context.get(ResourceLookup.class);
+        Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
             context.log().warn("No configuration file found for " + key.type().getSimpleName());

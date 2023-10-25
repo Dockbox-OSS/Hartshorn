@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
 
     @Override
-    public Object interpret(final BinaryExpression node, final InterpreterAdapter adapter) {
+    public Object interpret(BinaryExpression node, InterpreterAdapter adapter) {
         Object left = adapter.evaluate(node.leftExpression());
         Object right = adapter.evaluate(node.rightExpression());
 
@@ -50,11 +50,11 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     return String.valueOf(left) + right;
                 }
                 if ((left instanceof Character) && (right instanceof Double)) {
-                    final int value = (Character) left;
+                    int value = (Character) left;
                     return (double) right + value;
                 }
                 if ((left instanceof Double) && (right instanceof Character)) {
-                    final int value = (Character) right;
+                    int value = (Character) right;
                     return (double) left + value;
                 }
                 throw new RuntimeError(node.operator(), "Unsupported child for PLUS.\n");
@@ -65,10 +65,10 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
             }
             case STAR -> {
                 if ((left instanceof String || left instanceof Character) && right instanceof Double) {
-                    final int times = (int) ((double) right);
-                    final int finalLen = left.toString().length() * times;
-                    final StringBuilder result = new StringBuilder(finalLen);
-                    final String strValue = left.toString();
+                    int times = (int) ((double) right);
+                    int finalLen = left.toString().length() * times;
+                    StringBuilder result = new StringBuilder(finalLen);
+                    String strValue = left.toString();
                     result.append(strValue.repeat(Math.max(0, times)));
                     return result.toString();
                 }

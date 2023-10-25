@@ -27,13 +27,13 @@ public class JavaStatement extends Statement {
 
     private final Consumer<StatementVisitor<?>> consumer;
 
-    public JavaStatement(final Consumer<StatementVisitor<?>> consumer) {
+    public JavaStatement(Consumer<StatementVisitor<?>> consumer) {
         super(Token.of(TokenType.NATIVE).build());
         this.consumer = consumer;
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         this.consumer.accept(visitor);
         return null;
     }

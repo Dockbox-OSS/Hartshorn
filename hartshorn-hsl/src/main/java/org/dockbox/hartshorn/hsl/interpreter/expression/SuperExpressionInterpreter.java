@@ -28,11 +28,11 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, SuperExpression> {
 
     @Override
-    public Object interpret(final SuperExpression node, final InterpreterAdapter adapter) {
-        final int distance = adapter.distance(node);
-        final ClassReference superClass = (ClassReference) adapter.visitingScope().getAt(node.method(), distance, TokenType.SUPER.representation());
-        final InstanceReference object = (InstanceReference) adapter.visitingScope().getAt(node.method(), distance - 1, TokenType.THIS.representation());
-        final MethodReference method = superClass.method(node.method().lexeme());
+    public Object interpret(SuperExpression node, InterpreterAdapter adapter) {
+        int distance = adapter.distance(node);
+        ClassReference superClass = (ClassReference) adapter.visitingScope().getAt(node.method(), distance, TokenType.SUPER.representation());
+        InstanceReference object = (InstanceReference) adapter.visitingScope().getAt(node.method(), distance - 1, TokenType.THIS.representation());
+        MethodReference method = superClass.method(node.method().lexeme());
 
         if (method == null) {
             throw new RuntimeError(node.method(), "Undefined property '" + node.method().lexeme() + "'.");

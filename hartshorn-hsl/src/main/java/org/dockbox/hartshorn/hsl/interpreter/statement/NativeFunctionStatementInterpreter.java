@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 public class NativeFunctionStatementInterpreter implements ASTNodeInterpreter<Void, NativeFunctionStatement> {
 
     @Override
-    public Void interpret(final NativeFunctionStatement node, final InterpreterAdapter adapter) {
-        final NativeLibrary nativeLibrary = new NativeLibrary(node, adapter.interpreter().state().externalModules());
+    public Void interpret(NativeFunctionStatement node, InterpreterAdapter adapter) {
+        NativeLibrary nativeLibrary = new NativeLibrary(node, adapter.interpreter().state().externalModules());
         adapter.visitingScope().define(node.name().lexeme(), nativeLibrary);
         return null;
     }

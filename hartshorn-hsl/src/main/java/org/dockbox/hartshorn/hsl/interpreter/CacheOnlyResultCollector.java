@@ -28,22 +28,22 @@ public class CacheOnlyResultCollector implements ResultCollector {
     private final ApplicationContext applicationContext;
     private Object globalResult;
 
-    public CacheOnlyResultCollector(final ApplicationContext applicationContext) {
+    public CacheOnlyResultCollector(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public void addResult(final Object value) {
+    public void addResult(Object value) {
         this.globalResult = value;
     }
 
     @Override
-    public void addResult(final String id, final Object value) {
+    public void addResult(String id, Object value) {
         this.results.put(id, value);
     }
 
     @Override
-    public <T> Option<T> result(final Class<T> type) {
+    public <T> Option<T> result(Class<T> type) {
         return this.result().filter(type::isInstance).map(type::cast);
     }
 
@@ -53,12 +53,12 @@ public class CacheOnlyResultCollector implements ResultCollector {
     }
 
     @Override
-    public <T> Option<T> result(final String id, final Class<T> type) {
+    public <T> Option<T> result(String id, Class<T> type) {
         return this.result(id).filter(type::isInstance).map(type::cast);
     }
 
     @Override
-    public Option<?> result(final String id) {
+    public Option<?> result(String id) {
         return Option.of(this.results.get(id));
     }
 

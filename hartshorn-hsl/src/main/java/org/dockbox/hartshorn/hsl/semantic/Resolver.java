@@ -164,7 +164,9 @@ public class Resolver {
     }
 
     public void declare(Token name) {
-        if (this.scopes.isEmpty()) return;
+        if (this.scopes.isEmpty()) {
+            return;
+        }
 
         Map<String, Boolean> scope = this.scopes.peek();
 
@@ -177,7 +179,9 @@ public class Resolver {
 
     public void define(Token name) {
         // set the variable’s value in the scope map to true to mark it as fully initialized and available for use
-        if (this.scopes.isEmpty()) return;
+        if (this.scopes.isEmpty()) {
+            return;
+        }
         this.checkFinal(name);
         this.scopes.peek().put(name.lexeme(), true);
     }
@@ -185,13 +189,15 @@ public class Resolver {
     public void checkFinal(Token name) {
         if (this.finals.peek().containsKey(name.lexeme())) {
             String existingWhat = this.finals.peek().get(name.lexeme());
-            throw new ScriptEvaluationError("Cannot reassign %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
+            throw new ScriptEvaluationError("Cannot reassign final %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
         }
     }
 
     public <R extends Finalizable & NamedNode> void makeFinal(R node, String what) {
         // Unlike scopes, finals need to be tracked even in the global scope.
-        if (this.finals.isEmpty()) this.finals.push(new HashMap<>());
+        if (this.finals.isEmpty()) {
+            this.finals.push(new HashMap<>());
+        }
         this.checkFinal(node.name());
         if (node.isFinal()) {
             this.finals.peek().put(node.name().lexeme(), what);

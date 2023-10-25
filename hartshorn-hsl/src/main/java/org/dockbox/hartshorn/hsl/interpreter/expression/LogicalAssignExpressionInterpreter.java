@@ -24,23 +24,23 @@ import org.dockbox.hartshorn.hsl.token.TokenType;
 public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
     @Override
-    public Object interpret(final LogicalAssignExpression node, final InterpreterAdapter adapter) {
-        final Token name = node.name();
-        final Object left = adapter.lookUpVariable(name, node);
+    public Object interpret(LogicalAssignExpression node, InterpreterAdapter adapter) {
+        Token name = node.name();
+        Object left = adapter.lookUpVariable(name, node);
 
-        final Object right = adapter.evaluate(node.value());
+        Object right = adapter.evaluate(node.value());
 
-        final Token op = node.assignmentOperator();
-        final TokenType bitwiseOperator = node.logicalOperator();
+        Token op = node.assignmentOperator();
+        TokenType bitwiseOperator = node.logicalOperator();
 
         // Virtual token to indicate the position of the operator
-        final Token token = Token.of(bitwiseOperator)
+        Token token = Token.of(bitwiseOperator)
                 .lexeme(op.lexeme())
                 .position(op)
                 .build();
-        final Object result = this.getBitwiseResult(token, left, right);
+        Object result = this.getBitwiseResult(token, left, right);
 
-        final Integer distance = adapter.distance(node);
+        Integer distance = adapter.distance(node);
         if (distance != null) {
             adapter.visitingScope().assignAt(distance, name, result);
         }

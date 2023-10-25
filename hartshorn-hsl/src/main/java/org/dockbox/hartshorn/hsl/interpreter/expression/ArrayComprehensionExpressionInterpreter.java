@@ -29,9 +29,9 @@ import java.util.List;
 public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayComprehensionExpression> {
 
     @Override
-    public Object interpret(final ArrayComprehensionExpression node, final InterpreterAdapter adapter) {
-        final List<Object> values = new ArrayList<>();
-        final Object collection = adapter.evaluate(node.collection());
+    public Object interpret(ArrayComprehensionExpression node, InterpreterAdapter adapter) {
+        List<Object> values = new ArrayList<>();
+        Object collection = adapter.evaluate(node.collection());
         if (collection instanceof Iterable<?> iterable) {
 
             adapter.withNextScope(() -> {
@@ -45,9 +45,9 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
         return new Array(values.toArray());
     }
 
-    private static void visitIterable(final ArrayComprehensionExpression node, final InterpreterAdapter adapter,
-                                      final List<Object> values, final Iterable<?> iterable) {
-        for (final Object element : iterable) {
+    private static void visitIterable(ArrayComprehensionExpression node, InterpreterAdapter adapter,
+                                      final List<Object> values, Iterable<?> iterable) {
+        for (Object element : iterable) {
             adapter.visitingScope().assign(node.selector(), element);
 
             if (node.condition() != null) {

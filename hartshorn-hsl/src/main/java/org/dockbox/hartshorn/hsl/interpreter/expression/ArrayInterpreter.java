@@ -27,9 +27,9 @@ import java.util.function.BiFunction;
 
 public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
-    protected Object accessArray(final InterpreterAdapter adapter, final Token name,
-                               final Expression indexExp, final BiFunction<Array, Integer, Object> converter) {
-        final Array array = (Array) adapter.visitingScope().get(name);
+    protected Object accessArray(InterpreterAdapter adapter, Token name,
+                               Expression indexExp, BiFunction<Array, Integer, Object> converter) {
+        Array array = (Array) adapter.visitingScope().get(name);
         final Number indexValue = (Number) adapter.evaluate(indexExp);
         final int index = indexValue.intValue();
 

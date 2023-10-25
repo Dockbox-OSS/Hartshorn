@@ -29,14 +29,14 @@ import java.util.List;
 public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, PrefixExpression> {
 
     @Override
-    public Object interpret(final PrefixExpression node, final InterpreterAdapter adapter) {
-        final CallableNode value = (CallableNode) adapter.visitingScope().get(node.prefixOperatorName());
-        final List<Object> args = new ArrayList<>();
+    public Object interpret(PrefixExpression node, InterpreterAdapter adapter) {
+        CallableNode value = (CallableNode) adapter.visitingScope().get(node.prefixOperatorName());
+        List<Object> args = new ArrayList<>();
         args.add(adapter.evaluate(node.rightExpression()));
         try {
             return value.call(node.prefixOperatorName(), adapter.interpreter(), null, args);
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new RuntimeError(node.prefixOperatorName(), e.getMessage());
         }
     }

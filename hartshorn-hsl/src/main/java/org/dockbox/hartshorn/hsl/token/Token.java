@@ -43,7 +43,7 @@ public class Token extends ASTNode {
         this.literal = literal;
     }
 
-    public static TokenBuilder of(final TokenType type) {
+    public static TokenBuilder of(TokenType type) {
         return new TokenBuilder(type);
     }
 

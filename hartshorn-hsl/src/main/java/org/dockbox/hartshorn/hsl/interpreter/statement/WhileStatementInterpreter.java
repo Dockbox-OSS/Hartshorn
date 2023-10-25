@@ -25,12 +25,12 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class WhileStatementInterpreter implements ASTNodeInterpreter<Void, WhileStatement> {
 
     @Override
-    public Void interpret(final WhileStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(WhileStatement node, InterpreterAdapter adapter) {
         while (InterpreterUtilities.isTruthy(adapter.evaluate(node.condition()))) {
             try {
                 adapter.execute(node.body());
             }
-            catch (final MoveKeyword moveKeyword) {
+            catch (MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                     break;
                 }

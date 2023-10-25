@@ -26,15 +26,15 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestStatement> {
 
     @Override
-    public Void interpret(final TestStatement node, final InterpreterAdapter adapter) {
-        final String name = String.valueOf(node.name().literal());
-        final VariableScope variableScope = new VariableScope(adapter.global());
+    public Void interpret(TestStatement node, InterpreterAdapter adapter) {
+        String name = String.valueOf(node.name().literal());
+        VariableScope variableScope = new VariableScope(adapter.global());
         try {
             adapter.execute(node.body(), variableScope);
         }
-        catch (final Return r) {
-            final Object value = r.value();
-            final boolean val = InterpreterUtilities.isTruthy(value);
+        catch (Return r) {
+            Object value = r.value();
+            boolean val = InterpreterUtilities.isTruthy(value);
             adapter.interpreter().resultCollector().addResult(name, val);
         }
         return null;

@@ -27,11 +27,11 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, ModuleStatement> {
     @Override
-    public Void interpret(final ModuleStatement node, final InterpreterAdapter adapter) {
-        final String moduleName = node.name().lexeme();
-        final NativeModule module = adapter.interpreter().state().externalModules().get(moduleName);
-        for (final NativeFunctionStatement supportedFunction : module.supportedFunctions(node.name())) {
-            final NativeLibrary library = new NativeLibrary(supportedFunction, moduleName, module);
+    public Void interpret(ModuleStatement node, InterpreterAdapter adapter) {
+        String moduleName = node.name().lexeme();
+        NativeModule module = adapter.interpreter().state().externalModules().get(moduleName);
+        for (NativeFunctionStatement supportedFunction : module.supportedFunctions(node.name())) {
+            NativeLibrary library = new NativeLibrary(supportedFunction, moduleName, module);
 
             if (adapter.global().contains(supportedFunction.name().lexeme()) && !adapter.interpreter().executionOptions().permitAmbiguousExternalFunctions()) {
                 throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + supportedFunction.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunction.name());

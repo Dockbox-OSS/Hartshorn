@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 public class VariableStatementInterpreter implements ASTNodeInterpreter<Void, VariableStatement> {
 
     @Override
-    public Void interpret(final VariableStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(VariableStatement node, InterpreterAdapter adapter) {
         Object value = null;
         if (node.initializer() != null) {
             value = adapter.evaluate(node.initializer());

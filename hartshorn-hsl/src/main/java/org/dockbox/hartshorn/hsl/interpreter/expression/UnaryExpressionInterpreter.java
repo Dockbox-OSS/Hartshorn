@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
 
     @Override
-    public Object interpret(final UnaryExpression node, final InterpreterAdapter adapter) {
-        final Object right = adapter.evaluate(node.rightExpression());
-        final Object newValue = switch (node.operator().type()) {
+    public Object interpret(UnaryExpression node, InterpreterAdapter adapter) {
+        Object right = adapter.evaluate(node.rightExpression());
+        Object newValue = switch (node.operator().type()) {
             case MINUS -> {
                 InterpreterUtilities.checkNumberOperand(node.operator(), right);
                 yield -(double) right;
@@ -43,7 +43,7 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
             case BANG -> !InterpreterUtilities.isTruthy(right);
             case COMPLEMENT -> {
                 InterpreterUtilities.checkNumberOperand(node.operator(), right);
-                final int value = ((Double) right).intValue();
+                int value = ((Double) right).intValue();
                 // Cast to int is redundant, but required to suppress false-positive inspections.
                 //noinspection RedundantCast
                 yield (int) ~value;

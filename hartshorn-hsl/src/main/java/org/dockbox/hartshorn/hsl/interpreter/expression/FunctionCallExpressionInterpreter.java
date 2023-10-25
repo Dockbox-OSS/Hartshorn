@@ -33,13 +33,15 @@ import java.util.List;
 public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Object, FunctionCallExpression> {
 
     @Override
-    public Object interpret(final FunctionCallExpression node, final InterpreterAdapter adapter) {
-        final Object callee = adapter.evaluate(node.callee());
+    public Object interpret(FunctionCallExpression node, InterpreterAdapter adapter) {
+        Object callee = adapter.evaluate(node.callee());
 
-        final List<Object> arguments = new ArrayList<>();
-        for (final Expression argument : node.arguments()) {
+        List<Object> arguments = new ArrayList<>();
+        for (Expression argument : node.arguments()) {
             Object evaluated = adapter.evaluate(argument);
-            if (evaluated instanceof ExternalObjectReference external) evaluated = external.externalObject();
+            if (evaluated instanceof ExternalObjectReference external) {
+                evaluated = external.externalObject();
+            }
             arguments.add(evaluated);
         }
 
@@ -59,7 +61,7 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
                 return function.call(node.openParenthesis(), adapter.interpreter(), null, arguments);
             }
         }
-        catch (final ApplicationException e) {
+        catch (ApplicationException e) {
             throw new RuntimeError(node.openParenthesis(), e.getMessage());
         }
     }

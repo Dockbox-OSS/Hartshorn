@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 public class FunctionStatementInterpreter implements ASTNodeInterpreter<Void, FunctionStatement> {
 
     @Override
-    public Void interpret(final FunctionStatement node, final InterpreterAdapter adapter) {
-        final VirtualFunction function = new VirtualFunction(node, adapter.visitingScope(), false);
+    public Void interpret(FunctionStatement node, InterpreterAdapter adapter) {
+        VirtualFunction function = new VirtualFunction(node, adapter.visitingScope(), false);
         adapter.visitingScope().define(node.name().lexeme(), function);
         return null;
     }

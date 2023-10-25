@@ -112,7 +112,7 @@ public final class CollectionUtilities {
         return collection.stream().distinct().toList();
     }
 
-    public static <T> T last(final List<T> values) {
+    public static <T> T last(List<T> values) {
         return values.get(values.size() - 1);
     }
 }

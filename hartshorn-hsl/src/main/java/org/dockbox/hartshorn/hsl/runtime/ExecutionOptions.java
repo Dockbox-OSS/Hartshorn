@@ -44,7 +44,7 @@ public class ExecutionOptions {
         return this.enableAssertions;
     }
 
-    public ExecutionOptions enableAssertions(final boolean enableAssertions) {
+    public ExecutionOptions enableAssertions(boolean enableAssertions) {
         this.enableAssertions = enableAssertions;
         return this;
     }

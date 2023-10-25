@@ -41,13 +41,13 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend class 'User'. While interpreting at line 2, column 23.
+                Cannot extend final class 'User'. While interpreting at line 2, column 23.
                 class Admin extends User { }
                                        ^""", error.getMessage());
     }
 
     @Test
-    void canExtendExternalFinalClass() {
+    void canExtendExternalNonFinalClass() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
@@ -63,7 +63,7 @@ public class FinalizedTests {
         script.runtime().imports("User", FinalUser.class);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot extend class 'FinalUser'. While interpreting at line 1, column 20.
+                Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
                 class Admin extends User { }
                                     ^""", error.getMessage());
     }
@@ -76,7 +76,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign variable 'x'. While resolving at line 2, column 0.
+                Cannot reassign final variable 'x'. While resolving at line 2, column 0.
                 x = 2;
                 ^""", error.getMessage());
     }
@@ -89,7 +89,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign function 'x'. While resolving at line 2, column 9.
+                Cannot reassign final function 'x'. While resolving at line 2, column 9.
                 function x() { }
                          ^""", error.getMessage());
     }
@@ -102,7 +102,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                Cannot reassign class 'User'. While resolving at line 2, column 9.
+                Cannot reassign final class 'User'. While resolving at line 2, column 9.
                 class User { }
                          ^""", error.getMessage());
     }
@@ -116,11 +116,11 @@ public class FinalizedTests {
         // Do not evaluate, as the native function does not exist in the current environment.
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
         Assertions.assertEquals("""
-                Cannot reassign native function 'x'. While resolving at line 2, column 9.
+                Cannot reassign final native function 'x'. While resolving at line 2, column 9.
                 function x() { }
                          ^""", error.getMessage());
     }
 
     public static class User { }
-    public static class FinalUser { }
+    public static final class FinalUser { }
 }

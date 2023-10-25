@@ -24,14 +24,14 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class ForEachStatementInterpreter implements ASTNodeInterpreter<Void, ForEachStatement> {
 
     @Override
-    public Void interpret(final ForEachStatement node, final InterpreterAdapter adapter) {
+    public Void interpret(ForEachStatement node, InterpreterAdapter adapter) {
         adapter.withNextScope(() -> {
             Object collection = adapter.evaluate(node.collection());
             collection = InterpreterUtilities.unwrap(collection);
 
             if (collection instanceof Iterable<?> iterable) {
                 adapter.visitingScope().define(node.selector().name().lexeme(), null);
-                for (final Object item : iterable) {
+                for (Object item : iterable) {
                     adapter.visitingScope().assign(node.selector().name(), item);
                     adapter.execute(node.body());
                 }

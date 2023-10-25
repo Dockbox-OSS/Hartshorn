@@ -26,11 +26,11 @@ import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, PostfixExpression> {
 
     @Override
-    public Object interpret(final PostfixExpression node, final InterpreterAdapter adapter) {
-        final Object left = adapter.evaluate(node.leftExpression());
+    public Object interpret(PostfixExpression node, InterpreterAdapter adapter) {
+        Object left = adapter.evaluate(node.leftExpression());
         InterpreterUtilities.checkNumberOperand(node.operator(), left);
 
-        final double newValue = switch (node.operator().type()) {
+        double newValue = switch (node.operator().type()) {
             case PLUS_PLUS -> (double) left + 1;
             case MINUS_MINUS -> (double) left -1;
             default -> throw new RuntimeError(node.operator(), "Invalid postfix operator " + node.operator().type());
