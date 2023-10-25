@@ -80,7 +80,7 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      *
      * @return {@code true} if the environment is a CI environment, {@code false} otherwise.
      */
-    boolean isCI();
+    boolean isBuildEnvironment();
 
     /**
      * Indicates whether the current environment is running in batch mode. Batch mode is typically used for

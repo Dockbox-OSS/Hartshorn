@@ -73,7 +73,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final AnnotationLookup annotationLookup;
     private final ClasspathResourceLocator resourceLocator;
 
-    private final boolean isCI;
+    private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
 
     private final ApplicationArgumentParser argumentParser;
@@ -99,10 +99,14 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.printStacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
 
-        this.isCI = this.checkCI();
+        Boolean isBuildEnvironment = configurer.isBuildEnvironment.initialize(environmentInitializerContext);
+        if (isBuildEnvironment == null) {
+            isBuildEnvironment = false;
+        }
+        this.isBuildEnvironment = isBuildEnvironment;
         this.checkForDebugging();
 
-        if (!this.isCI && configurer.enableBanner.initialize(argumentsInitializerContext)) {
+        if (!this.isBuildEnvironment && configurer.enableBanner.initialize(argumentsInitializerContext)) {
             this.printBanner(context.input().mainClass());
         }
 
@@ -133,14 +137,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             managed.environment(this);
         }
         return instance;
-    }
-
-    protected boolean checkCI() {
-        return System.getenv().containsKey("GITLAB_CI")
-                || System.getenv().containsKey("JENKINS_HOME")
-                || System.getenv().containsKey("TRAVIS")
-                || System.getenv().containsKey("GITHUB_ACTIONS")
-                || System.getenv().containsKey("APPVEYOR");
     }
 
     public FileSystemProvider applicationFSProvider() {
@@ -187,8 +183,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     @Override
-    public boolean isCI() {
-        return this.isCI;
+    public boolean isBuildEnvironment() {
+        return this.isBuildEnvironment;
     }
 
     @Override
@@ -358,6 +354,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
 
         /**
          * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
@@ -650,6 +647,29 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         public Configurer applicationContext(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
             this.applicationContext = applicationContext;
             return this;
+        }
+
+        /**
+         * Sets whether the application is running in a build environment. This is typically used to disable
+         * certain features that are not required in a build environment. By default this will follow the result
+         * of
+         *
+         * @param isBuildEnvironment whether the application is running in a build environment
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer isBuildEnvironment(ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment) {
+            this.isBuildEnvironment = isBuildEnvironment;
+            return this;
+        }
+
+        /**
+         * Sets whether the application is running in a build environment. This is typically used to disable
+         * certain features that are not required in a build environment. This is disabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer isBuildEnvironment(boolean isBuildEnvironment) {
+            return this.isBuildEnvironment(ContextualInitializer.of(isBuildEnvironment));
         }
     }
 }

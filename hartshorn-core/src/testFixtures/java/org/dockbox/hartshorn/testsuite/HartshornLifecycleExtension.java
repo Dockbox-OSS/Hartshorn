@@ -252,7 +252,7 @@ public class HartshornLifecycleExtension implements
         @Override
         public void configure(Configurer constructor) {
             Customizer<ContextualApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
-                environment.enableBanner(); // Disable banner for tests, to avoid unnecessary noise
+                environment.disableBanner(); // Disable banner for tests, to avoid unnecessary noise
                 environment.enableBatchMode(); // Enable batch mode, to make use of additional caching
                 environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
