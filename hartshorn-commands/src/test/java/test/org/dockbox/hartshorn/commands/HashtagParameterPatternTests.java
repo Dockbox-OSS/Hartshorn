@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.ConverterException;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
+import org.dockbox.hartshorn.commands.arguments.PrefixedParameterPattern;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -46,7 +47,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testPreconditionsAcceptValidPattern() {
         String pattern = "#cuboid[1]";
-        CustomParameterPattern parameterPattern = this.pattern();
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
         Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
@@ -54,7 +55,7 @@ public class HashtagParameterPatternTests {
         Assertions.assertTrue(result.get());
     }
 
-    private HashtagParameterPattern pattern() {
+    private PrefixedParameterPattern pattern() {
         return new HashtagParameterPattern(this.applicationContext.get(CommandParameterResources.class)) {
             @Override
             protected Message wrongFormat() {
@@ -67,7 +68,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testPreconditionsRejectInvalidPrefix() {
         String pattern = "@cuboid[1]";
-        CustomParameterPattern parameterPattern = this.pattern();
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
         Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
@@ -78,7 +79,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testPreconditionsRejectInvalidName() {
         String pattern = "#sphere[1]";
-        CustomParameterPattern parameterPattern = this.pattern();
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
         Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
@@ -89,7 +90,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testSplitArgumentsCreatesCorrectArguments() {
         String pattern = "#cuboid[1]";
-        CustomParameterPattern parameterPattern = this.pattern();
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
         List<String> arguments = parameterPattern.splitArguments(pattern);
 
@@ -100,7 +101,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testIdentifierParser() {
         String pattern = "#cuboid[1]";
-        CustomParameterPattern parameterPattern = this.pattern();
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
         Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
 
