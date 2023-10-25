@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -43,11 +43,11 @@ import java.util.Set;
  */
 public class StandardRuntime extends AbstractScriptRuntime {
 
-    public StandardRuntime(ApplicationContext applicationContext, HslLanguageFactory factory) {
+    public StandardRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
         this(applicationContext, factory, Set.of());
     }
 
-    public StandardRuntime(ApplicationContext applicationContext, HslLanguageFactory factory,
+    public StandardRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory,
                            Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext, factory, statementParsers);
         this.customizer(new InlineStandardLibraryCustomizer());

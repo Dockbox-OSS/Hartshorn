@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 
 /**
  * Customizer to simplify the validation of standalone expressions. This customizer is used by the
@@ -49,6 +50,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
     @Override
     public void call(ScriptContext context) {
+        context.runtime().interpreterOptions().enableAssertions(true);
         List<Statement> statements = context.statements();
         this.verifyIsExpression(statements);
         List<Statement> testStatements = this.enhanceTestStatement(statements);
@@ -56,18 +58,22 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
     }
 
     private void verifyIsExpression(List<Statement> statements) {
-        // Get last statement in the statements list
-        Statement lastStatement = statements.get(statements.size() - 1);
+        Statement lastStatement = CollectionUtilities.last(statements);
         if (!(lastStatement instanceof ExpressionStatement || lastStatement instanceof ReturnStatement)) {
             throw new ScriptEvaluationError("Expected last statement to be a valid expression or return statement, but found " + lastStatement.getClass().getSimpleName(), Phase.RESOLVING, lastStatement);
         }
     }
 
     private List<Statement> enhanceTestStatement(List<Statement> statements) {
-        Statement lastStatement = statements.get(statements.size() - 1);
+        Statement lastStatement = CollectionUtilities.last(statements);
+
         if (!(lastStatement instanceof ReturnStatement)) {
             ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            Token returnToken = new Token(TokenType.RETURN, VALIDATION_ID, -1, -1);
+            Token returnToken = Token.of(TokenType.RETURN)
+                    .lexeme(VALIDATION_ID)
+                    .virtual()
+                    .build();
+
             ReturnStatement returnStatement = new ReturnStatement(returnToken, statement.expression());
             statements.set(statements.size() - 1, returnStatement);
         }

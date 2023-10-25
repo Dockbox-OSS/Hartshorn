@@ -67,7 +67,12 @@ public class Lexer {
             this.start = this.current;
             this.scanToken();
         }
-        this.tokens.add(new Token(TokenType.EOF, "", this.line, this.start));
+        Token token = Token.of(TokenType.EOF)
+                .lexeme("")
+                .line(this.line)
+                .column(this.start)
+                .build();
+        this.tokens.add(token);
         return this.tokens;
     }
 
@@ -374,7 +379,13 @@ public class Lexer {
 
     private void addToken(TokenType type, Object literal) {
         String text = this.source.substring(this.start, this.current);
-        this.tokens.add(new Token(type, text, literal, this.line, Math.min(this.start, this.column)));
+        Token token = Token.of(type)
+                .literal(literal)
+                .lexeme(text)
+                .line(this.line)
+                .column(Math.min(this.start, this.column))
+                .build();
+        this.tokens.add(token);
     }
 
     private boolean isAtEnd() {

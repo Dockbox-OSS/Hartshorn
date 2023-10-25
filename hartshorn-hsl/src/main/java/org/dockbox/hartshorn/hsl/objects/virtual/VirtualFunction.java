@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -27,8 +29,6 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-
-import java.util.List;
 
 /**
  * Represents a function definition inside a script. The function is identified by its name, and

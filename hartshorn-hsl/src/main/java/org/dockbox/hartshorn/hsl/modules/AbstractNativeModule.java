@@ -119,11 +119,17 @@ public abstract class AbstractNativeModule implements NativeModule {
                     continue;
                 }
 
-                Token token = new Token(TokenType.IDENTIFIER, method.name(), -1, -1);
+                Token token = Token.of(TokenType.IDENTIFIER)
+                        .lexeme(method.name())
+                        .virtual()
+                        .build();
 
                 List<Parameter> parameters = new ArrayList<>();
                 for (ParameterView<?> parameter : method.parameters().all()) {
-                    Token parameterName = new Token(TokenType.IDENTIFIER, parameter.name(), -1, -1);
+                    Token parameterName = Token.of(TokenType.IDENTIFIER)
+                            .lexeme(parameter.name())
+                            .virtual()
+                            .build();
                     parameters.add(new Parameter(parameterName));
                 }
                 NativeFunctionStatement functionStatement = new NativeFunctionStatement(token, moduleName, method, parameters);

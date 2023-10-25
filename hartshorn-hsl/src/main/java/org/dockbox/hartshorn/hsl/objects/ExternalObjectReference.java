@@ -16,6 +16,28 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
-public interface ExternalObjectReference {
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+/**
+ * Represents an object on the heap that is not a script-defined class. This could be e.g. a Java
+ * class, or a primitive value. This allows for interoperability between the script and the host
+ * environment.
+ *
+ * <p>External objects are {@link InstanceReference}s, and can be used as such. They can be bound to
+ * a {@link BindableNode}, and can be passed as an argument to a {@link CallableNode}. They can also
+ * be used as a {@link PropertyContainer}, though are not guaranteed to be mutable.
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
+public interface ExternalObjectReference extends InstanceReference {
+
+    /**
+     * Returns the external object that this reference represents. This can be any object, including
+     * {@code null}.
+     *
+     * @return The external object.
+     */
+    @Nullable
     Object externalObject();
 }

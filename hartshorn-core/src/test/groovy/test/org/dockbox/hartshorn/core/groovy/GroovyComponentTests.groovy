@@ -46,11 +46,11 @@ class GroovyComponentTests {
 
     @ParameterizedTest
     @MethodSource("components")
-    <T> void testComponent(final Class<T> componentType, final applicationContextFunction, final applicationManagerFunction) {
-        final def component = this.applicationContext.get(componentType)
+    <T> void testComponent(Class<T> componentType, applicationContextFunction, applicationManagerFunction) {
+        def component = this.applicationContext.get(componentType)
         Assertions.assertNotNull(component)
 
-        final def container = this.componentLocator.container(componentType)
+        def container = this.componentLocator.container(componentType)
         Assertions.assertNotNull(container)
         Assertions.assertTrue(container.present())
 

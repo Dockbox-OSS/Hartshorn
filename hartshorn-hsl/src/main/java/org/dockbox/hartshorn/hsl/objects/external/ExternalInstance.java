@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.Map;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
-import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Map;
 
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
@@ -39,7 +39,7 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public class ExternalInstance implements InstanceReference, ExternalObjectReference {
+public class ExternalInstance implements ExternalObjectReference {
 
     private final Object instance;
     private final TypeView<Object> type;
@@ -102,7 +102,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public Object externalObject() {
+    public @Nullable Object externalObject() {
         return this.instance();
     }
 }

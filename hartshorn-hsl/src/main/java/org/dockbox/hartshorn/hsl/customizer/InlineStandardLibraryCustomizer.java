@@ -34,13 +34,16 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     @Override
     public void call(ScriptContext context) {
-        List<Statement> enhancedStatements = this.enhanceModuleStatements(context.statements(), context.interpreter().externalModules());
+        List<Statement> enhancedStatements = this.enhanceModuleStatements(context.statements(), context.interpreter().state().externalModules());
         context.statements(enhancedStatements);
     }
 
     private List<Statement> enhanceModuleStatements(List<Statement> statements, Map<String, NativeModule> modules) {
         for (String module : modules.keySet()) {
-            Token moduleToken = new Token(TokenType.IDENTIFIER, module, -1, -1);
+            Token moduleToken = Token.of(TokenType.IDENTIFIER)
+                    .lexeme(module)
+                    .virtual()
+                    .build();
             ModuleStatement moduleStatement = new ModuleStatement(moduleToken);
             statements.add(0, moduleStatement);
         }

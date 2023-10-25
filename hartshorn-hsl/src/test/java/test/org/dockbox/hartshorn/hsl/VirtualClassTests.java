@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -63,20 +63,20 @@ public class VirtualClassTests {
                 Arguments.of("private final", "name", true, "Cannot access property 'name' outside of its class scope"),
                 Arguments.of("final", "name", false, null),
 
-                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
-                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
-                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign property 'name'"),
+                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
+                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
+                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
 
-                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign property 'name'"),
-                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign property 'name'"),
-                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign property 'name'")
+                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
+                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
+                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign final property 'name'")
         );
     }
 
     @ParameterizedTest
     @MethodSource("propertyAccessors")
     void test(String modifier, String accessor, boolean shouldFail, String message) {
-        HslScript script = HslScript.of(this.applicationContext, """
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class User {
                     %s name;
                     constructor(name) {

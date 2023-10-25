@@ -17,8 +17,8 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslExpression;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -38,10 +38,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
@@ -55,7 +57,8 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> scripts() throws IOException {
         Path resources = Paths.get("src", "test", "resources");
-        return Files.find(resources, 5, (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
+        BiPredicate<Path, BasicFileAttributes> filter = (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl");
+        return Files.find(resources, 5, filter).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {
@@ -76,13 +79,13 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("scripts")
     void testPredefinedScript(Path path) throws IOException {
-        this.assertNoErrorsReported(HslScript.of(this.applicationContext, path));
+        this.assertNoErrorsReported(ExecutableScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
     @MethodSource("scripts")
     void testPredefinedScriptWithOptionalSemicolons(Path path) throws IOException {
-        String source = HslScript.sourceFromPath(path).replaceAll(";", "");
+        String source = ExecutableScript.sourceFromPath(path).replaceAll(";", "");
         this.assertNoErrorsReported(source);
     }
 
@@ -99,7 +102,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithGlobal() {
-        HslExpression expression = HslExpression.of(this.applicationContext, "a == 12");
+        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
         this.assertValid(expression);
     }
@@ -107,22 +110,22 @@ public class ScriptRuntimeTests {
     @Test
     void testExpressionWithGlobalFunctionAccess() {
         String expression = "context != null && context.log() != null";
-        HslExpression hslExpression = HslExpression.of(this.applicationContext, expression);
-        hslExpression.runtime().global("context", this.applicationContext);
-        this.assertValid(hslExpression);
+        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        script.runtime().global("context", this.applicationContext);
+        this.assertValid(script);
     }
 
     @Test
     void testScriptWithGlobalFunctionAccess() {
         String expression = "context.log().info(\"Hello world!\")";
-        HslScript script = HslScript.of(this.applicationContext, expression);
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertNoErrorsReported(script);
     }
 
     @Test
     void testExpressionWithNativeAccess() {
-        HslExpression expression = HslExpression.of(this.applicationContext, "log() != null");
+        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "log() != null");
         expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
@@ -163,7 +166,7 @@ public class ScriptRuntimeTests {
                 """;
         ScriptContext context = this.assertNoErrorsReported(expression);
 
-        Map<String, Object> results = context.interpreter().global();
+        Map<String, Object> results = context.interpreter().global().values();
         Assertions.assertFalse(results.isEmpty());
         Assertions.assertEquals(12.0d, results.get("a"));
         Assertions.assertEquals(13.0d, results.get("b"));
@@ -173,7 +176,7 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("phases")
     void testPhaseCustomizers(Phase phase) {
-        HslScript script = HslScript.of(this.applicationContext, "1 == 1");
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, "1 == 1");
 
         AtomicBoolean called = new AtomicBoolean(false);
         CodeCustomizer customizer = new AbstractCodeCustomizer(phase) {
@@ -192,7 +195,7 @@ public class ScriptRuntimeTests {
     void testBitwiseOperator(TokenType token, int left, int right, int expected) {
         String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
         ScriptContext context = this.assertNoErrorsReported(expression);
-        Object result = context.interpreter().global().get("result");
+        Object result = context.interpreter().global().values().get("result");
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expected, result);
     }
@@ -209,23 +212,36 @@ public class ScriptRuntimeTests {
         this.assertValid(expression);
     }
 
-    ScriptContext assertValid(String expression) {
-        HslExpression hslExpression = HslExpression.of(this.applicationContext, expression);
-        return this.assertValid(hslExpression);
+    @Test
+    void testInterpreterCanBeReused() {
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                var x = 1;
+                test ("Variable has not been modified") {
+                    return x == 1;
+                }
+                x = 2;
+                """);
+        script.evaluate();
+        script.evaluate();
     }
 
-    ScriptContext assertValid(HslExpression expression) {
+    ScriptContext assertValid(String expression) {
+        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        return this.assertValid(script);
+    }
+
+    ScriptContext assertValid(ExpressionScript expression) {
         ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
         Assertions.assertTrue(expression.valid(context));
         return context;
     }
 
     ScriptContext assertNoErrorsReported(String expression) {
-        HslScript script = HslScript.of(this.applicationContext, expression);
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         return this.assertNoErrorsReported(script);
     }
 
-    ScriptContext assertNoErrorsReported(HslScript script) {
+    ScriptContext assertNoErrorsReported(ExecutableScript script) {
         return Assertions.assertDoesNotThrow(script::evaluate);
     }
 }

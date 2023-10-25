@@ -49,7 +49,9 @@ public interface ResultCollector extends ContextCarrier {
      * @return The result value, or {@link Option#empty()}.
      * @param <T> The type of the result.
      */
-    <T> Option<T> result();
+    <T> Option<T> result(Class<T> type);
+
+    Option<?> result();
 
     /**
      * Gets a result with the given ID. If no result with the given ID exists
@@ -58,7 +60,9 @@ public interface ResultCollector extends ContextCarrier {
      * @return The result value, or {@link Option#empty()}.
      * @param <T> The type of the result.
      */
-    <T> Option<T> result(String id);
+    <T> Option<T> result(String id, Class<T> type);
+
+    Option<?> result(String id);
 
     /**
      * Removes all stored results from the collector instance. If no results exist

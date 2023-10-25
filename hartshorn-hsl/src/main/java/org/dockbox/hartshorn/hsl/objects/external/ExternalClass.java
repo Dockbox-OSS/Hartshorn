@@ -92,6 +92,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
     public String name() {
+        // TODO: Return alias if imported with non-original name
         return this.type().name();
     }
 

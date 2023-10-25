@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -24,6 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.option.Option;
@@ -46,6 +46,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private static final String GLOBAL_RESULT = "$__result__$";
     protected Map<String, Object> results = new ConcurrentHashMap<>();
 
+    private final ScriptRuntime runtime;
     private final String source;
 
     private List<Token> tokens;
@@ -57,9 +58,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private Resolver resolver;
     private Interpreter interpreter;
 
-    public ScriptContext(ApplicationContext context, String source) {
-        super(context);
+    public ScriptContext(ScriptRuntime runtime, String source) {
+        super(runtime.applicationContext());
         this.source = source;
+        this.runtime = runtime;
     }
 
     public String source() {
@@ -129,6 +131,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this;
     }
 
+    public ScriptRuntime runtime() {
+        return this.runtime;
+    }
+
     @Override
     public void addResult(Object value) {
         this.addResult(GLOBAL_RESULT, value);
@@ -140,14 +146,23 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     }
 
     @Override
-    public <T> Option<T> result() {
+    public <T> Option<T> result(Class<T> type) {
+        return this.result(GLOBAL_RESULT, type);
+    }
+
+    @Override
+    public Option<?> result() {
         return this.result(GLOBAL_RESULT);
     }
 
     @Override
-    public <T> Option<T> result(String id) {
-        return Option.of(this.results.get(id))
-                .map(result -> (T) result);
+    public <T> Option<T> result(String id, Class<T> type) {
+        return Option.of(this.results.get(id)).ofType(type);
+    }
+
+    @Override
+    public Option<?> result(String id) {
+        return Option.of(this.results.get(id));
     }
 
     @Override

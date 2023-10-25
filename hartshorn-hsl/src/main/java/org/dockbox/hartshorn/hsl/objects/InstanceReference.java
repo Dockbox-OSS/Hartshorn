@@ -18,9 +18,22 @@ package org.dockbox.hartshorn.hsl.objects;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Represents a reference to an instance of a class. This could represent e.g. an instance of a
+ * script-defined class, or a class loaded from a Java class file. Exact semantics are defined by
+ * the implementation.
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
 public interface InstanceReference extends PropertyContainer {
 
+    /**
+     * Returns the type of the instance. This is the type of the class that the instance is an
+     * instance of. This may be a real or a synthetic type.
+     *
+     * @return The type of the instance.
+     */
     @NonNull
     ClassReference type();
-
 }

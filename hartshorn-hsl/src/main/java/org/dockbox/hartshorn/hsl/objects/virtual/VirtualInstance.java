@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.access.PropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents an instance of a {@link VirtualClass} inside a script. The instance is
@@ -54,7 +54,7 @@ public class VirtualInstance implements InstanceReference {
             throw new RuntimeError(name, "Undefined property '" + name.lexeme() + "'.");
         }
         if (field != null && field.isFinal() && this.fields.containsKey(name.lexeme())) {
-            throw new RuntimeError(name, "Cannot reassign property '" + name.lexeme() + "'.");
+            throw new RuntimeError(name, "Cannot reassign final property '" + name.lexeme() + "'.");
         }
         if (field != null) {
             this.checkScopeCanAccess(name, field, fromScope);
