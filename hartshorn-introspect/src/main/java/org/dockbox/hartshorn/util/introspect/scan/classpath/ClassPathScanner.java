@@ -72,16 +72,25 @@ public final class ClassPathScanner {
 
             try {
                 URL url = file.toURI().toURL();
-                this.classLoaders.add(new URLClassLoader(new URL[] { url }) {
-                    public String toString() {
-                        return super.toString() + " [url=" + url.toExternalForm() + "]";
-                    }
-                });
+                this.addUrlForScanning(url);
             }
             catch (MalformedURLException e) {
                 // Ignore
             }
         }
+        return this;
+    }
+
+    public ClassPathScanner addUrlForScanning(URL url) {
+        return this.addClassLoaderForScanning(new URLClassLoader(new URL[] { url }) {
+            public String toString() {
+                return super.toString() + " [url=" + url.toExternalForm() + "]";
+            }
+        });
+    }
+
+    public ClassPathScanner addClassLoaderForScanning(URLClassLoader classLoader) {
+        this.classLoaders.add(classLoader);
         return this;
     }
 
