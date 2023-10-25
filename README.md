@@ -57,7 +57,7 @@ public String helloWorld() {
 }
 ```
 
-Managed components are where injections take place. Components annotated with `@Component` or a stereotype annotation annotated with `@Component`, such as `@Service`, are considered managed.
+Managed components are part of your application structure, meaning they are automatically discovered and registered. Components annotated with `@Component` or a stereotype annotation annotated with `@Component`, such as `@Service`, are considered managed.
 
 ```java
 @Service
