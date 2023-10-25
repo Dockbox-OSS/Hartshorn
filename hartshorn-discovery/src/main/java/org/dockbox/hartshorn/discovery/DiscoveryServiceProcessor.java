@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import com.google.auto.service.AutoService;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -30,16 +33,19 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Objects;
-import java.util.Set;
+
+import com.google.auto.service.AutoService;
 
 @SupportedAnnotationTypes("org.dockbox.hartshorn.discovery.ServiceLoader")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DiscoveryServiceProcessor extends AbstractProcessor {
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latest();
+    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
